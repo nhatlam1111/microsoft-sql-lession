@@ -2,6 +2,7 @@
 import type { CatalogEntry } from '../../lib/catalog';
 import { withBase } from '../../lib/paths';
 import TopProgress from '../islands/TopProgress';
+import ProgressMenu from '../islands/ProgressMenu';
 
 interface Props {
   catalog: CatalogEntry[];
@@ -26,6 +27,7 @@ const nums = catalog.map(e => e.num);
     <a class="top-btn" href={withBase('/gioi-thieu/')}>Giới thiệu</a>
   </nav>
   <TopProgress client:load nums={nums} />
+  <ProgressMenu client:load nums={nums} />
   <slot />
 </header>
 

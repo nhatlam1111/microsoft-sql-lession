@@ -79,3 +79,21 @@
 .rp-spacer { flex: 1; }
 .rp-ghost { padding: 7px 13px; border: 1px solid var(--rule); border-radius: var(--radius-m); background: #FFF; font-weight: 600; font-size: 13.5px; color: var(--ink); text-decoration: none; cursor: pointer; }
 .rp-ghost:hover { border-color: var(--rule-strong); }
+
+/* ---------- Progress menu ---------- */
+.pm { position: relative; }
+.pm-menu {
+  position: absolute; right: 0; top: calc(100% + 6px); z-index: 40;
+  list-style: none; margin: 0; padding: 6px; min-width: 230px;
+  background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius-m);
+  box-shadow: 0 10px 28px rgba(15, 20, 30, 0.14);
+}
+.pm-menu button { width: 100%; text-align: left; padding: 8px 10px; border: 0; border-radius: var(--radius-s); background: none; font-size: 14px; cursor: pointer; }
+.pm-menu button:hover, .pm-menu button:focus-visible { background: #F5F3EE; }
+.pm-menu .pm-danger { color: var(--flag); }
+.pm-message, .pm-problem {
+  position: fixed; left: 0; right: 0; top: var(--topbar); z-index: 35;
+  margin: 0; padding: 9px 20px; font-size: 14px; border-bottom: 1px solid;
+}
+.pm-message { background: var(--accent-soft); color: #1A3C9E; border-color: #C9D6FA; }
+.pm-problem { background: var(--flag-soft); color: #7D1F31; border-color: #EBB7C2; }
