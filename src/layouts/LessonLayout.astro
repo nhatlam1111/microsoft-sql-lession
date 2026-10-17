@@ -1,0 +1,51 @@
+---
+import type { MarkdownHeading } from 'astro';
+import BaseLayout from './BaseLayout.astro';
+import LessonHeader from '../components/lesson/LessonHeader.astro';
+import SidebarNav from '../components/islands/SidebarNav';
+import LessonStatus from '../components/islands/LessonStatus';
+import { LEVELS } from '../data/curriculum';
+import { neighbors, type CatalogEntry } from '../lib/catalog';
+import { lessonUrl } from '../lib/paths';
+
+interface Props {
+  entry: CatalogEntry;
+  headings: MarkdownHeading[];
+  catalog: CatalogEntry[];
+}
+const { entry, headings, catalog } = Astro.props;
+const level = LEVELS.find(l => l.no === entry.level)!;
+const prerequisites = entry.prerequisites.map(p => catalog.find(e => e.num === p)!).filter(Boolean);
+const { prev, next } = neighbors(catalog, entry.num);
+const nums = catalog.map(e => e.num);
+const toc = headings.filter(h => h.depth === 2);
+---
+<BaseLayout title={`${entry.num} ${entry.title}`}>
+  <div class="lesson-layout">
+    <aside class="lesson-side">
+      <SidebarNav client:load catalog={catalog} levels={LEVELS} currentNum={entry.num} />
+    </aside>
+    <main class="lesson-main">
+      <article class="lesson-article">
+        <LessonHeader entry={entry} level={level} prerequisites={prerequisites} />
+        <div class="prose">
+          <slot />
+        </div>
+        <LessonStatus client:load num={entry.num} nums={nums} variant="footer" />
+        <nav class="pn" aria-label="Bài trước và bài sau">
+          {prev ? <a class="pn-prev" href={lessonUrl(prev.slug)}><small>← Bài trước</small>{prev.num} {prev.title}</a> : <span />}
+          {next ? <a class="pn-next" href={lessonUrl(next.slug)}><small>Bài sau →</small>{next.num} {next.title}</a> : <span />}
+        </nav>
+      </article>
+    </main>
+    <aside class="lesson-rail">
+      <div class="rail-inner">
+        <p class="rail-title">Trong bài này</p>
+        <ol class="toc">
+          {toc.map(h => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}
+        </ol>
+        <LessonStatus client:load num={entry.num} nums={nums} variant="rail" />
+      </div>
+    </aside>
+  </div>
+</BaseLayout>

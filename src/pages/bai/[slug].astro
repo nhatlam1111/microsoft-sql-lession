@@ -1,0 +1,19 @@
+---
+import { getCollection, render } from 'astro:content';
+import LessonLayout from '../../layouts/LessonLayout.astro';
+import { lessonComponents } from '../../components/lesson';
+import { loadCatalog } from '../../lib/load-catalog';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('lessons');
+  return entries.map(entry => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content, headings } = await render(entry);
+const catalog = await loadCatalog();
+const current = catalog.find(e => e.slug === entry.id)!;
+---
+<LessonLayout entry={current} headings={headings} catalog={catalog}>
+  <Content components={lessonComponents} />
+</LessonLayout>

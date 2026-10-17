@@ -1,0 +1,35 @@
+---
+import type { CatalogEntry } from '../../lib/catalog';
+import { withBase } from '../../lib/paths';
+import TopProgress from '../islands/TopProgress';
+
+interface Props {
+  catalog: CatalogEntry[];
+}
+const { catalog } = Astro.props;
+const nums = catalog.map(e => e.num);
+---
+<header class="topbar">
+  <a class="brand" href={withBase('/')}>
+    <svg class="brand-mark" viewBox="0 0 20 20" aria-hidden="true">
+      <rect x="1" y="1" width="18" height="18" rx="4" fill="currentColor" />
+      <path d="M1 7h18M1 13h18M7 7v12" stroke="#fff" stroke-width="1.6" />
+    </svg>
+    <span>SQL Server</span>
+  </a>
+  <button type="button" class="top-search" data-action="search">
+    <span>Tìm bài, từ khóa…</span><kbd>Ctrl K</kbd>
+  </button>
+  <nav class="top-nav" aria-label="Điều hướng chính">
+    <button type="button" class="top-btn top-btn-roadmap" data-action="roadmap">Lộ trình</button>
+    <a class="top-btn" href={withBase('/')}>Mindmap</a>
+    <a class="top-btn" href={withBase('/gioi-thieu/')}>Giới thiệu</a>
+  </nav>
+  <TopProgress client:load nums={nums} />
+  <slot />
+</header>
+
+<script>
+  import { EVENTS, emit } from '../../lib/events';
+  document.querySelector('[data-action="roadmap"]')?.addEventListener('click', () => emit(EVENTS.openRoadmap));
+</script>
