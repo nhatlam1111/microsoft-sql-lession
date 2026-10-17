@@ -1,6 +1,14 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import MindMap from '../components/islands/MindMap';
+import { AREAS, LEVELS } from '../data/curriculum';
+import { loadCatalog } from '../lib/load-catalog';
+
+const catalog = await loadCatalog();
 ---
 <BaseLayout title="SQL Server" wide>
-  <main class="home-placeholder"><h1>SQL Server</h1></main>
+  <main class="home">
+    <h1 class="visually-hidden">SQL Server: bản đồ kiến thức</h1>
+    <MindMap client:only="react" catalog={catalog} areas={AREAS} levels={LEVELS} />
+  </main>
 </BaseLayout>

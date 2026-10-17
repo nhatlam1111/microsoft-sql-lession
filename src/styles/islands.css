@@ -97,3 +97,60 @@
 }
 .pm-message { background: var(--accent-soft); color: #1A3C9E; border-color: #C9D6FA; }
 .pm-problem { background: var(--flag-soft); color: #7D1F31; border-color: #EBB7C2; }
+
+/* ---------- Mindmap ---------- */
+.home { height: calc(100vh - var(--topbar)); }
+.visually-hidden { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.mm-page { height: 100%; display: flex; flex-direction: column; }
+.mm-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; padding: 10px 20px; background: var(--surface); border-bottom: 1px solid var(--rule); font-size: 13px; color: var(--ink-2); }
+.mm-tool { padding: 5px 11px; border: 1px solid var(--rule); border-radius: var(--radius-s); background: #FFF; font-size: 13px; font-weight: 600; cursor: pointer; }
+.mm-tool:hover { border-color: var(--rule-strong); }
+.mm-spacer { flex: 1; }
+.mm-legend { display: inline-flex; align-items: center; gap: 6px; }
+.mm-canvas { flex: 1; min-height: 0; background-color: var(--paper); background-image: radial-gradient(#D9D5CC 1px, transparent 1px); background-size: 18px 18px; }
+.mm-canvas .react-flow { --xy-background-color: transparent; }
+.mm-canvas .react-flow__handle { opacity: 0; pointer-events: none; width: 4px; height: 4px; min-width: 0; min-height: 0; border: 0; }
+.mm-canvas .react-flow__edge-path { stroke: #CFC9BE; stroke-width: 1.5; }
+.mm-canvas .mm-edge-main .react-flow__edge-path { stroke: #B6B0A3; stroke-width: 2; }
+.mm-canvas .react-flow__node { cursor: default; }
+
+.mm-root { width: 100%; height: 100%; display: grid; place-items: center; border-radius: 12px; background: var(--ink); color: #FFF; font-weight: 700; font-size: 17px; letter-spacing: -0.01em; }
+.mm-area {
+  position: relative; width: 100%; height: 100%;
+  display: grid; align-content: center; gap: 5px; padding: 6px 14px;
+  background: var(--surface); border: 1.5px solid #DCD8CF; border-radius: 10px; cursor: pointer; text-align: left;
+}
+.mm-area:hover { border-color: var(--rule-strong); }
+.mm-area.is-open { border-color: var(--accent); }
+.mm-area-name { font-weight: 700; font-size: 13.5px; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mm-area-meta { display: flex; align-items: center; gap: 8px; font-size: 11.5px; font-weight: 600; color: var(--ink-3); }
+.mm-bar { flex: 1; height: 4px; border-radius: 2px; background: #EBE8E0; overflow: hidden; }
+.mm-bar > span { display: block; height: 100%; background: var(--done); }
+.mm-flags { color: var(--flag); }
+.mm-toggle {
+  position: absolute; top: 50%; width: 19px; height: 19px; margin-top: -9.5px;
+  display: grid; place-items: center; border-radius: 50%; background: #FFF; border: 1.5px solid #CFCAC0;
+  font-size: 13px; font-weight: 700; color: var(--ink-2); line-height: 1;
+}
+.side-right .mm-toggle { right: -10px; }
+.side-left .mm-toggle { left: -10px; }
+.mm-area.is-open .mm-toggle { border-color: var(--accent); color: var(--accent); }
+
+.mm-lesson {
+  width: 100%; height: 100%; display: flex; align-items: center; gap: 7px; padding: 0 8px;
+  background: var(--surface); border: 1px solid #E3DFD6; border-radius: 8px;
+  font-size: 12.5px; color: var(--ink); text-decoration: none;
+}
+.mm-lesson:hover { border-color: var(--rule-strong); }
+.mm-lesson.is-next { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 600; box-shadow: 0 0 0 3px rgba(31, 79, 209, 0.12); }
+.mm-num { width: 26px; flex: none; font-size: 11px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.mm-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.lvb { flex: none; font-size: 10.5px; font-weight: 700; padding: 1px 5px; border-radius: 4px; }
+.lv1 { color: var(--lv1); background: var(--lv1-soft); }
+.lv2 { color: var(--lv2); background: var(--lv2-soft); }
+.lv3 { color: var(--lv3); background: var(--lv3-soft); }
+.lv4 { color: var(--lv4); background: var(--lv4-soft); }
+.lv5 { color: var(--lv5); background: var(--lv5-soft); }
+.lv6 { color: var(--lv6); background: var(--lv6-soft); }
+.mm-legend .lvb + .lvb { margin-left: -2px; }
