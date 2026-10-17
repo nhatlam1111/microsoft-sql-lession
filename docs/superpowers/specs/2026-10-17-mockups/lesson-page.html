@@ -1,0 +1,360 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Literata:opsz,wght@7..72,400;7..72,600&display=swap">
+<style>
+  .lp-fit { width:100%; overflow:hidden; border-radius:12px; border:1px solid var(--border); margin-top: 6px; }
+  .lp-win {
+    --paper:#f4f2ec; --surface:#ffffff; --ink:#1f2328; --ink-2:#5b6169; --ink-3:#8a9099; --rule:#e5e2da;
+    --accent:#1f4fd1; --accent-soft:#e8eeff; --done:#1a7f4b; --done-soft:#e3f4ea; --seen:#b26b00; --flag:#c0364f; --flag-soft:#fbe3e8;
+    width:1280px; background:var(--paper); color:var(--ink); font-family:"Be Vietnam Pro", system-ui, sans-serif; line-height:1.5;
+  }
+  .lp-win * { box-sizing:border-box; }
+  .lp-win code { font-family:"JetBrains Mono", Consolas, monospace; font-size:.86em; }
+
+  /* top bar */
+  .lp-top { height:52px; display:flex; align-items:center; gap:10px; padding:0 18px; background:#fff; border-bottom:1px solid var(--rule); }
+  .lp-brand { display:flex; align-items:center; gap:9px; font-weight:700; font-size:15px; }
+  .lp-brand .logo { width:24px; height:24px; border-radius:6px; background:var(--ink); color:#fff; display:grid; place-items:center; font:600 10px "JetBrains Mono", monospace; }
+  .lp-sp { flex:1; }
+  .lp-search { width:250px; border:1px solid var(--rule); border-radius:8px; padding:6px 10px; font-size:13px; color:var(--ink-3); background:#f8f7f3; display:flex; justify-content:space-between; }
+  .lp-search kbd { font:500 11px "JetBrains Mono", monospace; border:1px solid var(--rule); border-radius:4px; padding:0 4px; background:#fff; }
+  .lp-tbtn { border:1px solid var(--rule); border-radius:8px; padding:6px 12px; font-size:13px; font-weight:600; background:#fff; }
+  .lp-tbtn.on { background:var(--accent-soft); color:var(--accent); border-color:transparent; }
+  .lp-prog { display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--ink-2); margin-left:6px; }
+  .lp-prog .bar { width:90px; height:6px; border-radius:3px; background:#ebe8e0; overflow:hidden; }
+  .lp-prog .bar i { display:block; height:100%; width:35%; background:var(--done); }
+
+  .lp-body { display:grid; grid-template-columns:262px minmax(0,1fr) 240px; }
+
+  /* sidebar */
+  .lp-side { background:#fff; border-right:1px solid var(--rule); padding:14px 10px 30px; font-size:13px; }
+  .lp-side-title { font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3); padding:4px 8px 8px; }
+  .lp-lv { display:flex; align-items:center; gap:9px; padding:7px 8px; border-radius:7px; font-weight:600; }
+  .lp-lv .num { width:22px; height:22px; border-radius:50%; display:grid; place-items:center; font-size:11px; font-weight:700; border:2px solid #d9d6ce; color:var(--ink-3); flex:none; }
+  .lp-lv.done .num { background:var(--done) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.6 8.4l2.9 2.9 5.9-6.6' fill='none' stroke='white' stroke-width='2.3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/12px no-repeat; border-color:var(--done); color:transparent; }
+  .lp-lv.partial .num { border-color:var(--done); color:var(--done); }
+  .lp-lv.current .num { border-color:var(--accent); color:var(--accent); }
+  .lp-lv.current { color:var(--accent); }
+  .lp-lv .cnt { margin-left:auto; font-size:11.5px; color:var(--ink-3); font-weight:600; }
+  .lp-lv .flagc { font-size:11px; color:var(--flag); font-weight:700; }
+  .lp-sub { list-style:none; margin:2px 0 6px 19px; padding:0 0 0 10px; border-left:2px solid #ebe8e0; }
+  .lp-sub li { display:flex; gap:8px; align-items:center; padding:4px 6px; border-radius:6px; font-size:12.5px; color:var(--ink); }
+  .lp-sub li .n { width:24px; flex:none; color:var(--ink-3); font-size:11.5px; }
+  .lp-sub li.here { background:var(--accent-soft); color:var(--accent); font-weight:600; }
+
+  .st { width:15px; height:15px; border-radius:50%; flex:none; display:inline-block; }
+  .st-todo { border:1.5px solid #c6c9ce; background:#fff; }
+  .st-seen { border:1.5px solid var(--seen); background:linear-gradient(90deg, var(--seen) 50%, #fff 50%); }
+  .st-done { background:var(--done) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.6 8.4l2.9 2.9 5.9-6.6' fill='none' stroke='white' stroke-width='2.3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/11px no-repeat; }
+
+  /* article */
+  .lp-main { padding:34px 44px 70px; min-width:0; }
+  .lp-article { max-width:720px; margin:0 auto; }
+  .lp-crumb { font-size:12.5px; color:var(--ink-3); display:flex; gap:8px; align-items:center; }
+  .lp-lvtag { font-size:11px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:var(--accent); background:var(--accent-soft); border-radius:5px; padding:2px 7px; }
+  .lp-h1 { font-size:32px; line-height:1.15; letter-spacing:-.02em; font-weight:700; margin:10px 0 10px; }
+  .lp-meta { font-size:13px; color:var(--ink-2); display:flex; gap:16px; flex-wrap:wrap; }
+  .lp-meta a { color:var(--accent); text-decoration:none; font-weight:600; }
+  .lp-goal { margin-top:16px; border-left:3px solid var(--done); background:var(--done-soft); padding:10px 14px; border-radius:0 8px 8px 0; font-size:14px; }
+  .lp-goal b { color:var(--done); }
+
+  .lp-h2 { font-size:19px; font-weight:700; letter-spacing:-.01em; margin:36px 0 12px; padding-top:18px; border-top:1px solid var(--rule); }
+  .lp-h3 { font-size:15px; font-weight:700; margin:22px 0 8px; }
+  .lp-prose { font-family:Literata, Georgia, serif; font-size:16.5px; line-height:1.7; }
+  .lp-prose p { margin:0 0 14px; }
+  .lp-prose p code { background:#ebe8e0; padding:1px 5px; border-radius:4px; }
+  .ui { font-family:"Be Vietnam Pro", system-ui, sans-serif; }
+
+  .lp-chat { display:flex; gap:10px; align-items:flex-start; margin:4px 0 16px; }
+  .lp-avatar { width:34px; height:34px; border-radius:50%; background:#ecdcc8; display:grid; place-items:center; font-weight:700; font-size:13px; color:#7a4f1f; flex:none; }
+  .lp-bubble { background:#fff; border:1px solid var(--rule); border-radius:4px 14px 14px 14px; padding:9px 14px 11px; font-size:14.5px; line-height:1.55; max-width:560px; }
+  .lp-bubble .who { font-size:12px; color:var(--ink-3); margin-bottom:2px; }
+  .lp-key { background:#fff; border:1.5px dashed #b9b4a8; border-radius:10px; padding:10px 14px; font-size:15px; font-weight:600; margin:0 0 6px; }
+
+  /* Excel block */
+  .xl { font-family:"Segoe UI", Calibri, Arial, sans-serif; border:1px solid #c8c8c8; border-radius:8px; overflow:hidden; background:#fff; margin:10px 0 14px; }
+  .xl-head { background:#107C41; color:#fff; font-size:12px; font-weight:600; padding:5px 10px; display:flex; gap:10px; align-items:center; }
+  .xl-head .tabs { margin-left:auto; font-weight:400; opacity:.9; }
+  .xl-fx { display:flex; align-items:stretch; border-bottom:1px solid #d4d4d4; font-size:13px; }
+  .xl-fx .nm { width:64px; padding:5px 8px; border-right:1px solid #d4d4d4; color:#333; }
+  .xl-fx .f { padding:5px 10px; font-style:italic; color:#666; border-right:1px solid #d4d4d4; }
+  .xl-fx .v { padding:5px 10px; font-family:Consolas, "JetBrains Mono", monospace; color:#111; }
+  table.xl-grid { border-collapse:collapse; width:100%; font-size:13px; }
+  .xl-grid th { background:#f3f3f3; color:#555; font-weight:400; border:1px solid #dadada; padding:3px 8px; text-align:center; }
+  .xl-grid td { border:1px solid #e1e1e1; padding:4px 8px; white-space:nowrap; }
+  .xl-grid td.rn { background:#f3f3f3; color:#555; text-align:center; width:34px; }
+  .xl-grid tr.hd td:not(.rn) { font-weight:700; }
+  .xl-grid td.na { background:#ffc7ce; color:#9c0006; }
+  .xl-grid td.sel { outline:2px solid #107C41; outline-offset:-2px; }
+
+  /* SQL block (SSMS colours) */
+  .sql { border:1px solid #cfd6e4; border-radius:8px; overflow:hidden; background:#fff; margin:10px 0 10px; }
+  .sql-head { display:flex; justify-content:space-between; align-items:center; background:#eef2fa; border-bottom:1px solid #cfd6e4; padding:5px 10px; font-size:12px; color:#40506e; font-weight:600; }
+  .sql-head .copy { font-weight:600; color:var(--accent); }
+  .sql pre { margin:0; padding:12px 14px; font-family:"JetBrains Mono", Consolas, monospace; font-size:13.5px; line-height:1.65; color:#000; white-space:pre; }
+  .k { color:#0000ff; } .o { color:#808080; } .c { color:#008000; }
+
+  /* SSMS results */
+  .res { border:1px solid #c9c9c9; border-radius:8px; overflow:hidden; background:#fff; margin:6px 0 14px; font-family:"Segoe UI", Arial, sans-serif; font-size:13px; }
+  .res-tabs { display:flex; background:#f5f5f5; border-bottom:1px solid #d9d9d9; font-size:12px; }
+  .res-tabs span { padding:5px 12px; color:#555; }
+  .res-tabs .on { background:#fff; border-right:1px solid #d9d9d9; font-weight:600; color:#222; }
+  table.res-grid { border-collapse:collapse; width:100%; }
+  .res-grid th { background:#f0f0f0; border:1px solid #dcdcdc; padding:3px 8px; text-align:left; font-weight:400; }
+  .res-grid td { border:1px solid #e8e8e8; padding:3px 8px; white-space:nowrap; }
+  .res-grid td.rn { background:#f0f0f0; color:#555; width:30px; text-align:center; }
+  .res-grid td.null { background:#ffffe1; }
+  .res-status { display:flex; gap:18px; padding:4px 10px; border-top:1px solid #d9d9d9; background:#fafafa; font-size:12px; color:#444; }
+  .res-status .ok { color:#1a7f4b; font-weight:600; }
+  .res-note { font-size:13.5px; color:var(--ink-2); margin:-4px 0 14px; }
+  .res-note .y { background:#ffffe1; border:1px solid #e6e2a0; padding:0 5px; border-radius:3px; }
+  .res-note .r { background:#ffc7ce; color:#9c0006; padding:0 5px; border-radius:3px; }
+
+  .lp-map { border:1px solid var(--rule); border-radius:10px; overflow:hidden; background:#fff; margin:10px 0 16px; }
+  .lp-map .row { display:grid; grid-template-columns:230px minmax(0,1fr); border-top:1px solid var(--rule); }
+  .lp-map .row:first-child { border-top:0; }
+  .lp-map code { padding:10px 12px; background:#fbfaf7; border-right:1px solid var(--rule); color:#0000ff; font-size:12.5px; }
+  .lp-map span { padding:9px 14px; font-size:14px; line-height:1.55; }
+
+  .lp-warn { border:1px solid #efd4a6; background:#fdf6ea; border-radius:10px; padding:14px 18px 4px; }
+  .lp-warn ol { margin:0; padding-left:20px; }
+  .lp-warn li { margin-bottom:12px; font-size:15.5px; }
+  .lp-work { border:1px solid #cfd9f4; background:#f3f6fe; border-radius:10px; padding:14px 18px 4px; }
+  .lp-work ul { margin:0; padding-left:20px; }
+  .lp-work li { margin-bottom:12px; font-size:15.5px; }
+
+  .lp-memo { border:1px solid var(--rule); background:#fff; border-radius:10px; overflow:hidden; }
+  .lp-memo table { border-collapse:collapse; width:100%; font-size:14px; }
+  .lp-memo th { text-align:left; padding:8px 14px; font-size:12px; letter-spacing:.06em; text-transform:uppercase; background:#fbfaf7; border-bottom:1px solid var(--rule); }
+  .lp-memo th.x { color:#107C41; } .lp-memo th.q { color:var(--accent); }
+  .lp-memo td { padding:8px 14px; border-top:1px solid var(--rule); }
+  .lp-memo td code { color:#0000ff; }
+
+  .lp-todo { border:1.5px dashed #cfcac0; border-radius:10px; padding:14px 16px; color:var(--ink-3); font-size:14px; }
+
+  .lp-done { display:flex; gap:10px; align-items:center; margin-top:34px; padding-top:20px; border-top:1px solid var(--rule); }
+  .btn-done { background:var(--done); color:#fff; border-radius:9px; padding:10px 16px; font-weight:600; font-size:14px; display:inline-flex; gap:8px; align-items:center; }
+  .btn-done::before { content:""; width:15px; height:15px; background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.6 8.4l2.9 2.9 5.9-6.6' fill='none' stroke='white' stroke-width='2.3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/15px no-repeat; }
+  .btn-flag { border:1px solid var(--rule); background:#fff; border-radius:9px; padding:10px 14px; font-weight:600; font-size:14px; color:var(--flag); }
+  .lp-done .hint { font-size:12.5px; color:var(--ink-3); margin-left:4px; }
+  .lp-pn { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:16px; }
+  .lp-pn div { border:1px solid var(--rule); border-radius:10px; padding:10px 14px; background:#fff; font-size:13.5px; font-weight:600; }
+  .lp-pn small { display:block; color:var(--ink-3); font-size:12px; font-weight:400; }
+  .lp-pn .next { text-align:right; }
+
+  /* right rail */
+  .lp-rail { padding:34px 18px; border-left:1px solid var(--rule); background:#f8f7f2; }
+  .lp-rail-title { font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3); margin-bottom:8px; }
+  .lp-toc div { font-size:13px; color:var(--ink-2); padding:4px 0 4px 10px; border-left:2px solid #e3e0d8; }
+  .lp-toc div.on { color:var(--accent); border-left-color:var(--accent); font-weight:600; }
+  .lp-box { margin-top:22px; background:#fff; border:1px solid var(--rule); border-radius:10px; padding:12px; font-size:13px; }
+  .lp-box .line { display:flex; align-items:center; gap:8px; margin-top:6px; }
+  .lp-box .muted { color:var(--ink-3); font-size:12px; margin-top:6px; }
+  .lp-box .mini { margin-top:10px; display:grid; gap:6px; }
+  .lp-box .mini span { border:1px solid var(--rule); border-radius:7px; padding:6px 8px; text-align:center; font-weight:600; font-size:12.5px; }
+  .lp-box .mini .g { background:var(--done); color:#fff; border-color:var(--done); }
+  .lp-box .mini .r { color:var(--flag); }
+</style>
+
+<h2>Một bài học mẫu: 3.5 LEFT JOIN</h2>
+<p class="subtitle">Xem bố cục và đọc thử nội dung: cách dẫn dắt, giọng văn, phần neo sang Excel. Nội dung và dữ liệu là bản nháp. Khung trình duyệt hẹp thì trang sẽ thu nhỏ, mở bằng Chrome sẽ dễ đọc hơn.</p>
+
+<div class="lp-fit" id="lpFit">
+<div class="lp-win" id="lpWin">
+
+  <div class="lp-top">
+    <div class="lp-brand"><span class="logo">SQL</span>SQL Server cho BA/PM</div>
+    <span class="lp-sp"></span>
+    <div class="lp-search"><span>Tìm bài, từ khóa…</span><kbd>Ctrl K</kbd></div>
+    <span class="lp-tbtn on">Lộ trình</span>
+    <span class="lp-tbtn">Mindmap</span>
+    <div class="lp-prog"><span>18/51</span><span class="bar"><i></i></span></div>
+  </div>
+
+  <div class="lp-body">
+    <!-- SIDEBAR -->
+    <aside class="lp-side">
+      <div class="lp-side-title">Khóa học</div>
+      <div class="lp-lv done"><span class="num">1</span>Làm quen<span class="cnt">6/6</span></div>
+      <div class="lp-lv partial"><span class="num">2</span>Cơ bản<span class="cnt">8/9 <span class="flagc">· 1 cờ</span></span></div>
+      <div class="lp-lv current"><span class="num">3</span>Trung cấp<span class="cnt">4/10</span></div>
+      <ul class="lp-sub">
+        <li><span class="st st-done"></span><span class="n">3.1</span>COUNT, SUM, AVG</li>
+        <li><span class="st st-done"></span><span class="n">3.2</span>GROUP BY</li>
+        <li><span class="st st-done"></span><span class="n">3.3</span>HAVING</li>
+        <li><span class="st st-done"></span><span class="n">3.4</span>INNER JOIN</li>
+        <li class="here"><span class="st st-seen"></span><span class="n">3.5</span>LEFT JOIN</li>
+        <li><span class="st st-todo"></span><span class="n">3.6</span>Nối nhiều bảng</li>
+        <li><span class="st st-seen"></span><span class="n">3.7</span>Self join</li>
+        <li><span class="st st-todo"></span><span class="n">3.8</span>UNION</li>
+        <li><span class="st st-todo"></span><span class="n">3.9</span>Subquery</li>
+        <li><span class="st st-todo"></span><span class="n">3.10</span>Đếm có điều kiện</li>
+      </ul>
+      <div class="lp-lv"><span class="num">4</span>Phân tích<span class="cnt">0/10</span></div>
+      <div class="lp-lv"><span class="num">5</span>Nâng cao<span class="cnt">0/9</span></div>
+      <div class="lp-lv"><span class="num">6</span>Cấp cứu dữ liệu<span class="cnt">0/7</span></div>
+    </aside>
+
+    <!-- ARTICLE -->
+    <main class="lp-main">
+      <article class="lp-article">
+        <div class="lp-crumb"><span class="lp-lvtag">Level 3 · Trung cấp</span><span>Bài 3.5</span></div>
+        <div class="lp-h1">LEFT JOIN: tìm người chưa có hợp đồng</div>
+        <div class="lp-meta"><span>Khoảng 12 phút</span><span>Cần biết trước: <a>2.5 NULL</a>, <a>3.4 INNER JOIN</a></span></div>
+        <div class="lp-goal"><b>Học xong bài này:</b> bạn tự tìm được "ai có trong danh sách này mà không có trong danh sách kia", không cần VLOOKUP.</div>
+
+        <div class="lp-h2">Tình huống</div>
+        <div class="lp-prose">
+          <p>Chiều thứ Sáu, chị Hạnh, trưởng phòng nhân sự bên khách hàng, nhắn cho bạn:</p>
+        </div>
+        <div class="lp-chat">
+          <div class="lp-avatar">H</div>
+          <div class="lp-bubble"><div class="who">Chị Hạnh · 16:05</div>Em ơi, thứ Hai chị phải báo cáo sếp. Mấy bạn mới vào tháng này chị không chắc đã có hợp đồng trên hệ thống chưa. Em lọc giúp chị danh sách nhé.</div>
+        </div>
+        <div class="lp-prose"><p>Nói gọn lại, chị Hạnh đang hỏi:</p></div>
+        <div class="lp-key">Nhân viên nào có trong bảng NhanVien, nhưng không có dòng nào trong bảng HopDong?</div>
+
+        <div class="lp-h2">Nếu làm bằng Excel</div>
+        <div class="lp-prose">
+          <p>Hồi làm consultant, chắc bạn làm thế này: xuất hai danh sách ra hai sheet, rồi ở sheet nhân viên thêm một cột VLOOKUP mã NV sang sheet hợp đồng. Dòng nào ra <span class="res-note"><span class="r">#N/A</span></span> là người chưa có hợp đồng.</p>
+        </div>
+        <div class="xl">
+          <div class="xl-head">Excel<span class="tabs">NhanVien · HopDong</span></div>
+          <div class="xl-fx"><span class="nm">D5</span><span class="f">fx</span><span class="v">=VLOOKUP(A5,HopDong!A:B,2,FALSE)</span></div>
+          <table class="xl-grid">
+            <tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th></tr>
+            <tr class="hd"><td class="rn">1</td><td>Mã NV</td><td>Họ tên</td><td>Phòng ban</td><td>Mã HĐ (dò)</td></tr>
+            <tr><td class="rn">2</td><td>NV001</td><td>Trần Thị Mai</td><td>Kế toán</td><td>HD2024-018</td></tr>
+            <tr><td class="rn">3</td><td>NV002</td><td>Lê Văn Hùng</td><td>Kinh doanh</td><td>HD2024-021</td></tr>
+            <tr><td class="rn">4</td><td>NV003</td><td>Nguyễn Thu Hà</td><td>Kinh doanh</td><td>HD2023-104</td></tr>
+            <tr><td class="rn">5</td><td>NV047</td><td>Phạm Ngọc Ánh</td><td>Nhân sự</td><td class="na sel">#N/A</td></tr>
+            <tr><td class="rn">6</td><td>NV048</td><td>Đỗ Minh Quân</td><td>IT</td><td class="na">#N/A</td></tr>
+          </table>
+        </div>
+        <div class="lp-prose"><p>Cách này ra đúng kết quả. Có điều tuần sau chị Hạnh hỏi lại thì bạn lại phải xuất file, dán công thức, lọc lại từ đầu.</p></div>
+
+        <div class="lp-h2">Làm bằng SQL</div>
+        <div class="lp-h3">Bước 1: nối hai bảng, chưa lọc gì</div>
+        <div class="lp-prose"><p>Viết câu lệnh theo từng bước, chạy thử từng bước. Đây là thói quen nên tập ngay từ đầu.</p></div>
+        <div class="sql">
+          <div class="sql-head"><span>SQL Server</span><span class="copy">Sao chép</span></div>
+<pre><span class="k">SELECT</span> nv.MaNV<span class="o">,</span> nv.HoTen<span class="o">,</span> hd.MaHD
+<span class="k">FROM</span>   NhanVien <span class="k">AS</span> nv
+<span class="o">LEFT JOIN</span> HopDong <span class="k">AS</span> hd
+       <span class="k">ON</span> hd.MaNV <span class="o">=</span> nv.MaNV<span class="o">;</span></pre>
+        </div>
+        <div class="res">
+          <div class="res-tabs"><span class="on">Results</span><span>Messages</span></div>
+          <table class="res-grid">
+            <tr><th></th><th>MaNV</th><th>HoTen</th><th>MaHD</th></tr>
+            <tr><td class="rn">1</td><td>NV001</td><td>Trần Thị Mai</td><td>HD2024-018</td></tr>
+            <tr><td class="rn">2</td><td>NV002</td><td>Lê Văn Hùng</td><td>HD2024-021</td></tr>
+            <tr><td class="rn">3</td><td>NV003</td><td>Nguyễn Thu Hà</td><td>HD2023-104</td></tr>
+            <tr><td class="rn">4</td><td>NV047</td><td>Phạm Ngọc Ánh</td><td class="null">NULL</td></tr>
+            <tr><td class="rn">5</td><td>NV048</td><td>Đỗ Minh Quân</td><td class="null">NULL</td></tr>
+          </table>
+          <div class="res-status"><span class="ok">✓ Query executed successfully.</span><span>HRM_Demo</span><span>5 rows</span></div>
+        </div>
+        <div class="res-note">Ô <span class="y">NULL</span> nền vàng chính là ô <span class="r">#N/A</span> bên Excel: dò không ra thì để trống.</div>
+
+        <div class="lp-h3">Bước 2: chỉ giữ những dòng NULL</div>
+        <div class="sql">
+          <div class="sql-head"><span>SQL Server</span><span class="copy">Sao chép</span></div>
+<pre><span class="k">SELECT</span> nv.MaNV<span class="o">,</span> nv.HoTen<span class="o">,</span> nv.PhongBan<span class="o">,</span> nv.NgayVaoLam
+<span class="k">FROM</span>   NhanVien <span class="k">AS</span> nv
+<span class="o">LEFT JOIN</span> HopDong <span class="k">AS</span> hd
+       <span class="k">ON</span> hd.MaNV <span class="o">=</span> nv.MaNV
+<span class="k">WHERE</span>  hd.MaHD <span class="o">IS NULL;</span>   <span class="c">-- dò không ra hợp đồng nào</span></pre>
+        </div>
+        <div class="lp-map">
+          <div class="row"><code>FROM NhanVien AS nv</code><span>Sheet nhân viên là bảng gốc, ai cũng được giữ lại. <i>nv</i> là tên gọi tắt cho đỡ gõ.</span></div>
+          <div class="row"><code>LEFT JOIN HopDong AS hd</code><span>Thêm cột dò sang sheet hợp đồng. LEFT nghĩa là giữ nguyên bảng bên trái, dò không ra cũng không bỏ dòng nào.</span></div>
+          <div class="row"><code>ON hd.MaNV = nv.MaNV</code><span>Dò theo mã NV, giống tham số đầu tiên của VLOOKUP.</span></div>
+          <div class="row"><code>WHERE hd.MaHD IS NULL</code><span>Chỉ giữ những dòng dò không ra, tức là các dòng #N/A.</span></div>
+        </div>
+        <div class="res">
+          <div class="res-tabs"><span class="on">Results</span><span>Messages</span></div>
+          <table class="res-grid">
+            <tr><th></th><th>MaNV</th><th>HoTen</th><th>PhongBan</th><th>NgayVaoLam</th></tr>
+            <tr><td class="rn">1</td><td>NV047</td><td>Phạm Ngọc Ánh</td><td>Nhân sự</td><td>2026-10-01</td></tr>
+            <tr><td class="rn">2</td><td>NV048</td><td>Đỗ Minh Quân</td><td>IT</td><td>2026-10-05</td></tr>
+          </table>
+          <div class="res-status"><span class="ok">✓ Query executed successfully.</span><span>HRM_Demo</span><span>2 rows</span></div>
+        </div>
+        <div class="lp-prose"><p>Hai người, khớp với file Excel. Lần sau chị Hạnh hỏi, bạn mở lại câu lệnh và bấm F5.</p></div>
+
+        <div class="lp-h2">Hay nhầm ở đâu</div>
+        <div class="lp-warn lp-prose">
+          <ol>
+            <li><b class="ui">Viết <code>= NULL</code> thay vì <code>IS NULL</code>.</b> So sánh bằng với NULL không bao giờ đúng. Câu lệnh trả về 0 dòng, và bạn tưởng ai cũng có hợp đồng rồi.</li>
+            <li><b class="ui">Lọc bảng bên phải ở WHERE.</b> Chị Hạnh hỏi thêm: "người chưa có hợp đồng <i>còn hiệu lực</i>". Nếu thêm <code>AND hd.NgayKetThuc &gt;= GETDATE()</code> vào WHERE, các dòng NULL bị loại hết và LEFT JOIN thành INNER JOIN lúc nào không hay. Điều kiện của HopDong phải đặt trong ON.</li>
+            <li><b class="ui">Một người hiện hai dòng.</b> Khi bỏ WHERE để xem tất cả, ai có cả HĐ thử việc lẫn HĐ chính thức sẽ hiện hai lần. Bài 3.6 sẽ xử lý chuyện này.</li>
+          </ol>
+        </div>
+
+        <div class="lp-h2">Mang vào việc BA/PM</div>
+        <div class="lp-work lp-prose">
+          <ul>
+            <li>Kiểm tra dữ liệu sau khi import cho khách mới: ai chưa có phòng ban, chưa có hợp đồng, chưa khai tài khoản ngân hàng. Cùng một khuôn <code>LEFT JOIN … IS NULL</code>.</li>
+            <li>Viết spec cho rõ. Thay vì "báo cáo nhân viên chưa có HĐ", hãy ghi: nhân viên đang làm việc, không có HĐ nào còn hiệu lực tại ngày chạy báo cáo; HĐ không xác định thời hạn (NgayKetThuc trống) tính là còn hiệu lực. Dev đọc là làm được, khỏi hỏi lại.</li>
+          </ul>
+        </div>
+
+        <div class="lp-h2">Ghi nhớ</div>
+        <div class="lp-memo">
+          <table>
+            <tr><th class="x">Bên Excel</th><th class="q">Bên SQL</th></tr>
+            <tr><td>VLOOKUP dò theo mã</td><td><code>LEFT JOIN … ON</code></td></tr>
+            <tr><td>Ô ra #N/A</td><td><code>NULL</code></td></tr>
+            <tr><td>Lọc các dòng #N/A</td><td><code>WHERE … IS NULL</code></td></tr>
+          </table>
+        </div>
+
+        <div class="lp-h2">Bài tập</div>
+        <div class="lp-todo">Phần bài tập sẽ bổ sung sau.</div>
+
+        <div class="lp-done">
+          <span class="btn-done">Đã học xong bài này</span>
+          <span class="btn-flag">Cắm cờ xem lại</span>
+          <span class="hint">Bấm khi bạn tự viết lại được câu lệnh mà không nhìn bài.</span>
+        </div>
+        <div class="lp-pn">
+          <div><small>← Bài trước</small>3.4 INNER JOIN: VLOOKUP bằng SQL</div>
+          <div class="next"><small>Bài sau →</small>3.6 Nối nhiều bảng: NV → HĐ → Lương</div>
+        </div>
+      </article>
+    </main>
+
+    <!-- RIGHT RAIL -->
+    <aside class="lp-rail">
+      <div class="lp-rail-title">Trong bài này</div>
+      <div class="lp-toc">
+        <div>Tình huống</div>
+        <div>Nếu làm bằng Excel</div>
+        <div class="on">Làm bằng SQL</div>
+        <div>Hay nhầm ở đâu</div>
+        <div>Mang vào việc BA/PM</div>
+        <div>Ghi nhớ</div>
+        <div>Bài tập</div>
+      </div>
+      <div class="lp-box">
+        <div class="lp-rail-title" style="margin:0">Trạng thái bài</div>
+        <div class="line"><span class="st st-seen"></span><b>Đã xem</b></div>
+        <div class="muted">Tự đánh dấu khi bạn mở bài.</div>
+        <div class="mini"><span class="g">Đã học xong</span><span class="r">Cắm cờ xem lại</span></div>
+      </div>
+    </aside>
+  </div>
+</div>
+</div>
+
+<script>
+  (function () {
+    var fit = document.getElementById('lpFit');
+    var win = document.getElementById('lpWin');
+    function size() {
+      var s = Math.min(1, fit.clientWidth / 1280);
+      win.style.zoom = s;
+    }
+    window.addEventListener('resize', size);
+    size();
+  })();
+</script>

@@ -1,0 +1,309 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap">
+<style>
+  .rp-stage {
+    --paper:#f4f2ec; --surface:#ffffff; --ink:#1f2328; --ink-2:#5b6169; --ink-3:#8a9099; --rule:#e5e2da;
+    --accent:#1f4fd1; --accent-soft:#e8eeff; --done:#1a7f4b; --done-soft:#dff3e7;
+    --seen:#b26b00; --flag:#c0364f; --flag-soft:#fbe3e8;
+    position: relative; overflow: hidden; border-radius: 10px; padding: 40px 32px;
+    background: var(--paper); color: var(--ink);
+    font-family: "Be Vietnam Pro", system-ui, sans-serif; margin-top: 14px;
+  }
+  .rp-ghost { position:absolute; inset:0; }
+  .rp-ghost .g-top { position:absolute; left:0; right:0; top:0; height:44px; background:#fff; border-bottom:1px solid var(--rule); }
+  .rp-ghost .g-side { position:absolute; left:0; top:44px; bottom:0; width:230px; background:#fff; border-right:1px solid var(--rule);
+    background-image: repeating-linear-gradient(transparent 0 22px, #ece9e2 22px 30px); background-size: 160px 100%; background-position: 24px 40px; background-repeat: no-repeat; }
+  .rp-ghost .g-main { position:absolute; left:290px; right:60px; top:90px; bottom:40px;
+    background-image: repeating-linear-gradient(#e6e3dc 0 12px, transparent 12px 28px); }
+  .rp-stage::after { content:""; position:absolute; inset:0; background: rgba(22,26,32,.52); }
+  .rp-modal { position:relative; z-index:1; background: var(--surface); border-radius: 14px; box-shadow: 0 24px 70px rgba(0,0,0,.35); max-width: 1060px; margin: 0 auto; overflow: hidden; }
+
+  .rp-head { display:grid; grid-template-columns: minmax(0,1fr) auto; gap: 16px 28px; align-items:center; padding: 22px 26px 18px; border-bottom: 1px solid var(--rule); }
+  .rp-kicker { font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+  .rp-title { font-size: 22px; font-weight: 700; letter-spacing: -.01em; margin-top: 4px; }
+  .rp-sub { font-size: 14px; color: var(--ink-2); margin-top: 6px; }
+  .rp-sub b { color: var(--ink); font-weight: 600; }
+  .rp-cta { display:grid; justify-items:end; gap: 8px; }
+  .rp-btn { background: var(--accent); color:#fff; border-radius: 10px; padding: 10px 18px; font-weight: 600; font-size: 14px; line-height: 1.3; text-align: left; }
+  .rp-btn span { display:block; font-weight: 400; font-size: 12px; opacity: .85; }
+  .rp-link { font-size: 12.5px; color: var(--flag); font-weight: 600; }
+
+  .rp-overall { display:flex; align-items:center; gap: 14px; padding: 11px 26px; background: #faf9f6; border-bottom: 1px solid var(--rule); font-size: 13px; color: var(--ink-2); }
+  .rp-overall b { color: var(--ink); }
+  .rp-bar { flex:1; height: 8px; background: #ebe8e0; border-radius: 4px; overflow: hidden; }
+  .rp-bar i { display:block; height:100%; background: var(--done); }
+
+  .st { width:16px; height:16px; border-radius:50%; flex:none; box-sizing:border-box; display:inline-block; }
+  .st-todo { border: 1.5px solid #c6c9ce; background:#fff; }
+  .st-seen { border: 1.5px solid var(--seen); background: linear-gradient(90deg, var(--seen) 50%, #fff 50%); }
+  .st-done { background: var(--done) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.6 8.4l2.9 2.9 5.9-6.6' fill='none' stroke='white' stroke-width='2.3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/12px no-repeat; }
+  .st-flag { background: var(--flag-soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M5 13.2V3h6.6L10 5.6l1.6 2.6H5' fill='none' stroke='%23c0364f' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/12px no-repeat; border: 1.5px solid var(--flag); }
+
+  .rp-lessons { list-style:none; display:grid; gap: 2px; margin:0; padding:0; }
+  .rp-lessons li { display:flex; align-items:center; gap: 8px; font-size: 12.5px; line-height: 1.35; padding: 3px 6px; border-radius: 6px; color: var(--ink); }
+  .rp-lessons li .n { color: var(--ink-3); font-variant-numeric: tabular-nums; width: 24px; flex:none; font-size: 11.5px; }
+  .rp-lessons li.is-done { color: var(--ink-2); }
+  .rp-lessons li.is-here { background: var(--accent-soft); font-weight: 600; color: var(--ink); }
+  .rp-lessons li .tag { margin-left:auto; font-size: 10.5px; font-weight: 700; white-space: nowrap; }
+  .rp-lessons li .tag.here { color: var(--accent); }
+  .rp-lessons li .tag.flag { color: var(--flag); }
+
+  .rp-foot { display:flex; flex-wrap:wrap; align-items:center; gap: 10px 18px; padding: 12px 26px; border-top: 1px solid var(--rule); font-size: 12.5px; color: var(--ink-2); }
+  .rp-foot .lg { display:inline-flex; align-items:center; gap: 6px; }
+  .rp-foot .sp { flex:1; }
+  .rp-foot .ghost-btn { border:1px solid var(--rule); border-radius: 8px; padding: 6px 12px; font-weight: 600; color: var(--ink); background:#fff; }
+
+  /* Option A: grid of levels */
+  .rp-grid { display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; padding: 16px 26px 18px; }
+  .rp-level { border:1px solid var(--rule); border-radius: 10px; padding: 12px 10px 10px; }
+  .rp-level.is-current { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(31,79,209,.12); }
+  .rp-lv-top { display:flex; justify-content:space-between; align-items:baseline; padding: 0 6px; }
+  .rp-lv-num { font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-3); }
+  .rp-level.is-current .rp-lv-num { color: var(--accent); }
+  .rp-lv-count { font-size: 12px; color: var(--ink-3); font-variant-numeric: tabular-nums; font-weight: 600; }
+  .rp-lv-name { font-weight: 700; font-size: 15px; padding: 2px 6px 0; }
+  .rp-lv-goal { font-size: 12px; color: var(--ink-2); padding: 2px 6px 0; line-height: 1.4; }
+  .rp-lv-bar { height: 4px; background:#ebe8e0; border-radius: 2px; margin: 9px 6px 8px; overflow:hidden; }
+  .rp-lv-bar i { display:block; height:100%; background: var(--done); }
+
+  /* Option B: journey track */
+  .rp-track { padding: 22px 26px 6px; }
+  .rp-track-in { position:relative; display:grid; grid-template-columns: repeat(6, minmax(0,1fr)); }
+  .rp-line { position:absolute; top: 19px; left: 8.333%; right: 8.333%; height: 3px; background: #e3e0d8; }
+  .rp-line i { display:block; height:100%; width: 40%; background: var(--done); }
+  .rp-station { position:relative; z-index:1; display:grid; justify-items:center; text-align:center; gap: 5px; padding: 0 4px; }
+  .rp-node { width: 40px; height: 40px; border-radius: 50%; display:grid; place-items:center; font-weight: 700; font-size: 15px; background:#fff; border: 3px solid #d9d6ce; color: var(--ink-3); box-sizing:border-box; }
+  .rp-station.done .rp-node { background: var(--done) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.6 8.4l2.9 2.9 5.9-6.6' fill='none' stroke='white' stroke-width='2.3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/18px no-repeat; border-color: var(--done); color: transparent; }
+  .rp-station.partial .rp-node { border-color: var(--done); color: var(--done); }
+  .rp-station.current .rp-node { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 0 6px rgba(31,79,209,.14); }
+  .rp-st-name { font-size: 13px; font-weight: 600; line-height: 1.25; }
+  .rp-station.current .rp-st-name { color: var(--accent); }
+  .rp-st-count { font-size: 12px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+  .rp-st-count .f { color: var(--flag); font-weight: 600; }
+  .rp-expand { margin: 14px 26px 20px; border:1px solid var(--accent); border-radius: 12px; padding: 14px 14px 12px; box-shadow: 0 0 0 3px rgba(31,79,209,.10); }
+  .rp-expand-head { display:flex; justify-content:space-between; align-items:baseline; gap: 12px; padding: 0 6px 10px; }
+  .rp-expand-head .t { font-weight: 700; font-size: 15px; }
+  .rp-expand-head .g { font-size: 12.5px; color: var(--ink-2); }
+  .rp-expand .rp-lessons { grid-template-columns: repeat(2, minmax(0,1fr)); grid-template-rows: repeat(5, auto); grid-auto-flow: column; column-gap: 22px; }
+  .rp-hint { font-size: 12px; color: var(--ink-3); padding: 0 26px 2px; text-align:center; }
+
+  .rp-note { font-size: 13px; color: var(--text-secondary); margin-top: 10px; }
+</style>
+
+<h2>Popup "Lộ trình của bạn" khi học viên quay lại</h2>
+<p class="subtitle">Tình huống: học viên mở lại web sau 14 ngày nghỉ. Tên bài và số liệu là bản nháp, chỉ để hình dung. Bấm vào kiểu bạn thấy hợp hơn.</p>
+
+<div class="options">
+
+  <!-- ===================== OPTION A ===================== -->
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Bảng tổng: thấy toàn bộ khóa học cùng lúc</h3>
+      <p>6 level xếp thành lưới, bài nào cũng hiện, bài đã học có tick xanh. Nhìn một lần là biết mình đã đi được bao xa và còn bao nhiêu.</p>
+
+      <div class="rp-stage">
+        <div class="rp-ghost"><div class="g-top"></div><div class="g-side"></div><div class="g-main"></div></div>
+        <div class="rp-modal">
+          <div class="rp-head">
+            <div>
+              <div class="rp-kicker">Lộ trình của bạn</div>
+              <div class="rp-title">Lần trước bạn dừng ở bài 3.5</div>
+              <div class="rp-sub">Cách đây <b>14 ngày</b> (thứ Bảy, 3/10). Bạn đang ở <b>Level 3 · Trung cấp</b>.</div>
+            </div>
+            <div class="rp-cta">
+              <div class="rp-btn">Học tiếp bài 3.5 →<span>LEFT JOIN: tìm người chưa có hợp đồng</span></div>
+              <div class="rp-link">Xem lại bài 2.8 bạn đã cắm cờ</div>
+            </div>
+          </div>
+          <div class="rp-overall"><span>Đã học <b>18/51</b> bài</span><div class="rp-bar"><i style="width:35%"></i></div><span>35%</span></div>
+
+          <div class="rp-grid">
+            <div class="rp-level">
+              <div class="rp-lv-top"><span class="rp-lv-num">Level 1</span><span class="rp-lv-count">6/6</span></div>
+              <div class="rp-lv-name">Làm quen</div>
+              <div class="rp-lv-goal">Biết app HRM cất dữ liệu ở đâu, mở ra đọc được</div>
+              <div class="rp-lv-bar"><i style="width:100%"></i></div>
+              <ul class="rp-lessons">
+                <li class="is-done"><span class="st st-done"></span><span class="n">1.1</span>Database là gì, nhìn từ file Excel</li>
+                <li class="is-done"><span class="st st-done"></span><span class="n">1.2</span>SQL Server, SSMS và database mẫu</li>
+                <li class="is-done"><span class="st st-done"></span><span class="n">1.3</span>Bảng, cột và kiểu dữ liệu</li>
+                <li class="is-done"><span class="st st-done"></span><span class="n">1.4</span>Khóa chính, khóa ngoại và "Mã NV"</li>
+                <li class="is-done"><span class="st st-done"></span><span class="n">1.5</span>Đọc sơ đồ quan hệ (ERD)</li>
+                <li class="is-done"><span class="st st-done"></span><span class="n">1.6</span>Câu SELECT đầu tiên</li>
+              </ul>
+            </div>
+
+            <div class="rp-level">
+              <div class="rp-lv-top"><span class="rp-lv-num">Level 2</span><span class="rp-lv-count">8/9</span></div>
+              <div class="rp-lv-name">Cơ bản</div>
+              <div class="rp-lv-goal">Tự lấy danh sách nhân viên theo điều kiện bất kỳ</div>
+              <div class="rp-lv-bar"><i style="width:89%"></i></div>
+              <ul class="rp-lessons">
+                <li class="is-done"><span class="st st-done"></span><span class="n">2.1</span>Chọn cột, đặt tên cột</li>
+                <li class="is-done"><span class="st st-done"></span><span class="n">2.2</span>WHERE: lọc như AutoFilter</li>
+                <li class="is-done"><span class="st st-done"></span><span class="n">2.3</span>AND, OR, IN, BETWEEN, LIKE</li>
+                <li class="is-done"><span class="st st-done"></span><span class="n">2.4</span>Sắp xếp và lấy TOP</li>
+                <li class="is-done"><span class="st st-done"></span><span class="n">2.5</span>NULL: ô trống không phải số 0</li>
+                <li class="is-done"><span class="st st-done"></span><span class="n">2.6</span>DISTINCT: bỏ dòng trùng</li>
+                <li class="is-done"><span class="st st-done"></span><span class="n">2.7</span>Hàm chuỗi và tiếng Việt có dấu</li>
+                <li><span class="st st-flag"></span><span class="n">2.8</span>Hàm ngày: thâm niên, hết hạn HĐ<span class="tag flag">cần xem lại</span></li>
+                <li class="is-done"><span class="st st-done"></span><span class="n">2.9</span>CASE WHEN: hàm IF của SQL</li>
+              </ul>
+            </div>
+
+            <div class="rp-level is-current">
+              <div class="rp-lv-top"><span class="rp-lv-num">Level 3 · đang học</span><span class="rp-lv-count">4/10</span></div>
+              <div class="rp-lv-name">Trung cấp</div>
+              <div class="rp-lv-goal">Tự làm báo cáo nhiều bảng, thay cho VLOOKUP + Pivot</div>
+              <div class="rp-lv-bar"><i style="width:40%"></i></div>
+              <ul class="rp-lessons">
+                <li class="is-done"><span class="st st-done"></span><span class="n">3.1</span>COUNT, SUM, AVG</li>
+                <li class="is-done"><span class="st st-done"></span><span class="n">3.2</span>GROUP BY: PivotTable bằng SQL</li>
+                <li class="is-done"><span class="st st-done"></span><span class="n">3.3</span>HAVING: lọc sau khi gộp</li>
+                <li class="is-done"><span class="st st-done"></span><span class="n">3.4</span>INNER JOIN: VLOOKUP bằng SQL</li>
+                <li class="is-here"><span class="st st-seen"></span><span class="n">3.5</span>LEFT JOIN: tìm người chưa có HĐ<span class="tag here">đang ở đây</span></li>
+                <li><span class="st st-todo"></span><span class="n">3.6</span>Nối nhiều bảng: NV → HĐ → Lương</li>
+                <li><span class="st st-seen"></span><span class="n">3.7</span>Self join: ai quản lý ai</li>
+                <li><span class="st st-todo"></span><span class="n">3.8</span>UNION: gộp hai danh sách</li>
+                <li><span class="st st-todo"></span><span class="n">3.9</span>Subquery: câu lệnh lồng nhau</li>
+                <li><span class="st st-todo"></span><span class="n">3.10</span>Đếm có điều kiện kiểu COUNTIFS</li>
+              </ul>
+            </div>
+
+            <div class="rp-level">
+              <div class="rp-lv-top"><span class="rp-lv-num">Level 4</span><span class="rp-lv-count">0/10</span></div>
+              <div class="rp-lv-name">Phân tích</div>
+              <div class="rp-lv-goal">Phân tích, đối soát dữ liệu, viết spec báo cáo</div>
+              <div class="rp-lv-bar"><i style="width:0%"></i></div>
+              <ul class="rp-lessons">
+                <li><span class="st st-todo"></span><span class="n">4.1</span>CTE: giải bài toán từng bước</li>
+                <li><span class="st st-todo"></span><span class="n">4.2</span>Xếp hạng: ROW_NUMBER, RANK</li>
+                <li><span class="st st-todo"></span><span class="n">4.3</span>Lũy kế, so với tháng trước</li>
+                <li><span class="st st-todo"></span><span class="n">4.4</span>PIVOT: xoay bảng như Excel</li>
+                <li><span class="st st-todo"></span><span class="n">4.5</span>View: báo cáo lưu sẵn</li>
+                <li><span class="st st-todo"></span><span class="n">4.6</span>Soi chất lượng dữ liệu</li>
+                <li><span class="st st-todo"></span><span class="n">4.7</span>Đối soát chấm công và lương</li>
+                <li><span class="st st-todo"></span><span class="n">4.8</span>Đọc hiểu stored procedure</li>
+                <li><span class="st st-todo"></span><span class="n">4.9</span>Kéo dữ liệu vào Excel (Power Query)</li>
+                <li><span class="st st-todo"></span><span class="n">4.10</span>Viết spec báo cáo cho dev</li>
+              </ul>
+            </div>
+
+            <div class="rp-level">
+              <div class="rp-lv-top"><span class="rp-lv-num">Level 5</span><span class="rp-lv-count">0/9</span></div>
+              <div class="rp-lv-name">Nâng cao</div>
+              <div class="rp-lv-goal">Hiểu thiết kế DB, sửa dữ liệu an toàn, bàn được với dev</div>
+              <div class="rp-lv-bar"><i style="width:0%"></i></div>
+              <ul class="rp-lessons">
+                <li><span class="st st-todo"></span><span class="n">5.1</span>Thiết kế bảng và chuẩn hóa</li>
+                <li><span class="st st-todo"></span><span class="n">5.2</span>Ràng buộc: Data Validation của DB</li>
+                <li><span class="st st-todo"></span><span class="n">5.3</span>INSERT, UPDATE, DELETE an toàn</li>
+                <li><span class="st st-todo"></span><span class="n">5.4</span>Transaction: được ăn cả, ngã về không</li>
+                <li><span class="st st-todo"></span><span class="n">5.5</span>Import dữ liệu khách hàng</li>
+                <li><span class="st st-todo"></span><span class="n">5.6</span>Index và chuyện truy vấn chậm</li>
+                <li><span class="st st-todo"></span><span class="n">5.7</span>Đọc execution plan cơ bản</li>
+                <li><span class="st st-todo"></span><span class="n">5.8</span>Lock, blocking, deadlock</li>
+                <li><span class="st st-todo"></span><span class="n">5.9</span>Trigger và nhật ký thay đổi</li>
+              </ul>
+            </div>
+
+            <div class="rp-level">
+              <div class="rp-lv-top"><span class="rp-lv-num">Level 6</span><span class="rp-lv-count">0/7</span></div>
+              <div class="rp-lv-name">Cấp cứu dữ liệu</div>
+              <div class="rp-lv-goal">Biết làm gì khi dữ liệu gặp sự cố (lý thuyết)</div>
+              <div class="rp-lv-bar"><i style="width:0%"></i></div>
+              <ul class="rp-lessons">
+                <li><span class="st st-todo"></span><span class="n">6.1</span>Dữ liệu nhạy cảm và phân quyền</li>
+                <li><span class="st st-todo"></span><span class="n">6.2</span>Dev, UAT, Production</li>
+                <li><span class="st st-todo"></span><span class="n">6.3</span>Backup và restore chạy ra sao</li>
+                <li><span class="st st-todo"></span><span class="n">6.4</span>Point-in-time restore là gì</li>
+                <li><span class="st st-todo"></span><span class="n">6.5</span>Lỡ UPDATE quên WHERE: 5 phút đầu</li>
+                <li><span class="st st-todo"></span><span class="n">6.6</span>Temporal table: xem dữ liệu quá khứ</li>
+                <li><span class="st st-todo"></span><span class="n">6.7</span>Checklist trước khi chạy trên Production</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="rp-foot">
+            <span class="lg"><span class="st st-todo"></span>Chưa học</span>
+            <span class="lg"><span class="st st-seen"></span>Đã xem</span>
+            <span class="lg"><span class="st st-done"></span>Đã học</span>
+            <span class="lg"><span class="st st-flag"></span>Cần xem lại</span>
+            <span class="sp"></span>
+            <span class="ghost-btn">Mở mindmap</span>
+            <span class="ghost-btn">Đóng</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== OPTION B ===================== -->
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Đường đi: các level là trạm, chỉ mở rộng level đang học</h3>
+      <p>Gọn hơn, tập trung vào chỗ đang đứng. Muốn xem bài của level khác thì bấm vào trạm đó.</p>
+
+      <div class="rp-stage">
+        <div class="rp-ghost"><div class="g-top"></div><div class="g-side"></div><div class="g-main"></div></div>
+        <div class="rp-modal">
+          <div class="rp-head">
+            <div>
+              <div class="rp-kicker">Lộ trình của bạn</div>
+              <div class="rp-title">Lần trước bạn dừng ở bài 3.5</div>
+              <div class="rp-sub">Cách đây <b>14 ngày</b> (thứ Bảy, 3/10). Đã học <b>18/51</b> bài.</div>
+            </div>
+            <div class="rp-cta">
+              <div class="rp-btn">Học tiếp bài 3.5 →<span>LEFT JOIN: tìm người chưa có hợp đồng</span></div>
+              <div class="rp-link">Xem lại bài 2.8 bạn đã cắm cờ</div>
+            </div>
+          </div>
+
+          <div class="rp-track">
+            <div class="rp-track-in">
+              <div class="rp-line"><i></i></div>
+              <div class="rp-station done"><div class="rp-node">1</div><div class="rp-st-name">Làm quen</div><div class="rp-st-count">6/6</div></div>
+              <div class="rp-station partial"><div class="rp-node">2</div><div class="rp-st-name">Cơ bản</div><div class="rp-st-count">8/9 · <span class="f">1 cờ</span></div></div>
+              <div class="rp-station current"><div class="rp-node">3</div><div class="rp-st-name">Trung cấp</div><div class="rp-st-count">4/10</div></div>
+              <div class="rp-station"><div class="rp-node">4</div><div class="rp-st-name">Phân tích</div><div class="rp-st-count">0/10</div></div>
+              <div class="rp-station"><div class="rp-node">5</div><div class="rp-st-name">Nâng cao</div><div class="rp-st-count">0/9</div></div>
+              <div class="rp-station"><div class="rp-node">6</div><div class="rp-st-name">Cấp cứu dữ liệu</div><div class="rp-st-count">0/7</div></div>
+            </div>
+          </div>
+
+          <div class="rp-expand">
+            <div class="rp-expand-head">
+              <span class="t">Level 3 · Trung cấp</span>
+              <span class="g">Học xong level này: tự làm báo cáo nhiều bảng, thay cho VLOOKUP + Pivot</span>
+            </div>
+            <ul class="rp-lessons">
+              <li class="is-done"><span class="st st-done"></span><span class="n">3.1</span>COUNT, SUM, AVG</li>
+              <li class="is-done"><span class="st st-done"></span><span class="n">3.2</span>GROUP BY: PivotTable bằng SQL</li>
+              <li class="is-done"><span class="st st-done"></span><span class="n">3.3</span>HAVING: lọc sau khi gộp</li>
+              <li class="is-done"><span class="st st-done"></span><span class="n">3.4</span>INNER JOIN: VLOOKUP bằng SQL</li>
+              <li class="is-here"><span class="st st-seen"></span><span class="n">3.5</span>LEFT JOIN: tìm người chưa có HĐ<span class="tag here">đang ở đây</span></li>
+              <li><span class="st st-todo"></span><span class="n">3.6</span>Nối nhiều bảng: NV → HĐ → Lương</li>
+              <li><span class="st st-seen"></span><span class="n">3.7</span>Self join: ai quản lý ai</li>
+              <li><span class="st st-todo"></span><span class="n">3.8</span>UNION: gộp hai danh sách</li>
+              <li><span class="st st-todo"></span><span class="n">3.9</span>Subquery: câu lệnh lồng nhau</li>
+              <li><span class="st st-todo"></span><span class="n">3.10</span>Đếm có điều kiện kiểu COUNTIFS</li>
+            </ul>
+          </div>
+          <div class="rp-hint">Bấm vào một trạm để xem các bài trong level đó</div>
+
+          <div class="rp-foot">
+            <span class="lg"><span class="st st-todo"></span>Chưa học</span>
+            <span class="lg"><span class="st st-seen"></span>Đã xem</span>
+            <span class="lg"><span class="st st-done"></span>Đã học</span>
+            <span class="lg"><span class="st st-flag"></span>Cần xem lại</span>
+            <span class="sp"></span>
+            <span class="ghost-btn">Mở mindmap</span>
+            <span class="ghost-btn">Đóng</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

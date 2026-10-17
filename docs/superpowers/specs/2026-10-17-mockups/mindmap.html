@@ -1,0 +1,219 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap">
+<style>
+  .mm-scope {
+    --paper:#f4f2ec; --ink:#1f2328; --ink-2:#5b6169; --ink-3:#8a9099; --rule:#e5e2da;
+    --accent:#1f4fd1; --accent-soft:#e8eeff; --done:#1a7f4b; --seen:#b26b00; --flag:#c0364f; --flag-soft:#fbe3e8;
+    --lv1:#0f8b8d; --lv1b:#dcf2f2; --lv2:#2f6fd6; --lv2b:#e3ecfc; --lv3:#5b4bc4; --lv3b:#ebe8fa;
+    --lv4:#9b3fae; --lv4b:#f4e6f7; --lv5:#c4581f; --lv5b:#fbeadf; --lv6:#8a2d16; --lv6b:#f6e2db;
+  }
+  .mm-scope .content { min-width:0; }
+  .mm-shell { margin-top:12px; border-radius:12px; overflow:hidden; border:1px solid #d8d4ca; background:var(--paper); font-family:"Be Vietnam Pro", system-ui, sans-serif; color:var(--ink); }
+  .mm-bar { display:flex; flex-wrap:wrap; align-items:center; gap:8px 14px; padding:10px 14px; background:#fff; border-bottom:1px solid var(--rule); font-size:12.5px; color:var(--ink-2); }
+  .mm-bar .b { border:1px solid var(--rule); border-radius:7px; padding:4px 10px; font-weight:600; color:var(--ink); background:#fff; }
+  .mm-bar .sp { flex:1; }
+  .mm-bar .lg { display:inline-flex; align-items:center; gap:5px; }
+  .mm-bar .lvb { margin-left:2px; }
+  .mm-fit { overflow:hidden; }
+  .mm-canvas { position:relative; background-color:var(--paper); background-image:radial-gradient(#d9d5cc 1px, transparent 1px); background-size:18px 18px; }
+  .mm-svg { position:absolute; left:0; top:0; overflow:visible; pointer-events:none; }
+  .mm-svg .e1 { stroke:#b9b3a6; stroke-width:2; fill:none; }
+  .mm-svg .e2 { stroke:#d0cabf; stroke-width:1.5; fill:none; }
+
+  .mm-root { position:absolute; box-sizing:border-box; display:grid; place-items:center; text-align:center; background:var(--ink); color:#fff; border-radius:12px; font-weight:700; font-size:15px; line-height:1.25; padding:0 12px; }
+  .mm-br { position:absolute; box-sizing:border-box; background:#fff; border:1.5px solid #dcd8cf; border-radius:10px; padding:6px 12px; display:grid; align-content:center; gap:5px; }
+  .mm-br.lvl { border-left:5px solid var(--lvc); }
+  .mm-br.open { border-color:var(--accent); }
+  .mm-br.open.lvl { border-left-color:var(--lvc); }
+  .mm-br .t { font-weight:700; font-size:13.5px; line-height:1.2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .mm-br .m { display:flex; align-items:center; gap:8px; font-size:11.5px; color:var(--ink-3); font-weight:600; }
+  .mm-br .bar { flex:1; height:4px; background:#ebe8e0; border-radius:2px; overflow:hidden; }
+  .mm-br .bar i { display:block; height:100%; background:var(--done); }
+  .mm-br .f { color:var(--flag); }
+  .mm-br .tg { position:absolute; top:50%; width:18px; height:18px; margin-top:-9px; border-radius:50%; background:#fff; border:1.5px solid #cfcac0; display:grid; place-items:center; font-size:12px; font-weight:700; color:var(--ink-2); line-height:1; }
+  .mm-br.open .tg { border-color:var(--accent); color:var(--accent); }
+
+  .mm-leaf { position:absolute; box-sizing:border-box; display:flex; align-items:center; gap:7px; background:#fff; border:1px solid #e3dfd6; border-radius:8px; padding:0 8px; font-size:12.5px; }
+  .mm-leaf .n { color:var(--ink-3); font-size:11px; width:26px; flex:none; font-variant-numeric:tabular-nums; }
+  .mm-leaf .t { flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .mm-leaf.here { background:var(--accent-soft); border-color:var(--accent); font-weight:600; color:var(--accent); box-shadow:0 0 0 3px rgba(31,79,209,.12); }
+
+  .lvb { font-size:10.5px; font-weight:700; padding:1px 5px; border-radius:4px; flex:none; }
+  .lv1 { color:var(--lv1); background:var(--lv1b); } .lv2 { color:var(--lv2); background:var(--lv2b); } .lv3 { color:var(--lv3); background:var(--lv3b); }
+  .lv4 { color:var(--lv4); background:var(--lv4b); } .lv5 { color:var(--lv5); background:var(--lv5b); } .lv6 { color:var(--lv6); background:var(--lv6b); }
+
+  .st { width:15px; height:15px; border-radius:50%; flex:none; display:inline-block; box-sizing:border-box; }
+  .st-todo { border:1.5px solid #c6c9ce; background:#fff; }
+  .st-seen { border:1.5px solid var(--seen); background:linear-gradient(90deg, var(--seen) 50%, #fff 50%); }
+  .st-done { background:var(--done) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.6 8.4l2.9 2.9 5.9-6.6' fill='none' stroke='white' stroke-width='2.3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/11px no-repeat; }
+  .st-flag { background:var(--flag-soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M5 13.2V3h6.6L10 5.6l1.6 2.6H5' fill='none' stroke='%23c0364f' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/11px no-repeat; border:1.5px solid var(--flag); }
+  .mm-cap { font-size:12.5px; color:var(--ink-3); padding:8px 14px 12px; background:#fff; border-top:1px solid var(--rule); }
+</style>
+
+<h2>Mindmap: chia nhánh theo cách nào?</h2>
+<p class="subtitle">Cả hai đều bấm vào nhánh để mở hoặc thu gọn, bấm vào bài để mở bài học, màu và dấu tick giống popup lộ trình. Khác nhau ở cách chia nhánh. Bấm chọn kiểu bạn thấy giúp hình dung tốt hơn.</p>
+
+<div class="options mm-scope">
+  <div class="option" data-choice="by-level" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Chia nhánh theo level</h3>
+      <p>Giống lộ trình: 6 nhánh là 6 level, mở level nào thấy bài của level đó. Đơn giản, nhưng gần như lặp lại popup lộ trình.</p>
+      <div class="mm-shell">
+        <div class="mm-bar">
+          <span class="b">Mở hết</span><span class="b">Thu gọn</span><span class="b">Về giữa</span>
+          <span class="sp"></span>
+          <span class="lg"><span class="st st-todo"></span>Chưa học</span>
+          <span class="lg"><span class="st st-seen"></span>Đã xem</span>
+          <span class="lg"><span class="st st-done"></span>Đã học</span>
+          <span class="lg"><span class="st st-flag"></span>Cần xem lại</span>
+        </div>
+        <div class="mm-fit"><div class="mm-canvas" id="mmA"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="by-topic" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Chia nhánh theo mảng kiến thức</h3>
+      <p>8 nhánh là 8 mảng: nền tảng, lọc dữ liệu, nối bảng, tổng hợp… Mỗi bài gắn nhãn level (L1–L6), nên thấy được một mảng đi từ cơ bản lên nâng cao ra sao. Thứ tự học vẫn theo lộ trình.</p>
+      <div class="mm-shell">
+        <div class="mm-bar">
+          <span class="b">Mở hết</span><span class="b">Thu gọn</span><span class="b">Về giữa</span>
+          <span class="sp"></span>
+          <span class="lg"><span class="st st-todo"></span>Chưa học</span>
+          <span class="lg"><span class="st st-seen"></span>Đã xem</span>
+          <span class="lg"><span class="st st-done"></span>Đã học</span>
+          <span class="lg"><span class="st st-flag"></span>Cần xem lại</span>
+          <span class="lg">Level <span class="lvb lv1">L1</span><span class="lvb lv2">L2</span><span class="lvb lv3">L3</span><span class="lvb lv4">L4</span><span class="lvb lv5">L5</span><span class="lvb lv6">L6</span></span>
+        </div>
+        <div class="mm-fit"><div class="mm-canvas" id="mmB"></div></div>
+        <div class="mm-cap">Mockup đang mở sẵn 3 nhánh. Bài có nền xanh là bài đang học dở.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var LEAF_H = 30, LEAF_GAP = 6, BR_H = 52, GAP = 18, PAD = 28;
+  var RW = 190, RH = 58, BW = 214, LW = 236, G1 = 90, G2 = 44;
+
+  var A = {
+    root: 'SQL Server<br>thực chiến', one: true,
+    right: [
+      { t: 'Level 1 · Làm quen', lv: 1, d: 6, n: 6 },
+      { t: 'Level 2 · Cơ bản', lv: 2, d: 8, n: 9, f: 1 },
+      { t: 'Level 3 · Trung cấp', lv: 3, d: 4, n: 10, open: true, c: [
+        ['3.1', 'COUNT, SUM, AVG', 'done'], ['3.2', 'GROUP BY', 'done'], ['3.3', 'HAVING', 'done'],
+        ['3.4', 'INNER JOIN', 'done'], ['3.5', 'LEFT JOIN', 'seen', 0, 1], ['3.6', 'Nối nhiều bảng', 'todo'],
+        ['3.7', 'Self join', 'seen'], ['3.8', 'UNION', 'todo'], ['3.9', 'Subquery', 'todo'], ['3.10', 'Đếm có điều kiện', 'todo'] ] },
+      { t: 'Level 4 · Phân tích', lv: 4, d: 0, n: 10 },
+      { t: 'Level 5 · Nâng cao', lv: 5, d: 0, n: 9 },
+      { t: 'Level 6 · Cấp cứu dữ liệu', lv: 6, d: 0, n: 7 }
+    ],
+    left: []
+  };
+
+  var B = {
+    root: 'SQL Server<br>thực chiến',
+    right: [
+      { t: 'Nền tảng database', d: 5, n: 7, open: true, c: [
+        ['1.1', 'Database là gì', 'done', 1], ['1.2', 'SQL Server, SSMS', 'done', 1], ['1.3', 'Bảng, cột, kiểu dữ liệu', 'done', 1],
+        ['1.4', 'Khóa chính, khóa ngoại', 'done', 1], ['1.5', 'Đọc sơ đồ ERD', 'done', 1],
+        ['5.1', 'Thiết kế bảng, chuẩn hóa', 'todo', 5], ['5.2', 'Ràng buộc dữ liệu', 'todo', 5] ] },
+      { t: 'Lấy và lọc dữ liệu', d: 7, n: 7 },
+      { t: 'Tính toán trong câu lệnh', d: 2, n: 3, f: 1 },
+      { t: 'Nối nhiều bảng', d: 1, n: 6, open: true, c: [
+        ['3.4', 'INNER JOIN', 'done', 3], ['3.5', 'LEFT JOIN', 'seen', 3, 1], ['3.6', 'Nối nhiều bảng', 'todo', 3],
+        ['3.7', 'Self join', 'seen', 3], ['3.8', 'UNION', 'todo', 3], ['3.9', 'Subquery', 'todo', 3] ] }
+    ],
+    left: [
+      { t: 'Tổng hợp và phân tích', d: 3, n: 9, open: true, c: [
+        ['3.1', 'COUNT, SUM, AVG', 'done', 3], ['3.2', 'GROUP BY', 'done', 3], ['3.3', 'HAVING', 'done', 3],
+        ['3.10', 'Đếm có điều kiện', 'todo', 3], ['4.1', 'CTE', 'todo', 4], ['4.2', 'Xếp hạng', 'todo', 4],
+        ['4.3', 'Lũy kế, so tháng trước', 'todo', 4], ['4.4', 'PIVOT', 'todo', 4], ['4.5', 'View', 'todo', 4] ] },
+      { t: 'Làm việc với dữ liệu thật', d: 0, n: 6 },
+      { t: 'Sửa dữ liệu và hiệu năng', d: 0, n: 6 },
+      { t: 'An toàn và cấp cứu dữ liệu', d: 0, n: 7 }
+    ]
+  };
+
+  function side(list) {
+    var y = 0, items = [];
+    list.forEach(function (b, i) {
+      if (i) y += GAP;
+      if (b.open && b.c) {
+        var leaves = b.c.map(function (c, j) {
+          var cy = y + LEAF_H / 2; y += LEAF_H; if (j < b.c.length - 1) y += LEAF_GAP;
+          return { n: c[0], t: c[1], s: c[2], lv: c[3], here: c[4], cy: cy };
+        });
+        items.push({ b: b, cy: (leaves[0].cy + leaves[leaves.length - 1].cy) / 2, leaves: leaves });
+      } else { items.push({ b: b, cy: y + BR_H / 2 }); y += BR_H; }
+    });
+    return { items: items, h: y };
+  }
+
+  function curve(sx, sy, ex, ey, cls) {
+    var dx = (ex - sx) / 2;
+    return '<path class="' + cls + '" d="M' + sx + ',' + sy + ' C' + (sx + dx) + ',' + sy + ' ' + (ex - dx) + ',' + ey + ' ' + ex + ',' + ey + '"/>';
+  }
+
+  function branch(b, x, cy, dir) {
+    var pct = Math.round(100 * b.d / b.n);
+    var cls = 'mm-br' + (b.open ? ' open' : '') + (b.lv ? ' lvl' : '');
+    var style = 'left:' + x + 'px;top:' + (cy - BR_H / 2) + 'px;width:' + BW + 'px;height:' + BR_H + 'px;' + (b.lv ? '--lvc:var(--lv' + b.lv + ');' : '');
+    var tg = '<span class="tg" style="' + (dir > 0 ? 'right:-10px' : 'left:-10px') + '">' + (b.open ? '−' : '+') + '</span>';
+    return '<div class="' + cls + '" style="' + style + '"><div class="t">' + b.t + '</div><div class="m"><span class="bar"><i style="width:' + pct + '%"></i></span><span>' + b.d + '/' + b.n + '</span>' + (b.f ? '<span class="f">· ' + b.f + ' cờ</span>' : '') + '</div>' + tg + '</div>';
+  }
+
+  function leaf(l, x, cy) {
+    return '<div class="mm-leaf' + (l.here ? ' here' : '') + '" style="left:' + x + 'px;top:' + (cy - LEAF_H / 2) + 'px;width:' + LW + 'px;height:' + LEAF_H + 'px">' +
+      '<span class="st st-' + l.s + '"></span><span class="n">' + l.n + '</span><span class="t">' + l.t + '</span>' +
+      (l.lv ? '<span class="lvb lv' + l.lv + '">L' + l.lv + '</span>' : '') + '</div>';
+  }
+
+  function render(el, data) {
+    var R = side(data.right), L = side(data.left);
+    var H = Math.max(R.h, L.h, RH) + PAD * 2;
+    var W, rootX;
+    if (data.one) { rootX = PAD; W = PAD + RW + G1 + BW + G2 + LW + PAD; }
+    else { W = 2 * (RW / 2 + G1 + BW + G2 + LW) + PAD * 2; rootX = W / 2 - RW / 2; }
+    var rootCy = H / 2, svg = '', html = '';
+    html += '<div class="mm-root" style="left:' + rootX + 'px;top:' + (rootCy - RH / 2) + 'px;width:' + RW + 'px;height:' + RH + 'px">' + data.root + '</div>';
+    function draw(S, dir) {
+      var off = (H - S.h) / 2;
+      S.items.forEach(function (it) {
+        var by = it.cy + off;
+        var bx = dir > 0 ? rootX + RW + G1 : rootX - G1 - BW;
+        svg += curve(dir > 0 ? rootX + RW : rootX, rootCy, dir > 0 ? bx : bx + BW, by, 'e1');
+        html += branch(it.b, bx, by, dir);
+        (it.leaves || []).forEach(function (l) {
+          var ly = l.cy + off;
+          var lx = dir > 0 ? bx + BW + G2 : bx - G2 - LW;
+          svg += curve(dir > 0 ? bx + BW + 10 : bx - 10, by, dir > 0 ? lx : lx + LW, ly, 'e2');
+          html += leaf(l, lx, ly);
+        });
+      });
+    }
+    draw(R, 1); draw(L, -1);
+    el.style.width = W + 'px'; el.style.height = H + 'px';
+    el.innerHTML = '<svg class="mm-svg" width="' + W + '" height="' + H + '">' + svg + '</svg>' + html;
+    el.dataset.w = W;
+  }
+
+  var a = document.getElementById('mmA'), b = document.getElementById('mmB');
+  render(a, A); render(b, B);
+
+  function fit() {
+    [a, b].forEach(function (el) {
+      var box = el.parentNode, w = +el.dataset.w;
+      var s = Math.min(1, box.clientWidth / w);
+      el.style.zoom = s;
+      if (s === 1) el.style.margin = '0 auto'; else el.style.margin = '0';
+    });
+  }
+  window.addEventListener('resize', fit);
+  fit();
+})();
+</script>
