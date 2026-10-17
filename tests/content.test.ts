@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import { readFileSync } from 'node:fs';
 import { lessonSchema, SECTION_HEADINGS, BANNED_PHRASES } from '../src/lib/lesson-schema';
 import { validateCatalog } from '../src/lib/catalog';
 import { findUnprefixedUnicodeStrings } from '../src/lib/tsql-lexer';
@@ -36,6 +37,14 @@ describe('lesson files', () => {
     for (const f of files) for (const m of f.body.matchAll(/<Sql[^>]*code=\{`([\s\S]*?)`\}/g)) {
       expect(findUnprefixedUnicodeStrings(m[1]), f.slug).toEqual([]);
     }
+  });
+  it('the intro page follows the writing rules and has its five sections', () => {
+    const page = readFileSync('src/pages/gioi-thieu.astro', 'utf8');
+    const text = page.toLowerCase();
+    for (const p of BANNED_PHRASES) expect(text.includes(p), p).toBe(false);
+    expect(/\p{Extended_Pictographic}/u.test(page)).toBe(false);
+    const h2 = [...page.matchAll(/<h2[^>]*>([^<]+)<\/h2>/g)].map(m => m[1].trim());
+    expect(h2).toEqual(['Khóa học này dạy gì', 'Cách dùng trang', '6 level', 'Database mẫu HRM_Demo', 'Tiến độ của bạn được lưu ở đâu']);
   });
   it('summary lessons have no SQL, result or message blocks', () => {
     for (const f of files) {

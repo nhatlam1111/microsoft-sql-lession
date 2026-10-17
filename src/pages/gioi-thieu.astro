@@ -1,6 +1,54 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import StatusIcon from '../components/islands/StatusIcon';
+import { LEVELS } from '../data/curriculum';
+import { withBase } from '../lib/paths';
 ---
 <BaseLayout title="Giới thiệu">
-  <main class="home-placeholder"><h1>Giới thiệu</h1></main>
+  <main class="intro">
+    <article class="intro-article prose">
+      <h1 class="intro-title">Giới thiệu khóa học</h1>
+
+      <h2>Khóa học này dạy gì</h2>
+      <p>Khóa học đi từ chỗ chưa viết câu SQL nào tới lúc tự đọc hiểu, truy vấn và phân tích được dữ liệu trên Microsoft SQL Server. Mọi ví dụ đều dùng dữ liệu nhân sự: nhân viên, hợp đồng, chấm công, nghỉ phép, bảng lương. Mỗi khái niệm SQL được đặt cạnh một việc quen làm trên Excel, như AutoFilter, VLOOKUP hay PivotTable.</p>
+      <p>Khóa học không dạy cài đặt hay quản trị máy chủ. Phần cấp cứu dữ liệu ở level cuối dừng ở mức hiểu: biết việc gì phải làm ngay, dữ liệu còn cứu được bằng cách nào và cần báo cho ai.</p>
+
+      <h2>Cách dùng trang</h2>
+      <ul>
+        <li><strong>Lộ trình:</strong> nút Lộ trình trên thanh trên cùng cho biết bạn đang ở bài nào và học tiếp từ đâu. Nếu lần trước bạn ghé cách đây từ một ngày trở lên, lộ trình tự mở khi bạn vào trang.</li>
+        <li><strong>Mindmap:</strong> trang chủ chia kiến thức thành 8 mảng. Mỗi bài gắn nhãn level từ L1 đến L6, nên nhìn một nhánh là thấy mảng đó đi từ cơ bản lên nâng cao ra sao.</li>
+        <li><strong>Tìm bài:</strong> bấm ô tìm kiếm hoặc Ctrl K, gõ không dấu cũng được.</li>
+      </ul>
+      <p>Mỗi bài có một trong các trạng thái sau:</p>
+      <ul class="intro-states">
+        <li><StatusIcon icon="todo" /> <strong>Chưa học:</strong> bạn chưa mở bài.</li>
+        <li><StatusIcon icon="seen" /> <strong>Đã xem:</strong> tự đánh dấu khi bạn mở bài.</li>
+        <li><StatusIcon icon="done" /> <strong>Đã học:</strong> bạn bấm "Đã học xong bài này" ở cuối bài, khi đã tự viết lại được câu lệnh mà không nhìn bài.</li>
+        <li><StatusIcon icon="flag" /> <strong>Cần xem lại:</strong> bạn tự cắm cờ khi thấy chưa chắc, gỡ cờ lúc nào cũng được.</li>
+      </ul>
+
+      <h2>6 level</h2>
+      <table class="intro-levels">
+        <thead><tr><th>Level</th><th>Học xong level này</th></tr></thead>
+        <tbody>
+          {LEVELS.map(l => (
+            <tr><td><span class={`lvb lv${l.no}`}>L{l.no}</span> {l.name}</td><td>{l.outcome}</td></tr>
+          ))}
+        </tbody>
+      </table>
+
+      <h2>Database mẫu HRM_Demo</h2>
+      <p>Các câu lệnh trong bài chạy trên một database nhân sự giả lập tên <code>HRM_Demo</code>, gồm 7 bảng: phòng ban, chức danh, nhân viên, hợp đồng, chấm công, đơn nghỉ phép và bảng lương. Tên người, số CCCD, lương đều là dữ liệu giả.</p>
+      <p><a href={withBase('/HRM_Demo.sql')} download>Tải script HRM_Demo.sql</a></p>
+      <ul>
+        <li>Trên máy riêng: tạo một database tên <code>HRM_Demo</code> trong SSMS, mở database đó rồi chạy cả file script.</li>
+        <li>Trên Azure SQL Database: mở database bạn được cấp rồi chạy cả file script.</li>
+      </ul>
+      <p>Script chạy lại bao nhiêu lần cũng được. Nếu database đã có bảng trùng tên không phải do script tạo, script tự dừng và không xóa gì.</p>
+
+      <h2>Tiến độ của bạn được lưu ở đâu</h2>
+      <p>Tiến độ được lưu ngay trong trình duyệt bạn đang dùng, không gửi đi đâu cả. Đổi máy, đổi trình duyệt hoặc xóa dữ liệu duyệt web thì tiến độ ở đó sẽ không còn.</p>
+      <p>Để mang tiến độ sang máy khác, mở menu Tiến độ trên thanh trên cùng, chọn "Xuất tiến độ ra file", rồi ở máy kia chọn "Nhập tiến độ từ file".</p>
+    </article>
+  </main>
 </BaseLayout>

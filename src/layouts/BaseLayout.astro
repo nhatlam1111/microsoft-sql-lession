@@ -18,6 +18,7 @@ import RoadmapPopup from '../components/islands/RoadmapPopup';
 import SearchDialog from '../components/islands/SearchDialog';
 import { AREAS, LEVELS } from '../data/curriculum';
 import { loadCatalog } from '../lib/load-catalog';
+import { withBase } from '../lib/paths';
 
 interface Props {
   title: string;
@@ -33,6 +34,7 @@ const pageTitle = title === 'SQL Server' ? title : `${title} · SQL Server`;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{pageTitle}</title>
+    <link rel="icon" type="image/svg+xml" href={withBase('/favicon.svg')} />
   </head>
   <body class={wide ? 'is-wide' : undefined}>
     <TopBar catalog={catalog} />

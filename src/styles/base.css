@@ -158,3 +158,15 @@ button { font: inherit; color: inherit; }
 .rail-actions .done-state { flex-direction: column; align-items: stretch; gap: 4px; }
 
 .home-placeholder { padding: 48px; }
+
+/* ---------- Intro and 404 ---------- */
+.intro { padding: 48px 24px 96px; }
+.intro-article { max-width: 720px; margin: 0 auto; }
+.intro-title { font-family: var(--font-ui); font-size: 34px; line-height: 1.15; letter-spacing: -0.02em; font-weight: 700; }
+.intro-article h2:first-of-type { margin-top: 1.6em; }
+.intro-states { list-style: none; padding-left: 0; }
+.intro-states .st { margin-right: 4px; }
+.intro-levels { width: 100%; border-collapse: collapse; font-family: var(--font-ui); font-size: 14.5px; background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius-m); overflow: hidden; }
+.intro-levels th, .intro-levels td { text-align: left; padding: 9px 14px; border-top: 1px solid var(--rule); vertical-align: top; }
+.intro-levels thead th { border-top: 0; background: #FBFAF7; font-weight: 650; font-size: 13px; }
+.intro-levels td:first-child { white-space: nowrap; font-weight: 600; }

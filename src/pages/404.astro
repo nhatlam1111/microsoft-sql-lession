@@ -1,0 +1,12 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { withBase } from '../lib/paths';
+---
+<BaseLayout title="Không tìm thấy trang">
+  <main class="intro">
+    <div class="intro-article prose">
+      <h1 class="intro-title">Không tìm thấy trang này.</h1>
+      <p><a href={withBase('/')}>Về trang chủ</a></p>
+    </div>
+  </main>
+</BaseLayout>

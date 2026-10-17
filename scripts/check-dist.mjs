@@ -48,7 +48,14 @@ function walk(dir) {
 function main() {
   const dist = 'dist';
   const errors = [];
-  if (!existsSync(join(dist, 'index.html'))) errors.push('thiếu dist/index.html');
+  for (const f of ['index.html', '404.html', 'gioi-thieu/index.html', 'HRM_Demo.sql']) {
+    if (!existsSync(join(dist, f))) errors.push(`thiếu dist/${f}`);
+  }
+  const sqlSrc = join('database', 'HRM_Demo.sql');
+  if (existsSync(join(dist, 'HRM_Demo.sql')) && existsSync(sqlSrc)
+    && readFileSync(join(dist, 'HRM_Demo.sql'), 'utf8') !== readFileSync(sqlSrc, 'utf8')) {
+    errors.push('dist/HRM_Demo.sql khác database/HRM_Demo.sql');
+  }
   const isFile = p => existsSync(join(dist, p)) && statSync(join(dist, p)).isFile();
   const pages = existsSync(dist) ? walk(dist).filter(f => f.endsWith('.html')) : [];
   let links = 0;
