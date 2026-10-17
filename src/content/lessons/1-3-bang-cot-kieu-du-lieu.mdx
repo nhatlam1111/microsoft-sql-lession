@@ -15,16 +15,19 @@ summary: INT, DECIMAL, NVARCHAR, DATE, BIT và vì sao ngày tháng, số tiền
 
 ## Nội dung chính
 
-{/* TODO-CONTENT */}
+- Mỗi cột có một kiểu dữ liệu cố định: `INT` cho số nguyên, `DECIMAL(18,0)` cho tiền, `NVARCHAR` cho chữ có dấu, `DATE` cho ngày, `BIT` cho đúng/sai.
+- Database từ chối dữ liệu sai kiểu: không gõ được chữ vào cột ngày sinh hay cột số tiền.
+- Chữ tiếng Việt cần kiểu `NVARCHAR`; kiểu `VARCHAR` dễ làm mất dấu.
+- Kiểu của từng cột xem được trong Object Explorer, mục Columns của bảng `NhanVien`.
 
 ## Liên hệ Excel
 
-{/* TODO-CONTENT */}
+Trong Excel, Format Cells chỉ đổi cách hiển thị; ô vẫn nhận bất cứ thứ gì được gõ vào, nên mới có chuyện cột ngày tháng lúc là ngày, lúc là chữ. Kiểu dữ liệu trong database thì bắt buộc.
 
 ## Tình huống ví dụ
 
-{/* TODO-CONTENT */}
+Một file import có cột ngày vào làm lẫn cả kiểu 01/02/2024 lẫn 2024-02-01, cần biết database sẽ nhận hay báo lỗi.
 
 ## Bài tập
 
-{/* TODO-CONTENT */}
+<Exercises />

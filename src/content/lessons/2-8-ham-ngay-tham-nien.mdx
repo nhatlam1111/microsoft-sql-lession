@@ -15,16 +15,19 @@ summary: GETDATE, DATEDIFF, DATEADD, EOMONTH và danh sách hợp đồng sắp 
 
 ## Nội dung chính
 
-{/* TODO-CONTENT */}
+- `GETDATE()` lấy ngày giờ hiện tại; `CAST(GETDATE() AS date)` chỉ lấy phần ngày.
+- `DATEDIFF(month, NgayVaoLam, GETDATE())` đếm số tháng thâm niên. Hàm này đếm số lần vượt qua ranh giới tháng, không làm tròn theo số ngày.
+- `DATEADD(day, 30, GETDATE())` cộng thêm 30 ngày, dùng để tìm hợp đồng kết thúc trong 30 ngày tới.
+- `EOMONTH` cho ngày cuối tháng; `MONTH(NgaySinh)` lấy tháng sinh để làm danh sách sinh nhật.
 
 ## Liên hệ Excel
 
-{/* TODO-CONTENT */}
+Giống TODAY, DATEDIF, EDATE, EOMONTH và MONTH của Excel.
 
 ## Tình huống ví dụ
 
-{/* TODO-CONTENT */}
+Phòng nhân sự cần danh sách hợp đồng sắp hết hạn trong 30 ngày tới để chuẩn bị gia hạn.
 
 ## Bài tập
 
-{/* TODO-CONTENT */}
+<Exercises />

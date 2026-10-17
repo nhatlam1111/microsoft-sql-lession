@@ -15,16 +15,19 @@ summary: ORDER BY nhiều cột, và vì sao TOP luôn phải đi cùng ORDER BY
 
 ## Nội dung chính
 
-{/* TODO-CONTENT */}
+- `ORDER BY NgayVaoLam DESC` đưa người vào làm gần nhất lên đầu; `ASC` (mặc định) là tăng dần.
+- Sắp theo nhiều cột: `ORDER BY MaPB, HoTen` sắp theo phòng, cùng phòng thì theo họ tên.
+- `TOP (5)` lấy 5 dòng đầu, và chỉ có nghĩa khi đi cùng `ORDER BY`.
+- Không có `ORDER BY` thì SQL Server không hứa thứ tự nào, kể cả khi lần nào chạy trông cũng giống nhau.
 
 ## Liên hệ Excel
 
-{/* TODO-CONTENT */}
+Giống Sort và bộ lọc Top 10. Khác ở chỗ thứ tự không được lưu trong bảng; muốn có thứ tự thì lần nào cũng phải ghi `ORDER BY`.
 
 ## Tình huống ví dụ
 
-{/* TODO-CONTENT */}
+Ban giám đốc muốn biết 5 người vào làm gần đây nhất.
 
 ## Bài tập
 
-{/* TODO-CONTENT */}
+<Exercises />

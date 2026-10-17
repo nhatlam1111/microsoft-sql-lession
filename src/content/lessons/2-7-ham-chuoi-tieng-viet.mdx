@@ -15,16 +15,19 @@ summary: Hàm chuỗi, chữ N trước chuỗi tiếng Việt, collation và c�
 
 ## Nội dung chính
 
-{/* TODO-CONTENT */}
+- `LEFT`, `RIGHT`, `SUBSTRING` cắt chuỗi; `LEN` đếm ký tự; `CONCAT` ghép chuỗi; `TRIM` bỏ khoảng trắng hai đầu; `UPPER`, `LOWER` đổi chữ hoa, chữ thường.
+- Chuỗi tiếng Việt trong câu lệnh phải có chữ N đứng trước, như `N'Kế toán'`; thiếu N thì chữ có dấu biến thành dấu hỏi.
+- Collation quyết định khi so sánh có phân biệt hoa thường, có dấu hay không; với collation `Vietnamese_CI_AI`, tìm `nguyen` vẫn ra Nguyễn.
+- Muốn sắp danh sách theo tên như sổ điểm danh thì tách lấy chữ cuối của họ tên.
 
 ## Liên hệ Excel
 
-{/* TODO-CONTENT */}
+Giống LEFT, MID, LEN, CONCAT, TRIM, UPPER của Excel. Riêng chuyện tìm không dấu, SQL cần chọn collation phù hợp.
 
 ## Tình huống ví dụ
 
-{/* TODO-CONTENT */}
+Phòng nhân sự cần danh sách sắp theo tên, không phải theo họ, để in bảng ký nhận.
 
 ## Bài tập
 
-{/* TODO-CONTENT */}
+<Exercises />

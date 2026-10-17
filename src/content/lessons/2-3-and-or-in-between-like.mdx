@@ -15,16 +15,19 @@ summary: Kết hợp điều kiện, đặt dấu ngoặc đúng chỗ và tìm 
 
 ## Nội dung chính
 
-{/* TODO-CONTENT */}
+- `AND` cần cả hai điều kiện cùng đúng, `OR` chỉ cần một.
+- Trộn `AND` với `OR` thì đặt dấu ngoặc cho rõ: `WHERE MaPB = 'KD' AND (MaCD = 'CV' OR MaCD = 'CVC')`.
+- `IN ('KD', 'IT')` thay cho nhiều `OR`; `BETWEEN '2026-01-01' AND '2026-06-30'` lấy cả hai đầu mút.
+- `LIKE N'Nguyễn%'` tìm họ tên bắt đầu bằng Nguyễn; `%` là chuỗi bất kỳ, `_` là đúng một ký tự.
 
 ## Liên hệ Excel
 
-{/* TODO-CONTENT */}
+Giống Text Filters (Contains, Begins With) và Number Filters (Between) của AutoFilter, nhưng gộp được nhiều điều kiện trên nhiều cột trong cùng một câu.
 
 ## Tình huống ví dụ
 
-{/* TODO-CONTENT */}
+Cần danh sách nhân viên phòng Kinh doanh hoặc IT vào làm trong 6 tháng đầu năm.
 
 ## Bài tập
 
-{/* TODO-CONTENT */}
+<Exercises />

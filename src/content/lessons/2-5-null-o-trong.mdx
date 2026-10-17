@@ -15,16 +15,19 @@ summary: IS NULL, IS NOT NULL, ISNULL, COALESCE và chuyện NULL trong phép t�
 
 ## Nội dung chính
 
-{/* TODO-CONTENT */}
+- `NULL` nghĩa là không có giá trị, khác với số 0 và khác với chuỗi rỗng.
+- Lọc ô trống bằng `IS NULL` và `IS NOT NULL`; viết `= NULL` sẽ không ra dòng nào.
+- Phép tính có `NULL` cho ra `NULL`: lương cộng với một khoản phụ cấp trống thì thành trống.
+- `ISNULL(Email, N'(chưa có)')` hoặc `COALESCE` thay giá trị trống bằng giá trị khác khi hiển thị.
 
 ## Liên hệ Excel
 
-{/* TODO-CONTENT */}
+Giống ô trống trong Excel, nhưng Excel coi ô trống là 0 khi cộng, còn SQL thì không. Excel dùng COUNTBLANK để đếm ô trống, SQL dùng `IS NULL`.
 
 ## Tình huống ví dụ
 
-{/* TODO-CONTENT */}
+Cần danh sách nhân viên chưa khai email để nhắc bổ sung hồ sơ.
 
 ## Bài tập
 
-{/* TODO-CONTENT */}
+<Exercises />

@@ -15,16 +15,19 @@ summary: Quan hệ một-nhiều giữa phòng ban, nhân viên, hợp đồng, 
 
 ## Nội dung chính
 
-{/* TODO-CONTENT */}
+- ERD (sơ đồ quan hệ) vẽ các bảng và đường nối giữa chúng; mỗi đường nối là một cặp khóa chính, khóa ngoại.
+- Quan hệ một-nhiều: một phòng ban có nhiều nhân viên; một nhân viên có nhiều hợp đồng, nhiều ngày chấm công, nhiều dòng bảng lương.
+- Trong HRM_Demo, bảng `NhanVien` nằm giữa, các bảng còn lại đều liên kết về nó qua cột `MaNV`.
+- SSMS tự vẽ được sơ đồ ở mục Database Diagrams nếu tài khoản có quyền.
 
 ## Liên hệ Excel
 
-{/* TODO-CONTENT */}
+Giống một file có nhiều sheet tham chiếu nhau bằng mã: sheet hợp đồng dùng mã NV của sheet nhân viên. ERD là tấm bản đồ cho biết sheet nào dựa vào sheet nào.
 
 ## Tình huống ví dụ
 
-{/* TODO-CONTENT */}
+Cần lấy lương tháng 9 kèm tên phòng ban của từng người, và phải biết đi qua những bảng nào.
 
 ## Bài tập
 
-{/* TODO-CONTENT */}
+<Exercises />

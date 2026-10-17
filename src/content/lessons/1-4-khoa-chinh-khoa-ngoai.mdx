@@ -15,16 +15,19 @@ summary: Khóa chính, khóa ngoại và vì sao không xóa được một phò
 
 ## Nội dung chính
 
-{/* TODO-CONTENT */}
+- Khóa chính là cột (hoặc nhóm cột) không được trùng và không được trống, ví dụ `MaNV` trong bảng `NhanVien`.
+- Khóa ngoại là cột trỏ sang khóa chính của bảng khác, ví dụ `NhanVien.MaPB` trỏ sang `PhongBan.MaPB`.
+- Nhờ khóa ngoại, không gán được nhân viên vào một phòng ban không có trong danh mục.
+- Cũng vì khóa ngoại mà không xóa được một phòng ban khi vẫn còn nhân viên thuộc phòng đó.
 
 ## Liên hệ Excel
 
-{/* TODO-CONTENT */}
+Giống cột mã NV không được trùng, và cột phòng ban dùng dropdown (Data Validation dạng List) lấy từ sheet danh mục phòng ban. Khác ở chỗ Excel vẫn cho dán đè một giá trị lạ, còn database thì chặn hẳn.
 
 ## Tình huống ví dụ
 
-{/* TODO-CONTENT */}
+Phòng nhân sự muốn xóa phòng Vận hành khỏi danh mục và hỏi vì sao hệ thống báo lỗi.
 
 ## Bài tập
 
-{/* TODO-CONTENT */}
+<Exercises />

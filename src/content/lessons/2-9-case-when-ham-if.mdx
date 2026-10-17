@@ -15,16 +15,19 @@ summary: Phân nhóm thâm niên và đổi mã trạng thái thành chữ dễ 
 
 ## Nội dung chính
 
-{/* TODO-CONTENT */}
+- `CASE WHEN … THEN … ELSE … END` trả về giá trị khác nhau theo điều kiện.
+- Phân nhóm thâm niên dưới 1 năm, từ 1 đến 3 năm, trên 3 năm: mỗi nhóm là một nhánh `WHEN`.
+- Các nhánh `WHEN` được xét từ trên xuống, gặp nhánh đúng đầu tiên là dừng.
+- Thiếu `ELSE` thì dòng không khớp nhánh nào sẽ nhận `NULL`.
 
 ## Liên hệ Excel
 
-{/* TODO-CONTENT */}
+Giống IF lồng nhau hoặc IFS, ví dụ `=IFS(C2<12,"Dưới 1 năm",C2<36,"1–3 năm",TRUE,"Trên 3 năm")`.
 
 ## Tình huống ví dụ
 
-{/* TODO-CONTENT */}
+Báo cáo cơ cấu nhân sự cần một cột nhóm thâm niên thay cho số tháng.
 
 ## Bài tập
 
-{/* TODO-CONTENT */}
+<Exercises />
