@@ -15,16 +15,19 @@ summary: Khóa dữ liệu, chặn nhau và deadlock, giải thích bằng ví d
 
 ## Nội dung chính
 
-{/* TODO-CONTENT */}
+- Khi một câu đang sửa dữ liệu, SQL Server khóa những dòng đó; câu khác muốn sửa cùng chỗ phải chờ.
+- Blocking là chuyện một câu chờ câu khác nhả khóa; nhìn từ ngoài, câu lệnh như bị treo.
+- Deadlock là hai bên chờ nhau; SQL Server chọn một bên làm "nạn nhân", hủy câu đó và báo lỗi 1205.
+- Transaction để mở quá lâu, ví dụ quên `COMMIT`, là nguyên nhân blocking hay gặp.
 
 ## Liên hệ Excel
 
-{/* TODO-CONTENT */}
+Giống file Excel trên ổ chung đang có người mở: người sau chỉ mở được bản chỉ đọc hoặc phải chờ.
 
 ## Tình huống ví dụ
 
-{/* TODO-CONTENT */}
+Câu lệnh cập nhật bảng lương chạy mãi không xong, đúng lúc kế toán đang chạy báo cáo.
 
 ## Bài tập
 
-{/* TODO-CONTENT */}
+<Exercises />

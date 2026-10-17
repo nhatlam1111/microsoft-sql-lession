@@ -15,16 +15,19 @@ summary: NOT NULL, UNIQUE, CHECK, DEFAULT và khóa ngoại.
 
 ## Nội dung chính
 
-{/* TODO-CONTENT */}
+- `NOT NULL` bắt buộc phải có giá trị, `UNIQUE` không cho trùng, `CHECK` đặt điều kiện như `LuongCoBan > 0`, `DEFAULT` điền sẵn giá trị khi không nhập.
+- Khóa ngoại chặn những mã không có trong bảng danh mục.
+- Ràng buộc chặn ngay lúc ghi dữ liệu, dù dữ liệu đến từ file import hay từ một chương trình khác.
+- HRM_Demo cố ý không đặt `UNIQUE` cho `SoCCCD` và không đặt `CHECK` cho ngày hợp đồng; nhờ vậy bài 4.6 mới có lỗi để soi.
 
 ## Liên hệ Excel
 
-{/* TODO-CONTENT */}
+Giống Data Validation: chỉ cho nhập số, chỉ cho chọn trong danh sách. Khác ở chỗ Data Validation bị bỏ qua khi dán đè, còn ràng buộc của database thì không.
 
 ## Tình huống ví dụ
 
-{/* TODO-CONTENT */}
+Cần đề xuất những luật nên đặt cho bảng hợp đồng để không còn hợp đồng có ngày kết thúc trước ngày bắt đầu.
 
 ## Bài tập
 
-{/* TODO-CONTENT */}
+<Exercises />

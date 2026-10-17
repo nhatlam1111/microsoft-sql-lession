@@ -15,16 +15,19 @@ summary: BEGIN TRAN, COMMIT, ROLLBACK và chuyện SSMS mặc định tự commi
 
 ## Nội dung chính
 
-{/* TODO-CONTENT */}
+- Transaction gom nhiều câu sửa thành một khối: hoặc tất cả cùng được lưu, hoặc không câu nào được lưu.
+- `BEGIN TRAN` mở khối, `COMMIT` lưu hẳn, `ROLLBACK` quay về như trước khi mở.
+- SSMS mặc định tự commit từng câu lệnh; không mở transaction thì không có đường lui.
+- Giữ transaction càng ngắn càng tốt: trong lúc mở, các dòng đang sửa bị khóa và người khác phải chờ (bài 5.8).
 
 ## Liên hệ Excel
 
-{/* TODO-CONTENT */}
+Giống Undo, nhưng chỉ dùng được trước khi `COMMIT`. Sau `COMMIT` thì như đã lưu và đóng file, không bấm Ctrl+Z được nữa.
 
 ## Tình huống ví dụ
 
-{/* TODO-CONTENT */}
+Điều chuyển một nhân viên phải sửa cùng lúc phòng ban, chức danh và người quản lý; một bước lỗi thì không bước nào được lưu.
 
 ## Bài tập
 
-{/* TODO-CONTENT */}
+<Exercises />

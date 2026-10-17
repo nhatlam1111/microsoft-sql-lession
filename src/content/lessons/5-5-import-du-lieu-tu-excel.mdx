@@ -16,16 +16,19 @@ summary: Import Wizard, bảng tạm và kiểm tra dữ liệu trước khi đ�
 
 ## Nội dung chính
 
-{/* TODO-CONTENT */}
+- SSMS có Import Flat File và Import and Export Wizard để đưa dữ liệu từ file vào database.
+- Nên import vào một bảng tạm (staging) trước, chưa đụng tới bảng thật.
+- Soát dữ liệu trên bảng tạm: mã trùng, mã phòng ban không có trong danh mục, ngày tháng sai định dạng, ô bắt buộc bị trống.
+- Bảng tạm sạch rồi mới `INSERT … SELECT` sang bảng thật, gói trong một transaction.
 
 ## Liên hệ Excel
 
-{/* TODO-CONTENT */}
+Giống file mẫu import: cột nào bắt buộc, định dạng ra sao. Bảng tạm là nơi soát file đó bằng câu lệnh thay vì soát bằng mắt.
 
 ## Tình huống ví dụ
 
-{/* TODO-CONTENT */}
+Một chi nhánh gửi file Excel 30 nhân viên mới, cần đưa vào hệ thống trước kỳ lương.
 
 ## Bài tập
 
-{/* TODO-CONTENT */}
+<Exercises />

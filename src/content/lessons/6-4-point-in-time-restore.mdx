@@ -15,16 +15,19 @@ summary: Recovery model, khôi phục về một thời điểm và chuyện Azu
 
 ## Nội dung chính
 
-{/* TODO-CONTENT */}
+- Point-in-time restore khôi phục database về đúng một thời điểm, ví dụ 15:59:30, ngay trước câu lệnh sai.
+- Cần recovery model FULL và chuỗi log backup không bị đứt.
+- Thường khôi phục ra một database khác rồi chép những dòng cần thiết sang database thật, để không mất dữ liệu đúng phát sinh sau sự cố.
+- Azure SQL Database tự sao lưu và cho khôi phục theo thời điểm; mặc định giữ 7 ngày và chỉnh được.
 
 ## Liên hệ Excel
 
-{/* TODO-CONTENT */}
+Giống chọn một phiên bản cụ thể theo giờ trong Version History.
 
 ## Tình huống ví dụ
 
-{/* TODO-CONTENT */}
+Biết chính xác giờ một câu lệnh sai đã chạy và cần đề nghị khôi phục về ngay trước đó.
 
 ## Bài tập
 
-{/* TODO-CONTENT */}
+<Exercises />

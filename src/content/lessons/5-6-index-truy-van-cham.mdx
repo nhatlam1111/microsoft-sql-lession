@@ -15,16 +15,19 @@ summary: Index là gì, clustered và nonclustered, và cái giá phải trả k
 
 ## Nội dung chính
 
-{/* TODO-CONTENT */}
+- Index giúp SQL Server tìm dòng nhanh mà không phải đọc cả bảng, giống mục lục cuối sách.
+- Clustered index quyết định thứ tự lưu của chính bảng, mỗi bảng chỉ có một; khóa chính thường là clustered index.
+- Nonclustered index là một "mục lục" riêng theo một hay vài cột, ví dụ theo `MaPB` hay `NgayVaoLam`.
+- Index làm đọc nhanh hơn nhưng làm ghi chậm hơn và tốn chỗ, nên chỉ đặt cho những cột hay dùng để lọc và kết bảng.
 
 ## Liên hệ Excel
 
-{/* TODO-CONTENT */}
+Giống mục lục sách, hoặc chuyện lọc một file một triệu dòng chậm hơn hẳn so với tra trong một danh sách đã sắp xếp.
 
 ## Tình huống ví dụ
 
-{/* TODO-CONTENT */}
+Báo cáo chấm công chạy mất vài phút, cần biết có nên đề nghị thêm index không.
 
 ## Bài tập
 
-{/* TODO-CONTENT */}
+<Exercises />

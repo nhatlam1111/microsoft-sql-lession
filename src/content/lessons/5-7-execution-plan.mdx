@@ -15,16 +15,19 @@ summary: Xem kế hoạch thực thi, phân biệt scan với seek, tìm bước
 
 ## Nội dung chính
 
-{/* TODO-CONTENT */}
+- Trong SSMS, bấm Display Estimated Execution Plan hoặc bật Include Actual Execution Plan (Ctrl+M) để xem SQL Server chạy câu lệnh ra sao.
+- Đọc từ phải sang trái: mỗi ô là một bước, mũi tên càng dày thì càng nhiều dòng đi qua.
+- Scan là đọc cả bảng hoặc cả index; Seek là nhảy thẳng tới chỗ cần, thường nhanh hơn nhiều.
+- Tìm bước có phần trăm chi phí cao nhất; đó là chỗ đáng hỏi trước tiên.
 
 ## Liên hệ Excel
 
-{/* TODO-CONTENT */}
+Giống Evaluate Formula: xem công thức được tính qua từng bước thay vì chỉ thấy kết quả cuối.
 
 ## Tình huống ví dụ
 
-{/* TODO-CONTENT */}
+Hai câu lệnh ra cùng một kết quả nhưng một câu chạy chậm gấp mười lần, cần biết vì sao.
 
 ## Bài tập
 
-{/* TODO-CONTENT */}
+<Exercises />

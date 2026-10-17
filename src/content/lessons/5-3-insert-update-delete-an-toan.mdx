@@ -15,16 +15,19 @@ summary: SELECT trước khi sửa, WHERE, @@ROWCOUNT và OUTPUT.
 
 ## Nội dung chính
 
-{/* TODO-CONTENT */}
+- `INSERT INTO … VALUES` thêm dòng, `UPDATE … SET … WHERE` sửa, `DELETE FROM … WHERE` xóa.
+- Luôn chạy `SELECT` với đúng điều kiện `WHERE` trước, xem số dòng, rồi mới đổi thành `UPDATE` hay `DELETE`.
+- Sau khi chạy, đọc số dòng ở tab Messages hoặc `@@ROWCOUNT`; số dòng khác dự kiến là dấu hiệu phải dừng lại.
+- `OUTPUT deleted.*, inserted.*` cho xem giá trị trước và sau ngay trong lúc sửa.
 
 ## Liên hệ Excel
 
-{/* TODO-CONTENT */}
+Giống sửa ô, xóa dòng trong Excel, nhưng không có Ctrl+Z và mọi người dùng database đều thấy thay đổi ngay. Bài 6.5 kể chuyện xảy ra khi quên `WHERE`.
 
 ## Tình huống ví dụ
 
-{/* TODO-CONTENT */}
+Cần sửa phòng ban cho một nhân viên vừa điều chuyển từ Kinh doanh sang IT.
 
 ## Bài tập
 
-{/* TODO-CONTENT */}
+<Exercises />
