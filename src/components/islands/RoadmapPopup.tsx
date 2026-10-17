@@ -22,7 +22,7 @@ export default function RoadmapPopup({ catalog, levels }: Props) {
     return shouldAutoOpen(getSnapshot().previousActiveAt, Date.now());
   });
   const [shownLevel, setShownLevel] = useState<LevelNo | null>(null);
-  const { state, previousActiveAt } = useProgress(nums);
+  const { state, previousActiveAt, previousLastLessonNum } = useProgress(nums);
   const dialogRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -42,7 +42,7 @@ export default function RoadmapPopup({ catalog, levels }: Props) {
 
   if (!open) return null;
 
-  const model = popupModel(state, previousActiveAt, catalog, Date.now());
+  const model = popupModel(state, previousActiveAt, catalog, Date.now(), previousLastLessonNum);
   const level = shownLevel ?? model.expandedLevel;
   const levelDef = levels.find(l => l.no === level)!;
   const lessons = catalog.filter(e => e.level === level);

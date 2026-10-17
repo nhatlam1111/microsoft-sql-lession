@@ -28,3 +28,14 @@ it('congratulates when everything is done', () => {
   const m = popupModel(s, NOW - 3 * 86_400_000, CAT, NOW);
   expect([m.title, m.sub, m.cta, m.expandedLevel]).toEqual(['Bạn đã học xong cả 51 bài', 'Muốn ôn lại bài nào thì bấm vào trạm của level đó.', null, 6]);
 });
+it('a first visit that lands on a lesson page still gets the greeting', () => {
+  const s = markSeen(emptyState(), '4.2', NOW);
+  const m = popupModel(s, null, CAT, NOW, null);
+  expect([m.title, m.cta?.label, m.introLink]).toEqual(['Chào bạn', 'Bắt đầu bài 1.1 →', true]);
+});
+it('a return that lands on another lesson resumes where the learner stopped', () => {
+  const before = demoState(NOW);
+  const s = markSeen(before, '4.2', NOW);
+  const m = popupModel(s, before.lastActiveAt, CAT, NOW, '3.5');
+  expect([m.title, m.cta?.label]).toEqual(['Lần trước bạn dừng ở bài 3.5', 'Học tiếp bài 3.5 →']);
+});

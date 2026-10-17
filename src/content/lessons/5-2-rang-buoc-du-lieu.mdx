@@ -17,7 +17,7 @@ summary: NOT NULL, UNIQUE, CHECK, DEFAULT và khóa ngoại.
 
 - `NOT NULL` bắt buộc phải có giá trị, `UNIQUE` không cho trùng, `CHECK` đặt điều kiện như `LuongCoBan > 0`, `DEFAULT` điền sẵn giá trị khi không nhập.
 - Khóa ngoại chặn những mã không có trong bảng danh mục.
-- Ràng buộc chặn ngay lúc ghi dữ liệu, dù dữ liệu đến từ file import hay từ một chương trình khác.
+- Ràng buộc chặn ngay lúc ghi dữ liệu, dù dữ liệu đến từ màn hình nhập hay từ một chương trình khác. Riêng `BULK INSERT` và bcp mặc định bỏ qua `CHECK` và khóa ngoại, trừ khi bật tùy chọn `CHECK_CONSTRAINTS`.
 - HRM_Demo cố ý không đặt `UNIQUE` cho `SoCCCD` và không đặt `CHECK` cho ngày hợp đồng; nhờ vậy bài 4.6 mới có lỗi để soi.
 
 ## Liên hệ Excel

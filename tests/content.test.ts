@@ -60,3 +60,29 @@ describe('lesson files', () => {
     }
   });
 });
+
+describe('fixes from the final review', () => {
+  const body = (slug: string) => readLessonFiles().find(f => f.slug === slug)!.body;
+  it('3.5 shows the full "still valid" condition, open-ended contracts included', () => {
+    expect(body('3-5-left-join')).toContain('hd.NgayKetThuc IS NULL OR hd.NgayKetThuc >=');
+  });
+  it('6.5 says to check @@TRANCOUNT in the same query window and not to commit on close', () => {
+    expect(body('6-5-update-quen-where')).toContain('cùng cửa sổ');
+    expect(body('6-5-update-quen-where')).toContain('chọn No');
+  });
+  it('6.5 links the related lessons', () => {
+    for (const slug of ['6-3-backup-restore', '6-4-point-in-time-restore', '6-6-temporal-table']) {
+      expect(body('6-5-update-quen-where')).toContain(`/microsoft-sql-lession/bai/${slug}/`);
+    }
+  });
+  it('2.5 replaces a varchar NULL with COALESCE so Vietnamese text keeps its accents', () => {
+    expect(body('2-5-null-o-trong')).not.toContain('ISNULL(Email');
+    expect(body('2-5-null-o-trong')).toContain("COALESCE(Email, N'(chưa có)')");
+  });
+  it('summaries state the corrected facts', () => {
+    expect(body('1-5-doc-so-do-erd')).toContain('`MaPB`, `MaCD`');
+    expect(body('1-5-doc-so-do-erd')).toContain('Azure SQL Database không có');
+    expect(body('5-2-rang-buoc-du-lieu')).toContain('BULK INSERT');
+    expect(body('6-6-temporal-table')).toContain('UTC');
+  });
+});

@@ -94,7 +94,7 @@ Hai người, khớp với file Excel. Lần sau chị Hạnh hỏi, bạn mở 
 <Mistakes>
 
 1. **Viết `= NULL` thay vì `IS NULL`.** So sánh bằng với `NULL` không bao giờ đúng. Câu lệnh trả về 0 dòng, và bạn tưởng ai cũng có hợp đồng rồi.
-2. **Lọc bảng bên phải ở `WHERE`.** Chị Hạnh hỏi thêm: "người chưa có hợp đồng *còn hiệu lực*". Nếu thêm `hd.NgayKetThuc >= GETDATE()` vào `WHERE`, các dòng `NULL` bị loại hết, và `LEFT JOIN` thành `INNER JOIN` lúc nào không hay. Điều kiện của `HopDong` phải đặt trong `ON`.
+2. **Lọc bảng bên phải ở `WHERE`.** Chị Hạnh hỏi thêm: "người chưa có hợp đồng *còn hiệu lực*". Nếu thêm `hd.NgayKetThuc >= GETDATE()` vào `WHERE`, các dòng `NULL` bị loại hết, và `LEFT JOIN` thành `INNER JOIN` lúc nào không hay. Điều kiện của `HopDong` phải đặt trong `ON`, và nhớ rằng hợp đồng không xác định thời hạn có `NgayKetThuc` để trống: `ON hd.MaNV = nv.MaNV AND (hd.NgayKetThuc IS NULL OR hd.NgayKetThuc >= CAST(GETDATE() AS date))`.
 3. **Một người hiện nhiều dòng.** Khi bỏ `WHERE` để xem tất cả, ai có nhiều hợp đồng sẽ hiện nhiều lần: NV021 có hợp đồng thử việc, hợp đồng xác định thời hạn rồi không xác định thời hạn, nên hiện ba dòng. Cả bảng có 48 nhân viên nhưng kết quả ra 57 dòng. Bài 3.6 sẽ xử lý chuyện này.
 
 </Mistakes>

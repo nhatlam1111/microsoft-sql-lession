@@ -13,8 +13,19 @@ export interface PopupModel {
   expandedLevel: LevelNo;
 }
 
-/** Everything the roadmap popup says, for a first visit, a return, or a finished course. */
-export function popupModel(s: ProgressState, previousActiveAt: number | null, catalog: CatalogEntry[], now: number): PopupModel {
+/**
+ * Everything the roadmap popup says, for a first visit, a return, or a finished course.
+ * `startLastLessonNum` is the last lesson as it was when the page opened: a lesson page marks
+ * itself seen on load, which must not turn a first visit into a "return" or move the resume point.
+ */
+export function popupModel(
+  live: ProgressState,
+  previousActiveAt: number | null,
+  catalog: CatalogEntry[],
+  now: number,
+  startLastLessonNum: string | null = live.lastLessonNum,
+): PopupModel {
+  const s: ProgressState = { ...live, lastLessonNum: startLastLessonNum };
   const sorted = sortCatalog(catalog);
   const total = sorted.length;
   const done = countDone(s, sorted.map(e => e.num));

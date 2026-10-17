@@ -17,8 +17,8 @@ summary: Quan hệ một-nhiều giữa phòng ban, nhân viên, hợp đồng, 
 
 - ERD (sơ đồ quan hệ) vẽ các bảng và đường nối giữa chúng; mỗi đường nối là một cặp khóa chính, khóa ngoại.
 - Quan hệ một-nhiều: một phòng ban có nhiều nhân viên; một nhân viên có nhiều hợp đồng, nhiều ngày chấm công, nhiều dòng bảng lương.
-- Trong HRM_Demo, bảng `NhanVien` nằm giữa, các bảng còn lại đều liên kết về nó qua cột `MaNV`.
-- SSMS tự vẽ được sơ đồ ở mục Database Diagrams nếu tài khoản có quyền.
+- Trong HRM_Demo, bảng `NhanVien` nằm giữa: hợp đồng, chấm công, đơn nghỉ phép và bảng lương liên kết về nó qua `MaNV`, còn nó liên kết sang phòng ban và chức danh qua `MaPB`, `MaCD`.
+- Với SQL Server cài trên máy chủ, SSMS tự vẽ được sơ đồ ở mục Database Diagrams nếu tài khoản có quyền; Azure SQL Database không có mục này.
 
 ## Liên hệ Excel
 

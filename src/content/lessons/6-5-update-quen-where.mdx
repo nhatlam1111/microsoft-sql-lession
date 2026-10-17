@@ -48,6 +48,8 @@ Với Excel, lỡ dán đè cả cột thì bấm Ctrl+Z là xong, hoặc mở V
 
 <Result columns={['SoTransactionDangMo']} rows={[[0]]} />
 
+Chạy câu này trong cùng cửa sổ query vừa chạy `UPDATE`. Mỗi cửa sổ là một phiên riêng, nên mở cửa sổ mới sẽ luôn thấy 0. Cũng đừng đóng cửa sổ đó: nếu SSMS hỏi có commit transaction đang mở không, chọn No.
+
 Kết quả lớn hơn 0 nghĩa là trước đó bạn đã chạy `BEGIN TRAN` và thay đổi chưa được lưu hẳn: chạy `ROLLBACK;` là mọi thứ quay về như cũ. Kết quả bằng 0 như trên nghĩa là thay đổi đã được commit.
 
 3. **Ghi lại ngay ba thứ:** thời điểm chạy (giờ, phút, càng chính xác càng tốt), câu lệnh đã chạy (chép nguyên văn từ cửa sổ query) và số dòng bị ảnh hưởng ở tab Messages.
@@ -63,9 +65,9 @@ FROM BangLuong;`} />
 
 ### Những đường cứu
 
-- **Point-in-time restore** (bài 6.4): người quản trị khôi phục database về đúng thời điểm ngay trước câu lệnh, thường ra một database khác, rồi chép những dòng bị hỏng từ đó sang database thật. Cách này cần database chạy recovery model FULL và có log backup. Azure SQL Database tự sao lưu theo kiểu này, mặc định giữ được 7 ngày.
-- **Temporal table** (bài 6.6): nếu bảng có lưu lịch sử thì đọc lại được giá trị cũ bằng `FOR SYSTEM_TIME AS OF`. Bảng `BangLuong` trong HRM_Demo không bật tính năng này.
-- **Bảng nhật ký do trigger ghi** (bài 5.9): nếu hệ thống có, giá trị trước khi sửa nằm ở đó.
+- **Point-in-time restore** ([bài 6.3](/microsoft-sql-lession/bai/6-3-backup-restore/), [bài 6.4](/microsoft-sql-lession/bai/6-4-point-in-time-restore/)): người quản trị khôi phục database về đúng thời điểm ngay trước câu lệnh, thường ra một database khác, rồi chép những dòng bị hỏng từ đó sang database thật. Cách này cần database chạy recovery model FULL và có log backup. Azure SQL Database tự sao lưu theo kiểu này, mặc định giữ được 7 ngày.
+- **Temporal table** ([bài 6.6](/microsoft-sql-lession/bai/6-6-temporal-table/)): nếu bảng có lưu lịch sử thì đọc lại được giá trị cũ bằng `FOR SYSTEM_TIME AS OF`. Bảng `BangLuong` trong HRM_Demo không bật tính năng này.
+- **Bảng nhật ký do trigger ghi** ([bài 5.9](/microsoft-sql-lession/bai/5-9-trigger-nhat-ky/)): nếu hệ thống có, giá trị trước khi sửa nằm ở đó.
 - **File xuất gần nhất:** chỉ dùng để đối chiếu, không phải đường cứu chính, vì không ai chắc file đó còn khớp với database.
 
 ### Thói quen phòng tránh
@@ -91,7 +93,7 @@ SELECT @@ROWCOUNT AS SoDongVuaSua;   -- đúng 1 thì COMMIT, khác 1 thì ROLLB
 Thêm vài thói quen nữa:
 
 - Sao lưu các dòng sắp sửa sang một bảng riêng bằng `SELECT … INTO` trước khi sửa hàng loạt.
-- Chỉ cần xem thì dùng tài khoản chỉ đọc; sửa thử trên môi trường UAT trước (bài 6.2).
+- Chỉ cần xem thì dùng tài khoản chỉ đọc; sửa thử trên môi trường UAT trước ([bài 6.2](/microsoft-sql-lession/bai/6-2-dev-uat-production/)).
 - Trong SSMS có thể bật `SET IMPLICIT_TRANSACTIONS ON` (Query Options, mục ANSI): mỗi câu sửa sẽ tự mở transaction và chỉ được lưu khi bạn chạy `COMMIT`.
 
 ## Hay nhầm ở đâu
@@ -109,7 +111,7 @@ Thêm vài thói quen nữa:
 <Apply>
 
 - Trước khi nhận quyền sửa dữ liệu thật, hỏi rõ: database có sao lưu tự động không, giữ được bao lâu, ai là người khôi phục, liên lạc thế nào ngoài giờ làm việc.
-- Đưa trình tự "`SELECT` trước, `BEGIN TRAN`, xem số dòng, rồi mới `COMMIT`" vào checklist chung của nhóm (bài 6.7).
+- Đưa trình tự "`SELECT` trước, `BEGIN TRAN`, xem số dòng, rồi mới `COMMIT`" vào checklist chung của nhóm ([bài 6.7](/microsoft-sql-lession/bai/6-7-checklist-production/)).
 
 </Apply>
 

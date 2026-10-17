@@ -5,7 +5,7 @@ import { EVENTS, emit } from '../../lib/events';
 import { useProgress } from './use-progress';
 
 const PROBLEM_TEXT = {
-  unavailable: 'Trình duyệt đang chặn lưu dữ liệu nên tiến độ sẽ mất khi đóng trang. Hãy xuất tiến độ ra file trước khi đóng.',
+  unavailable: 'Trình duyệt đang chặn lưu dữ liệu, nên tiến độ không được giữ lại khi chuyển trang hay đóng trang. Hãy dùng trình duyệt khác hoặc tắt chế độ ẩn danh.',
   corrupt: 'Không đọc được tiến độ đã lưu. Bản cũ vẫn được giữ lại trong trình duyệt; nếu có file đã xuất, hãy nhập lại.',
 };
 

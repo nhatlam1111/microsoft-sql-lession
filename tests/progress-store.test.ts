@@ -47,3 +47,21 @@ it('reset empties progress; the server snapshot is empty and stable', () => {
   expect(S.getServerSnapshot()).toBe(S.getServerSnapshot());
   expect(S.getServerSnapshot().state).toEqual(emptyState());
 });
+it('remembers the last lesson as it was when the page opened', () => {
+  st.setItem(STORAGE_KEY, serializeProgress({ ...markSeen(emptyState(), '3.5', 1000), lastActiveAt: 1000 }));
+  S.initProgressStore(ALL_NUMS, st, 5000);
+  S.actions.markSeen('4.2');
+  expect([S.getSnapshot().previousLastLessonNum, S.getSnapshot().state.lastLessonNum]).toEqual(['3.5', '4.2']);
+});
+it('re-reads storage when a page comes back from the back/forward cache', () => {
+  S.initProgressStore(ALL_NUMS, st, 5000);
+  st.setItem(STORAGE_KEY, serializeProgress(markSeen(emptyState(), '2.2', 7000)));
+  S.refreshFromStorage();
+  S.actions.markSeen('1.1');
+  expect([statusOf(S.getSnapshot().state, '2.2'), statusOf(S.getSnapshot().state, '1.1')]).toEqual(['seen', 'seen']);
+});
+it('flags storage as unavailable when the first save fails', () => {
+  const readOnly = { getItem: () => null, setItem: () => { throw new Error('quota'); } };
+  S.initProgressStore(ALL_NUMS, readOnly, 5000);
+  expect(S.getSnapshot().problem).toBe('unavailable');
+});

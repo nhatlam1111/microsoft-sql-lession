@@ -5,9 +5,16 @@ import {
 } from './progress';
 import { loadProgress, saveProgress, type LoadProblem, type StorageLike } from './progress-storage';
 
-export interface StoreSnapshot { state: ProgressState; previousActiveAt: number | null; problem: LoadProblem }
+export interface StoreSnapshot {
+  state: ProgressState;
+  /** When the learner was last here, captured before this page marked its visit. */
+  previousActiveAt: number | null;
+  /** The last lesson as it was when this page opened, before a lesson page marks itself seen. */
+  previousLastLessonNum: string | null;
+  problem: LoadProblem;
+}
 
-const SERVER_SNAPSHOT: StoreSnapshot = { state: emptyState(), previousActiveAt: null, problem: null };
+const SERVER_SNAPSHOT: StoreSnapshot = { state: emptyState(), previousActiveAt: null, previousLastLessonNum: null, problem: null };
 
 let initialized = false;
 let storage: StorageLike | null = null;
@@ -43,13 +50,31 @@ export function initProgressStore(nums: string[], store: StorageLike | null = sa
   knownNums = nums;
   const loaded = loadProgress(storage, knownNums);
   const state = touch(loaded.state, now);
-  if (loaded.problem !== 'unavailable') saveProgress(storage, state);
-  publish({ state, previousActiveAt: loaded.state.lastActiveAt, problem: loaded.problem });
+  const saved = loaded.problem !== 'unavailable' && saveProgress(storage, state);
+  publish({
+    state,
+    previousActiveAt: loaded.state.lastActiveAt,
+    previousLastLessonNum: loaded.state.lastLessonNum,
+    problem: loaded.problem ?? (saved ? null : 'unavailable'),
+  });
   if (typeof window !== 'undefined') {
     const onStorage = (e: StorageEvent) => { if (e.key === STORAGE_KEY) handleExternalChange(e.newValue); };
+    // A page restored from the back/forward cache holds old progress in memory; read the saved copy again.
+    const onPageShow = (e: PageTransitionEvent) => { if (e.persisted) refreshFromStorage(); };
     window.addEventListener('storage', onStorage);
-    removeStorageListener = () => window.removeEventListener('storage', onStorage);
+    window.addEventListener('pageshow', onPageShow);
+    removeStorageListener = () => {
+      window.removeEventListener('storage', onStorage);
+      window.removeEventListener('pageshow', onPageShow);
+    };
   }
+}
+
+/** Replace the in-memory progress with what is saved, e.g. after another page changed it. */
+export function refreshFromStorage(): void {
+  let raw: string | null = null;
+  try { raw = storage?.getItem(STORAGE_KEY) ?? null; } catch { return; }
+  if (raw !== null) handleExternalChange(raw);
 }
 
 export function getSnapshot(): StoreSnapshot {
@@ -81,14 +106,14 @@ export const actions = {
   toggleFlag(num: string): void { commit(toggleFlag(snapshot.state, num, Date.now())); },
   importText(text: string): ImportResult {
     const result = parseProgress(text, knownNums);
-    if (result.ok) commit(result.state);
+    if (result.ok) commit(result.state, { previousLastLessonNum: result.state.lastLessonNum });
     return result;
   },
   exportText(): string { return serializeProgress(snapshot.state); },
-  reset(): void { commit(touch(emptyState(), Date.now())); },
+  reset(): void { commit(touch(emptyState(), Date.now()), { previousLastLessonNum: null }); },
   loadDemo(): void {
     const state = demoState(Date.now());
-    commit(state, { previousActiveAt: state.lastActiveAt });
+    commit(state, { previousActiveAt: state.lastActiveAt, previousLastLessonNum: state.lastLessonNum });
   },
 };
 
