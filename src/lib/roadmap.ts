@@ -20,6 +20,12 @@ export function resumeTarget(s: ProgressState, catalog: CatalogEntry[]): Catalog
   return sorted.slice(i + 1).find(notDone) ?? sorted.find(notDone) ?? null;
 }
 
+/** The level the course menu opens on: the lesson being read, else the lesson to continue, else level 1. */
+export function menuOpenLevel(s: ProgressState, catalog: CatalogEntry[], currentNum?: string): LevelNo {
+  const entry = currentNum ? catalog.find(e => e.num === currentNum) : resumeTarget(s, catalog);
+  return (entry?.level ?? 1) as LevelNo;
+}
+
 export interface LevelSummary {
   level: LevelNo;
   done: number;

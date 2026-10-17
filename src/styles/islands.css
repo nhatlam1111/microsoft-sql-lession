@@ -105,9 +105,14 @@
 .mm-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; padding: 10px 20px; background: var(--surface); border-bottom: 1px solid var(--rule); font-size: 13px; color: var(--ink-2); }
 .mm-tool { padding: 5px 11px; border: 1px solid var(--rule); border-radius: var(--radius-s); background: #FFF; font-size: 13px; font-weight: 600; cursor: pointer; }
 .mm-tool:hover { border-color: var(--rule-strong); }
+.mm-tool[aria-expanded='true'] { background: #EBE8E0; border-color: var(--rule-strong); color: var(--ink); }
+.mm-menu-btn { display: inline-flex; align-items: center; gap: 7px; }
 .mm-spacer { flex: 1; }
 .mm-legend { display: inline-flex; align-items: center; gap: 6px; }
-.mm-canvas { flex: 1; min-height: 0; background-color: var(--paper); background-image: radial-gradient(#D9D5CC 1px, transparent 1px); background-size: 18px 18px; }
+.mm-body { flex: 1; min-height: 0; display: flex; }
+.mm-menu { width: 272px; flex: none; overflow-y: auto; background: var(--surface); border-right: 1px solid var(--rule); }
+.mm-menu .side { padding: 16px 12px 40px; }
+.mm-canvas { flex: 1; min-width: 0; min-height: 0; background-color: var(--paper); background-image: radial-gradient(#D9D5CC 1px, transparent 1px); background-size: 18px 18px; }
 .mm-canvas .react-flow { --xy-background-color: transparent; }
 .mm-canvas .react-flow__handle { opacity: 0; pointer-events: none; width: 4px; height: 4px; min-width: 0; min-height: 0; border: 0; }
 .mm-canvas .react-flow__edge-path { stroke: #CFC9BE; stroke-width: 1.5; }
@@ -143,6 +148,7 @@
 }
 .mm-lesson:hover { border-color: var(--rule-strong); }
 .mm-lesson.is-next { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 600; box-shadow: 0 0 0 3px rgba(31, 79, 209, 0.12); }
+.mm-lesson.is-selected { outline: 2px solid var(--ink); outline-offset: 2px; }
 .mm-num { width: 26px; flex: none; font-size: 11px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
 .mm-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
@@ -154,6 +160,48 @@
 .lv5 { color: var(--lv5); background: var(--lv5-soft); }
 .lv6 { color: var(--lv6); background: var(--lv6-soft); }
 .mm-legend .lvb + .lvb { margin-left: -2px; }
+
+/* Lesson drawer: a preview of the lesson's opening, docked on the right of the map */
+.ld {
+  width: 360px; flex: none; min-height: 0; display: flex; flex-direction: column;
+  background: var(--surface); border-left: 1px solid var(--rule); border-top: 4px solid var(--lv);
+  animation: ld-in 160ms ease-out;
+}
+.ld:focus { outline: none; }
+@keyframes ld-in { from { opacity: 0; transform: translateX(12px); } to { opacity: 1; transform: none; } }
+.ld-head { display: flex; align-items: center; gap: 8px; padding: 14px 12px 0 22px; }
+.ld-head .lesson-crumbs { flex: 1; min-width: 0; }
+.ld-close {
+  flex: none; width: 32px; height: 32px; display: grid; place-items: center;
+  border: 0; border-radius: var(--radius-s); background: none; color: var(--ink-2); font-size: 22px; line-height: 1; cursor: pointer;
+}
+.ld-close:hover { background: #F3F1EB; color: var(--ink); }
+.ld-body { flex: 1; min-height: 0; overflow-y: auto; padding: 2px 22px 24px; }
+.ld-title { margin: 12px 0 0; font-size: 22px; line-height: 1.25; letter-spacing: -0.015em; font-weight: 700; text-wrap: balance; }
+.ld-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin: 10px 0 0; font-size: 13.5px; color: var(--ink-2); }
+.ld-status { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; color: var(--ink); }
+.ld-summary { margin: 18px 0 0; font-family: var(--font-read); font-size: 16.5px; line-height: 1.65; }
+.ld .lesson-goal { margin-top: 18px; font-size: 14px; line-height: 1.5; }
+.ld-excel { display: flex; align-items: flex-start; gap: 10px; margin: 18px 0 0; font-size: 14px; line-height: 1.45; color: var(--ink-2); }
+.ld-excel strong { color: var(--ink); font-weight: 600; }
+.ld-excel-mark {
+  flex: none; width: 20px; height: 20px; margin-top: 1px; display: grid; place-items: center;
+  border-radius: 4px; background: var(--excel); color: #FFF; font-size: 11.5px; font-weight: 700;
+}
+.ld-sub { margin: 24px 0 6px; font-size: 13px; font-weight: 600; color: var(--ink-3); }
+.ld-pre { list-style: none; margin: 0 -8px; padding: 0; }
+.ld-pre button {
+  width: 100%; display: flex; align-items: center; gap: 8px; padding: 6px 8px;
+  border: 0; border-radius: var(--radius-s); background: none; font: inherit; font-size: 14px; color: var(--ink); text-align: left; cursor: pointer;
+}
+.ld-pre button:hover { background: #F5F3EE; }
+.ld-pre-num { width: 28px; flex: none; font-size: 12.5px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.ld-foot { padding: 14px 22px 18px; border-top: 1px solid var(--rule); }
+.ld-go {
+  display: block; padding: 11px 16px; border-radius: var(--radius-m);
+  background: var(--accent); color: #FFF; text-align: center; text-decoration: none; font-weight: 650; font-size: 15px;
+}
+.ld-go:hover { background: #1A43B5; }
 
 /* ---------- Search dialog ---------- */
 .sd-backdrop { position: fixed; inset: 0; z-index: 60; display: grid; justify-items: center; align-items: start; padding: 88px 24px 24px; background: rgba(24, 28, 34, 0.45); }

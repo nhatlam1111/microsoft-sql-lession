@@ -33,3 +33,7 @@ it('formats the last visit in Vietnamese', () => {
   expect(R.formatLastVisit(new Date(2026, 9, 16, 23, 30).getTime(), NOW)).toBe('Hôm qua (thứ Sáu, 16/10)');
   expect(R.formatLastVisit(new Date(2026, 9, 17, 7, 0).getTime(), NOW)).toBe('Hôm nay');
 });
+it('opens the course menu on the level of the lesson being read, else of the lesson to continue', () => {
+  const started = markSeen(emptyState(), '3.2', NOW);
+  expect([R.menuOpenLevel(started, CAT, '1.4'), R.menuOpenLevel(started, CAT), R.menuOpenLevel(doneAll(ALL_NUMS), CAT)]).toEqual([1, 3, 1]);
+});

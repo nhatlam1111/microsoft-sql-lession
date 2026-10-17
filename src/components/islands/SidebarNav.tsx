@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import type { CatalogEntry } from '../../lib/catalog';
-import type { LevelDef, LevelNo } from '../../data/curriculum';
+import type { LevelDef } from '../../data/curriculum';
 import { iconOf } from '../../lib/progress';
-import { levelSummaries } from '../../lib/roadmap';
+import { levelSummaries, menuOpenLevel } from '../../lib/roadmap';
 import { lessonUrl } from '../../lib/paths';
 import { useProgress } from './use-progress';
 import StatusIcon from './StatusIcon';
@@ -10,12 +10,13 @@ import StatusIcon from './StatusIcon';
 interface Props {
   catalog: CatalogEntry[];
   levels: LevelDef[];
-  currentNum: string;
+  /** The lesson on screen; the mindmap's menu has none. */
+  currentNum?: string;
 }
 
 export default function SidebarNav({ catalog, levels, currentNum }: Props) {
   const { state } = useProgress(catalog.map(e => e.num));
-  const currentLevel = (catalog.find(e => e.num === currentNum)?.level ?? 1) as LevelNo;
+  const currentLevel = menuOpenLevel(state, catalog, currentNum);
   const [open, setOpen] = useState<Set<number>>(() => new Set([currentLevel]));
   const summaries = levelSummaries(state, catalog, currentLevel);
 
