@@ -1,5 +1,5 @@
 import { it, expect } from 'vitest';
-import { layoutMindmap, SIZES } from '../src/lib/mindmap-layout';
+import { layoutMindmap, flowNodeBase, SIZES } from '../src/lib/mindmap-layout';
 import { AREAS, type AreaId } from '../src/data/curriculum';
 import { fakeCatalog } from './helpers/expected';
 
@@ -43,4 +43,10 @@ it('keeps each side vertically centred on the root', () => {
     const ns = nodes.filter(n => n.side === side);
     expect(Math.min(...ns.map(n => n.y)) + Math.max(...ns.map(n => n.y + n.height))).toBeCloseTo(0, 5);
   }
+});
+it('lets area and lesson nodes take clicks, which React Flow turns off for nodes it cannot select or drag', () => {
+  const { nodes } = layoutMindmap(AREAS, CAT, new Set<AreaId>(['A1']));
+  const style = (kind: string) => flowNodeBase(nodes.find(n => n.kind === kind)!).style;
+  expect([style('area'), style('lesson')].map(s => 'pointerEvents' in s && s.pointerEvents)).toEqual(['all', 'all']);
+  expect('pointerEvents' in style('root')).toBe(false);
 });

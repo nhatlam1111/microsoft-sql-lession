@@ -9,3 +9,9 @@ export function withBase(path: string, base: string = import.meta.env.BASE_URL):
 export function lessonUrl(slug: string, base?: string): string {
   return withBase(`bai/${slug}/`, base);
 }
+
+/** True when `pathname` is the site page at `path`, ignoring a trailing slash. */
+export function isCurrentPage(pathname: string, path: string, base?: string): boolean {
+  const trim = (p: string) => p.replace(/\/+$/, '');
+  return trim(pathname) === trim(withBase(path, base));
+}

@@ -9,7 +9,7 @@ import type { AreaDef, AreaId, LevelDef } from '../../data/curriculum';
 import { getSnapshot, initProgressStore } from '../../lib/progress-store';
 import { countDone, iconOf, isFlagged, type ProgressState } from '../../lib/progress';
 import { resumeTarget } from '../../lib/roadmap';
-import { layoutMindmap } from '../../lib/mindmap-layout';
+import { flowNodeBase, layoutMindmap } from '../../lib/mindmap-layout';
 import { lessonUrl } from '../../lib/paths';
 import { useProgress } from './use-progress';
 import StatusIcon, { ICON_LABEL } from './StatusIcon';
@@ -88,7 +88,7 @@ function MindMapCanvas({ catalog, areas, levels }: Props) {
   const { nodes, edges } = useMemo(() => {
     const layout = layoutMindmap(areas, catalog, expanded);
     const nodes: Node[] = layout.nodes.map(n => {
-      const base = { id: n.id, position: { x: n.x, y: n.y }, width: n.width, height: n.height, style: { width: n.width, height: n.height }, draggable: false, selectable: false };
+      const base = flowNodeBase(n);
       if (n.kind === 'root') return { ...base, type: 'root', data: { label: 'SQL Server' } };
       if (n.kind === 'area') {
         const area = areas.find(a => a.id === n.areaId)!;

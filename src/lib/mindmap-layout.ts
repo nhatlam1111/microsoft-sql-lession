@@ -68,3 +68,16 @@ export function layoutMindmap(areas: AreaDef[], catalog: CatalogEntry[], expande
   }
   return { nodes, edges };
 }
+
+/**
+ * The React Flow fields every node shares. React Flow sets `pointer-events: none` on a node it can
+ * neither select nor drag, so area and lesson nodes (a button and a link) switch it back on.
+ */
+export function flowNodeBase(n: MapNode) {
+  const size = { width: n.width, height: n.height };
+  return {
+    id: n.id, position: { x: n.x, y: n.y }, ...size,
+    style: n.kind === 'root' ? size : { ...size, pointerEvents: 'all' as const },
+    draggable: false, selectable: false,
+  };
+}

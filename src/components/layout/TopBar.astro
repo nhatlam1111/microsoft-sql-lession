@@ -1,6 +1,6 @@
 ---
 import type { CatalogEntry } from '../../lib/catalog';
-import { withBase } from '../../lib/paths';
+import { isCurrentPage, withBase } from '../../lib/paths';
 import TopProgress from '../islands/TopProgress';
 import ProgressMenu from '../islands/ProgressMenu';
 
@@ -9,6 +9,7 @@ interface Props {
 }
 const { catalog } = Astro.props;
 const nums = catalog.map(e => e.num);
+const current = (path: string) => (isCurrentPage(Astro.url.pathname, path) ? 'page' : undefined);
 ---
 <header class="topbar">
   <a class="brand" href={withBase('/')}>
@@ -23,8 +24,8 @@ const nums = catalog.map(e => e.num);
   </button>
   <nav class="top-nav" aria-label="Điều hướng chính">
     <button type="button" class="top-btn top-btn-roadmap" data-action="roadmap">Lộ trình</button>
-    <a class="top-btn" href={withBase('/')}>Mindmap</a>
-    <a class="top-btn" href={withBase('/gioi-thieu/')}>Giới thiệu</a>
+    <a class="top-btn" href={withBase('/')} aria-current={current('/')}>Mindmap</a>
+    <a class="top-btn" href={withBase('/gioi-thieu/')} aria-current={current('/gioi-thieu/')}>Giới thiệu</a>
   </nav>
   <TopProgress client:load nums={nums} />
   <ProgressMenu client:load nums={nums} />

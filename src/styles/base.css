@@ -41,6 +41,7 @@ button { font: inherit; color: inherit; }
   font-size: 14px; font-weight: 600; text-decoration: none; color: var(--ink-2); cursor: pointer;
 }
 .top-btn:hover { background: #F3F1EB; color: var(--ink); }
+.top-btn[aria-current='page'] { background: #EBE8E0; border-color: var(--rule-strong); color: var(--ink); }
 .top-btn-roadmap { background: var(--accent-soft); color: var(--accent); }
 .top-btn-roadmap:hover { background: #DCE5FF; color: var(--accent); }
 .top-progress { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink-2); font-variant-numeric: tabular-nums; min-width: 128px; }
