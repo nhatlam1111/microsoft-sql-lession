@@ -46,6 +46,11 @@ describe('lesson files', () => {
     const h2 = [...page.matchAll(/<h2[^>]*>([^<]+)<\/h2>/g)].map(m => m[1].trim());
     expect(h2).toEqual(['Khóa học này dạy gì', 'Cách dùng trang', '6 level', 'Database mẫu HRM_Demo', 'Tiến độ của bạn được lưu ở đâu']);
   });
+  it('lesson SQL does not start lines with spaces, which MDX strips', () => {
+    for (const f of files) for (const m of f.body.matchAll(/<Sql[^>]*code=\{`([\s\S]*?)`\}/g)) {
+      expect(m[1].split(/\r?\n/).filter(l => /^\s+\S/.test(l)), f.slug).toEqual([]);
+    }
+  });
   it('summary lessons have no SQL, result or message blocks', () => {
     for (const f of files) {
       if ((f.data as { kind: string }).kind === 'summary') expect(/<(Sql|Result|Messages)\b/.test(f.body), f.slug).toBe(false);

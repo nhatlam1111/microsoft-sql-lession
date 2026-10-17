@@ -64,7 +64,7 @@ Database giải quyết chuyện này bằng hai cách: giữ **một bản duy 
 Muốn xem 5 nhân viên đầu tiên, với Excel bạn mở sheet rồi cuộn lên đầu. Với database, bạn gõ một câu lệnh:
 
 <Sql code={`SELECT TOP (5) MaNV, HoTen, MaPB
-FROM   NhanVien
+FROM NhanVien
 ORDER BY MaNV;`} />
 
 <Result columns={['MaNV', 'HoTen', 'MaPB']} rows={[

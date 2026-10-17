@@ -146,3 +146,5 @@
 .prose table:not([class]) { width: 100%; border-collapse: collapse; font-family: var(--font-ui); font-size: 14.5px; line-height: 1.5; background: var(--surface); border: 1px solid var(--rule); }
 .prose table:not([class]) th, .prose table:not([class]) td { padding: 8px 12px; border-top: 1px solid var(--rule); text-align: left; vertical-align: top; }
 .prose table:not([class]) thead th { border-top: 0; background: #FBFAF7; font-size: 13px; font-weight: 650; }
+/* The editor and result blocks sit inside .prose; keep the inline-code look off them. */
+.prose .sql-code code, .prose .res code { background: none; padding: 0; border-radius: 0; font-size: inherit; }

@@ -16,28 +16,106 @@ summary: LEFT JOIN … IS NULL để tìm dòng không khớp, và vì sao đi�
 
 ## Tình huống
 
-{/* TODO-CONTENT */}
+Một yêu cầu hay gặp từ phòng nhân sự:
+
+<Chat who="Chị Hạnh · Phòng Nhân sự" time="16:05" initial="H">
+Em ơi, thứ Hai chị phải báo cáo sếp. Mấy bạn mới vào tháng này chị không chắc đã có hợp đồng trên hệ thống chưa. Em lọc giúp chị danh sách nhé.
+</Chat>
+
+Nói gọn lại, chị Hạnh đang hỏi:
+
+<Key>Nhân viên nào có trong bảng NhanVien, nhưng không có dòng nào trong bảng HopDong?</Key>
 
 ## Với Excel
 
-{/* TODO-CONTENT */}
+Với Excel, cách quen thuộc là xuất hai danh sách ra hai sheet, rồi ở sheet nhân viên thêm một cột VLOOKUP mã NV sang sheet hợp đồng. Dòng nào ra `#N/A` là người chưa có hợp đồng.
+
+<Excel sheets="NhanVien · HopDong" cell="D5" formula="=VLOOKUP(A5,HopDong!A:B,2,FALSE)" selected="D5" rows={[
+  ['Mã NV', 'Họ tên', 'Phòng ban', 'Mã HĐ (dò)'],
+  ['NV001', 'Trần Thị Mai', 'Kế toán', 'HD2024-018'],
+  ['NV002', 'Lê Văn Hùng', 'Kinh doanh', 'HD2024-021'],
+  ['NV003', 'Nguyễn Thu Hà', 'Kinh doanh', 'HD2023-104'],
+  ['NV047', 'Phạm Ngọc Ánh', 'Nhân sự', '#N/A'],
+  ['NV048', 'Đỗ Minh Quân', 'IT', '#N/A'],
+]} />
+
+Cách này ra đúng kết quả. Có điều tuần sau chị Hạnh hỏi lại thì bạn lại phải xuất file, dán công thức, lọc lại từ đầu.
 
 ## Làm bằng SQL
 
-{/* TODO-CONTENT */}
+### Bước 1: kết hai bảng, chưa lọc gì
+
+Viết câu lệnh theo từng bước và chạy thử từng bước. Đây là thói quen nên tập ngay từ đầu. Để dễ nhìn, bước này chỉ lấy đúng 5 người như trong file Excel ở trên.
+
+<Sql code={`SELECT nv.MaNV, nv.HoTen, hd.MaHD
+FROM NhanVien AS nv
+LEFT JOIN HopDong AS hd ON hd.MaNV = nv.MaNV
+WHERE nv.MaNV IN ('NV001', 'NV002', 'NV003', 'NV047', 'NV048')
+ORDER BY nv.MaNV;`} />
+
+<Result columns={['MaNV', 'HoTen', 'MaHD']} rows={[
+  ['NV001', 'Trần Thị Mai', 'HD2024-018'],
+  ['NV002', 'Lê Văn Hùng', 'HD2024-021'],
+  ['NV003', 'Nguyễn Thu Hà', 'HD2023-104'],
+  ['NV047', 'Phạm Ngọc Ánh', null],
+  ['NV048', 'Đỗ Minh Quân', null],
+]} />
+
+Ô `NULL` nền vàng chính là ô `#N/A` bên Excel: dò không ra thì để trống.
+
+### Bước 2: chỉ giữ những dòng NULL
+
+Bỏ điều kiện lọc 5 người, thay bằng điều kiện "dò không ra":
+
+<Sql code={`SELECT nv.MaNV, nv.HoTen, nv.MaPB, nv.NgayVaoLam
+FROM NhanVien AS nv
+LEFT JOIN HopDong AS hd ON hd.MaNV = nv.MaNV
+WHERE hd.MaHD IS NULL   -- dò không ra hợp đồng nào
+ORDER BY nv.MaNV;`} />
+
+Đọc từng dòng, đối chiếu với cách làm Excel:
+
+<LineMap rows={[
+  ['FROM NhanVien AS nv', 'Sheet nhân viên là bảng gốc, ai cũng được giữ lại. nv là tên gọi tắt cho đỡ gõ.'],
+  ['LEFT JOIN HopDong AS hd', 'Thêm cột dò sang sheet hợp đồng. LEFT nghĩa là giữ nguyên bảng bên trái, dò không ra cũng không bỏ dòng nào.'],
+  ['ON hd.MaNV = nv.MaNV', 'Dò theo mã NV, giống tham số đầu tiên của VLOOKUP.'],
+  ['WHERE hd.MaHD IS NULL', 'Chỉ giữ những dòng dò không ra, tức là các dòng #N/A.'],
+]} />
+
+<Result columns={['MaNV', 'HoTen', 'MaPB', 'NgayVaoLam']} rows={[
+  ['NV047', 'Phạm Ngọc Ánh', 'NS', '2026-10-01'],
+  ['NV048', 'Đỗ Minh Quân', 'IT', '2026-10-05'],
+]} />
+
+Hai người, khớp với file Excel. Lần sau chị Hạnh hỏi, bạn mở lại câu lệnh và bấm F5.
 
 ## Hay nhầm ở đâu
 
-{/* TODO-CONTENT */}
+<Mistakes>
+
+1. **Viết `= NULL` thay vì `IS NULL`.** So sánh bằng với `NULL` không bao giờ đúng. Câu lệnh trả về 0 dòng, và bạn tưởng ai cũng có hợp đồng rồi.
+2. **Lọc bảng bên phải ở `WHERE`.** Chị Hạnh hỏi thêm: "người chưa có hợp đồng *còn hiệu lực*". Nếu thêm `hd.NgayKetThuc >= GETDATE()` vào `WHERE`, các dòng `NULL` bị loại hết, và `LEFT JOIN` thành `INNER JOIN` lúc nào không hay. Điều kiện của `HopDong` phải đặt trong `ON`.
+3. **Một người hiện nhiều dòng.** Khi bỏ `WHERE` để xem tất cả, ai có nhiều hợp đồng sẽ hiện nhiều lần: NV021 có hợp đồng thử việc, hợp đồng xác định thời hạn rồi không xác định thời hạn, nên hiện ba dòng. Cả bảng có 48 nhân viên nhưng kết quả ra 57 dòng. Bài 3.6 sẽ xử lý chuyện này.
+
+</Mistakes>
 
 ## Ứng dụng
 
-{/* TODO-CONTENT */}
+<Apply>
+
+- Kiểm tra dữ liệu sau khi import: ai chưa có phòng ban, chưa có hợp đồng, chưa khai tài khoản ngân hàng. Cùng một khuôn `LEFT JOIN … IS NULL`.
+- Viết yêu cầu báo cáo cho rõ. Thay vì "báo cáo nhân viên chưa có HĐ", hãy ghi: nhân viên đang làm việc, không có hợp đồng nào còn hiệu lực tại ngày chạy báo cáo; hợp đồng không xác định thời hạn (`NgayKetThuc` trống) tính là còn hiệu lực. Người làm báo cáo đọc là làm được, khỏi hỏi lại.
+
+</Apply>
 
 ## Ghi nhớ
 
-{/* TODO-CONTENT */}
+<Memo rows={[
+  ['VLOOKUP dò theo mã', 'LEFT JOIN … ON'],
+  ['Ô ra #N/A', 'NULL'],
+  ['Lọc các dòng #N/A', 'WHERE … IS NULL'],
+]} />
 
 ## Bài tập
 
-{/* TODO-CONTENT */}
+<Exercises />
