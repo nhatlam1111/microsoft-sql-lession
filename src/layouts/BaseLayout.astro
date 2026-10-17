@@ -11,8 +11,11 @@ import '@fontsource/jetbrains-mono/500.css';
 import '../styles/tokens.css';
 import '../styles/base.css';
 import '../styles/lesson.css';
+import '../styles/islands.css';
 import TopBar from '../components/layout/TopBar.astro';
 import NarrowNotice from '../components/layout/NarrowNotice.astro';
+import RoadmapPopup from '../components/islands/RoadmapPopup';
+import { LEVELS } from '../data/curriculum';
 import { loadCatalog } from '../lib/load-catalog';
 
 interface Props {
@@ -34,5 +37,6 @@ const pageTitle = title === 'SQL Server' ? title : `${title} · SQL Server`;
     <TopBar catalog={catalog} />
     <NarrowNotice />
     <slot />
+    <RoadmapPopup client:only="react" catalog={catalog} levels={LEVELS} />
   </body>
 </html>
