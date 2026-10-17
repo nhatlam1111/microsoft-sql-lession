@@ -15,16 +15,19 @@ summary: SUM() OVER, LAG và biến động quỹ lương theo tháng.
 
 ## Nội dung chính
 
-{/* TODO-CONTENT */}
+- `SUM(ThucLinh) OVER (ORDER BY KyLuong)` cộng dồn quỹ lương qua từng kỳ.
+- `LAG(TongQuy) OVER (ORDER BY KyLuong)` lấy giá trị của kỳ trước để tính chênh lệch.
+- Thêm `PARTITION BY` để tính riêng cho từng phòng ban hoặc từng người.
+- Kỳ đầu tiên không có kỳ trước nên `LAG` trả về `NULL`.
 
 ## Liên hệ Excel
 
-{/* TODO-CONTENT */}
+Giống công thức cộng dồn =SUM($B$2:B2) kéo xuống, và công thức so với dòng ngay trên như =B3-B2.
 
 ## Tình huống ví dụ
 
-{/* TODO-CONTENT */}
+Ban giám đốc muốn xem quỹ lương tháng 9 tăng hay giảm bao nhiêu so với tháng 8.
 
 ## Bài tập
 
-{/* TODO-CONTENT */}
+<Exercises />

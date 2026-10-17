@@ -15,16 +15,19 @@ summary: Kết 3–4 bảng và xử lý dòng bị nhân lên khi quan hệ là
 
 ## Nội dung chính
 
-{/* TODO-CONTENT */}
+- Kết lần lượt: `NhanVien` với `HopDong`, rồi với `BangLuong`; mỗi lần là một `JOIN` với điều kiện `ON` riêng.
+- Quan hệ một-nhiều làm dòng nhân lên: người có ba hợp đồng hiện ba lần, cộng lương theo kết quả đó sẽ ra số sai.
+- Cách xử lý: chọn đúng một hợp đồng cho mỗi người (hợp đồng còn hiệu lực, hoặc mới nhất ở bài 4.2) rồi mới kết.
+- Đếm số dòng trước và sau mỗi lần kết để phát hiện dòng bị nhân lên.
 
 ## Liên hệ Excel
 
-{/* TODO-CONTENT */}
+Giống VLOOKUP qua nhiều sheet liên tiếp. Có một khác biệt dễ gây sai số: VLOOKUP chỉ lấy dòng khớp đầu tiên, còn SQL lấy hết mọi dòng khớp.
 
 ## Tình huống ví dụ
 
-{/* TODO-CONTENT */}
+Báo cáo lương tháng 9 cần kèm loại hợp đồng của từng người.
 
 ## Bài tập
 
-{/* TODO-CONTENT */}
+<Exercises />

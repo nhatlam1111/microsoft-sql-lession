@@ -15,16 +15,19 @@ summary: PIVOT và cách viết tương đương bằng SUM(CASE …).
 
 ## Nội dung chính
 
-{/* TODO-CONTENT */}
+- `PIVOT` biến các giá trị của một cột thành nhiều cột, ví dụ mỗi kỳ lương một cột.
+- Danh sách cột phải ghi rõ trong câu lệnh, như `[2026-08], [2026-09]`.
+- Cách viết bằng `SUM(CASE WHEN KyLuong = '2026-08' THEN ThucLinh END)` dễ đọc hơn và linh hoạt hơn.
+- Báo cáo dạng ma trận, phòng ban theo hàng, kỳ lương theo cột, là chỗ dùng điển hình.
 
 ## Liên hệ Excel
 
-{/* TODO-CONTENT */}
+Giống PivotTable kéo Kỳ lương vào Columns. Khác ở chỗ PivotTable tự thêm cột khi có kỳ mới, còn câu lệnh SQL phải ghi thêm cột.
 
 ## Tình huống ví dụ
 
-{/* TODO-CONTENT */}
+Cần báo cáo quỹ lương mỗi phòng theo từng tháng, các tháng nằm ngang như bảng Excel quen thuộc.
 
 ## Bài tập
 
-{/* TODO-CONTENT */}
+<Exercises />

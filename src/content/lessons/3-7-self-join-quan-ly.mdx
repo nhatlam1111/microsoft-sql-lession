@@ -15,16 +15,19 @@ summary: Kết bảng NhanVien với chính nó qua cột MaQuanLy.
 
 ## Nội dung chính
 
-{/* TODO-CONTENT */}
+- Bảng `NhanVien` có cột `MaQuanLy` trỏ về chính bảng `NhanVien`.
+- Kết bảng với chính nó bằng hai bí danh khác nhau: `nv` cho nhân viên, `ql` cho người quản lý.
+- Dùng `LEFT JOIN` để giữ cả giám đốc, người không có quản lý trực tiếp.
+- Đếm số người mỗi quản lý phụ trách bằng cách gom nhóm theo `ql.MaNV`.
 
 ## Liên hệ Excel
 
-{/* TODO-CONTENT */}
+Giống VLOOKUP mã quản lý vào chính sheet nhân viên để lấy tên người quản lý.
 
 ## Tình huống ví dụ
 
-{/* TODO-CONTENT */}
+Cần danh sách nhân viên kèm tên quản lý trực tiếp để gửi phiếu đánh giá cuối năm.
 
 ## Bài tập
 
-{/* TODO-CONTENT */}
+<Exercises />

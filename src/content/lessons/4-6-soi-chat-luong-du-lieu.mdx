@@ -16,16 +16,19 @@ summary: Tìm số CCCD trùng, nhân viên thiếu email, hợp đồng có ng�
 
 ## Nội dung chính
 
-{/* TODO-CONTENT */}
+- Tìm mã trùng: `GROUP BY SoCCCD HAVING COUNT(*) > 1`.
+- Tìm thông tin bắt buộc bị thiếu: `WHERE Email IS NULL`.
+- Tìm dữ liệu vô lý: hợp đồng có `NgayKetThuc < NgayBatDau`, ngày sinh nằm trong tương lai, lương âm.
+- HRM_Demo có sẵn vài lỗi cài cố ý để tập: hai người trùng số CCCD, hai người thiếu email, một hợp đồng có ngày kết thúc trước ngày bắt đầu.
 
 ## Liên hệ Excel
 
-{/* TODO-CONTENT */}
+Giống Conditional Formatting tô màu giá trị trùng, hoặc Data Validation với Circle Invalid Data. Khác ở chỗ câu lệnh soát cả bảng mỗi lần chạy và lưu lại được để chạy định kỳ.
 
 ## Tình huống ví dụ
 
-{/* TODO-CONTENT */}
+Trước khi chốt báo cáo nhân sự quý, cần biết dữ liệu có chỗ nào trùng, thiếu hay sai.
 
 ## Bài tập
 
-{/* TODO-CONTENT */}
+<Exercises />

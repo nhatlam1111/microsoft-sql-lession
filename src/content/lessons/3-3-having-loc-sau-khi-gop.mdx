@@ -15,16 +15,19 @@ summary: Tìm phòng ban trên 10 người và phân biệt WHERE với HAVING.
 
 ## Nội dung chính
 
-{/* TODO-CONTENT */}
+- `WHERE` lọc từng dòng trước khi gom nhóm; `HAVING` lọc từng nhóm sau khi đã tính tổng hợp.
+- `HAVING COUNT(*) > 10` chỉ giữ những phòng ban có trên 10 người.
+- Dùng được cả hai trong một câu: `WHERE TrangThai = N'Đang làm'` rồi `HAVING COUNT(*) > 10`.
+- Điều kiện nào không dùng hàm tổng hợp thì nên đặt ở `WHERE` cho dễ đọc và chạy nhanh hơn.
 
 ## Liên hệ Excel
 
-{/* TODO-CONTENT */}
+Giống Value Filters trên PivotTable: lọc theo con số đã tổng hợp chứ không lọc dữ liệu gốc.
 
 ## Tình huống ví dụ
 
-{/* TODO-CONTENT */}
+Ban giám đốc muốn biết phòng nào đang có trên 10 nhân viên.
 
 ## Bài tập
 
-{/* TODO-CONTENT */}
+<Exercises />

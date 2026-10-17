@@ -16,16 +16,19 @@ summary: Lấy tên phòng ban cho danh sách nhân viên và đặt bí danh ch
 
 ## Nội dung chính
 
-{/* TODO-CONTENT */}
+- `INNER JOIN PhongBan AS pb ON pb.MaPB = nv.MaPB` lấy tên phòng ban cho từng nhân viên.
+- `INNER JOIN` chỉ giữ những dòng khớp ở cả hai bảng; dòng không khớp bị bỏ khỏi kết quả.
+- Đặt bí danh ngắn cho bảng (`nv`, `pb`) và ghi rõ cột thuộc bảng nào khi hai bảng có cột trùng tên.
+- Kết theo đúng cặp khóa chính, khóa ngoại trên sơ đồ ERD (bài 1.5).
 
 ## Liên hệ Excel
 
-{/* TODO-CONTENT */}
+Giống VLOOKUP hoặc XLOOKUP mã phòng ban sang sheet danh mục để lấy tên phòng. Khác ở chỗ dòng dò không ra không hiện #N/A mà bị bỏ hẳn; muốn giữ lại thì dùng `LEFT JOIN` ở bài 3.5.
 
 ## Tình huống ví dụ
 
-{/* TODO-CONTENT */}
+Danh sách nhân viên gửi ra ngoài cần tên phòng ban đầy đủ thay cho các mã KD, KT.
 
 ## Bài tập
 
-{/* TODO-CONTENT */}
+<Exercises />

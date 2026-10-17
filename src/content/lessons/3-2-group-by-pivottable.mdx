@@ -15,16 +15,19 @@ summary: Số người và quỹ lương theo từng phòng ban.
 
 ## Nội dung chính
 
-{/* TODO-CONTENT */}
+- `GROUP BY MaPB` gom các dòng cùng phòng ban thành một nhóm, rồi tính tổng hợp cho từng nhóm.
+- Cột nào đứng trong `SELECT` mà không nằm trong hàm tổng hợp thì phải có mặt trong `GROUP BY`.
+- Gom theo nhiều cột: `GROUP BY KyLuong, MaPB` cho quỹ lương của từng phòng trong từng kỳ.
+- Thêm `ORDER BY` để sắp các nhóm, ví dụ đưa phòng đông người nhất lên đầu.
 
 ## Liên hệ Excel
 
-{/* TODO-CONTENT */}
+Giống PivotTable: kéo Phòng ban vào Rows, kéo Thực lĩnh vào Values. Khác ở chỗ câu lệnh lưu lại được và chạy lại cho kỳ sau mà không phải kéo thả lại.
 
 ## Tình huống ví dụ
 
-{/* TODO-CONTENT */}
+Cần số nhân viên và tổng quỹ lương tháng 9 của từng phòng ban.
 
 ## Bài tập
 
-{/* TODO-CONTENT */}
+<Exercises />

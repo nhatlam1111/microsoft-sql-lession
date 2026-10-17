@@ -15,16 +15,19 @@ summary: IN (SELECT …), EXISTS và khi nào nên dùng thay cho JOIN.
 
 ## Nội dung chính
 
-{/* TODO-CONTENT */}
+- Subquery là một câu `SELECT` nằm bên trong câu khác, đặt trong ngoặc.
+- `WHERE MaNV IN (SELECT MaNV FROM DonNghiPhep …)` lọc theo một danh sách lấy từ bảng khác.
+- `EXISTS` kiểm tra có tồn tại dòng nào thỏa điều kiện hay không; `NOT EXISTS` là một cách khác để tìm người chưa có hợp đồng.
+- Khi chỉ cần lọc mà không cần lấy cột của bảng kia, subquery thường dễ đọc hơn `JOIN`.
 
 ## Liên hệ Excel
 
-{/* TODO-CONTENT */}
+Giống tạo một cột phụ hoặc một sheet trung gian chứa danh sách mã, rồi lọc sheet chính theo danh sách đó.
 
 ## Tình huống ví dụ
 
-{/* TODO-CONTENT */}
+Cần danh sách nhân viên đã có ít nhất một đơn nghỉ phép được duyệt.
 
 ## Bài tập
 
-{/* TODO-CONTENT */}
+<Exercises />

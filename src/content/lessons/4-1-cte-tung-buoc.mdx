@@ -15,16 +15,19 @@ summary: WITH để đặt tên cho từng bước trung gian.
 
 ## Nội dung chính
 
-{/* TODO-CONTENT */}
+- `WITH TenBuoc AS (SELECT …)` đặt tên cho một bước trung gian; câu `SELECT` phía sau dùng nó như một bảng.
+- Nhiều bước nối tiếp nhau, mỗi bước cách nhau bằng dấu phẩy, bước sau dùng được kết quả bước trước.
+- Kiểm từng bước bằng cách tạm thay câu cuối thành `SELECT * FROM` bước đó.
+- CTE chỉ sống trong câu lệnh đi ngay sau nó; muốn lưu lâu dài thì dùng view (bài 4.5).
 
 ## Liên hệ Excel
 
-{/* TODO-CONTENT */}
+Giống các bước trong Power Query, hay các sheet trung gian: bước sau dùng kết quả của bước trước.
 
 ## Tình huống ví dụ
 
-{/* TODO-CONTENT */}
+Báo cáo lương cần ba bước: lấy hợp đồng còn hiệu lực, tính ngày công, rồi ghép với bảng lương.
 
 ## Bài tập
 
-{/* TODO-CONTENT */}
+<Exercises />

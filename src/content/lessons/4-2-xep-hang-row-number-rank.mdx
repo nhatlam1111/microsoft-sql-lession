@@ -15,16 +15,19 @@ summary: Hợp đồng mới nhất của mỗi người và top 3 lương mỗi
 
 ## Nội dung chính
 
-{/* TODO-CONTENT */}
+- `ROW_NUMBER() OVER (PARTITION BY MaNV ORDER BY NgayBatDau DESC)` đánh số hợp đồng của từng người, mới nhất là số 1.
+- Lọc những dòng mang số 1 (qua một CTE) là ra hợp đồng mới nhất của mỗi người.
+- `RANK` cho các giá trị bằng nhau cùng hạng rồi bỏ qua hạng kế tiếp; `DENSE_RANK` thì không bỏ.
+- `PARTITION BY MaPB ORDER BY ThucLinh DESC` để lấy top 3 thực lĩnh của mỗi phòng.
 
 ## Liên hệ Excel
 
-{/* TODO-CONTENT */}
+Giống RANK.EQ, hoặc sắp xếp rồi đánh số thứ tự trong từng nhóm, nhưng không phải sắp lại dữ liệu gốc.
 
 ## Tình huống ví dụ
 
-{/* TODO-CONTENT */}
+Cần hợp đồng mới nhất của mỗi nhân viên để kiểm tra ai sắp hết hạn.
 
 ## Bài tập
 
-{/* TODO-CONTENT */}
+<Exercises />

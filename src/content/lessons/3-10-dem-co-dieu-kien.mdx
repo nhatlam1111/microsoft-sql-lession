@@ -16,16 +16,19 @@ summary: SUM(CASE WHEN …) để làm báo cáo nam/nữ theo phòng ban trên 
 
 ## Nội dung chính
 
-{/* TODO-CONTENT */}
+- `SUM(CASE WHEN GioiTinh = N'Nữ' THEN 1 ELSE 0 END)` đếm số nữ trong mỗi nhóm.
+- Viết nhiều cột đếm có điều kiện trên cùng một dòng để ra báo cáo dạng bảng: nam, nữ, tổng.
+- `COUNT(CASE WHEN … THEN 1 END)` cũng đếm được, vì `COUNT` bỏ qua `NULL`.
+- Kết hợp với `GROUP BY MaPB` để ra một dòng cho mỗi phòng ban.
 
 ## Liên hệ Excel
 
-{/* TODO-CONTENT */}
+Giống COUNTIFS và SUMIFS: mỗi cột báo cáo là một công thức với điều kiện riêng.
 
 ## Tình huống ví dụ
 
-{/* TODO-CONTENT */}
+Báo cáo cơ cấu giới tính cần một dòng cho mỗi phòng, với số nam, số nữ và tổng.
 
 ## Bài tập
 
-{/* TODO-CONTENT */}
+<Exercises />
