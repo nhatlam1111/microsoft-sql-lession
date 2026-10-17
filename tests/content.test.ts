@@ -51,6 +51,9 @@ describe('lesson files', () => {
       expect(m[1].split(/\r?\n/).filter(l => /^\s+\S/.test(l)), f.slug).toEqual([]);
     }
   });
+  it('no lesson still has TODO-CONTENT', () => {
+    for (const f of files) expect(f.body.includes('TODO-CONTENT'), f.slug).toBe(false);
+  });
   it('summary lessons have no SQL, result or message blocks', () => {
     for (const f of files) {
       if ((f.data as { kind: string }).kind === 'summary') expect(/<(Sql|Result|Messages)\b/.test(f.body), f.slug).toBe(false);
