@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { lessonSchema, SECTION_HEADINGS, BANNED_PHRASES } from '../src/lib/lesson-schema';
 import { validateCatalog } from '../src/lib/catalog';
+import { findUnprefixedUnicodeStrings } from '../src/lib/tsql-lexer';
 import { EXPECTED } from './helpers/expected';
 import { readLessonFiles, readCatalog } from './helpers/lessons';
 
@@ -29,6 +30,11 @@ describe('lesson files', () => {
       const text = (JSON.stringify(f.data) + f.body).toLowerCase();
       for (const p of BANNED_PHRASES) expect(text.includes(p), `${f.slug}: ${p}`).toBe(false);
       expect(/\p{Extended_Pictographic}/u.test(text), f.slug).toBe(false);
+    }
+  });
+  it('every Vietnamese string in lesson SQL has the N prefix', () => {
+    for (const f of files) for (const m of f.body.matchAll(/<Sql[^>]*code=\{`([\s\S]*?)`\}/g)) {
+      expect(findUnprefixedUnicodeStrings(m[1]), f.slug).toEqual([]);
     }
   });
   it('summary lessons have no SQL, result or message blocks', () => {

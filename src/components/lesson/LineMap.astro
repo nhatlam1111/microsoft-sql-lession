@@ -1,0 +1,16 @@
+---
+import { highlightTsql } from '../../lib/tsql-highlight';
+
+interface Props {
+  rows: [string, string][];
+}
+const { rows } = Astro.props;
+---
+<dl class="linemap">
+  {rows.map(([code, meaning]) => (
+    <div class="linemap-row">
+      <dt><code>{highlightTsql(code).map(t => (t.kind === 'plain' ? t.text : <span class={`t-${t.kind}`}>{t.text}</span>))}</code></dt>
+      <dd>{meaning}</dd>
+    </div>
+  ))}
+</dl>

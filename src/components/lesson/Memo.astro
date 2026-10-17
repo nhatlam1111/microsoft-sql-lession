@@ -1,0 +1,19 @@
+---
+import { highlightTsql } from '../../lib/tsql-highlight';
+
+interface Props {
+  rows: [string, string][];
+}
+const { rows } = Astro.props;
+---
+<table class="memo">
+  <thead><tr><th class="memo-excel">Bên Excel</th><th class="memo-sql">Bên SQL</th></tr></thead>
+  <tbody>
+    {rows.map(([excel, sql]) => (
+      <tr>
+        <td>{excel}</td>
+        <td><code>{highlightTsql(sql).map(t => (t.kind === 'plain' ? t.text : <span class={`t-${t.kind}`}>{t.text}</span>))}</code></td>
+      </tr>
+    ))}
+  </tbody>
+</table>

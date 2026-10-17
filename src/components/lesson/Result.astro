@@ -1,0 +1,29 @@
+---
+interface Props {
+  columns: string[];
+  rows: (string | number | null)[][];
+  db?: string;
+  total?: number;
+}
+const { columns, rows, db = 'HRM_Demo', total } = Astro.props;
+const count = `${total ?? rows.length} rows`;
+const trimmed = total !== undefined && total > rows.length ? `Trích ${rows.length} dòng (kết quả có ${total} dòng)` : null;
+---
+<figure class="res">
+  <div class="res-tabs"><span class="res-tab is-active">Results</span><span class="res-tab">Messages</span></div>
+  <div class="res-scroll">
+    <table class="res-grid">
+      <thead><tr><th class="res-rn"></th>{columns.map(c => <th>{c}</th>)}</tr></thead>
+      <tbody>
+        {rows.map((r, i) => (
+          <tr>
+            <td class="res-rn">{i + 1}</td>
+            {r.map(v => (v === null ? <td class="res-null">NULL</td> : <td>{v}</td>))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  <div class="res-status"><span class="res-ok">✓ Query executed successfully.</span><span>{db}</span><span>{count}</span></div>
+  {trimmed && <figcaption class="res-trim">{trimmed}</figcaption>}
+</figure>

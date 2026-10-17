@@ -1,0 +1,142 @@
+/* ---------- Lesson article ---------- */
+.lesson-article { max-width: 720px; margin: 0 auto; }
+
+.prose {
+  font-family: var(--font-read);
+  font-size: 17px;
+  line-height: 1.72;
+  color: var(--ink);
+}
+.prose > * + * { margin-top: 0.9em; }
+.prose p, .prose ul, .prose ol { margin: 0; }
+.prose ul, .prose ol { padding-left: 1.3em; }
+.prose li + li { margin-top: 0.45em; }
+.prose strong { font-weight: 600; }
+.prose a { color: var(--accent); text-underline-offset: 3px; }
+.prose code {
+  font-family: var(--font-code);
+  font-size: 0.84em;
+  background: #EBE8E0;
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+}
+.prose h2 {
+  font-family: var(--font-ui);
+  font-size: 21px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  margin-top: 2.4em;
+  padding-top: 1.1em;
+  border-top: 1px solid var(--rule);
+}
+.prose h3 {
+  font-family: var(--font-ui);
+  font-size: 16px;
+  font-weight: 650;
+  margin-top: 1.8em;
+}
+.prose h2 + *, .prose h3 + * { margin-top: 0.7em; }
+
+/* ---------- Chat bubble and the "say it plainly" box ---------- */
+.chat { display: flex; gap: 12px; align-items: flex-start; font-family: var(--font-ui); }
+.chat-avatar {
+  flex: none; width: 36px; height: 36px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: #ECDCC8; color: #6E4518; font-weight: 700; font-size: 14px;
+}
+.chat-bubble {
+  background: var(--surface); border: 1px solid var(--rule);
+  border-radius: 4px var(--radius-l) var(--radius-l) var(--radius-l);
+  padding: 10px 16px 12px; max-width: 34em; font-size: 15px; line-height: 1.6;
+}
+.chat-meta { margin: 0 0 2px; display: flex; gap: 10px; font-size: 13px; color: var(--ink-3); }
+.chat-who { font-weight: 600; color: var(--ink-2); }
+.chat-text > * { margin: 0; }
+
+.key {
+  font-family: var(--font-ui); font-size: 16px; font-weight: 600; line-height: 1.5;
+  padding: 12px 16px; border-radius: var(--radius-m);
+  border: 1.5px dashed var(--rule-strong); background: var(--surface);
+}
+.key > * { margin: 0; }
+
+/* ---------- Excel replica ---------- */
+.xl { margin: 1.2em 0; border: 1px solid #C8C8C8; border-radius: var(--radius-s); overflow: hidden; background: #FFF; font-family: var(--font-tool); }
+.xl-head { display: flex; justify-content: space-between; gap: 12px; padding: 5px 10px; background: var(--excel); color: #FFF; font-size: 12px; }
+.xl-app { font-weight: 600; }
+.xl-sheets { opacity: 0.9; }
+.xl-fx { display: flex; border-bottom: 1px solid #D4D4D4; font-size: 13px; }
+.xl-fx > span { padding: 5px 10px; }
+.xl-name { width: 64px; border-right: 1px solid #D4D4D4; color: #333; }
+.xl-fx-label { font-style: italic; color: #666; border-right: 1px solid #D4D4D4; }
+.xl-formula { font-family: Consolas, var(--font-code); color: #111; }
+.xl-scroll { overflow-x: auto; }
+.xl-grid { border-collapse: collapse; width: 100%; font-size: 13px; color: #1F1F1F; }
+.xl-grid th { background: #F3F3F3; color: #555; font-weight: 400; border: 1px solid #DADADA; padding: 3px 8px; text-align: center; }
+.xl-grid td { border: 1px solid #E1E1E1; padding: 4px 8px; white-space: nowrap; }
+.xl-grid .xl-rn { width: 34px; }
+.xl-grid .xl-corner { width: 34px; }
+.xl-first td { font-weight: 700; }
+.xl-grid .xl-num { text-align: right; }
+.xl-grid .xl-err { background: var(--excel-err-bg); color: var(--excel-err); }
+.xl-grid .xl-sel { outline: 2px solid var(--excel); outline-offset: -2px; }
+
+/* ---------- SSMS replica: editor ---------- */
+.sql { margin: 1.2em 0; border: 1px solid #CDD5E3; border-radius: var(--radius-s); overflow: hidden; background: #FFF; }
+.sql-head { display: flex; justify-content: space-between; align-items: center; padding: 4px 6px 4px 12px; background: #EEF2FA; border-bottom: 1px solid #CDD5E3; font-family: var(--font-ui); font-size: 12.5px; }
+.sql-title { color: #3B4A68; font-weight: 600; }
+.sql-copy { font: inherit; font-weight: 600; color: var(--accent); background: none; border: 1px solid transparent; border-radius: var(--radius-s); padding: 3px 8px; cursor: pointer; }
+.sql-copy:hover { border-color: #C4D0EC; background: #FFF; }
+.sql-code { margin: 0; padding: 12px 14px; overflow-x: auto; font-family: var(--font-code); font-size: 13.5px; line-height: 1.65; color: #000; tab-size: 4; }
+.t-keyword { color: var(--ssms-keyword); }
+.t-gray { color: var(--ssms-gray); }
+.t-comment { color: var(--ssms-comment); }
+.t-string { color: var(--ssms-string); }
+.t-function { color: var(--ssms-function); }
+
+/* ---------- SSMS replica: results ---------- */
+.res { margin: 0.8em 0 1.2em; border: 1px solid #C9C9C9; border-radius: var(--radius-s); overflow: hidden; background: #FFF; font-family: var(--font-tool); font-size: 13px; color: #1F1F1F; }
+.res-tabs { display: flex; background: #F5F5F5; border-bottom: 1px solid #D9D9D9; font-size: 12px; }
+.res-tab { padding: 5px 12px; color: #555; }
+.res-tab.is-active { background: #FFF; color: #1F1F1F; font-weight: 600; border-right: 1px solid #D9D9D9; }
+.res-tab.is-active:not(:first-child) { border-left: 1px solid #D9D9D9; }
+.res-scroll { overflow-x: auto; }
+.res-grid { border-collapse: collapse; width: 100%; }
+.res-grid th { background: #F0F0F0; border: 1px solid #DCDCDC; padding: 3px 8px; text-align: left; font-weight: 400; white-space: nowrap; }
+.res-grid td { border: 1px solid #E8E8E8; padding: 3px 8px; white-space: nowrap; }
+.res-grid .res-rn { width: 30px; background: #F0F0F0; color: #555; text-align: center; }
+.res-grid .res-null { background: var(--ssms-null); }
+.res-status { display: flex; gap: 18px; padding: 4px 10px; border-top: 1px solid #D9D9D9; background: #FAFAFA; font-size: 12px; color: #444; }
+.res-ok { color: var(--done); font-weight: 600; }
+.res-messages { margin: 0; padding: 10px 12px; font-family: Consolas, var(--font-code); font-size: 13px; white-space: pre-wrap; }
+.res-trim { padding: 4px 10px 6px; font-size: 12px; color: var(--ink-3); background: #FAFAFA; }
+
+/* ---------- Line-by-line reading of a query ---------- */
+.linemap { margin: 1em 0; border: 1px solid var(--rule); border-radius: var(--radius-m); overflow: hidden; background: var(--surface); }
+.linemap-row { display: grid; grid-template-columns: 240px minmax(0, 1fr); border-top: 1px solid var(--rule); }
+.linemap-row:first-child { border-top: 0; }
+.linemap dt { padding: 10px 12px; background: #FBFAF7; border-right: 1px solid var(--rule); }
+.linemap dt code { font-family: var(--font-code); font-size: 12.5px; background: none; padding: 0; white-space: pre-wrap; }
+.linemap dd { margin: 0; padding: 9px 14px; font-family: var(--font-ui); font-size: 14.5px; line-height: 1.55; }
+
+/* ---------- Mistakes and how it is used at work ---------- */
+.callout { padding: 14px 18px; border-radius: var(--radius-m); font-size: 16px; }
+.callout > * + * { margin-top: 0.7em; }
+.callout ol, .callout ul { padding-left: 1.25em; }
+.callout-mistakes { background: #FDF6EA; border: 1px solid #EDD3A4; }
+.callout-apply { background: #F3F6FE; border: 1px solid #CFD9F4; }
+
+/* ---------- Excel ↔ SQL memo ---------- */
+.memo { width: 100%; border-collapse: separate; border-spacing: 0; border: 1px solid var(--rule); border-radius: var(--radius-m); overflow: hidden; background: var(--surface); font-family: var(--font-ui); font-size: 14.5px; }
+.memo th { text-align: left; padding: 9px 14px; font-size: 13px; font-weight: 650; background: #FBFAF7; border-bottom: 1px solid var(--rule); }
+.memo .memo-excel { color: var(--excel); }
+.memo .memo-sql { color: var(--accent); }
+.memo td { padding: 9px 14px; border-top: 1px solid var(--rule); vertical-align: top; }
+.memo tr:first-child td { border-top: 0; }
+.memo td code { font-family: var(--font-code); font-size: 13px; background: none; padding: 0; }
+
+.exercises {
+  font-family: var(--font-ui); font-size: 14.5px; color: var(--ink-3);
+  padding: 14px 16px; border: 1.5px dashed var(--rule-strong); border-radius: var(--radius-m);
+}

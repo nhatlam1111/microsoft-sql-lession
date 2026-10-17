@@ -1,0 +1,12 @@
+---
+interface Props {
+  lines: string[];
+  db?: string;
+}
+const { lines, db = 'HRM_Demo' } = Astro.props;
+---
+<figure class="res">
+  <div class="res-tabs"><span class="res-tab">Results</span><span class="res-tab is-active">Messages</span></div>
+  <pre class="res-messages">{lines.join('\n')}</pre>
+  <div class="res-status"><span>{db}</span></div>
+</figure>

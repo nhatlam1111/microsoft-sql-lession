@@ -1,0 +1,29 @@
+---
+import { highlightTsql } from '../../lib/tsql-highlight';
+
+interface Props {
+  code: string;
+  title?: string;
+}
+const { title = 'SQL Server' } = Astro.props;
+const code = Astro.props.code.replace(/^(?:[ \t]*\r?\n)+/, '').replace(/(?:\r?\n[ \t]*)+$/, '');
+const tokens = highlightTsql(code);
+---
+<figure class="sql">
+  <div class="sql-head">
+    <span class="sql-title">{title}</span>
+    <button type="button" class="sql-copy" data-copy={code}>Sao chép</button>
+  </div>
+  <pre class="sql-code"><code>{tokens.map(t => (t.kind === 'plain' ? t.text : <span class={`t-${t.kind}`}>{t.text}</span>))}</code></pre>
+</figure>
+
+<script>
+  document.addEventListener('click', event => {
+    const button = (event.target as HTMLElement | null)?.closest<HTMLButtonElement>('.sql-copy');
+    if (!button) return;
+    navigator.clipboard.writeText(button.dataset.copy ?? '').then(() => {
+      button.textContent = 'Đã chép';
+      setTimeout(() => { button.textContent = 'Sao chép'; }, 1500);
+    });
+  });
+</script>

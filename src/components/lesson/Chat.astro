@@ -1,0 +1,15 @@
+---
+interface Props {
+  who: string;
+  time?: string;
+  initial?: string;
+}
+const { who, time, initial = who.charAt(0) } = Astro.props;
+---
+<div class="chat">
+  <span class="chat-avatar" aria-hidden="true">{initial}</span>
+  <div class="chat-bubble">
+    <p class="chat-meta"><span class="chat-who">{who}</span>{time && <time class="chat-time">{time}</time>}</p>
+    <div class="chat-text"><slot /></div>
+  </div>
+</div>

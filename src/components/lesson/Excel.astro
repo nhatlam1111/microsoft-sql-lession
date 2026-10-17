@@ -1,0 +1,35 @@
+---
+interface Props {
+  rows: (string | number)[][];
+  cell?: string;
+  formula?: string;
+  sheets?: string;
+  selected?: string;
+}
+const { rows, cell, formula, sheets, selected } = Astro.props;
+const ERROR_VALUE = /^#(N\/A|VALUE!|REF!|DIV\/0!|NAME\?|NUM!|NULL!)$/;
+const width = Math.max(...rows.map(r => r.length));
+const letters = Array.from({ length: width }, (_, i) => String.fromCharCode(65 + i));
+const cellClass = (value: string | number, ref: string) =>
+  [ERROR_VALUE.test(String(value)) && 'xl-err', ref === selected && 'xl-sel', typeof value === 'number' && 'xl-num']
+    .filter(Boolean).join(' ') || undefined;
+---
+<figure class="xl">
+  <div class="xl-head"><span class="xl-app">Excel</span>{sheets && <span class="xl-sheets">{sheets}</span>}</div>
+  {(cell || formula) && (
+    <div class="xl-fx"><span class="xl-name">{cell}</span><span class="xl-fx-label">fx</span><span class="xl-formula">{formula}</span></div>
+  )}
+  <div class="xl-scroll">
+    <table class="xl-grid">
+      <thead><tr><th class="xl-corner"></th>{letters.map(l => <th>{l}</th>)}</tr></thead>
+      <tbody>
+        {rows.map((r, ri) => (
+          <tr class={ri === 0 ? 'xl-first' : undefined}>
+            <th class="xl-rn">{ri + 1}</th>
+            {letters.map((l, ci) => <td class={cellClass(r[ci] ?? '', `${l}${ri + 1}`)}>{r[ci] ?? ''}</td>)}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</figure>
