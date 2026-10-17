@@ -14,28 +14,98 @@ summary: File Excel nhân sự gửi qua lại sinh lỗi gì, database giải q
 
 ## Tình huống
 
-{/* TODO-CONTENT */}
+Một yêu cầu hay gặp từ phòng nhân sự:
+
+<Chat who="Chị Hạnh · Phòng Nhân sự" time="9:12" initial="H">
+Em ơi, file nhân sự tháng này chị gửi rồi đó. Mà bản chị Thảo bên kế toán đang giữ hình như khác bản của chị, bên đó vẫn còn bạn Quân ở phòng cũ, trong khi bạn ấy chuyển sang IT rồi. Em xem giúp chị bản nào đúng nhé.
+</Chat>
+
+Nói gọn lại, câu hỏi ở đây không phải "dòng nào sai" mà là:
+
+<Key>Vì sao cùng một danh sách nhân viên lại có hai phiên bản, và làm sao để chỉ còn một?</Key>
 
 ## Với Excel
 
-{/* TODO-CONTENT */}
+Với Excel, cách quen thuộc là một file nhân sự nhiều sheet: sheet nhân viên, sheet hợp đồng, sheet chấm công. Mỗi tháng file được gửi qua email, mỗi người lưu một bản và sửa trên bản của mình.
+
+<Excel sheets="NhanVien · HopDong · ChamCong" cell="D4" formula="Ke toan" selected="D4" rows={[
+  ['Mã NV', 'Họ tên', 'Ngày vào làm', 'Phòng ban'],
+  ['NV001', 'Trần Thị Mai', '01/03/2024', 'Kế toán'],
+  ['NV005', 'Vũ Thị Lan', '14/03/2016', 'Kế toán'],
+  ['NV014', 'Hồ Thị Bích', '2017-10-02', 'Ke toan'],
+  ['NV005', 'Vũ Thị Lan', '14/03/2016', 'Kế toán'],
+]} />
+
+Nhìn bảng trên là thấy ba lỗi quen thuộc:
+
+- Cột ngày vào làm lúc gõ kiểu 01/03/2024, lúc kiểu 2017-10-02. Có ô là ngày, có ô thật ra là chữ.
+- "Ke toan" và "Kế toán" là một phòng, nhưng Excel coi là hai. PivotTable theo phòng ban sẽ ra hai dòng.
+- NV005 xuất hiện hai lần, đếm số người sẽ dư một.
+
+Không ai cố tình làm sai. File Excel cho phép tất cả những điều đó, và khi năm người cùng giữ năm bản, lỗi sinh ra nhanh hơn tốc độ sửa.
 
 ## Làm bằng SQL
 
-{/* TODO-CONTENT */}
+Database giải quyết chuyện này bằng hai cách: giữ **một bản duy nhất** trên máy chủ, và đặt **luật cho từng cột**. Mọi người cùng đọc, cùng sửa trên bản đó, nên không còn "bản của chị" với "bản của em".
+
+### Excel và database đặt cạnh nhau
+
+| Trong Excel | Trong database | Khác ở đâu |
+|---|---|---|
+| Một file nhân sự | Database `HRM_Demo` | Một bản duy nhất trên máy chủ, nhiều người dùng cùng lúc |
+| Sheet nhân viên | Bảng `NhanVien` | Các cột cố định, không chèn thêm cột tùy ý |
+| Tiêu đề cột | Cột có kiểu dữ liệu | Cột `NgayVaoLam` kiểu `date` không nhận chữ |
+| Một dòng | Một dòng (bản ghi) | Như nhau |
+| Cột mã NV không được trùng | Khóa chính `MaNV` | Database chặn hẳn mã trùng |
+| Dropdown phòng ban lấy từ sheet khác | Khóa ngoại `MaPB` trỏ sang bảng `PhongBan` | Không gõ được "Ke toan", chỉ chọn được mã có trong danh mục |
+
+### Nhìn thử câu lệnh đầu tiên
+
+Muốn xem 5 nhân viên đầu tiên, với Excel bạn mở sheet rồi cuộn lên đầu. Với database, bạn gõ một câu lệnh:
+
+<Sql code={`SELECT TOP (5) MaNV, HoTen, MaPB
+FROM   NhanVien
+ORDER BY MaNV;`} />
+
+<Result columns={['MaNV', 'HoTen', 'MaPB']} rows={[
+  ['NV001', 'Trần Thị Mai', 'KT'],
+  ['NV002', 'Lê Văn Hùng', 'KD'],
+  ['NV003', 'Nguyễn Thu Hà', 'KD'],
+  ['NV004', 'Hoàng Minh Tuấn', 'BGD'],
+  ['NV005', 'Vũ Thị Lan', 'KT'],
+]} />
+
+Chưa cần hiểu từng chữ, bài 1.6 sẽ quay lại câu lệnh này. Điều đáng để ý là cột phòng ban chỉ chứa mã như `KT`, `KD`. Tên đầy đủ "Kế toán" nằm ở bảng `PhongBan` và chỉ được ghi đúng một lần, nên không thể có chuyện người này gõ "Kế toán", người kia gõ "Ke toan".
 
 ## Hay nhầm ở đâu
 
-{/* TODO-CONTENT */}
+<Mistakes>
+
+1. **Nghĩ database chỉ là Excel to hơn.** Khác biệt chính không nằm ở dung lượng mà ở luật: kiểu dữ liệu, khóa chính, khóa ngoại. Excel để bạn gõ gì cũng được; database từ chối ngay lúc nhập.
+2. **Xuất ra Excel rồi sửa trên file.** File xuất ra chỉ là ảnh chụp tại một thời điểm. Sửa trên đó không thay đổi gì trong database, lại sinh thêm một "bản khác".
+3. **Tưởng sửa thẳng trong bảng cũng an toàn như sửa một ô Excel.** Database không có Ctrl+Z. Level 5 và 6 sẽ nói kỹ cách sửa dữ liệu cho an toàn.
+
+</Mistakes>
 
 ## Ứng dụng
 
-{/* TODO-CONTENT */}
+<Apply>
+
+- Khi gặp một màn hình của hệ thống nhân sự, tập tự hỏi: dữ liệu này nằm ở bảng nào, cột nào, và mã nào liên kết nó với bảng khác.
+- Khi nhận một file Excel "bản mới nhất", hỏi lại file đó xuất từ database lúc nào. Số liệu nên lấy thẳng từ database thay vì từ một file đã qua nhiều tay.
+
+</Apply>
 
 ## Ghi nhớ
 
-{/* TODO-CONTENT */}
+<Memo rows={[
+  ['Một file nhân sự', 'Database HRM_Demo'],
+  ['Một sheet', 'Bảng NhanVien'],
+  ['Cột mã không được trùng', 'PRIMARY KEY'],
+  ['Dropdown lấy từ sheet khác', 'FOREIGN KEY'],
+  ['Mở sheet ra xem', 'SELECT … FROM'],
+]} />
 
 ## Bài tập
 
-{/* TODO-CONTENT */}
+<Exercises />

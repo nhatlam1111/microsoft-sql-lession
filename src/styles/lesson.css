@@ -141,3 +141,8 @@
   font-family: var(--font-ui); font-size: 14.5px; color: var(--ink-3);
   padding: 14px 16px; border: 1.5px dashed var(--rule-strong); border-radius: var(--radius-m);
 }
+
+/* ---------- Plain markdown tables in lessons ---------- */
+.prose table:not([class]) { width: 100%; border-collapse: collapse; font-family: var(--font-ui); font-size: 14.5px; line-height: 1.5; background: var(--surface); border: 1px solid var(--rule); }
+.prose table:not([class]) th, .prose table:not([class]) td { padding: 8px 12px; border-top: 1px solid var(--rule); text-align: left; vertical-align: top; }
+.prose table:not([class]) thead th { border-top: 0; background: #FBFAF7; font-size: 13px; font-weight: 650; }
