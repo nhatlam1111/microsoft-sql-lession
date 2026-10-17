@@ -34,4 +34,5 @@ const nums = catalog.map(e => e.num);
 <script>
   import { EVENTS, emit } from '../../lib/events';
   document.querySelector('[data-action="roadmap"]')?.addEventListener('click', () => emit(EVENTS.openRoadmap));
+  document.querySelector('[data-action="search"]')?.addEventListener('click', () => emit(EVENTS.openSearch));
 </script>
