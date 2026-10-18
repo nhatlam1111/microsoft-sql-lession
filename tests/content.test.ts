@@ -51,12 +51,18 @@ describe('lesson files', () => {
       expect(m[1].split(/\r?\n/).filter(l => /^\s+\S/.test(l)), f.slug).toEqual([]);
     }
   });
+  it('SQL inside run-flow steps keeps the N prefix and has no leading spaces', () => {
+    for (const f of files) for (const m of f.body.matchAll(/(?:\bsql:\s*|\bquery=\{)`([\s\S]*?)`/g)) {
+      expect(findUnprefixedUnicodeStrings(m[1]), f.slug).toEqual([]);
+      expect(m[1].split(/\r?\n/).filter(l => /^\s+\S/.test(l)), f.slug).toEqual([]);
+    }
+  });
   it('no lesson still has TODO-CONTENT', () => {
     for (const f of files) expect(f.body.includes('TODO-CONTENT'), f.slug).toBe(false);
   });
   it('summary lessons have no SQL, result or message blocks', () => {
     for (const f of files) {
-      if ((f.data as { kind: string }).kind === 'summary') expect(/<(Sql|Result|Messages)\b/.test(f.body), f.slug).toBe(false);
+      if ((f.data as { kind: string }).kind === 'summary') expect(/<(Sql|Result|Messages|RunFlow)\b/.test(f.body), f.slug).toBe(false);
     }
   });
 });
@@ -78,6 +84,10 @@ describe('fixes from the final review', () => {
   it('2.5 replaces a varchar NULL with COALESCE so Vietnamese text keeps its accents', () => {
     expect(body('2-5-null-o-trong')).not.toContain('ISNULL(Email');
     expect(body('2-5-null-o-trong')).toContain("COALESCE(Email, N'(chưa có)')");
+  });
+  it('3.5 shows the run order of its final query', () => {
+    expect(body('3-5-left-join')).toContain('### SQL Server chạy câu này thế nào');
+    expect(body('3-5-left-join')).toContain('<RunFlow');
   });
   it('summaries state the corrected facts', () => {
     expect(body('1-5-doc-so-do-erd')).toContain('`MaPB`, `MaCD`');
