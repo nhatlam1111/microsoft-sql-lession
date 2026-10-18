@@ -1,7 +1,7 @@
 # Thiết kế phần C, đợt Level 1: viết đầy đủ các bài Level 1
 
 - Ngày: 2026-10-18
-- Trạng thái: chờ người làm khóa học duyệt.
+- Trạng thái: đã duyệt ngày 2026-10-18.
 - Nối tiếp: [spec đợt 2, mục 6](2026-10-18-step-flow-exercises-full-lessons-design.md) (phần C), [spec đợt 1, mục 4.5 và 4.7](2026-10-17-sql-server-course-site-design.md) (khuôn bài và giọng văn), [spec B](2026-10-18-exercise-runner-design.md) (bài tập trên web). Chỗ nào spec này ghi khác các spec đó thì theo spec này.
 - Web: https://nhatlam1111.github.io/microsoft-sql-lession/
 
