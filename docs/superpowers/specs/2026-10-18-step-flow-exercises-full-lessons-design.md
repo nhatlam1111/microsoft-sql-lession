@@ -85,9 +85,12 @@ Theo ảnh tham khảo người làm khóa học gửi ("Simple 8-Step Workflow"
 
 ### 4.3 Bấm vào một bước
 
-- Drawer mở ở bên phải, cùng kiểu với drawer trên mindmap, nằm đè lên cột phải của trang bài. Drawer có:
-  - số bước và mệnh đề;
-  - lời giải thích dài hơn câu trên thẻ;
+- Drawer mở ở bên phải, cùng kiểu với drawer trên mindmap, nằm đè lên cột phải của trang bài. Drawer có, theo thứ tự (đã duyệt qua mockup ngày 2026-10-18, sau góp ý "nhấn mạnh keyword của bước"):
+  - số bước, mệnh đề, câu tóm tắt của bước;
+  - câu lệnh đầy đủ, các dòng thuộc bước này được tô nổi (nền vàng nhạt, vạch bên trái), các dòng khác mờ đi;
+  - đoạn "`<mệnh đề>` làm gì": nghĩa chung của từ khóa, dùng lại được ở câu lệnh khác;
+  - đoạn "Ở bước này": chuyện xảy ra với dữ liệu thật ở bước này, có số liệu;
+  - trong hai đoạn trên, từ khóa SQL được đóng khung và tô màu kiểu SSMS; tên bảng, tên cột chỉ dùng chữ code thường;
   - bảng kết quả của bước đó, kiểu bảng Results SSMS; nhiều dòng thì trích và ghi rõ "trích N dòng";
   - câu lệnh cho ra đúng kết quả trung gian đó, có nút "Sao chép", để người học tự chạy lại;
   - một câu liên hệ Excel nếu bước đó có việc tương ứng trong Excel.
@@ -98,7 +101,7 @@ Theo ảnh tham khảo người làm khóa học gửi ("Simple 8-Step Workflow"
 
 - Đặt trong mục "Làm bằng SQL" của bài đầy đủ, ngay sau câu lệnh hoàn chỉnh, dưới một tiêu đề cấp 3 (ví dụ "SQL Server chạy câu này thế nào"). Không thêm tiêu đề cấp 2, để giữ khung 7 mục của bài đầy đủ.
 - Chỉ dùng cho câu lệnh có từ 2 bước trở lên. Bài tóm tắt không có sơ đồ.
-- Viết bằng một thành phần MDX mới. Dữ liệu từng bước nằm ngay trong file bài: mệnh đề, câu ngắn, lời giải thích, câu lệnh trung gian, các cột, các dòng, tổng số dòng.
+- Viết bằng một thành phần MDX mới. Dữ liệu nằm ngay trong file bài: câu lệnh đầy đủ (một lần cho cả sơ đồ); với từng bước: mệnh đề, câu tóm tắt, đoạn lệnh của bước, nghĩa của từ khóa, chuyện xảy ra ở bước này, câu lệnh trung gian, các cột, các dòng, tổng số dòng.
 - Kết quả từng bước chép từ lần chạy thật câu lệnh trung gian qua MCP chỉ đọc. Với câu sửa dữ liệu, kết quả lấy bằng câu `SELECT` tương ứng, như cách bài 6.5 đã làm.
 - Kiểm tra tự động:
   - các bước đi đúng thứ tự logic ở mục 4.1;
@@ -171,7 +174,7 @@ Theo ảnh tham khảo người làm khóa học gửi ("Simple 8-Step Workflow"
 
 ## 7. Những quyết định mình tự đặt (bạn xem lại khi đọc)
 
-1. Sơ đồ xếp 3 thẻ mỗi hàng theo hình chữ chi; thẻ có bảng xem trước tối đa 3 dòng × 3 cột; màu theo web chứ không theo 8 màu của ảnh.
+1. (Đã duyệt qua mockup.) Sơ đồ xếp 3 thẻ mỗi hàng theo hình chữ chi; thẻ có bảng xem trước tối đa 3 dòng × 3 cột; màu theo web chứ không theo 8 màu của ảnh.
 2. Drawer của sơ đồ đè lên cột phải của trang bài, cùng kiểu với drawer trên mindmap.
 3. Sơ đồ đặt dưới tiêu đề cấp 3 trong mục "Làm bằng SQL"; bài đầy đủ vẫn giữ đúng 7 mục.
 4. Mỗi bài tập có một trang riêng; phím F5 để chạy như SSMS.

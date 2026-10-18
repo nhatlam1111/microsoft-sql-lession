@@ -73,13 +73,15 @@ git commit -m "add the run-order diagram mockup"
 **Interfaces:**
 - Produces:
   - `type FlowCell = string | number | null`
-  - `interface FlowStep { clause: string; title: string; detail: string; sql: string; columns: string[]; rows: FlowCell[][]; total?: number; excel?: string }`
+  - `interface FlowStep { clause: string; title: string; focus: string; meaning: string; detail: string; sql: string; columns: string[]; rows: FlowCell[][]; total?: number; excel?: string }` — `focus`: đoạn của câu lệnh đầy đủ mà bước này chạy; `meaning`: từ khóa làm gì (nghĩa chung); `detail`: chuyện xảy ra ở bước này với dữ liệu thật; trong `meaning` và `detail`, chữ đặt giữa hai dấu `` ` `` là code.
   - `clauseRank(clause: string): number | null` — `FROM` 1; mệnh đề có chữ `JOIN` 2; `WHERE` 3; `GROUP BY` 4; `HAVING` 5; `SELECT`, `SET`, `DELETE` 6; `DISTINCT` 7; `ORDER BY` 8; `TOP`, `OFFSET` 9; `Messages` 10; còn lại `null`.
   - `rowCount(step: FlowStep): number` — `total ?? rows.length`.
-  - `checkFlow(steps: FlowStep[]): string[]` — mỗi lỗi một câu tiếng Việt, mở đầu bằng `bước N:` (N đếm từ 1), trừ lỗi "cần ít nhất 2 bước".
+  - `checkFlow(steps: FlowStep[], query: string): string[]` — mỗi lỗi một câu tiếng Việt, mở đầu bằng `bước N:` (N đếm từ 1), trừ lỗi "cần ít nhất 2 bước".
+  - `splitFocus(query: string, focus: string): { before: string; focus: string; after: string } | null` — tìm lần xuất hiện đầu tiên của `focus` trong `query`, mở rộng ra trọn các dòng chứa nó; không thấy thì `null`.
+  - `inlineCode(text: string): { code: boolean; text: string }[]` — tách theo dấu `` ` ``, bỏ đoạn rỗng; số dấu lẻ thì trả cả câu là một đoạn chữ thường.
   - `interface SnakeCell { row: number; col: number; arrow: 'right' | 'left' | 'down' | null }`; `snakeLayout(count: number, perRow = 3): SnakeCell[]` — hàng chẵn đi trái sang phải, hàng lẻ đi phải sang trái; thẻ cuối hàng (trừ thẻ cuối cùng) có mũi tên `down`; thẻ cuối cùng `null`.
   - `interface Preview { columns: string[]; rows: FlowCell[][]; moreRows: number; moreCols: number }`; `previewOf(step: FlowStep, maxRows = 3, maxCols = 3): Preview`.
-  - `tests/helpers/flows.ts`: `sampleFlow(): FlowStep[]` — 5 bước như bảng ở Task 1, dữ liệu giả: bước 01 có 12 cột, 10 dòng, `total: 48`; bước 02 có 10 dòng, `total: 57`, ô `MaHD` của dòng đầu là `null` (để bảng xem trước có ô `NULL`); bước 03–05 có 2 dòng.
+  - `tests/helpers/flows.ts`: `sampleQuery(): string` — câu lệnh cuối bài 3.5 (có dòng `WHERE hd.MaHD IS NULL   -- dò không ra hợp đồng nào`); `sampleFlow(): FlowStep[]` — 5 bước như bảng ở Task 1, `focus` là đúng dòng tương ứng trong `sampleQuery()`, bước 02 có `meaning` chứa `` `LEFT JOIN` `` và `` `ON` ``, `detail` chứa `` `NhanVien` ``; dữ liệu giả: bước 01 có 12 cột, 10 dòng, `total: 48`; bước 02 có 10 dòng, `total: 57`, ô `MaHD` của dòng đầu là `null` (để bảng xem trước có ô `NULL`); bước 03–05 có 2 dòng.
 
 - [ ] **Step 1: Viết test hỏng trong `tests/run-flow.test.ts`**
 
@@ -88,16 +90,18 @@ it('ranks clauses in SQL Server run order', () => {
   expect(['FROM', 'LEFT JOIN', 'INNER JOIN', 'WHERE', 'GROUP BY', 'HAVING', 'SELECT', 'SET', 'DELETE', 'DISTINCT', 'ORDER BY', 'TOP', 'OFFSET', 'Messages', 'FOO'].map(clauseRank))
     .toEqual([1, 2, 2, 3, 4, 5, 6, 6, 6, 7, 8, 9, 9, 10, null]);
 });
-it('accepts the sample flow', () => expect(checkFlow(sampleFlow())).toEqual([]));
+it('accepts the sample flow', () => expect(checkFlow(sampleFlow(), sampleQuery())).toEqual([]));
 it('reports every broken rule with its step number', () => {
-  const f = sampleFlow();
-  expect(checkFlow(f.slice(0, 1))).toEqual(['sơ đồ cần ít nhất 2 bước']);
-  expect(checkFlow([f[0], { ...f[1], clause: 'FOO' }])[0]).toMatch(/^bước 2: .*FOO/);
-  expect(checkFlow([f[0], f[2], f[1]])[0]).toMatch(/^bước 3: .*LEFT JOIN.*WHERE/);
-  expect(checkFlow([f[0], { ...f[1], rows: [['NV001']] }])[0]).toMatch(/^bước 2: dòng 1/);
-  expect(checkFlow([f[0], { ...f[1], total: 3 }])[0]).toMatch(/^bước 2: .*total/);
-  expect(checkFlow([f[0], { ...f[1], rows: Array(11).fill(f[1].rows[0]), total: 57 }])[0]).toMatch(/^bước 2: .*10 dòng/);
-  expect(checkFlow([f[0], { ...f[1], detail: '' }])[0]).toMatch(/^bước 2: thiếu detail/);
+  const f = sampleFlow(); const q = sampleQuery();
+  expect(checkFlow(f.slice(0, 1), q)).toEqual(['sơ đồ cần ít nhất 2 bước']);
+  expect(checkFlow([f[0], { ...f[1], clause: 'FOO' }], q)[0]).toMatch(/^bước 2: .*FOO/);
+  expect(checkFlow([f[0], f[2], f[1]], q)[0]).toMatch(/^bước 3: .*LEFT JOIN.*WHERE/);
+  expect(checkFlow([f[0], { ...f[1], rows: [['NV001']] }], q)[0]).toMatch(/^bước 2: dòng 1/);
+  expect(checkFlow([f[0], { ...f[1], total: 3 }], q)[0]).toMatch(/^bước 2: .*total/);
+  expect(checkFlow([f[0], { ...f[1], rows: Array(11).fill(f[1].rows[0]), total: 57 }], q)[0]).toMatch(/^bước 2: .*10 dòng/);
+  expect(checkFlow([f[0], { ...f[1], detail: '' }], q)[0]).toMatch(/^bước 2: thiếu detail/);
+  expect(checkFlow([f[0], { ...f[1], meaning: '' }], q)[0]).toMatch(/^bước 2: thiếu meaning/);
+  expect(checkFlow([f[0], { ...f[1], focus: 'GROUP BY nv.MaPB' }], q)[0]).toMatch(/^bước 2: không tìm thấy/);
 });
 it('lays cards out in a snake, three per row', () => {
   expect(snakeLayout(5)).toEqual([
@@ -111,13 +115,24 @@ it('previews at most 3 rows and 3 columns and counts the rest', () => {
   expect([p.columns.length, p.rows.length, p.moreRows, p.moreCols]).toEqual([3, 3, 45, 9]);
   expect(previewOf({ ...sampleFlow()[2], rows: [], total: 0 })).toMatchObject({ rows: [], moreRows: 0 });
 });
+it('widens the highlighted part of the query to whole lines', () => {
+  const q = 'SELECT a\nFROM T\nWHERE x IS NULL   -- note\nORDER BY a;';
+  expect(splitFocus(q, 'WHERE x IS NULL')).toEqual({ before: 'SELECT a\nFROM T\n', focus: 'WHERE x IS NULL   -- note', after: '\nORDER BY a;' });
+  expect(splitFocus(q, 'GROUP BY a')).toBeNull();
+});
+it('splits backtick code out of the explanation text', () => {
+  expect(inlineCode('`LEFT JOIN` giữ dòng, để `NULL`.')).toEqual([
+    { code: true, text: 'LEFT JOIN' }, { code: false, text: ' giữ dòng, để ' }, { code: true, text: 'NULL' }, { code: false, text: '.' },
+  ]);
+  expect(inlineCode('lẻ ` một dấu')).toEqual([{ code: false, text: 'lẻ ` một dấu' }]);
+});
 ```
 
 - [ ] **Step 2: Chạy `npx vitest run tests/run-flow.test.ts`, kỳ vọng FAIL vì chưa có `src/lib/run-flow.ts`**
 
 - [ ] **Step 3: Viết `src/lib/run-flow.ts` theo khối Interfaces**
 
-`checkFlow` kiểm theo thứ tự: số bước ≥ 2; từng bước: `title`, `detail`, `sql` không rỗng ("thiếu title|detail|sql"); `clauseRank` không `null`; hạng không nhỏ hơn bước trước (cho phép bằng, ví dụ hai `JOIN`), câu lỗi nêu cả hai mệnh đề; mỗi dòng đủ số ô bằng số cột ("dòng M có K ô, cần C"); `total` không nhỏ hơn số dòng đã ghi; ghi tối đa 10 dòng (phần còn lại dùng `total`).
+`checkFlow` kiểm theo thứ tự: số bước ≥ 2; từng bước: `title`, `focus`, `meaning`, `detail`, `sql` không rỗng ("thiếu title|focus|meaning|detail|sql"); `splitFocus(query, focus)` khác `null` ("không tìm thấy … trong câu lệnh"); `clauseRank` không `null`; hạng không nhỏ hơn bước trước (cho phép bằng, ví dụ hai `JOIN`), câu lỗi nêu cả hai mệnh đề; mỗi dòng đủ số ô bằng số cột ("dòng M có K ô, cần C"); `total` không nhỏ hơn số dòng đã ghi; ghi tối đa 10 dòng (phần còn lại dùng `total`).
 
 - [ ] **Step 4: Chạy lại test, kỳ vọng PASS; chạy `npm test`, kỳ vọng tất cả PASS**
 
@@ -125,7 +140,7 @@ it('previews at most 3 rows and 3 columns and counts the rest', () => {
 
 ```bash
 git add src/lib/run-flow.ts tests/run-flow.test.ts tests/helpers/flows.ts
-git commit -m "add run-order rules, snake layout and previews for the flow diagram"
+git commit -m "add run-order rules, layout, previews and focus lines for the flow diagram"
 ```
 
 ### Task 3: Thành phần `RunFlow` (render tĩnh)
@@ -136,37 +151,44 @@ git commit -m "add run-order rules, snake layout and previews for the flow diagr
 - Test: `tests/components.test.ts`
 
 **Interfaces:**
-- Consumes: `FlowStep`, `checkFlow`, `snakeLayout`, `previewOf`, `rowCount` (Task 2); `Result.astro`, `Sql.astro`; `highlightTsql` (`src/lib/tsql-highlight.ts`).
+- Consumes: `FlowStep`, `checkFlow`, `snakeLayout`, `previewOf`, `rowCount`, `splitFocus`, `inlineCode` (Task 2); `Result.astro`, `Sql.astro`; `highlightTsql` (`src/lib/tsql-highlight.ts`).
 - Produces (Task 4 dựa vào đúng các lớp và thuộc tính này):
-  - Props: `{ steps: FlowStep[]; note?: string }`; `note` mặc định `Bạn viết SELECT trước, nhưng SQL Server làm FROM trước.`
-  - `checkFlow` có lỗi thì `throw new Error('Sơ đồ thứ tự chạy có lỗi:\n' + problems.join('\n'))`.
+  - Props: `{ query: string; steps: FlowStep[]; note?: string }`; `note` mặc định `Bạn viết SELECT trước, nhưng SQL Server làm FROM trước.`
+  - `checkFlow(steps, query)` có lỗi thì `throw new Error('Sơ đồ thứ tự chạy có lỗi:\n' + problems.join('\n'))`.
   - Gốc `<figure class="rf">`; `<p class="rf-note">`; `<ol class="rf-grid">`, mỗi bước một `<li class="rf-cell" data-arrow="right|left|down">` đặt bằng `grid-row`/`grid-column` theo `snakeLayout`.
   - Thẻ: `<button type="button" class="rf-card" data-step="{i}" aria-expanded="false" aria-controls="{drawerId}">` gồm `.rf-num` ("01"), `.rf-clause` (mệnh đề tô màu), `.rf-title`, `.rf-count` ("còn N dòng"), bảng `.rf-mini` (ô `null` có lớp `res-null`, chữ `NULL`), `.rf-more` ("+N dòng", "+N cột"); bước 0 dòng thì `<p class="rf-empty">Không còn dòng nào</p>`.
-  - Drawer: `<aside class="rf-drawer" id="{drawerId}" hidden tabindex="-1" aria-label="Chi tiết bước">` có nút `.rf-close` (`aria-label="Đóng"`), mỗi bước một `<section class="rf-panel" data-panel="{i}" hidden>` gồm `Bước 0N` và mệnh đề, `.rf-d-title`, đoạn `detail`, `<Result columns rows total={rowCount(step)}>`, `<Sql code={step.sql} title="Câu lệnh của bước này">`, dòng "Liên hệ Excel: …" khi có `excel`; cuối drawer là `.rf-prev` ("Bước trước") và `.rf-next` ("Bước sau").
+  - Drawer: `<aside class="rf-drawer" id="{drawerId}" hidden tabindex="-1" aria-label="Chi tiết bước">` có nút `.rf-close` (`aria-label="Đóng"`), mỗi bước một `<section class="rf-panel" data-panel="{i}" hidden>` gồm `Bước 0N` và mệnh đề; `.rf-d-title` (là `title`); `<pre class="rf-q">` chứa câu lệnh đầy đủ: `before` và `after` của `splitFocus` trong `<span class="rf-q-dim">`, `focus` trong `<mark class="rf-q-on">`, cả ba tô màu bằng `highlightTsql`, không có xuống dòng thừa giữa các khối; `<p class="rf-d-sub">` "`{clause}` làm gì" rồi `<p class="rf-d-text">` từ `meaning`; `<p class="rf-d-sub">Ở bước này</p>` rồi `<p class="rf-d-text">` từ `detail`; đoạn code trong hai đoạn này (theo `inlineCode`) thành `<code class="rf-kw">` (tô màu bằng `highlightTsql`) nếu có từ khóa, chữ xám hoặc hàm, còn lại thành `<code class="rf-id">` không tô; tiếp theo là `<Result columns rows total={rowCount(step)}>`, `<Sql code={step.sql} title="Câu lệnh của bước này">`, dòng "Liên hệ Excel: …" khi có `excel`; cuối drawer là `.rf-prev` ("Bước trước") và `.rf-next` ("Bước sau").
   - `drawerId` là `rf-{n}`, `n` tăng dần theo mỗi lần render trong module.
 
 - [ ] **Step 1: Viết test hỏng trong `tests/components.test.ts`** (dùng `sampleFlow()`)
 
 ```ts
 it('RunFlow numbers the steps, counts rows and previews 3 rows by 3 columns', async () => {
-  const html = await c.renderToString(RunFlow, { props: { steps: sampleFlow() } });
+  const html = await c.renderToString(RunFlow, { props: { query: sampleQuery(), steps: sampleFlow() } });
   expect(html).toMatch(/class="rf-num"[^>]*>01</);
   expect(html).toMatch(/class="rf-num"[^>]*>05</);
   for (const s of ['còn 48 dòng', 'còn 57 dòng', '+45 dòng', '+9 cột', 'Bạn viết SELECT trước, nhưng SQL Server làm FROM trước.']) expect(html).toContain(s);
   expect(html).toMatch(/<table class="rf-mini"[^>]*>(?:(?!<\/table>)[\s\S])*res-null/);
   expect((html.match(/class="rf-panel"/g) ?? []).length).toBe(5);
-  for (const s of ['Bước trước', 'Bước sau', 'Trích 10 dòng (kết quả có 57 dòng)', 'Câu lệnh của bước này', 'Sao chép']) expect(html).toContain(s);
+  for (const s of ['Bước trước', 'Bước sau', 'Trích 10 dòng (kết quả có 57 dòng)', 'Câu lệnh của bước này', 'Sao chép', 'Ở bước này']) expect(html).toContain(s);
+});
+it("RunFlow highlights the step's lines in the full query and boxes SQL words in the explanation", async () => {
+  const html = await c.renderToString(RunFlow, { props: { query: sampleQuery(), steps: sampleFlow() } });
+  expect(html).toMatch(/<mark class="rf-q-on">(?:(?!<\/mark>)[\s\S])*LEFT(?:(?!<\/mark>)[\s\S])*HopDong/);
+  expect(html).toMatch(/<mark class="rf-q-on">(?:(?!<\/mark>)[\s\S])*dò không ra hợp đồng nào/);
+  expect(html).toMatch(/<code class="rf-kw">(?:(?!<\/code>)[\s\S])*ON(?:(?!<\/code>)[\s\S])*<\/code>/);
+  expect(html).toContain('<code class="rf-id">NhanVien</code>');
 });
 it('RunFlow shows an empty step as "Không còn dòng nào"', async () => {
   const f = sampleFlow(); f[2] = { ...f[2], rows: [], total: 0 };
-  expect(await c.renderToString(RunFlow, { props: { steps: f } })).toContain('Không còn dòng nào');
+  expect(await c.renderToString(RunFlow, { props: { query: sampleQuery(), steps: f } })).toContain('Không còn dòng nào');
 });
 it('RunFlow stops the build when the flow breaks a rule', async () => {
-  await expect(c.renderToString(RunFlow, { props: { steps: sampleFlow().slice(0, 1) } })).rejects.toThrow('Sơ đồ thứ tự chạy có lỗi');
+  await expect(c.renderToString(RunFlow, { props: { query: sampleQuery(), steps: sampleFlow().slice(0, 1) } })).rejects.toThrow('Sơ đồ thứ tự chạy có lỗi');
 });
 it('two RunFlows on one page get their own drawers', async () => {
   const id = (h: string) => h.match(/class="rf-drawer" id="([^"]+)"/)![1];
-  const [a, b] = [await c.renderToString(RunFlow, { props: { steps: sampleFlow() } }), await c.renderToString(RunFlow, { props: { steps: sampleFlow() } })];
+  const [a, b] = [await c.renderToString(RunFlow, { props: { query: sampleQuery(), steps: sampleFlow() } }), await c.renderToString(RunFlow, { props: { query: sampleQuery(), steps: sampleFlow() } })];
   expect(id(a)).not.toBe(id(b));
 });
 ```
@@ -235,7 +257,7 @@ git commit -m "open, step through and close the flow drawer"
 
 ```ts
 it('SQL inside run-flow steps keeps the N prefix and has no leading spaces', () => {
-  for (const f of files) for (const m of f.body.matchAll(/\bsql:\s*`([\s\S]*?)`/g)) {
+  for (const f of files) for (const m of f.body.matchAll(/(?:\bsql:\s*|\bquery=\{)`([\s\S]*?)`/g)) {
     expect(findUnprefixedUnicodeStrings(m[1]), f.slug).toEqual([]);
     expect(m[1].split(/\r?\n/).filter(l => /^\s+\S/.test(l)), f.slug).toEqual([]);
   }
@@ -257,7 +279,7 @@ it('3.5 shows the run order of its final query', () => {
 
 - [ ] **Step 3: Viết sơ đồ vào bài 3.5**
 
-Tiêu đề cấp 3 "SQL Server chạy câu này thế nào", một câu dẫn ngắn, rồi `<RunFlow steps={[…]} />` với 5 bước ở Task 1. Mỗi bước: `title` một câu; `detail` 2–3 câu theo giọng văn mục 4.7 spec đợt 1; `excel` khi có việc tương ứng (bước 02: VLOOKUP ra `#N/A`; bước 03: lọc `#N/A` bằng AutoFilter; bước 05: Sort A→Z); `rows` tối đa 10 dòng chép từ lần chạy thật, `total` là số dòng đã kiểm (48, 57, 2, 2, 2). SQL trong `sql:` viết sát lề trái.
+Tiêu đề cấp 3 "SQL Server chạy câu này thế nào", một câu dẫn ngắn, rồi `<RunFlow query={`…`} steps={[…]} />`: `query` là đúng câu lệnh ở "Bước 2" của bài (giữ chú thích); 5 bước ở Task 1. Mỗi bước: `title` một câu; `focus` là đoạn của `query` ứng với bước; `meaning` 1–2 câu nói từ khóa làm gì, từ khóa đặt trong dấu `` ` ``; `detail` 2–3 câu nói chuyện xảy ra với dữ liệu ở bước này, có số liệu, theo giọng văn mục 4.7 spec đợt 1; `excel` khi có việc tương ứng (bước 02: VLOOKUP ra `#N/A`; bước 03: lọc `#N/A` bằng AutoFilter; bước 05: Sort A→Z); `rows` tối đa 10 dòng chép từ lần chạy thật, `total` là số dòng đã kiểm (48, 57, 2, 2, 2). SQL trong `sql:` viết sát lề trái.
 
 - [ ] **Step 4: Chạy `npm test`, `npm run build`, `npm run check:dist`, kỳ vọng tất cả PASS, check-dist báo OK**
 

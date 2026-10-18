@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sơ đồ thứ tự chạy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Literata:opsz,wght@7..72,400;7..72,600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --paper: #F4F2EC; --surface: #FFFFFF; --ink: #1F2328; --ink-2: #5B6169; --ink-3: #656B72; --ink-faint: #8A9099;
+    --rule: #E5E2DA; --rule-strong: #D3CEC3; --accent: #1F4FD1; --accent-soft: #E8EEFF; --done: #1A7F4B; --done-soft: #E3F4EA;
+    --lv3: #5B4BC4; --lv3-soft: #EBE8FA; --excel: #107C41;
+    --ssms-keyword: #0000FF; --ssms-gray: #808080; --ssms-null: #FFFFE1;
+    --font-ui: 'Be Vietnam Pro', system-ui, sans-serif; --font-read: 'Literata', Georgia, serif;
+    --font-code: 'JetBrains Mono', Consolas, monospace; --font-tool: 'Segoe UI', 'Be Vietnam Pro', system-ui, sans-serif;
+    --radius-s: 5px; --radius-m: 9px; --topbar: 56px;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-width: 1280px; background: var(--paper); color: var(--ink); font-family: var(--font-ui); }
+  .topbar { position: sticky; top: 0; z-index: 30; height: var(--topbar); display: flex; align-items: center; gap: 12px; padding: 0 20px; background: var(--surface); border-bottom: 1px solid var(--rule); font-weight: 700; }
+  .topbar small { font-weight: 500; color: var(--ink-3); }
+  .page { display: grid; grid-template-columns: 220px minmax(0, 1fr); }
+  .side { background: var(--surface); border-right: 1px solid var(--rule); min-height: calc(100vh - var(--topbar)); padding: 18px 16px; color: var(--ink-3); font-size: 13px; }
+  .main { padding: 36px 470px 80px 40px; }
+  .article { max-width: 720px; }
+  .crumb { font-size: 13px; color: var(--ink-3); margin: 0 0 6px; }
+  h2 { font-size: 24px; margin: 0 0 14px; letter-spacing: -0.01em; }
+  h3 { font-size: 19px; margin: 34px 0 8px; }
+  .prose p { font-family: var(--font-read); font-size: 17px; line-height: 1.7; margin: 0 0 14px; }
+  .faded { opacity: .45; }
+
+  /* ---- Run flow ---- */
+  .prose .rf-note { font-family: var(--font-ui); line-height: 1.5; }
+  .rf-note { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 10px; margin: 6px 0 18px; padding: 10px 14px; background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius-m); font-size: 14px; color: var(--ink-2); }
+  .rf-note strong { color: var(--ink); }
+  .rf-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 30px; row-gap: 34px; }
+  .rf-cell { position: relative; }
+  .rf-cell::after { position: absolute; color: #B6B0A3; font-size: 22px; font-weight: 700; line-height: 1; letter-spacing: -0.12em; }
+  .rf-cell[data-arrow='right']::after { content: '››'; right: -24px; top: 50%; transform: translateY(-50%); }
+  .rf-cell[data-arrow='left']::after { content: '‹‹'; left: -26px; top: 50%; transform: translateY(-50%); }
+  .rf-cell[data-arrow='down']::after { content: '››'; left: 50%; bottom: -29px; transform: translateX(-50%) rotate(90deg); }
+  .rf-card { width: 100%; height: 100%; display: grid; align-content: start; gap: 8px; padding: 12px 12px 10px; text-align: left; font: inherit; color: inherit; background: var(--surface); border: 1px solid var(--rule); border-radius: 12px; cursor: pointer; }
+  .rf-card:hover { border-color: var(--rule-strong); }
+  .rf-card[aria-expanded='true'] { outline: 2px solid var(--ink); outline-offset: 2px; }
+  .rf-top { display: flex; align-items: baseline; gap: 10px; }
+  .rf-num { font-size: 30px; font-weight: 800; line-height: 1; color: var(--accent); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+  .rf-clause { font-family: var(--font-code); font-size: 14px; font-weight: 500; }
+  .kw { color: var(--ssms-keyword); } .gr { color: var(--ssms-gray); }
+  .rf-title { font-size: 13px; line-height: 1.45; color: var(--ink-2); min-height: 38px; }
+  .rf-count { font-size: 12.5px; font-weight: 700; }
+  .rf-mini { width: 100%; border-collapse: collapse; table-layout: fixed; font-family: var(--font-tool); font-size: 11px; color: #1F1F1F; }
+  .rf-mini th { background: #F0F0F0; border: 1px solid #DCDCDC; padding: 2px 5px; text-align: left; font-weight: 400; }
+  .rf-mini td { border: 1px solid #E8E8E8; padding: 2px 5px; }
+  .rf-mini th, .rf-mini td { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .res-null { background: var(--ssms-null); }
+  .rf-more { display: flex; gap: 10px; font-size: 11.5px; color: var(--ink-3); }
+
+  /* ---- Drawer ---- */
+  .rf-drawer { position: fixed; top: var(--topbar); right: 0; bottom: 0; width: 440px; display: flex; flex-direction: column; background: var(--surface); border-left: 1px solid var(--rule); border-top: 4px solid var(--lv3); box-shadow: -12px 0 32px rgba(31, 35, 40, 0.08); }
+  .rf-d-head { display: flex; align-items: center; gap: 10px; padding: 14px 12px 0 22px; }
+  .rf-d-step { font-size: 13px; font-weight: 600; color: var(--ink-3); }
+  .rf-d-clause { font-family: var(--font-code); font-size: 13px; padding: 1px 7px; border-radius: var(--radius-s); background: #F3F1EB; }
+  .rf-close { margin-left: auto; width: 32px; height: 32px; border: 0; border-radius: var(--radius-s); background: none; color: var(--ink-2); font-size: 22px; cursor: pointer; }
+  .rf-d-body { flex: 1; overflow-y: auto; padding: 6px 22px 22px; }
+  .rf-d-title { margin: 10px 0 0; font-size: 21px; font-weight: 700; line-height: 1.25; letter-spacing: -0.01em; }
+  .rf-d-text { margin: 6px 0 0; font-family: var(--font-read); font-size: 15.5px; line-height: 1.7; }
+  .rf-d-sub { margin: 18px 0 0; font-size: 13px; font-weight: 600; color: var(--ink-3); }
+  .rf-kw { font-family: var(--font-code); font-size: 0.86em; font-weight: 500; padding: 1px 5px; border-radius: 4px; background: #EEF2FA; border: 1px solid #DCE3F0; color: var(--ink); white-space: nowrap; }
+  .rf-kw.kw { color: var(--ssms-keyword); } .rf-kw.gr { color: #5F5F5F; }
+  .rf-d-sub .rf-kw { font-size: 12.5px; }
+  .rf-id { font-family: var(--font-code); font-size: 0.86em; color: var(--ink); }
+  .rf-q { margin: 14px 0 0; border: 1px solid #CDD5E3; border-radius: var(--radius-s); background: #FFF; overflow: hidden; }
+  .rf-q-code { margin: 0; padding: 10px 0; font-family: var(--font-code); font-size: 12.5px; line-height: 1.7; color: #000; white-space: pre; overflow-x: auto; }
+  .rf-q-dim { display: block; padding: 0 14px; opacity: 0.4; }
+  .rf-q-on { display: block; padding: 2px 14px 2px 11px; background: #FFF6D6; border-left: 3px solid #E0A800; color: inherit; }
+  .res { margin: 16px 0 0; border: 1px solid #C9C9C9; border-radius: var(--radius-s); overflow: hidden; background: #FFF; font-family: var(--font-tool); font-size: 12.5px; color: #1F1F1F; }
+  .res-tabs { display: flex; background: #F5F5F5; border-bottom: 1px solid #D9D9D9; font-size: 12px; }
+  .res-tab { padding: 5px 12px; color: #555; } .res-tab.on { background: #FFF; color: #1F1F1F; font-weight: 600; border-right: 1px solid #D9D9D9; }
+  .res-scroll { overflow-x: auto; }
+  .res-grid { border-collapse: collapse; width: 100%; }
+  .res-grid th { background: #F0F0F0; border: 1px solid #DCDCDC; padding: 3px 8px; text-align: left; font-weight: 400; white-space: nowrap; }
+  .res-grid td { border: 1px solid #E8E8E8; padding: 3px 8px; white-space: nowrap; }
+  .res-grid .rn { width: 30px; background: #F0F0F0; color: #555; text-align: center; }
+  .res-status { display: flex; gap: 16px; padding: 4px 10px; border-top: 1px solid #D9D9D9; background: #FAFAFA; font-size: 12px; color: #444; }
+  .res-ok { color: var(--done); font-weight: 600; }
+  .res-trim { padding: 4px 10px 6px; font-size: 12px; color: var(--ink-3); background: #FAFAFA; }
+  .sql { margin: 14px 0 0; border: 1px solid #CDD5E3; border-radius: var(--radius-s); overflow: hidden; background: #FFF; }
+  .sql-head { display: flex; justify-content: space-between; align-items: center; padding: 4px 6px 4px 12px; background: #EEF2FA; border-bottom: 1px solid #CDD5E3; font-size: 12.5px; }
+  .sql-title { color: #3B4A68; font-weight: 600; }
+  .sql-copy { font: inherit; font-weight: 600; color: var(--accent); background: none; border: 0; padding: 3px 8px; }
+  .sql-code { margin: 0; padding: 10px 14px; font-family: var(--font-code); font-size: 12.5px; line-height: 1.65; color: #000; white-space: pre; overflow-x: auto; }
+  .rf-excel { display: flex; gap: 10px; align-items: flex-start; margin: 16px 0 0; font-size: 14px; line-height: 1.45; color: var(--ink-2); }
+  .rf-excel b { color: var(--ink); font-weight: 600; }
+  .xmark { flex: none; width: 20px; height: 20px; margin-top: 1px; display: grid; place-items: center; border-radius: 4px; background: var(--excel); color: #FFF; font-size: 11.5px; font-weight: 700; }
+  .rf-d-foot { display: flex; justify-content: space-between; padding: 12px 22px 16px; border-top: 1px solid var(--rule); }
+  .rf-nav { padding: 8px 14px; border: 1px solid var(--rule); border-radius: var(--radius-m); background: #FFF; font: inherit; font-size: 14px; font-weight: 600; color: var(--ink); cursor: pointer; }
+  .rf-nav:hover { border-color: var(--rule-strong); }
+  .mock-tag { position: fixed; left: 12px; bottom: 12px; padding: 6px 10px; background: var(--ink); color: #FFF; border-radius: 6px; font-size: 12px; }
+</style>
+</head>
+<body>
+  <header class="topbar">SQL Server <small>· mockup sơ đồ thứ tự chạy, bài 3.5</small></header>
+  <div class="page">
+    <aside class="side">Sidebar khóa học (lược bớt trong mockup)</aside>
+    <main class="main">
+      <article class="article prose">
+        <p class="crumb">Level 3 · Trung cấp &nbsp; Bài 3.5</p>
+        <h2>Làm bằng SQL</h2>
+        <p class="faded">… Bước 1, Bước 2, bảng kết quả 2 dòng NV047 và NV048 như bài hiện tại …</p>
+
+        <h3>SQL Server chạy câu này thế nào</h3>
+        <p>Câu lệnh ở Bước 2 bắt đầu bằng SELECT, nhưng SQL Server không chạy theo thứ tự bạn viết. Bấm vào từng bước để xem dữ liệu lúc đó trông ra sao.</p>
+
+        <figure class="rf" style="margin:0">
+          <p class="rf-note">Bạn viết <strong>SELECT</strong> trước, nhưng SQL Server làm <strong>FROM</strong> trước.</p>
+          <ol class="rf-grid">
+            <li class="rf-cell" data-arrow="right" style="grid-row:1;grid-column:1">
+              <button class="rf-card" type="button" aria-expanded="false">
+                <span class="rf-top"><span class="rf-num">01</span><span class="rf-clause kw">FROM</span></span>
+                <span class="rf-title">Lấy bảng NhanVien làm bảng gốc.</span>
+                <span class="rf-count">còn 48 dòng</span>
+                <table class="rf-mini"><thead><tr><th>MaNV</th><th>HoTen</th><th>GioiTinh</th></tr></thead>
+                  <tbody><tr><td>NV001</td><td>Trần Thị Mai</td><td>Nữ</td></tr><tr><td>NV002</td><td>Lê Văn Hùng</td><td>Nam</td></tr><tr><td>NV003</td><td>Nguyễn Thu Hà</td><td>Nữ</td></tr></tbody></table>
+                <span class="rf-more"><span>+45 dòng</span><span>+9 cột</span></span>
+              </button>
+            </li>
+            <li class="rf-cell" data-arrow="right" style="grid-row:1;grid-column:2">
+              <button class="rf-card" type="button" aria-expanded="true">
+                <span class="rf-top"><span class="rf-num">02</span><span class="rf-clause gr">LEFT JOIN</span></span>
+                <span class="rf-title">Ghép mỗi nhân viên với hợp đồng của họ; ai không có thì để NULL.</span>
+                <span class="rf-count">còn 57 dòng</span>
+                <table class="rf-mini"><thead><tr><th>MaNV</th><th>HoTen</th><th>MaHD</th></tr></thead>
+                  <tbody><tr><td>NV021</td><td>Tôn Thất Long</td><td>HD2021-001</td></tr><tr><td>NV021</td><td>Tôn Thất Long</td><td>HD2021-002</td></tr><tr><td>NV047</td><td>Phạm Ngọc Ánh</td><td class="res-null">NULL</td></tr></tbody></table>
+                <span class="rf-more"><span>+54 dòng</span><span>+2 cột</span></span>
+              </button>
+            </li>
+            <li class="rf-cell" data-arrow="down" style="grid-row:1;grid-column:3">
+              <button class="rf-card" type="button" aria-expanded="false">
+                <span class="rf-top"><span class="rf-num">03</span><span class="rf-clause kw">WHERE</span></span>
+                <span class="rf-title">Chỉ giữ những dòng không dò ra hợp đồng nào.</span>
+                <span class="rf-count">còn 2 dòng</span>
+                <table class="rf-mini"><thead><tr><th>MaNV</th><th>HoTen</th><th>MaHD</th></tr></thead>
+                  <tbody><tr><td>NV047</td><td>Phạm Ngọc Ánh</td><td class="res-null">NULL</td></tr><tr><td>NV048</td><td>Đỗ Minh Quân</td><td class="res-null">NULL</td></tr></tbody></table>
+                <span class="rf-more"><span>+2 cột</span></span>
+              </button>
+            </li>
+            <li class="rf-cell" data-arrow="left" style="grid-row:2;grid-column:3">
+              <button class="rf-card" type="button" aria-expanded="false">
+                <span class="rf-top"><span class="rf-num">04</span><span class="rf-clause kw">SELECT</span></span>
+                <span class="rf-title">Chọn 4 cột cần đưa vào danh sách.</span>
+                <span class="rf-count">còn 2 dòng</span>
+                <table class="rf-mini"><thead><tr><th>MaNV</th><th>HoTen</th><th>MaPB</th></tr></thead>
+                  <tbody><tr><td>NV047</td><td>Phạm Ngọc Ánh</td><td>NS</td></tr><tr><td>NV048</td><td>Đỗ Minh Quân</td><td>IT</td></tr></tbody></table>
+                <span class="rf-more"><span>+1 cột</span></span>
+              </button>
+            </li>
+            <li class="rf-cell" style="grid-row:2;grid-column:2">
+              <button class="rf-card" type="button" aria-expanded="false">
+                <span class="rf-top"><span class="rf-num">05</span><span class="rf-clause kw">ORDER BY</span></span>
+                <span class="rf-title">Sắp xếp theo mã nhân viên.</span>
+                <span class="rf-count">còn 2 dòng</span>
+                <table class="rf-mini"><thead><tr><th>MaNV</th><th>HoTen</th><th>MaPB</th></tr></thead>
+                  <tbody><tr><td>NV047</td><td>Phạm Ngọc Ánh</td><td>NS</td></tr><tr><td>NV048</td><td>Đỗ Minh Quân</td><td>IT</td></tr></tbody></table>
+                <span class="rf-more"><span>+1 cột</span></span>
+              </button>
+            </li>
+          </ol>
+        </figure>
+
+        <h2 style="margin-top:48px" class="faded">Hay nhầm ở đâu</h2>
+      </article>
+    </main>
+  </div>
+
+  <aside class="rf-drawer" aria-label="Chi tiết bước">
+    <div class="rf-d-head">
+      <span class="rf-d-step">Bước 02</span><span class="rf-d-clause gr">LEFT JOIN</span>
+      <button class="rf-close" type="button" aria-label="Đóng">×</button>
+    </div>
+    <div class="rf-d-body">
+      <p class="rf-d-title">Ghép mỗi nhân viên với hợp đồng của họ</p>
+      <figure class="rf-q">
+<pre class="rf-q-code"><span class="rf-q-dim"><span class="kw">SELECT</span> nv<span class="gr">.</span>MaNV<span class="gr">,</span> nv<span class="gr">.</span>HoTen<span class="gr">,</span> nv<span class="gr">.</span>MaPB<span class="gr">,</span> nv<span class="gr">.</span>NgayVaoLam
+<span class="kw">FROM</span> NhanVien <span class="kw">AS</span> nv</span><mark class="rf-q-on"><span class="gr">LEFT JOIN</span> HopDong <span class="kw">AS</span> hd <span class="kw">ON</span> hd<span class="gr">.</span>MaNV <span class="gr">=</span> nv<span class="gr">.</span>MaNV</mark><span class="rf-q-dim"><span class="kw">WHERE</span> hd<span class="gr">.</span>MaHD <span class="gr">IS NULL</span>
+<span class="kw">ORDER BY</span> nv<span class="gr">.</span>MaNV<span class="gr">;</span></span></pre>
+      </figure>
+      <p class="rf-d-sub"><code class="rf-kw gr">LEFT JOIN</code> làm gì</p>
+      <p class="rf-d-text"><code class="rf-kw gr">LEFT JOIN</code> ghép mỗi dòng của bảng bên trái với các dòng khớp ở bảng bên phải, theo điều kiện viết sau <code class="rf-kw kw">ON</code>. Dòng bên trái không khớp với dòng nào vẫn được giữ lại, các cột của bảng bên phải để <code class="rf-kw gr">NULL</code>.</p>
+      <p class="rf-d-sub">Ở bước này</p>
+      <p class="rf-d-text">Bảng bên trái là <code class="rf-id">NhanVien</code> (48 người), bên phải là <code class="rf-id">HopDong</code>, khớp nhau theo <code class="rf-id">MaNV</code>. Tôn Thất Long có ba hợp đồng nên có ba dòng, vì vậy 48 người thành 57 dòng. Phạm Ngọc Ánh và Đỗ Minh Quân chưa có hợp đồng nào, vẫn còn trong bảng với <code class="rf-id">MaHD</code> là <code class="rf-kw gr">NULL</code>.</p>
+      <figure class="res" style="margin-inline:0">
+        <div class="res-tabs"><span class="res-tab on">Results</span><span class="res-tab">Messages</span></div>
+        <div class="res-scroll">
+          <table class="res-grid">
+            <thead><tr><th class="rn"></th><th>MaNV</th><th>HoTen</th><th>MaHD</th><th>MaPB</th><th>NgayVaoLam</th></tr></thead>
+            <tbody>
+              <tr><td class="rn">1</td><td>NV021</td><td>Tôn Thất Long</td><td>HD2021-001</td><td>IT</td><td>2021-07-01</td></tr>
+              <tr><td class="rn">2</td><td>NV021</td><td>Tôn Thất Long</td><td>HD2021-002</td><td>IT</td><td>2021-07-01</td></tr>
+              <tr><td class="rn">3</td><td>NV047</td><td>Phạm Ngọc Ánh</td><td class="res-null">NULL</td><td>NS</td><td>2026-10-01</td></tr>
+              <tr><td class="rn">4</td><td>NV021</td><td>Tôn Thất Long</td><td>HD2024-005</td><td>IT</td><td>2021-07-01</td></tr>
+              <tr><td class="rn">5</td><td>NV001</td><td>Trần Thị Mai</td><td>HD2024-018</td><td>KT</td><td>2024-03-01</td></tr>
+              <tr><td class="rn">6</td><td>NV002</td><td>Lê Văn Hùng</td><td>HD2024-021</td><td>KD</td><td>2024-04-01</td></tr>
+              <tr><td class="rn">7</td><td>NV003</td><td>Nguyễn Thu Hà</td><td>HD2023-104</td><td>KD</td><td>2023-06-01</td></tr>
+              <tr><td class="rn">8</td><td>NV025</td><td>Huỳnh Văn Tài</td><td>HD2023-005</td><td>KD</td><td>2023-11-01</td></tr>
+              <tr><td class="rn">9</td><td>NV025</td><td>Huỳnh Văn Tài</td><td>HD2025-014</td><td>KD</td><td>2023-11-01</td></tr>
+              <tr><td class="rn">10</td><td>NV048</td><td>Đỗ Minh Quân</td><td class="res-null">NULL</td><td>IT</td><td>2026-10-05</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="res-status"><span class="res-ok">✓ Query executed successfully.</span><span>HRM_Demo</span><span>57 rows</span></div>
+        <figcaption class="res-trim">Trích 10 dòng (kết quả có 57 dòng)</figcaption>
+      </figure>
+      <figure class="sql" style="margin-inline:0">
+        <div class="sql-head"><span class="sql-title">Câu lệnh của bước này</span><button class="sql-copy" type="button">Sao chép</button></div>
+<pre class="sql-code"><span class="kw">SELECT</span> nv<span class="gr">.</span>MaNV<span class="gr">,</span> nv<span class="gr">.</span>HoTen<span class="gr">,</span> hd<span class="gr">.</span>MaHD<span class="gr">,</span> nv<span class="gr">.</span>MaPB<span class="gr">,</span> nv<span class="gr">.</span>NgayVaoLam
+<span class="kw">FROM</span> NhanVien <span class="kw">AS</span> nv
+<span class="gr">LEFT JOIN</span> HopDong <span class="kw">AS</span> hd <span class="kw">ON</span> hd<span class="gr">.</span>MaNV <span class="gr">=</span> nv<span class="gr">.</span>MaNV<span class="gr">;</span></pre>
+      </figure>
+      <p class="rf-excel"><span class="xmark">X</span><span>Liên hệ Excel: <b>VLOOKUP dò không ra thì trả #N/A</b>; ở đây ô đó là NULL.</span></p>
+    </div>
+    <div class="rf-d-foot">
+      <button class="rf-nav" type="button">Bước trước</button>
+      <button class="rf-nav" type="button">Bước sau</button>
+    </div>
+  </aside>
+  <span class="mock-tag">Mockup tĩnh: thẻ 02 đang mở trong drawer</span>
+</body>
+</html>
