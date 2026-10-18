@@ -4,27 +4,152 @@ title: Khóa chính, khóa ngoại và chuyện "Mã NV"
 shortTitle: Khóa chính, khóa ngoại
 level: 1
 area: A1
-kind: summary
-minutes: 12
+kind: full
+minutes: 15
 prerequisites:
   - "1.3"
-goal: bạn biết các bảng liên kết với nhau qua cột mã như thế nào
+goal: bạn biết các bảng liên kết với nhau qua cột mã như thế nào, và đọc được thông báo lỗi khi vi phạm khóa
 excel: Cột mã không trùng; dropdown lấy từ sheet khác
-summary: Khóa chính, khóa ngoại và vì sao không xóa được một phòng ban khi vẫn còn nhân viên.
+summary: Khóa chính, khóa ngoại, và vì sao không xóa được một phòng ban khi vẫn còn nhân viên.
 noExercises: true
 ---
 
-## Nội dung chính
+## Tình huống
 
-- Khóa chính là cột (hoặc nhóm cột) không được trùng và không được trống, ví dụ `MaNV` trong bảng `NhanVien`.
-- Khóa ngoại là cột trỏ sang khóa chính của bảng khác, ví dụ `NhanVien.MaPB` trỏ sang `PhongBan.MaPB`.
-- Nhờ khóa ngoại, không gán được nhân viên vào một phòng ban không có trong danh mục.
-- Cũng vì khóa ngoại mà không xóa được một phòng ban khi vẫn còn nhân viên thuộc phòng đó.
+Một yêu cầu hay gặp khi công ty sắp xếp lại bộ máy:
 
-## Liên hệ Excel
+<Chat who="Chị Hạnh · Phòng Nhân sự" time="9:45" initial="H">
+Công ty gộp phòng Vận hành vào phòng Kinh doanh rồi. Chị nhờ bên IT xóa phòng Vận hành khỏi danh mục, mà hệ thống báo lỗi, không xóa được. Sao lại vậy em?
+</Chat>
 
-Giống cột mã NV không được trùng, và cột phòng ban dùng dropdown (Data Validation dạng List) lấy từ sheet danh mục phòng ban. Khác ở chỗ Excel vẫn cho dán đè một giá trị lạ, còn database thì chặn hẳn.
+Nói gọn lại:
 
-## Tình huống ví dụ
+<Key>Bảng phòng ban và bảng nhân viên liên kết với nhau bằng gì, mà database không cho xóa một phòng ban?</Key>
 
-Phòng nhân sự muốn xóa phòng Vận hành khỏi danh mục và hỏi vì sao hệ thống báo lỗi.
+## Với Excel
+
+Với Excel, cách quen thuộc là hai sheet: sheet danh mục phòng ban, và sheet nhân viên có cột "Mã PB" làm dropdown (Data Validation dạng List) lấy từ sheet danh mục. Cột mã NV thì tô màu khi trùng để dễ thấy.
+
+<Excel sheets="NhanVien · DanhMucPB" cell="C4" formula="Van hanh" selected="C4" rows={[
+  ['Mã NV', 'Họ tên', 'Mã PB'],
+  ['NV008', 'Phan Văn Lợi', 'VH'],
+  ['NV015', 'Dương Văn Nam', 'VH'],
+  ['NV019', 'Châu Văn Phúc', 'Van hanh'],
+]} />
+
+Hai lỗ hổng quen thuộc: dán đè một giá trị lạ như "Van hanh" vào ô dropdown vẫn được, và xóa dòng VH ở sheet danh mục thì sheet nhân viên vẫn giữ nguyên chữ VH, trỏ vào một phòng không còn tồn tại. Excel không báo gì cả.
+
+## Làm bằng SQL
+
+### Lý thuyết cơ bản
+
+**Khóa chính** (primary key) là cột, hoặc nhóm cột, xác định đúng một dòng trong bảng: không được trùng, không được để trống. Trong HRM_Demo, `NhanVien.MaNV` và `PhongBan.MaPB` là khóa chính. Có bảng dùng khóa hai cột: `ChamCong` lấy cặp `(MaNV, Ngay)`, vì mỗi người mỗi ngày chỉ có một dòng chấm công; `BangLuong` lấy cặp `(KyLuong, MaNV)`.
+
+**Khóa ngoại** (foreign key) là cột trỏ sang khóa chính của một bảng khác. Nó chỉ nhận giá trị đang có ở bảng kia. `NhanVien.MaPB` trỏ sang `PhongBan.MaPB`; `HopDong.MaNV`, `ChamCong.MaNV`, `DonNghiPhep.MaNV`, `BangLuong.MaNV` đều trỏ về `NhanVien.MaNV`.
+
+Trong script `HRM_Demo.sql`, khóa được khai báo ngay cạnh cột:
+
+<Sql title="Cách khóa được khai báo" code={`MaNV  varchar(10)  NOT NULL CONSTRAINT PK_NhanVien PRIMARY KEY,
+MaPB  varchar(10)  NOT NULL CONSTRAINT FK_NhanVien_PhongBan REFERENCES dbo.PhongBan (MaPB),`} />
+
+Ví dụ thu gọn: phòng VH có trong `PhongBan`, và ba nhân viên trỏ tới nó.
+
+| PhongBan.MaPB | PhongBan.TenPB |
+|---|---|
+| VH | Vận hành |
+
+| NhanVien.MaNV | NhanVien.HoTen | NhanVien.MaPB |
+|---|---|---|
+| NV008 | Phan Văn Lợi | VH |
+| NV015 | Dương Văn Nam | VH |
+| NV019 | Châu Văn Phúc | VH |
+
+Còn dòng nào trong `NhanVien` trỏ tới VH thì dòng VH trong `PhongBan` không xóa được.
+
+Từng phần nghĩa là gì:
+
+<LineMap rows={[
+  ['PRIMARY KEY', 'Đây là khóa chính: không trùng, không trống. Giống cột mã NV không được trùng, nhưng database chặn hẳn chứ không chỉ tô màu.'],
+  ['CONSTRAINT PK_NhanVien', 'Tên của khóa. Tên này hiện nguyên văn trong thông báo lỗi, nên đọc lỗi là biết khóa nào bị vi phạm.'],
+  ['REFERENCES dbo.PhongBan (MaPB)', 'Khóa ngoại: cột này chỉ nhận mã đang có ở cột MaPB của bảng PhongBan. Giống dropdown lấy từ sheet danh mục, nhưng không dán đè được.'],
+]} />
+
+### Thấy khóa trong SSMS
+
+Trong Object Explorer, cột là khóa có chữ PK hoặc FK trong ngoặc:
+
+<Ssms view="explorer" table="NhanVien" caption="Bảng dbo.NhanVien: MaNV là khóa chính; MaPB, MaCD, MaQuanLy là khóa ngoại. MaQuanLy trỏ về chính bảng NhanVien và được để trống." />
+
+### Database chặn những gì
+
+Ba câu dưới đây chỉ để đọc. Nếu chạy, SQL Server báo lỗi và không đổi gì, nhưng trong khóa học bạn không cần tự chạy câu sửa dữ liệu nào trên SSMS.
+
+**Thêm một người trùng mã NV.** Khóa chính chặn:
+
+<Sql code={`INSERT INTO NhanVien (MaNV, HoTen, GioiTinh, NgaySinh, SoCCCD, NgayVaoLam, MaPB, MaCD, TrangThai)
+VALUES ('NV001', N'Lý Thu Hằng', N'Nữ', '1996-05-20', '000196000049', '2026-10-12', 'KT', 'CV', N'Đang làm');`} />
+
+<Messages lines={[
+  'Msg 2627, Level 14, State 1, Line 1',
+  "Violation of PRIMARY KEY constraint 'PK_NhanVien'. Cannot insert duplicate key in object 'dbo.NhanVien'. The duplicate key value is (NV001).",
+  'The statement has been terminated.',
+]} />
+
+**Thêm một người với mã phòng không có trong danh mục.** Khóa ngoại chặn (`KT01` không có trong `PhongBan`):
+
+<Sql code={`INSERT INTO NhanVien (MaNV, HoTen, GioiTinh, NgaySinh, SoCCCD, NgayVaoLam, MaPB, MaCD, TrangThai)
+VALUES ('NV049', N'Lý Thu Hằng', N'Nữ', '1996-05-20', '000196000049', '2026-10-12', 'KT01', 'CV', N'Đang làm');`} />
+
+<Messages lines={[
+  'Msg 547, Level 16, State 0, Line 1',
+  'The INSERT statement conflicted with the FOREIGN KEY constraint "FK_NhanVien_PhongBan". The conflict occurred in database "free-sql-db-8797714", table "dbo.PhongBan", column \'MaPB\'.',
+  'The statement has been terminated.',
+]} />
+
+**Xóa phòng Vận hành khi còn nhân viên.** Đây chính là lỗi bên IT gặp:
+
+<Sql code={`DELETE FROM PhongBan WHERE MaPB = 'VH';`} />
+
+<Messages lines={[
+  'Msg 547, Level 16, State 0, Line 1',
+  'The DELETE statement conflicted with the REFERENCE constraint "FK_NhanVien_PhongBan". The conflict occurred in database "free-sql-db-8797714", table "dbo.NhanVien", column \'MaPB\'.',
+  'The statement has been terminated.',
+]} />
+
+Đọc lỗi từ trái sang phải: khóa `FK_NhanVien_PhongBan` bị vi phạm, vì bảng `dbo.NhanVien`, cột `MaPB`, vẫn còn dòng trỏ tới VH. Đếm thử thì phòng VH đang có 10 người (chưa cần hiểu từng chữ, `WHERE` và `COUNT` có ở bài 2.2 và 3.1):
+
+<Sql code={`SELECT COUNT(*) AS SoNhanVien
+FROM NhanVien
+WHERE MaPB = 'VH';`} />
+
+<Result columns={['SoNhanVien']} rows={[[10]]} />
+
+Muốn xóa phòng VH, trước hết phải chuyển 10 người đó sang phòng Kinh doanh. Database bắt làm đúng thứ tự, nên danh mục không bao giờ thiếu một phòng mà nhân viên đang trỏ tới. Cách sửa dữ liệu an toàn để ở Level 5.
+
+## Hay nhầm ở đâu
+
+<Mistakes>
+
+1. **Xóa danh mục trước, định sửa nhân viên sau.** Thứ tự này làm được trên Excel, nhưng database chặn ngay ở bước đầu. Thứ tự đúng là chuyển hết các dòng đang trỏ tới, rồi mới xóa dòng danh mục.
+2. **Nghĩ khóa chính luôn là một cột.** Trong `ChamCong`, cột `MaNV` lặp lại mỗi ngày là bình thường. Cái không được trùng là cặp `(MaNV, Ngay)`: một người không thể có hai dòng chấm công cho cùng một ngày.
+3. **Nghĩ khóa ngoại bắt buộc phải có giá trị.** `MaQuanLy` là khóa ngoại nhưng được để trống: NV004 Hoàng Minh Tuấn là giám đốc, không có ai quản lý. Khóa ngoại chỉ kiểm khi cột có giá trị; muốn bắt buộc thì cột phải thêm `NOT NULL`.
+
+</Mistakes>
+
+## Ứng dụng
+
+<Apply>
+
+- Khi viết đặc tả một màn hình hay một file import, ghi rõ cột nào là mã duy nhất, cột nào lấy từ danh mục nào. Đó chính là khóa chính và khóa ngoại mà người dựng hệ thống cần biết.
+- Khi hệ thống báo lỗi có chữ "conflicted with the REFERENCE constraint", đọc tên khóa và tên bảng trong thông báo là biết dữ liệu nào đang trỏ tới dòng bạn muốn xóa, khỏi đoán.
+
+</Apply>
+
+## Ghi nhớ
+
+<Memo rows={[
+  ['Cột mã NV không được trùng', 'PRIMARY KEY'],
+  ['Dropdown lấy từ sheet danh mục', 'FOREIGN KEY … REFERENCES'],
+  ['Xóa dòng danh mục, sheet khác vẫn giữ mã cũ', 'Không xóa được khi còn dòng trỏ tới'],
+  ['Một người một ngày một dòng chấm công', 'PRIMARY KEY (MaNV, Ngay)'],
+]} />
