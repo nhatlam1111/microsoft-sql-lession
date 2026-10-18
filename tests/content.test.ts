@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { readFileSync } from 'node:fs';
-import { lessonSchema, SECTION_HEADINGS, BANNED_PHRASES } from '../src/lib/lesson-schema';
+import { readdirSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { parse as parseYaml } from 'yaml';
+import { lessonSchema, SECTION_HEADINGS, BANNED_PHRASES, sectionHeadings } from '../src/lib/lesson-schema';
 import { validateCatalog } from '../src/lib/catalog';
 import { findUnprefixedUnicodeStrings } from '../src/lib/tsql-lexer';
 import { EXPECTED } from './helpers/expected';
@@ -21,9 +23,32 @@ describe('lesson files', () => {
   });
   it('uses exactly the section headings of its kind, in order', () => {
     for (const f of files) {
-      const kind = (f.data as { kind: 'full' | 'summary' }).kind;
+      const { kind, noExercises } = f.data as { kind: 'full' | 'summary'; noExercises?: boolean };
       const h2 = [...f.body.matchAll(/^## (.+?)\s*$/gm)].map(m => m[1]);
-      expect(h2, f.slug).toEqual(SECTION_HEADINGS[kind]);
+      expect(h2, f.slug).toEqual(sectionHeadings(kind, noExercises));
+    }
+  });
+  it('sectionHeadings drops Bài tập only when asked', () => {
+    expect(sectionHeadings('full', true)).toEqual(SECTION_HEADINGS.full.slice(0, 6));
+    expect(sectionHeadings('summary').at(-1)).toBe('Bài tập');
+    expect(sectionHeadings('full', false)).toEqual([...SECTION_HEADINGS.full]);
+  });
+  it('lessons 1.1 to 1.5 have no exercises section', () => {
+    for (const f of files) {
+      const data = f.data as { num: string; noExercises?: boolean };
+      if (!['1.1', '1.2', '1.3', '1.4', '1.5'].includes(data.num)) continue;
+      expect(data.noExercises, f.slug).toBe(true);
+      expect(f.body.includes('<Exercises'), f.slug).toBe(false);
+    }
+  });
+  it('a lesson with an exercise file is not marked noExercises and lists its exercises', () => {
+    const lessons = readdirSync(join('src', 'content', 'exercises')).filter(n => n.endsWith('.yaml'))
+      .map(n => (parseYaml(readFileSync(join('src', 'content', 'exercises', n), 'utf8')) as { lesson: string }).lesson);
+    expect(lessons.length).toBeGreaterThan(0);
+    for (const lesson of lessons) {
+      const f = files.find(x => x.slug === lesson)!;
+      expect((f.data as { noExercises?: boolean }).noExercises, lesson).not.toBe(true);
+      expect(f.body.includes('<Exercises />'), lesson).toBe(true);
     }
   });
   it('contains no banned phrase and no emoji', () => {

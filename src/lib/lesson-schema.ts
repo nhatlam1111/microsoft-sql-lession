@@ -13,6 +13,8 @@ export const lessonSchema = z.object({
   goal: z.string().min(1).refine(g => !g.startsWith('Học xong'), 'goal must not start with "Học xong"'),
   excel: z.string().min(1),
   summary: z.string().min(1),
+  /** The lesson has no "Bài tập" section at all, not even the placeholder (lessons before SELECT is taught). */
+  noExercises: z.boolean().optional(),
 });
 
 export type LessonFrontmatter = z.infer<typeof lessonSchema>;
@@ -22,6 +24,11 @@ export const SECTION_HEADINGS = {
   full: ['Tình huống', 'Với Excel', 'Làm bằng SQL', 'Hay nhầm ở đâu', 'Ứng dụng', 'Ghi nhớ', 'Bài tập'],
   summary: ['Nội dung chính', 'Liên hệ Excel', 'Tình huống ví dụ', 'Bài tập'],
 } as const;
+
+/** The level-2 headings a lesson must have, in order; a lesson marked `noExercises` ends without "Bài tập". */
+export function sectionHeadings(kind: 'full' | 'summary', noExercises = false): string[] {
+  return SECTION_HEADINGS[kind].filter(h => !(noExercises && h === 'Bài tập'));
+}
 
 /** Phrases that make the text read machine-written or tie it to one reader's job (matched in lower case). */
 export const BANNED_PHRASES = [
