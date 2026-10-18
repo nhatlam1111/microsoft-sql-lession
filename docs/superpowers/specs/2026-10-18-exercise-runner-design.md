@@ -89,7 +89,7 @@ Khi trang làm bài mở ra, trang gửi trước một yêu cầu "đánh thứ
 
 ### 5.1 Nơi chạy
 
-- Azure Functions, gói Flex Consumption, Node.js 22 (nếu Azure chưa có 22 thì dùng 20), cỡ máy 512 MB, không bật Always Ready, Zone redundancy tắt.
+- Azure Functions, gói Flex Consumption, Node.js 24 (người làm khóa học chọn ngày 2026-10-18 thay cho 22, vì 22 chỉ được hỗ trợ đến 04/2027), cỡ máy 512 MB, không bật Always Ready, Zone redundancy tắt, chưa bật Application Insights.
 - Vùng: Australia East, cùng vùng với database. Lúc cài đặt kiểm bằng `az functionapp list-flexconsumption-locations`; nếu Australia East chưa có Flex thì chọn vùng gần nhất có Flex và ghi lại độ trễ đo được.
 - Code nằm trong thư mục `api/` của repo, có `package.json` riêng. Logic thuần (bộ chặn, so kết quả, định dạng giá trị) viết sao cho dùng chung được với test của web.
 
@@ -101,7 +101,7 @@ Khi trang làm bài mở ra, trang gửi trước một yêu cầu "đánh thứ
 | `POST /api/run` | Nhận mã bài tập và câu SQL, chạy có `ROLLBACK` | cột, tối đa 200 dòng (có cờ "đã cắt"), số dòng bị ảnh hưởng, thông báo hoặc lỗi của SQL Server, thời gian chạy |
 | `POST /api/grade` | Như `run`, rồi chấm theo đáp án của bài tập | như `run`, thêm đúng/sai và lý do |
 
-- Mọi đầu gọi (trừ `ping`) yêu cầu header mã truy cập. Danh sách mã nằm trong cài đặt `ACCESS_CODES` (cách nhau bởi dấu phẩy), để sau này phát mỗi học viên một mã. Sai mã trả 401.
+- Mọi đầu gọi, kể cả `ping`, yêu cầu header mã truy cập (đổi sau rà soát cuối: không có mã thì người lạ cũng đánh thức được database và làm tốn hạn mức). Trang chỉ gửi `ping` khi đã có mã. Danh sách mã nằm trong cài đặt `ACCESS_CODES` (cách nhau bởi dấu phẩy), để sau này phát mỗi học viên một mã. Sai mã trả 401.
 - Chỉ nhận yêu cầu từ `https://nhatlam1111.github.io` và `http://localhost:4321` (CORS).
 - Giới hạn tốc độ: mỗi mã tối đa 30 lần gọi mỗi phút, đếm trong từng máy chạy API (không cần chính xác tuyệt đối).
 
