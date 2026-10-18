@@ -132,7 +132,7 @@ exercises:
 ```
 
 - Câu đáp án và câu kiểm tra chỉ được đóng gói vào API. `check:dist` báo lỗi nếu tìm thấy chúng trong `dist/`. Repo đang public, nên ai đọc repo vẫn thấy đáp án; điều này đã được chấp nhận.
-- Bài truy vấn chấm theo giá trị: không so tên cột, so thứ tự dòng chỉ khi `ordered: true`, số `9610000` và `9610000.0` coi là bằng nhau. Bài sửa dữ liệu so số dòng bị ảnh hưởng trước, rồi so kết quả câu kiểm tra.
+- Bài truy vấn chấm theo giá trị: không so tên cột, so thứ tự dòng chỉ khi `ordered: true`, số `9610000` và `9610000.0` coi là bằng nhau. Bài sửa dữ liệu so số dòng bị ảnh hưởng trước, rồi so kết quả câu kiểm tra (câu này lấy mọi dòng của bảng bị sửa, có `ORDER BY`). Khi sai, lý do chỉ ra dòng và cột lệch, không bao giờ đưa giá trị của đáp án.
 - Trước khi push, chạy `npm --prefix api run check:exercises` để chắc mọi đáp án chạy được trên database thật.
 
 ## Deploy
@@ -140,7 +140,7 @@ exercises:
 | Workflow | Khi nào chạy | Làm gì |
 |---|---|---|
 | `deploy.yml` | Mọi lần push vào `main`, hoặc bấm tay | `npm ci`, `npm run check`, `npm test`, build (đọc `PUBLIC_EXERCISE_API`), `check:dist`, đẩy lên GitHub Pages |
-| `deploy-api.yml` | Push vào `main` có đổi `api/`, bài tập, `src/lib/sql-guard.ts`, `grade.ts`, `exercise-types.ts`; hoặc bấm "Run workflow" | Test, `typecheck`, build API, đăng nhập Azure bằng OIDC, deploy lên Function App |
+| `deploy-api.yml` | Push vào `main` có đổi `api/`, bài tập, `src/lib/sql-guard.ts`, `grade.ts`, `exercise-types.ts`; hoặc bấm "Run workflow" | Test, `typecheck`, build API, đăng nhập Azure bằng OIDC, deploy lên Function App, rồi gọi thử `/api/ping` không kèm mã (phải ra 401) |
 
 Cấu hình cần có (giá trị do người phụ trách tự điền, không nằm trong repo):
 

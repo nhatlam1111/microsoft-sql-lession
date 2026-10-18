@@ -40,7 +40,9 @@ Học viên tự học là chính; người làm khóa học chỉ thỉnh tho�
   - bên dưới là tab Results và Messages giống bảng kết quả trong bài học. Messages ghi số dòng bị ảnh hưởng, hoặc nguyên văn lỗi của SQL Server.
 - "Chạy" chỉ chạy và hiện kết quả. "Nộp bài" chấm rồi hiện một dải kết quả:
   - đúng: "Đúng rồi." (xanh lá);
-  - sai: "Chưa đúng: " kèm một lý do ngắn, ví dụ "khác số dòng (bạn ra 2, đáp án 1)", "khác số cột (bạn ra 4, đề cần 3)", "dòng 2 khác", "khác số dòng bị ảnh hưởng (bạn 17, đáp án 9)". Lý do chỉ nói chỗ lệch, không nói cách sửa.
+  - sai: "Chưa đúng: " kèm một lý do ngắn chỉ chỗ lệch, không nói cách sửa và không bao giờ đưa ra giá trị của đáp án:
+    - bài truy vấn: "khác số cột (bạn ra 4, đề cần 3)", "khác số dòng (bạn ra 2, đáp án 1)", "dòng 2 khác ở cột HoTen" (đề có yêu cầu sắp xếp), "dòng 2 không có trong đáp án" (đề không yêu cầu sắp xếp). Số dòng là dòng học viên thấy trong tab Results;
+    - bài sửa dữ liệu (học viên không thấy kết quả câu kiểm tra, nên dòng được gọi bằng giá trị của chính nó): "khác số dòng bị ảnh hưởng (bạn 17, đáp án 9)", "sau khi sửa, bảng còn 40 dòng, đáp án còn 41 dòng", "sau khi sửa, dòng MaNV = NV002, KyLuong = 2026-09 khác đáp án ở cột PhuCap", "sau khi sửa vẫn còn dòng MaDon = DP003 mà đáp án không có".
 - Câu đang viết dở được giữ trong trình duyệt khi rời trang hoặc tải lại, mỗi bài tập một bản.
 - Khi học viên mới vào, khung soạn chỉ có một dòng chú thích `-- Viết câu lệnh của bạn ở đây`.
 
@@ -79,7 +81,7 @@ Khi trang làm bài mở ra, trang gửi trước một yêu cầu "đánh thứ
 - Mỗi bài học có bài tập thì có một file riêng trong `src/content/exercises/`, đặt theo slug bài học. Mỗi bài tập gồm:
   - mã (ví dụ `3-5-1`), tên, yêu cầu, các cột cần ra, có cần sắp xếp không;
   - loại: truy vấn hoặc sửa dữ liệu;
-  - câu đáp án; với bài sửa dữ liệu thêm câu kiểm tra (`SELECT` trên bảng bị sửa, có `ORDER BY`).
+  - câu đáp án; với bài sửa dữ liệu thêm câu kiểm tra (`SELECT` mọi dòng của bảng bị sửa, có các cột khóa và cột bị sửa, có `ORDER BY`).
 - Web chỉ đọc phần đề. Câu đáp án và câu kiểm tra chỉ được đóng gói vào API, không có trong trang hay file nào của web; bước kiểm bản build (`check:dist`) báo lỗi nếu tìm thấy câu đáp án nào trong `dist`. Repo đang để public, nên ai đọc repo vẫn thấy đáp án; chấp nhận điều này.
 - Kiểm tra tự động khi chạy test: file đúng cấu trúc; mã không trùng; SQL có chuỗi tiếng Việt thì có `N`; bài sửa dữ liệu phải có câu kiểm tra.
 - Kiểm tra trên database thật bằng một lệnh chạy trên máy (không chạy trong CI, vì CI không có thông tin kết nối): chạy mọi câu đáp án (và câu kiểm tra) theo đúng cách API chạy, có `ROLLBACK`, báo câu nào lỗi hoặc ra 0 dòng.
@@ -143,6 +145,7 @@ Theo bản chạy thử, có sửa các chỗ thiếu đã ghi trong file kết 
 - Web cần biết địa chỉ API: đặt trong biến của repo `PUBLIC_EXERCISE_API`, workflow build web đọc biến này.
 - Các bước của workflow API: `npm ci`, `npm test` (của web), rồi trong `api/`: `npm ci`, `npm run typecheck` (`tsc`), `npm run build`, `npm prune --omit=dev`; đăng nhập Azure; `Azure/functions-action@v1` với `package: api`, `sku: flexconsumption`, `respect-funcignore: true` (bỏ mã TypeScript và `local.settings.json` khỏi gói tải lên). Action đọc `api/.funcignore` theo luật của `.gitignore`, nên mọi dòng phải bắt đầu bằng `/`: một dòng `src` trần cũng xóa thư mục `src` của các package trong `node_modules` (`debug`, `js-md4`…), API không nạp được và mọi đầu gọi trả 404. Test kiểm điều này.
 - Federated credential phải khớp đúng chuỗi subject GitHub gửi. Repo này gửi dạng có ID: `repo:nhatlam1111@25176629/microsoft-sql-lession@1423314136:ref:refs/heads/main`; dạng `repo:nhatlam1111/microsoft-sql-lession:ref:refs/heads/main` bị Azure từ chối (lỗi AADSTS700213).
+- Sau khi deploy, workflow gọi `PUBLIC_EXERCISE_API/ping` không kèm mã, thử lại tối đa 12 lần cách nhau 10 giây; phải nhận 401, nếu không thì workflow báo lỗi (404 nghĩa là các function không nạp được).
 - Push chỉ đổi file ngoài bộ lọc đường dẫn thì workflow API không chạy; cần deploy lại thì bấm "Run workflow" trên GitHub.
 
 ## 7. Cài đặt lần đầu: ai làm gì
@@ -210,4 +213,5 @@ Tham khảo khi viết spec: [Deploy Azure Functions bằng GitHub Actions](http
   - câu trả lời không đúng dạng từ API được báo như không gọi được API (mục 3.5);
   - Tab với nhiều dòng được chọn, Ctrl+Z hoàn tác được (mục 3.2);
   - popup sơ đồ giữ Tab bên trong và không giật focus khi trang vẽ lại (mục 3.3);
-  - CI kiểm kiểu cho `api/`; `sku` và `respect-funcignore` trong workflow; `api/local.settings.json` nằm trong `.gitignore` (mục 6). Lần deploy đầu với `respect-funcignore` làm API trả 404 vì `.funcignore` có dòng `src` trần; đã sửa bằng cách thêm `/` ở đầu mỗi dòng.
+  - CI kiểm kiểu cho `api/`; `sku` và `respect-funcignore` trong workflow; `api/local.settings.json` nằm trong `.gitignore` (mục 6). Lần deploy đầu với `respect-funcignore` làm API trả 404 vì `.funcignore` có dòng `src` trần; đã sửa bằng cách thêm `/` ở đầu mỗi dòng, và workflow giờ tự gọi thử `ping` sau khi deploy.
+  - Người làm khóa học thử bài 6-5-1 trên web thật: câu sai được chấm sai đúng, `check:data` không lệch; nhưng lý do "dòng 45 khác" trỏ vào dòng của câu kiểm tra mà học viên không thấy. Đã đổi lý do của bài sửa dữ liệu sang gọi dòng bằng giá trị và tên cột lệch, bài truy vấn thêm tên cột lệch (mục 3.2).

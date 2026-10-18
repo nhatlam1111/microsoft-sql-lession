@@ -51,3 +51,16 @@ jobs:
           sku: flexconsumption
           # Leaves the TypeScript sources and local settings listed in api/.funcignore out of the upload.
           respect-funcignore: true
+      # A ping without an access code must answer 401: 404 means the functions did not load (as with a broken .funcignore).
+      - name: Check that the deployed API answers
+        env:
+          API: ${{ vars.PUBLIC_EXERCISE_API }}
+        run: |
+          for i in $(seq 1 12); do
+            code=$(curl -s -o /dev/null -w '%{http_code}' -m 60 "$API/ping" || true)
+            echo "ping without a code: $code"
+            if [ "$code" = "401" ]; then exit 0; fi
+            sleep 10
+          done
+          echo "::error::$API/ping did not answer 401; the functions may not have loaded."
+          exit 1
