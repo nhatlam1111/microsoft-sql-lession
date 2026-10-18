@@ -1,7 +1,7 @@
 # Thiết kế: website khóa học "SQL Server"
 
 - Ngày: 2026-10-17
-- Trạng thái: chờ duyệt
+- Trạng thái: đã duyệt; prototype đã đăng ngày 2026-10-18. Thay đổi sau khi đăng ở mục 11; đợt tiếp theo ở [spec đợt 2](2026-10-18-step-flow-exercises-full-lessons-design.md).
 - Repo: https://github.com/nhatlam1111/microsoft-sql-lession
 - Địa chỉ sau khi đăng: https://nhatlam1111.github.io/microsoft-sql-lession/
 - Mockup đã duyệt: thư mục [`2026-10-17-mockups/`](2026-10-17-mockups/) (file HTML dạng mảnh, mở bằng trình duyệt để xem; phần khung chọn A/B thiếu CSS là bình thường)
@@ -32,8 +32,8 @@ Ba ý tưởng xuyên suốt:
 
 ### Ngoài phạm vi (đợt này)
 
-- Bài tập, chấm bài, môi trường chạy SQL trên web. Mỗi bài chỉ có một mục "Bài tập" để trống, ghi "Phần bài tập sẽ bổ sung sau".
-- Viết đầy đủ cả 51 bài. Đợt này chỉ viết đầy đủ 3 bài mẫu (xem mục 7), 48 bài còn lại là bản tóm tắt.
+- Bài tập, chấm bài, môi trường chạy SQL trên web. Mỗi bài chỉ có một mục "Bài tập" để trống, ghi "Phần bài tập sẽ bổ sung sau". (Chuyển sang [đợt 2](2026-10-18-step-flow-exercises-full-lessons-design.md).)
+- Viết đầy đủ cả 51 bài. Đợt này chỉ viết đầy đủ 3 bài mẫu (xem mục 7), 48 bài còn lại là bản tóm tắt. (Đợt 2 bắt đầu viết đầy đủ từ Level 1.)
 - Giao diện điện thoại, máy tính bảng.
 - Tài khoản người dùng, đồng bộ tiến độ giữa nhiều máy qua server.
 - Nội dung quản trị database ở mức thao tác (tự backup, restore, cấu hình server). Phần cấp cứu dữ liệu chỉ dừng ở mức lý thuyết.
@@ -89,7 +89,7 @@ Ba ý tưởng xuyên suốt:
 - Gốc ở giữa: "SQL Server". 8 nhánh là 8 mảng kiến thức, 4 nhánh bên phải và 4 nhánh bên trái (thứ tự ở mục 6). Lá là các bài.
 - Nhánh hiển thị tên mảng, thanh tiến độ, số bài đã học trên tổng, số cờ nếu có, nút +/− để mở hoặc thu gọn.
 - Lá hiển thị biểu tượng trạng thái, mã bài, tên bài ngắn, nhãn level L1–L6 theo màu. Bài đang học dở tô nền xanh nhạt.
-- Thanh công cụ: "Mở hết", "Thu gọn", "Về giữa", chú thích trạng thái và màu level. Kéo và zoom được.
+- Thanh công cụ: "Menu khóa học" (thêm sau khi đăng, mục 11), "Mở hết", "Thu gọn", "Về giữa", chú thích trạng thái và màu level. Kéo và zoom được.
 - Thứ tự học vẫn do lộ trình (theo level) dẫn; mindmap để nhìn toàn cảnh.
 - Mockup: [`mindmap.html`](2026-10-17-mockups/mindmap.html), phương án B.
 
@@ -279,7 +279,7 @@ Danh sách bài (tên bài có thể chỉnh câu chữ khi viết, nhưng giữ
 1. Popup tự hiện khi vào trang lần đầu, hoặc khi lần ghé trước cách đây từ 24 giờ trở lên. Lần đầu, popup ghi lời chào ngắn, mở sẵn Level 1, nút "Bắt đầu bài 1.1" và link tới trang giới thiệu.
 2. Trạng thái "Đã xem" tự đánh dấu ngay khi mở bài. "Cần xem lại" là cờ riêng, không thay cho trạng thái chính.
 3. Trang chủ là mindmap, popup nổi lên trên khi cần. Trang "Giới thiệu" riêng nói về khóa học, cách dùng trạng thái, 6 level và database mẫu.
-4. Bấm vào bài trên mindmap là mở thẳng trang bài, không có khung xem trước.
+4. ~~Bấm vào bài trên mindmap là mở thẳng trang bài, không có khung xem trước.~~ Đổi ngày 2026-10-18 theo yêu cầu: bấm vào bài mở drawer tóm tắt bên phải, có nút "Vào bài học" (mục 11).
 5. Database mẫu giả lập, tên bảng tiếng Việt không dấu.
 6. Ba bài đầy đủ là 1.1, 3.5 và 6.5.
 7. Có tìm kiếm (Ctrl K) theo mã bài, tên bài, nội dung tóm tắt và tên tính năng Excel; gõ không dấu vẫn ra kết quả có dấu.
@@ -302,6 +302,14 @@ Danh sách bài (tên bài có thể chỉnh câu chữ khi viết, nhưng giữ
 
 ## 10. Việc bạn cần tự làm
 
-- Bật GitHub Pages cho repo: Settings → Pages → Source: **GitHub Actions**.
-- Khi người dựng báo script `HRM_Demo` đã sẵn sàng: chạy script một lần trên Azure SQL `sql-lession` (SSMS hoặc Query editor trên Azure Portal).
-- Bảo đảm MCP `azure-sql` kết nối được trong phiên làm việc để người dựng kiểm kết quả (hiện đang mất kết nối).
+- ~~Bật GitHub Pages cho repo: Settings → Pages → Source: **GitHub Actions**.~~ Đã làm.
+- ~~Khi người dựng báo script `HRM_Demo` đã sẵn sàng: chạy script một lần trên Azure SQL `sql-lession`.~~ Đã làm, người dựng đã kiểm số dòng qua MCP.
+- ~~Bảo đảm MCP `azure-sql` kết nối được trong phiên làm việc.~~ Đã kết nối. Còn một việc: `.env` đang để `MCP_ALLOW_WRITE=true`, cần đổi về `false` để giữ đúng chế độ chỉ đọc ở mục 3.
+
+## 11. Thay đổi sau khi đăng (2026-10-18)
+
+- Sửa lỗi: node trên mindmap không bấm được (React Flow tắt nhận chuột với node không chọn được và không kéo được).
+- Thanh trên cùng: nút "Mindmap" và "Giới thiệu" sáng lên khi đang ở đúng trang đó.
+- Mindmap có nút "Menu khóa học" ở đầu thanh công cụ: mở danh sách bài ở bên trái giống sidebar trang bài, mở sẵn level của bài đang học dở; mở hoặc ẩn thì bản đồ tự căn lại.
+- Bấm vào bài trên mindmap mở drawer bên phải: level, mã bài, tên bài, trạng thái, "Bản tóm tắt" hoặc số phút, đoạn tóm tắt, "Học xong bài này", "Liên hệ Excel", "Cần biết trước" (bấm để chuyển drawer sang bài đó, nhánh đang đóng thì tự mở), nút "Vào bài học". Đóng bằng ×, Esc hoặc bấm vào chỗ trống. Ctrl+click hoặc chuột giữa vẫn mở thẳng bài. Bản đồ chỉ dịch vừa đủ để bài đang chọn không bị drawer che.
+- Bấm vào nhánh vẫn là mở hoặc thu gọn nhánh, không mở drawer.
