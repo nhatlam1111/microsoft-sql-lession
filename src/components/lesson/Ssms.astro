@@ -50,27 +50,17 @@ const isLeaf = (n: Node) => n.icon === 'col' || n.icon === 'key';
   {view === 'connect' && (
     <div class="ssms-dialog">
       <div class="ssms-title">Connect to Server<span class="ssms-x" aria-hidden="true">×</span></div>
-      <div class="ssms-panes">
-        <div class="ssms-pane">
-          <div class="ssms-tabs"><span class="is-on">Login</span><span>Connection Properties</span></div>
-          <dl class="ssms-form">
-            <dt>Server type:</dt><dd><span class="ssms-field is-select">Database Engine</span></dd>
-            <dt>Server name:</dt><dd><span class="ssms-field is-select">{COURSE_SERVER.server}</span></dd>
-            <dt>Authentication:</dt><dd><span class="ssms-field is-select">SQL Server Authentication</span></dd>
-            <dt>Login:</dt><dd><span class="ssms-field is-select">{LOGIN}</span></dd>
-            <dt>Password:</dt><dd><span class="ssms-field">••••••••••</span></dd>
-          </dl>
-        </div>
-        <div class="ssms-pane">
-          <div class="ssms-tabs"><span>Login</span><span class="is-on">Connection Properties</span></div>
-          <dl class="ssms-form">
-            <dt>Connect to database:</dt><dd><span class="ssms-field is-select is-mark">{COURSE_SERVER.database}</span></dd>
-            <dt>Network protocol:</dt><dd><span class="ssms-field is-select">&lt;default&gt;</span></dd>
-            <dt>Connection time-out:</dt><dd><span class="ssms-field is-short">30</span> seconds</dd>
-          </dl>
-        </div>
-      </div>
-      <div class="ssms-buttons"><span class="ssms-btn is-primary">Connect</span><span class="ssms-btn">Cancel</span><span class="ssms-btn">Help</span><span class="ssms-btn">Options &lt;&lt;</span></div>
+      <dl class="ssms-form">
+        <dt>Server type:</dt><dd><span class="ssms-field is-select">Database Engine</span></dd>
+        <dt>Server name:</dt><dd><span class="ssms-field is-select">{COURSE_SERVER.server}</span></dd>
+        <dt>Authentication:</dt><dd><span class="ssms-field is-select">SQL Server Authentication</span></dd>
+        <dt>Login:</dt><dd><span class="ssms-field is-select">{LOGIN}</span></dd>
+        <dt>Password:</dt><dd><span class="ssms-field">••••••••••</span></dd>
+        <dt>Database Name:</dt><dd><span class="ssms-field is-select is-mark">{COURSE_SERVER.database}</span></dd>
+        <dt>Encryption:</dt><dd><span class="ssms-field is-select">Strict (Minimum SQL Server 2022 and Azure SQL)</span></dd>
+        <dt></dt><dd><span class="ssms-check" aria-hidden="true"></span>Trust server certificate</dd>
+      </dl>
+      <div class="ssms-buttons"><span class="ssms-btn is-primary">Connect</span><span class="ssms-btn">Cancel</span></div>
     </div>
   )}
 

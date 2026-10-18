@@ -103,7 +103,9 @@ it('Exercises keeps the placeholder in a lesson with no exercises', async () => 
 
 it('Ssms draws the connect box, Object Explorer and the toolbar', async () => {
   const connect = await c.renderToString(Ssms, { props: { view: 'connect' } });
-  for (const s of ['sql-lession.database.windows.net', 'SQL Server Authentication', 'Connect to database', 'sql-lession', 'Mô phỏng SSMS:']) expect(connect).toContain(s);
+  // SSMS 21 and later: Database Name sits on the dialog itself (Microsoft Learn, SSMS quickstarts, 2026-10).
+  for (const s of ['sql-lession.database.windows.net', 'SQL Server Authentication', 'Database Name', 'sql-lession', 'Strict (Minimum SQL Server 2022 and Azure SQL)', 'Trust server certificate', 'Mô phỏng SSMS:']) expect(connect).toContain(s);
+  expect(connect).not.toContain('Connection Properties');
   const explorer = await c.renderToString(Ssms, { props: { view: 'explorer' } });
   for (const t of ['PhongBan', 'ChucDanh', 'NhanVien', 'HopDong', 'ChamCong', 'DonNghiPhep', 'BangLuong']) expect(explorer).toContain(`dbo.${t}`);
   for (const s of ['MaNV (PK, varchar(10), not null)', 'Email (varchar(100), null)']) expect(explorer).toContain(s);

@@ -234,18 +234,13 @@
 .ssms-app { font-weight: 600; }
 .ssms-title { display: flex; justify-content: space-between; padding: 6px 10px; background: #FFF; border-bottom: 1px solid var(--ssms-line); font-weight: 600; }
 .ssms-x { font-weight: 400; color: #555; }
-.ssms-dialog { margin: 12px; border: 1px solid var(--ssms-line); background: var(--ssms-panel); }
-.ssms-panes { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; padding: 10px; }
-.ssms-pane { border: 1px solid var(--ssms-line); background: #FFF; }
-.ssms-tabs { display: flex; border-bottom: 1px solid var(--ssms-line); background: var(--ssms-panel); }
-.ssms-tabs span { padding: 5px 10px; color: #555; }
-.ssms-tabs .is-on { background: #FFF; color: var(--ssms-ink); box-shadow: inset 0 -2px 0 var(--ssms-accent); }
-.ssms-form { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px 10px; align-items: center; margin: 0; padding: 10px; }
+.ssms-dialog { margin: 12px; max-width: 520px; border: 1px solid var(--ssms-line); background: #FFF; }
+.ssms-form { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px 10px; align-items: center; margin: 0; padding: 12px; }
 .ssms-form dt { color: #333; white-space: nowrap; }
 .ssms-form dd { margin: 0; min-width: 0; }
 .ssms-field { display: inline-block; max-width: 100%; box-sizing: border-box; padding: 2px 6px; border: 1px solid #A0A0A0; background: #FFF; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: middle; }
 .ssms-form .ssms-field { width: 100%; }
-.ssms-form .ssms-field.is-short { width: 4em; }
+.ssms-check { display: inline-block; width: 12px; height: 12px; margin-right: 6px; border: 1px solid #767676; background: #FFF; vertical-align: -2px; }
 .ssms-field.is-select { position: relative; padding-right: 20px; }
 .ssms-field.is-select::after { content: '▾'; position: absolute; right: 6px; top: 1px; color: #555; }
 .ssms-field.is-mark { outline: 2px solid var(--ssms-accent); outline-offset: 1px; }
