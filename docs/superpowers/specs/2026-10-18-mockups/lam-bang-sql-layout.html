@@ -1,0 +1,106 @@
+<style>
+  .cmp { display: grid; grid-template-columns: 1fr 1.25fr; gap: 20px; align-items: start; }
+  .col h3 { margin: 0 0 10px; font-size: 15px; }
+  .page { background: #fff; color: #1d2433; border: 1px solid #d9dee8; border-radius: 10px; padding: 16px 18px; font-size: 13px; line-height: 1.55; }
+  .page h4 { font-size: 15px; margin: 14px 0 6px; }
+  .page h5 { font-size: 13.5px; margin: 14px 0 6px; color: #1f4fd1; }
+  .page p { margin: 4px 0 8px; }
+  .sql { font-family: Consolas, 'JetBrains Mono', monospace; font-size: 12px; background: #fbfcfe; border: 1px solid #d5dbe6; border-radius: 6px; padding: 8px 10px; white-space: pre; margin: 6px 0; color: #000; }
+  .k { color: #0000ff; } .g { color: #808080; } .s { color: #ff0000; } .c { color: #008000; } .ph { color: #8a5a00; font-style: italic; }
+  .res { border: 1px solid #d5dbe6; border-radius: 6px; overflow: hidden; margin: 6px 0; font-family: Consolas, monospace; font-size: 11.5px; }
+  .res table { border-collapse: collapse; width: 100%; } .res td, .res th { border-bottom: 1px solid #eef1f6; padding: 2px 8px; text-align: left; }
+  .res th { background: #f3f5f9; font-weight: 600; } .null { background: #ffffe1; color: #6b6b6b; }
+  .res .st { background: #f6f8fb; padding: 3px 8px; color: #2a7a2a; font-family: system-ui, sans-serif; font-size: 11px; }
+  .gone { opacity: .45; text-decoration: line-through; }
+  .tag { display: inline-block; font-size: 11px; font-weight: 600; padding: 1px 7px; border-radius: 99px; margin-left: 6px; vertical-align: 1px; }
+  .tag.new { background: #e3f4e6; color: #1d6b2c; } .tag.keep { background: #e8eefc; color: #1f4fd1; } .tag.drop { background: #fde6e6; color: #a02020; }
+  .guess { border: 1px dashed #c9a227; background: #fffbea; border-radius: 8px; padding: 8px 10px; margin: 6px 0; }
+  .guess-label { font-size: 11px; font-weight: 700; color: #8a6d00; letter-spacing: .02em; }
+  .mini { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 6px 0; }
+  .mini .res { margin: 0; min-width: 120px; } .arrow { font-size: 18px; color: #7a8599; }
+  .lm { display: grid; grid-template-columns: 150px 1fr; gap: 2px 10px; font-size: 12px; margin: 6px 0; }
+  .lm code { font-family: Consolas, monospace; color: #0000ff; }
+  .flow { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 8px 0; }
+  .card { border: 1px solid #d5dbe6; border-radius: 8px; padding: 6px 8px; font-size: 11.5px; background: #fff; }
+  .card b { color: #1f4fd1; } .card .n { color: #7a8599; font-size: 10.5px; }
+  .note { font-size: 12px; color: #5b6578; }
+</style>
+
+<h2>Mục "Làm bằng SQL": hiện tại và đề xuất (minh họa bằng bài 3.5)</h2>
+<p class="subtitle">Bên trái là bài 3.5 đang có trên web. Bên phải là cách bạn vừa tả. Khung viền vàng đứt nét là phần mình tự đoán, bạn sửa giúp.</p>
+
+<div class="cmp">
+  <div class="col">
+    <h3>Hiện tại</h3>
+    <div class="page">
+      <h4>Làm bằng SQL</h4>
+      <h5>Bước 1: kết hai bảng, chưa lọc gì <span class="tag drop">bỏ</span></h5>
+      <div class="sql gone"><span class="k">SELECT</span> nv.MaNV, nv.HoTen, hd.MaHD
+<span class="k">FROM</span> NhanVien <span class="k">AS</span> nv
+<span class="g">LEFT JOIN</span> HopDong <span class="k">AS</span> hd <span class="k">ON</span> …</div>
+      <p class="gone">Bảng kết quả 57 dòng (trích)</p>
+      <h5>Bước 2: chỉ giữ những dòng NULL <span class="tag drop">bỏ</span></h5>
+      <div class="sql gone">… <span class="k">WHERE</span> hd.MaHD <span class="g">IS NULL</span></div>
+      <p class="gone">Bảng giải thích từng dòng lệnh, kết quả 2 dòng</p>
+      <h5>SQL Server chạy câu này thế nào <span class="tag keep">giữ</span></h5>
+      <div class="flow">
+        <div class="card"><span class="n">01</span> <b>FROM</b><br>48 dòng</div>
+        <div class="card"><span class="n">02</span> <b>LEFT JOIN</b><br>57 dòng</div>
+        <div class="card"><span class="n">03</span> <b>WHERE</b><br>2 dòng</div>
+      </div>
+      <p class="note">Bấm vào thẻ thì drawer giải thích bước đó, kèm bảng dữ liệu sau bước.</p>
+    </div>
+  </div>
+
+  <div class="col">
+    <h3>Đề xuất</h3>
+    <div class="page">
+      <h4>Làm bằng SQL</h4>
+
+      <h5>1. Lý thuyết cơ bản <span class="tag new">mới</span></h5>
+      <div class="guess">
+        <div class="guess-label">MÌNH ĐOÁN, BẠN SỬA</div>
+        <p><b>LEFT JOIN là gì:</b> giữ mọi dòng của bảng bên trái, dò sang bảng bên phải theo điều kiện ở <code>ON</code>; dò không ra thì các cột của bảng bên phải là <code>NULL</code>.</p>
+        <p><b>Cú pháp chung:</b></p>
+        <div class="sql"><span class="k">SELECT</span> <span class="ph">các cột</span>
+<span class="k">FROM</span> <span class="ph">bảng bên trái</span>
+<span class="g">LEFT JOIN</span> <span class="ph">bảng bên phải</span> <span class="k">ON</span> <span class="ph">điều kiện ghép</span></div>
+        <p><b>Ví dụ nhỏ</b> (3 nhân viên, 2 hợp đồng):</p>
+        <div class="mini">
+          <div class="res"><table><tr><th>MaNV</th></tr><tr><td>NV001</td></tr><tr><td>NV002</td></tr><tr><td>NV047</td></tr></table></div>
+          <div class="res"><table><tr><th>MaNV</th><th>MaHD</th></tr><tr><td>NV001</td><td>HD01</td></tr><tr><td>NV002</td><td>HD02</td></tr></table></div>
+          <span class="arrow">→</span>
+          <div class="res"><table><tr><th>MaNV</th><th>MaHD</th></tr><tr><td>NV001</td><td>HD01</td></tr><tr><td>NV002</td><td>HD02</td></tr><tr><td>NV047</td><td class="null">NULL</td></tr></table></div>
+        </div>
+        <p><b>Từng phần nghĩa là gì:</b></p>
+        <div class="lm">
+          <code>LEFT</code><span>giữ nguyên bảng bên trái, dò không ra cũng không bỏ dòng</span>
+          <code>ON …</code><span>dò theo cột nào, giống tham số đầu của VLOOKUP</span>
+          <code>IS NULL</code><span>cách duy nhất để hỏi "dò không ra"; <code>= NULL</code> không bao giờ đúng</span>
+        </div>
+      </div>
+
+      <h5>2. Câu lệnh cho tình huống <span class="tag new">mới</span></h5>
+      <div class="sql"><span class="k">SELECT</span> nv.MaNV, nv.HoTen, nv.MaPB, nv.NgayVaoLam
+<span class="k">FROM</span> NhanVien <span class="k">AS</span> nv
+<span class="g">LEFT JOIN</span> HopDong <span class="k">AS</span> hd <span class="k">ON</span> hd.MaNV <span class="g">=</span> nv.MaNV
+<span class="k">WHERE</span> hd.MaHD <span class="g">IS NULL</span>
+<span class="k">ORDER BY</span> nv.NgayVaoLam;</div>
+      <div class="guess">
+        <div class="guess-label">MÌNH ĐOÁN</div>
+        <p>Ngay dưới câu lệnh là bảng kết quả cuối (2 dòng), để học viên thấy đáp án của tình huống trước khi xem từng bước.</p>
+        <div class="res"><table><tr><th>MaNV</th><th>HoTen</th><th>MaPB</th><th>NgayVaoLam</th></tr><tr><td>NV047</td><td>Phạm Ngọc Ánh</td><td>NS</td><td>2026-10-01</td></tr><tr><td>NV048</td><td>Đỗ Minh Quân</td><td>IT</td><td>2026-10-05</td></tr></table><div class="st">✓ Query executed successfully. · HRM_Demo · 2 rows</div></div>
+      </div>
+
+      <h5>3. SQL Server chạy câu này thế nào <span class="tag keep">giữ</span></h5>
+      <div class="flow">
+        <div class="card"><span class="n">01</span> <b>FROM</b><br>48 dòng</div>
+        <div class="card"><span class="n">02</span> <b>LEFT JOIN</b><br>57 dòng</div>
+        <div class="card"><span class="n">03</span> <b>WHERE</b><br>2 dòng</div>
+        <div class="card"><span class="n">04</span> <b>SELECT</b><br>4 cột</div>
+        <div class="card"><span class="n">05</span> <b>ORDER BY</b><br>2 dòng</div>
+      </div>
+      <p class="note">Phần "đi từng bước" chuyển hẳn vào drawer của từng thẻ, như bạn nói.</p>
+    </div>
+  </div>
+</div>

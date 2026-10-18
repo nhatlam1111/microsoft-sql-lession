@@ -205,6 +205,7 @@ Tham khảo khi viết spec: [Deploy Azure Functions bằng GitHub Actions](http
 ## 12. Đã làm và trạng thái (cập nhật 2026-10-18)
 
 - Tài nguyên Azure: Function App `sql-lession-api` (Flex Consumption, Australia East, Node 24, 512 MB) trong resource group `learn`; identity `sql-lession-api-deploy` với federated credential `github-main`. Địa chỉ API: `https://sql-lession-api.azurewebsites.net/api`.
+- Bảo mật (2026-10-18): Function App đã bật HTTPS only (gọi `http://` thì bị chuyển sang `https://`). Tường lửa của SQL server còn rule `public` mở cho mọi IP; người làm khóa học cố ý để vậy và sẽ tự điều chỉnh sau.
 - Workflow "Deploy the exercise API" chạy thành công. Đã thử API thật: `ping` và `run` không có mã trả 401; gọi từ origin lạ không có header CORS; từ `https://nhatlam1111.github.io` thì có.
 - Người làm khóa học đã thử bài 3-5-1 trên web thật với mã của mình (một câu đúng, một câu sai); sau đó `npm --prefix api run check:data` báo không bảng nào lệch (2026-10-18).
 - Sửa sau rà soát cuối (2026-10-18), đã ghi vào các mục trên:
