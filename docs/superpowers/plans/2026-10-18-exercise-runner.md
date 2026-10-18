@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Trạng thái (2026-10-18):** Task 1–9 xong; Task 10 xong tới Step 9, còn Step 10 chờ người làm khóa học thử trên web thật. Những chỗ làm khác plan ghi ở mục "Sai khác so với plan" cuối file; spec B mục 12 là bản tóm tắt hiện trạng.
+**Trạng thái (2026-10-18):** đã làm xong cả 10 task, kể cả thử trên web thật và `check:data` không lệch. Những chỗ làm khác plan ghi ở mục "Sai khác so với plan" cuối file; spec B mục 12 là bản tóm tắt hiện trạng.
 
 **Goal:** Học viên làm bài tập trên trang riêng: viết SQL, chạy trên `sql-lession` qua một API có `ROLLBACK`, nộp bài và biết đúng hay chưa; có popup sơ đồ database; 5 bài tập mẫu ở bài 3.5 và 6.5.
 

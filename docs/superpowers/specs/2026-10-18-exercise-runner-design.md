@@ -203,7 +203,7 @@ Tham khảo khi viết spec: [Deploy Azure Functions bằng GitHub Actions](http
 
 - Tài nguyên Azure: Function App `sql-lession-api` (Flex Consumption, Australia East, Node 24, 512 MB) trong resource group `learn`; identity `sql-lession-api-deploy` với federated credential `github-main`. Địa chỉ API: `https://sql-lession-api.azurewebsites.net/api`.
 - Workflow "Deploy the exercise API" chạy thành công. Đã thử API thật: `ping` và `run` không có mã trả 401; gọi từ origin lạ không có header CORS; từ `https://nhatlam1111.github.io` thì có.
-- Còn chờ người làm khóa học: mở trang bài tập 3-5-1 trên web thật, nhập mã, nộp một câu đúng và một câu sai; sau đó người dựng chạy `npm --prefix api run check:data` để chắc dữ liệu không lệch.
+- Người làm khóa học đã thử bài 3-5-1 trên web thật với mã của mình (một câu đúng, một câu sai); sau đó `npm --prefix api run check:data` báo không bảng nào lệch (2026-10-18).
 - Sửa sau rà soát cuối (2026-10-18), đã ghi vào các mục trên:
   - câu quá 10 giây trả 504 thay cho 408 (mục 5.2);
   - `money`/`smallmoney` có 4 chữ số thập phân; `FOR JSON`/`FOR XML` không còn làm hỏng trang (mục 5.3);
