@@ -1,5 +1,5 @@
 import { it, expect } from 'vitest';
-import { findLinkProblems, findAnswerLeaks } from '../scripts/check-dist.mjs';
+import { findLinkProblems, findAnswerLeaks, missingExerciseLinks } from '../scripts/check-dist.mjs';
 
 const BASE = '/microsoft-sql-lession';
 const exists = (p: string) => p === 'bai/1-1-x/index.html' || p === 'HRM_Demo.sql';
@@ -23,6 +23,12 @@ it('finds an answer query hidden in a built file, whatever its spacing', () => {
   // A bundle keeps the line break as the two characters \ and n.
   expect(findAnswerLeaks([{ path: 'c.js', text: 'x="SELECT nv.MaNV\\nFROM NhanVien AS nv"' }], [answer])).toEqual(['c.js']);
   expect(findAnswerLeaks([{ path: 'b.html', text: '<p>SELECT nv.MaNV</p>' }], [answer])).toEqual([]);
+});
+
+it('lists the exercise pages a lesson page fails to link to', () => {
+  const html = '<a href="/microsoft-sql-lession/bai/3-5-left-join/bai-tap/1/">Làm bài</a><a href="/microsoft-sql-lession/bai/3-5-left-join/bai-tap/3/">Làm bài</a>';
+  expect(missingExerciseLinks(html, '3-5-left-join', 3, BASE)).toEqual(['/microsoft-sql-lession/bai/3-5-left-join/bai-tap/2/']);
+  expect(missingExerciseLinks('', '3-5-left-join', 1, BASE)).toEqual(['/microsoft-sql-lession/bai/3-5-left-join/bai-tap/1/']);
 });
 
 it('finds an answer that reached the page escaped, as island props are', () => {

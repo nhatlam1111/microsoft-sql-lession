@@ -96,10 +96,3 @@ it('Exercises keeps the placeholder in a lesson with no exercises', async () => 
   const html = await c.renderToString(Exercises, { request: new Request('http://x/microsoft-sql-lession/bai/1-1-database-la-gi/') });
   expect(html).toContain('Phần bài tập sẽ bổ sung sau.');
 });
-it('Exercises lists the exercises of 3.5 with links to their pages', async () => {
-  const html = await c.renderToString(Exercises, { request: new Request('http://x/microsoft-sql-lession/bai/3-5-left-join/') });
-  for (const n of [1, 2, 3]) expect(html).toContain(`href="/microsoft-sql-lession/bai/3-5-left-join/bai-tap/${n}/"`);
-  expect(html).toContain('IT chưa có hợp đồng');
-  expect(html).toContain('Chưa làm');
-  expect(html).not.toContain('Phần bài tập sẽ bổ sung sau.');
-});

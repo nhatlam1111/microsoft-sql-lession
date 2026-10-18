@@ -63,6 +63,17 @@ export function findAnswerLeaks(files, answers) {
   }).map(f => f.path);
 }
 
+/**
+ * Exercise pages a lesson page does not link to; the lesson's "Bài tập" list must point at every one.
+ * @param {string} html @param {string} lesson @param {number} count @param {string} base
+ * @returns {string[]}
+ */
+export function missingExerciseLinks(html, lesson, count, base) {
+  const head = base.replace(/\/+$/, '');
+  return Array.from({ length: count }, (_, i) => `${head}/bai/${lesson}/bai-tap/${i + 1}/`)
+    .filter(href => !html.includes(`href="${href}"`));
+}
+
 function walk(dir) {
   return readdirSync(dir, { withFileTypes: true }).flatMap(e => {
     const p = join(dir, e.name);
@@ -103,6 +114,12 @@ function main() {
     : [];
   const answers = [];
   for (const file of exerciseFiles) {
+    const lessonPage = join(dist, 'bai', file.lesson, 'index.html');
+    if (existsSync(lessonPage)) {
+      for (const href of missingExerciseLinks(readFileSync(lessonPage, 'utf8'), file.lesson, file.exercises.length, BASE)) {
+        errors.push(`dist/bai/${file.lesson}/ không có link tới ${href}`);
+      }
+    }
     file.exercises.forEach((e, i) => {
       const page = join(dist, 'bai', file.lesson, 'bai-tap', String(i + 1), 'index.html');
       if (!existsSync(page)) errors.push(`thiếu trang bài tập ${e.id}: dist/bai/${file.lesson}/bai-tap/${i + 1}/`);
