@@ -8,6 +8,7 @@ import { editorKeyAction } from '../../lib/editor-keys';
 import { actions } from '../../lib/progress-store';
 import { useProgress } from './use-progress';
 import SqlEditor from './SqlEditor';
+import { COURSE_SERVER } from '../../lib/course-server';
 import { DbDiagramDialog } from './DbDiagram';
 
 interface Props {
@@ -130,7 +131,7 @@ export default function ExerciseWorkspace({ exercise, apiBase, tables, nums }: P
           )}
           <div className="res-status">
             {result.error ? <span className="ws-status-bad">Query completed with errors.</span> : <span className="res-ok">✓ Query executed successfully.</span>}
-            <span>HRM_Demo</span>
+            <span>{COURSE_SERVER.database}</span>
             <span>{result.columns.length ? `${result.truncated ? `${SHOWN_ROWS}+` : result.rows.length} rows` : ''}</span>
           </div>
           {result.truncated && <figcaption className="res-trim">Đã cắt, chỉ hiện {SHOWN_ROWS} dòng đầu.</figcaption>}

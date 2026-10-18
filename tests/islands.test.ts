@@ -1,7 +1,10 @@
 import { it, expect } from 'vitest';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
+import { readFileSync } from 'node:fs';
 import LessonDrawer from '../src/components/islands/LessonDrawer';
+import { DbDiagramDialog } from '../src/components/islands/DbDiagram';
+import { parseSchema } from '../src/lib/db-schema';
 import SidebarNav from '../src/components/islands/SidebarNav';
 import { LEVELS } from '../src/data/curriculum';
 import { emptyState, markSeen } from '../src/lib/progress';
@@ -38,4 +41,9 @@ it('the course menu works without a current lesson', () => {
   expect(html).toContain('Khóa học');
   expect(html).not.toContain('aria-current');
   expect(html).toContain(`href="/microsoft-sql-lession/bai/${entry('1.1').slug}/"`);
+});
+
+it('the diagram popup keeps the data set name HRM_Demo', () => {
+  const tables = parseSchema(readFileSync('database/HRM_Demo.sql', 'utf8'));
+  expect(renderToStaticMarkup(createElement(DbDiagramDialog, { tables, open: true, onClose: () => {} }))).toContain('Sơ đồ HRM_Demo');
 });

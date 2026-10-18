@@ -18,10 +18,13 @@ beforeAll(async () => { c = await AstroContainer.create(); });
 it('Result shows NULL cells in the SSMS style and says how many rows were trimmed', async () => {
   const html = await c.renderToString(Result, { props: { columns: ['MaNV', 'MaHD'], rows: [['NV001', 'HD2024-018'], ['NV047', null]], total: 52 } });
   expect(html).toMatch(/class="[^"]*res-null[^"]*"[^>]*>NULL</);
-  for (const s of ['52 rows', 'Trích 2 dòng (kết quả có 52 dòng)', 'HRM_Demo', 'Query executed successfully.']) expect(html).toContain(s);
+  for (const s of ['52 rows', 'Trích 2 dòng (kết quả có 52 dòng)', 'sql-lession', 'Query executed successfully.']) expect(html).toContain(s);
+  expect(html).not.toContain('HRM_Demo');
 });
 it('Messages prints its lines', async () => {
-  expect(await c.renderToString(Messages, { props: { lines: ['(96 rows affected)'] } })).toContain('(96 rows affected)');
+  const html = await c.renderToString(Messages, { props: { lines: ['(96 rows affected)'] } });
+  expect(html).toContain('(96 rows affected)');
+  expect(html).toContain('sql-lession');
 });
 it('Excel labels columns, marks error values and the selected cell', async () => {
   const html = await c.renderToString(Excel, { props: { cell: 'D3', formula: '=VLOOKUP(A3,HopDong!A:B,2,FALSE)', selected: 'D3',

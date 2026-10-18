@@ -1,11 +1,13 @@
 ---
+import { COURSE_SERVER } from '../../lib/course-server';
+
 interface Props {
   columns: string[];
   rows: (string | number | null)[][];
   db?: string;
   total?: number;
 }
-const { columns, rows, db = 'HRM_Demo', total } = Astro.props;
+const { columns, rows, db = COURSE_SERVER.database, total } = Astro.props;
 const count = `${total ?? rows.length} rows`;
 const trimmed = total !== undefined && total > rows.length ? `Trích ${rows.length} dòng (kết quả có ${total} dòng)` : null;
 ---
