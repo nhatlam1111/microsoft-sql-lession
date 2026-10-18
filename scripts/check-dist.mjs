@@ -3,6 +3,7 @@
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { parse as parseYaml } from 'yaml';
 
 export const BASE = '/microsoft-sql-lession';
 
@@ -38,6 +39,23 @@ export function findLinkProblems(html, fileExists, base) {
   return [...problems];
 }
 
+// Answers are matched with all spacing squeezed, and with \n, \r, \t as a bundle writes them inside strings.
+const squeeze = text => text.replace(/\\[nrt]/g, ' ').replace(/\s+/g, ' ').trim();
+
+/**
+ * Built files that contain an exercise answer or check query, which must only ever ship with the API.
+ * @param {{ path: string; text: string }[]} files
+ * @param {string[]} answers
+ * @returns {string[]}
+ */
+export function findAnswerLeaks(files, answers) {
+  const needles = answers.map(a => squeeze(a).replace(/;$/, '')).filter(Boolean);
+  return files.filter(f => {
+    const hay = squeeze(f.text);
+    return needles.some(n => hay.includes(n));
+  }).map(f => f.path);
+}
+
 function walk(dir) {
   return readdirSync(dir, { withFileTypes: true }).flatMap(e => {
     const p = join(dir, e.name);
@@ -71,6 +89,24 @@ function main() {
     ? readdirSync(baiDir).filter(d => existsSync(join(baiDir, d, 'index.html'))).length
     : 0;
   if (lessonPages !== lessons) errors.push(`có ${lessonPages} trang bài nhưng ${lessons} file bài`);
+
+  const exerciseDir = join('src', 'content', 'exercises');
+  const exerciseFiles = existsSync(exerciseDir)
+    ? readdirSync(exerciseDir).filter(f => f.endsWith('.yaml')).map(f => parseYaml(readFileSync(join(exerciseDir, f), 'utf8')))
+    : [];
+  const answers = [];
+  for (const file of exerciseFiles) {
+    file.exercises.forEach((e, i) => {
+      const page = join(dist, 'bai', file.lesson, 'bai-tap', String(i + 1), 'index.html');
+      if (!existsSync(page)) errors.push(`thiếu trang bài tập ${e.id}: dist/bai/${file.lesson}/bai-tap/${i + 1}/`);
+      answers.push(e.answer, ...(e.check ? [e.check] : []));
+    });
+  }
+  const shipped = existsSync(dist)
+    ? walk(dist).filter(f => /\.(html|js|json)$/.test(f)).map(f => ({ path: relative(dist, f).split(sep).join('/'), text: readFileSync(f, 'utf8') }))
+    : [];
+  for (const leak of findAnswerLeaks(shipped, answers)) errors.push(`dist/${leak} có chứa câu đáp án hoặc câu kiểm tra của bài tập`);
+
   if (errors.length) {
     for (const e of errors) console.error(e);
     process.exit(1);

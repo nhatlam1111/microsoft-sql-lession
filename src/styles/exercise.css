@@ -50,3 +50,16 @@
 .ws-res .res-scroll { max-height: 420px; overflow: auto; }
 .res-messages.is-error { color: #C00000; }
 .ws-status-bad { color: #C00000; font-weight: 600; }
+
+/* Exercise list at the end of a lesson */
+.prose .exl { list-style: none; padding: 0; display: grid; gap: 8px; font-family: var(--font-ui); }
+.prose .exl li + li { margin-top: 0; }
+.exl-item { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto auto; align-items: center; gap: 12px; padding: 12px 14px; background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius-m); }
+.exl-num { font-size: 18px; font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; }
+.exl-body { display: grid; gap: 2px; min-width: 0; }
+.exl-title { font-size: 15px; font-weight: 600; }
+.exl-summary { font-size: 13.5px; color: var(--ink-2); line-height: 1.45; }
+.exl-status { font-size: 12.5px; font-weight: 600; color: var(--ink-3); white-space: nowrap; }
+.exl-item.is-done .exl-status { color: var(--done); }
+.prose .exl-go { padding: 6px 12px; border-radius: var(--radius-m); background: var(--accent); color: #FFF; font-size: 13.5px; font-weight: 600; text-decoration: none; white-space: nowrap; }
+.prose .exl-go:hover { background: #1A43B5; }

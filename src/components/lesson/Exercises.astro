@@ -1,1 +1,45 @@
-<p class="exercises">Phần bài tập sẽ bổ sung sau.</p>
+---
+import { getCollection } from 'astro:content';
+import { exerciseUrl, publicExercises } from '../../lib/exercises';
+
+// The lesson comes from the page address: /…/bai/<slug>/
+const slug = Astro.url.pathname.match(/\/bai\/([^/]+)\/?$/)?.[1] ?? null;
+const files = slug ? await getCollection('exercises') : [];
+const file = files.find(f => f.data.lesson === slug);
+const items = file && slug ? publicExercises(file.data) : [];
+---
+{items.length === 0 ? (
+  <p class="exercises">Phần bài tập sẽ bổ sung sau.</p>
+) : (
+  <ol class="exl">
+    {items.map(e => (
+      <li class="exl-item" data-exercise={e.id}>
+        <span class="exl-num">{e.n}</span>
+        <span class="exl-body">
+          <span class="exl-title">{e.title}</span>
+          <span class="exl-summary">{e.summary}</span>
+        </span>
+        <span class="exl-status">Chưa làm</span>
+        <a class="exl-go" href={exerciseUrl(slug!, e.n)}>Làm bài</a>
+      </li>
+    ))}
+  </ol>
+)}
+
+<script>
+  import { STORAGE_KEY } from '../../lib/progress';
+
+  // Marks the exercises this browser has solved; the page is static, so it reads saved progress directly.
+  function paint() {
+    let solved: Record<string, unknown> = {};
+    try { solved = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '{}').exercises ?? {}; } catch { /* blocked storage */ }
+    for (const item of document.querySelectorAll<HTMLElement>('.exl-item')) {
+      const done = Boolean(solved[item.dataset.exercise ?? '']);
+      item.classList.toggle('is-done', done);
+      const status = item.querySelector('.exl-status');
+      if (status) status.textContent = done ? 'Đã làm đúng' : 'Chưa làm';
+    }
+  }
+  paint();
+  window.addEventListener('pageshow', paint);
+</script>
