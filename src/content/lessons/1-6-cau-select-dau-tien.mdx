@@ -70,7 +70,7 @@ Cách chạy trong SSMS: gõ câu lệnh vào cửa sổ New Query, nhìn ô ch�
 
 Kết quả hiện ở hai tab ngay dưới câu lệnh:
 
-- **Results**: lưới kết quả. Ô trống hiện chữ `NULL` nền vàng nhạt. Lưới chỉ để đọc: gõ sửa một ô trong lưới không làm đổi gì trong bảng.
+- **Results**: lưới kết quả. Ô trống hiện chữ `NULL` nền vàng nhạt. Lưới này chỉ để đọc và chép, không gõ sửa được.
 - **Messages**: số dòng câu lệnh trả về, hoặc nguyên văn lỗi nếu câu sai. Cuối cửa sổ còn một dòng trạng thái ghi database đang dùng và số dòng.
 
 ### Câu lệnh cho tình huống
@@ -182,7 +182,7 @@ FROM NhanVien;`,
 
 1. **Tưởng `TOP (10)` là 10 người có mã nhỏ nhất.** Không có `ORDER BY` thì SQL Server được trả về 10 dòng nào cũng đúng. Hôm nay ra NV001 tới NV010, sau khi dữ liệu thay đổi có thể ra khác. Dùng `TOP` không có `ORDER BY` để nhìn qua một bảng thì được; muốn đúng "10 người đầu tiên theo mã" thì phải có `ORDER BY` (bài 2.4).
 2. **Bôi đen thiếu một phần rồi bấm F5.** SSMS chỉ chạy phần được bôi đen. Bôi đen mỗi dòng `SELECT TOP (10) *` thì câu lệnh không còn `FROM`, và tab Messages báo `Must specify table to select from.` Bấm vào chỗ trống trong cửa sổ để bỏ bôi đen rồi chạy lại.
-3. **Sửa dữ liệu ngay trên lưới kết quả.** Lưới ở tab Results là bản sao để đọc. Gõ đè một ô không làm đổi gì trong bảng, nên lần chạy sau dữ liệu vẫn như cũ.
+3. **Dùng Edit Top 200 Rows để xem bảng.** Bấm chuột phải vào bảng trong Object Explorer có mục **Edit Top 200 Rows**. Lưới của mục này trông giống tab Results, nhưng gõ vào ô nào là sửa thẳng vào bảng, mà database của khóa học là của chung mọi học viên. Muốn xem dữ liệu, luôn dùng câu `SELECT`: lưới Results chỉ để đọc.
 
 </Mistakes>
 

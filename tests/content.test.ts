@@ -104,6 +104,17 @@ describe('lesson files', () => {
 
 describe('fixes from the final review', () => {
   const body = (slug: string) => readLessonFiles().find(f => f.slug === slug)!.body;
+  it('1.2 says what to do when the sleeping course database refuses the first connection', () => {
+    expect(body('1-2-sql-server-ssms-hrm-demo')).toContain('40613');
+  });
+  it('1.6 warns that the Edit Top 200 Rows grid writes to the shared table', () => {
+    expect(body('1-6-cau-select-dau-tien')).toContain('Edit Top 200 Rows');
+  });
+  it('the intro page never tells learners to run the script on the shared course database', () => {
+    const page = readFileSync('src/pages/gioi-thieu.astro', 'utf8');
+    expect(page).not.toContain('mở database bạn được cấp rồi chạy cả file script');
+    expect(page).toContain('đừng chạy script');
+  });
   it('3.5 shows the full "still valid" condition, open-ended contracts included', () => {
     expect(body('3-5-left-join')).toContain('hd.NgayKetThuc IS NULL OR hd.NgayKetThuc >=');
   });

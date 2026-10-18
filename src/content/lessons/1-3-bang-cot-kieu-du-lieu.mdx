@@ -30,14 +30,14 @@ Nói gọn lại, câu hỏi là:
 
 Với Excel, mỗi ô nhận bất cứ thứ gì bạn gõ. Format Cells chỉ đổi cách hiển thị, không chặn gì cả:
 
-<Excel sheets="NhanVienMoi" cell="C3" formula="2024-02-01" selected="C3" rows={[
+<Excel sheets="NhanVienMoi" cell="C3" formula="2024.02.01" selected="C3" rows={[
   ['Mã NV', 'Họ tên', 'Ngày vào làm', 'Lương cơ bản'],
   ['NV049', 'Lý Thu Hằng', '01/02/2024', '9.610.000'],
-  ['NV050', 'Mai Văn Tâm', '2024-02-01', '9,61 triệu'],
+  ['NV050', 'Mai Văn Tâm', '2024.02.01', '9,61 triệu'],
   ['NV051', 'Đinh Gia Bảo', 'chưa rõ', 9610000],
 ]} />
 
-Ba dòng, ba kiểu ngày, ba kiểu lương. Excel vẫn cho lưu, nhưng tới lúc lọc theo tháng vào làm hay cộng tổng lương thì công thức trả sai mà không báo gì: ô "2024-02-01" thật ra là chữ, ô "9,61 triệu" không cộng được.
+Ba dòng, ba kiểu ngày, ba kiểu lương. Excel vẫn cho lưu, nhưng tới lúc lọc theo tháng vào làm hay cộng tổng lương thì công thức trả sai mà không báo gì: ô "2024.02.01" thật ra là chữ, ô "01/02/2024" là ngày 1 tháng 2 hay 2 tháng 1 tùy thiết lập vùng của máy, ô "9,61 triệu" không cộng được.
 
 ## Làm bằng SQL
 
@@ -118,7 +118,7 @@ Còn khi đưa vào cột ngày một thứ không phải ngày, SQL Server báo
 
 <Mistakes>
 
-1. **Gõ ngày kiểu 01/02/2024.** Database của khóa học đang dùng thiết lập ngôn ngữ `us_english`, nên `CAST('01/02/2024' AS date)` ra `2024-01-02`, tức ngày 2 tháng 1 chứ không phải 1 tháng 2. Không báo lỗi gì, chỉ sai. Luôn viết ngày dạng `'2024-02-01'`: với kiểu `date`, cách viết này không phụ thuộc thiết lập ngôn ngữ.
+1. **Gõ ngày kiểu 01/02/2024.** Cách SQL Server đọc ngày dạng này tùy thiết lập ngôn ngữ của tài khoản đang kết nối (xem bằng `SELECT @@LANGUAGE;`). Với `us_english`, thiết lập mặc định, `CAST('01/02/2024' AS date)` ra `2024-01-02`, tức ngày 2 tháng 1 chứ không phải 1 tháng 2. Không báo lỗi gì, chỉ sai. Luôn viết ngày dạng `'2024-02-01'`: với kiểu `date`, cách viết này không phụ thuộc thiết lập ngôn ngữ.
 2. **Quên chữ N trước chuỗi tiếng Việt.** `SELECT 'Trần Thị Mai'` ra `Tr?n Th? Mai`: chuỗi không có `N` bị đổi sang bảng mã không có dấu tiếng Việt trước khi tới cột. Viết `N'Trần Thị Mai'` thì giữ nguyên.
 3. **Nghĩ cột số giữ được mọi chữ số.** Cột `decimal(4,1)` chỉ giữ một chữ số sau dấu phẩy: đưa vào 21.25 ngày công thì còn 21.3. Muốn biết một cột giữ được bao nhiêu chữ số, đọc hai số trong ngoặc ở Object Explorer.
 

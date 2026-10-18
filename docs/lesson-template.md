@@ -169,7 +169,7 @@ Dùng thẳng trong MDX, không cần import.
 | `Result` | `columns`, `rows`, `total?`, `db?` | Tab Results kiểu SSMS; `null` hiện `NULL` nền vàng; `total` khi chỉ trích |
 | `Messages` | `lines`, `db?` | Tab Messages: số dòng bị ảnh hưởng, lỗi |
 | `LineMap` | `rows`: `[đoạn lệnh, nghĩa]` | Bảng từng phần nghĩa là gì |
-| `RunFlow` | `query`, `steps` | Sơ đồ thứ tự chạy, mỗi thẻ có drawer |
+| `RunFlow` | `query`, `steps`, `note?` (câu nhắc trên sơ đồ, mặc định "Bạn viết SELECT trước, nhưng SQL Server làm FROM trước.") | Sơ đồ thứ tự chạy, mỗi thẻ có drawer |
 | `Mistakes` | nội dung (danh sách đánh số) | Mục Hay nhầm ở đâu |
 | `Apply` | nội dung (danh sách) | Mục Ứng dụng |
 | `Memo` | `rows`: `[bên Excel, bên SQL]` | Mục Ghi nhớ |
@@ -195,4 +195,5 @@ Dòng trạng thái của `Result` và `Messages` mặc định ghi `free-sql-db
 1. Chạy lại mọi câu lệnh trong bài bằng MCP `azure-sql` (chỉ `SELECT`) và so từng ô với bảng kết quả trong bài.
 2. Câu làm đổi dữ liệu (để lấy nguyên văn lỗi) chỉ chạy qua API bài tập trên máy, có hoàn tác; xong thì `npm --prefix api run check:data`.
 3. Bài có bài tập: `npm --prefix api run build` rồi `npm --prefix api run check:exercises`.
+   - `check:dist` báo lỗi nếu bất kỳ trang nào chứa nguyên văn một câu đáp án (bỏ qua khoảng trắng và dấu `;` cuối). Đáp án ngắn như `SELECT * FROM HopDong;` (bài tập 1.6) vì thế không được xuất hiện trong bài nào, kể cả làm ví dụ. Bài tập mới nên dùng đáp án không trùng với câu nào đã có trong bài.
 4. `npm test`, `npm run check`, `npm run build`, `npm run check:dist`.

@@ -125,7 +125,7 @@ Học viên kết nối vào database tên `free-sql-db-8797714`, nên chữ "HR
 
 Bài 1.2 (và 1.3, 1.6 khi cần) có khối mô phỏng SSMS, cùng tinh thần với khối Excel: đủ giống để học viên nhận ra trên máy mình, không cần giống từng điểm ảnh. Tối thiểu gồm:
 
-- hộp Connect to Server, có tab Connection Properties;
+- hộp Connect to Server theo SSMS 21 trở lên: ô Database Name và Encryption nằm ngay trên hộp (đổi trong lúc làm, theo mục 4.1; bài ghi thêm đường Options → Connection Properties của SSMS 20);
 - cây Object Explorer (Databases → `free-sql-db-8797714` → Tables → `dbo.NhanVien` → Columns, có kiểu dữ liệu và khóa);
 - thanh công cụ có nút New Query, ô chọn database và nút Execute.
 

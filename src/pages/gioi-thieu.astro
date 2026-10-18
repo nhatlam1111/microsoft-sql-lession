@@ -38,13 +38,14 @@ import { withBase } from '../lib/paths';
       </table>
 
       <h2>Database mẫu HRM_Demo</h2>
-      <p>Các câu lệnh trong bài chạy trên một database nhân sự giả lập tên <code>HRM_Demo</code>, gồm 7 bảng: phòng ban, chức danh, nhân viên, hợp đồng, chấm công, đơn nghỉ phép và bảng lương. Tên người, số CCCD, lương đều là dữ liệu giả.</p>
-      <p><a href={withBase('/HRM_Demo.sql')} download>Tải script HRM_Demo.sql</a></p>
+      <p>Các câu lệnh trong bài chạy trên bộ dữ liệu nhân sự giả lập tên <code>HRM_Demo</code>, gồm 7 bảng: phòng ban, chức danh, nhân viên, hợp đồng, chấm công, đơn nghỉ phép và bảng lương. Tên người, số CCCD, lương đều là dữ liệu giả.</p>
+      <p>Trên máy chủ của khóa học, bộ dữ liệu này đã có sẵn trong database <code>free-sql-db-8797714</code>, dùng chung cho mọi học viên (cách kết nối ở bài 1.2). Ở đó đừng chạy script: script xóa và tạo lại 7 bảng, tức là xóa dữ liệu mọi người đang dùng.</p>
+      <p>Script chỉ dành cho ai muốn có bản riêng: <a href={withBase('/HRM_Demo.sql')} download>Tải script HRM_Demo.sql</a></p>
       <ul>
         <li>Trên máy riêng: tạo một database tên <code>HRM_Demo</code> trong SSMS, mở database đó rồi chạy cả file script.</li>
-        <li>Trên Azure SQL Database: mở database bạn được cấp rồi chạy cả file script.</li>
+        <li>Trên một Azure SQL Database của riêng bạn (không phải máy chủ của khóa học): mở database đó rồi chạy cả file script.</li>
       </ul>
-      <p>Script chạy lại bao nhiêu lần cũng được. Nếu database đã có bảng trùng tên không phải do script tạo, script tự dừng và không xóa gì.</p>
+      <p>Trên bản riêng, script chạy lại bao nhiêu lần cũng được. Nếu database đã có bảng trùng tên không phải do script tạo, script tự dừng và không xóa gì.</p>
 
       <h2>Tiến độ của bạn được lưu ở đâu</h2>
       <p>Tiến độ được lưu ngay trong trình duyệt bạn đang dùng, không gửi đi đâu cả. Đổi máy, đổi trình duyệt hoặc xóa dữ liệu duyệt web thì tiến độ ở đó sẽ không còn.</p>

@@ -101,6 +101,10 @@ it('Exercises keeps the placeholder in a lesson with no exercises', async () => 
   expect(html).toContain('Phần bài tập sẽ bổ sung sau.');
 });
 
+it('Ssms stops the build when the opened table does not exist', async () => {
+  await expect(c.renderToString(Ssms, { props: { view: 'explorer', table: 'NhanVen' } })).rejects.toThrow('NhanVen');
+});
+
 it('Ssms draws the connect box, Object Explorer and the toolbar', async () => {
   const connect = await c.renderToString(Ssms, { props: { view: 'connect' } });
   // SSMS 21 and later: Database Name sits on the dialog itself (Microsoft Learn, SSMS quickstarts, 2026-10).
