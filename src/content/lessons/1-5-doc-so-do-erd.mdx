@@ -4,27 +4,129 @@ title: Đọc sơ đồ quan hệ (ERD) của HRM_Demo
 shortTitle: Đọc sơ đồ ERD
 level: 1
 area: A1
-kind: summary
-minutes: 12
+kind: full
+minutes: 15
 prerequisites:
   - "1.4"
 goal: bạn nhìn sơ đồ là biết muốn lấy dữ liệu nào thì phải đi qua những bảng nào
 excel: Các sheet tham chiếu nhau
-summary: Quan hệ một-nhiều giữa phòng ban, nhân viên, hợp đồng, chấm công và bảng lương trong HRM_Demo.
+summary: Đọc sơ đồ 7 bảng của HRM_Demo, quan hệ một-nhiều, và cách tìm đường đi qua các bảng để lấy đúng dữ liệu cần.
 noExercises: true
 ---
 
-## Nội dung chính
+## Tình huống
 
-- ERD (sơ đồ quan hệ) vẽ các bảng và đường nối giữa chúng; mỗi đường nối là một cặp khóa chính, khóa ngoại.
-- Quan hệ một-nhiều: một phòng ban có nhiều nhân viên; một nhân viên có nhiều hợp đồng, nhiều ngày chấm công, nhiều dòng bảng lương.
-- Trong HRM_Demo, bảng `NhanVien` nằm giữa: hợp đồng, chấm công, đơn nghỉ phép và bảng lương liên kết về nó qua `MaNV`, còn nó liên kết sang phòng ban và chức danh qua `MaPB`, `MaCD`.
-- Với SQL Server cài trên máy chủ, SSMS tự vẽ được sơ đồ ở mục Database Diagrams nếu tài khoản có quyền; Azure SQL Database không có mục này.
+Một yêu cầu hay gặp vào cuối kỳ lương:
 
-## Liên hệ Excel
+<Chat who="Chị Hạnh · Phòng Nhân sự" time="15:30" initial="H">
+Kế toán xin bảng lương tháng 9 có kèm tên phòng ban của từng người. Chị mở bảng lương ra thì có mã nhân viên, có thực lĩnh, mà không thấy cột phòng ban đâu cả. Lấy ở đâu ra em?
+</Chat>
 
-Giống một file có nhiều sheet tham chiếu nhau bằng mã: sheet hợp đồng dùng mã NV của sheet nhân viên. ERD là tấm bản đồ cho biết sheet nào dựa vào sheet nào.
+Nói gọn lại:
 
-## Tình huống ví dụ
+<Key>Muốn có lương tháng 9 kèm tên phòng ban, dữ liệu phải đi qua những bảng nào?</Key>
 
-Cần lấy lương tháng 9 kèm tên phòng ban của từng người, và phải biết đi qua những bảng nào.
+## Với Excel
+
+Với Excel, cách quen thuộc là dò hai lần. Từ sheet bảng lương, VLOOKUP mã NV sang sheet nhân viên để lấy mã phòng, rồi VLOOKUP tiếp mã phòng sang sheet danh mục phòng ban để lấy tên:
+
+<Excel sheets="BangLuong · NhanVien · PhongBan" cell="E2" formula="=VLOOKUP(D2,PhongBan!A:B,2,FALSE)" selected="E2" rows={[
+  ['Mã NV', 'Kỳ lương', 'Thực lĩnh', 'Mã PB (dò lần 1)', 'Tên phòng (dò lần 2)'],
+  ['NV001', '2026-09', 13285000, 'KT', 'Kế toán'],
+  ['NV002', '2026-09', 21631000, 'KD', 'Kinh doanh'],
+  ['NV003', '2026-09', 14088000, 'KD', 'Kinh doanh'],
+]} />
+
+Cách này chạy được, với điều kiện bạn nhớ sheet nào có cột nào và sheet nào nối với sheet nào. File càng nhiều sheet thì càng khó nhớ. Database có sẵn một tấm bản đồ cho việc đó.
+
+## Làm bằng SQL
+
+### Lý thuyết cơ bản
+
+**ERD** (sơ đồ quan hệ) vẽ mỗi bảng thành một hộp liệt kê các cột. Mỗi **đường nối** giữa hai hộp là một cặp khóa ngoại và khóa chính như ở bài 1.4: nó đi từ cột khóa ngoại tới bảng mà cột đó trỏ tới.
+
+Hầu hết đường nối trong HRM_Demo là quan hệ **một-nhiều**: một dòng ở bảng có khóa chính ứng với nhiều dòng ở bảng có khóa ngoại. Cách đọc một đường nối:
+
+1. Tìm cột có nhãn FK, ví dụ `NhanVien.MaPB`. Bảng chứa cột này là phía "nhiều".
+2. Đi theo đường nối tới bảng nó trỏ tới, ví dụ `PhongBan`. Đó là phía "một".
+3. Đọc thành câu: một phòng ban có nhiều nhân viên; mỗi nhân viên thuộc đúng một phòng ban.
+
+Trong HRM_Demo, bảng `NhanVien` nằm giữa: hợp đồng, chấm công, đơn nghỉ phép và bảng lương nối về nó qua `MaNV`, còn nó nối sang phòng ban và chức danh qua `MaPB`, `MaCD`. Đây là sơ đồ, cũng là sơ đồ bạn mở được bằng nút "Sơ đồ database" trên trang bài tập:
+
+<Erd />
+
+Ví dụ thu gọn, mỗi đường nối một dòng, kèm con số thật trong dữ liệu mẫu:
+
+| Đường nối | Đọc là | Trong dữ liệu mẫu |
+|---|---|---|
+| `NhanVien.MaPB` → `PhongBan` | Một phòng ban có nhiều nhân viên | Phòng IT có 10 người |
+| `NhanVien.MaCD` → `ChucDanh` | Một chức danh có nhiều người giữ | 21 người là Chuyên viên |
+| `NhanVien.MaQuanLy` → `NhanVien` | Một người quản lý nhiều người | NV008 quản lý 9 người |
+| `HopDong.MaNV` → `NhanVien` | Một người có nhiều hợp đồng | NV021 có 3 hợp đồng |
+| `ChamCong.MaNV` → `NhanVien` | Một người có nhiều ngày chấm công | NV001 có 19 ngày công tháng 9 |
+| `DonNghiPhep.MaNV` → `NhanVien` | Một người có thể có nhiều đơn nghỉ | 20 đơn, mỗi người tối đa một đơn |
+| `BangLuong.MaNV` → `NhanVien` | Một người có một dòng lương mỗi kỳ | NV001 có 2 kỳ: 2026-08 và 2026-09 |
+
+Từng phần trên sơ đồ nghĩa là gì:
+
+<LineMap rows={[
+  ['PK', 'Khóa chính của bảng. Bảng ChamCong và BangLuong có hai cột cùng mang nhãn PK vì khóa gồm hai cột.'],
+  ['FK', 'Khóa ngoại: đầu của một đường nối. Bảng có cột FK là phía "nhiều".'],
+  ['NhanVien', 'Bảng nằm giữa sơ đồ. Muốn đi từ bảng lương, chấm công hay hợp đồng sang phòng ban thì gần như luôn phải qua đây.'],
+  ['MaQuanLy', 'Đường nối vòng về chính bảng NhanVien: người quản lý cũng là một nhân viên.'],
+]} />
+
+### Đi đường nào cho câu hỏi của chị Hạnh
+
+Đọc sơ đồ từ thứ mình có tới thứ mình cần:
+
+1. `BangLuong` có `MaNV`, `KyLuong`, `ThucLinh`, nhưng không có cột phòng ban.
+2. `BangLuong.MaNV` nối tới `NhanVien`, và `NhanVien` có `MaPB`.
+3. `NhanVien.MaPB` nối tới `PhongBan`, và `PhongBan` có `TenPB`.
+
+Vậy đường đi là `BangLuong` → `NhanVien` → `PhongBan`, đúng hai lần dò như bên Excel. Câu lệnh đi theo đường đó trông như sau (chưa cần hiểu từng chữ, cách kết bảng có ở bài 3.4):
+
+<Sql code={`SELECT bl.MaNV, nv.HoTen, pb.TenPB, bl.ThucLinh
+FROM BangLuong AS bl
+JOIN NhanVien AS nv ON nv.MaNV = bl.MaNV
+JOIN PhongBan AS pb ON pb.MaPB = nv.MaPB
+WHERE bl.KyLuong = '2026-09'
+ORDER BY bl.MaNV;`} />
+
+<Result columns={['MaNV', 'HoTen', 'TenPB', 'ThucLinh']} rows={[
+  ['NV001', 'Trần Thị Mai', 'Kế toán', 13285000],
+  ['NV002', 'Lê Văn Hùng', 'Kinh doanh', 21631000],
+  ['NV003', 'Nguyễn Thu Hà', 'Kinh doanh', 14088000],
+]} total={43} />
+
+Mỗi dòng `JOIN … ON` là một đường nối trên sơ đồ. Biết đường đi trước thì câu lệnh gần như tự viết ra.
+
+Nếu bạn tự cài SQL Server trên máy, SSMS còn tự vẽ được sơ đồ ở mục **Database Diagrams** của database (khi tài khoản có quyền). Azure SQL Database không có mục này, nên với máy chủ của khóa học, bạn dùng sơ đồ ở trên.
+
+## Hay nhầm ở đâu
+
+<Mistakes>
+
+1. **Tìm một đường tắt không có trên sơ đồ.** `BangLuong` và `PhongBan` không có đường nối trực tiếp, nên tìm cột phòng ban trong bảng lương là không thấy. Muốn đi từ bảng này sang bảng kia thì phải qua bảng ở giữa, ở đây là `NhanVien`.
+2. **Quên phía "nhiều" khi kết bảng.** Kết `NhanVien` với `HopDong` thì người có ba hợp đồng như NV021 hiện ba dòng: 48 nhân viên nhưng ra 57 dòng (bài 3.5). Thấy số dòng tăng bất thường, nhìn sơ đồ tìm đường nối một-nhiều vừa đi qua.
+3. **Đọc ngược chiều đường nối.** Đường nối đi từ khóa ngoại sang khóa chính, nên bảng có cột FK là phía "nhiều". Đọc ngược thành "một nhân viên có nhiều phòng ban" là sai, và câu lệnh viết theo cách hiểu đó cũng sai theo.
+
+</Mistakes>
+
+## Ứng dụng
+
+<Apply>
+
+- Khi viết yêu cầu báo cáo, ghi luôn đường đi qua các bảng, ví dụ "lương lấy ở BangLuong, tên phòng lấy ở PhongBan, đi qua NhanVien". Người viết câu lệnh đọc là biết cần kết những bảng nào, khỏi hỏi lại.
+- Khi nhận một database lạ, xem sơ đồ trước khi viết câu lệnh đầu tiên: tìm bảng nằm giữa, rồi các bảng nối về nó. Đó thường là các đối tượng chính của nghiệp vụ.
+
+</Apply>
+
+## Ghi nhớ
+
+<Memo rows={[
+  ['Sheet tham chiếu sheet khác bằng mã', 'Đường nối: khóa ngoại → khóa chính'],
+  ['Một phòng có nhiều dòng nhân viên', 'Quan hệ một-nhiều'],
+  ['Dò hai lần qua hai sheet', 'BangLuong → NhanVien → PhongBan'],
+  ['Sheet nào cũng tra theo mã NV', 'NhanVien nằm giữa sơ đồ'],
+]} />
