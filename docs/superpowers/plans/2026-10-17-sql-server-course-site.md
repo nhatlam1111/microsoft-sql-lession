@@ -2,6 +2,8 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+**Trạng thái (2026-10-18):** đã làm xong và đã lên web. Các thay đổi sau đó ghi ở spec đợt 1 mục 11.
+
 **Goal:** Dựng website tĩnh "SQL Server" (51 trang bài: 3 bài đầy đủ, 48 bản tóm tắt; popup lộ trình; mindmap theo mảng kiến thức; tiến độ lưu trong trình duyệt) cùng script database mẫu `HRM_Demo`, đăng được lên GitHub Pages.
 
 **Architecture:** Astro dựng mọi trang ở dạng tĩnh. Thông tin từng bài nằm ở frontmatter MDX, kiểm bằng một zod schema dùng chung cho build và test. Phần tương tác là các React island dùng chung một module kho tiến độ (bộ nhớ + `localStorage`, `useSyncExternalStore`). Mọi logic đáng kể (tiến độ, quy tắc popup, tìm kiếm, bố trí mindmap, tô màu T-SQL, kiểm danh mục bài) nằm trong module TypeScript thuần ở `src/lib/` và có test Vitest. Component Astro được test qua Container API. Một script sau build kiểm đầu ra dưới base `/microsoft-sql-lession/`.

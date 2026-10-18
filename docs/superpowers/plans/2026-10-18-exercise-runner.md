@@ -2,11 +2,13 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+**Trạng thái (2026-10-18):** Task 1–9 xong; Task 10 xong tới Step 9, còn Step 10 chờ người làm khóa học thử trên web thật. Những chỗ làm khác plan ghi ở mục "Sai khác so với plan" cuối file; spec B mục 12 là bản tóm tắt hiện trạng.
+
 **Goal:** Học viên làm bài tập trên trang riêng: viết SQL, chạy trên `sql-lession` qua một API có `ROLLBACK`, nộp bài và biết đúng hay chưa; có popup sơ đồ database; 5 bài tập mẫu ở bài 3.5 và 6.5.
 
 **Architecture:** Logic thuần (bộ chặn lệnh, chấm bài, định dạng giá trị, đọc sơ đồ, kiểu dữ liệu API) nằm ở `src/lib/`, không phụ thuộc Astro, để web, test và API dùng chung. API là Azure Functions (Node.js, mô hình v4) trong `api/`: phần lõi (`core.ts`) gồm các handler nhận phụ thuộc từ ngoài vào nên test được không cần Azure; `index.ts` gắn chúng vào Azure; một dev server dùng cùng lõi để thử trên máy. Web thêm trang `/bai/<slug>/bai-tap/<n>/` với một React island làm khung làm bài.
 
-**Tech Stack:** Astro 5, React 19, TypeScript, Vitest 3; API: Node.js 22, `@azure/functions` v4, `mssql` 12, esbuild; GitHub Actions (OIDC, `azure/login`, `Azure/functions-action`); Azure CLI.
+**Tech Stack:** Astro 5, React 19, TypeScript, Vitest 3; API: Node.js 24 (plan viết 22, đổi khi tạo Function App), `@azure/functions` v4, `mssql` 12, esbuild; GitHub Actions (OIDC, `azure/login`, `Azure/functions-action`); Azure CLI.
 
 **Spec:** [docs/superpowers/specs/2026-10-18-exercise-runner-design.md](../specs/2026-10-18-exercise-runner-design.md) (spec B), nền là [spec đợt 2, mục 5](../specs/2026-10-18-step-flow-exercises-full-lessons-design.md) và [kết quả chạy thử](../specs/2026-10-18-exercise-runner-spike-results.md). Code chạy thử tham khảo: nhánh `spike/exercise-runner` (`spike/guard.mjs`, `run.mjs`, `grade.mjs`, `snapshot.mjs`).
 
@@ -18,7 +20,7 @@
 - Giới hạn: câu lệnh 10 giây; kết nối 90 giây; tối đa 200 dòng hiển thị; tối đa 5.000 dòng khi chấm; câu dài tối đa 4.000 ký tự; 30 lần gọi mỗi phút mỗi mã.
 - Mã truy cập trong header `x-access-code`; cài đặt `ACCESS_CODES` là danh sách cách nhau bởi dấu phẩy.
 - CORS chỉ cho `https://nhatlam1111.github.io` và `http://localhost:4321`.
-- Azure: Flex Consumption, Australia East, Node.js 22 (không có thì 20), 512 MB, không bật Always Ready, Zone redundancy tắt.
+- Azure: Flex Consumption, Australia East, Node.js 24 (plan viết 22; người làm khóa học chọn 24 lúc tạo), 512 MB, không bật Always Ready, Zone redundancy tắt.
 - Người dựng không nhập, không đọc và không ghi vào repo mật khẩu SQL, mã truy cập hay secret; người làm khóa học tự điền. Hỏi lại người làm khóa học trước mỗi lệnh `az` tạo hoặc sửa tài nguyên.
 - Giao diện tiếng Việt; câu chữ hiển thị đúng như spec B mục 3; link đi qua base `/microsoft-sql-lession/`.
 - SQL trong file bài tập: chuỗi tiếng Việt có `N`.
@@ -201,7 +203,7 @@ it('builds the exercise page URL under the base path', () => expect(exerciseUrl(
     - `handleRun(body: unknown, code: string | null, deps: Deps): Promise<{ status: number; body: RunResponse | ApiFailure }>`
     - `handleGrade(body: unknown, code: string | null, deps: Deps): Promise<{ status: number; body: GradeResponse | ApiFailure }>`
     - Body là `{ exercise: string; sql: string }`.
-    - Mã trạng thái: `bad-request` 400, `bad-code` 401, `unknown-exercise` 404, `rate` 429, `blocked`/`multi`/`too-big` 422 (`blocked` kèm `reason`), `timeout` 408, `quota`/`unavailable` 503.
+    - Mã trạng thái: `bad-request` 400, `bad-code` 401, `unknown-exercise` 404, `rate` 429, `blocked`/`multi`/`too-big` 422 (`blocked` kèm `reason`), `timeout` 504 (plan viết 408, đổi sau rà soát), `quota`/`unavailable` 503.
     - Thứ tự: body hợp lệ → mã đúng → `allow(code)` → bài tập có → `guardExercise` → `run`. Kết quả có `errorKind` thì trả lỗi tương ứng; `affected.length > 1` thì `multi`.
     - `handleRun`: `rows` tối đa 200 (`truncated`), `affected` là `affected[0] ?? null`, `error` là lỗi SQL Server nguyên văn.
     - `handleGrade`: chạy câu học viên (bài `change` kèm `check`), chạy đáp án như vậy; câu học viên lỗi SQL thì `correct: false`, `reason: 'câu lệnh bị lỗi, xem tab Messages'`; quá 5.000 dòng thì `too-big`; còn lại dùng `compareResults` (theo `ordered`) hoặc `compareChanges`.
@@ -233,7 +235,7 @@ it('caps shown rows at 200 and reports several statements as one error', async (
   expect((await handleRun({ exercise: 'q1', sql: 'SELECT 1' }, 'abc', depsReturning({ affected: [2, 3] }))).body).toEqual({ ok: false, kind: 'multi' });
 });
 it('maps a timeout and a paused database to their own errors', async () => {
-  expect((await handleRun({ exercise: 'q1', sql: 'SELECT 1' }, 'abc', depsReturning({ errorKind: 'timeout' }))).status).toBe(408);
+  expect((await handleRun({ exercise: 'q1', sql: 'SELECT 1' }, 'abc', depsReturning({ errorKind: 'timeout' }))).status).toBe(504);
   expect((await handleRun({ exercise: 'q1', sql: 'SELECT 1' }, 'abc', depsReturning({ errorKind: 'quota' }))).body).toEqual({ ok: false, kind: 'quota' });
 });
 it('grades with the answer, and says a SQL error is not correct', async () => {
@@ -455,7 +457,7 @@ it('Exercises keeps the placeholder in a lesson with no exercises', async () => 
 - `deploy-api.yml`:
   - chạy khi push vào `main` có thay đổi ở `api/**`, `src/lib/sql-guard.ts`, `src/lib/grade.ts`, `src/lib/exercise-types.ts`, `src/content/exercises/**`, chính file workflow; có `workflow_dispatch`;
   - `permissions: { id-token: write, contents: read }`;
-  - các bước: checkout; setup-node 22; `npm ci`; `npm test`; `cd api && npm ci && npm run build && npm prune --omit=dev`; `azure/login@v2` (`client-id`, `tenant-id`, `subscription-id` từ secret `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_SUBSCRIPTION_ID`); `Azure/functions-action@v1` (`app-name: ${{ vars.AZURE_FUNCTIONAPP_NAME }}`, `package: api`).
+  - các bước: checkout; setup-node 22; `npm ci`; `npm test`; `cd api && npm ci && npm run typecheck && npm run build && npm prune --omit=dev`; `azure/login@v2` (`client-id`, `tenant-id`, `subscription-id` từ secret `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_SUBSCRIPTION_ID`); `Azure/functions-action@v1` (`app-name: ${{ vars.AZURE_FUNCTIONAPP_NAME }}`, `package: api`, `sku: flexconsumption`, `respect-funcignore: true`).
 
 - [ ] **Step 1: Viết hai file; kiểm cú pháp YAML bằng `node -e "require('yaml').parse(require('fs').readFileSync(f,'utf8'))"` cho từng file**
 - [ ] **Step 2: `npm test`, `npm run build` vẫn PASS**
@@ -469,16 +471,16 @@ Task này phần lớn là thao tác trên tài nguyên thật. **Trước mỗi
 - [ ] **Step 2: Nhờ người làm khóa học chạy `az login`** trong terminal của họ (họ tự đăng nhập trên trình duyệt). Kiểm `az account show` ra đúng subscription "Azure subscription 1".
 - [ ] **Step 3: Tra cứu, không tạo gì:**
   - `az functionapp list-flexconsumption-locations` có `australiaeast` không;
-  - `az functionapp list-flexconsumption-runtimes --location australiaeast --runtime node` có bản 22 không;
+  - `az functionapp list-flexconsumption-runtimes --location australiaeast --runtime node` có bản 24 không;
   - tìm resource group của SQL server (`az sql server list --query "[].{name:name, rg:resourceGroup, location:location}"`);
   - tên `sql-lession-api` còn trống không.
 
   Báo lại cho người làm khóa học các giá trị sẽ dùng.
-- [ ] **Step 4: (hỏi trước) Tạo storage account và Function App** — `az storage account create` (Standard_LRS, cùng resource group và vùng); `az functionapp create --resource-group <rg> --name <app> --storage-account <st> --flexconsumption-location australiaeast --runtime node --runtime-version 22 --instance-memory 512`.
+- [ ] **Step 4: (hỏi trước) Tạo storage account và Function App** — `az storage account create` (Standard_LRS, cùng resource group và vùng); `az functionapp create --resource-group <rg> --name <app> --storage-account <st> --flexconsumption-location australiaeast --runtime node --runtime-version 24 --instance-memory 512`.
 - [ ] **Step 5: (hỏi trước) Đặt CORS và cài đặt không bí mật** — `az functionapp cors add --allowed-origins https://nhatlam1111.github.io http://localhost:4321`; `az functionapp config appsettings set --settings SQL_SERVER=<server>.database.windows.net SQL_DATABASE=<db> SQL_USER=hrm_practice`.
 - [ ] **Step 6: (hỏi trước) Identity cho GitHub Actions:**
   - `az identity create` (cùng resource group);
-  - `az identity federated-credential create --issuer https://token.actions.githubusercontent.com --subject repo:nhatlam1111/microsoft-sql-lession:ref:refs/heads/main --audiences api://AzureADTokenExchange`;
+  - `az identity federated-credential create --issuer https://token.actions.githubusercontent.com --subject repo:nhatlam1111@25176629/microsoft-sql-lession@1423314136:ref:refs/heads/main --audiences api://AzureADTokenExchange` (subject phải khớp đúng chuỗi GitHub gửi; repo này gửi dạng có ID, dạng `repo:owner/repo:ref:…` bị từ chối với lỗi AADSTS700213);
   - `az role assignment create --role "Website Contributor" --assignee <principalId> --scope <id của Function App>`.
 
   Đưa cho người làm khóa học `clientId` của identity, `tenantId`, `subscriptionId`, tên Function App và địa chỉ API (`https://<defaultHostName>/api`). Các giá trị này không phải bí mật.
@@ -494,3 +496,13 @@ Task này phần lớn là thao tác trên tài nguyên thật. **Trước mỗi
 ## Thứ tự và phụ thuộc
 
 Task 1 và 2 độc lập; Task 3 dùng kiểu `Cell` của Task 2; Task 4 cần 1–3; Task 5 cần 3; Task 6 độc lập; Task 7 cần 3–6; Task 8 cần 3, 5, 7; Task 9 cần 4; Task 10 cần tất cả.
+
+## Sai khác so với plan (ghi lại sau khi làm)
+
+- Node.js 24 thay cho 22 cho Function App (người làm khóa học chọn, vì 22 chỉ được hỗ trợ đến 04/2027). Runner của GitHub Actions vẫn build bằng Node 22; API đóng gói bằng esbuild nên không phụ thuộc bản Node lúc build.
+- `ping` cũng cần mã truy cập (sau rà soát cuối); trang chỉ gửi `ping` khi đã có mã.
+- Bộ chặn tách chữ số dính chữ (`1=1COMMIT`), chuẩn hóa xuống dòng `` trước khi đọc, chặn `SET` thừa; mỗi lần chạy đặt `SET ROWCOUNT 5001` và kiểm `@@TRANCOUNT` sau câu của học viên (sau rà soát cuối).
+- Test của mục "Bài tập" trong bài học chuyển thành bước kiểm `missingExerciseLinks` trong `check:dist`, vì test cũ cần `.astro/data-store.json` chỉ có khi đã chạy dev server.
+- Federated credential dùng subject dạng có ID (xem Task 10 Step 6).
+- Sửa các lỗi nhỏ để lại sau rà soát cuối: timeout 504; `money` 4 chữ số thập phân; `FOR JSON`/`FOR XML` đọc được (hàm `shapeOf` tách ra `api/src/shape.ts` để test); câu trả lời không đúng dạng báo như không gọi được API; Tab với nhiều dòng (`indentEdit` trong `src/lib/editor-keys.ts`, Ctrl+Z hoàn tác được); popup sơ đồ giữ Tab bên trong (`src/lib/focus-trap.ts`); `npm run typecheck` cho `api/`; `sku`, `respect-funcignore` trong workflow; `api/local.settings.json` trong `.gitignore`.
+

@@ -1,7 +1,7 @@
 # Thiết kế đợt 2: sơ đồ thứ tự chạy, bài tập chạy trên web, bài đầy đủ
 
 - Ngày: 2026-10-18
-- Trạng thái: đã duyệt ngày 2026-10-18
+- Trạng thái: đã duyệt ngày 2026-10-18. Phần A (sơ đồ thứ tự chạy, mẫu ở bài 3.5) và phần B (bài tập chạy trên web, xem [spec B](2026-10-18-exercise-runner-design.md)) đã làm và đã lên web; phần C (viết đầy đủ bài theo level) chưa làm.
 - Nối tiếp: [spec đợt 1](2026-10-17-sql-server-course-site-design.md) (mọi quy định ở đó vẫn giữ, trừ chỗ spec này ghi khác)
 - Web: https://nhatlam1111.github.io/microsoft-sql-lession/
 
@@ -200,6 +200,6 @@ Theo ảnh tham khảo người làm khóa học gửi ("Simple 8-Step Workflow"
 
 ## 10. Việc bạn cần tự làm
 
-- Đổi `MCP_ALLOW_WRITE` về `false` trong `.env`, hoặc bảo người dựng đổi.
+- Đổi `MCP_ALLOW_WRITE` về `false` trong `.env`, hoặc bảo người dựng đổi. (Ngày 2026-10-18 vẫn đang là `true`.)
 - ~~Trả lời câu hỏi ở mục 8.~~ Đã trả lời.
-- Sau bản chạy thử, theo spec B: tạo Function App, tạo tài khoản SQL cho API theo script người dựng đưa, đặt mã truy cập.
+- ~~Sau bản chạy thử, theo spec B: tạo Function App, tạo tài khoản SQL cho API theo script người dựng đưa, đặt mã truy cập.~~ Đã làm.

@@ -111,7 +111,7 @@ Cuối bài: nút "Đã học xong bài này" (xanh lá), nút "Cắm cờ xem l
 
 Quy ước hiển thị:
 
-- Khối SQL tô màu như SSMS mặc định: từ khóa (`SELECT`, `FROM`, `WHERE`, `AS`, `ON`…) xanh dương `#0000FF`; toán tử và các từ `JOIN`, `IS`, `NULL`, `AND`, `OR`, `IN`, `LIKE`, dấu phẩy màu xám `#808080`; chú thích xanh lá `#008000`; chuỗi đỏ `#FF0000`; hàm hệ thống hồng tím `#FF00FF`. Có nút "Sao chép".
+- Khối SQL tô màu như SSMS mặc định: từ khóa (`SELECT`, `FROM`, `WHERE`, `AS`, `ON`…) xanh dương `#0000FF`; toán tử và các từ `JOIN`, `IS`, `NULL`, `AND`, `OR`, `IN`, `LIKE`, dấu phẩy màu xám `#808080`; chú thích xanh lá `#008000`; chuỗi đỏ `#FF0000`; hàm hệ thống hồng tím `#FF00FF`. Có nút "Sao chép"; trình duyệt từ chối chép thì nút báo "Không chép được".
 - Bảng kết quả giống tab Results của SSMS: cột số thứ tự xám, ô `NULL` nền vàng nhạt `#FFFFE1`, dòng trạng thái "Query executed successfully." kèm tên database và số dòng.
 - Khối Excel: dải đầu màu xanh Excel `#107C41`, ô `#N/A` nền `#FFC7CE` chữ `#9C0006`.
 
@@ -125,6 +125,9 @@ Quy ước hiển thị:
 - Số "đã học" ở mọi nơi chỉ đếm các bài có trạng thái Đã học.
 - "Học tiếp" trỏ tới bài mở gần nhất mà chưa Đã học; nếu bài đó đã học xong thì trỏ tới bài kế tiếp theo thứ tự lộ trình.
 - Lưu trong trình duyệt; có "Xuất tiến độ" (tải file JSON) và "Nhập tiến độ" (chọn file, kiểm tra hợp lệ, hỏi lại trước khi ghi đè), và "Xóa tiến độ" (hỏi lại).
+- Bản lưu trong trình duyệt đọc không được thì được chép sang một khóa dự phòng rồi bắt đầu lại từ đầu; nếu không chép được thì web không ghi đè lên bản cũ và báo là không lưu được tiến độ.
+- Bài không còn trong danh mục vẫn được giữ trong bản lưu của trình duyệt (để một trang cũ hay một lần đổi số bài không làm mất tiến độ); chỉ khi nhập file thì các bài đó mới bị bỏ qua và web báo số bài bỏ qua.
+- Nạp tiến độ mẫu hay nhập file được tính là vừa ghé hôm nay, nên sang trang sau popup lộ trình không tự mở lại.
 
 ### 4.7 Giọng văn và quy tắc viết
 
@@ -142,6 +145,7 @@ Quy ước hiển thị:
 - Lưu thành script trong repo (tạo bảng và nạp dữ liệu), chạy được trên SQL Server 2019+ và Azure SQL Database. Sau này dùng cho phần bài tập.
 - Vì Azure SQL Database không chuyển database bằng `USE`, script không có `USE` hay `CREATE DATABASE`: chạy thẳng trong database đang mở, bảng nằm ở schema `dbo`. Ai học trên máy riêng thì tự tạo database tên `HRM_Demo` rồi chạy script. Trong bài, tên database hiển thị là `HRM_Demo`.
 - Script chạy lại được nhiều lần: chỉ xóa và tạo lại đúng các bảng của `HRM_Demo`, không đụng tới đối tượng nào khác. Trước khi người làm khóa học chạy, người dựng kiểm qua MCP xem `sql-lession` đã có bảng trùng tên hay chưa.
+- File script lưu dạng UTF-8 có BOM, để SSMS và `sqlcmd` đọc đúng chữ tiếng Việt khi mở hoặc chạy file.
 - Mọi câu lệnh và kết quả trong bài phải khớp với script này. Kết quả bị cắt bớt phải ghi rõ "trích N dòng". Câu lệnh có hiển thị kết quả thì phải có `ORDER BY` khi thứ tự có ý nghĩa.
 - Khung bảng tối thiểu (người dựng được thêm cột hoặc bảng nếu bài cần):
 
@@ -313,3 +317,6 @@ Danh sách bài (tên bài có thể chỉnh câu chữ khi viết, nhưng giữ
 - Mindmap có nút "Menu khóa học" ở đầu thanh công cụ: mở danh sách bài ở bên trái giống sidebar trang bài, mở sẵn level của bài đang học dở; mở hoặc ẩn thì bản đồ tự căn lại.
 - Bấm vào bài trên mindmap mở drawer bên phải: level, mã bài, tên bài, trạng thái, "Bản tóm tắt" hoặc số phút, đoạn tóm tắt, "Học xong bài này", "Liên hệ Excel", "Cần biết trước" (bấm để chuyển drawer sang bài đó, nhánh đang đóng thì tự mở), nút "Vào bài học". Đóng bằng ×, Esc hoặc bấm vào chỗ trống. Ctrl+click hoặc chuột giữa vẫn mở thẳng bài. Bản đồ chỉ dịch vừa đủ để bài đang chọn không bị drawer che.
 - Bấm vào nhánh vẫn là mở hoặc thu gọn nhánh, không mở drawer.
+- Sửa các lỗi nhỏ còn để lại từ rà soát đợt 1 (cũng ngày 2026-10-18): bản lưu hỏng không chép dự phòng được thì không bị ghi đè; bài lạ trong bản lưu được giữ; tiến độ mẫu và file nhập không làm popup mở lại ở trang sau; `HRM_Demo.sql` có BOM; nút "Sao chép" báo khi không chép được.
+- Sidebar và popup lộ trình chỉ nhận các trường bài học chúng hiển thị (mã, slug, tên, tên ngắn, level), không nhận cả danh mục; trang bài nhẹ đi khoảng một phần tư (bài 3.5: 177 KB còn 130 KB, nén gzip 33,5 KB còn 23,7 KB).
+- CI chạy `npm run check` (`astro check`) trước test, để lỗi kiểu dữ liệu trong `.ts`, `.tsx` và `.astro` dừng bản build.

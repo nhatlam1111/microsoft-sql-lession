@@ -2,6 +2,7 @@
 
 - Ngày: 2026-10-18
 - Trạng thái: đã duyệt ngày 2026-10-18. Người làm khóa học chọn cách ở mục 7: người dựng cài Azure CLI, người làm khóa học tự `az login`, người dựng tạo tài nguyên và hỏi lại trước mỗi lần tạo.
+- Đã làm và deploy ngày 2026-10-18; trạng thái hiện tại và các chỗ đổi sau đó ở mục 12.
 - Nối tiếp: [spec đợt 2, mục 5](2026-10-18-step-flow-exercises-full-lessons-design.md) và [kết quả chạy thử](2026-10-18-exercise-runner-spike-results.md). Chỗ nào spec này ghi khác spec đợt 2 thì theo spec này.
 - Web: https://nhatlam1111.github.io/microsoft-sql-lession/
 
@@ -35,6 +36,7 @@ Học viên tự học là chính; người làm khóa học chỉ thỉnh tho�
 - **Cột phải:**
   - khung soạn SQL tô màu như khối SQL của web (kiểu SSMS);
   - nút "Chạy (F5)", nút "Nộp bài", nút "Sơ đồ database"; phím F5 hoặc Ctrl+Enter cũng chạy;
+  - Tab chèn 4 dấu cách; chọn nhiều dòng rồi bấm Tab thì mọi dòng được chọn lùi vào 4 dấu cách như SSMS; Ctrl+Z hoàn tác được;
   - bên dưới là tab Results và Messages giống bảng kết quả trong bài học. Messages ghi số dòng bị ảnh hưởng, hoặc nguyên văn lỗi của SQL Server.
 - "Chạy" chỉ chạy và hiện kết quả. "Nộp bài" chấm rồi hiện một dải kết quả:
   - đúng: "Đúng rồi." (xanh lá);
@@ -46,7 +48,7 @@ Học viên tự học là chính; người làm khóa học chỉ thỉnh tho�
 
 - Nội dung theo mockup đã chọn ([`erd-popup.html`](2026-10-18-mockups/erd-popup.html), phương án A; trang làm bài: [`exercise-workspace.html`](2026-10-18-mockups/exercise-workspace.html), phương án A; hai file là mảnh HTML, mở bằng trình duyệt sẽ thiếu khung): 7 hộp bảng, mỗi dòng một cột với tên, kiểu, nhãn PK/FK; đường nối từ khóa ngoại tới bảng nó trỏ tới, kể cả `NhanVien.MaQuanLy` trỏ về chính `NhanVien`.
 - Dữ liệu sơ đồ sinh lúc build từ `database/HRM_Demo.sql`, nên đổi script thì sơ đồ đổi theo. Vị trí các hộp do người dựng đặt cố định.
-- Popup đóng bằng ×, Esc hoặc bấm ra ngoài; khi mở thì focus nằm trong popup, đóng thì focus về nút "Sơ đồ database".
+- Popup đóng bằng ×, Esc hoặc bấm ra ngoài; khi mở thì focus nằm trong popup, Tab chỉ đi vòng giữa nút × và vùng sơ đồ (vùng sơ đồ cuộn được bằng phím mũi tên), đóng thì focus về nút "Sơ đồ database".
 
 ### 3.4 Mã truy cập
 
@@ -63,6 +65,7 @@ Học viên tự học là chính; người làm khóa học chỉ thỉnh tho�
 | Chạy quá 10 giây | "Câu lệnh chạy quá 10 giây nên đã dừng. Kiểm tra lại điều kiện lọc hoặc kết bảng." |
 | Database tạm dừng vì hết hạn mức miễn phí trong tháng | "Phần chạy bài tập tạm nghỉ đến đầu tháng sau. Bài học vẫn đọc được bình thường." |
 | Không gọi được API | "Không kết nối được máy chủ bài tập. Thử lại sau ít phút; nếu vẫn lỗi, nhắn người phụ trách khóa học." |
+| API trả về câu trả lời không đúng dạng (ví dụ trang lỗi của Azure) | Như dòng trên |
 
 Khi trang làm bài mở ra, trang gửi trước một yêu cầu "đánh thức" để database kịp thức trước khi học viên bấm Chạy.
 
@@ -101,7 +104,7 @@ Khi trang làm bài mở ra, trang gửi trước một yêu cầu "đánh thứ
 | `POST /api/run` | Nhận mã bài tập và câu SQL, chạy có `ROLLBACK` | cột, tối đa 200 dòng (có cờ "đã cắt"), số dòng bị ảnh hưởng, thông báo hoặc lỗi của SQL Server, thời gian chạy |
 | `POST /api/grade` | Như `run`, rồi chấm theo đáp án của bài tập | như `run`, thêm đúng/sai và lý do |
 
-- Mọi đầu gọi, kể cả `ping`, yêu cầu header mã truy cập (đổi sau rà soát cuối: không có mã thì người lạ cũng đánh thức được database và làm tốn hạn mức). Trang chỉ gửi `ping` khi đã có mã. Danh sách mã nằm trong cài đặt `ACCESS_CODES` (cách nhau bởi dấu phẩy), để sau này phát mỗi học viên một mã. Sai mã trả 401.
+- Mọi đầu gọi, kể cả `ping`, yêu cầu header mã truy cập (đổi sau rà soát cuối: không có mã thì người lạ cũng đánh thức được database và làm tốn hạn mức). Trang chỉ gửi `ping` khi đã có mã. Danh sách mã nằm trong cài đặt `ACCESS_CODES` (cách nhau bởi dấu phẩy), để sau này phát mỗi học viên một mã. Sai mã trả 401. Câu lệnh chạy quá 10 giây trả 504 (không dùng 408, vì trình duyệt có thể tự gửi lại yêu cầu sau 408).
 - Chỉ nhận yêu cầu từ `https://nhatlam1111.github.io` và `http://localhost:4321` (CORS).
 - Giới hạn tốc độ: mỗi mã tối đa 30 lần gọi mỗi phút, đếm trong từng máy chạy API (không cần chính xác tuyệt đối).
 
@@ -117,7 +120,7 @@ Theo bản chạy thử, có sửa các chỗ thiếu đã ghi trong file kết 
   - câu dài quá 4.000 ký tự thì từ chối.
 - Chạy: một kết nối, một transaction; `SET XACT_ABORT ON; SET LOCK_TIMEOUT 3000;`; câu của học viên; câu kiểm tra nếu là bài sửa dữ liệu; luôn `ROLLBACK`. Gộp thành ít lượt gửi nhất có thể.
 - Sau khi chạy, nếu câu của học viên sinh ra nhiều hơn một kết quả hoặc nhiều hơn một số đếm dòng (tức là có nhiều câu lệnh, kể cả khi không có `;`), thì không chấm và báo "Mỗi lần chỉ chạy một câu lệnh."
-- Đọc kết quả theo mảng để giữ đúng thứ tự cột và cột trùng tên. `DECIMAL` định dạng theo số chữ số thập phân của cột trước khi so; `date` thành `YYYY-MM-DD`; `time` thành `HH:MM:SS`.
+- Đọc kết quả theo mảng để giữ đúng thứ tự cột và cột trùng tên. `DECIMAL` định dạng theo số chữ số thập phân của cột trước khi so (không rõ số chữ số thì giữ nguyên số); `money` và `smallmoney` luôn có 4 chữ số thập phân như SSMS, vì driver không báo số chữ số cho hai kiểu này; `date` thành `YYYY-MM-DD`; `time` thành `HH:MM:SS`. Kết quả `FOR JSON`/`FOR XML` (driver gộp thành một dòng dạng object) hiện thành một cột chuỗi.
 - Thời gian chờ: kết nối 90 giây (database đang ngủ), mỗi câu lệnh 10 giây.
 - Chấm: như spec đợt 2 mục 5.4. So tối đa 5.000 dòng; vượt thì báo "Kết quả quá lớn để chấm, hãy lọc bớt."
 
@@ -138,12 +141,15 @@ Theo bản chạy thử, có sửa các chỗ thiếu đã ghi trong file kết 
 - Workflow GitHub Actions riêng cho API (`.github/workflows/deploy-api.yml`), chạy khi push vào `main` có thay đổi trong `api/`, `src/content/exercises/` hoặc phần logic dùng chung.
 - Đăng nhập Azure bằng OIDC (`azure/login`), không dùng publish profile, theo khuyến nghị của Microsoft cho Flex Consumption. GitHub cần ba secret `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_SUBSCRIPTION_ID`; identity chỉ có quyền deploy vào đúng Function App này.
 - Web cần biết địa chỉ API: đặt trong biến của repo `PUBLIC_EXERCISE_API`, workflow build web đọc biến này.
+- Các bước của workflow API: `npm ci`, `npm test` (của web), rồi trong `api/`: `npm ci`, `npm run typecheck` (`tsc`), `npm run build`, `npm prune --omit=dev`; đăng nhập Azure; `Azure/functions-action@v1` với `package: api`, `sku: flexconsumption`, `respect-funcignore: true` (bỏ mã TypeScript và `local.settings.json` khỏi gói tải lên).
+- Federated credential phải khớp đúng chuỗi subject GitHub gửi. Repo này gửi dạng có ID: `repo:nhatlam1111@25176629/microsoft-sql-lession@1423314136:ref:refs/heads/main`; dạng `repo:nhatlam1111/microsoft-sql-lession:ref:refs/heads/main` bị Azure từ chối (lỗi AADSTS700213).
+- Push chỉ đổi file ngoài bộ lọc đường dẫn thì workflow API không chạy; cần deploy lại thì bấm "Run workflow" trên GitHub.
 
 ## 7. Cài đặt lần đầu: ai làm gì
 
 1. **Người dựng:** cài Azure CLI (và Azure Functions Core Tools nếu cần thử API trên máy) bằng `winget`.
 2. **Người làm khóa học:** chạy `az login` và tự đăng nhập trong trình duyệt.
-3. **Người dựng** (hỏi lại trước khi tạo bất kỳ tài nguyên nào): kiểm Flex có ở Australia East; tìm resource group của `sql-lession`; tạo storage account, Function App (Flex, Node 22, 512 MB), identity cho GitHub Actions kèm federated credential cho nhánh `main` của repo và quyền deploy vào Function App; đặt CORS và các cài đặt không bí mật (`SQL_SERVER`, `SQL_DATABASE`, `SQL_USER`).
+3. **Người dựng** (hỏi lại trước khi tạo bất kỳ tài nguyên nào): kiểm Flex có ở Australia East; tìm resource group của `sql-lession`; tạo storage account, Function App (Flex, Node 24, 512 MB), identity cho GitHub Actions kèm federated credential cho nhánh `main` của repo và quyền deploy vào Function App; đặt CORS và các cài đặt không bí mật (`SQL_SERVER`, `SQL_DATABASE`, `SQL_USER`).
 4. **Người làm khóa học:**
    - chạy `database/practice-user.sql` trong Query editor của `sql-lession` với mật khẩu tự chọn;
    - bật tường lửa "Allow Azure services…";
@@ -192,3 +198,16 @@ Như spec đợt 2 mục 2, cộng thêm:
 - Cách kiểm thử: logic thuần bằng Vitest; API bằng lệnh chạy trên máy với database thật.
 
 Tham khảo khi viết spec: [Deploy Azure Functions bằng GitHub Actions](https://learn.microsoft.com/en-us/azure/azure-functions/functions-how-to-github-actions), [Azure/functions-action](https://github.com/Azure/functions-action), [Flex Consumption](https://learn.microsoft.com/en-us/azure/azure-functions/flex-consumption-plan), [bảng giá Functions](https://azure.microsoft.com/en-us/pricing/details/functions/).
+
+## 12. Đã làm và trạng thái (cập nhật 2026-10-18)
+
+- Tài nguyên Azure: Function App `sql-lession-api` (Flex Consumption, Australia East, Node 24, 512 MB) trong resource group `learn`; identity `sql-lession-api-deploy` với federated credential `github-main`. Địa chỉ API: `https://sql-lession-api.azurewebsites.net/api`.
+- Workflow "Deploy the exercise API" chạy thành công. Đã thử API thật: `ping` và `run` không có mã trả 401; gọi từ origin lạ không có header CORS; từ `https://nhatlam1111.github.io` thì có.
+- Còn chờ người làm khóa học: mở trang bài tập 3-5-1 trên web thật, nhập mã, nộp một câu đúng và một câu sai; sau đó người dựng chạy `npm --prefix api run check:data` để chắc dữ liệu không lệch.
+- Sửa sau rà soát cuối (2026-10-18), đã ghi vào các mục trên:
+  - câu quá 10 giây trả 504 thay cho 408 (mục 5.2);
+  - `money`/`smallmoney` có 4 chữ số thập phân; `FOR JSON`/`FOR XML` không còn làm hỏng trang (mục 5.3);
+  - câu trả lời không đúng dạng từ API được báo như không gọi được API (mục 3.5);
+  - Tab với nhiều dòng được chọn, Ctrl+Z hoàn tác được (mục 3.2);
+  - popup sơ đồ giữ Tab bên trong và không giật focus khi trang vẽ lại (mục 3.3);
+  - CI kiểm kiểu cho `api/`; `sku` và `respect-funcignore` trong workflow; `api/local.settings.json` nằm trong `.gitignore` (mục 6).

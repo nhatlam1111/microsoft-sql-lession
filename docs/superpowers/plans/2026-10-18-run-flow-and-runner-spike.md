@@ -2,6 +2,8 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+**Trạng thái (2026-10-18):** đã làm xong; sơ đồ đã lên web ở bài 3.5. Bản chạy thử nằm ở nhánh `spike/exercise-runner` (giữ lại, không merge); kết quả ở [file kết quả chạy thử](../specs/2026-10-18-exercise-runner-spike-results.md).
+
 **Goal:** Thêm sơ đồ thứ tự chạy câu lệnh (phần A) vào trang bài, làm mẫu ở bài 3.5, và chạy thử cách chạy bài tập có `ROLLBACK` trên `sql-lession` (bản chạy thử của phần B).
 
 **Architecture:** Sơ đồ là một thành phần Astro `RunFlow` render tĩnh (thẻ, bảng xem trước, drawer ẩn cho từng bước) cộng một `<script>` nhỏ để mở drawer, giống cách `Sql.astro` làm nút "Sao chép". Logic thuần (thứ tự mệnh đề, kiểm dữ liệu, xếp hình chữ chi, bảng xem trước) nằm ở `src/lib/run-flow.ts`. Dữ liệu sơ đồ sai thì build dừng. Bản chạy thử là script Node.js trên một nhánh riêng không bao giờ merge; chỉ file kết quả về `main`.
