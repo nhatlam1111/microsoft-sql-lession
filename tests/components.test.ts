@@ -8,6 +8,7 @@ import Memo from '../src/components/lesson/Memo.astro';
 import Exercises from '../src/components/lesson/Exercises.astro';
 import LessonHeader from '../src/components/lesson/LessonHeader.astro';
 import RunFlow from '../src/components/lesson/RunFlow.astro';
+import Ssms from '../src/components/lesson/Ssms.astro';
 import { LEVELS } from '../src/data/curriculum';
 import { fakeCatalog } from './helpers/expected';
 import { sampleFlow, sampleQuery } from './helpers/flows';
@@ -98,4 +99,15 @@ it('RunFlow cards are valid buttons with a short spoken name', async () => {
 it('Exercises keeps the placeholder in a lesson with no exercises', async () => {
   const html = await c.renderToString(Exercises, { request: new Request('http://x/microsoft-sql-lession/bai/1-1-database-la-gi/') });
   expect(html).toContain('Phần bài tập sẽ bổ sung sau.');
+});
+
+it('Ssms draws the connect box, Object Explorer and the toolbar', async () => {
+  const connect = await c.renderToString(Ssms, { props: { view: 'connect' } });
+  for (const s of ['sql-lession.database.windows.net', 'SQL Server Authentication', 'Connect to database', 'sql-lession', 'Mô phỏng SSMS:']) expect(connect).toContain(s);
+  const explorer = await c.renderToString(Ssms, { props: { view: 'explorer' } });
+  for (const t of ['PhongBan', 'ChucDanh', 'NhanVien', 'HopDong', 'ChamCong', 'DonNghiPhep', 'BangLuong']) expect(explorer).toContain(`dbo.${t}`);
+  for (const s of ['MaNV (PK, varchar(10), not null)', 'Email (varchar(100), null)']) expect(explorer).toContain(s);
+  expect(await c.renderToString(Ssms, { props: { view: 'explorer', table: 'ChamCong' } })).toContain('MaNV (PK, FK, varchar(10), not null)');
+  const toolbar = await c.renderToString(Ssms, { props: { view: 'toolbar', caption: 'Chọn đúng database trước khi chạy' } });
+  for (const s of ['New Query', 'Execute', 'sql-lession', 'Chọn đúng database trước khi chạy']) expect(toolbar).toContain(s);
 });

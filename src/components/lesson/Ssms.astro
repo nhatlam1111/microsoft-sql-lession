@@ -1,0 +1,104 @@
+---
+import { COURSE_SERVER } from '../../lib/course-server';
+import { parseSchema, ssmsColumnLabel } from '../../lib/db-schema';
+import schemaSql from '../../../database/HRM_Demo.sql?raw';
+
+interface Props {
+  /** connect: the Connect to Server box; explorer: Object Explorer; toolbar: the query toolbars. */
+  view: 'connect' | 'explorer' | 'toolbar';
+  /** explorer only: the table opened down to its columns. */
+  table?: string;
+  caption?: string;
+}
+const { view, table = 'NhanVien', caption } = Astro.props;
+const LOGIN = 'tài khoản được cấp';
+// Object Explorer lists tables by name, as SSMS sorts them.
+const tables = parseSchema(schemaSql).sort((a, b) => a.name.localeCompare(b.name));
+const opened = tables.find(t => t.name === table);
+const LABEL = {
+  connect: 'hộp Connect to Server',
+  explorer: `cửa sổ Object Explorer, mở bảng dbo.${table}`,
+  toolbar: 'thanh công cụ của cửa sổ câu lệnh',
+} as const;
+type Node = { text: string; icon: string; depth: number; open?: boolean; on?: boolean };
+const tree: Node[] = [
+  { text: `${COURSE_SERVER.server} (SQL Server 12.0.2000 - ${LOGIN})`, icon: 'server', depth: 0, open: true },
+  { text: 'Databases', icon: 'folder', depth: 1, open: true },
+  { text: COURSE_SERVER.database, icon: 'db', depth: 2, open: true },
+  { text: 'Tables', icon: 'folder', depth: 3, open: true },
+  { text: 'System Tables', icon: 'folder', depth: 4 },
+  ...tables.flatMap((t): Node[] => t === opened
+    ? [
+        { text: `dbo.${t.name}`, icon: 'table', depth: 4, open: true, on: true },
+        { text: 'Columns', icon: 'folder', depth: 5, open: true },
+        ...t.columns.map(c => ({ text: ssmsColumnLabel(t, c), icon: t.primaryKey.includes(c.name) ? 'key' : 'col', depth: 6 })),
+        { text: 'Keys', icon: 'folder', depth: 5 },
+        { text: 'Constraints', icon: 'folder', depth: 5 },
+        { text: 'Indexes', icon: 'folder', depth: 5 },
+      ]
+    : [{ text: `dbo.${t.name}`, icon: 'table', depth: 4 }]),
+  { text: 'Views', icon: 'folder', depth: 3 },
+  { text: 'Programmability', icon: 'folder', depth: 3 },
+  { text: 'Security', icon: 'folder', depth: 3 },
+];
+// Leaves (columns) have no expander; everything else shows ▾ when open, ▸ when closed.
+const isLeaf = (n: Node) => n.icon === 'col' || n.icon === 'key';
+---
+<figure class={`ssms ssms-${view}`} aria-label={`Mô phỏng SSMS: ${LABEL[view]}`}>
+  <div class="ssms-head"><span class="ssms-app">SQL Server Management Studio</span></div>
+
+  {view === 'connect' && (
+    <div class="ssms-dialog">
+      <div class="ssms-title">Connect to Server<span class="ssms-x" aria-hidden="true">×</span></div>
+      <div class="ssms-panes">
+        <div class="ssms-pane">
+          <div class="ssms-tabs"><span class="is-on">Login</span><span>Connection Properties</span></div>
+          <dl class="ssms-form">
+            <dt>Server type:</dt><dd><span class="ssms-field is-select">Database Engine</span></dd>
+            <dt>Server name:</dt><dd><span class="ssms-field is-select">{COURSE_SERVER.server}</span></dd>
+            <dt>Authentication:</dt><dd><span class="ssms-field is-select">SQL Server Authentication</span></dd>
+            <dt>Login:</dt><dd><span class="ssms-field is-select">{LOGIN}</span></dd>
+            <dt>Password:</dt><dd><span class="ssms-field">••••••••••</span></dd>
+          </dl>
+        </div>
+        <div class="ssms-pane">
+          <div class="ssms-tabs"><span>Login</span><span class="is-on">Connection Properties</span></div>
+          <dl class="ssms-form">
+            <dt>Connect to database:</dt><dd><span class="ssms-field is-select is-mark">{COURSE_SERVER.database}</span></dd>
+            <dt>Network protocol:</dt><dd><span class="ssms-field is-select">&lt;default&gt;</span></dd>
+            <dt>Connection time-out:</dt><dd><span class="ssms-field is-short">30</span> seconds</dd>
+          </dl>
+        </div>
+      </div>
+      <div class="ssms-buttons"><span class="ssms-btn is-primary">Connect</span><span class="ssms-btn">Cancel</span><span class="ssms-btn">Help</span><span class="ssms-btn">Options &lt;&lt;</span></div>
+    </div>
+  )}
+
+  {view === 'explorer' && (
+    <div class="ssms-explorer">
+      <div class="ssms-title">Object Explorer</div>
+      <ul class="ssms-tree">
+        {tree.map(n => (
+          <li class={n.on ? 'is-on' : undefined} style={`--depth: ${n.depth}`}>
+            <span class="ssms-exp" aria-hidden="true">{isLeaf(n) ? '' : n.open ? '▾' : '▸'}</span>
+            <span class={`ssms-i i-${n.icon}`} aria-hidden="true"></span>
+            <span class="ssms-node">{n.text}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )}
+
+  {view === 'toolbar' && (
+    <div class="ssms-toolbars">
+      <div class="ssms-bar"><span class="ssms-tool"><span class="ssms-i i-query" aria-hidden="true"></span>New Query</span></div>
+      <div class="ssms-bar">
+        <span class="ssms-field is-select is-mark is-db">{COURSE_SERVER.database}</span>
+        <span class="ssms-tool"><span class="ssms-run" aria-hidden="true">▶</span>Execute</span>
+        <span class="ssms-tool is-muted" aria-hidden="true">✓</span>
+      </div>
+    </div>
+  )}
+
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>

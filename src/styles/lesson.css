@@ -227,3 +227,50 @@
 .erd-scroll:focus-visible { outline: 2px solid var(--accent); outline-offset: -3px; }
 .erd figcaption { margin-top: 8px; font-size: 13px; color: var(--ink-3); }
 
+/* SSMS look-alike (Connect to Server, Object Explorer, query toolbars), in Visual Studio's light theme. */
+.ssms { --ssms-chrome: #EEEEF2; --ssms-panel: #F5F5F5; --ssms-line: #CCCEDB; --ssms-ink: #1E1E1E; --ssms-sel: #CCE8FF; --ssms-sel-line: #99D1FF; --ssms-accent: #0063B1;
+  margin: 1.2em 0; border: 1px solid var(--ssms-line); border-radius: var(--radius-s); overflow: hidden; background: var(--ssms-chrome); color: var(--ssms-ink); font-family: var(--font-tool); font-size: 12.5px; }
+.ssms-head { padding: 5px 10px; background: #FFF; border-bottom: 1px solid var(--ssms-line); font-size: 12px; }
+.ssms-app { font-weight: 600; }
+.ssms-title { display: flex; justify-content: space-between; padding: 6px 10px; background: #FFF; border-bottom: 1px solid var(--ssms-line); font-weight: 600; }
+.ssms-x { font-weight: 400; color: #555; }
+.ssms-dialog { margin: 12px; border: 1px solid var(--ssms-line); background: var(--ssms-panel); }
+.ssms-panes { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; padding: 10px; }
+.ssms-pane { border: 1px solid var(--ssms-line); background: #FFF; }
+.ssms-tabs { display: flex; border-bottom: 1px solid var(--ssms-line); background: var(--ssms-panel); }
+.ssms-tabs span { padding: 5px 10px; color: #555; }
+.ssms-tabs .is-on { background: #FFF; color: var(--ssms-ink); box-shadow: inset 0 -2px 0 var(--ssms-accent); }
+.ssms-form { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px 10px; align-items: center; margin: 0; padding: 10px; }
+.ssms-form dt { color: #333; white-space: nowrap; }
+.ssms-form dd { margin: 0; min-width: 0; }
+.ssms-field { display: inline-block; max-width: 100%; box-sizing: border-box; padding: 2px 6px; border: 1px solid #A0A0A0; background: #FFF; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: middle; }
+.ssms-form .ssms-field { width: 100%; }
+.ssms-form .ssms-field.is-short { width: 4em; }
+.ssms-field.is-select { position: relative; padding-right: 20px; }
+.ssms-field.is-select::after { content: '▾'; position: absolute; right: 6px; top: 1px; color: #555; }
+.ssms-field.is-mark { outline: 2px solid var(--ssms-accent); outline-offset: 1px; }
+.ssms-buttons { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; padding: 0 10px 10px; }
+.ssms-btn { padding: 3px 12px; border: 1px solid #ADADAD; background: #E1E1E1; }
+.ssms-btn.is-primary { border-color: var(--ssms-accent); box-shadow: inset 0 0 0 1px var(--ssms-accent); }
+.ssms-explorer { margin: 12px; border: 1px solid var(--ssms-line); background: #FFF; max-width: 560px; }
+.ssms-tree { list-style: none; margin: 0; padding: 4px 0 8px; overflow-x: auto; }
+.ssms-tree li { display: flex; align-items: center; gap: 4px; padding: 1px 8px 1px calc(8px + var(--depth) * 16px); white-space: nowrap; line-height: 18px; }
+.ssms-tree li.is-on .ssms-node { background: var(--ssms-sel); outline: 1px solid var(--ssms-sel-line); }
+.ssms-exp { width: 10px; color: #555; font-size: 10px; text-align: center; }
+.ssms-node { padding: 0 3px; }
+.ssms-i { flex: none; display: inline-block; width: 14px; height: 12px; border-radius: 2px; }
+.i-server { background: #5A7FB5; box-shadow: inset 0 -3px 0 #3B5C8C; }
+.i-folder { height: 10px; background: #E8B64C; border-radius: 1px 3px 2px 2px; box-shadow: inset 0 2px 0 #F3CF7A; }
+.i-db { width: 12px; height: 13px; border-radius: 6px / 3px; background: #E3A72F; box-shadow: inset 0 3px 0 #F2CB6E; }
+.i-table { background: linear-gradient(#5A7FB5 0 3px, transparent 3px) , repeating-linear-gradient(#FFF 0 3px, #9DB4D6 3px 4px); border: 1px solid #5A7FB5; box-sizing: border-box; }
+.i-col { width: 10px; height: 10px; margin: 0 2px; background: #9DB4D6; border: 1px solid #5A7FB5; box-sizing: border-box; }
+.i-key { width: 12px; height: 6px; margin: 0 1px; border-radius: 3px; background: #D4A017; box-shadow: inset 4px 0 0 #B8860B; }
+.i-query { width: 12px; height: 13px; border: 1px solid #5A7FB5; background: #FFF repeating-linear-gradient(transparent 0 3px, #9DB4D6 3px 4px); box-sizing: border-box; }
+.ssms-toolbars { padding: 6px 10px 10px; display: grid; gap: 6px; }
+.ssms-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 4px 6px; border: 1px solid var(--ssms-line); background: var(--ssms-panel); }
+.ssms-tool { display: inline-flex; align-items: center; gap: 5px; padding: 2px 6px; }
+.ssms-tool.is-muted { color: #888; }
+.ssms-run { color: #388A34; font-size: 11px; }
+.ssms-field.is-db { min-width: 150px; }
+.ssms figcaption { padding: 6px 10px 8px; font-size: 13px; color: var(--ink-3); background: #FFF; border-top: 1px solid var(--ssms-line); }
+
