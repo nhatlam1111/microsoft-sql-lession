@@ -20,7 +20,7 @@ Web: https://nhatlam1111.github.io/microsoft-sql-lession/
 | Web | Astro 5 (trang tĩnh, MDX), React 19 cho các phần tương tác, React Flow cho mindmap |
 | Kiểm thử | Vitest 3, `astro check`, `scripts/check-dist.mjs` (kiểm bản build) |
 | API bài tập | Azure Functions (Flex Consumption, Node.js 24, mô hình v4), `mssql`, đóng gói bằng esbuild |
-| Database | Azure SQL Database `sql-lession` (serverless, gói miễn phí) |
+| Database | Azure SQL Database `free-sql-db-8797714` trên máy chủ `sql-lession` (serverless, gói miễn phí) |
 | Deploy | GitHub Actions: GitHub Pages cho web; OIDC + `Azure/functions-action` cho API |
 
 ## Cấu trúc thư mục

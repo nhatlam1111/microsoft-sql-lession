@@ -21,7 +21,7 @@ Hiện chỉ bài 1.1 là bài đầy đủ; 1.2–1.6 còn là bản tóm tắt
 1. Viết đầy đủ 1.2, 1.3, 1.4, 1.5, 1.6. Bài 1.1 đã đầy đủ, chỉ sửa theo khuôn mới ở mục 3.
 2. Bài tập chạy SQL bắt đầu từ bài 1.6, khi học viên đã viết được câu `SELECT`. Bài 1.1–1.5 **bỏ hẳn mục "Bài tập"**, không có tiêu đề, không có dòng nào. Điều này thay cho spec đợt 2, vốn ghi mỗi bài Level 1 có 2–4 bài tập và bài 1.1 được thêm bài tập.
 3. Mục "Làm bằng SQL" theo khuôn mới (mục 3.2), bỏ các tiểu mục "Bước 1, Bước 2…", vì phần đi từng bước đã nằm trong drawer của sơ đồ thứ tự chạy. Đã duyệt qua mockup [`lam-bang-sql-layout.html`](2026-10-18-mockups/lam-bang-sql-layout.html) (mảnh HTML, mở bằng trình duyệt sẽ thiếu khung), lấy bài 3.5 làm ví dụ.
-4. Học viên kết nối SSMS thẳng vào database `sql-lession` trên Azure, bằng tài khoản người làm khóa học cấp. Tài khoản, quyền của tài khoản và tường lửa là việc của người làm khóa học; bài học và người dựng không đặt giới hạn gì thêm cho tài khoản đó.
+4. Học viên kết nối SSMS thẳng vào máy chủ `sql-lession` trên Azure, bằng tài khoản người làm khóa học cấp. Database trên máy chủ đó tên `free-sql-db-8797714` (tên Azure tự đặt khi tạo database miễn phí); người làm khóa học quyết định giữ tên này, không đổi (2026-10-18). Tài khoản, quyền của tài khoản và tường lửa là việc của người làm khóa học; bài học và người dựng không đặt giới hạn gì thêm cho tài khoản đó.
 5. Các đề xuất sau của người dựng đã được đồng ý:
    - bài 1.2 dạy kết nối vào máy chủ khóa học (mục 4);
    - đổi tên database hiển thị cho khớp SSMS (mục 5.2);
@@ -86,8 +86,8 @@ Giữ đúng spec đợt 1 mục 4.7. Thêm hai điều:
 
 - Server name: `sql-lession.database.windows.net`.
 - Authentication: SQL Server Authentication; tên đăng nhập và mật khẩu do người phụ trách khóa học cấp.
-- Ghi tên database `sql-lession` vào ô chọn database của hộp kết nối: ở SSMS 20 trở về trước là Options → tab Connection Properties → "Connect to database"; bản mới hơn có thể đặt ô này ngay trên hộp kết nối. Người dựng kiểm theo tài liệu của Microsoft cho bản SSMS mới nhất lúc viết, và bài ghi rõ bản SSMS đang tả. Bước này bắt buộc với tài khoản tạo riêng trong database; bỏ qua là không đăng nhập được. Bài nói rõ triệu chứng khi quên bước này (thông báo lỗi đăng nhập), nguyên văn lấy từ SSMS hoặc từ tài liệu của Microsoft.
-- Sau khi vào: Object Explorer → Databases → `sql-lession` → Tables có 7 bảng `dbo.*`.
+- Ghi tên database `free-sql-db-8797714` vào ô chọn database của hộp kết nối: ở SSMS 20 trở về trước là Options → tab Connection Properties → "Connect to database"; bản mới hơn có thể đặt ô này ngay trên hộp kết nối. Người dựng kiểm theo tài liệu của Microsoft cho bản SSMS mới nhất lúc viết, và bài ghi rõ bản SSMS đang tả. Bước này bắt buộc với tài khoản tạo riêng trong database; bỏ qua là không đăng nhập được. Bài nói rõ triệu chứng khi quên bước này (thông báo lỗi đăng nhập), nguyên văn lấy từ SSMS hoặc từ tài liệu của Microsoft.
+- Sau khi vào: Object Explorer → Databases → `free-sql-db-8797714` → Tables có 7 bảng `dbo.*`.
 
 ### 4.2 Trang làm bài tập trên web (bài 1.2)
 
@@ -114,19 +114,19 @@ Giới thiệu ngắn, để tới bài 1.6 học viên biết dùng:
 
 ### 5.2 Tên database hiển thị
 
-Học viên kết nối vào database tên `sql-lession`, nên chữ "HRM_Demo" ở những chỗ đặt cạnh SSMS đổi thành `sql-lession`:
+Học viên kết nối vào database tên `free-sql-db-8797714`, nên chữ "HRM_Demo" ở những chỗ đặt cạnh SSMS đổi thành `free-sql-db-8797714`:
 
 - dòng trạng thái dưới khối kết quả (`Result`) và khối `Messages` trong bài;
 - dòng trạng thái trên trang làm bài tập.
 
-"HRM_Demo" vẫn là tên của bộ dữ liệu mẫu: tên bài 1.2, script `HRM_Demo.sql`, popup "Sơ đồ HRM_Demo", trang Giới thiệu. Bài 1.2 giải thích: bộ dữ liệu mẫu HRM_Demo nằm trong database `sql-lession` trên máy chủ khóa học; ai tự cài trên máy thì đặt tên database là `HRM_Demo`.
+"HRM_Demo" vẫn là tên của bộ dữ liệu mẫu: tên bài 1.2, script `HRM_Demo.sql`, popup "Sơ đồ HRM_Demo", trang Giới thiệu. Bài 1.2 giải thích: bộ dữ liệu mẫu HRM_Demo nằm trong database `free-sql-db-8797714` trên máy chủ khóa học; ai tự cài trên máy thì đặt tên database là `HRM_Demo`.
 
 ### 5.3 Hình SSMS vẽ bằng HTML
 
 Bài 1.2 (và 1.3, 1.6 khi cần) có khối mô phỏng SSMS, cùng tinh thần với khối Excel: đủ giống để học viên nhận ra trên máy mình, không cần giống từng điểm ảnh. Tối thiểu gồm:
 
 - hộp Connect to Server, có tab Connection Properties;
-- cây Object Explorer (Databases → `sql-lession` → Tables → `dbo.NhanVien` → Columns, có kiểu dữ liệu và khóa);
+- cây Object Explorer (Databases → `free-sql-db-8797714` → Tables → `dbo.NhanVien` → Columns, có kiểu dữ liệu và khóa);
 - thanh công cụ có nút New Query, ô chọn database và nút Execute.
 
 Không dùng ảnh chụp. Người làm khóa học gửi ảnh chụp thật thì thay vào sau.
@@ -142,7 +142,7 @@ Dùng lại cách vẽ sơ đồ của popup "Sơ đồ database" (hộp bảng,
 
 ## 6. Kiểm tra
 
-- Mọi câu lệnh và kết quả trong bài khớp `sql-lession`. Kiểm bằng câu `SELECT` qua MCP chỉ đọc.
+- Mọi câu lệnh và kết quả trong bài khớp database `free-sql-db-8797714`. Kiểm bằng câu `SELECT` qua MCP chỉ đọc.
 - Thông báo lỗi có trong bài (ví dụ lỗi khóa ngoại ở bài 1.4) lấy nguyên văn bằng cách chạy câu đó qua API bài tập trên máy, trong transaction có hoàn tác. Chạy xong thì `check:data` phải sạch.
 - Bài tập 1.6: `npm --prefix api run check:exercises` chạy được mọi đáp án.
 - `npm test`, `npm run check`, `npm run build`, `npm run check:dist` đều qua.
@@ -160,7 +160,7 @@ Dùng lại cách vẽ sơ đồ của popup "Sơ đồ database" (hộp bảng,
 
 Như spec đợt 1 mục 2 và spec đợt 2 mục 2, cộng thêm:
 
-- Bài viết "SSMS sẽ hiện HRM_Demo" trong khi học viên thấy `sql-lession`.
+- Bài viết "SSMS sẽ hiện HRM_Demo" trong khi học viên thấy `free-sql-db-8797714`.
 - Bài tập đòi kiến thức chưa dạy tới bài đó.
 - Bài tập có chấm điểm dùng `TOP` mà không có `ORDER BY`.
 - Bài 1.1–1.5 còn dòng "Phần bài tập sẽ bổ sung sau."
@@ -172,7 +172,7 @@ Như spec đợt 1 mục 2 và spec đợt 2 mục 2, cộng thêm:
 2. Ngay dưới câu lệnh cho tình huống có bảng kết quả cuối.
 3. Bài 6.5 giữ nguyên.
 4. Bài học không bảo học viên chạy câu sửa dữ liệu trong SSMS ở Level 1 (mục 3.3).
-5. Đổi tên database hiển thị thành `sql-lession` ở dòng trạng thái; "HRM_Demo" vẫn là tên bộ dữ liệu mẫu.
+5. Đổi tên database hiển thị thành `free-sql-db-8797714` ở dòng trạng thái; "HRM_Demo" vẫn là tên bộ dữ liệu mẫu.
 6. Bài 1.5 vẽ thẳng sơ đồ trong bài, dùng lại cách vẽ của popup.
 7. Ba bài tập của bài 1.6 khác nhau ở bảng (nhỏ, có `NULL`, có ngày hoặc tiền), không khó dần về cú pháp, vì bài chỉ dạy `SELECT *`.
 

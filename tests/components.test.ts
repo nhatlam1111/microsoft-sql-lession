@@ -19,13 +19,13 @@ beforeAll(async () => { c = await AstroContainer.create(); });
 it('Result shows NULL cells in the SSMS style and says how many rows were trimmed', async () => {
   const html = await c.renderToString(Result, { props: { columns: ['MaNV', 'MaHD'], rows: [['NV001', 'HD2024-018'], ['NV047', null]], total: 52 } });
   expect(html).toMatch(/class="[^"]*res-null[^"]*"[^>]*>NULL</);
-  for (const s of ['52 rows', 'Trích 2 dòng (kết quả có 52 dòng)', 'sql-lession', 'Query executed successfully.']) expect(html).toContain(s);
+  for (const s of ['52 rows', 'Trích 2 dòng (kết quả có 52 dòng)', 'free-sql-db-8797714', 'Query executed successfully.']) expect(html).toContain(s);
   expect(html).not.toContain('HRM_Demo');
 });
 it('Messages prints its lines', async () => {
   const html = await c.renderToString(Messages, { props: { lines: ['(96 rows affected)'] } });
   expect(html).toContain('(96 rows affected)');
-  expect(html).toContain('sql-lession');
+  expect(html).toContain('free-sql-db-8797714');
 });
 it('Excel labels columns, marks error values and the selected cell', async () => {
   const html = await c.renderToString(Excel, { props: { cell: 'D3', formula: '=VLOOKUP(A3,HopDong!A:B,2,FALSE)', selected: 'D3',
@@ -104,12 +104,13 @@ it('Exercises keeps the placeholder in a lesson with no exercises', async () => 
 it('Ssms draws the connect box, Object Explorer and the toolbar', async () => {
   const connect = await c.renderToString(Ssms, { props: { view: 'connect' } });
   // SSMS 21 and later: Database Name sits on the dialog itself (Microsoft Learn, SSMS quickstarts, 2026-10).
-  for (const s of ['sql-lession.database.windows.net', 'SQL Server Authentication', 'Database Name', 'sql-lession', 'Strict (Minimum SQL Server 2022 and Azure SQL)', 'Trust server certificate', 'Mô phỏng SSMS:']) expect(connect).toContain(s);
+  for (const s of ['sql-lession.database.windows.net', 'SQL Server Authentication', 'Database Name', 'free-sql-db-8797714', 'Strict (Minimum SQL Server 2022 and Azure SQL)', 'Trust server certificate', 'Mô phỏng SSMS:']) expect(connect).toContain(s);
   expect(connect).not.toContain('Connection Properties');
   const explorer = await c.renderToString(Ssms, { props: { view: 'explorer' } });
+  expect(explorer).toContain('free-sql-db-8797714');
   for (const t of ['PhongBan', 'ChucDanh', 'NhanVien', 'HopDong', 'ChamCong', 'DonNghiPhep', 'BangLuong']) expect(explorer).toContain(`dbo.${t}`);
   for (const s of ['MaNV (PK, varchar(10), not null)', 'Email (varchar(100), null)']) expect(explorer).toContain(s);
   expect(await c.renderToString(Ssms, { props: { view: 'explorer', table: 'ChamCong' } })).toContain('MaNV (PK, FK, varchar(10), not null)');
   const toolbar = await c.renderToString(Ssms, { props: { view: 'toolbar', caption: 'Chọn đúng database trước khi chạy' } });
-  for (const s of ['New Query', 'Execute', 'sql-lession', 'Chọn đúng database trước khi chạy']) expect(toolbar).toContain(s);
+  for (const s of ['New Query', 'Execute', 'free-sql-db-8797714', 'Chọn đúng database trước khi chạy']) expect(toolbar).toContain(s);
 });

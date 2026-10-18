@@ -2,16 +2,18 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Năm bài 1.2–1.6 thành bài đầy đủ theo khuôn mới; bài 1.1 và 3.5 sắp lại theo khuôn đó. Bài 1.1–1.5 không có mục "Bài tập". Bài 1.6 có 3 bài tập và sơ đồ thứ tự chạy. Web có thêm khối mô phỏng SSMS và sơ đồ quan hệ đặt thẳng trong bài, và hiện tên database `sql-lession` ở dòng trạng thái.
+**Goal:** Năm bài 1.2–1.6 thành bài đầy đủ theo khuôn mới; bài 1.1 và 3.5 sắp lại theo khuôn đó. Bài 1.1–1.5 không có mục "Bài tập". Bài 1.6 có 3 bài tập và sơ đồ thứ tự chạy. Web có thêm khối mô phỏng SSMS và sơ đồ quan hệ đặt thẳng trong bài, và hiện tên database `free-sql-db-8797714` ở dòng trạng thái.
 
 **Architecture:**
 - Quy tắc về mục bài nằm ở `src/lib/lesson-schema.ts` (thêm trường `noExercises`) và được kiểm trong `tests/content.test.ts`.
 - Tên máy chủ và database của khóa học nằm ở một hằng số dùng chung (`src/lib/course-server.ts`).
 - Khối SSMS là một component Astro tĩnh, đọc cột từ `database/HRM_Demo.sql` như popup sơ đồ.
 - Sơ đồ quan hệ trong bài 1.5 dùng lại phần vẽ của popup, tách thành một component React render tĩnh.
-- Nội dung bài viết bằng MDX. Mọi kết quả trong bài được kiểm trên `sql-lession` bằng MCP chỉ đọc.
+- Nội dung bài viết bằng MDX. Mọi kết quả trong bài được kiểm trên database `free-sql-db-8797714` bằng MCP chỉ đọc.
 
 **Tech Stack:** Astro 5 (MDX), React 19 (render tĩnh, không hydrate), Vitest 3 (Astro Container API, `react-dom/server`), API bài tập trên máy (`npm --prefix api run dev`), MCP `azure-sql`.
+
+**Lưu ý (2026-10-18, trong lúc làm):** database trên máy chủ `sql-lession` tên là `free-sql-db-8797714`, không phải `sql-lession`. Người làm khóa học quyết định giữ tên này. Mọi chỗ ghi database dưới đây theo tên thật.
 
 **Spec:** [docs/superpowers/specs/2026-10-18-level-1-full-lessons-design.md](../specs/2026-10-18-level-1-full-lessons-design.md). Nền:
 - [spec đợt 1](../specs/2026-10-17-sql-server-course-site-design.md), mục 4.5, 4.7, 4.8;
@@ -41,14 +43,14 @@ Bài mẫu: `src/content/lessons/3-5-left-join.mdx` (giọng văn, khối, sơ �
 - Thông tin kết nối:
   - Server name: `sql-lession.database.windows.net`.
   - Authentication: SQL Server Authentication, tài khoản do người phụ trách khóa học cấp.
-  - Database: `sql-lession`.
-- Dòng trạng thái dưới khối `Result`, khối `Messages` và trên trang làm bài tập ghi `sql-lession`. "HRM_Demo" vẫn là tên bộ dữ liệu mẫu (tên bài 1.2, script, popup "Sơ đồ HRM_Demo", trang Giới thiệu).
+  - Database: `free-sql-db-8797714` (tên Azure tự đặt khi tạo database miễn phí; người làm khóa học giữ nguyên, không đổi).
+- Dòng trạng thái dưới khối `Result`, khối `Messages` và trên trang làm bài tập ghi `free-sql-db-8797714`. "HRM_Demo" vẫn là tên bộ dữ liệu mẫu (tên bài 1.2, script, popup "Sơ đồ HRM_Demo", trang Giới thiệu).
 - Bài tập 1.6:
   - 3 bài truy vấn, `ordered: false`;
   - chỉ dùng `SELECT *`: không chọn cột, không `WHERE`, không `ORDER BY`, không `TOP`;
   - ba bảng khác nhau: một bảng nhỏ, một bảng có ô `NULL`, một bảng có cột ngày hoặc tiền.
 - Database:
-  - Mọi câu lệnh và kết quả trong bài khớp `sql-lession`; kiểm bằng `SELECT` qua MCP `azure-sql`. MCP chỉ dùng cho `SELECT`.
+  - Mọi câu lệnh và kết quả trong bài khớp database `free-sql-db-8797714`; kiểm bằng `SELECT` qua MCP `azure-sql`. MCP chỉ dùng cho `SELECT`.
   - Câu làm đổi dữ liệu (để lấy nguyên văn lỗi) chỉ chạy qua API bài tập trên máy, có hoàn tác. Chạy xong thì `npm --prefix api run check:data` phải báo "Không bảng nào lệch.".
 - Không push khi người làm khóa học chưa đồng ý.
 - Không làm hỏng cái đang chạy: 171 test hiện có vẫn qua (trừ test được plan này sửa); `npm run check`, `npm run build`, `npm run check:dist` vẫn OK.
@@ -96,13 +98,13 @@ Bài mẫu: `src/content/lessons/3-5-left-join.mdx` (giọng văn, khối, sơ �
 - Produces: `export const COURSE_SERVER = { server: 'sql-lession.database.windows.net', database: 'sql-lession' } as const;`
 
 - [ ] **Step 1: Sửa test:**
-  - Trong `tests/components.test.ts`, test `Result` đổi `'HRM_Demo'` thành `'sql-lession'` và thêm `expect(html).not.toContain('HRM_Demo')`.
-  - Test `Messages` kiểm có `'sql-lession'`.
+  - Trong `tests/components.test.ts`, test `Result` đổi `'HRM_Demo'` thành `'free-sql-db-8797714'` và thêm `expect(html).not.toContain('HRM_Demo')`.
+  - Test `Messages` kiểm có `'free-sql-db-8797714'`.
   - Trong `tests/islands.test.ts`, thêm `it('the diagram popup keeps the data set name HRM_Demo')`: `renderToStaticMarkup(createElement(DbDiagramDialog, { tables: parseSchema(readFileSync('database/HRM_Demo.sql','utf8')), open: true, onClose: () => {} }))` chứa `'Sơ đồ HRM_Demo'`.
 - [ ] **Step 2: Chạy, kỳ vọng FAIL ở test Result và Messages.**
 - [ ] **Step 3: Tạo `course-server.ts`; ba file trên đọc `COURSE_SERVER.database`.**
 - [ ] **Step 4: `npm test` PASS.**
-- [ ] **Step 5: Commit**: `git commit -m "show the course database name sql-lession next to results"`
+- [ ] **Step 5: Commit**: `git commit -m "show the course database name sql-lession next to results"` (sau đó sửa: tên thật của database là `free-sql-db-8797714`, xem Task 8 trong ledger)
 
 ### Task 3: Cột có cho để trống, nhãn cột kiểu SSMS
 
@@ -164,17 +166,17 @@ Bài mẫu: `src/content/lessons/3-5-left-join.mdx` (giọng văn, khối, sơ �
     - Server name `COURSE_SERVER.server`;
     - Authentication "SQL Server Authentication", Login "tài khoản được cấp", mật khẩu che;
     - tab "Connection Properties" có ô "Connect to database" = `COURSE_SERVER.database`.
-  - `explorer`: cây Object Explorer: máy chủ → Databases → `sql-lession` → Tables → 7 dòng `dbo.<Bảng>`. Bảng tên `table` (mặc định `NhanVien`) mở mục Columns, mỗi cột một dòng theo `ssmsColumnLabel`.
+  - `explorer`: cây Object Explorer: máy chủ → Databases → `free-sql-db-8797714` → Tables → 7 dòng `dbo.<Bảng>`. Bảng tên `table` (mặc định `NhanVien`) mở mục Columns, mỗi cột một dòng theo `ssmsColumnLabel`.
   - `toolbar`: thanh công cụ có nút "New Query", ô chọn database đang chọn `COURSE_SERVER.database`, nút "Execute".
   - Mỗi khối là `<figure class="ssms">`, `aria-label` bắt đầu bằng "Mô phỏng SSMS:". `caption` (nếu có) là `figcaption`.
 
   Màu và cách vẽ do người dựng tự quyết, theo tinh thần khối Excel: nhận ra được trên máy mình, không cần giống từng điểm ảnh.
 
 - [ ] **Step 1: Viết test** `it('Ssms draws the connect box, Object Explorer and the toolbar')`:
-  - `connect` chứa `'sql-lession.database.windows.net'`, `'SQL Server Authentication'`, `'Connect to database'`, `'sql-lession'`;
+  - `connect` chứa `'sql-lession.database.windows.net'`, `'SQL Server Authentication'`, `'Connect to database'`, `'free-sql-db-8797714'`;
   - `explorer` chứa đủ 7 `dbo.` tên bảng, `'MaNV (PK, varchar(10), not null)'`, `'Email (varchar(100), null)'`;
   - `explorer` với `table="ChamCong"` chứa `'MaNV (PK, FK, varchar(10), not null)'`;
-  - `toolbar` chứa `'New Query'`, `'Execute'`, `'sql-lession'`.
+  - `toolbar` chứa `'New Query'`, `'Execute'`, `'free-sql-db-8797714'`.
 - [ ] **Step 2: Chạy `npx vitest run tests/components.test.ts`, kỳ vọng FAIL.**
 - [ ] **Step 3: Viết component và CSS.** Thêm vào `lessonComponents`.
 - [ ] **Step 4: `npm test` PASS. Xem thử trên dev server bằng một trang nháp hoặc ở Task 8.**
@@ -207,7 +209,7 @@ Bài mẫu: `src/content/lessons/3-5-left-join.mdx` (giọng văn, khối, sơ �
 - [ ] **Step 4: Sửa bài 1.1.**
   - `### Lý thuyết cơ bản` gom phần "Excel và database đặt cạnh nhau": workbook ↔ database, sheet ↔ bảng, dòng ↔ bản ghi, cột ↔ cột có kiểu.
   - Câu `SELECT TOP (5) …` minh họa giữ lại dưới một tiểu mục khác (không có sơ đồ).
-- [ ] **Step 5: Kiểm kết quả.** Mọi câu SQL và bảng kết quả còn trong hai bài khớp `sql-lession`: chạy lại từng câu bằng MCP `run_query`, so từng ô.
+- [ ] **Step 5: Kiểm kết quả.** Mọi câu SQL và bảng kết quả còn trong hai bài khớp database `free-sql-db-8797714`: chạy lại từng câu bằng MCP `run_query`, so từng ô.
 - [ ] **Step 6: `npm test` PASS; `npm run build`; `npm run check:dist` OK; xem bài 3.5 trên dev server.**
 - [ ] **Step 7: Commit**: `git commit -m "lead Làm bằng SQL with the theory in lessons 1.1 and 3.5"`
 
@@ -248,7 +250,7 @@ Bài mẫu: `src/content/lessons/3-5-left-join.mdx` (giọng văn, khối, sơ �
     - kết nối theo spec Level 1 mục 4.1, dùng `<Ssms view="connect">`; ghi triệu chứng khi quên ghi database, nguyên văn lỗi đăng nhập lấy từ tài liệu Microsoft;
     - Object Explorer với `<Ssms view="explorer">`;
     - New Query, ô chọn database và F5 với `<Ssms view="toolbar">`, kèm câu `SELECT TOP (5) * FROM NhanVien;` và kết quả thật;
-    - tên database: bộ dữ liệu mẫu HRM_Demo nằm trong database `sql-lession` (spec mục 5.2);
+    - tên database: bộ dữ liệu mẫu HRM_Demo nằm trong database `free-sql-db-8797714` (spec mục 5.2);
     - trang làm bài tập trên web (spec mục 4.2);
     - phần thêm: tự có bản riêng bằng `HRM_Demo.sql` trên SQL Server cài ở máy, đặt tên database `HRM_Demo`.
   - Hay nhầm ở đâu: quên ghi database; chạy câu khi đang chọn `master`; nhầm Server name.
@@ -350,7 +352,7 @@ Bài mẫu: `src/content/lessons/3-5-left-join.mdx` (giọng văn, khối, sơ �
   - `npm --prefix api run check:data`, kỳ vọng "Không bảng nào lệch.".
 - [ ] **Step 2: Xem trên dev server.**
   - Bài 1.1–1.6, 3.5: mục lục bên phải không có "Bài tập" ở 1.1–1.5; sơ đồ 1.6 mở drawer được; khối SSMS và sơ đồ quan hệ đọc được ở bề ngang 375 px.
-  - Trang bài tập 1-6-1: dòng trạng thái ghi `sql-lession`.
+  - Trang bài tập 1-6-1: dòng trạng thái ghi `free-sql-db-8797714`.
   - Mindmap: drawer của 1.2–1.6 hiện số phút thay cho "Bản tóm tắt".
 - [ ] **Step 3: Rà giọng văn.**
   - `grep` trong 6 bài các chữ "Bước 1", "nối bảng", "Phần bài tập sẽ bổ sung sau" không còn (trừ bản tóm tắt Level 2 trở đi).

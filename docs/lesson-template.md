@@ -177,7 +177,7 @@ Dùng thẳng trong MDX, không cần import.
 | `Ssms` | `view`: `connect`, `explorer` hoặc `toolbar`; `table?`; `caption?` | Mô phỏng SSMS: hộp Connect to Server, Object Explorer, thanh công cụ |
 | `Erd` | `caption?` | Sơ đồ quan hệ của HRM_Demo đặt thẳng trong bài |
 
-Dòng trạng thái của `Result` và `Messages` mặc định ghi `sql-lession`, đúng tên database học viên thấy trong SSMS.
+Dòng trạng thái của `Result` và `Messages` mặc định ghi `free-sql-db-8797714`, đúng tên database học viên thấy trong SSMS.
 
 ## Quy tắc viết
 
