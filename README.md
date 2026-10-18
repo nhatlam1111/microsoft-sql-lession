@@ -98,6 +98,8 @@ API chạy ở http://127.0.0.1:7071/api. Khi chạy `npm run dev`, web tự g�
 
 ## Viết bài học
 
+Khung bài chép ra là viết được: [`docs/lesson-template.md`](docs/lesson-template.md).
+
 Mỗi bài là một file `src/content/lessons/<số>-<slug>.mdx`, ví dụ `3-5-left-join.mdx`. Frontmatter gồm:
 
 | Trường | Ý nghĩa |
@@ -108,9 +110,11 @@ Mỗi bài là một file `src/content/lessons/<số>-<slug>.mdx`, ví dụ `3-5
 | `kind`, `minutes` | `full` hoặc `summary`; số phút đọc |
 | `prerequisites` | Các bài cần biết trước |
 | `goal`, `excel`, `summary` | Học xong làm được gì, liên hệ Excel, đoạn tóm tắt hiện trong drawer |
+| `noExercises` | `true` khi bài không có mục "Bài tập" (bài 1.1–1.5) |
 
-- Bài đầy đủ có các mục theo thứ tự: Tình huống, Với Excel, Làm bằng SQL, Hay nhầm ở đâu, Ứng dụng, Ghi nhớ, Bài tập. Bản tóm tắt có: Nội dung chính, Liên hệ Excel, Tình huống ví dụ, Bài tập.
-- Trong MDX dùng thẳng các khối `Sql`, `Result`, `Messages`, `Excel`, `Chat`, `Key`, `LineMap`, `Mistakes`, `Apply`, `Memo`, `Exercises`, `RunFlow`, không cần import.
+- Bài đầy đủ có các mục theo thứ tự: Tình huống, Với Excel, Làm bằng SQL, Hay nhầm ở đâu, Ứng dụng, Ghi nhớ, Bài tập. Bản tóm tắt có: Nội dung chính, Liên hệ Excel, Tình huống ví dụ, Bài tập. Bài có `noExercises: true` thì không có mục Bài tập.
+- "Làm bằng SQL" mở đầu bằng `### Lý thuyết cơ bản`; bài có sơ đồ thứ tự chạy thì kết thúc bằng `### Câu lệnh cho tình huống` rồi `### SQL Server chạy câu này thế nào`. Không viết tiểu mục "Bước 1, Bước 2…".
+- Trong MDX dùng thẳng các khối `Sql`, `Result`, `Messages`, `Excel`, `Chat`, `Key`, `LineMap`, `Mistakes`, `Apply`, `Memo`, `Exercises`, `RunFlow`, `Ssms` (mô phỏng SSMS), `Erd` (sơ đồ quan hệ), không cần import.
 - Quy tắc viết: xưng "bạn"; dùng "kết bảng" cho `JOIN`; chuỗi tiếng Việt trong SQL có `N`; không nhắc vai trò hay xuất thân của người đọc. `npm test` kiểm phần lớn các quy tắc này.
 
 ## Viết bài tập

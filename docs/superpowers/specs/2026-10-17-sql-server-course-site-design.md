@@ -95,17 +95,19 @@ Ba ý tưởng xuyên suốt:
 
 ### 4.5 Trang bài học (đã chốt qua bài mẫu 3.5)
 
+> Đổi ngày 2026-10-18: khuôn mục "Làm bằng SQL" và quy tắc mục "Bài tập" theo [spec Level 1, mục 3](2026-10-18-level-1-full-lessons-design.md). Khung chép ra viết: [`docs/lesson-template.md`](../../lesson-template.md).
+
 Đầu bài: nhãn level, mã bài, tên bài, thời gian đọc, "Cần biết trước" (link tới bài), khung "Học xong bài này: …".
 
 Thân bài đi theo đúng thứ tự các mục sau, tên mục giữ nguyên:
 
 1. **Tình huống**: một yêu cầu nhân sự cụ thể, có thể dùng bong bóng tin nhắn. Kết bằng một câu "nói gọn lại" để chốt câu hỏi dữ liệu. Câu dẫn trung tính, ví dụ "Một yêu cầu hay gặp từ phòng nhân sự".
 2. **Với Excel**: cách quen thuộc để làm việc đó trên Excel, kèm khối Excel (thanh công thức, lưới ô có tên cột A B C, số dòng, ô lỗi tô đỏ nhạt như định dạng có điều kiện của Excel).
-3. **Làm bằng SQL**: viết và chạy theo từng bước (Bước 1, Bước 2…), mỗi bước có khối SQL và bảng kết quả kiểu SSMS; có bảng đối chiếu từng dòng lệnh với ý nghĩa và với cách làm Excel.
+3. **Làm bằng SQL**: ~~viết và chạy theo từng bước (Bước 1, Bước 2…)~~ (đổi 2026-10-18) lý thuyết cơ bản (khái niệm, cú pháp chung, ví dụ thu gọn, bảng từng phần nghĩa là gì), rồi câu lệnh cho tình huống kèm kết quả, rồi sơ đồ thứ tự chạy khi câu lệnh có từ 2 bước trở lên.
 4. **Hay nhầm ở đâu**: 2–3 lỗi thường gặp, nói rõ hậu quả.
 5. **Ứng dụng**: 1–2 cách dùng trong công việc thật (kiểm tra dữ liệu sau import, viết yêu cầu báo cáo…), không gắn với vị trí người đọc.
 6. **Ghi nhớ**: bảng 2 cột "Bên Excel" / "Bên SQL".
-7. **Bài tập**: để trống, ghi "Phần bài tập sẽ bổ sung sau."
+7. **Bài tập**: danh sách bài tập của bài; chưa có thì ghi "Phần bài tập sẽ bổ sung sau.". Bài 1.1–1.5 không có mục này (đổi 2026-10-18).
 
 Cuối bài: nút "Đã học xong bài này" (xanh lá), nút "Cắm cờ xem lại", gợi ý nhỏ "Bấm khi bạn tự viết lại được câu lệnh mà không nhìn bài", thẻ bài trước và bài sau.
 

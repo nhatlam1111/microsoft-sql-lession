@@ -167,7 +167,7 @@ Theo ảnh tham khảo người làm khóa học gửi ("Simple 8-Step Workflow"
 ## 6. C. Viết đầy đủ bài theo level
 
 - Bắt đầu Level 1: viết đầy đủ 1.2, 1.3, 1.4, 1.5, 1.6 (bài 1.1 đã đầy đủ). Theo khuôn bài đầy đủ ở mục 4.5 và giọng văn ở mục 4.7 của spec đợt 1.
-- Mỗi bài Level 1 có 2–4 bài tập thật, từ dễ đến khó, trên `HRM_Demo`. Bài 1.1 được bổ sung bài tập. Bài nào có câu lệnh từ 2 bước trở lên thì có sơ đồ.
+- ~~Mỗi bài Level 1 có 2–4 bài tập thật, từ dễ đến khó, trên `HRM_Demo`. Bài 1.1 được bổ sung bài tập.~~ Đổi 2026-10-18: bài tập bắt đầu từ bài 1.6, bài 1.1–1.5 không có mục "Bài tập" (xem [spec Level 1](2026-10-18-level-1-full-lessons-design.md)). Bài nào có câu lệnh từ 2 bước trở lên thì có sơ đồ.
 - Bài tập Level 1 chỉ dùng câu truy vấn, đúng phạm vi level.
 - Bài 1.2 giữ nội dung đã định (SSMS, Object Explorer, chạy script `HRM_Demo`) và thêm phần giới thiệu trang làm bài tập trên web.
 - Mọi câu lệnh, kết quả và đáp án được kiểm qua MCP chỉ đọc.
