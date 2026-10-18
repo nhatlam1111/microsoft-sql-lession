@@ -1,0 +1,62 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import ExerciseWorkspace from '../../../../components/islands/ExerciseWorkspace';
+import { loadCatalog } from '../../../../lib/load-catalog';
+import { exerciseUrl, publicExercises } from '../../../../lib/exercises';
+import { parseSchema } from '../../../../lib/db-schema';
+import { lessonUrl } from '../../../../lib/paths';
+import type { PublicExercise } from '../../../../lib/exercise-types';
+import schemaSql from '../../../../../database/HRM_Demo.sql?raw';
+
+export async function getStaticPaths() {
+  const files = await getCollection('exercises');
+  return files.flatMap(file => {
+    const exercises = publicExercises(file.data);
+    return exercises.map(exercise => ({
+      params: { slug: file.data.lesson, n: String(exercise.n) },
+      props: { exercise, total: exercises.length },
+    }));
+  });
+}
+
+interface Props { exercise: PublicExercise; total: number }
+const { exercise, total } = Astro.props;
+const catalog = await loadCatalog();
+const lesson = catalog.find(e => e.slug === exercise.lesson)!;
+const nums = catalog.map(e => e.num);
+const tables = parseSchema(schemaSql);
+const apiBase = import.meta.env.PUBLIC_EXERCISE_API ?? '';
+---
+<BaseLayout title={`Bài tập ${exercise.n} · ${lesson.num} ${lesson.title}`} wide>
+  <main class="ex-page">
+    <nav class="ex-crumbs" aria-label="Đường dẫn">
+      <a href={lessonUrl(lesson.slug)}>Bài {lesson.num} {lesson.shortTitle}</a>
+      <span aria-hidden="true">›</span>
+      <span>Bài tập {exercise.n}/{total}</span>
+      <span class="ex-spacer"></span>
+      {exercise.n > 1 && <a class="ex-step" href={exerciseUrl(lesson.slug, exercise.n - 1)}>Bài tập trước</a>}
+      {exercise.n < total && <a class="ex-step" href={exerciseUrl(lesson.slug, exercise.n + 1)}>Bài tập sau</a>}
+    </nav>
+    <div class="ex-cols">
+      <section class="ex-brief" aria-labelledby="ex-title">
+        <h1 id="ex-title">{exercise.title}</h1>
+        <p class="ex-prompt">{exercise.prompt}</p>
+        {exercise.kind === 'query' ? (
+          <dl class="ex-meta">
+            <dt>Kết quả cần</dt><dd>{exercise.columns.length} cột ({exercise.columns.join(', ')})</dd>
+            <dt>Có sắp xếp</dt><dd>{exercise.ordered ? 'có, theo yêu cầu trong đề' : 'không cần'}</dd>
+          </dl>
+        ) : (
+          <dl class="ex-meta">
+            <dt>Được chấm theo</dt><dd>số dòng bị ảnh hưởng và dữ liệu của bảng sau khi sửa</dd>
+          </dl>
+        )}
+        <p class="ex-note">Mỗi lần chạy đều được hoàn tác ngay, dữ liệu mẫu không bị đổi.</p>
+      </section>
+      <section class="ex-work" aria-label="Khung làm bài">
+        <ExerciseWorkspace client:only="react" exercise={exercise} apiBase={apiBase} tables={tables} nums={nums} />
+      </section>
+    </div>
+  </main>
+</BaseLayout>
