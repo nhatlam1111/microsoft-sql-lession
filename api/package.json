@@ -6,6 +6,7 @@
   "description": "Runs course exercises against HRM_Demo in a rolled-back transaction",
   "scripts": {
     "build": "node build.mjs",
+    "typecheck": "tsc -p tsconfig.json",
     "dev": "node dist/dev-server.js",
     "check:exercises": "node dist/check-exercises.js",
     "check:data": "node dist/check-data.js"
@@ -15,8 +16,11 @@
     "mssql": "^12.7.9"
   },
   "devDependencies": {
+    "@types/mssql": "^12.3.0",
+    "@types/node": "^22.20.5",
     "dotenv": "^18.0.8",
     "esbuild": "^0.28.2",
+    "typescript": "^5.9.3",
     "yaml": "^2.9.1"
   }
 }

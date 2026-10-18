@@ -18,7 +18,9 @@ export function formatCell(value: unknown, column: ResultColumn): Cell {
   if (value === null || value === undefined) return null;
   const type = column.type.toLowerCase();
   if ((type === 'decimal' || type === 'numeric' || type === 'money' || type === 'smallmoney') && typeof value === 'number') {
-    return value.toFixed(column.scale ?? 0);
+    // The driver reports no scale for money; SQL Server always keeps four decimals there, as SSMS shows.
+    const scale = column.scale ?? (type === 'money' || type === 'smallmoney' ? 4 : undefined);
+    return scale === undefined ? String(value) : value.toFixed(scale);
   }
   if (value instanceof Date) {
     if (type === 'date') return isoDate(value);

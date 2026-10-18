@@ -24,9 +24,10 @@ type Reply<T> = { status: number; body: T | ApiFailure };
 
 const SHOWN_ROWS = 200;
 const GRADED_ROWS = 5000;
+// A timeout is 504, not 408: a browser may silently send a request again after a 408.
 const STATUS: Record<FailureKind, number> = {
   'bad-request': 400, 'bad-code': 401, 'unknown-exercise': 404, rate: 429,
-  blocked: 422, multi: 422, 'too-big': 422, timeout: 408, quota: 503, unavailable: 503, network: 503,
+  blocked: 422, multi: 422, 'too-big': 422, timeout: 504, quota: 503, unavailable: 503, network: 503,
 };
 
 const fail = (kind: FailureKind, reason?: string): { status: number; body: ApiFailure } =>

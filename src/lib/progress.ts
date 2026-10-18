@@ -52,7 +52,7 @@ export function toggleDone(s: ProgressState, num: string, now: number): Progress
     const { doneAt: _drop, ...rest } = current;
     return withLesson(s, num, { ...rest, status: 'seen' });
   }
-  return withLesson(s, num, { flagged: false, seenAt: now, ...current, status: 'done', doneAt: now });
+  return withLesson(s, num, { ...(current ?? { flagged: false, seenAt: now }), status: 'done', doneAt: now });
 }
 
 export function toggleFlag(s: ProgressState, num: string, now: number): ProgressState {
@@ -96,8 +96,11 @@ function parseLesson(v: unknown): LessonProgress | null {
   return lesson;
 }
 
-/** Read an exported progress file; lessons that are no longer in the course are dropped and counted. */
-export function parseProgress(text: string, knownNums: string[]): ImportResult {
+/**
+ * Read an exported progress file; lessons that are no longer in the course are dropped and counted.
+ * `keepUnknown` keeps them instead: the browser's own copy must not shrink because one page has an older lesson list.
+ */
+export function parseProgress(text: string, knownNums: string[], keepUnknown = false): ImportResult {
   let raw: unknown;
   try { raw = JSON.parse(text); } catch { return { ok: false, error: IMPORT_ERRORS.notJson }; }
   const bad = { ok: false as const, error: IMPORT_ERRORS.badShape };
@@ -122,7 +125,7 @@ export function parseProgress(text: string, knownNums: string[]): ImportResult {
   for (const [num, value] of Object.entries(raw.lessons)) {
     const lesson = parseLesson(value);
     if (!lesson) return bad;
-    if (known.has(num)) lessons[num] = lesson; else ignored++;
+    if (known.has(num) || keepUnknown) lessons[num] = lesson; else ignored++;
   }
   return {
     ok: true,

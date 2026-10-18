@@ -13,6 +13,12 @@ it('formats values so equal data compares equal', () => {
 
 const shape = (rows: Cell[][], n = rows[0]?.length ?? 2): Shape => ({ columns: Array.from({ length: n }, (_, i) => ({ name: `c${i}`, type: 'nvarchar' })), rows });
 
+it('shows money with its four decimals, as SSMS does, though the driver gives no scale', () => {
+  expect(formatCell(1234.56, col('money'))).toBe('1234.5600');
+  expect(formatCell(12.5, col('smallmoney'))).toBe('12.5000');
+  expect(formatCell(0.125, col('decimal'))).toBe('0.125');
+});
+
 it('compares by value, ignores column names, and checks order only when asked', () => {
   const answer = shape([['NV047', null], ['NV048', null]]);
   expect(compareResults({ ...shape([['NV048', null], ['NV047', null]]), columns: [{ name: 'Ma', type: 'varchar' }, { name: 'X', type: 'varchar' }] }, answer, false)).toEqual({ correct: true, reason: null });

@@ -2,6 +2,13 @@ import type { LessonFrontmatter } from './lesson-schema';
 
 export interface CatalogEntry extends LessonFrontmatter { slug: string }
 
+/** What the course menu and the roadmap popup show of a lesson; every island carries its own copy in the page, so it stays small. */
+export type NavEntry = Pick<CatalogEntry, 'num' | 'slug' | 'title' | 'shortTitle' | 'level'>;
+
+export function navEntries(catalog: CatalogEntry[]): NavEntry[] {
+  return catalog.map(({ num, slug, title, shortTitle, level }) => ({ num, slug, title, shortTitle, level }));
+}
+
 const parts = (num: string) => num.split('.').map(Number);
 
 /** Roadmap order of lesson numbers: 3.9 comes before 3.10. */
@@ -11,7 +18,7 @@ export function compareNum(a: string, b: string): number {
   return a1 - b1 || a2 - b2;
 }
 
-export function sortCatalog(entries: CatalogEntry[]): CatalogEntry[] {
+export function sortCatalog<T extends { num: string }>(entries: T[]): T[] {
   return [...entries].sort((x, y) => compareNum(x.num, y.num));
 }
 

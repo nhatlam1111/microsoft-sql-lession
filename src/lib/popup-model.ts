@@ -1,5 +1,5 @@
 import { LEVELS, type LevelNo } from '../data/curriculum';
-import { sortCatalog, type CatalogEntry } from './catalog';
+import { sortCatalog, type NavEntry } from './catalog';
 import { countDone, type ProgressState } from './progress';
 import { firstFlagged, formatLastVisit, levelSummaries, resumeTarget, type LevelSummary } from './roadmap';
 
@@ -21,7 +21,7 @@ export interface PopupModel {
 export function popupModel(
   live: ProgressState,
   previousActiveAt: number | null,
-  catalog: CatalogEntry[],
+  catalog: NavEntry[],
   now: number,
   startLastLessonNum: string | null = live.lastLessonNum,
 ): PopupModel {

@@ -18,6 +18,16 @@ it('keeps a copy of corrupt data instead of silently losing it', () => {
   expect(loadProgress(st, ALL_NUMS)).toEqual({ state: emptyState(), problem: 'corrupt' });
   expect(st.getItem(BACKUP_KEY)).toBe('{not json');
 });
+it('leaves corrupt data where it is when its copy cannot be written', () => {
+  const m = new Map([[STORAGE_KEY, '{not json']]);
+  const st = { getItem: (k: string) => m.get(k) ?? null, setItem: (k: string, v: string) => { if (k === BACKUP_KEY) throw new Error('full'); m.set(k, v); } };
+  expect(loadProgress(st, ALL_NUMS)).toEqual({ state: emptyState(), problem: 'unavailable' });
+});
+it('keeps lessons it does not know when loading, so the next save does not erase them', () => {
+  const st = mem();
+  st.setItem(STORAGE_KEY, serializeProgress({ ...emptyState(), lessons: { '1.1': { status: 'done', flagged: false, seenAt: 1, doneAt: 1 }, '9.9': { status: 'seen', flagged: true, seenAt: 2 } } }));
+  expect(Object.keys(loadProgress(st, ALL_NUMS).state.lessons)).toEqual(['1.1', '9.9']);
+});
 it('reports blocked or missing storage', () => {
   const blocked = { getItem: () => { throw new Error('blocked'); }, setItem: () => { throw new Error('blocked'); } };
   expect(loadProgress(blocked, ALL_NUMS).problem).toBe('unavailable');

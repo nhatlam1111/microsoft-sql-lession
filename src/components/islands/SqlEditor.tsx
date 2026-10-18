@@ -1,6 +1,6 @@
 import { useRef, type KeyboardEvent } from 'react';
 import { highlightTsql } from '../../lib/tsql-highlight';
-import { editorKeyAction } from '../../lib/editor-keys';
+import { editorKeyAction, indentEdit } from '../../lib/editor-keys';
 
 interface Props {
   value: string;
@@ -24,9 +24,15 @@ export default function SqlEditor({ value, onChange, onRun }: Props) {
     } else if (action === 'indent') {
       e.preventDefault();
       const ta = e.currentTarget;
-      const { selectionStart: start, selectionEnd: end } = ta;
-      onChange(`${value.slice(0, start)}    ${value.slice(end)}`);
-      requestAnimationFrame(() => { ta.selectionStart = ta.selectionEnd = start + 4; });
+      const edit = indentEdit(value, ta.selectionStart, ta.selectionEnd);
+      ta.setSelectionRange(edit.from, edit.to);
+      // insertText goes through the browser's own editing, so Ctrl+Z can undo it; it also fires the change.
+      if (document.execCommand('insertText', false, edit.insert)) {
+        ta.setSelectionRange(edit.selStart, edit.selEnd);
+      } else {
+        onChange(value.slice(0, edit.from) + edit.insert + value.slice(edit.to));
+        requestAnimationFrame(() => ta.setSelectionRange(edit.selStart, edit.selEnd));
+      }
     }
   };
 

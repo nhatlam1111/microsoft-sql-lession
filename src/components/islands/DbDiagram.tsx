@@ -1,4 +1,5 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type KeyboardEvent as ReactKeyboardEvent } from 'react';
+import { nextFocusIndex } from '../../lib/focus-trap';
 import type { DbTable } from '../../lib/db-schema';
 import { BOX, DIAGRAM_POSITIONS, DIAGRAM_SIZE, diagramLinks } from '../../lib/db-diagram';
 
@@ -11,27 +12,38 @@ interface Props {
 /** The HRM_Demo diagram in a popup: every table with its columns, keys and links. */
 export function DbDiagramDialog({ tables, open, onClose }: Props) {
   const ref = useRef<HTMLDivElement>(null);
+  // The page hands a new onClose on every render; reading it through a ref keeps focus where the learner put it.
+  const close = useRef(onClose);
+  close.current = onClose;
 
   useEffect(() => {
     if (!open) return;
     ref.current?.focus();
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') close.current(); };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [open, onClose]);
+  }, [open]);
 
   if (!open) return null;
   const links = diagramLinks(tables);
 
+  const keepTabInside = (e: ReactKeyboardEvent<HTMLDivElement>) => {
+    if (e.key !== 'Tab') return;
+    const items = Array.from(e.currentTarget.querySelectorAll<HTMLElement>('button, [tabindex="0"]'));
+    const next = items[nextFocusIndex(items.length, items.indexOf(document.activeElement as HTMLElement), e.shiftKey)];
+    e.preventDefault();
+    next?.focus();
+  };
+
   return (
     <div className="dbd-backdrop" onMouseDown={e => { if (e.target === e.currentTarget) onClose(); }}>
-      <div className="dbd" role="dialog" aria-modal="true" aria-labelledby="dbd-title" tabIndex={-1} ref={ref}>
+      <div className="dbd" role="dialog" aria-modal="true" aria-labelledby="dbd-title" tabIndex={-1} ref={ref} onKeyDown={keepTabInside}>
         <div className="dbd-head">
           <h2 id="dbd-title">Sơ đồ HRM_Demo</h2>
           <p>PK là khóa chính, FK là khóa ngoại; đường nối đi từ khóa ngoại tới bảng nó trỏ tới.</p>
           <button type="button" className="dbd-close" aria-label="Đóng" onClick={onClose}>×</button>
         </div>
-        <div className="dbd-scroll">
+        <div className="dbd-scroll" tabIndex={0} role="group" aria-label="Sơ đồ các bảng, dùng phím mũi tên để cuộn">
           <div className="er" style={{ width: DIAGRAM_SIZE.width, height: DIAGRAM_SIZE.height }}>
             <svg width={DIAGRAM_SIZE.width} height={DIAGRAM_SIZE.height} aria-hidden="true">
               {links.map((l, i) => (

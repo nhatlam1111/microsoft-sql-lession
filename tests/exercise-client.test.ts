@@ -39,6 +39,14 @@ it('sends the access code header and the exercise body', async () => {
   expect(JSON.parse(init.body as string)).toEqual({ exercise: '3-5-1', sql: 'SELECT 1' });
 });
 
+it('treats a reply that is not one of the API answers as the service being unavailable', async () => {
+  const replying = (body: unknown) => (async () => new Response(JSON.stringify(body), { status: 500 })) as unknown as typeof fetch;
+  const unavailable = { ok: false, kind: 'unavailable' };
+  expect(await createExerciseClient('https://x/api', replying({ error: 'Internal' })).run('3-5-1', 'SELECT 1', 'abc')).toEqual(unavailable);
+  expect(await createExerciseClient('https://x/api', replying({ ok: false })).grade('3-5-1', 'SELECT 1', 'abc')).toEqual(unavailable);
+  expect(await createExerciseClient('https://x/api', replying(null)).run('3-5-1', 'SELECT 1', 'abc')).toEqual(unavailable);
+});
+
 it('storage helpers survive a storage that throws', () => {
   const broken = { getItem() { throw new Error('x'); }, setItem() { throw new Error('x'); }, removeItem() { throw new Error('x'); } } as unknown as Storage;
   expect(() => saveDraft('3-5-1', 'SELECT 1', broken)).not.toThrow();

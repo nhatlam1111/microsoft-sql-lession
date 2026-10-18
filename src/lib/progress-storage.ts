@@ -12,9 +12,10 @@ export function loadProgress(storage: StorageLike | null, knownNums: string[]): 
   let raw: string | null;
   try { raw = storage.getItem(STORAGE_KEY); } catch { return { state: emptyState(), problem: 'unavailable' }; }
   if (raw === null) return { state: emptyState(), problem: null };
-  const parsed = parseProgress(raw, knownNums);
+  const parsed = parseProgress(raw, knownNums, true);
   if (parsed.ok) return { state: parsed.state, problem: null };
-  try { storage.setItem(BACKUP_KEY, raw); } catch { /* nothing more we can keep */ }
+  // Without a copy, the unreadable progress stays where it is and nothing may be saved over it.
+  try { storage.setItem(BACKUP_KEY, raw); } catch { return { state: emptyState(), problem: 'unavailable' }; }
   return { state: emptyState(), problem: 'corrupt' };
 }
 

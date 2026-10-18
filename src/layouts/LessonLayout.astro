@@ -5,7 +5,7 @@ import LessonHeader from '../components/lesson/LessonHeader.astro';
 import SidebarNav from '../components/islands/SidebarNav';
 import LessonStatus from '../components/islands/LessonStatus';
 import { LEVELS } from '../data/curriculum';
-import { neighbors, type CatalogEntry } from '../lib/catalog';
+import { navEntries, neighbors, type CatalogEntry } from '../lib/catalog';
 import { lessonUrl } from '../lib/paths';
 
 interface Props {
@@ -23,7 +23,7 @@ const toc = headings.filter(h => h.depth === 2);
 <BaseLayout title={`${entry.num} ${entry.title}`}>
   <div class="lesson-layout">
     <aside class="lesson-side">
-      <SidebarNav client:load catalog={catalog} levels={LEVELS} currentNum={entry.num} />
+      <SidebarNav client:load catalog={navEntries(catalog)} levels={LEVELS} currentNum={entry.num} />
     </aside>
     <main class="lesson-main">
       <article class="lesson-article" style={`--lv: var(--lv${level.no});`}>

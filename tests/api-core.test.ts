@@ -1,6 +1,7 @@
 import { it, expect, vi } from 'vitest';
 import { handleRun, handleGrade, handlePing, type Deps, type RunOutcome } from '../api/src/core';
 import { createLimiter } from '../api/src/limiter';
+import { shapeOf } from '../api/src/shape';
 import type { RunResponse } from '../src/lib/exercise-types';
 import type { Exercise } from '../src/lib/exercise-types';
 
@@ -37,7 +38,7 @@ it('caps shown rows at 200 and reports several statements as one error', async (
 });
 
 it('maps a timeout and a paused database to their own errors', async () => {
-  expect((await handleRun({ exercise: 'q1', sql: 'SELECT 1' }, 'abc', depsReturning({ errorKind: 'timeout' }))).status).toBe(408);
+  expect((await handleRun({ exercise: 'q1', sql: 'SELECT 1' }, 'abc', depsReturning({ errorKind: 'timeout' }))).status).toBe(504);
   expect((await handleRun({ exercise: 'q1', sql: 'SELECT 1' }, 'abc', depsReturning({ errorKind: 'quota' }))).body).toEqual({ ok: false, kind: 'quota' });
 });
 
@@ -70,4 +71,10 @@ it('sends the database the same line breaks the guard read', async () => {
   const run = vi.fn(async () => outcome());
   await handleRun({ exercise: 'q1', sql: 'SELECT a\r\nFROM T\rWHERE 1 = 1' }, 'abc', { ...deps, run });
   expect(run).toHaveBeenCalledWith('SELECT a\nFROM T\nWHERE 1 = 1');
+});
+
+it('reads a FOR JSON result, which the driver hands back as one object row', () => {
+  const id = 'JSON_F52E2B61-18A1-11d1-B105-00805F49916B';
+  const set = Object.assign([{ 0: '[{"MaNV":"NV001"}]' }], { columns: [{ name: id, type: { declaration: 'nvarchar' } }] });
+  expect(shapeOf(set)).toEqual({ columns: [{ name: id, type: 'nvarchar', scale: undefined }], rows: [['[{"MaNV":"NV001"}]']] });
 });

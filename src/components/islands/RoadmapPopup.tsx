@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import type { CatalogEntry } from '../../lib/catalog';
+import type { NavEntry } from '../../lib/catalog';
 import type { LevelDef, LevelNo } from '../../data/curriculum';
 import { getSnapshot, initProgressStore } from '../../lib/progress-store';
 import { iconOf } from '../../lib/progress';
@@ -11,7 +11,7 @@ import { useProgress } from './use-progress';
 import StatusIcon, { ICON_LABEL } from './StatusIcon';
 
 interface Props {
-  catalog: CatalogEntry[];
+  catalog: NavEntry[];
   levels: LevelDef[];
 }
 

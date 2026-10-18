@@ -1,7 +1,7 @@
 /** Runs statements on the database: one transaction per run, always rolled back. */
 import sql from 'mssql';
-import { formatCell, type ResultColumn, type Shape } from '../../src/lib/grade';
 import type { RunOutcome } from './core';
+import { shapeOf, type RecordsetLike } from './shape';
 
 type Env = Record<string, string | undefined>;
 
@@ -16,16 +16,6 @@ export function configFromEnv(env: Env): sql.config {
     // No idle connections: they would keep the serverless database awake and burn the free allowance.
     pool: { max: 4, min: 0, idleTimeoutMillis: 30_000 },
   };
-}
-
-interface ColumnMeta { name: string; type?: { declaration?: string }; scale?: number }
-type RecordsetLike = unknown[] & { columns?: unknown };
-
-function shapeOf(recordset: RecordsetLike): Shape {
-  const meta = (Array.isArray(recordset.columns) ? recordset.columns : Object.values(recordset.columns ?? {})) as ColumnMeta[];
-  const columns: ResultColumn[] = meta.map(c => ({ name: c.name, type: (c.type?.declaration ?? '').toLowerCase(), scale: c.scale }));
-  const rows = (recordset as unknown[][]).map(row => row.map((v, i) => formatCell(v, columns[i] ?? { name: '', type: '' })));
-  return { columns, rows };
 }
 
 const empty = (ms: number, extra: Partial<RunOutcome>): RunOutcome =>

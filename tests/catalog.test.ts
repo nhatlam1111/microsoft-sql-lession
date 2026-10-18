@@ -1,5 +1,5 @@
 import { it, expect } from 'vitest';
-import { compareNum, validateCatalog, neighbors } from '../src/lib/catalog';
+import { compareNum, validateCatalog, neighbors, navEntries } from '../src/lib/catalog';
 import { fakeCatalog } from './helpers/expected';
 
 it('sorts lesson numbers numerically', () => {
@@ -27,4 +27,10 @@ it('finds neighbours across levels', () => {
   const n = neighbors(fakeCatalog(), '1.6');
   expect([n.prev?.num, n.next?.num]).toEqual(['1.5', '2.1']);
   expect(neighbors(fakeCatalog(), '1.1').prev).toBeUndefined();
+});
+
+it('gives the course menu and the roadmap popup only the lesson fields they show', () => {
+  const nav = navEntries(fakeCatalog());
+  expect(nav).toHaveLength(fakeCatalog().length);
+  expect(Object.keys(nav[0]).sort()).toEqual(['level', 'num', 'shortTitle', 'slug', 'title']);
 });

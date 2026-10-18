@@ -21,9 +21,13 @@ const tokens = highlightTsql(code);
   document.addEventListener('click', event => {
     const button = (event.target as HTMLElement | null)?.closest<HTMLButtonElement>('.sql-copy');
     if (!button) return;
-    navigator.clipboard.writeText(button.dataset.copy ?? '').then(() => {
-      button.textContent = 'Đã chép';
+    const show = (text: string) => {
+      button.textContent = text;
       setTimeout(() => { button.textContent = 'Sao chép'; }, 1500);
-    });
+    };
+    // The clipboard can be refused (no permission, page not focused); say so instead of doing nothing.
+    Promise.resolve()
+      .then(() => navigator.clipboard.writeText(button.dataset.copy ?? ''))
+      .then(() => show('Đã chép'), () => show('Không chép được'));
   });
 </script>

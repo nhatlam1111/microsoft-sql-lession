@@ -1,6 +1,7 @@
 import { it, expect, beforeEach, vi } from 'vitest';
 import * as S from '../src/lib/progress-store';
 import { STORAGE_KEY, emptyState, serializeProgress, markSeen, statusOf } from '../src/lib/progress';
+import { BACKUP_KEY } from '../src/lib/progress-storage';
 import { ALL_NUMS } from './helpers/expected';
 
 const mem = () => { const m = new Map<string, string>(); return { getItem: (k: string) => m.get(k) ?? null, setItem: (k: string, v: string) => void m.set(k, v) }; };
@@ -69,4 +70,24 @@ it('saves a solved exercise', () => {
   S.initProgressStore(ALL_NUMS, st, 5000);
   S.actions.markExerciseDone('3-5-1');
   expect(JSON.parse(st.getItem(STORAGE_KEY)!).exercises['3-5-1'].doneAt).toBe(10_000);
+});
+it('never writes over corrupt progress it could not back up', () => {
+  const m = new Map([[STORAGE_KEY, '{not json']]);
+  const full = { getItem: (k: string) => m.get(k) ?? null, setItem: (k: string, v: string) => { if (k === BACKUP_KEY) throw new Error('full'); m.set(k, v); } };
+  S.initProgressStore(ALL_NUMS, full, 5000);
+  S.actions.markSeen('1.1');
+  expect([m.get(STORAGE_KEY), S.getSnapshot().problem]).toEqual(['{not json', 'unavailable']);
+});
+it('keeps lessons another tab saved that this page does not know', () => {
+  S.initProgressStore(ALL_NUMS, st, 5000);
+  S.handleExternalChange(serializeProgress(markSeen(emptyState(), '9.9', 7000)));
+  S.actions.markSeen('1.1');
+  expect(Object.keys(JSON.parse(st.getItem(STORAGE_KEY)!).lessons).sort()).toEqual(['1.1', '9.9']);
+});
+it('saves a demo or an import as a visit now, so the next page does not open the roadmap again', () => {
+  S.initProgressStore(ALL_NUMS, st, 5000);
+  S.actions.loadDemo();
+  expect(JSON.parse(st.getItem(STORAGE_KEY)!).lastActiveAt).toBe(10_000);
+  S.actions.importText(serializeProgress({ ...emptyState(), lastActiveAt: 1000 }));
+  expect(JSON.parse(st.getItem(STORAGE_KEY)!).lastActiveAt).toBe(10_000);
 });

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { CatalogEntry } from '../../lib/catalog';
+import type { NavEntry } from '../../lib/catalog';
 import type { LevelDef } from '../../data/curriculum';
 import { iconOf } from '../../lib/progress';
 import { levelSummaries, menuOpenLevel } from '../../lib/roadmap';
@@ -8,7 +8,7 @@ import { useProgress } from './use-progress';
 import StatusIcon from './StatusIcon';
 
 interface Props {
-  catalog: CatalogEntry[];
+  catalog: NavEntry[];
   levels: LevelDef[];
   /** The lesson on screen; the mindmap's menu has none. */
   currentNum?: string;

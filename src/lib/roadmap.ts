@@ -1,6 +1,6 @@
 import type { LevelNo } from '../data/curriculum';
 import { LEVELS } from '../data/curriculum';
-import { sortCatalog, type CatalogEntry } from './catalog';
+import { sortCatalog, type NavEntry } from './catalog';
 import { isFlagged, statusOf, type ProgressState } from './progress';
 
 export const DAY_MS = 86_400_000;
@@ -11,9 +11,9 @@ export function shouldAutoOpen(previousActiveAt: number | null, now: number): bo
 }
 
 /** The lesson the "continue" button points to; null once every lesson is done. */
-export function resumeTarget(s: ProgressState, catalog: CatalogEntry[]): CatalogEntry | null {
+export function resumeTarget<T extends NavEntry>(s: ProgressState, catalog: T[]): T | null {
   const sorted = sortCatalog(catalog);
-  const notDone = (e: CatalogEntry) => statusOf(s, e.num) !== 'done';
+  const notDone = (e: T) => statusOf(s, e.num) !== 'done';
   const i = s.lastLessonNum === null ? -1 : sorted.findIndex(e => e.num === s.lastLessonNum);
   if (i < 0) return sorted.find(notDone) ?? null;
   if (notDone(sorted[i])) return sorted[i];
@@ -21,7 +21,7 @@ export function resumeTarget(s: ProgressState, catalog: CatalogEntry[]): Catalog
 }
 
 /** The level the course menu opens on: the lesson being read, else the lesson to continue, else level 1. */
-export function menuOpenLevel(s: ProgressState, catalog: CatalogEntry[], currentNum?: string): LevelNo {
+export function menuOpenLevel(s: ProgressState, catalog: NavEntry[], currentNum?: string): LevelNo {
   const entry = currentNum ? catalog.find(e => e.num === currentNum) : resumeTarget(s, catalog);
   return (entry?.level ?? 1) as LevelNo;
 }
@@ -34,7 +34,7 @@ export interface LevelSummary {
   state: 'done' | 'current' | 'partial' | 'todo';
 }
 
-export function levelSummaries(s: ProgressState, catalog: CatalogEntry[], currentLevel: LevelNo | null): LevelSummary[] {
+export function levelSummaries(s: ProgressState, catalog: NavEntry[], currentLevel: LevelNo | null): LevelSummary[] {
   return LEVELS.map(({ no }) => {
     const lessons = catalog.filter(e => e.level === no);
     const done = lessons.filter(e => statusOf(s, e.num) === 'done').length;
@@ -44,7 +44,7 @@ export function levelSummaries(s: ProgressState, catalog: CatalogEntry[], curren
   });
 }
 
-export function firstFlagged(s: ProgressState, catalog: CatalogEntry[]): CatalogEntry | null {
+export function firstFlagged<T extends NavEntry>(s: ProgressState, catalog: T[]): T | null {
   return sortCatalog(catalog).find(e => isFlagged(s, e.num)) ?? null;
 }
 

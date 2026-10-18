@@ -19,6 +19,7 @@ import RoadmapPopup from '../components/islands/RoadmapPopup';
 import SearchDialog from '../components/islands/SearchDialog';
 import { AREAS, LEVELS } from '../data/curriculum';
 import { loadCatalog } from '../lib/load-catalog';
+import { navEntries } from '../lib/catalog';
 import { withBase } from '../lib/paths';
 
 interface Props {
@@ -41,7 +42,7 @@ const pageTitle = title === 'SQL Server' ? title : `${title} · SQL Server`;
     <TopBar catalog={catalog} />
     <NarrowNotice />
     <slot />
-    <RoadmapPopup client:only="react" catalog={catalog} levels={LEVELS} />
+    <RoadmapPopup client:only="react" catalog={navEntries(catalog)} levels={LEVELS} />
     <SearchDialog client:only="react" catalog={catalog} areas={AREAS} levels={LEVELS} />
   </body>
 </html>

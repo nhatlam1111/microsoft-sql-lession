@@ -46,9 +46,10 @@ function commit(state: ProgressState, extra: Partial<StoreSnapshot> = {}): void 
 export function initProgressStore(nums: string[], store: StorageLike | null = safeLocalStorage(), now: number = Date.now()): void {
   if (initialized) return;
   initialized = true;
-  storage = store;
   knownNums = nums;
-  const loaded = loadProgress(storage, knownNums);
+  const loaded = loadProgress(store, knownNums);
+  // Storage that cannot be read, or holds progress that could not be backed up, is never written to.
+  storage = loaded.problem === 'unavailable' ? null : store;
   const state = touch(loaded.state, now);
   const saved = loaded.problem !== 'unavailable' && saveProgress(storage, state);
   publish({
@@ -96,7 +97,7 @@ export function handleExternalChange(newValue: string | null): void {
     publish({ state: emptyState() });
     return;
   }
-  const parsed = parseProgress(newValue, knownNums);
+  const parsed = parseProgress(newValue, knownNums, true);
   if (parsed.ok) publish({ state: parsed.state });
 }
 
@@ -107,14 +108,15 @@ export const actions = {
   markExerciseDone(id: string): void { commit(markExerciseDone(snapshot.state, id, Date.now())); },
   importText(text: string): ImportResult {
     const result = parseProgress(text, knownNums);
-    if (result.ok) commit(result.state, { previousLastLessonNum: result.state.lastLessonNum });
+    // Saved as a visit now, so the next page does not take the file's old date for a long break and reopen the roadmap.
+    if (result.ok) commit(touch(result.state, Date.now()), { previousLastLessonNum: result.state.lastLessonNum });
     return result;
   },
   exportText(): string { return serializeProgress(snapshot.state); },
   reset(): void { commit(touch(emptyState(), Date.now()), { previousLastLessonNum: null }); },
   loadDemo(): void {
     const state = demoState(Date.now());
-    commit(state, { previousActiveAt: state.lastActiveAt, previousLastLessonNum: state.lastLessonNum });
+    commit(touch(state, Date.now()), { previousActiveAt: state.lastActiveAt, previousLastLessonNum: state.lastLessonNum });
   },
 };
 

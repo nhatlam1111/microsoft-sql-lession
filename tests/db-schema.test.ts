@@ -20,3 +20,7 @@ it('places every table and draws one link per foreign key', () => {
   for (const t of tables) expect(DIAGRAM_POSITIONS[t.name], t.name).toBeDefined();
   expect(diagramLinks(tables)).toHaveLength(7);
 });
+
+it('the sample script starts with a UTF-8 BOM, so SSMS and sqlcmd read its Vietnamese text as UTF-8', () => {
+  expect([...readFileSync('database/HRM_Demo.sql').subarray(0, 3)]).toEqual([0xEF, 0xBB, 0xBF]);
+});

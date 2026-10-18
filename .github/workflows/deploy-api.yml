@@ -36,6 +36,7 @@ jobs:
         working-directory: api
         run: |
           npm ci
+          npm run typecheck
           npm run build
           npm prune --omit=dev
       - uses: azure/login@v2
@@ -47,3 +48,6 @@ jobs:
         with:
           app-name: ${{ vars.AZURE_FUNCTIONAPP_NAME }}
           package: api
+          sku: flexconsumption
+          # Leaves the TypeScript sources and local settings listed in api/.funcignore out of the upload.
+          respect-funcignore: true

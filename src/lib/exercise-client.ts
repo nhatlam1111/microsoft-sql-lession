@@ -2,6 +2,14 @@
 import type { ApiFailure, GradeResponse, RunResponse } from './exercise-types';
 
 const NETWORK: ApiFailure = { ok: false, kind: 'network' };
+const UNAVAILABLE: ApiFailure = { ok: false, kind: 'unavailable' };
+
+/** A reply the page can show: a success, or a failure that names its kind. Anything else is the service misbehaving. */
+function isReply(body: unknown): boolean {
+  if (typeof body !== 'object' || body === null) return false;
+  const b = body as { ok?: unknown; kind?: unknown };
+  return b.ok === true || (b.ok === false && typeof b.kind === 'string');
+}
 
 export function createExerciseClient(
   base: string,
@@ -23,7 +31,8 @@ export function createExerciseClient(
         body: body === undefined ? undefined : JSON.stringify(body),
         signal: controller.signal,
       });
-      return (await res.json()) as T | ApiFailure;
+      const reply: unknown = await res.json();
+      return isReply(reply) ? reply as T | ApiFailure : UNAVAILABLE;
     } catch {
       return NETWORK;
     } finally {
