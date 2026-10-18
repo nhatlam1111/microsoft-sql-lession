@@ -6,7 +6,7 @@ import { lessonSchema, SECTION_HEADINGS, BANNED_PHRASES, sectionHeadings } from 
 import { validateCatalog } from '../src/lib/catalog';
 import { findUnprefixedUnicodeStrings } from '../src/lib/tsql-lexer';
 import { EXPECTED } from './helpers/expected';
-import { readLessonFiles, readCatalog } from './helpers/lessons';
+import { readLessonFiles, readCatalog, sqlSubheadings } from './helpers/lessons';
 
 describe('lesson files', () => {
   const files = readLessonFiles();
@@ -26,6 +26,16 @@ describe('lesson files', () => {
       const { kind, noExercises } = f.data as { kind: 'full' | 'summary'; noExercises?: boolean };
       const h2 = [...f.body.matchAll(/^## (.+?)\s*$/gm)].map(m => m[1]);
       expect(h2, f.slug).toEqual(sectionHeadings(kind, noExercises));
+    }
+  });
+  it('Làm bằng SQL starts with the theory and ends with the query and its run order', () => {
+    for (const f of files) {
+      const { kind, num } = f.data as { kind: string; num: string };
+      if (kind !== 'full' || num === '6.5') continue;
+      const h3 = sqlSubheadings(f.body);
+      expect(h3[0], f.slug).toBe('Lý thuyết cơ bản');
+      expect(h3.filter(h => h.startsWith('Bước')), f.slug).toEqual([]);
+      if (f.body.includes('<RunFlow')) expect(h3.slice(-2), f.slug).toEqual(['Câu lệnh cho tình huống', 'SQL Server chạy câu này thế nào']);
     }
   });
   it('sectionHeadings drops Bài tập only when asked', () => {

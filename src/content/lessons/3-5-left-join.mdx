@@ -43,44 +43,53 @@ Cách này ra đúng kết quả. Có điều tuần sau chị Hạnh hỏi lạ
 
 ## Làm bằng SQL
 
-### Bước 1: kết hai bảng, chưa lọc gì
+### Lý thuyết cơ bản
 
-Viết câu lệnh theo từng bước và chạy thử từng bước. Đây là thói quen nên tập ngay từ đầu. Để dễ nhìn, bước này chỉ lấy đúng 5 người như trong file Excel ở trên.
+`LEFT JOIN` kết hai bảng nhưng giữ lại mọi dòng của bảng bên trái. Dòng nào dò sang bảng bên phải mà không ra thì các cột của bảng bên phải để `NULL`, giống ô `#N/A` bên Excel.
 
-<Sql code={`SELECT nv.MaNV, nv.HoTen, hd.MaHD
-FROM NhanVien AS nv
-LEFT JOIN HopDong AS hd ON hd.MaNV = nv.MaNV
-WHERE nv.MaNV IN ('NV001', 'NV002', 'NV003', 'NV047', 'NV048')
-ORDER BY nv.MaNV;`} />
+<Sql title="Cú pháp chung" code={`SELECT các cột
+FROM bảng bên trái
+LEFT JOIN bảng bên phải ON điều kiện dò;`} />
 
-<Result columns={['MaNV', 'HoTen', 'MaHD']} rows={[
-  ['NV001', 'Trần Thị Mai', 'HD2024-018'],
-  ['NV002', 'Lê Văn Hùng', 'HD2024-021'],
-  ['NV003', 'Nguyễn Thu Hà', 'HD2023-104'],
-  ['NV047', 'Phạm Ngọc Ánh', null],
-  ['NV048', 'Đỗ Minh Quân', null],
+Ví dụ thu gọn: bảng bên trái có ba nhân viên, bảng bên phải chỉ có hợp đồng của hai người.
+
+| MaNV (bảng bên trái) |
+|---|
+| NV001 |
+| NV002 |
+| NV047 |
+
+| MaNV | MaHD (bảng bên phải) |
+|---|---|
+| NV001 | HD2024-018 |
+| NV002 | HD2024-021 |
+
+`LEFT JOIN … ON hd.MaNV = nv.MaNV` ra ba dòng. NV047 vẫn còn, cột `MaHD` để trống:
+
+| MaNV | MaHD |
+|---|---|
+| NV001 | HD2024-018 |
+| NV002 | HD2024-021 |
+| NV047 | NULL |
+
+Muốn chỉ giữ những người dò không ra, bạn lọc thêm `WHERE … IS NULL`. Từng phần nghĩa là gì, đối chiếu với cách làm Excel:
+
+<LineMap rows={[
+  ['FROM NhanVien AS nv', 'Sheet nhân viên là bảng gốc, ai cũng được giữ lại. nv là tên gọi tắt cho đỡ gõ.'],
+  ['LEFT JOIN HopDong AS hd', 'Thêm cột dò sang sheet hợp đồng. LEFT nghĩa là giữ nguyên bảng bên trái, dò không ra cũng không bỏ dòng nào.'],
+  ['ON hd.MaNV = nv.MaNV', 'Dò theo mã NV, giống tham số đầu tiên của VLOOKUP.'],
+  ['WHERE hd.MaHD IS NULL', 'Chỉ giữ những dòng dò không ra, tức là các dòng #N/A. Hỏi "trống" phải dùng IS NULL, viết = NULL thì không bao giờ đúng.'],
 ]} />
 
-Ô `NULL` nền vàng chính là ô `#N/A` bên Excel: dò không ra thì để trống.
+### Câu lệnh cho tình huống
 
-### Bước 2: chỉ giữ những dòng NULL
-
-Bỏ điều kiện lọc 5 người, thay bằng điều kiện "dò không ra":
+Gộp các phần trên lại là có câu trả lời cho chị Hạnh:
 
 <Sql code={`SELECT nv.MaNV, nv.HoTen, nv.MaPB, nv.NgayVaoLam
 FROM NhanVien AS nv
 LEFT JOIN HopDong AS hd ON hd.MaNV = nv.MaNV
 WHERE hd.MaHD IS NULL   -- dò không ra hợp đồng nào
 ORDER BY nv.MaNV;`} />
-
-Đọc từng dòng, đối chiếu với cách làm Excel:
-
-<LineMap rows={[
-  ['FROM NhanVien AS nv', 'Sheet nhân viên là bảng gốc, ai cũng được giữ lại. nv là tên gọi tắt cho đỡ gõ.'],
-  ['LEFT JOIN HopDong AS hd', 'Thêm cột dò sang sheet hợp đồng. LEFT nghĩa là giữ nguyên bảng bên trái, dò không ra cũng không bỏ dòng nào.'],
-  ['ON hd.MaNV = nv.MaNV', 'Dò theo mã NV, giống tham số đầu tiên của VLOOKUP.'],
-  ['WHERE hd.MaHD IS NULL', 'Chỉ giữ những dòng dò không ra, tức là các dòng #N/A.'],
-]} />
 
 <Result columns={['MaNV', 'HoTen', 'MaPB', 'NgayVaoLam']} rows={[
   ['NV047', 'Phạm Ngọc Ánh', 'NS', '2026-10-01'],
@@ -91,7 +100,7 @@ Hai người, khớp với file Excel. Lần sau chị Hạnh hỏi, bạn mở 
 
 ### SQL Server chạy câu này thế nào
 
-Câu lệnh ở Bước 2 bắt đầu bằng `SELECT`, nhưng SQL Server không chạy theo thứ tự bạn viết. Bấm vào từng bước để xem dữ liệu lúc đó trông ra sao.
+Câu lệnh trên bắt đầu bằng `SELECT`, nhưng SQL Server không chạy theo thứ tự bạn viết. Bấm vào từng bước để xem dữ liệu lúc đó trông ra sao. Khi tự viết một câu dài, bạn cũng nên chạy thử từng phần theo đúng thứ tự này.
 
 <RunFlow query={`SELECT nv.MaNV, nv.HoTen, nv.MaPB, nv.NgayVaoLam
 FROM NhanVien AS nv

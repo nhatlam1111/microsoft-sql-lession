@@ -22,3 +22,9 @@ export function readLessonFiles(): { slug: string; data: unknown; body: string }
 export function readCatalog(): CatalogEntry[] {
   return sortCatalog(readLessonFiles().map(f => ({ slug: f.slug, ...lessonSchema.parse(f.data) })));
 }
+
+/** The level-3 headings inside the "Làm bằng SQL" section, in order. */
+export function sqlSubheadings(body: string): string[] {
+  const section = body.split(/^## /m).find(s => s.startsWith('Làm bằng SQL')) ?? '';
+  return [...section.matchAll(/^### (.+?)\s*$/gm)].map(m => m[1]);
+}
