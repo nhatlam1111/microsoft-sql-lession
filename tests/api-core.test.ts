@@ -1,0 +1,57 @@
+import { it, expect } from 'vitest';
+import { handleRun, handleGrade, type Deps, type RunOutcome } from '../api/src/core';
+import { createLimiter } from '../api/src/limiter';
+import type { RunResponse } from '../src/lib/exercise-types';
+import type { Exercise } from '../src/lib/exercise-types';
+
+const base = { title: 't', summary: 's', prompt: 'p', columns: ['a'], ordered: false };
+const exercises: Record<string, Exercise> = {
+  q1: { ...base, id: 'q1', kind: 'query', answer: 'SELECT 1 AS a' },
+  c1: { ...base, id: 'c1', kind: 'change', answer: 'DELETE FROM T WHERE x = 1', check: 'SELECT a FROM T ORDER BY a' },
+};
+const outcome = (o: Partial<RunOutcome & { rowCount: number }> = {}): RunOutcome => {
+  const rows = Array.from({ length: o.rowCount ?? 1 }, (_, i) => [String(i)]);
+  return {
+    shape: { columns: [{ name: 'a', type: 'varchar' }], rows },
+    affected: o.affected ?? [rows.length], check: o.check ?? null,
+    error: o.error ?? null, errorKind: o.errorKind ?? null, ms: 5,
+  };
+};
+const depsReturning = (o: Partial<RunOutcome & { rowCount: number }> = {}): Deps => ({
+  codes: ['abc'], exercises, allow: () => true, run: async () => outcome(o),
+});
+const deps = depsReturning();
+
+it('refuses a missing body, a wrong code, an unknown exercise and a blocked statement', async () => {
+  expect((await handleRun(null, 'abc', deps)).status).toBe(400);
+  expect((await handleRun({ exercise: 'q1', sql: 'SELECT 1' }, 'nope', deps)).body).toEqual({ ok: false, kind: 'bad-code' });
+  expect((await handleRun({ exercise: 'zz', sql: 'SELECT 1' }, 'abc', deps)).status).toBe(404);
+  expect((await handleRun({ exercise: 'q1', sql: 'DROP TABLE NhanVien' }, 'abc', deps)).body)
+    .toEqual({ ok: false, kind: 'blocked', reason: 'Bài tập chỉ nhận câu bắt đầu bằng SELECT, WITH, INSERT, UPDATE hoặc DELETE.' });
+});
+
+it('caps shown rows at 200 and reports several statements as one error', async () => {
+  const big = await handleRun({ exercise: 'q1', sql: 'SELECT 1' }, 'abc', depsReturning({ rowCount: 250 }));
+  expect([big.status, (big.body as RunResponse).rows.length, (big.body as RunResponse).truncated]).toEqual([200, 200, true]);
+  expect((await handleRun({ exercise: 'q1', sql: 'SELECT 1' }, 'abc', depsReturning({ affected: [2, 3] }))).body).toEqual({ ok: false, kind: 'multi' });
+});
+
+it('maps a timeout and a paused database to their own errors', async () => {
+  expect((await handleRun({ exercise: 'q1', sql: 'SELECT 1' }, 'abc', depsReturning({ errorKind: 'timeout' }))).status).toBe(408);
+  expect((await handleRun({ exercise: 'q1', sql: 'SELECT 1' }, 'abc', depsReturning({ errorKind: 'quota' }))).body).toEqual({ ok: false, kind: 'quota' });
+});
+
+it('grades with the answer, and says a SQL error is not correct', async () => {
+  expect((await handleGrade({ exercise: 'q1', sql: 'SELECT 1' }, 'abc', deps)).body).toMatchObject({ ok: true, correct: true, reason: null });
+  expect((await handleGrade({ exercise: 'q1', sql: 'SELECT 1' }, 'abc', depsReturning({ error: "Invalid column name 'X'." }))).body)
+    .toMatchObject({ correct: false, reason: 'câu lệnh bị lỗi, xem tab Messages', error: "Invalid column name 'X'." });
+});
+
+it('lets 30 calls a minute through per code', () => {
+  let t = 0;
+  const allow = createLimiter(30, 60_000, () => t);
+  expect(Array.from({ length: 31 }, () => allow('a')).filter(Boolean).length).toBe(30);
+  expect(allow('b')).toBe(true);
+  t = 60_001;
+  expect(allow('a')).toBe(true);
+});

@@ -1,0 +1,22 @@
+{
+  "name": "sql-lession-api",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "description": "Runs course exercises against HRM_Demo in a rolled-back transaction",
+  "scripts": {
+    "build": "node build.mjs",
+    "dev": "node dist/dev-server.js",
+    "check:exercises": "node dist/check-exercises.js",
+    "check:data": "node dist/check-data.js"
+  },
+  "dependencies": {
+    "@azure/functions": "^4.16.5",
+    "mssql": "^12.7.9"
+  },
+  "devDependencies": {
+    "dotenv": "^18.0.8",
+    "esbuild": "^0.28.2",
+    "yaml": "^2.9.1"
+  }
+}

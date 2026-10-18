@@ -1,7 +1,7 @@
 {
   "extends": "astro/tsconfigs/strict",
   "include": [".astro/types.d.ts", "**/*"],
-  "exclude": ["dist", "mcp-azure-sql"],
+  "exclude": ["dist", "mcp-azure-sql", "api"],
   "compilerOptions": {
     "jsx": "react-jsx",
     "jsxImportSource": "react"
