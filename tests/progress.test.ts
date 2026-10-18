@@ -55,3 +55,13 @@ it('the demo state matches the mockup', () => {
 it('names the export file by local date', () => {
   expect(P.exportFileName(NOW)).toBe('tien-do-sql-server-2026-10-17.json');
 });
+
+it('remembers solved exercises and still imports files without them', () => {
+  const s = P.markExerciseDone(P.emptyState(), '3-5-1', 1000);
+  expect(P.isExerciseDone(s, '3-5-1')).toBe(true);
+  expect(P.isExerciseDone(s, '3-5-2')).toBe(false);
+  const back = P.parseProgress(P.serializeProgress(s), ALL_NUMS);
+  expect(back.ok && P.isExerciseDone(back.state, '3-5-1')).toBe(true);
+  expect(P.parseProgress(P.serializeProgress(P.emptyState()), ALL_NUMS).ok).toBe(true);
+  expect(P.parseProgress(JSON.stringify({ ...P.emptyState(), exercises: 5 }), ALL_NUMS)).toEqual({ ok: false, error: P.IMPORT_ERRORS.badShape });
+});

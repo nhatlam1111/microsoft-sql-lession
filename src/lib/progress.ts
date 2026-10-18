@@ -8,6 +8,8 @@ export interface ProgressState {
   lessons: Record<string, LessonProgress>;
   lastLessonNum: string | null;
   lastActiveAt: number | null;
+  /** Exercises solved on the exercise page, by exercise id; older progress files have none. */
+  exercises?: Record<string, { doneAt: number }>;
 }
 
 export const STORAGE_KEY = 'sqlserver-course:progress:v1';
@@ -58,6 +60,15 @@ export function toggleFlag(s: ProgressState, num: string, now: number): Progress
   return withLesson(s, num, { ...current, flagged: !current.flagged });
 }
 
+export function markExerciseDone(s: ProgressState, id: string, now: number): ProgressState {
+  if (s.exercises?.[id]) return s;
+  return { ...s, exercises: { ...s.exercises, [id]: { doneAt: now } } };
+}
+
+export function isExerciseDone(s: ProgressState, id: string): boolean {
+  return Boolean(s.exercises?.[id]);
+}
+
 export function touch(s: ProgressState, now: number): ProgressState {
   return { ...s, lastActiveAt: now };
 }
@@ -95,6 +106,15 @@ export function parseProgress(text: string, knownNums: string[]): ImportResult {
   const active = raw.lastActiveAt ?? null;
   if (last !== null && typeof last !== 'string') return bad;
   if (active !== null && !isNum(active)) return bad;
+  let exercises: Record<string, { doneAt: number }> | undefined;
+  if (raw.exercises !== undefined) {
+    if (!isObject(raw.exercises)) return bad;
+    exercises = {};
+    for (const [id, value] of Object.entries(raw.exercises)) {
+      if (!isObject(value) || !isNum(value.doneAt)) return bad;
+      exercises[id] = { doneAt: value.doneAt };
+    }
+  }
 
   const known = new Set(knownNums);
   const lessons: Record<string, LessonProgress> = {};
@@ -106,7 +126,7 @@ export function parseProgress(text: string, knownNums: string[]): ImportResult {
   }
   return {
     ok: true,
-    state: { version: 1, lessons, lastLessonNum: last !== null && known.has(last) ? last : null, lastActiveAt: active },
+    state: { version: 1, lessons, lastLessonNum: last !== null && known.has(last) ? last : null, lastActiveAt: active, ...(exercises ? { exercises } : {}) },
     ignored,
   };
 }

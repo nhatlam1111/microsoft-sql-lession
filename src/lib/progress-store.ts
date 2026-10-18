@@ -1,7 +1,7 @@
 // One progress store per page, shared by every island through this module.
 import {
   demoState, emptyState, parseProgress, serializeProgress, STORAGE_KEY, touch,
-  markSeen, toggleDone, toggleFlag, type ImportResult, type ProgressState,
+  markSeen, toggleDone, toggleFlag, markExerciseDone, type ImportResult, type ProgressState,
 } from './progress';
 import { loadProgress, saveProgress, type LoadProblem, type StorageLike } from './progress-storage';
 
@@ -104,6 +104,7 @@ export const actions = {
   markSeen(num: string): void { commit(markSeen(snapshot.state, num, Date.now())); },
   toggleDone(num: string): void { commit(toggleDone(snapshot.state, num, Date.now())); },
   toggleFlag(num: string): void { commit(toggleFlag(snapshot.state, num, Date.now())); },
+  markExerciseDone(id: string): void { commit(markExerciseDone(snapshot.state, id, Date.now())); },
   importText(text: string): ImportResult {
     const result = parseProgress(text, knownNums);
     if (result.ok) commit(result.state, { previousLastLessonNum: result.state.lastLessonNum });

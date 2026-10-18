@@ -65,3 +65,8 @@ it('flags storage as unavailable when the first save fails', () => {
   S.initProgressStore(ALL_NUMS, readOnly, 5000);
   expect(S.getSnapshot().problem).toBe('unavailable');
 });
+it('saves a solved exercise', () => {
+  S.initProgressStore(ALL_NUMS, st, 5000);
+  S.actions.markExerciseDone('3-5-1');
+  expect(JSON.parse(st.getItem(STORAGE_KEY)!).exercises['3-5-1'].doneAt).toBe(10_000);
+});
