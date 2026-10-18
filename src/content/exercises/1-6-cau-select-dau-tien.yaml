@@ -1,0 +1,37 @@
+lesson: 1-6-cau-select-dau-tien
+exercises:
+  - id: 1-6-1
+    title: Danh mục chức danh
+    summary: Xem đầy đủ danh mục chức danh.
+    prompt: >-
+      Chị Hạnh cần danh mục chức danh đầy đủ để làm mẫu quyết định bổ nhiệm.
+      Lấy mọi chức danh, đủ mọi cột của danh mục. Thứ tự dòng không quan trọng.
+    columns: [MaCD, TenCD]
+    ordered: false
+    kind: query
+    answer: |
+      SELECT * FROM ChucDanh;
+  - id: 1-6-2
+    title: Toàn bộ hợp đồng
+    summary: Xem mọi hợp đồng, kể cả các ô ngày kết thúc để trống.
+    prompt: >-
+      Kế toán hỏi danh sách tất cả hợp đồng lao động đang lưu trên hệ thống, đủ mọi cột:
+      mã hợp đồng, người ký, loại hợp đồng, ngày bắt đầu, ngày kết thúc và lương cơ bản,
+      kể cả những ô đang để trống. Thứ tự dòng không quan trọng.
+    columns: [MaHD, MaNV, LoaiHD, NgayBatDau, NgayKetThuc, LuongCoBan]
+    ordered: false
+    kind: query
+    answer: |
+      SELECT * FROM HopDong;
+  - id: 1-6-3
+    title: Toàn bộ đơn nghỉ phép
+    summary: Xem mọi đơn nghỉ phép, có ngày nghỉ và số ngày.
+    prompt: >-
+      Trước khi chốt công tháng, chị Hạnh muốn xem toàn bộ đơn nghỉ phép đang lưu,
+      đủ mọi cột: mã đơn, người nghỉ, loại nghỉ, từ ngày, đến ngày, số ngày và trạng thái duyệt.
+      Thứ tự dòng không quan trọng.
+    columns: [MaDon, MaNV, LoaiNghi, TuNgay, DenNgay, SoNgay, TrangThai]
+    ordered: false
+    kind: query
+    answer: |
+      SELECT * FROM DonNghiPhep;
