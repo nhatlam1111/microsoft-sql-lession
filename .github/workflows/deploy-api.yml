@@ -1,0 +1,49 @@
+name: Deploy the exercise API
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'api/**'
+      - 'src/lib/sql-guard.ts'
+      - 'src/lib/grade.ts'
+      - 'src/lib/exercise-types.ts'
+      - 'src/content/exercises/**'
+      - '.github/workflows/deploy-api.yml'
+  workflow_dispatch:
+
+# OIDC: GitHub hands Azure a short-lived token; no publish profile or password is stored.
+permissions:
+  id-token: write
+  contents: read
+
+concurrency:
+  group: exercise-api
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - name: Build the API
+        working-directory: api
+        run: |
+          npm ci
+          npm run build
+          npm prune --omit=dev
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - uses: Azure/functions-action@v1
+        with:
+          app-name: ${{ vars.AZURE_FUNCTIONAPP_NAME }}
+          package: api
