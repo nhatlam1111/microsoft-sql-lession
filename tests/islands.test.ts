@@ -3,7 +3,7 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { readFileSync } from 'node:fs';
 import LessonDrawer from '../src/components/islands/LessonDrawer';
-import { DbDiagramDialog } from '../src/components/islands/DbDiagram';
+import { DbDiagram, DbDiagramDialog } from '../src/components/islands/DbDiagram';
 import { parseSchema } from '../src/lib/db-schema';
 import SidebarNav from '../src/components/islands/SidebarNav';
 import { LEVELS } from '../src/data/curriculum';
@@ -46,4 +46,12 @@ it('the course menu works without a current lesson', () => {
 it('the diagram popup keeps the data set name HRM_Demo', () => {
   const tables = parseSchema(readFileSync('database/HRM_Demo.sql', 'utf8'));
   expect(renderToStaticMarkup(createElement(DbDiagramDialog, { tables, open: true, onClose: () => {} }))).toContain('Sơ đồ HRM_Demo');
+});
+
+it('draws the diagram on its own, outside the popup', () => {
+  const tables = parseSchema(readFileSync('database/HRM_Demo.sql', 'utf8'));
+  const html = renderToStaticMarkup(createElement(DbDiagram, { tables }));
+  expect(html.match(/class="er-box"/g)).toHaveLength(7);
+  for (const s of ['NhanVien', 'PK', 'FK']) expect(html).toContain(s);
+  expect(html).not.toContain('role="dialog"');
 });

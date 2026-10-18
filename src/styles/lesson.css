@@ -220,3 +220,10 @@
 .rf-nav { padding: 8px 14px; border: 1px solid var(--rule); border-radius: var(--radius-m); background: #FFF; font: inherit; font-size: 14px; font-weight: 600; color: var(--ink); cursor: pointer; }
 .rf-nav:hover:not(:disabled) { border-color: var(--rule-strong); }
 .rf-nav:disabled { opacity: 0.4; cursor: default; }
+
+/* The HRM_Demo diagram drawn inside a lesson (lesson 1.5); the drawing itself is styled with the popup in islands.css. */
+.erd { margin: 20px 0 24px; }
+.erd-scroll { overflow-x: auto; padding: 12px; border: 1px solid #CDD5E3; border-radius: var(--radius-s); background: #FFF; }
+.erd-scroll:focus-visible { outline: 2px solid var(--accent); outline-offset: -3px; }
+.erd figcaption { margin-top: 8px; font-size: 13px; color: var(--ink-3); }
+

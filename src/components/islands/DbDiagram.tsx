@@ -25,7 +25,6 @@ export function DbDiagramDialog({ tables, open, onClose }: Props) {
   }, [open]);
 
   if (!open) return null;
-  const links = diagramLinks(tables);
 
   const keepTabInside = (e: ReactKeyboardEvent<HTMLDivElement>) => {
     if (e.key !== 'Tab') return;
@@ -44,36 +43,44 @@ export function DbDiagramDialog({ tables, open, onClose }: Props) {
           <button type="button" className="dbd-close" aria-label="Đóng" onClick={onClose}>×</button>
         </div>
         <div className="dbd-scroll" tabIndex={0} role="group" aria-label="Sơ đồ các bảng, dùng phím mũi tên để cuộn">
-          <div className="er" style={{ width: DIAGRAM_SIZE.width, height: DIAGRAM_SIZE.height }}>
-            <svg width={DIAGRAM_SIZE.width} height={DIAGRAM_SIZE.height} aria-hidden="true">
-              {links.map((l, i) => (
-                <g key={i}>
-                  <path d={l.d} className="er-link" />
-                  {l.dot && <circle cx={l.dot.x} cy={l.dot.y} r={3} className="er-dot" />}
-                </g>
-              ))}
-            </svg>
-            {tables.map(t => {
-              const at = DIAGRAM_POSITIONS[t.name];
-              if (!at) return null;
-              const fks = new Set(t.foreignKeys.map(f => f.column));
-              return (
-                <div key={t.name} className="er-box" style={{ left: at.x, top: at.y, width: BOX.width }}>
-                  <div className="er-head" style={{ height: BOX.head }}>{t.name}</div>
-                  {t.columns.map(c => (
-                    <div key={c.name} className="er-row" style={{ height: BOX.row }}>
-                      <span className="er-col">{c.name}</span>
-                      {t.primaryKey.includes(c.name) && <span className="er-key is-pk">PK</span>}
-                      {fks.has(c.name) && <span className="er-key is-fk">FK</span>}
-                      <span className="er-type">{c.type}</span>
-                    </div>
-                  ))}
-                </div>
-              );
-            })}
-          </div>
+          <DbDiagram tables={tables} />
         </div>
       </div>
+    </div>
+  );
+}
+
+/** The diagram itself: every table with its columns, keys and links. Used in the popup and, rendered without JavaScript, in lesson 1.5. */
+export function DbDiagram({ tables }: { tables: DbTable[] }) {
+  const links = diagramLinks(tables);
+  return (
+    <div className="er" style={{ width: DIAGRAM_SIZE.width, height: DIAGRAM_SIZE.height }}>
+      <svg width={DIAGRAM_SIZE.width} height={DIAGRAM_SIZE.height} aria-hidden="true">
+        {links.map((l, i) => (
+          <g key={i}>
+            <path d={l.d} className="er-link" />
+            {l.dot && <circle cx={l.dot.x} cy={l.dot.y} r={3} className="er-dot" />}
+          </g>
+        ))}
+      </svg>
+      {tables.map(t => {
+        const at = DIAGRAM_POSITIONS[t.name];
+        if (!at) return null;
+        const fks = new Set(t.foreignKeys.map(f => f.column));
+        return (
+          <div key={t.name} className="er-box" style={{ left: at.x, top: at.y, width: BOX.width }}>
+            <div className="er-head" style={{ height: BOX.head }}>{t.name}</div>
+            {t.columns.map(c => (
+              <div key={c.name} className="er-row" style={{ height: BOX.row }}>
+                <span className="er-col">{c.name}</span>
+                {t.primaryKey.includes(c.name) && <span className="er-key is-pk">PK</span>}
+                {fks.has(c.name) && <span className="er-key is-fk">FK</span>}
+                <span className="er-type">{c.type}</span>
+              </div>
+            ))}
+          </div>
+        );
+      })}
     </div>
   );
 }
