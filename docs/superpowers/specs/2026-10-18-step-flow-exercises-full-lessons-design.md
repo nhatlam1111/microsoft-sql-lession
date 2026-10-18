@@ -1,7 +1,7 @@
 # Thiết kế đợt 2: sơ đồ thứ tự chạy, bài tập chạy trên web, bài đầy đủ
 
 - Ngày: 2026-10-18
-- Trạng thái: chờ duyệt
+- Trạng thái: đã duyệt ngày 2026-10-18
 - Nối tiếp: [spec đợt 1](2026-10-17-sql-server-course-site-design.md) (mọi quy định ở đó vẫn giữ, trừ chỗ spec này ghi khác)
 - Web: https://nhatlam1111.github.io/microsoft-sql-lession/
 
@@ -58,7 +58,7 @@ Một buổi học, theo lời người làm khóa học:
 - Nơi chạy API dự kiến là Azure Functions (Node.js) trong cùng subscription; chốt trong spec B sau bản chạy thử.
 - Đã kiểm ngày 2026-10-18: database đang dùng gói miễn phí, loại serverless 2 vCore.
 - Nội dung bài vẫn được kiểm qua MCP `azure-sql` ở chế độ chỉ đọc như spec đợt 1. Hiện MCP đăng nhập bằng tài khoản quản trị (`db_owner`) và `.env` đang để `MCP_ALLOW_WRITE=true`; đổi về `false`. API của phần B không được dùng tài khoản quản trị này.
-- Bản chạy thử và API sẽ chạy câu sửa dữ liệu trong transaction rồi `ROLLBACK` trên `sql-lession`. Spec đợt 1 ghi người dựng không ghi gì vào `sql-lession`, nên việc này cần người làm khóa học cho phép (mục 8).
+- Bản chạy thử và API được chạy câu sửa dữ liệu trong transaction rồi `ROLLBACK` trên `sql-lession` (người làm khóa học đã cho phép ngày 2026-10-18, mục 8). Ngoài cách đó, người dựng vẫn không ghi gì vào `sql-lession`.
 - Máy có Node.js; không có `gh` CLI, không có SQL Server cài sẵn.
 
 ## 4. A. Sơ đồ thứ tự chạy
@@ -184,7 +184,7 @@ Theo ảnh tham khảo người làm khóa học gửi ("Simple 8-Step Workflow"
 
 ## 8. Câu hỏi cần bạn trả lời
 
-1. Bạn có cho phép bản chạy thử (và sau này là API) chạy câu sửa dữ liệu trong transaction rồi `ROLLBACK` trên `sql-lession` không? Spec đợt 1 ghi người dựng không ghi gì vào `sql-lession`. Nếu không cho, bản chạy thử chỉ thử câu `SELECT`, và bài tập sửa dữ liệu phải chờ một database riêng.
+1. Bạn có cho phép bản chạy thử (và sau này là API) chạy câu sửa dữ liệu trong transaction rồi `ROLLBACK` trên `sql-lession` không? **Trả lời (2026-10-18): cho phép.**
 
 ## 9. Để người dựng tự quyết
 
@@ -197,5 +197,5 @@ Theo ảnh tham khảo người làm khóa học gửi ("Simple 8-Step Workflow"
 ## 10. Việc bạn cần tự làm
 
 - Đổi `MCP_ALLOW_WRITE` về `false` trong `.env`, hoặc bảo người dựng đổi.
-- Trả lời câu hỏi ở mục 8.
+- ~~Trả lời câu hỏi ở mục 8.~~ Đã trả lời.
 - Sau bản chạy thử, theo spec B: tạo Function App, tạo tài khoản SQL cho API theo script người dựng đưa, đặt mã truy cập.
