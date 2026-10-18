@@ -1,4 +1,6 @@
-src
-tsconfig.json
-build.mjs
-local.settings.json
+# Rules use gitignore syntax. Keep the leading "/": a bare "src" also matches node_modules/debug/src
+# and other packages' code, and the API then fails to load on Azure.
+/src
+/tsconfig.json
+/build.mjs
+/local.settings.json

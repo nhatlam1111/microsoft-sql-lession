@@ -141,7 +141,7 @@ Theo bản chạy thử, có sửa các chỗ thiếu đã ghi trong file kết 
 - Workflow GitHub Actions riêng cho API (`.github/workflows/deploy-api.yml`), chạy khi push vào `main` có thay đổi trong `api/`, `src/content/exercises/` hoặc phần logic dùng chung.
 - Đăng nhập Azure bằng OIDC (`azure/login`), không dùng publish profile, theo khuyến nghị của Microsoft cho Flex Consumption. GitHub cần ba secret `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_SUBSCRIPTION_ID`; identity chỉ có quyền deploy vào đúng Function App này.
 - Web cần biết địa chỉ API: đặt trong biến của repo `PUBLIC_EXERCISE_API`, workflow build web đọc biến này.
-- Các bước của workflow API: `npm ci`, `npm test` (của web), rồi trong `api/`: `npm ci`, `npm run typecheck` (`tsc`), `npm run build`, `npm prune --omit=dev`; đăng nhập Azure; `Azure/functions-action@v1` với `package: api`, `sku: flexconsumption`, `respect-funcignore: true` (bỏ mã TypeScript và `local.settings.json` khỏi gói tải lên).
+- Các bước của workflow API: `npm ci`, `npm test` (của web), rồi trong `api/`: `npm ci`, `npm run typecheck` (`tsc`), `npm run build`, `npm prune --omit=dev`; đăng nhập Azure; `Azure/functions-action@v1` với `package: api`, `sku: flexconsumption`, `respect-funcignore: true` (bỏ mã TypeScript và `local.settings.json` khỏi gói tải lên). Action đọc `api/.funcignore` theo luật của `.gitignore`, nên mọi dòng phải bắt đầu bằng `/`: một dòng `src` trần cũng xóa thư mục `src` của các package trong `node_modules` (`debug`, `js-md4`…), API không nạp được và mọi đầu gọi trả 404. Test kiểm điều này.
 - Federated credential phải khớp đúng chuỗi subject GitHub gửi. Repo này gửi dạng có ID: `repo:nhatlam1111@25176629/microsoft-sql-lession@1423314136:ref:refs/heads/main`; dạng `repo:nhatlam1111/microsoft-sql-lession:ref:refs/heads/main` bị Azure từ chối (lỗi AADSTS700213).
 - Push chỉ đổi file ngoài bộ lọc đường dẫn thì workflow API không chạy; cần deploy lại thì bấm "Run workflow" trên GitHub.
 
@@ -210,4 +210,4 @@ Tham khảo khi viết spec: [Deploy Azure Functions bằng GitHub Actions](http
   - câu trả lời không đúng dạng từ API được báo như không gọi được API (mục 3.5);
   - Tab với nhiều dòng được chọn, Ctrl+Z hoàn tác được (mục 3.2);
   - popup sơ đồ giữ Tab bên trong và không giật focus khi trang vẽ lại (mục 3.3);
-  - CI kiểm kiểu cho `api/`; `sku` và `respect-funcignore` trong workflow; `api/local.settings.json` nằm trong `.gitignore` (mục 6).
+  - CI kiểm kiểu cho `api/`; `sku` và `respect-funcignore` trong workflow; `api/local.settings.json` nằm trong `.gitignore` (mục 6). Lần deploy đầu với `respect-funcignore` làm API trả 404 vì `.funcignore` có dòng `src` trần; đã sửa bằng cách thêm `/` ở đầu mỗi dòng.

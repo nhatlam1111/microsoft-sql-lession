@@ -1,4 +1,5 @@
 import { it, expect, vi } from 'vitest';
+import { readFileSync } from 'node:fs';
 import { handleRun, handleGrade, handlePing, type Deps, type RunOutcome } from '../api/src/core';
 import { createLimiter } from '../api/src/limiter';
 import { shapeOf } from '../api/src/shape';
@@ -77,4 +78,11 @@ it('reads a FOR JSON result, which the driver hands back as one object row', () 
   const id = 'JSON_F52E2B61-18A1-11d1-B105-00805F49916B';
   const set = Object.assign([{ 0: '[{"MaNV":"NV001"}]' }], { columns: [{ name: id, type: { declaration: 'nvarchar' } }] });
   expect(shapeOf(set)).toEqual({ columns: [{ name: id, type: 'nvarchar', scale: undefined }], rows: [['[{"MaNV":"NV001"}]']] });
+});
+
+it('api/.funcignore anchors every rule to api/, so packages in node_modules keep their own src folders', () => {
+  // The deploy action reads it with gitignore rules: a bare "src" also strips node_modules/debug/src and the API cannot load.
+  const rules = readFileSync('api/.funcignore', 'utf8').split(/\r?\n/).map(l => l.trim()).filter(l => l && !l.startsWith('#'));
+  expect(rules.length).toBeGreaterThan(0);
+  expect(rules.filter(r => !r.startsWith('/'))).toEqual([]);
 });

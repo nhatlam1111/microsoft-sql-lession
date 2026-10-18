@@ -501,8 +501,9 @@ Task 1 và 2 độc lập; Task 3 dùng kiểu `Cell` của Task 2; Task 4 cần
 
 - Node.js 24 thay cho 22 cho Function App (người làm khóa học chọn, vì 22 chỉ được hỗ trợ đến 04/2027). Runner của GitHub Actions vẫn build bằng Node 22; API đóng gói bằng esbuild nên không phụ thuộc bản Node lúc build.
 - `ping` cũng cần mã truy cập (sau rà soát cuối); trang chỉ gửi `ping` khi đã có mã.
-- Bộ chặn tách chữ số dính chữ (`1=1COMMIT`), chuẩn hóa xuống dòng `` trước khi đọc, chặn `SET` thừa; mỗi lần chạy đặt `SET ROWCOUNT 5001` và kiểm `@@TRANCOUNT` sau câu của học viên (sau rà soát cuối).
+- Bộ chặn tách chữ số dính chữ (`1=1COMMIT`), chuẩn hóa xuống dòng `
+` trước khi đọc, chặn `SET` thừa; mỗi lần chạy đặt `SET ROWCOUNT 5001` và kiểm `@@TRANCOUNT` sau câu của học viên (sau rà soát cuối).
 - Test của mục "Bài tập" trong bài học chuyển thành bước kiểm `missingExerciseLinks` trong `check:dist`, vì test cũ cần `.astro/data-store.json` chỉ có khi đã chạy dev server.
 - Federated credential dùng subject dạng có ID (xem Task 10 Step 6).
-- Sửa các lỗi nhỏ để lại sau rà soát cuối: timeout 504; `money` 4 chữ số thập phân; `FOR JSON`/`FOR XML` đọc được (hàm `shapeOf` tách ra `api/src/shape.ts` để test); câu trả lời không đúng dạng báo như không gọi được API; Tab với nhiều dòng (`indentEdit` trong `src/lib/editor-keys.ts`, Ctrl+Z hoàn tác được); popup sơ đồ giữ Tab bên trong (`src/lib/focus-trap.ts`); `npm run typecheck` cho `api/`; `sku`, `respect-funcignore` trong workflow; `api/local.settings.json` trong `.gitignore`.
+- Sửa các lỗi nhỏ để lại sau rà soát cuối: timeout 504; `money` 4 chữ số thập phân; `FOR JSON`/`FOR XML` đọc được (hàm `shapeOf` tách ra `api/src/shape.ts` để test); câu trả lời không đúng dạng báo như không gọi được API; Tab với nhiều dòng (`indentEdit` trong `src/lib/editor-keys.ts`, Ctrl+Z hoàn tác được); popup sơ đồ giữ Tab bên trong (`src/lib/focus-trap.ts`); `npm run typecheck` cho `api/`; `sku`, `respect-funcignore` trong workflow (mọi dòng của `api/.funcignore` bắt đầu bằng `/`, xem spec B mục 6); `api/local.settings.json` trong `.gitignore`.
 
