@@ -25,6 +25,7 @@ const views = steps.map((step, i) => {
   return {
     step,
     num: String(i + 1).padStart(2, '0'),
+    label: `Bước ${String(i + 1).padStart(2, '0')}, ${step.clause}: ${step.title} Còn ${rowCount(step)} dòng.`,
     cell: cells[i],
     preview: previewOf(step),
     count: rowCount(step),
@@ -42,7 +43,7 @@ const views = steps.map((step, i) => {
   <ol class="rf-grid">
     {views.map((v, i) => (
       <li class="rf-cell" data-arrow={v.cell.arrow ?? undefined} style={`grid-row: ${v.cell.row + 1}; grid-column: ${v.cell.col + 1};`}>
-        <button type="button" class="rf-card" data-step={i} aria-expanded="false" aria-controls={drawerId}>
+        <button type="button" class="rf-card" aria-label={v.label} data-step={i} aria-expanded="false" aria-controls={drawerId}>
           <span class="rf-top">
             <span class="rf-num">{v.num}</span>
             <span class="rf-clause">{v.clause.map(t => (t.kind === 'plain' ? t.text : <span class={`t-${t.kind}`}>{t.text}</span>))}</span>
@@ -52,10 +53,10 @@ const views = steps.map((step, i) => {
           {v.preview.rows.length === 0
             ? <span class="rf-empty">Không còn dòng nào</span>
             : (
-              <table class="rf-mini">
-                <thead><tr>{v.preview.columns.map(c => <th>{c}</th>)}</tr></thead>
-                <tbody>{v.preview.rows.map(r => <tr>{r.map(c => (c === null ? <td class="res-null">NULL</td> : <td>{c}</td>))}</tr>)}</tbody>
-              </table>
+              <span class="rf-mini" aria-hidden="true" style={`--cols: ${v.preview.columns.length};`}>
+                {v.preview.columns.map(c => <span class="rf-mini-h">{c}</span>)}
+                {v.preview.rows.map(r => r.map(c => (c === null ? <span class="res-null">NULL</span> : <span>{c}</span>)))}
+              </span>
             )}
           {(v.preview.moreRows > 0 || v.preview.moreCols > 0) && (
             <span class="rf-more">

@@ -92,6 +92,10 @@ describe('fixes from the final review', () => {
     expect(b).not.toContain('là bước cuối cùng');
     expect(b).not.toContain('ở dòng thứ hai');
   });
+  it('3.5 run-order text says "kết bảng" for JOIN, like the rest of the course', () => {
+    expect(body('3-5-left-join')).not.toMatch(/ghép/i);
+    expect(body('3-5-left-join')).toContain("title: 'Kết bảng nhân viên với bảng hợp đồng");
+  });
   it('3.5 shows the run order of its final query', () => {
     expect(body('3-5-left-join')).toContain('### SQL Server chạy câu này thế nào');
     expect(body('3-5-left-join')).toContain('<RunFlow');

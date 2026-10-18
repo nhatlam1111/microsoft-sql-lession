@@ -50,3 +50,10 @@ it('moves a step with a bare arrow key on the drawer or a card, and leaves every
   expect(arrowMove(key('ArrowRight', { ctrlKey: true }), true)).toBe(0);
   expect(arrowMove(key('ArrowRight'), false)).toBe(0);
 });
+it('an empty step previews no columns either', () => {
+  expect(previewOf({ ...sampleFlow()[0], rows: [], total: 0 })).toMatchObject({ rows: [], moreRows: 0, moreCols: 0 });
+});
+it('an empty step must say its total is 0', () => {
+  const f = sampleFlow();
+  expect(checkFlow([f[0], { ...f[1], rows: [] }], sampleQuery())[0]).toMatch(/^bước 2: .*total/);
+});

@@ -64,6 +64,7 @@ export function checkFlow(steps: FlowStep[], query: string): string[] {
       if (row.length !== step.columns.length) problems.push(`${at} dòng ${r + 1} có ${row.length} ô, cần ${step.columns.length}`);
     });
     if (step.total !== undefined && step.total < step.rows.length) problems.push(`${at} total nhỏ hơn số dòng đã ghi`);
+    if (step.rows.length === 0 && rowCount(step) !== 0) problems.push(`${at} không ghi dòng nào thì total phải là 0`);
     if (step.rows.length > MAX_ROWS) problems.push(`${at} ghi tối đa ${MAX_ROWS} dòng, phần còn lại dùng total`);
     previous = step;
   });
@@ -90,7 +91,9 @@ export interface Preview { columns: string[]; rows: FlowCell[][]; moreRows: numb
 export function previewOf(step: FlowStep, maxRows = 3, maxCols = 3): Preview {
   const columns = step.columns.slice(0, maxCols);
   const rows = step.rows.slice(0, maxRows).map(r => r.slice(0, maxCols));
-  return { columns, rows, moreRows: rowCount(step) - rows.length, moreCols: step.columns.length - columns.length };
+  // With no rows the card shows no table, so there are no hidden columns to count either.
+  const moreCols = rows.length === 0 ? 0 : step.columns.length - columns.length;
+  return { columns, rows, moreRows: rowCount(step) - rows.length, moreCols };
 }
 
 /** The query cut around the whole lines that hold `focus`; null when `focus` is not in the query. */

@@ -124,9 +124,9 @@ FROM NhanVien AS nv;`,
   },
   {
     clause: 'LEFT JOIN',
-    title: 'Ghép mỗi nhân viên với hợp đồng của họ; ai không có thì để NULL.',
+    title: 'Kết bảng nhân viên với bảng hợp đồng; ai chưa có hợp đồng thì để NULL.',
     focus: 'LEFT JOIN HopDong AS hd ON hd.MaNV = nv.MaNV',
-    meaning: '`LEFT JOIN` ghép mỗi dòng của bảng bên trái với các dòng khớp ở bảng bên phải, theo điều kiện viết sau `ON`. Dòng bên trái không khớp với dòng nào vẫn được giữ lại, các cột của bảng bên phải để `NULL`.',
+    meaning: '`LEFT JOIN` kết bảng bên trái với bảng bên phải: mỗi dòng bên trái đi cùng các dòng khớp với nó ở bảng bên phải, theo điều kiện viết sau `ON`. Dòng bên trái không khớp với dòng nào vẫn được giữ lại, các cột của bảng bên phải để `NULL`.',
     detail: 'Bảng bên trái là `NhanVien` (48 người), bên phải là `HopDong` (55 hợp đồng), khớp nhau theo `MaNV`. Ai có nhiều hợp đồng thì có nhiều dòng (Tôn Thất Long có ba), vì vậy 48 người thành 57 dòng. Phạm Ngọc Ánh và Đỗ Minh Quân chưa có hợp đồng nào, vẫn còn trong bảng với `MaHD` là `NULL`.',
     sql: `SELECT nv.MaNV, nv.HoTen, hd.MaHD, nv.MaPB, nv.NgayVaoLam
 FROM NhanVien AS nv
