@@ -1,0 +1,104 @@
+<h2>Học viên làm bài tập ở đâu?</h2>
+<p class="subtitle">Cùng một bài tập của bài 3.5, ba cách đặt khung làm bài. Không có gợi ý, không có nút xem đáp án. Bấm để chọn cách bạn thấy hợp.</p>
+
+<style>
+  .wf { font-family: system-ui, sans-serif; font-size: 11px; color: #1F2328; background: #F4F2EC; border: 1px solid #D3CEC3; border-radius: 6px; overflow: hidden; }
+  .wf-top { height: 18px; background: #fff; border-bottom: 1px solid #E5E2DA; display: flex; align-items: center; padding: 0 8px; gap: 8px; font-weight: 700; font-size: 10px; }
+  .wf-top span { font-weight: 400; color: #656B72; }
+  .wf-body { display: flex; gap: 8px; padding: 8px; height: 230px; }
+  .wf-col { background: #fff; border: 1px solid #E5E2DA; border-radius: 5px; padding: 7px; }
+  .wf-h { font-weight: 700; font-size: 11.5px; margin-bottom: 4px; }
+  .wf-p { color: #5B6169; line-height: 1.45; }
+  .wf-code { font-family: Consolas, monospace; font-size: 10px; background: #fff; border: 1px solid #CDD5E3; border-radius: 4px; padding: 5px; color: #000; line-height: 1.5; }
+  .kw { color: #0000FF; } .gr { color: #808080; } .st { color: #FF0000; }
+  .wf-btns { display: flex; gap: 5px; margin: 6px 0; }
+  .wf-btn { padding: 2px 7px; border-radius: 4px; border: 1px solid #D3CEC3; background: #fff; font-weight: 600; font-size: 10px; }
+  .wf-btn.pri { background: #1F4FD1; border-color: #1F4FD1; color: #fff; }
+  .wf-res { border: 1px solid #C9C9C9; border-radius: 4px; font-size: 9.5px; }
+  .wf-res div { padding: 2px 5px; border-bottom: 1px solid #E8E8E8; }
+  .wf-res .tabs { background: #F5F5F5; font-weight: 600; }
+  .wf-bad { margin-top: 6px; padding: 4px 6px; border-radius: 4px; background: #FBE3E8; color: #7D1F31; font-weight: 600; }
+  .wf-lesson { background: #fff; border: 1px solid #E5E2DA; border-radius: 5px; padding: 7px; flex: 1; }
+  .wf-side { width: 46px; background: #fff; border: 1px solid #E5E2DA; border-radius: 5px; }
+  .wf-rail { width: 40px; background: #fff; border: 1px solid #E5E2DA; border-radius: 5px; }
+  .wf-faded { opacity: .35; }
+  .wf-overlay { position: absolute; inset: 18px 0 0 0; background: rgba(24,28,34,.45); display: flex; padding: 10px; }
+  .wf-sheet { flex: 1; display: flex; gap: 8px; background: #F4F2EC; border-radius: 6px; padding: 8px; position: relative; }
+  .wf-x { position: absolute; top: 4px; right: 7px; font-weight: 700; color: #5B6169; }
+</style>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Trang làm bài riêng, dùng hết chiều ngang</h3>
+      <p>Bấm "Làm bài" ở cuối bài học thì sang trang mới. Có link quay lại bài, và chuyển qua lại giữa các bài tập của bài đó.</p>
+      <div class="wf">
+        <div class="wf-top">SQL Server <span>Bài 3.5 LEFT JOIN › Bài tập 1/3</span></div>
+        <div class="wf-body">
+          <div class="wf-col" style="width:38%">
+            <div class="wf-h">Bài tập 1: IT chưa có hợp đồng</div>
+            <div class="wf-p">Lấy <b>MaNV, HoTen, NgayVaoLam</b> của nhân viên phòng IT chưa có hợp đồng nào. Sắp xếp theo NgayVaoLam.</div>
+            <div class="wf-p" style="margin-top:6px">Kết quả cần: 3 cột, có sắp xếp.</div>
+          </div>
+          <div class="wf-col" style="flex:1">
+            <div class="wf-code"><span class="kw">SELECT</span> nv.MaNV<span class="gr">,</span> nv.HoTen<span class="gr">,</span> nv.NgayVaoLam<br><span class="kw">FROM</span> NhanVien <span class="kw">AS</span> nv<br><span class="gr">LEFT JOIN</span> HopDong <span class="kw">AS</span> hd <span class="kw">ON</span> hd.MaNV <span class="gr">=</span> nv.MaNV<br><span class="kw">WHERE</span> hd.MaHD <span class="gr">IS NULL</span></div>
+            <div class="wf-btns"><span class="wf-btn">Chạy (F5)</span><span class="wf-btn pri">Nộp bài</span></div>
+            <div class="wf-res"><div class="tabs">Results · Messages</div><div>NV047 · Phạm Ngọc Ánh · 2026-10-01</div><div>NV048 · Đỗ Minh Quân · 2026-10-05</div></div>
+            <div class="wf-bad">Chưa đúng: khác số dòng (bạn ra 2, đáp án 1)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Làm ngay trong bài học</h3>
+      <p>Mục "Bài tập" cuối bài mở ra thành khung làm bài trong cột bài (rộng 720px): đề ở trên, khung SQL và kết quả ở dưới.</p>
+      <div class="wf">
+        <div class="wf-top">SQL Server <span>Bài 3.5 LEFT JOIN</span></div>
+        <div class="wf-body">
+          <div class="wf-side"></div>
+          <div class="wf-lesson">
+            <div class="wf-h">Bài tập</div>
+            <div class="wf-p"><b>1. IT chưa có hợp đồng.</b> Lấy MaNV, HoTen, NgayVaoLam của nhân viên phòng IT chưa có hợp đồng nào, sắp theo NgayVaoLam.</div>
+            <div class="wf-code" style="margin-top:5px"><span class="kw">SELECT</span> nv.MaNV<span class="gr">,</span> nv.HoTen<span class="gr">,</span> nv.NgayVaoLam<br><span class="kw">FROM</span> NhanVien <span class="kw">AS</span> nv …</div>
+            <div class="wf-btns"><span class="wf-btn">Chạy (F5)</span><span class="wf-btn pri">Nộp bài</span></div>
+            <div class="wf-bad">Chưa đúng: khác số dòng (bạn ra 2, đáp án 1)</div>
+            <div class="wf-p wf-faded" style="margin-top:6px"><b>2. …</b></div>
+          </div>
+          <div class="wf-rail"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Khung làm bài phủ toàn màn hình, trên nền bài học</h3>
+      <p>Bấm "Làm bài" thì một khung lớn phủ lên trang bài. Đóng (× hoặc Esc) là về đúng chỗ đang đọc.</p>
+      <div class="wf" style="position:relative">
+        <div class="wf-top">SQL Server <span>Bài 3.5 LEFT JOIN</span></div>
+        <div class="wf-body wf-faded"><div class="wf-side"></div><div class="wf-lesson"></div><div class="wf-rail"></div></div>
+        <div class="wf-overlay">
+          <div class="wf-sheet">
+            <span class="wf-x">×</span>
+            <div class="wf-col" style="width:36%">
+              <div class="wf-h">Bài tập 1/3</div>
+              <div class="wf-p">Lấy MaNV, HoTen, NgayVaoLam của nhân viên phòng IT chưa có hợp đồng nào. Sắp theo NgayVaoLam.</div>
+            </div>
+            <div class="wf-col" style="flex:1">
+              <div class="wf-code"><span class="kw">SELECT</span> nv.MaNV<span class="gr">,</span> nv.HoTen …</div>
+              <div class="wf-btns"><span class="wf-btn">Chạy (F5)</span><span class="wf-btn pri">Nộp bài</span></div>
+              <div class="wf-res"><div class="tabs">Results · Messages</div><div>NV047 · Phạm Ngọc Ánh</div></div>
+              <div class="wf-bad">Chưa đúng: khác số dòng</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

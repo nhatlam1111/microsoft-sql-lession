@@ -115,11 +115,12 @@ Theo ảnh tham khảo người làm khóa học gửi ("Simple 8-Step Workflow"
 
 - Mục "Bài tập" cuối bài liệt kê các bài tập: tên, một câu đề, trạng thái (chưa làm hoặc đã làm đúng), nút "Làm bài".
 - Mỗi bài tập có một trang làm bài riêng, dùng hết chiều ngang:
-  - Bên trái là đề bài: yêu cầu, các cột cần ra, có cần sắp xếp không, gợi ý mở dần từng cái, đáp án.
+  - Bên trái là đề bài: yêu cầu, các cột cần ra, có cần sắp xếp không. ~~Gợi ý mở dần, đáp án.~~ Bỏ theo [spec B](2026-10-18-exercise-runner-design.md): không gợi ý, không đáp án.
   - Bên phải là khung soạn SQL tô màu kiểu SSMS; bên dưới là tab Results và Messages giống SSMS.
 - Nút "Chạy" (phím F5 như SSMS, hoặc Ctrl+Enter): chạy và hiện kết quả, không chấm.
 - Nút "Nộp bài": chấm rồi báo đúng, hoặc báo sai kèm lý do cụ thể (khác số dòng, khác số cột, dòng thứ mấy khác) mà không lộ đáp án.
-- Đáp án mở được sau lần nộp đầu tiên.
+- ~~Đáp án mở được sau lần nộp đầu tiên.~~ Bỏ theo spec B.
+- Có nút "Sơ đồ database" mở popup sơ đồ 7 bảng (spec B).
 - Bài làm dở được giữ lại trong trình duyệt khi rời trang.
 - Trạng thái bài tập lưu cùng tiến độ, có trong file xuất/nhập tiến độ; file tiến độ cũ vẫn nhập được. Nút "Đã học xong" của bài vẫn do người học tự bấm, không phụ thuộc bài tập.
 
@@ -178,7 +179,7 @@ Theo ảnh tham khảo người làm khóa học gửi ("Simple 8-Step Workflow"
 2. Drawer của sơ đồ đè lên cột phải của trang bài, cùng kiểu với drawer trên mindmap.
 3. Sơ đồ đặt dưới tiêu đề cấp 3 trong mục "Làm bằng SQL"; bài đầy đủ vẫn giữ đúng 7 mục.
 4. Mỗi bài tập có một trang riêng; phím F5 để chạy như SSMS.
-5. Đáp án mở được sau lần nộp đầu tiên.
+5. ~~Đáp án mở được sau lần nộp đầu tiên.~~ Người làm khóa học quyết định bỏ (spec B).
 6. Chấm bài không so tên cột; chỉ so thứ tự dòng khi đề yêu cầu sắp xếp.
 7. Dùng chung một database, mỗi lần chạy đều `ROLLBACK`; chưa làm đăng nhập hay database riêng.
 8. Có mã truy cập để chặn người lạ.
