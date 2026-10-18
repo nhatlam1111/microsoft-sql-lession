@@ -109,3 +109,11 @@ export function inlineCode(text: string): { code: boolean; text: string }[] {
   if (parts.length % 2 === 0) return [{ code: false, text }];
   return parts.map((part, i) => ({ code: i % 2 === 1, text: part })).filter(p => p.text !== '');
 }
+
+let flowCount = 0;
+
+/** A drawer id that differs for every diagram rendered in this build. */
+export function nextFlowId(): string {
+  flowCount += 1;
+  return `rf-${flowCount}`;
+}

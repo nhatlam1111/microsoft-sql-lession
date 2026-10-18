@@ -26,7 +26,7 @@ const toc = headings.filter(h => h.depth === 2);
       <SidebarNav client:load catalog={catalog} levels={LEVELS} currentNum={entry.num} />
     </aside>
     <main class="lesson-main">
-      <article class="lesson-article">
+      <article class="lesson-article" style={`--lv: var(--lv${level.no});`}>
         <LessonHeader entry={entry} level={level} prerequisites={prerequisites} />
         <div class="prose">
           <slot />

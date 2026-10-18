@@ -1,0 +1,99 @@
+---
+import Result from './Result.astro';
+import Sql from './Sql.astro';
+import { highlightTsql } from '../../lib/tsql-highlight';
+import { checkFlow, inlineCode, nextFlowId, previewOf, rowCount, snakeLayout, splitFocus, type FlowStep } from '../../lib/run-flow';
+
+interface Props {
+  /** The whole query the diagram walks through. */
+  query: string;
+  steps: FlowStep[];
+  note?: string;
+}
+const { query, steps, note = 'Bạn viết SELECT trước, nhưng SQL Server làm FROM trước.' } = Astro.props;
+
+const problems = checkFlow(steps, query);
+if (problems.length) throw new Error(`Sơ đồ thứ tự chạy có lỗi:\n${problems.join('\n')}`);
+
+const drawerId = nextFlowId();
+const cells = snakeLayout(steps.length);
+const isSqlWord = (code: string) => highlightTsql(code).some(t => t.kind === 'keyword' || t.kind === 'gray' || t.kind === 'function');
+const parts = (text: string) => inlineCode(text).map(p => ({ ...p, sqlWord: p.code && isSqlWord(p.text), tokens: highlightTsql(p.text) }));
+
+const views = steps.map((step, i) => {
+  const split = splitFocus(query, step.focus)!;
+  return {
+    step,
+    num: String(i + 1).padStart(2, '0'),
+    cell: cells[i],
+    preview: previewOf(step),
+    count: rowCount(step),
+    clause: highlightTsql(step.clause),
+    before: highlightTsql(split.before.replace(/\r?\n$/, '')),
+    focus: highlightTsql(split.focus),
+    after: highlightTsql(split.after.replace(/^\r?\n/, '')),
+    meaning: parts(step.meaning),
+    detail: parts(step.detail),
+  };
+});
+---
+<figure class="rf">
+  <p class="rf-note">{note}</p>
+  <ol class="rf-grid">
+    {views.map((v, i) => (
+      <li class="rf-cell" data-arrow={v.cell.arrow ?? undefined} style={`grid-row: ${v.cell.row + 1}; grid-column: ${v.cell.col + 1};`}>
+        <button type="button" class="rf-card" data-step={i} aria-expanded="false" aria-controls={drawerId}>
+          <span class="rf-top">
+            <span class="rf-num">{v.num}</span>
+            <span class="rf-clause">{v.clause.map(t => (t.kind === 'plain' ? t.text : <span class={`t-${t.kind}`}>{t.text}</span>))}</span>
+          </span>
+          <span class="rf-title">{v.step.title}</span>
+          <span class="rf-count">còn {v.count} dòng</span>
+          {v.preview.rows.length === 0
+            ? <span class="rf-empty">Không còn dòng nào</span>
+            : (
+              <table class="rf-mini">
+                <thead><tr>{v.preview.columns.map(c => <th>{c}</th>)}</tr></thead>
+                <tbody>{v.preview.rows.map(r => <tr>{r.map(c => (c === null ? <td class="res-null">NULL</td> : <td>{c}</td>))}</tr>)}</tbody>
+              </table>
+            )}
+          {(v.preview.moreRows > 0 || v.preview.moreCols > 0) && (
+            <span class="rf-more">
+              {v.preview.moreRows > 0 && <span>+{v.preview.moreRows} dòng</span>}
+              {v.preview.moreCols > 0 && <span>+{v.preview.moreCols} cột</span>}
+            </span>
+          )}
+        </button>
+      </li>
+    ))}
+  </ol>
+
+  <aside class="rf-drawer" id={drawerId} hidden tabindex="-1" aria-label="Chi tiết bước">
+    <button type="button" class="rf-close" aria-label="Đóng">×</button>
+    <div class="rf-d-body">
+      {views.map((v, i) => (
+        <section class="rf-panel" data-panel={i} hidden>
+          <p class="rf-d-head">
+            <span class="rf-d-step">Bước {v.num}</span>
+            <code class="rf-d-clause">{v.clause.map(t => (t.kind === 'plain' ? t.text : <span class={`t-${t.kind}`}>{t.text}</span>))}</code>
+          </p>
+          <p class="rf-d-title">{v.step.title}</p>
+          <pre class="rf-q">{v.before.length > 0 && <span class="rf-q-dim">{v.before.map(t => (t.kind === 'plain' ? t.text : <span class={`t-${t.kind}`}>{t.text}</span>))}</span>}<mark class="rf-q-on">{v.focus.map(t => (t.kind === 'plain' ? t.text : <span class={`t-${t.kind}`}>{t.text}</span>))}</mark>{v.after.length > 0 && <span class="rf-q-dim">{v.after.map(t => (t.kind === 'plain' ? t.text : <span class={`t-${t.kind}`}>{t.text}</span>))}</span>}</pre>
+          <p class="rf-d-sub"><code class="rf-kw">{v.clause.map(t => (t.kind === 'plain' ? t.text : <span class={`t-${t.kind}`}>{t.text}</span>))}</code> làm gì</p>
+          <p class="rf-d-text">{v.meaning.map(p => (!p.code ? p.text : p.sqlWord ? <code class="rf-kw">{p.tokens.map(t => (t.kind === 'plain' ? t.text : <span class={`t-${t.kind}`}>{t.text}</span>))}</code> : <code class="rf-id">{p.text}</code>))}</p>
+          <p class="rf-d-sub">Ở bước này</p>
+          <p class="rf-d-text">{v.detail.map(p => (!p.code ? p.text : p.sqlWord ? <code class="rf-kw">{p.tokens.map(t => (t.kind === 'plain' ? t.text : <span class={`t-${t.kind}`}>{t.text}</span>))}</code> : <code class="rf-id">{p.text}</code>))}</p>
+          <Result columns={v.step.columns} rows={v.step.rows} total={v.count} />
+          <Sql code={v.step.sql} title="Câu lệnh của bước này" />
+          {v.step.excel && (
+            <p class="rf-excel"><span class="rf-xmark" aria-hidden="true">X</span><span>Liên hệ Excel: {v.step.excel}</span></p>
+          )}
+        </section>
+      ))}
+    </div>
+    <div class="rf-d-foot">
+      <button type="button" class="rf-nav rf-prev">Bước trước</button>
+      <button type="button" class="rf-nav rf-next">Bước sau</button>
+    </div>
+  </aside>
+</figure>

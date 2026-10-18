@@ -9,6 +9,7 @@ import Mistakes from './Mistakes.astro';
 import Apply from './Apply.astro';
 import Memo from './Memo.astro';
 import Exercises from './Exercises.astro';
+import RunFlow from './RunFlow.astro';
 
 /** Components lesson MDX files can use without importing them. */
-export const lessonComponents = { Excel, Sql, Result, Messages, Chat, Key, LineMap, Mistakes, Apply, Memo, Exercises };
+export const lessonComponents = { Excel, Sql, Result, Messages, Chat, Key, LineMap, Mistakes, Apply, Memo, Exercises, RunFlow };
