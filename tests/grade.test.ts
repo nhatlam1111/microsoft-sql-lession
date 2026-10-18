@@ -26,3 +26,12 @@ it('compares data changes by rows affected first, then by the check query', () =
   expect(compareChanges({ affected: 17, check }, { affected: 9, check }).reason).toBe('khác số dòng bị ảnh hưởng (bạn 17, đáp án 9)');
   expect(compareChanges({ affected: 9, check }, { affected: 9, check })).toEqual({ correct: true, reason: null });
 });
+
+it('grades numbers by value, whatever their type or trailing zeros', () => {
+  const one = (type: string, scale: number | undefined, v: Cell): Shape => ({ columns: [{ name: 'c', type, scale }], rows: [[v]] });
+  expect(compareResults(one('decimal', 0, '9610000'), one('decimal', 1, '9610000.0'), false).correct).toBe(true);
+  expect(compareResults(one('decimal', 1, '0.5'), one('decimal', 2, '0.50'), false).correct).toBe(true);
+  expect(compareResults(one('int', undefined, 9610000), one('decimal', 0, '9610000'), false).correct).toBe(true);
+  expect(compareResults(one('bigint', undefined, '12'), one('int', undefined, 12), false).correct).toBe(true);
+  expect(compareResults(one('decimal', 1, '0.5'), one('decimal', 1, '0.6'), false).correct).toBe(false);
+});

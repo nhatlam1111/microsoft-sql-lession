@@ -24,3 +24,12 @@ it('finds an answer query hidden in a built file, whatever its spacing', () => {
   expect(findAnswerLeaks([{ path: 'c.js', text: 'x="SELECT nv.MaNV\\nFROM NhanVien AS nv"' }], [answer])).toEqual(['c.js']);
   expect(findAnswerLeaks([{ path: 'b.html', text: '<p>SELECT nv.MaNV</p>' }], [answer])).toEqual([]);
 });
+
+it('finds an answer that reached the page escaped, as island props are', () => {
+  const answer = "SELECT MaNV FROM NhanVien WHERE MaPB = 'IT' AND HoTen <> N\"x\"";
+  expect(findAnswerLeaks([
+    { path: 'props.html', text: 'props="SELECT MaNV FROM NhanVien WHERE MaPB = &amp;#39;IT&amp;#39; AND HoTen &amp;lt;&amp;gt; N&amp;quot;x&amp;quot;"' },
+    { path: 'once.html', text: 'SELECT MaNV FROM NhanVien WHERE MaPB = &#39;IT&#39; AND HoTen &lt;&gt; N&quot;x&quot;' },
+    { path: 'bundle.js', text: '"SELECT MaNV FROM NhanVien WHERE MaPB = \\u0027IT\\u0027 AND HoTen <> N\\"x\\""' },
+  ], [answer])).toEqual(['props.html', 'once.html', 'bundle.js']);
+});

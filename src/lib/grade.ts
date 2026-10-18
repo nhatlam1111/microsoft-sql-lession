@@ -33,6 +33,22 @@ export function formatCell(value: unknown, column: ResultColumn): Cell {
   return String(value);
 }
 
+const NUMERIC = new Set(['tinyint', 'smallint', 'int', 'bigint', 'decimal', 'numeric', 'money', 'smallmoney', 'float', 'real']);
+
+/** A number as plain text without trailing zeros, so 9610000, '9610000.0' and '9610000' all match. */
+function canonicalNumber(cell: Cell): Cell {
+  if (cell === null) return null;
+  const s = String(cell);
+  if (!/^-?\d+(\.\d+)?$/.test(s)) return cell;
+  const trimmed = s.includes('.') ? s.replace(/0+$/, '').replace(/\.$/, '') : s;
+  return trimmed === '-0' ? '0' : trimmed;
+}
+
+/** Rows ready to compare: numeric columns (numeric on either side) in canonical form; display keeps formatCell's text. */
+function comparable(shape: Shape, numeric: boolean[]): Cell[][] {
+  return shape.rows.map(row => row.map((cell, i) => (numeric[i] ? canonicalNumber(cell) : cell)));
+}
+
 const key = (row: Cell[]) => JSON.stringify(row);
 const sorted = (rows: Cell[][]) => [...rows].sort((a, b) => (key(a) < key(b) ? -1 : key(a) > key(b) ? 1 : 0));
 
@@ -44,8 +60,11 @@ export function compareResults(mine: Shape, answer: Shape, ordered: boolean): Ve
   if (mine.rows.length !== answer.rows.length) {
     return { correct: false, reason: `khác số dòng (bạn ra ${mine.rows.length}, đáp án ${answer.rows.length})` };
   }
-  const a = ordered ? mine.rows : sorted(mine.rows);
-  const b = ordered ? answer.rows : sorted(answer.rows);
+  const numeric = answer.columns.map((c, i) => NUMERIC.has(c.type.toLowerCase()) || NUMERIC.has((mine.columns[i]?.type ?? '').toLowerCase()));
+  const mineRows = comparable(mine, numeric);
+  const answerRows = comparable(answer, numeric);
+  const a = ordered ? mineRows : sorted(mineRows);
+  const b = ordered ? answerRows : sorted(answerRows);
   const i = a.findIndex((row, k) => key(row) !== key(b[k]));
   return i < 0 ? { correct: true, reason: null } : { correct: false, reason: `dòng ${i + 1} khác` };
 }

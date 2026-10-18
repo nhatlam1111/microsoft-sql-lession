@@ -58,12 +58,18 @@ export type GuardResult = { ok: true } | { ok: false; reason: string };
 
 const refuse = (reason: string): GuardResult => ({ ok: false, reason });
 
+/** Line breaks as SQL Server reads them: a bare CR ends a -- comment too. The API sends this form to the database. */
+export function normalizeSql(text: string): string {
+  return text.replace(/\r\n?/g, '\n');
+}
+
 export function guardExercise(text: string): GuardResult {
   if (!text.trim()) return refuse('Chưa có câu lệnh nào.');
   if (text.length > MAX_LENGTH) return refuse('Câu lệnh dài quá 4.000 ký tự.');
   let stripped: string;
   try {
-    stripped = sanitize(text).trim().replace(/;+\s*$/, '');
+    // SQL Server ends a number at the first letter, so "1=1COMMIT" is "1=1 COMMIT": split them before matching words.
+    stripped = sanitize(normalizeSql(text)).trim().replace(/;+\s*$/, '').replace(/(\d)([a-z_@#$])/gi, '$1 $2');
   } catch {
     return refuse('Có chuỗi hoặc chú thích chưa đóng.');
   }
@@ -76,6 +82,9 @@ export function guardExercise(text: string): GuardResult {
     const word = /^begin/i.test(hit[1]) ? 'BEGIN TRAN' : hit[1].toUpperCase();
     return refuse(`Lệnh ${word} không dùng được trong bài tập.`);
   }
+  // A SET of its own (SET ROWCOUNT, SET NOCOUNT…) would change the pooled connection for later runs.
+  const count = (re: RegExp) => stripped.match(re)?.length ?? 0;
+  if (count(/\bset\b/gi) > count(/\bupdate\b/gi)) return refuse('Lệnh SET không dùng được trong bài tập.');
   if (/\binto\b/i.test(stripped.replace(/\binsert\s+into\b/gi, ' '))) {
     return refuse('SELECT … INTO tạo bảng mới nên không dùng được trong bài tập.');
   }

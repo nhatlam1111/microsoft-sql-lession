@@ -39,8 +39,15 @@ export function findLinkProblems(html, fileExists, base) {
   return [...problems];
 }
 
-// Answers are matched with all spacing squeezed, and with \n, \r, \t as a bundle writes them inside strings.
-const squeeze = text => text.replace(/\\[nrt]/g, ' ').replace(/\s+/g, ' ').trim();
+// Built text is read back the way it was written: island props are HTML-escaped (sometimes twice),
+// bundles escape quotes and line breaks. Then spacing is squeezed so line breaks never hide a match.
+const ENTITIES = { '&#39;': "'", '&quot;': '"', '&lt;': '<', '&gt;': '>', '&amp;': '&' };
+function unescape(text) {
+  let out = text.replace(/\\u0027/g, "'").replace(/\\u0022/g, '"').replace(/\\"/g, '"').replace(/\\'/g, "'");
+  for (let pass = 0; pass < 2; pass++) out = out.replace(/&(#39|quot|lt|gt|amp);/g, m => ENTITIES[m]);
+  return out;
+}
+const squeeze = text => unescape(text).replace(/\\[nrt]/g, ' ').replace(/\s+/g, ' ').trim();
 
 /**
  * Built files that contain an exercise answer or check query, which must only ever ship with the API.

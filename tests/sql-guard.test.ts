@@ -21,3 +21,15 @@ it('explains every refusal', () => {
   expect(blocked('UPDATE NhanVien SET HoTen = HoTen BEGIN TRAN')).toBe('Lệnh BEGIN TRAN không dùng được trong bài tập.');
   expect(blocked('SELECT * INTO X FROM NhanVien')).toBe('SELECT … INTO tạo bảng mới nên không dùng được trong bài tập.');
 });
+
+it('sees a keyword glued to a number and a comment ended by a bare CR', () => {
+  expect(blocked('UPDATE BangLuong SET PhuCap = 0 WHERE 1=1COMMIT')).toBe('Lệnh COMMIT không dùng được trong bài tập.');
+  expect(blocked('SELECT 1ROLLBACK')).toBe('Lệnh ROLLBACK không dùng được trong bài tập.');
+  expect(blocked('SELECT 1 --x\rCOMMIT')).toBe('Lệnh COMMIT không dùng được trong bài tập.');
+});
+
+it('refuses a SET that is not part of an UPDATE', () => {
+  expect(blocked('SELECT 1 AS a SET ROWCOUNT 1')).toBe('Lệnh SET không dùng được trong bài tập.');
+  expect(blocked('UPDATE BangLuong SET PhuCap = 1 SET NOCOUNT ON')).toBe('Lệnh SET không dùng được trong bài tập.');
+  expect(blocked('UPDATE BangLuong SET PhuCap = 1, ThueTNCN = 0 WHERE KyLuong = N\'2026-09\'')).toBeNull();
+});

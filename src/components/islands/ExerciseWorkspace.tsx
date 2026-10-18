@@ -39,8 +39,8 @@ export default function ExerciseWorkspace({ exercise, apiBase, tables, nums }: P
   const codeField = useRef<HTMLInputElement>(null);
   const pending = useRef<Action>('run');
 
-  // Wake the database while the learner reads the brief.
-  useEffect(() => { void client.ping(); }, [client]);
+  // Wake the database while the learner reads the brief, but only for someone who has a code.
+  useEffect(() => { void client.ping(code); }, [client, code]);
   useEffect(() => { if (askCode) codeField.current?.focus(); }, [askCode]);
 
   const change = (text: string) => { setSql(text); saveDraft(exercise.id, text); };

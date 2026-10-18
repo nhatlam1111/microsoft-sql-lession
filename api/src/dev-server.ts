@@ -2,7 +2,7 @@
 import { createServer } from 'node:http';
 import { createRunner } from './runner';
 import { createLimiter } from './limiter';
-import { handleGrade, handleRun, type Deps } from './core';
+import { handleGrade, handlePing, handleRun, type Deps } from './core';
 import { loadExercises } from './exercises-data';
 import { localConfig, localEnv } from './local-config';
 
@@ -27,7 +27,8 @@ createServer(async (req, res) => {
   };
   if (req.method === 'OPTIONS') { res.writeHead(204, CORS); res.end(); return; }
   if (req.method === 'GET' && req.url === '/api/ping') {
-    try { send(200, { ok: true, ms: await runner.ping() }); } catch { send(503, { ok: false, kind: 'unavailable' }); }
+    const r = await handlePing((req.headers['x-access-code'] as string | undefined) ?? null, { codes: deps.codes, ping: runner.ping });
+    send(r.status, r.body);
     return;
   }
   if (req.method === 'POST' && (req.url === '/api/run' || req.url === '/api/grade')) {
@@ -41,4 +42,5 @@ createServer(async (req, res) => {
     return;
   }
   send(404, { ok: false, kind: 'bad-request' });
-}).listen(7071, () => console.log(`Exercise API on http://localhost:7071/api (access code: ${deps.codes.join(', ')})`));
+// Loopback only: this server may hold the admin login from ../.env and its default code is public.
+}).listen(7071, '127.0.0.1', () => console.log(`Exercise API on http://localhost:7071/api (access code: ${deps.codes.join(', ')})`));

@@ -2,7 +2,7 @@
 import { app, type HttpRequest } from '@azure/functions';
 import { createRunner, configFromEnv } from './runner';
 import { createLimiter } from './limiter';
-import { handleGrade, handleRun, type Deps } from './core';
+import { handleGrade, handlePing, handleRun, type Deps } from './core';
 import { loadExercises } from './exercises-data';
 
 const runner = createRunner(configFromEnv(process.env));
@@ -19,13 +19,9 @@ const bodyOf = async (req: HttpRequest) => {
 
 app.http('ping', {
   methods: ['GET'], authLevel: 'anonymous', route: 'ping',
-  handler: async () => {
-    try {
-      return { jsonBody: { ok: true, ms: await runner.ping() } };
-    } catch (e) {
-      const kind = /free|limit/i.test(String((e as Error)?.message)) ? 'quota' : 'unavailable';
-      return { status: 503, jsonBody: { ok: false, kind } };
-    }
+  handler: async req => {
+    const r = await handlePing(req.headers.get('x-access-code'), { codes: deps.codes, ping: runner.ping });
+    return { status: r.status, jsonBody: r.body };
   },
 });
 

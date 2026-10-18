@@ -33,8 +33,10 @@ export function createExerciseClient(
   }
 
   return {
-    async ping(): Promise<boolean> {
-      const r = await call<{ ok: true }>('ping', undefined, null);
+    /** Wakes the database early; skipped without a code, so visitors who cannot run anything do not wake it. */
+    async ping(code: string | null): Promise<boolean> {
+      if (!code) return false;
+      const r = await call<{ ok: true }>('ping', undefined, code);
       return r.ok === true;
     },
     run: (id: string, sql: string, code: string, onSlow?: () => void) =>

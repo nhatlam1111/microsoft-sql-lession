@@ -1,5 +1,5 @@
-import { it, expect } from 'vitest';
-import { handleRun, handleGrade, type Deps, type RunOutcome } from '../api/src/core';
+import { it, expect, vi } from 'vitest';
+import { handleRun, handleGrade, handlePing, type Deps, type RunOutcome } from '../api/src/core';
 import { createLimiter } from '../api/src/limiter';
 import type { RunResponse } from '../src/lib/exercise-types';
 import type { Exercise } from '../src/lib/exercise-types';
@@ -54,4 +54,20 @@ it('lets 30 calls a minute through per code', () => {
   expect(allow('b')).toBe(true);
   t = 60_001;
   expect(allow('a')).toBe(true);
+});
+
+it('wakes the database only for a valid access code', async () => {
+  const ping = vi.fn(async () => 42);
+  expect(await handlePing(null, { codes: ['abc'], ping })).toEqual({ status: 401, body: { ok: false, kind: 'bad-code' } });
+  expect(await handlePing('nope', { codes: ['abc'], ping })).toEqual({ status: 401, body: { ok: false, kind: 'bad-code' } });
+  expect(ping).not.toHaveBeenCalled();
+  expect(await handlePing('abc', { codes: ['abc'], ping })).toEqual({ status: 200, body: { ok: true, ms: 42 } });
+  const down = async () => { throw new Error('Database is paused: free amount limit reached'); };
+  expect(await handlePing('abc', { codes: ['abc'], ping: down })).toEqual({ status: 503, body: { ok: false, kind: 'quota' } });
+});
+
+it('sends the database the same line breaks the guard read', async () => {
+  const run = vi.fn(async () => outcome());
+  await handleRun({ exercise: 'q1', sql: 'SELECT a\r\nFROM T\rWHERE 1 = 1' }, 'abc', { ...deps, run });
+  expect(run).toHaveBeenCalledWith('SELECT a\nFROM T\nWHERE 1 = 1');
 });

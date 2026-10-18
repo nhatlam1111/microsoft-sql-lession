@@ -1,5 +1,5 @@
 /** The API's request handling, free of Azure and of the database driver so it can be tested with fakes. */
-import { guardExercise } from '../../src/lib/sql-guard';
+import { guardExercise, normalizeSql } from '../../src/lib/sql-guard';
 import { compareChanges, compareResults, type Shape } from '../../src/lib/grade';
 import type { ApiFailure, Exercise, FailureKind, GradeResponse, RunResponse } from '../../src/lib/exercise-types';
 
@@ -41,7 +41,8 @@ function prepare(body: unknown, code: string | null, deps: Deps): { exercise: Ex
   if (!exercise) return fail('unknown-exercise');
   const guard = guardExercise(b.sql);
   if (!guard.ok) return fail('blocked', guard.reason);
-  return { exercise, sql: b.sql };
+  // The database gets exactly the text the guard read.
+  return { exercise, sql: normalizeSql(b.sql) };
 }
 
 /** A database-side failure or several statements; null when the outcome can be shown. */
@@ -62,6 +63,19 @@ function toRun(o: RunOutcome): RunResponse {
     error: o.error,
     ms: o.ms,
   };
+}
+
+/** Wakes the database; needs a valid code so strangers cannot keep it awake and use up the free allowance. */
+export async function handlePing(
+  code: string | null,
+  deps: { codes: string[]; ping(): Promise<number> },
+): Promise<{ status: number; body: { ok: true; ms: number } | ApiFailure }> {
+  if (!code || !deps.codes.includes(code)) return fail('bad-code');
+  try {
+    return { status: 200, body: { ok: true, ms: await deps.ping() } };
+  } catch (e) {
+    return fail(/free|limit/i.test(String((e as Error)?.message)) ? 'quota' : 'unavailable');
+  }
 }
 
 export async function handleRun(body: unknown, code: string | null, deps: Deps): Promise<Reply<RunResponse>> {

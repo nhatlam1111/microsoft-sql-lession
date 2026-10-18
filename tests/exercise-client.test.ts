@@ -61,3 +61,13 @@ it('keeps one draft per exercise and the access code', () => {
 it('verdict text matches the spec', () => {
   expect([verdictText(true, null), verdictText(false, 'dòng 2 khác')]).toEqual(['Đúng rồi.', 'Chưa đúng: dòng 2 khác']);
 });
+
+it('pings with the access code, and does not ping without one', async () => {
+  const fetchImpl = vi.fn(async () => new Response(JSON.stringify({ ok: true, ms: 3 })));
+  const client = createExerciseClient('https://x/api', fetchImpl as unknown as typeof fetch);
+  expect(await client.ping(null)).toBe(false);
+  expect(fetchImpl).not.toHaveBeenCalled();
+  expect(await client.ping('abc')).toBe(true);
+  const [url, init] = fetchImpl.mock.calls[0] as unknown as [string, RequestInit];
+  expect([url, new Headers(init.headers).get('x-access-code')]).toEqual(['https://x/api/ping', 'abc']);
+});

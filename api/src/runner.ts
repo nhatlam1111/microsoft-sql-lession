@@ -53,8 +53,20 @@ export function createRunner(config: sql.config) {
     }
     const request = () => { const r = new sql.Request(tx); r.arrayRowMode = true; return r; };
     try {
-      await request().batch('SET XACT_ABORT ON; SET LOCK_TIMEOUT 3000;');
+      // Every run starts from a clean session, whatever an earlier run on this pooled connection set.
+      // ROWCOUNT 5001 stops a runaway SELECT (or a cross join) in the database instead of in this instance's memory;
+      // no HRM_Demo table has more than about 800 rows, and the grader refuses anything above 5,000 anyway.
+      await request().batch(
+        'SET XACT_ABORT ON; SET LOCK_TIMEOUT 3000; SET ROWCOUNT 5001; SET NOCOUNT OFF; SET NOEXEC OFF;'
+        + ' SET PARSEONLY OFF; SET FMTONLY OFF; SET IMPLICIT_TRANSACTIONS OFF;',
+      );
       const main = await request().batch(text);
+      // The guard should make this impossible; if the learner's statement still ended the transaction, say so loudly.
+      const open = await request().query('SELECT @@TRANCOUNT AS n');
+      if ((open.recordset as unknown as number[][])[0]?.[0] !== 1) {
+        console.error(`ALERT: a learner statement ended the transaction: ${text.slice(0, 200)}`);
+        return empty(Date.now() - started, { errorKind: 'unavailable' });
+      }
       const checked = check ? await request().query(check) : null;
       const sets = main.recordsets as unknown as RecordsetLike[];
       return {
