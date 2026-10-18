@@ -216,3 +216,25 @@
 .sd-title { grid-area: title; font-size: 14.5px; font-weight: 600; }
 .sd-results li .lvb { grid-area: lvl; align-self: center; }
 .sd-area { grid-area: area; font-size: 12.5px; color: var(--ink-3); }
+
+/* ---------- Database diagram popup (exercise page) ---------- */
+.dbd-backdrop { position: fixed; inset: 0; z-index: 55; display: grid; place-items: center; padding: 24px; background: rgba(24, 28, 34, 0.45); }
+.dbd { max-width: min(880px, 100%); max-height: calc(100vh - 48px); display: flex; flex-direction: column; background: var(--surface); border-radius: var(--radius-l); box-shadow: 0 24px 64px rgba(15, 20, 30, 0.3); outline: none; }
+.dbd-head { position: relative; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; padding: 14px 52px 10px 20px; border-bottom: 1px solid var(--rule); }
+.dbd-head h2 { margin: 0; font-size: 17px; font-weight: 700; }
+.dbd-head p { margin: 0; font-size: 13px; color: var(--ink-3); }
+.dbd-close { position: absolute; top: 10px; right: 12px; width: 32px; height: 32px; border: 0; border-radius: var(--radius-s); background: none; color: var(--ink-2); font-size: 22px; line-height: 1; cursor: pointer; }
+.dbd-close:hover { background: #F3F1EB; color: var(--ink); }
+.dbd-scroll { overflow: auto; padding: 14px 20px 20px; }
+.er { position: relative; flex: none; font-family: var(--font-tool); }
+.er svg { position: absolute; inset: 0; }
+.er-link { fill: none; stroke: #9AA3B5; stroke-width: 1.4; }
+.er-dot { fill: #9AA3B5; }
+.er-box { position: absolute; overflow: hidden; background: #FFF; border: 1px solid #B9C3D6; border-radius: 6px; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); }
+.er-head { display: flex; align-items: center; padding: 0 10px; background: #EEF2FA; border-bottom: 1px solid #CDD5E3; font-size: 13px; font-weight: 700; color: var(--ink); }
+.er-row { display: flex; align-items: center; gap: 4px; padding: 0 8px; font-size: 11.5px; color: var(--ink); }
+.er-col { font-family: var(--font-code); }
+.er-type { margin-left: auto; font-family: var(--font-code); font-size: 10.5px; color: var(--ink-faint); }
+.er-key { padding: 0 3px; border-radius: 3px; font-size: 8.5px; font-weight: 700; }
+.er-key.is-pk { background: #FFF1C2; color: #7A5600; }
+.er-key.is-fk { background: var(--lv2-soft); color: var(--lv2); }
