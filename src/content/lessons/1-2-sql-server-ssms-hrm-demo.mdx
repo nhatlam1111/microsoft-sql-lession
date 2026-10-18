@@ -4,28 +4,161 @@ title: SQL Server, SSMS và database mẫu HRM_Demo
 shortTitle: SSMS và HRM_Demo
 level: 1
 area: A1
-kind: summary
-minutes: 10
+kind: full
+minutes: 15
 prerequisites:
   - "1.1"
-goal: bạn kết nối được SQL Server bằng SSMS và tạo được database mẫu HRM_Demo
+goal: bạn kết nối được máy chủ của khóa học bằng SSMS và mở được một bảng để xem
 excel: Mở file so với kết nối máy chủ
-summary: Server, database, bảng; kết nối bằng SSMS, xem Object Explorer và chạy script tạo HRM_Demo.
+summary: Máy chủ, database, bảng; kết nối SSMS vào máy chủ của khóa học, đọc Object Explorer, chạy câu lệnh đầu tiên và làm quen trang bài tập.
 noExercises: true
 ---
 
-## Nội dung chính
+## Tình huống
 
-- SQL Server là phần mềm giữ database. Một máy chủ SQL Server chứa được nhiều database, mỗi database có nhiều bảng.
-- SSMS (SQL Server Management Studio) là công cụ để kết nối tới máy chủ, xem bảng và chạy câu lệnh. Khi kết nối cần tên máy chủ, cách đăng nhập và database muốn mở.
-- Cửa sổ Object Explorer bên trái liệt kê database, bảng và cột, giống dãy tên sheet ở cuối một file Excel.
-- Tạo database `HRM_Demo` rồi chạy script tải ở trang Giới thiệu là có đủ 7 bảng nhân sự dùng cho cả khóa.
-- Mở cửa sổ New Query và chọn đúng database trên thanh công cụ trước khi chạy lệnh.
+Một yêu cầu hay gặp ở ngày đầu được cấp quyền vào hệ thống:
 
-## Liên hệ Excel
+<Chat who="Chị Hạnh · Phòng Nhân sự" time="10:20" initial="H">
+Bên IT vừa gửi em tên máy chủ với tài khoản vào database nhân sự rồi đó. Chiều nay họp, em mở bảng phòng ban xem giúp chị bây giờ công ty có những phòng nào nhé.
+</Chat>
 
-Mở một file Excel là mở cả dữ liệu lẫn công thức ngay trên máy của mình. Với SQL Server, dữ liệu nằm trên máy chủ; SSMS chỉ là cửa sổ để nhìn vào và ra lệnh, nên nhiều người cùng làm việc trên một bản dữ liệu duy nhất.
+Nói gọn lại, bạn đang có trong tay một tên máy chủ và một tài khoản, và cần:
 
-## Tình huống ví dụ
+<Key>Làm sao mở được một bảng dữ liệu trên máy chủ để xem, khi không có file nào để bấm vào?</Key>
 
-Bạn vừa được cấp tài khoản vào database nhân sự và cần mở được bảng nhân viên trước buổi họp chiều nay.
+## Với Excel
+
+Với Excel, danh sách phòng ban là một file. Bạn bấm đúp là file mở ra, dữ liệu nằm ngay trên máy của bạn:
+
+<Excel sheets="PhongBan" rows={[
+  ['Mã PB', 'Tên phòng ban'],
+  ['BGD', 'Ban Giám đốc'],
+  ['IT', 'IT'],
+  ['KD', 'Kinh doanh'],
+  ['KT', 'Kế toán'],
+  ['NS', 'Nhân sự'],
+  ['VH', 'Vận hành'],
+]} />
+
+Muốn người khác cùng xem, bạn gửi file đi, và từ lúc đó mỗi người giữ một bản. Database thì không có file nào để gửi: dữ liệu nằm trên máy chủ, mọi người cùng mở một bản đó qua một công cụ.
+
+## Làm bằng SQL
+
+### Lý thuyết cơ bản
+
+**SQL Server** là phần mềm giữ database, chạy trên một máy chủ. Một máy chủ chứa nhiều database, mỗi database chứa nhiều bảng. **SSMS** (SQL Server Management Studio) là cửa sổ để bạn nhìn vào máy chủ đó: xem có những database nào, bảng nào, và gõ câu lệnh. Bản thân SSMS không chứa dữ liệu.
+
+Muốn kết nối, bạn cần đủ bốn thông tin, như địa chỉ một căn phòng:
+
+1. tên máy chủ;
+2. cách đăng nhập;
+3. tài khoản và mật khẩu;
+4. tên database muốn mở.
+
+Ví dụ thu gọn với máy chủ của khóa học. Mỗi bảng có một "địa chỉ" đầy đủ gồm ba phần:
+
+| Máy chủ | Database | Bảng |
+|---|---|---|
+| sql-lession.database.windows.net | free-sql-db-8797714 | dbo.PhongBan |
+
+Từng phần nghĩa là gì:
+
+<LineMap rows={[
+  ['sql-lession.database.windows.net', 'Tên máy chủ, giống địa chỉ tòa nhà. Gõ đúng cả đuôi .database.windows.net vì đây là máy chủ trên Azure.'],
+  ['free-sql-db-8797714', 'Tên database trên máy chủ đó, giống tên một file. Azure tự đặt tên này khi tạo database miễn phí; bên trong là bộ dữ liệu mẫu HRM_Demo.'],
+  ['dbo.PhongBan', 'Tên bảng, giống tên một sheet. dbo là nhóm (schema) mặc định chứa bảng; cả 7 bảng của HRM_Demo đều nằm trong dbo.'],
+]} />
+
+HRM_Demo là tên của bộ dữ liệu mẫu dùng cho cả khóa: 7 bảng nhân sự hoàn toàn giả. Trên máy chủ của khóa học, bộ dữ liệu đó nằm trong database `free-sql-db-8797714`, nên dòng trạng thái dưới mọi bảng kết quả trong bài ghi đúng tên này, giống như SSMS của bạn.
+
+### Kết nối SSMS vào máy chủ của khóa học
+
+Bài tả SSMS 21 trở lên. Mở SSMS, hộp **Connect to Server** hiện ra. Điền:
+
+- **Server type**: Database Engine.
+- **Server name**: `sql-lession.database.windows.net`.
+- **Authentication**: SQL Server Authentication.
+- **Login** và **Password**: tài khoản người phụ trách khóa học cấp cho bạn.
+- **Database Name**: `free-sql-db-8797714`. Luôn điền ô này (xem mục Hay nhầm ở đâu).
+- **Encryption**: Strict (Minimum SQL Server 2022 and Azure SQL), theo hướng dẫn của Microsoft khi kết nối Azure SQL.
+
+<Ssms view="connect" caption="Hộp Connect to Server của SSMS 21. Ô có viền xanh là ô hay bị bỏ quên." />
+
+Bấm **Connect**. Lần đầu có thể phải chờ tới một phút, vì database của khóa học tự ngủ khi không ai dùng.
+
+Nếu bạn dùng SSMS 20 trở về trước, hộp kết nối không có ô Database Name. Bấm **Options >>**, chọn tab **Connection Properties**, rồi ghi `free-sql-db-8797714` vào ô **Connect to database**.
+
+### Đọc Object Explorer
+
+Kết nối xong, cửa sổ **Object Explorer** bên trái hiện một cái cây. Mở lần lượt Databases → `free-sql-db-8797714` → Tables là thấy 7 bảng của HRM_Demo, giống dãy tên sheet ở cuối một file Excel. Mở tiếp một bảng, rồi mục Columns, là thấy các cột của bảng đó:
+
+<Ssms view="explorer" table="PhongBan" caption="Bảng dbo.PhongBan có hai cột. Chữ trong ngoặc là khóa, kiểu dữ liệu và có được để trống hay không; bài 1.3 và 1.4 đọc kỹ phần này." />
+
+### Chạy câu lệnh đầu tiên
+
+Bấm **New Query** trên thanh công cụ để mở một cửa sổ câu lệnh. Trước khi chạy, nhìn ô chọn database ngay bên cạnh nút **Execute**: ô đó phải ghi `free-sql-db-8797714`.
+
+<Ssms view="toolbar" caption="Câu lệnh luôn chạy trên database đang chọn ở ô này." />
+
+Gõ câu lệnh dưới đây rồi bấm **F5** (hoặc nút Execute):
+
+<Sql code={`SELECT * FROM PhongBan;`} />
+
+<Result columns={['MaPB', 'TenPB']} rows={[
+  ['BGD', 'Ban Giám đốc'],
+  ['IT', 'IT'],
+  ['KD', 'Kinh doanh'],
+  ['KT', 'Kế toán'],
+  ['NS', 'Nhân sự'],
+  ['VH', 'Vận hành'],
+]} />
+
+Sáu phòng ban, khớp với sheet Excel ở trên, và chị Hạnh có câu trả lời. Câu `SELECT` sẽ được giải thích kỹ ở bài 1.6.
+
+### Trang làm bài tập trên web
+
+Từ bài 1.6, cuối mỗi bài có mục **Bài tập**. Bấm "Làm bài" là mở trang làm bài: đề ở bên trái, khung viết SQL ở bên phải, chạy thẳng trên database của khóa học, không cần mở SSMS.
+
+- Lần đầu chạy, trang hỏi **mã truy cập**. Xin mã ở người phụ trách khóa học; nhập một lần, trình duyệt nhớ.
+- **Chạy (F5)** chỉ chạy và hiện kết quả. **Nộp bài** thì chấm và báo đúng hay chưa đúng, kèm chỗ bị lệch.
+- Nút **Sơ đồ database** mở sơ đồ 7 bảng để tra tên bảng, tên cột.
+- Mọi lần chạy trên trang đều được hoàn tác ngay, nên dữ liệu mẫu không bao giờ bị đổi.
+
+### Muốn có bản riêng trên máy
+
+Phần này không bắt buộc. Nếu muốn thử thoải mái trên máy của mình:
+
+1. Cài SQL Server bản Express hoặc Developer (miễn phí) và SSMS.
+2. Kết nối vào SQL Server trên máy, tạo một database tên `HRM_Demo`.
+3. Tải script [HRM_Demo.sql](/microsoft-sql-lession/HRM_Demo.sql) ở [trang Giới thiệu](/microsoft-sql-lession/gioi-thieu/), mở bằng SSMS, chọn database `HRM_Demo` ở ô chọn database rồi bấm Execute.
+
+Script tạo đủ 7 bảng và dữ liệu. Chạy lại bao nhiêu lần cũng được: nó chỉ xóa và tạo lại đúng 7 bảng của mình.
+
+## Hay nhầm ở đâu
+
+<Mistakes>
+
+1. **Bỏ trống Database Name.** SSMS khi đó vào database `master` của máy chủ. Nếu tài khoản của bạn được tạo riêng trong database `free-sql-db-8797714`, đăng nhập bị từ chối với thông báo `Login failed for user '…'. (Microsoft SQL Server, Error: 18456)`, dù mật khẩu đúng. Nếu vẫn vào được, cửa sổ câu lệnh đứng ở `master`, và `SELECT * FROM PhongBan;` báo `Invalid object name 'PhongBan'.` vì `master` không có bảng nào tên như vậy.
+2. **Gõ thiếu đuôi của tên máy chủ.** Chỉ gõ `sql-lession` thì SSMS đi tìm một máy chủ tên như vậy trong mạng nội bộ, chờ một lúc rồi báo không tìm thấy máy chủ. Tên máy chủ trên Azure luôn có đuôi `.database.windows.net`.
+3. **Chạy script khi ô chọn database đang là `master`** (chỉ gặp khi tự cài trên máy). Script vẫn chạy, nhưng 7 bảng nằm lẫn trong database hệ thống `master`. Luôn nhìn ô chọn database trước khi bấm Execute.
+
+</Mistakes>
+
+## Ứng dụng
+
+<Apply>
+
+- Khi được cấp quyền vào một database mới, ghi lại đủ bốn thông tin: máy chủ, cách đăng nhập, tài khoản, database. Thiếu một là không vào được, và người cấp quyền thường chỉ gửi ba.
+- Trước khi viết câu lệnh đầu tiên trên một hệ thống lạ, mở Object Explorer xem có những bảng nào, mỗi bảng có những cột nào. Năm phút đó giúp bạn hỏi đúng câu, đúng bảng.
+
+</Apply>
+
+## Ghi nhớ
+
+<Memo rows={[
+  ['Bấm đúp mở file', 'Kết nối máy chủ trong SSMS'],
+  ['Tên file', 'Tên database'],
+  ['Dãy tên sheet ở cuối file', 'Object Explorer → Tables'],
+  ['Một sheet', 'dbo.PhongBan'],
+  ['Mở sheet ra xem', 'SELECT * FROM PhongBan;'],
+]} />
