@@ -1,0 +1,36 @@
+lesson: 6-5-update-quen-where
+exercises:
+  - id: 6-5-1
+    title: Thêm phụ cấp cho phòng Kinh doanh, chỉ kỳ 2026-09
+    summary: Cộng phụ cấp cho đúng những dòng lương cần sửa.
+    prompt: >-
+      Phòng Kinh doanh (mã phòng KD) được thêm 500.000 đồng phụ cấp, chỉ trong kỳ lương 2026-09.
+      Viết một câu UPDATE cộng số tiền này vào cột PhuCap của đúng những dòng cần sửa.
+    columns: [MaNV, KyLuong, PhuCap]
+    ordered: true
+    kind: change
+    answer: |
+      UPDATE bl
+      SET PhuCap = bl.PhuCap + 500000
+      FROM BangLuong AS bl
+      JOIN NhanVien AS nv ON nv.MaNV = bl.MaNV
+      WHERE bl.KyLuong = '2026-09' AND nv.MaPB = 'KD';
+    check: |
+      SELECT MaNV, KyLuong, PhuCap
+      FROM BangLuong
+      ORDER BY KyLuong, MaNV;
+  - id: 6-5-2
+    title: Xóa đơn nghỉ phép bị từ chối
+    summary: Xóa đúng các đơn bị từ chối, giữ nguyên mọi đơn khác.
+    prompt: >-
+      Xóa các đơn nghỉ phép đã bị từ chối, giữ nguyên mọi đơn khác.
+    columns: [MaDon]
+    ordered: true
+    kind: change
+    answer: |
+      DELETE FROM DonNghiPhep
+      WHERE TrangThai = N'Từ chối';
+    check: |
+      SELECT MaDon
+      FROM DonNghiPhep
+      ORDER BY MaDon;

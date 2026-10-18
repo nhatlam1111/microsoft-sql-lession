@@ -1,0 +1,47 @@
+lesson: 3-5-left-join
+exercises:
+  - id: 3-5-1
+    title: IT chưa có hợp đồng
+    summary: Tìm nhân viên phòng IT chưa có hợp đồng nào.
+    prompt: >-
+      Phòng IT cần danh sách nhân viên chưa có hợp đồng nào để làm hợp đồng bổ sung.
+      Lấy mã, họ tên và ngày vào làm; người vào làm trước xếp trước.
+    columns: [MaNV, HoTen, NgayVaoLam]
+    ordered: true
+    kind: query
+    answer: |
+      SELECT nv.MaNV, nv.HoTen, nv.NgayVaoLam
+      FROM NhanVien AS nv
+      LEFT JOIN HopDong AS hd ON hd.MaNV = nv.MaNV
+      WHERE hd.MaHD IS NULL AND nv.MaPB = 'IT'
+      ORDER BY nv.NgayVaoLam;
+  - id: 3-5-2
+    title: Chưa có bảng lương tháng 9
+    summary: Tìm nhân viên không có dòng lương kỳ 2026-09.
+    prompt: >-
+      Kế toán hỏi ai không có dòng lương trong kỳ 2026-09.
+      Lấy mã và họ tên, xếp theo mã nhân viên.
+    columns: [MaNV, HoTen]
+    ordered: true
+    kind: query
+    answer: |
+      SELECT nv.MaNV, nv.HoTen
+      FROM NhanVien AS nv
+      LEFT JOIN BangLuong AS bl ON bl.MaNV = nv.MaNV AND bl.KyLuong = '2026-09'
+      WHERE bl.MaNV IS NULL
+      ORDER BY nv.MaNV;
+  - id: 3-5-3
+    title: Nhân viên và hợp đồng, kể cả người chưa có
+    summary: Liệt kê mọi nhân viên kèm từng hợp đồng của họ.
+    prompt: >-
+      Lấy mã và họ tên của mọi nhân viên, kèm mã từng hợp đồng của họ.
+      Ai chưa có hợp đồng vẫn phải có mặt, cột mã hợp đồng để trống.
+      Xếp theo mã nhân viên, rồi theo mã hợp đồng.
+    columns: [MaNV, HoTen, MaHD]
+    ordered: true
+    kind: query
+    answer: |
+      SELECT nv.MaNV, nv.HoTen, hd.MaHD
+      FROM NhanVien AS nv
+      LEFT JOIN HopDong AS hd ON hd.MaNV = nv.MaNV
+      ORDER BY nv.MaNV, hd.MaHD;
