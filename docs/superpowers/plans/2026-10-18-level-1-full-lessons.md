@@ -1,5 +1,7 @@
 # Level 1 viết đầy đủ: Implementation Plan
 
+**Trạng thái (2026-10-18):** đã làm xong 13 task theo cách Native, rà soát cuối bằng một reviewer độc lập (kết luận "With fixes": 2 lỗi đáng sửa, 8 lỗi nhỏ, đều đã sửa có test). Đã merge vào `main`. Các quyết định trong lúc làm: tên database thật là `free-sql-db-8797714` (giữ nguyên theo quyết định của người làm khóa học); hộp kết nối theo SSMS 21; bài tập 1.6 dùng ChucDanh, HopDong, DonNghiPhep để không lọt đáp án vào bài.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Năm bài 1.2–1.6 thành bài đầy đủ theo khuôn mới; bài 1.1 và 3.5 sắp lại theo khuôn đó. Bài 1.1–1.5 không có mục "Bài tập". Bài 1.6 có 3 bài tập và sơ đồ thứ tự chạy. Web có thêm khối mô phỏng SSMS và sơ đồ quan hệ đặt thẳng trong bài, và hiện tên database `free-sql-db-8797714` ở dòng trạng thái.
