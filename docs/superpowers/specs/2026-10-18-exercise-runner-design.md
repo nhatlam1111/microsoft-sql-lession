@@ -1,7 +1,7 @@
 # Thiết kế phần B: bài tập chạy SQL trên web
 
 - Ngày: 2026-10-18
-- Trạng thái: chờ duyệt
+- Trạng thái: đã duyệt ngày 2026-10-18. Người làm khóa học chọn cách ở mục 7: người dựng cài Azure CLI, người làm khóa học tự `az login`, người dựng tạo tài nguyên và hỏi lại trước mỗi lần tạo.
 - Nối tiếp: [spec đợt 2, mục 5](2026-10-18-step-flow-exercises-full-lessons-design.md) và [kết quả chạy thử](2026-10-18-exercise-runner-spike-results.md). Chỗ nào spec này ghi khác spec đợt 2 thì theo spec này.
 - Web: https://nhatlam1111.github.io/microsoft-sql-lession/
 
