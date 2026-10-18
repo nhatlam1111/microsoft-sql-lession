@@ -97,3 +97,69 @@ const views = steps.map((step, i) => {
     </div>
   </aside>
 </figure>
+
+<script>
+  const flows = () => [...document.querySelectorAll<HTMLElement>('.rf')];
+  const drawerOf = (root: HTMLElement) => root.querySelector<HTMLElement>('.rf-drawer')!;
+  const cardsOf = (root: HTMLElement) => [...root.querySelectorAll<HTMLElement>('.rf-card')];
+  const currentOf = (root: HTMLElement) => Number(root.dataset.current ?? 0);
+
+  function show(root: HTMLElement, i: number) {
+    for (const other of flows()) if (other !== root) hide(other, false);
+    const drawer = drawerOf(root);
+    const panels = [...drawer.querySelectorAll<HTMLElement>('.rf-panel')];
+    panels.forEach((panel, k) => { panel.hidden = k !== i; });
+    cardsOf(root).forEach((card, k) => card.setAttribute('aria-expanded', String(k === i)));
+    root.dataset.current = String(i);
+    drawer.querySelector<HTMLButtonElement>('.rf-prev')!.disabled = i === 0;
+    drawer.querySelector<HTMLButtonElement>('.rf-next')!.disabled = i === panels.length - 1;
+    drawer.hidden = false;
+    drawer.querySelector<HTMLElement>('.rf-d-body')!.scrollTop = 0;
+    drawer.focus({ preventScroll: true });
+  }
+
+  function hide(root: HTMLElement, returnFocus: boolean) {
+    const drawer = drawerOf(root);
+    if (drawer.hidden) return;
+    drawer.hidden = true;
+    const cards = cardsOf(root);
+    cards.forEach(card => card.setAttribute('aria-expanded', 'false'));
+    if (returnFocus) cards[currentOf(root)]?.focus({ preventScroll: true });
+  }
+
+  function move(root: HTMLElement, by: number) {
+    const next = currentOf(root) + by;
+    if (next >= 0 && next < cardsOf(root).length) show(root, next);
+  }
+
+  document.addEventListener('click', event => {
+    const target = event.target as HTMLElement | null;
+    const card = target?.closest<HTMLElement>('.rf-card');
+    if (card) { show(card.closest<HTMLElement>('.rf')!, Number(card.dataset.step)); return; }
+    const root = target?.closest<HTMLElement>('.rf');
+    if (!root || !target) return;
+    if (target.closest('.rf-close')) hide(root, true);
+    else if (target.closest('.rf-prev')) move(root, -1);
+    else if (target.closest('.rf-next')) move(root, 1);
+  });
+
+  // Capture phase: React closes the roadmap popup or the search box before a bubbling listener
+  // would run, and the drawer must not take that same Esc as its own.
+  document.addEventListener('keydown', event => {
+    const root = flows().find(r => !drawerOf(r).hidden);
+    if (!root || document.querySelector('.rp-backdrop, .sd-backdrop')) return;
+    if (event.key === 'Escape') hide(root, true);
+    else if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+      event.preventDefault();
+      move(root, event.key === 'ArrowLeft' ? -1 : 1);
+    }
+  }, true);
+
+  document.addEventListener('mousedown', event => {
+    const target = event.target as HTMLElement;
+    for (const root of flows()) {
+      const drawer = drawerOf(root);
+      if (!drawer.hidden && !drawer.contains(target) && !target.closest('.rf-card')) hide(root, false);
+    }
+  });
+</script>
