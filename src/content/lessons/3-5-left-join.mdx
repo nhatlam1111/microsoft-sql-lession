@@ -102,7 +102,7 @@ ORDER BY nv.MaNV;`} steps={[
     clause: 'FROM',
     title: 'Lấy bảng NhanVien làm bảng gốc.',
     focus: 'FROM NhanVien AS nv',
-    meaning: '`FROM` cho SQL Server biết lấy dữ liệu từ bảng nào. Đây luôn là việc làm đầu tiên, dù trong câu lệnh nó nằm ở dòng thứ hai. `AS nv` đặt tên gọi tắt cho bảng để các dòng sau viết ngắn hơn.',
+    meaning: '`FROM` cho SQL Server biết lấy dữ liệu từ bảng nào. Đây luôn là việc làm đầu tiên, dù khi viết nó đứng sau `SELECT`. `AS nv` đặt tên gọi tắt cho bảng để các dòng sau viết ngắn hơn.',
     detail: 'Bảng `NhanVien` có 48 người, mỗi người một dòng, đủ 12 cột. Chưa có dòng nào bị lọc hay cột nào bị bỏ.',
     sql: `SELECT *
 FROM NhanVien AS nv;`,
@@ -127,7 +127,7 @@ FROM NhanVien AS nv;`,
     title: 'Ghép mỗi nhân viên với hợp đồng của họ; ai không có thì để NULL.',
     focus: 'LEFT JOIN HopDong AS hd ON hd.MaNV = nv.MaNV',
     meaning: '`LEFT JOIN` ghép mỗi dòng của bảng bên trái với các dòng khớp ở bảng bên phải, theo điều kiện viết sau `ON`. Dòng bên trái không khớp với dòng nào vẫn được giữ lại, các cột của bảng bên phải để `NULL`.',
-    detail: 'Bảng bên trái là `NhanVien` (48 người), bên phải là `HopDong`, khớp nhau theo `MaNV`. Tôn Thất Long có ba hợp đồng nên có ba dòng, vì vậy 48 người thành 57 dòng. Phạm Ngọc Ánh và Đỗ Minh Quân chưa có hợp đồng nào, vẫn còn trong bảng với `MaHD` là `NULL`.',
+    detail: 'Bảng bên trái là `NhanVien` (48 người), bên phải là `HopDong` (55 hợp đồng), khớp nhau theo `MaNV`. Ai có nhiều hợp đồng thì có nhiều dòng (Tôn Thất Long có ba), vì vậy 48 người thành 57 dòng. Phạm Ngọc Ánh và Đỗ Minh Quân chưa có hợp đồng nào, vẫn còn trong bảng với `MaHD` là `NULL`.',
     sql: `SELECT nv.MaNV, nv.HoTen, hd.MaHD, nv.MaPB, nv.NgayVaoLam
 FROM NhanVien AS nv
 LEFT JOIN HopDong AS hd ON hd.MaNV = nv.MaNV;`,
@@ -187,7 +187,7 @@ WHERE hd.MaHD IS NULL;`,
     clause: 'ORDER BY',
     title: 'Sắp xếp theo mã nhân viên.',
     focus: 'ORDER BY nv.MaNV',
-    meaning: '`ORDER BY` sắp xếp các dòng của kết quả và là bước cuối cùng. Không có `ORDER BY` thì SQL Server không hứa trả dòng theo thứ tự nào.',
+    meaning: '`ORDER BY` sắp xếp các dòng của kết quả; sau nó chỉ còn `TOP` hoặc `OFFSET` nếu câu lệnh có. Không có `ORDER BY` thì SQL Server không hứa trả dòng theo thứ tự nào.',
     detail: 'Hai dòng xếp theo `MaNV`: NV047 rồi NV048. Lần này thứ tự tình cờ đã đúng sẵn, nhưng khi thứ tự có ý nghĩa thì vẫn nên viết `ORDER BY`.',
     sql: `SELECT nv.MaNV, nv.HoTen, nv.MaPB, nv.NgayVaoLam
 FROM NhanVien AS nv

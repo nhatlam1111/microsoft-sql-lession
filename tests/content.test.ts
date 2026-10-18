@@ -85,6 +85,13 @@ describe('fixes from the final review', () => {
     expect(body('2-5-null-o-trong')).not.toContain('ISNULL(Email');
     expect(body('2-5-null-o-trong')).toContain("COALESCE(Email, N'(chưa có)')");
   });
+  it('3.5 run-order text gets the row arithmetic and the general rules right', () => {
+    const b = body('3-5-left-join');
+    expect(b).toContain('Ai có nhiều hợp đồng thì có nhiều dòng');
+    expect(b).not.toContain('Tôn Thất Long có ba hợp đồng nên có ba dòng, vì vậy');
+    expect(b).not.toContain('là bước cuối cùng');
+    expect(b).not.toContain('ở dòng thứ hai');
+  });
   it('3.5 shows the run order of its final query', () => {
     expect(body('3-5-left-join')).toContain('### SQL Server chạy câu này thế nào');
     expect(body('3-5-left-join')).toContain('<RunFlow');

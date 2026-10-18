@@ -99,12 +99,14 @@ const views = steps.map((step, i) => {
 </figure>
 
 <script>
+  import { arrowMove } from '../../lib/run-flow';
+
   const flows = () => [...document.querySelectorAll<HTMLElement>('.rf')];
   const drawerOf = (root: HTMLElement) => root.querySelector<HTMLElement>('.rf-drawer')!;
   const cardsOf = (root: HTMLElement) => [...root.querySelectorAll<HTMLElement>('.rf-card')];
   const currentOf = (root: HTMLElement) => Number(root.dataset.current ?? 0);
 
-  function show(root: HTMLElement, i: number) {
+  function show(root: HTMLElement, i: number, takeFocus: boolean) {
     for (const other of flows()) if (other !== root) hide(other, false);
     const drawer = drawerOf(root);
     const panels = [...drawer.querySelectorAll<HTMLElement>('.rf-panel')];
@@ -115,7 +117,7 @@ const views = steps.map((step, i) => {
     drawer.querySelector<HTMLButtonElement>('.rf-next')!.disabled = i === panels.length - 1;
     drawer.hidden = false;
     drawer.querySelector<HTMLElement>('.rf-d-body')!.scrollTop = 0;
-    drawer.focus({ preventScroll: true });
+    if (takeFocus) drawer.focus({ preventScroll: true });
   }
 
   function hide(root: HTMLElement, returnFocus: boolean) {
@@ -129,13 +131,17 @@ const views = steps.map((step, i) => {
 
   function move(root: HTMLElement, by: number) {
     const next = currentOf(root) + by;
-    if (next >= 0 && next < cardsOf(root).length) show(root, next);
+    if (next < 0 || next >= cardsOf(root).length) return;
+    show(root, next, false);
+    // Stepping onto the first or last step disables the button that had focus; keep focus in the drawer.
+    const active = document.activeElement as HTMLButtonElement | null;
+    if (!active || active === document.body || active.disabled) drawerOf(root).focus({ preventScroll: true });
   }
 
   document.addEventListener('click', event => {
     const target = event.target as HTMLElement | null;
     const card = target?.closest<HTMLElement>('.rf-card');
-    if (card) { show(card.closest<HTMLElement>('.rf')!, Number(card.dataset.step)); return; }
+    if (card) { show(card.closest<HTMLElement>('.rf')!, Number(card.dataset.step), true); return; }
     const root = target?.closest<HTMLElement>('.rf');
     if (!root || !target) return;
     if (target.closest('.rf-close')) hide(root, true);
@@ -148,10 +154,14 @@ const views = steps.map((step, i) => {
   document.addEventListener('keydown', event => {
     const root = flows().find(r => !drawerOf(r).hidden);
     if (!root || document.querySelector('.rp-backdrop, .sd-backdrop')) return;
-    if (event.key === 'Escape') hide(root, true);
-    else if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+    if (event.key === 'Escape') { hide(root, true); return; }
+    const target = event.target as HTMLElement;
+    const drawer = drawerOf(root);
+    const onDrawerOrCard = !!target.closest?.('.rf-card') || (drawer.contains(target) && !target.closest('.res-scroll, pre'));
+    const by = arrowMove(event, onDrawerOrCard);
+    if (by !== 0) {
       event.preventDefault();
-      move(root, event.key === 'ArrowLeft' ? -1 : 1);
+      move(root, by);
     }
   }, true);
 

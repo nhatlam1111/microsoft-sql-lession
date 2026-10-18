@@ -1,5 +1,5 @@
 import { it, expect } from 'vitest';
-import { clauseRank, checkFlow, snakeLayout, previewOf, splitFocus, inlineCode } from '../src/lib/run-flow';
+import { clauseRank, checkFlow, snakeLayout, previewOf, splitFocus, inlineCode, arrowMove } from '../src/lib/run-flow';
 import { sampleFlow, sampleQuery } from './helpers/flows';
 
 it('ranks clauses in SQL Server run order', () => {
@@ -41,4 +41,12 @@ it('splits backtick code out of the explanation text', () => {
     { code: true, text: 'LEFT JOIN' }, { code: false, text: ' giữ dòng, để ' }, { code: true, text: 'NULL' }, { code: false, text: '.' },
   ]);
   expect(inlineCode('lẻ ` một dấu')).toEqual([{ code: false, text: 'lẻ ` một dấu' }]);
+});
+it('moves a step with a bare arrow key on the drawer or a card, and leaves every other key alone', () => {
+  const key = (k: string, mods: Partial<Record<'altKey' | 'ctrlKey' | 'metaKey' | 'shiftKey', boolean>> = {}) =>
+    ({ key: k, altKey: false, ctrlKey: false, metaKey: false, shiftKey: false, ...mods });
+  expect([arrowMove(key('ArrowLeft'), true), arrowMove(key('ArrowRight'), true), arrowMove(key('Enter'), true)]).toEqual([-1, 1, 0]);
+  expect(arrowMove(key('ArrowLeft', { altKey: true }), true)).toBe(0);
+  expect(arrowMove(key('ArrowRight', { ctrlKey: true }), true)).toBe(0);
+  expect(arrowMove(key('ArrowRight'), false)).toBe(0);
 });

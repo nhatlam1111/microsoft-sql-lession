@@ -117,3 +117,14 @@ export function nextFlowId(): string {
   flowCount += 1;
   return `rf-${flowCount}`;
 }
+
+export interface KeyLike { key: string; altKey: boolean; ctrlKey: boolean; metaKey: boolean; shiftKey: boolean }
+
+/**
+ * Which way a key moves the open drawer: only a bare ← or → while focus is on the drawer or a card,
+ * so Alt+← still goes back and arrows still scroll a wide result table.
+ */
+export function arrowMove(e: KeyLike, onDrawerOrCard: boolean): -1 | 0 | 1 {
+  if (!onDrawerOrCard || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return 0;
+  return e.key === 'ArrowLeft' ? -1 : e.key === 'ArrowRight' ? 1 : 0;
+}

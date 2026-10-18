@@ -8,6 +8,10 @@
 
 Cách làm ở spec đợt 2 chạy được trên database thật. Cả 15 trường hợp ra đúng kỳ vọng. Checksum của 7 bảng trước và sau lần chạy giống hệt nhau; kiểm lại qua MCP chỉ đọc cũng thấy dữ liệu còn nguyên (20 đơn nghỉ phép, 2 đơn "Từ chối", 86 dòng lương, không có bảng `X`).
 
+Chưa được chứng minh trong lần chạy này:
+- Danh sách từ khóa bị chặn (`commit`, `waitfor`, `exec`…) chưa lần nào tự chặn được: cả 6 câu bị chặn đều dừng sớm hơn, ở luật "chỉ nhận câu bắt đầu bằng …", luật dấu `;` hoặc luật `INTO`. Cần thêm trường hợp như `SELECT 1 WAITFOR DELAY '00:00:01'`.
+- Luật chấm "`NULL` bằng `NULL`" và báo "Khác số cột" chưa có trường hợp nào đi qua.
+
 Hai việc cần tính trong spec B: database ngủ thì lần chạy đầu mất gần một phút, và mỗi lượt gọi từ máy này tới database mất khoảng 0,34 giây.
 
 ## Các trường hợp
@@ -33,9 +37,9 @@ Trường hợp C2 là tư liệu tốt cho bài học: database này cắt mấ
 |---|---|
 | Kết nối và truy vấn đầu tiên (database đang ngủ) | 57,4 giây |
 | `SELECT 1` khi database đã thức (5 lần) | 355 / 335 / 346 / 313 / 343 ms |
-| Một lần chạy có lỗi (E1, gồm mở transaction, `SET`, câu lệnh, `ROLLBACK`) | 692 ms |
+| Một lần chạy có lỗi (E1, gồm mở transaction, `SET`, câu lệnh; chưa tính `ROLLBACK` chạy sau cùng) | 692 ms |
 
-Thời gian khi đã thức gần như toàn là đường truyền từ máy này tới Azure. Bản chạy thử gửi 4–5 lượt cho mỗi lần chạy (mở transaction, `SET`, câu lệnh, câu kiểm tra, `ROLLBACK`), và chấm một bài là hai lần chạy, nên từ máy này mất khoảng 3 giây mỗi lần nộp.
+Thời gian khi đã thức gần như toàn là đường truyền từ máy này tới Azure. Bản chạy thử gửi 4–5 lượt cho mỗi lần chạy (mở transaction, `SET`, câu lệnh, câu kiểm tra, `ROLLBACK`), và chấm một bài là hai lần chạy, nên ước tính từ máy này mất khoảng 2–3 giây mỗi lần nộp (chưa đo trực tiếp một lần nộp trọn vẹn).
 
 ## Những gì chạy khác dự kiến hoặc còn thiếu
 
@@ -54,6 +58,7 @@ Thời gian khi đã thức gần như toàn là đường truyền từ máy n�
 - Gộp `SET`, câu lệnh, câu kiểm tra và `ROLLBACK` vào một lượt gửi khi được, để bớt số lượt.
 - Thời gian chờ: kết nối 90 giây (database đang ngủ), mỗi câu lệnh 10 giây, chờ khóa 3 giây.
 - Khi trang làm bài mở ra thì gửi trước một yêu cầu "đánh thức", để lúc học viên bấm Chạy thì database đã thức.
-- Bộ chặn: đếm câu lệnh cấp ngoài cùng, cho phép `WITH … INSERT/UPDATE/DELETE`, giữ danh sách lệnh bị chặn hiện tại.
+- Bộ chặn: đếm câu lệnh cấp ngoài cùng, cho phép `WITH … INSERT/UPDATE/DELETE`, giữ danh sách lệnh bị chặn hiện tại, và có test cho đúng danh sách đó (ví dụ `SELECT 1 WAITFOR DELAY '00:00:01'`, `SELECT 1 COMMIT`).
+- Chấm bài: thêm trường hợp có ô `NULL` và trường hợp khác số cột.
 - Chấm bài: đọc kết quả theo mảng, so `DECIMAL` không qua số thực.
 - Khôi phục: vì `ROLLBACK` đã được chứng minh, chỉ cần một bước kiểm checksum định kỳ để báo khi lệch, và chạy lại `database/HRM_Demo.sql` bằng tay khi cần.
