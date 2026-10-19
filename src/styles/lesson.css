@@ -14,12 +14,13 @@
 .prose li + li { margin-top: 0.45em; }
 .prose strong { font-weight: 600; }
 .prose a { color: var(--accent); text-underline-offset: 3px; }
+.prose a:hover { color: var(--accent-hover); }
 .prose code {
   font-family: var(--font-code);
   font-size: 0.84em;
-  background: #EBE8E0;
+  background: var(--surface-hover);
   padding: 0.1em 0.35em;
-  border-radius: 4px;
+  border-radius: var(--radius-s);
 }
 .prose h2 {
   font-family: var(--font-ui);
@@ -44,12 +45,13 @@
 .chat-avatar {
   flex: none; width: 36px; height: 36px; border-radius: 50%;
   display: grid; place-items: center;
-  background: #ECDCC8; color: #6E4518; font-weight: 700; font-size: 14px;
+  background: var(--accent-soft); color: var(--accent); font-weight: 700; font-size: 14px;
 }
 .chat-bubble {
   background: var(--surface); border: 1px solid var(--rule);
   border-radius: 4px var(--radius-l) var(--radius-l) var(--radius-l);
   padding: 10px 16px 12px; max-width: 34em; font-size: 15px; line-height: 1.6;
+  box-shadow: var(--shadow-s);
 }
 .chat-meta { margin: 0 0 2px; display: flex; gap: 10px; font-size: 13px; color: var(--ink-3); }
 .chat-who { font-weight: 600; color: var(--ink-2); }
@@ -58,7 +60,7 @@
 .key {
   font-family: var(--font-ui); font-size: 16px; font-weight: 600; line-height: 1.5;
   padding: 12px 16px; border-radius: var(--radius-m);
-  border: 1.5px dashed var(--rule-strong); background: var(--surface);
+  border: 1px solid var(--accent-line); background: var(--accent-soft); color: var(--ink);
 }
 .key > * { margin: 0; }
 
@@ -118,23 +120,23 @@
 .res-trim { padding: 4px 10px 6px; font-size: 12px; color: var(--ink-3); background: #FAFAFA; }
 
 /* ---------- Line-by-line reading of a query ---------- */
-.linemap { margin: 1em 0; border: 1px solid var(--rule); border-radius: var(--radius-m); overflow: hidden; background: var(--surface); }
+.linemap { margin: 1em 0; border: 1px solid var(--rule); border-radius: var(--radius-m); overflow: hidden; background: var(--surface); box-shadow: var(--shadow-s); }
 .linemap-row { display: grid; grid-template-columns: 240px minmax(0, 1fr); border-top: 1px solid var(--rule); }
 .linemap-row:first-child { border-top: 0; }
-.linemap dt { padding: 10px 12px; background: #FBFAF7; border-right: 1px solid var(--rule); }
+.linemap dt { padding: 10px 12px; background: var(--surface-subtle); border-right: 1px solid var(--rule); }
 .linemap dt code { font-family: var(--font-code); font-size: 12.5px; background: none; padding: 0; white-space: pre-wrap; }
 .linemap dd { margin: 0; padding: 9px 14px; font-family: var(--font-ui); font-size: 14.5px; line-height: 1.55; }
 
 /* ---------- Mistakes and how it is used at work ---------- */
-.callout { padding: 14px 18px; border-radius: var(--radius-m); font-size: 16px; }
+.callout { padding: 16px 20px; border-radius: var(--radius-m); font-size: 16px; }
 .callout > * + * { margin-top: 0.7em; }
 .callout ol, .callout ul { padding-left: 1.25em; }
-.callout-mistakes { background: #FDF6EA; border: 1px solid #EDD3A4; }
-.callout-apply { background: #F3F6FE; border: 1px solid #CFD9F4; }
+.callout-mistakes { background: var(--seen-soft); border: 1px solid var(--seen-line); }
+.callout-apply { background: var(--accent-soft); border: 1px solid var(--accent-line); }
 
 /* ---------- Excel ↔ SQL memo ---------- */
 .memo { width: 100%; border-collapse: separate; border-spacing: 0; border: 1px solid var(--rule); border-radius: var(--radius-m); overflow: hidden; background: var(--surface); font-family: var(--font-ui); font-size: 14.5px; }
-.memo th { text-align: left; padding: 9px 14px; font-size: 13px; font-weight: 650; background: #FBFAF7; border-bottom: 1px solid var(--rule); }
+.memo th { text-align: left; padding: 10px 14px; font-size: 13px; font-weight: 650; background: var(--surface-subtle); border-bottom: 1px solid var(--rule); }
 .memo .memo-excel { color: var(--excel); }
 .memo .memo-sql { color: var(--accent); }
 .memo td { padding: 9px 14px; border-top: 1px solid var(--rule); vertical-align: top; }
@@ -143,33 +145,36 @@
 
 .exercises {
   font-family: var(--font-ui); font-size: 14.5px; color: var(--ink-3);
-  padding: 14px 16px; border: 1.5px dashed var(--rule-strong); border-radius: var(--radius-m);
+  padding: 16px 18px; border: 1px dashed var(--rule-strong); border-radius: var(--radius-m); background: var(--surface-subtle);
 }
 
 /* ---------- Plain markdown tables in lessons ---------- */
 .prose table:not([class]) { width: 100%; border-collapse: collapse; font-family: var(--font-ui); font-size: 14.5px; line-height: 1.5; background: var(--surface); border: 1px solid var(--rule); }
 .prose table:not([class]) th, .prose table:not([class]) td { padding: 8px 12px; border-top: 1px solid var(--rule); text-align: left; vertical-align: top; }
-.prose table:not([class]) thead th { border-top: 0; background: #FBFAF7; font-size: 13px; font-weight: 650; }
+.prose table:not([class]) thead th { border-top: 0; background: var(--surface-subtle); font-size: 13px; font-weight: 650; }
 /* The editor and result blocks sit inside .prose; keep the inline-code look off them. */
 .prose .sql-code code, .prose .res code { background: none; padding: 0; border-radius: 0; font-size: inherit; }
 
 /* ---------- Run-order diagram (RunFlow) ---------- */
 .rf { font-family: var(--font-ui); }
-.prose .rf-note { display: flex; flex-wrap: wrap; gap: 6px 10px; margin-bottom: 18px; padding: 10px 14px; background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius-m); font-size: 14px; line-height: 1.5; color: var(--ink-2); }
+.prose .rf-note { display: flex; flex-wrap: wrap; gap: 6px 10px; margin-bottom: 18px; padding: 12px 14px; background: var(--surface-subtle); border: 1px solid var(--rule); border-radius: var(--radius-m); font-size: 14px; line-height: 1.5; color: var(--ink-2); }
 .prose .rf-grid { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 30px; row-gap: 34px; }
 .prose .rf-grid li + li { margin-top: 0; }
 .rf-cell { position: relative; }
-.rf-cell::after { position: absolute; color: #B6B0A3; font-size: 22px; font-weight: 700; line-height: 1; letter-spacing: -0.12em; pointer-events: none; }
+.rf-cell::after { position: absolute; color: var(--ink-faint); font-size: 22px; font-weight: 700; line-height: 1; letter-spacing: -0.12em; pointer-events: none; }
 .rf-cell[data-arrow='right']::after { content: '››'; right: -24px; top: 50%; transform: translateY(-50%); }
 .rf-cell[data-arrow='left']::after { content: '‹‹'; left: -26px; top: 50%; transform: translateY(-50%); }
 .rf-cell[data-arrow='down']::after { content: '››'; left: 50%; bottom: -29px; transform: translateX(-50%) rotate(90deg); }
 .rf-card {
   width: 100%; height: 100%; display: grid; align-content: start; gap: 8px; padding: 12px 12px 10px;
   text-align: left; font: inherit; color: inherit; background: var(--surface);
-  border: 1px solid var(--rule); border-radius: 12px; cursor: pointer;
+  border: 1px solid var(--rule); border-radius: var(--radius-m); cursor: pointer;
+  box-shadow: var(--shadow-s);
+  transition: border-color var(--motion-fast) var(--ease-ui), background-color var(--motion-fast) var(--ease-ui), box-shadow var(--motion-fast) var(--ease-ui);
 }
-.rf-card:hover { border-color: var(--rule-strong); }
-.rf-card[aria-expanded='true'] { outline: 2px solid var(--ink); outline-offset: 2px; }
+.rf-card:hover { border-color: var(--accent-line); box-shadow: var(--shadow-m); }
+.rf-card:active { background: var(--surface-hover); }
+.rf-card[aria-expanded='true'] { border-color: var(--accent); outline: 2px solid var(--accent); outline-offset: 2px; }
 .rf-top { display: flex; align-items: baseline; gap: 10px; }
 .rf-num { font-size: 30px; font-weight: 800; line-height: 1; letter-spacing: -0.02em; color: var(--accent); font-variant-numeric: tabular-nums; }
 .rf-clause { font-family: var(--font-code); font-size: 14px; font-weight: 500; }
@@ -190,22 +195,24 @@
   position: fixed; top: var(--topbar); right: 0; bottom: 0; z-index: 40; width: 440px;
   display: flex; flex-direction: column; background: var(--surface);
   border-left: 1px solid var(--rule); border-top: 4px solid var(--lv, var(--accent));
-  box-shadow: -12px 0 32px rgba(31, 35, 40, 0.08);
-  font-size: 14px; line-height: 1.5; animation: rf-in 160ms ease-out;
+  box-shadow: var(--shadow-l);
+  font-size: 14px; line-height: 1.5; animation: rf-in var(--motion-normal) var(--ease-ui);
 }
 .rf-drawer[hidden] { display: none; }
 .rf-drawer:focus { outline: none; }
 @keyframes rf-in { from { opacity: 0; transform: translateX(12px); } to { opacity: 1; transform: none; } }
 .rf-close {
-  position: absolute; top: 10px; right: 12px; z-index: 1; width: 32px; height: 32px;
+  position: absolute; top: 10px; right: 12px; z-index: 1; width: 38px; height: 38px;
   display: grid; place-items: center; border: 0; border-radius: var(--radius-s);
-  background: none; color: var(--ink-2); font-size: 22px; line-height: 1; cursor: pointer;
+  background: var(--surface-subtle); color: var(--ink-2); font-size: 22px; line-height: 1; cursor: pointer;
+  transition: background-color var(--motion-fast) var(--ease-ui), color var(--motion-fast) var(--ease-ui);
 }
-.rf-close:hover { background: #F3F1EB; color: var(--ink); }
+.rf-close:hover { background: var(--surface-hover); color: var(--ink); }
+.rf-close:active { background: var(--accent-soft); color: var(--accent); }
 .rf-d-body { flex: 1; min-height: 0; overflow-y: auto; padding: 14px 22px 22px; }
 .rf-d-head { display: flex; align-items: center; gap: 10px; padding-right: 40px; }
 .rf-d-step { font-size: 13px; font-weight: 600; color: var(--ink-3); }
-.prose .rf-d-clause { font-size: 13px; padding: 1px 7px; border-radius: var(--radius-s); background: #F3F1EB; }
+.prose .rf-d-clause { font-size: 13px; padding: 1px 7px; border-radius: var(--radius-s); background: var(--surface-hover); }
 .rf-d-title { margin-top: 10px; font-size: 21px; font-weight: 700; line-height: 1.25; letter-spacing: -0.01em; }
 /* One auto grid column: lines in a pre cannot wrap, so the column is as wide as the longest line
    (or the box, if wider) and the highlight band runs the full scroll width. */
@@ -214,20 +221,21 @@
 .rf-q-on { display: block; padding: 2px 14px 2px 11px; background: #FFF6D6; border-left: 3px solid #E0A800; color: inherit; }
 .rf-d-sub { margin-top: 18px; font-size: 13px; font-weight: 600; color: var(--ink-3); }
 .rf-d-text { margin-top: 6px; font-family: var(--font-read); font-size: 15.5px; line-height: 1.7; }
-.prose .rf-kw { font-size: 0.86em; font-weight: 500; padding: 1px 5px; border-radius: 4px; background: #EEF2FA; border: 1px solid #DCE3F0; color: var(--ink); white-space: nowrap; }
+.prose .rf-kw { font-size: 0.86em; font-weight: 500; padding: 1px 5px; border-radius: var(--radius-s); background: var(--accent-soft); border: 1px solid var(--accent-line); color: var(--ink); white-space: nowrap; }
 .prose .rf-d-sub .rf-kw { font-size: 12.5px; }
 .prose .rf-id { font-size: 0.86em; padding: 0; background: none; color: var(--ink); }
 .rf-drawer .res, .rf-drawer .sql { margin: 16px 0 0; }
 .rf-excel { display: flex; align-items: flex-start; gap: 10px; margin-top: 16px; font-size: 14px; line-height: 1.45; color: var(--ink-2); }
 .rf-xmark { flex: none; width: 20px; height: 20px; margin-top: 1px; display: grid; place-items: center; border-radius: 4px; background: var(--excel); color: #FFF; font-size: 11.5px; font-weight: 700; }
-.rf-d-foot { display: flex; justify-content: space-between; padding: 12px 22px 16px; border-top: 1px solid var(--rule); }
-.rf-nav { padding: 8px 14px; border: 1px solid var(--rule); border-radius: var(--radius-m); background: #FFF; font: inherit; font-size: 14px; font-weight: 600; color: var(--ink); cursor: pointer; }
-.rf-nav:hover:not(:disabled) { border-color: var(--rule-strong); }
+.rf-d-foot { display: flex; justify-content: space-between; padding: 14px 22px 18px; border-top: 1px solid var(--rule); background: var(--surface-subtle); }
+.rf-nav { min-height: 40px; padding: 8px 14px; border: 1px solid var(--rule-strong); border-radius: var(--radius-m); background: var(--surface); font: inherit; font-size: 14px; font-weight: 600; color: var(--ink); cursor: pointer; box-shadow: var(--shadow-s); transition: background-color var(--motion-fast) var(--ease-ui), border-color var(--motion-fast) var(--ease-ui), color var(--motion-fast) var(--ease-ui); }
+.rf-nav:hover:not(:disabled) { border-color: var(--accent-line); background: var(--accent-soft); color: var(--accent); }
+.rf-nav:active:not(:disabled) { background: var(--surface-hover); border-color: var(--accent); }
 .rf-nav:disabled { opacity: 0.4; cursor: default; }
 
 /* The HRM_Demo diagram drawn inside a lesson (lesson 1.5); the drawing itself is styled with the popup in islands.css. */
 .erd { margin: 20px 0 24px; }
-.erd-scroll { overflow-x: auto; padding: 12px; border: 1px solid #CDD5E3; border-radius: var(--radius-s); background: #FFF; }
+.erd-scroll { overflow-x: auto; padding: 12px; border: 1px solid var(--rule); border-radius: var(--radius-m); background: var(--surface); }
 .erd-scroll:focus-visible { outline: 2px solid var(--accent); outline-offset: -3px; }
 .erd figcaption { margin-top: 8px; font-size: 13px; color: var(--ink-3); }
 
@@ -275,8 +283,10 @@
 .ssms figcaption { padding: 6px 10px 8px; font-size: 13px; color: var(--ink-3); background: #FFF; border-top: 1px solid var(--ssms-line); }
 
 /* Self-check questions at the end of a lesson: the answer opens under the question. */
-.prose details { margin: 8px 0; padding: 10px 14px; border: 1px solid var(--rule); border-radius: var(--radius-s); background: var(--surface); }
-.prose details summary { cursor: pointer; font-family: var(--font-ui); font-size: 15px; font-weight: 600; }
-.prose details[open] summary { margin-bottom: 6px; }
+.prose details { margin: 10px 0; padding: 12px 16px; border: 1px solid var(--rule); border-radius: var(--radius-m); background: var(--surface); transition: border-color var(--motion-fast) var(--ease-ui), background-color var(--motion-fast) var(--ease-ui); }
+.prose details:hover { border-color: var(--rule-strong); }
+.prose details summary { cursor: pointer; font-family: var(--font-ui); font-size: 15px; font-weight: 600; color: var(--ink); }
+.prose details[open] { background: var(--surface-subtle); }
+.prose details[open] summary { margin-bottom: 10px; }
 .prose details p { margin: 0; }
 

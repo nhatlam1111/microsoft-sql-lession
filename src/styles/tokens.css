@@ -1,29 +1,39 @@
 :root {
-  /* Paper and ink */
-  --paper: #F4F2EC;
+  /* Workspace surfaces and ink. Canonical runtime tokens; see DESIGN.md. */
+  --paper: #F5F7FB;
   --surface: #FFFFFF;
-  --ink: #1F2328;
-  --ink-2: #5B6169;
-  --ink-3: #656B72; /* spec #8A9099, darkened so small text passes 4.5:1 on the paper */
-  --ink-faint: #8A9099; /* only for non-text marks: borders of empty states, dots */
-  --rule: #E5E2DA;
-  --rule-strong: #D3CEC3;
+  --surface-subtle: #F8FAFD;
+  --surface-hover: #EEF3FA;
+  --ink: #172B4D;
+  --ink-2: #526078;
+  --ink-3: #5E6D83;
+  --ink-faint: #8A99AE; /* non-text marks only */
+  --rule: #DCE3ED;
+  --rule-strong: #B8C6D9;
+  --control-line: #7B8DA8;
 
   /* Accent and lesson states */
-  --accent: #1F4FD1;
-  --accent-soft: #E8EEFF;
-  --done: #1A7F4B;
-  --done-soft: #E3F4EA;
-  --seen: #B26B00;
-  --flag: #C0364F;
-  --flag-soft: #FBE3E8;
+  --accent: #215CE5;
+  --accent-hover: #174BC2;
+  --accent-soft: #EDF3FF;
+  --accent-line: #C5D5FA;
+  --focus-ring: rgba(33, 92, 229, 0.16);
+  --done: #166B43;
+  --done-hover: #105333;
+  --done-soft: #E9F6EF;
+  --seen: #875100;
+  --seen-soft: #FFF5DE;
+  --seen-line: #E5CB92;
+  --flag: #B52F49;
+  --flag-soft: #FFF0F3;
+  --flag-line: #E9B6C0;
 
   /* Levels, cool to warm as the course gets harder */
-  --lv1: #0F8B8D; --lv1-soft: #DCF2F2;
-  --lv2: #2F6FD6; --lv2-soft: #E3ECFC;
-  --lv3: #5B4BC4; --lv3-soft: #EBE8FA;
-  --lv4: #9B3FAE; --lv4-soft: #F4E6F7;
-  --lv5: #C4581F; --lv5-soft: #FBEADF;
+  --lv1: #0B6B70; --lv1-soft: #DCF2F2;
+  --lv2: #225CBD; --lv2-soft: #E3ECFC;
+  --lv3: #5744B8; --lv3-soft: #EBE8FA;
+  --lv4: #89379C; --lv4-soft: #F4E6F7;
+  --lv5: #9F4518; --lv5-soft: #FBEADF;
   --lv6: #8A2D16; --lv6-soft: #F6E2DB;
 
   /* The two real tools the lessons copy */
@@ -42,8 +52,18 @@
   --font-code: 'JetBrains Mono', Consolas, monospace;
   --font-tool: 'Segoe UI', 'Be Vietnam Pro', system-ui, sans-serif;
 
-  --radius-s: 5px;
-  --radius-m: 9px;
-  --radius-l: 14px;
-  --topbar: 56px;
+  --radius-s: 6px;
+  --radius-m: 10px;
+  --radius-l: 16px;
+  --shadow-s: 0 2px 6px rgba(23, 43, 77, 0.04);
+  --shadow-m: 0 8px 24px rgba(23, 43, 77, 0.08);
+  --shadow-l: 0 24px 72px rgba(23, 43, 77, 0.18);
+  --scrim: rgba(15, 29, 53, 0.46);
+  --scroll-thumb: #7B8DA8;
+  --scroll-thumb-hover: #5E6D83;
+  --scroll-track: #EEF3FA;
+  --motion-fast: 140ms;
+  --motion-normal: 200ms;
+  --ease-ui: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --topbar: 64px;
 }
