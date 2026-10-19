@@ -127,6 +127,12 @@ it('Excel marks the cells a lesson points at', async () => {
   expect(html).toMatch(/<td class="xl-mark"[^>]*>d<\/td>/);
   expect(html).not.toMatch(/<td class="xl-mark"[^>]*>c<\/td>/);
 });
+it('Excel aligns a real date to the right like a number, and leaves text on the left', async () => {
+  const html = await c.renderToString(Excel, { props: { rows: [['Ngày'], ['01/02/2024'], ['2024.02.01']], numeric: ['A2'] } });
+  expect(html).toMatch(/<td class="xl-num"[^>]*>01\/02\/2024<\/td>/);
+  expect(html).toMatch(/<td(?! class)[^>]*>2024\.02\.01<\/td>/);
+  await expect(c.renderToString(Excel, { props: { rows: [['a']], numeric: ['B9'] } })).rejects.toThrow('B9');
+});
 it('Erd lights up the path a lesson follows', async () => {
   // Erd draws a React component, so this container needs the React renderer.
   const withReact = await AstroContainer.create();
@@ -142,8 +148,9 @@ it('Ssms stops the build when the opened table does not exist', async () => {
 it('Ssms draws the connect box, Object Explorer and the toolbar', async () => {
   const connect = await c.renderToString(Ssms, { props: { view: 'connect' } });
   // SSMS 21 and later: Database Name sits on the dialog itself (Microsoft Learn, SSMS quickstarts, 2026-10).
-  for (const s of ['sql-lession.database.windows.net', 'SQL Server Authentication', 'Database Name', 'free-sql-db-8797714', 'Strict (Minimum SQL Server 2022 and Azure SQL)', 'Trust server certificate', 'Mô phỏng SSMS:']) expect(connect).toContain(s);
-  expect(connect).not.toContain('Connection Properties');
+  // The modern dialog, the default in current SSMS: no Server type, User Name and Encrypt instead of Login and Encryption (Microsoft Learn, 2026-10).
+  for (const s of ['Server Name:', 'sql-lession.database.windows.net', 'SQL Server Authentication', 'User Name:', 'Database Name:', 'free-sql-db-8797714', 'Encrypt:', 'Strict (Minimum SQL Server 2022 and Azure SQL)', 'Trust Server Certificate', 'Mô phỏng SSMS:']) expect(connect).toContain(s);
+  for (const s of ['Connection Properties', 'Server type', 'Login:', 'Encryption:']) expect(connect).not.toContain(s);
   const explorer = await c.renderToString(Ssms, { props: { view: 'explorer' } });
   expect(explorer).toContain('free-sql-db-8797714');
   for (const t of ['PhongBan', 'ChucDanh', 'NhanVien', 'HopDong', 'ChamCong', 'DonNghiPhep', 'BangLuong']) expect(explorer).toContain(`dbo.${t}`);
