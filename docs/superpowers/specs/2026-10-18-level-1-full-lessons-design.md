@@ -186,7 +186,7 @@ Như spec đợt 1 mục 2 và spec đợt 2 mục 2, cộng thêm:
 
 ## 11. Sửa sau review bài 1.1 (2026-10-19)
 
-Người làm khóa học đưa một bản review bài 1.1 viết từ góc nhìn người làm nghiệp vụ khó tính (`temp/review-bai-1-1-database.md`, 50 mục). Đã sửa theo phần lớn các mục:
+Người làm khóa học đưa một bản review bài 1.1 viết từ góc nhìn người làm nghiệp vụ khó tính (`temp/review/review-bai-1-1-database.md`, 50 mục). Đã sửa theo phần lớn các mục:
 
 - Bỏ các khẳng định tuyệt đối mà database không tự bảo đảm: "một bản duy nhất", "đặt luật cho từng cột", "không thể có chuyện…", "Excel để bạn gõ gì cũng được", "từ chối ngay lúc nhập". Thay bằng: một nguồn dữ liệu dùng chung theo quyền; ràng buộc do người thiết kế khai báo, được kiểm khi ghi dữ liệu.
 - Thêm đoạn "Hợp lệ chưa chắc đã đúng": mã có thật nhưng gán nhầm người, ngày hợp lệ nhưng sai hồ sơ vẫn lưu được.
@@ -194,7 +194,7 @@ Người làm khóa học đưa một bản review bài 1.1 viết từ góc nh�
 - Tình huống có giả định về mốc thời gian; thêm tiểu mục "Trả lời chị Hạnh" để khép tình huống bằng quy trình xác minh, thống nhất nguồn, lấy lại số liệu cùng phạm vi.
 - Phân biệt database, SQL Server, SQL; thêm bảng danh mục phòng ban và chú giải tên cột; ví dụ ngày dạng chữ dùng `02.10.2017`.
 - Ứng dụng có bốn câu hỏi về nguồn file và các câu hỏi khi xem thiết kế dữ liệu; Ghi nhớ có ba câu tự kiểm tra.
-- Gợi ý dưới nút "Đã học xong" của bài khái niệm (1.1–1.5) đổi thành "tự giải thích lại được nội dung chính".
+- Gợi ý dưới nút "Đã học xong" của bài khái niệm (1.1–1.5) đổi thành "tự giải thích lại được nội dung chính" (sau đó đổi tiếp ở mục 12).
 
 Không làm theo, vì trái quyết định đã có:
 
@@ -203,3 +203,25 @@ Không làm theo, vì trái quyết định đã có:
 - Đổi nhãn "Bên Excel / Bên SQL" của khối Ghi nhớ: nhãn chung cho mọi bài.
 - Viết "BA cần…", "trao đổi với developer": bài không nhắc vai trò người đọc; các câu hỏi được giữ ở dạng trung tính.
 
+## 12. Sửa sau review bài 1.2–1.6 (2026-10-19)
+
+Người làm khóa học đưa thêm năm bản review cùng góc nhìn (`temp/review/review-bai-1-2…1-6-*.md`, mỗi bản 48–50 mục). Các con số được kiểm lại trên database khóa học bằng `SELECT` trước khi sửa: VH có 10 hồ sơ (8 đang làm, 2 đã nghỉ); `NhanVien` kết `HopDong` ra 55 dòng với `JOIN`, 57 dòng với `LEFT JOIN` (NV047, NV048 chưa có hợp đồng); NV008 quản lý trực tiếp 9 người (7 đang làm); IT có 10 hồ sơ, gồm NV048 vào làm 2026-10-05; database dùng `SQL_Latin1_General_CP1_CI_AS`, `us_english`, DATEFORMAT `mdy`.
+
+Đã sửa:
+
+- **1.2**: SQL Server là hệ quản trị cơ sở dữ liệu; máy chủ khóa học là Azure SQL Database; SSMS là công cụ cài riêng, không chứa dữ liệu. Excel không bị coi là "một file gửi đi" (có cùng sửa trên OneDrive/SharePoint). Thêm điều kiện trước khi kết nối (link cài SSMS, tài khoản, mạng), hộp kết nối kiểu cũ của SSMS 21, ô Trust server certificate để nguyên. Lỗi 40613 "thường" do database đang thức dậy, có thể do bảo trì; lỗi kéo dài hoặc nhắc tới IP thì gửi nguyên văn lỗi cho người phụ trách. Lời hứa hoàn tác ghi đúng cơ chế (giao dịch luôn rollback, chặn câu thoát giao dịch) và chỉ có trên trang bài tập. Mã truy cập khác tài khoản SSMS, trình duyệt nhớ mã. Kết quả không `ORDER BY` có thể khác thứ tự; khép tình huống bằng câu trả lời cho chị Hạnh. Developer/Express ghi rõ phạm vi dùng; chạy lại script đưa 7 bảng về dữ liệu gốc. Bỏ "người cấp quyền thường chỉ gửi ba".
+- **1.3**: mục tiêu và lý thuyết tách ba khả năng khi ghi một giá trị (đổi được, đổi được nhưng khác đi, không đổi được) và câu "Lưu được chưa chắc đã đúng ý". Định nghĩa lại `varchar` (byte, bảng mã), `nvarchar`, `char` (đệm khoảng trắng), `decimal(p, s)` (phần nguyên p − s). NOT NULL không chặn chuỗi rỗng; NULL ở `NgayNghiViec` là quy ước của bộ mẫu. Ngày mơ hồ phụ thuộc DATEFORMAT của phiên (`DBCC USEROPTIONS`); kết quả `Tr?n Th? Mai` gắn với bảng mã của database khóa học. Thêm "Trả lời chị Hạnh"; Excel không bị coi là "nhận bất cứ thứ gì" (`SUM` bỏ qua ô chữ, `+` báo `#VALUE!`). Ứng dụng không còn "đổi định dạng".
+- **1.4**: khóa chính "không trùng, không nhận NULL"; khóa nhiều cột xét cả bộ; khóa ngoại có thể trỏ về chính bảng đó, chỉ kiểm giá trị khác NULL, xác nhận mã tồn tại chứ không xác nhận mã đúng. Chặn xóa là cách xử lý mặc định của HRM_Demo; khóa ngoại có thể bị tắt hay bị bỏ qua khi nạp hàng loạt (dẫn bài 5.2). Bỏ "phải chuyển 10 người sang Kinh doanh" và "danh mục không bao giờ thiếu"; thêm "Trả lời chị Hạnh" với bốn câu hỏi nghiệp vụ (ngày hiệu lực, người đã nghỉ, báo cáo kỳ cũ, xóa hay ngừng dùng). Ứng dụng: mã duy nhất nghiệp vụ không nhất thiết là khóa chính (UNIQUE), mã 547 dùng cho nhiều loại ràng buộc. Thêm lỗi hay nhầm "mã khác nhau là người khác nhau".
+- **1.5**: mục tiêu cụ thể; quan hệ một-nhiều là "0, 1 hoặc nhiều"; "phía nhiều" chỉ đúng khi cột FK không duy nhất; `BangLuong` "tối đa một dòng lương mỗi kỳ"; các con số ghi rõ đếm trên toàn bộ dữ liệu mẫu. 57 dòng là `LEFT JOIN`, `JOIN` ra 55 dòng. Đảo hai vế `ON` không sai; điều sai là đảo nghĩa một-nhiều. "Trả lời chị Hạnh": tên phòng là phòng ban đang lưu, không phải phòng tại kỳ lương. Bỏ "câu lệnh gần như tự viết ra", "khỏi hỏi lại", "Sheet nào cũng tra theo mã NV".
+- **1.6**: `TOP (n)` là tối đa n dòng; câu SELECT trong bài chỉ đọc nhưng `SELECT INTO` thì ghi; `(10 rows affected)` là số dòng trả về; NULL khác chuỗi rỗng và số 0; mười dòng chỉ là mẫu, chưa phải nghiệm thu import. `RunFlow` gọi là thứ tự logic. Đề bài tập 2 và 3 ghi "mã nhân viên" thay cho "người ký", "người nghỉ".
+- **Chung**: `Sql` có `copy={false}` cho đoạn chỉ để đọc (câu ghi dữ liệu ở 1.4, đoạn trích có `...` ở 1.3, khuôn cú pháp ở 1.6). Câu nhắc mặc định của `RunFlow` thành "Bạn viết SELECT trước, nhưng theo thứ tự logic, SQL Server xét FROM trước."; tiêu đề câu lệnh trong drawer thành "Câu lệnh để xem dữ liệu ở bước này". Bài 1.2–1.5 có ba câu tự kiểm tra như 1.1, và gợi ý dưới nút "Đã học xong" của bài khái niệm thành "Bấm khi bạn trả lời được các câu tự kiểm tra cuối bài mà không nhìn bài." Thời gian đọc 1.2–1.5 tăng lên 20 phút.
+
+Không làm theo:
+
+- Đổi tên mục "Làm bằng SQL" hay tiêu đề "SQL Server chạy câu này thế nào": tên cố định theo khuôn bài (mục 3.1); thay vào đó, đoạn mở đầu và câu nhắc nói rõ đây là thứ tự logic.
+- Thêm `dbo.` vào mọi câu lệnh: cả khóa viết tên bảng không kèm schema; bài 1.2 và 1.6 giải thích `dbo.PhongBan`, `dbo.NhanVien`.
+- Sửa sơ đồ ERD (ký hiệu số lượng, dấu NULL, tách các đoạn đường trùng, phóng to): phần chữ của bài 1.5 đã nói `MaQuanLy` nhận NULL và quan hệ 0, 1 hoặc nhiều; sửa hình là việc riêng nếu cần.
+- Thêm bài tập về `TOP` ở 1.6: `TOP` không có `ORDER BY` không chấm được một cách xác định; `ORDER BY` ở bài 2.4.
+- Gợi ý "Đã học xong" riêng cho 1.6: gợi ý chung cho mọi bài có câu lệnh, giữ nguyên.
+- Các mục "Giữ được" và các mục chỉ xin thêm nhãn "mô phỏng" cho hình SSMS, kết quả: hình trong bài đều là minh họa, không đánh nhãn từng hình.
+- Khẳng định Azure SQL Database không có mục Database Diagrams trong SSMS được giữ (khóa học dùng sơ đồ trên trang); thêm ý cần cài phần hỗ trợ và quyền db_owner khi tự cài trên máy.

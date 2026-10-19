@@ -126,6 +126,19 @@ ORDER BY MaNV;`} />
 <Exercises />
 ````
 
+Bài khái niệm (`noExercises: true`) không có mục "Bài tập"; thay vào đó, ngay sau khối `Memo` có dòng `**Tự kiểm tra trước khi bấm "Đã học xong":**` và ít nhất ba câu hỏi, mỗi câu một khối:
+
+````mdx
+<details>
+<summary>Câu hỏi?</summary>
+
+Câu trả lời ngắn.
+
+</details>
+````
+
+Gợi ý dưới nút "Đã học xong" của các bài này là "Bấm khi bạn trả lời được các câu tự kiểm tra cuối bài mà không nhìn bài."
+
 Ghi chú về các tiểu mục của "Làm bằng SQL":
 
 - `### Lý thuyết cơ bản` luôn đứng đầu, gồm bốn phần: khái niệm, cú pháp chung, ví dụ thu gọn, bảng từng phần nghĩa là gì.
@@ -165,11 +178,11 @@ Dùng thẳng trong MDX, không cần import.
 | `Chat` | `who`, `time`, `initial`; nội dung là tin nhắn | Bong bóng tin nhắn ở mục Tình huống |
 | `Key` | nội dung | Câu "nói gọn lại" chốt câu hỏi dữ liệu |
 | `Excel` | `rows`, `cell?`, `formula?`, `sheets?`, `selected?` | Lưới Excel; ô `#N/A`, `#VALUE!`… tự tô đỏ |
-| `Sql` | `code`, `title?` (mặc định "SQL Server") | Câu lệnh tô màu kiểu SSMS, có nút "Sao chép" |
+| `Sql` | `code`, `title?` (mặc định "SQL Server"), `copy?` (mặc định `true`) | Câu lệnh tô màu kiểu SSMS, có nút "Sao chép". `copy={false}` cho đoạn chỉ để đọc: câu ghi dữ liệu, đoạn trích có `...`, khuôn cú pháp có chỗ cần thay |
 | `Result` | `columns`, `rows`, `total?`, `db?` | Tab Results kiểu SSMS; `null` hiện `NULL` nền vàng; `total` khi chỉ trích |
 | `Messages` | `lines`, `db?` | Tab Messages: số dòng bị ảnh hưởng, lỗi |
 | `LineMap` | `rows`: `[đoạn lệnh, nghĩa]` | Bảng từng phần nghĩa là gì |
-| `RunFlow` | `query`, `steps`, `note?` (câu nhắc trên sơ đồ, mặc định "Bạn viết SELECT trước, nhưng SQL Server làm FROM trước.") | Sơ đồ thứ tự chạy, mỗi thẻ có drawer |
+| `RunFlow` | `query`, `steps`, `note?` (câu nhắc trên sơ đồ, mặc định "Bạn viết SELECT trước, nhưng theo thứ tự logic, SQL Server xét FROM trước.") | Sơ đồ thứ tự xử lý logic, mỗi thẻ có drawer |
 | `Mistakes` | nội dung (danh sách đánh số) | Mục Hay nhầm ở đâu |
 | `Apply` | nội dung (danh sách) | Mục Ứng dụng |
 | `Memo` | `rows`: `[bên Excel, bên SQL]` | Mục Ghi nhớ |
@@ -191,7 +204,10 @@ Dòng trạng thái của `Result` và `Messages` mặc định ghi `free-sql-db
 - Level 1 không bảo học viên chạy câu `INSERT`, `UPDATE`, `DELETE` trong SSMS; câu sửa dữ liệu chỉ đưa ra để đọc.
 - Không hứa điều database không tự bảo đảm. Ràng buộc chỉ có khi được khai báo, nên viết "khi `MaNV` được khai báo là khóa chính…" thay cho "database chặn hẳn…". Tách "hợp lệ" với "đúng": mã có thật vẫn có thể gán nhầm người. Khóa ngoại là luật kiểm khi ghi dữ liệu, không phải ô chọn trên màn hình.
 - Không tuyệt đối hóa Excel (Excel có Data Validation, có làm việc chung trên một workbook); nói rõ điều kiện của tình huống ("trong file chưa thiết lập kiểm tra…").
-- Tình huống ở đầu bài phải được khép lại trong bài: có giả định rõ (mốc thời gian, phạm vi), và có câu trả lời cho người hỏi.
+- Tình huống ở đầu bài phải được khép lại trong bài: có giả định rõ (mốc thời gian, phạm vi), và có câu trả lời cho người hỏi. Bài không có `RunFlow` có thể kết "Làm bằng SQL" bằng `### Trả lời chị Hạnh`. Câu trả lời tách phần database làm được với phần là quyết định nghiệp vụ (ví dụ chuyển phòng ai, từ ngày nào, giữ lịch sử ra sao).
+- Con số lấy từ dữ liệu mẫu phải nói rõ đang đếm gì và trên phạm vi nào: "10 hồ sơ còn trỏ tới VH, gồm 2 người đã nghỉ", "đếm trên toàn bộ dữ liệu mẫu", "43 người có lương kỳ 2026-09". Phân biệt "tối đa một" với "đúng một", và quy ước của bộ mẫu (NULL ở `NgayNghiViec` là chưa nghỉ) với điều SQL Server tự bảo đảm.
+- Kết quả không có `ORDER BY` thì nói thứ tự dòng có thể khác hình. `TOP (n)` là "tối đa n dòng". Thứ tự trong `RunFlow` là thứ tự xử lý logic, không phải cách SQL Server thực sự đọc dữ liệu.
+- Lời hứa của công cụ phải nói rõ phạm vi: việc hoàn tác chỉ có trên trang bài tập, SSMS chạy thật; lỗi 40613 thường do database đang thức dậy, nhưng không phải lúc nào cũng vậy; gặp lỗi kéo dài thì gửi nguyên văn lỗi cho người phụ trách.
 
 ## Kiểm trước khi commit
 

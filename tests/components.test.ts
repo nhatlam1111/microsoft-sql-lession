@@ -41,6 +41,12 @@ it('Sql highlights keywords and keeps the raw code for copying', async () => {
   expect(html).toContain('data-copy="SELECT 1;"');
   expect(html).toContain('Sao chép');
 });
+it('Sql leaves out the copy button for a snippet that is only for reading', async () => {
+  const html = await c.renderToString(Sql, { props: { code: 'DELETE FROM PhongBan;', copy: false } });
+  expect(html).not.toContain('Sao chép');
+  expect(html).not.toContain('data-copy');
+  expect(html).toMatch(/<span class="t-keyword"[^>]*>DELETE<\/span>/);
+});
 it('Memo and Exercises use the fixed copy', async () => {
   const memo = await c.renderToString(Memo, { props: { rows: [['VLOOKUP dò theo mã', 'LEFT JOIN … ON']] } });
   expect(memo).toContain('Bên Excel'); expect(memo).toContain('Bên SQL');
@@ -65,10 +71,10 @@ it('RunFlow numbers the steps, counts rows and previews 3 rows by 3 columns', as
   const html = await c.renderToString(RunFlow, { props: { query: sampleQuery(), steps: sampleFlow() } });
   expect(html).toMatch(/class="rf-num"[^>]*>01</);
   expect(html).toMatch(/class="rf-num"[^>]*>05</);
-  for (const s of ['còn 48 dòng', 'còn 57 dòng', '+45 dòng', '+9 cột', 'Bạn viết SELECT trước, nhưng SQL Server làm FROM trước.']) expect(html).toContain(s);
+  for (const s of ['còn 48 dòng', 'còn 57 dòng', '+45 dòng', '+9 cột', 'Bạn viết SELECT trước, nhưng theo thứ tự logic, SQL Server xét FROM trước.']) expect(html).toContain(s);
   expect(html).toMatch(/<span class="rf-mini"[^>]*>(?:(?!<\/button>)[\s\S])*res-null/);
   expect((html.match(/class="rf-panel"/g) ?? []).length).toBe(5);
-  for (const s of ['Bước trước', 'Bước sau', 'Trích 10 dòng (kết quả có 57 dòng)', 'Câu lệnh của bước này', 'Sao chép', 'Ở bước này']) expect(html).toContain(s);
+  for (const s of ['Bước trước', 'Bước sau', 'Trích 10 dòng (kết quả có 57 dòng)', 'Câu lệnh để xem dữ liệu ở bước này', 'Sao chép', 'Ở bước này']) expect(html).toContain(s);
 });
 it("RunFlow highlights the step's lines in the full query and boxes SQL words in the explanation", async () => {
   const html = await c.renderToString(RunFlow, { props: { query: sampleQuery(), steps: sampleFlow() } });

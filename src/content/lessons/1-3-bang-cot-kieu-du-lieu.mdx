@@ -5,12 +5,12 @@ shortTitle: Bảng, cột, kiểu dữ liệu
 level: 1
 area: A1
 kind: full
-minutes: 15
+minutes: 20
 prerequisites:
   - "1.2"
-goal: bạn đọc được mỗi cột trong bảng chứa loại dữ liệu gì, và biết dữ liệu sai loại sẽ bị từ chối
-excel: Format Cells, nhưng bắt buộc
-summary: VARCHAR, NVARCHAR, DATE, TIME, DECIMAL trong HRM_Demo (cùng INT, BIT hay gặp ở hệ thống khác), và vì sao ngày tháng, số tiền không còn bị lệch kiểu như trong Excel.
+goal: bạn đọc được kiểu dữ liệu của một cột và cột đó có nhận NULL hay không, và phân biệt dữ liệu bị từ chối với dữ liệu được đổi kiểu nhưng có thể sai ý
+excel: Format Cells so với kiểu của cột
+summary: VARCHAR, NVARCHAR, CHAR, DATE, TIME, DECIMAL trong HRM_Demo (cùng INT, BIT hay gặp ở hệ thống khác); giá trị nào bị từ chối, giá trị nào được đổi kiểu nhưng có thể sai ý.
 noExercises: true
 ---
 
@@ -28,7 +28,7 @@ Nói gọn lại, câu hỏi là:
 
 ## Với Excel
 
-Với Excel, mỗi ô nhận bất cứ thứ gì bạn gõ. Format Cells chỉ đổi cách hiển thị, không chặn gì cả:
+Trong file chị Hạnh gửi, các cột chưa đặt Data Validation (tính năng giới hạn dữ liệu nhập của Excel), nên một cột có thể bị nhập lẫn ngày, số và chữ. Đổi Format Cells sang Date hay Number chỉ đổi cách hiển thị, không biến ô chữ thành ngày hay số:
 
 <Excel sheets="NhanVienMoi" cell="C3" formula="2024.02.01" selected="C3" rows={[
   ['Mã NV', 'Họ tên', 'Ngày vào làm', 'Lương cơ bản'],
@@ -37,17 +37,25 @@ Với Excel, mỗi ô nhận bất cứ thứ gì bạn gõ. Format Cells chỉ 
   ['NV051', 'Đinh Gia Bảo', 'chưa rõ', 9610000],
 ]} />
 
-Ba dòng, ba kiểu ngày, ba kiểu lương. Excel vẫn cho lưu, nhưng tới lúc lọc theo tháng vào làm hay cộng tổng lương thì công thức trả sai mà không báo gì: ô "2024.02.01" thật ra là chữ, ô "01/02/2024" là ngày 1 tháng 2 hay 2 tháng 1 tùy thiết lập vùng của máy, ô "9,61 triệu" không cộng được.
+Ba dòng nhập ngày và lương theo ba cách khác nhau, có ô chỉ là chữ. Trong file này, ô "2024.02.01" đang là chữ, không phải ngày. Ô "01/02/2024" lúc gõ vào được Excel hiểu là ngày 1 tháng 2 hay 2 tháng 1 tùy thiết lập vùng của máy người gõ. Ô "9,61 triệu" là chữ: hàm `SUM` bỏ qua ô chữ nên tổng lương bị thiếu mà không báo gì, còn cộng thẳng bằng dấu `+` thì ra lỗi `#VALUE!`.
 
 ## Làm bằng SQL
 
 ### Lý thuyết cơ bản
 
-Trong database, mỗi cột có một **kiểu dữ liệu** cố định, đặt ngay lúc tạo bảng. Cột kiểu ngày chỉ nhận ngày, cột kiểu số chỉ nhận số. Giá trị sai kiểu bị từ chối ngay lúc ghi, không có chuyện "lưu tạm rồi tính sau" như Excel.
+Trong database, mỗi cột được khai báo một **kiểu dữ liệu** khi tạo bảng, và mọi dòng của cột đó dùng chung kiểu này. Đổi kiểu của một cột là thay đổi cấu trúc bảng, một việc riêng của người quản trị.
 
-Đây là một phần câu lệnh tạo bảng `NhanVien` trong script `HRM_Demo.sql`. Mỗi dòng là một cột: tên cột, kiểu dữ liệu, rồi có được để trống hay không.
+Khi ghi một giá trị vào cột, SQL Server đổi giá trị đó sang kiểu của cột nếu đổi được, rồi mới lưu. Có ba khả năng:
 
-<Sql title="Cách một cột được khai báo" code={`CREATE TABLE dbo.NhanVien (
+1. **Đổi được, không có gì phải đoán.** Chuỗi `'2024-02-01'` vào cột `date` là ngày 1 tháng 2 năm 2024.
+2. **Đổi được, nhưng giá trị có thể khác đi.** Chuỗi `'01/02/2024'` có thể thành ngày 2 tháng 1; số 21.25 vào cột `decimal(4,1)` bị làm tròn thành 21.3. Không có lỗi nào hiện ra.
+3. **Không đổi được.** Chuỗi `'chưa rõ'` vào cột `date`: SQL Server báo lỗi và không ghi.
+
+Khả năng thứ hai là chỗ dễ sai nhất. **Lưu được chưa chắc đã đúng ý** người nhập.
+
+Đây là một phần câu lệnh tạo bảng `NhanVien` trong script `HRM_Demo.sql`, đã lược bớt các cột và khóa khác; đoạn này để đọc, không để chạy. Mỗi dòng là một cột: tên cột, kiểu dữ liệu, rồi cột có nhận NULL (giá trị trống, chưa có) hay không.
+
+<Sql title="Trích đoạn khai báo bảng NhanVien (chỉ để đọc)" copy={false} code={`CREATE TABLE dbo.NhanVien (
 MaNV         varchar(10)   NOT NULL,
 HoTen        nvarchar(100) NOT NULL,
 NgayVaoLam   date          NOT NULL,
@@ -59,31 +67,33 @@ Các kiểu có trong HRM_Demo, ví dụ thu gọn:
 
 | Kiểu | Chứa gì | Ví dụ trong HRM_Demo |
 |---|---|---|
-| `varchar(n)` | Chữ không dấu, tối đa n ký tự | `NhanVien.MaNV`: NV001 |
-| `nvarchar(n)` | Chữ có dấu tiếng Việt, tối đa n ký tự | `NhanVien.HoTen`: Trần Thị Mai |
-| `char(n)` | Chữ đúng n ký tự | `BangLuong.KyLuong`: 2026-09 |
+| `varchar(n)` | Chuỗi tối đa n byte, dùng cho chữ không dấu (mỗi ký tự một byte) | `NhanVien.MaNV`: NV001 |
+| `nvarchar(n)` | Chuỗi Unicode, giữ được chữ tiếng Việt; tối đa n ký tự thông thường | `NhanVien.HoTen`: Trần Thị Mai |
+| `char(n)` | Chuỗi dài cố định n; ngắn hơn thì được đệm khoảng trắng cho đủ | `BangLuong.KyLuong` là `char(7)`: 2026-09 |
 | `date` | Ngày, không có giờ | `NhanVien.NgayVaoLam`: 2024-03-01 |
-| `time` | Giờ trong ngày | `ChamCong.GioVao`: 08:00:00 |
-| `decimal(p, s)` | Số có tối đa p chữ số, trong đó s chữ số sau dấu phẩy | `HopDong.LuongCoBan` là `decimal(18,0)`: 60000000; `DonNghiPhep.SoNgay` là `decimal(4,1)`: 2.0 |
+| `time` | Giờ trong ngày | `ChamCong.GioVao` là `time(0)`, không lẻ giây: 08:00:00 |
+| `decimal(p, s)` | Số có tối đa p chữ số, trong đó s chữ số sau dấu thập phân, nên phần nguyên còn tối đa p − s chữ số | `HopDong.LuongCoBan` là `decimal(18,0)`: 60000000; `DonNghiPhep.SoNgay` là `decimal(4,1)`: 2.0 |
 
-Hai kiểu rất hay gặp ở hệ thống khác nhưng HRM_Demo không dùng: `int` (số nguyên, ví dụ số con) và `bit` (đúng/sai, lưu bằng 1 và 0, ví dụ "đã nghỉ việc").
+Dấu phẩy trong `decimal(4,1)` chỉ ngăn hai con số; số lẻ trong câu lệnh viết bằng dấu chấm, như `0.5`. `decimal(4,1)` vì vậy giữ được tối đa ba chữ số phần nguyên và một chữ số phần lẻ, như 999.9.
+
+Hai kiểu rất hay gặp ở hệ thống khác nhưng 7 bảng của HRM_Demo không có cột nào dùng: `int` (số nguyên, ví dụ số con) và `bit` (đúng/sai, lưu bằng 1 và 0, ví dụ "đã nghỉ việc").
 
 Từng phần nghĩa là gì:
 
 <LineMap rows={[
-  ['varchar(10)', 'Chữ, tối đa 10 ký tự. Hợp với mã như NV001 vì mã không có dấu.'],
-  ['nvarchar(100)', 'Chữ n là Unicode: giữ được dấu tiếng Việt. Họ tên, tên phòng ban luôn dùng kiểu này.'],
-  ['date', 'Chỉ nhận ngày thật. Một chuỗi như "chưa rõ" bị từ chối.'],
-  ['decimal(18,0)', 'Số tới 18 chữ số, 0 chữ số sau dấu phẩy: vừa cho tiền đồng.'],
-  ['NOT NULL', 'Bắt buộc có giá trị, như ô bắt buộc nhập trong một biểu mẫu.'],
-  ['NULL', 'Được để trống. Ngày nghỉ việc để trống nghĩa là người đó đang làm.'],
+  ['varchar(10)', 'Chuỗi tối đa 10 byte. Mã như NV001 chỉ có chữ không dấu và số, mỗi ký tự một byte, nên chứa được tới 10 ký tự. Kiểu này không tự kiểm mã có đúng quy tắc đặt mã hay không.'],
+  ['nvarchar(100)', 'Chữ n là Unicode: giữ được dấu tiếng Việt. Trong HRM_Demo, họ tên và tên phòng ban dùng kiểu này.'],
+  ['date', 'Chỉ lưu được ngày có thật; chuỗi như "chưa rõ" không đổi được thành ngày nên bị từ chối. Ngày có thật vẫn có thể sai hồ sơ, ví dụ gõ nhầm năm.'],
+  ['decimal(18,0)', 'Số tới 18 chữ số, không có phần lẻ. Bộ mẫu quy ước tiền tính bằng đồng; kiểu cột không tự ghi đơn vị, cũng không tự chặn số âm.'],
+  ['NOT NULL', 'Cột không nhận NULL. Chuỗi rỗng hay chuỗi toàn dấu cách không phải NULL nên vẫn lưu được; muốn chặn cần thêm luật khác.'],
+  ['NULL', 'Cột được nhận NULL. Trong bộ mẫu, NgayNghiViec là NULL với người chưa nghỉ việc. Đó là quy ước của bộ dữ liệu, SQL Server không tự hiểu NULL là "đang làm".'],
 ]} />
 
 ### Xem kiểu dữ liệu trong SSMS
 
-Không cần mở script. Trong Object Explorer, mở một bảng rồi mục **Columns**: chữ trong ngoặc sau tên cột là kiểu dữ liệu và có được để trống hay không.
+Không cần mở script. Trong Object Explorer, mở database của khóa học → Tables → `dbo.HopDong` → **Columns**: chữ trong ngoặc sau tên cột là khóa (PK, FK, học ở bài 1.4), kiểu dữ liệu, và cột có nhận NULL hay không.
 
-<Ssms view="explorer" table="HopDong" caption="Bảng dbo.HopDong: LuongCoBan là decimal(18,0), NgayKetThuc là date và được để trống (hợp đồng không xác định thời hạn)." />
+<Ssms view="explorer" table="HopDong" caption="Bảng dbo.HopDong: LuongCoBan là decimal(18,0), NgayKetThuc là date và nhận NULL. Trong dữ liệu mẫu, hợp đồng không xác định thời hạn để NgayKetThuc là NULL." />
 
 ### Nhìn kiểu dữ liệu trong kết quả
 
@@ -101,9 +111,9 @@ ORDER BY MaDon;`} />
   ['DP005', 'Phép năm', '2026-08-17', '2026-08-21', '5.0'],
 ]} />
 
-Ngày nào cũng ra một dạng năm-tháng-ngày, dù lúc nhập là ai gõ. `SoNgay` có đúng một chữ số sau dấu phẩy vì cột là `decimal(4,1)`, để ghi được nửa ngày phép như 0.5.
+SSMS hiện mọi giá trị `date` theo cùng một dạng năm-tháng-ngày, vì cột lưu giá trị ngày chứ không lưu nguyên chuỗi người ta đã gõ. Hiển thị đều không có nghĩa lúc nhập đã hiểu đúng ngày. `SoNgay` có một chữ số sau dấu thập phân vì cột là `decimal(4,1)`, đủ để ghi nửa ngày phép như 0.5; kiểu cột không tự chặn 0.1 hay số âm, việc đó cần một luật khác.
 
-Còn khi đưa vào cột ngày một thứ không phải ngày, SQL Server báo lỗi ngay. Câu dưới đây chỉ đổi kiểu một chuỗi để xem, không đụng tới bảng nào, bạn chạy thử được:
+Còn khi đưa vào cột ngày một thứ không đổi được thành ngày, SQL Server báo lỗi. Câu dưới đây chỉ đổi kiểu một chuỗi để xem, không ghi vào bảng nào, bạn chạy thử được:
 
 <Sql code={`SELECT CAST(N'chưa rõ' AS date) AS NgayVaoLam;`} />
 
@@ -112,15 +122,23 @@ Còn khi đưa vào cột ngày một thứ không phải ngày, SQL Server báo
   'Conversion failed when converting date and/or time from character string.',
 ]} />
 
-Đó là lý do file của chị Hạnh không vào được nguyên trạng: dòng "chưa rõ" và dòng "9,61 triệu" phải sửa trước khi import.
+### Trả lời chị Hạnh
+
+Bên IT nói đúng một nửa: có giá trị sẽ bị từ chối, nhưng cũng có giá trị lọt vào mà sai. Với file của chị Hạnh:
+
+1. Ngày "chưa rõ" không đổi được thành ngày, mà `NgayVaoLam` là `NOT NULL`, nên dòng này chưa ghi được. Trả lại người gửi để xác minh ngày vào làm, đừng điền đại một ngày cho qua.
+2. Ngày "01/02/2024" và "2024.02.01": hỏi người gửi đó là ngày nào, rồi thống nhất ghi theo dạng năm-tháng-ngày như `2024-02-01`.
+3. Lương "9,61 triệu" và "9.610.000": hỏi rõ đơn vị, rồi thống nhất thành số đồng không có dấu ngăn cách, như `9610000`.
+
+Đặt Format Cells cho đẹp không thay được các bước này, vì nó chỉ đổi cách hiển thị.
 
 ## Hay nhầm ở đâu
 
 <Mistakes>
 
-1. **Gõ ngày kiểu 01/02/2024.** Cách SQL Server đọc ngày dạng này tùy thiết lập ngôn ngữ của tài khoản đang kết nối (xem bằng `SELECT @@LANGUAGE;`). Với `us_english`, thiết lập mặc định, `CAST('01/02/2024' AS date)` ra `2024-01-02`, tức ngày 2 tháng 1 chứ không phải 1 tháng 2. Không báo lỗi gì, chỉ sai. Luôn viết ngày dạng `'2024-02-01'`: với kiểu `date`, cách viết này không phụ thuộc thiết lập ngôn ngữ.
-2. **Quên chữ N trước chuỗi tiếng Việt.** `SELECT 'Trần Thị Mai'` ra `Tr?n Th? Mai`: chuỗi không có `N` bị đổi sang bảng mã không có dấu tiếng Việt trước khi tới cột. Viết `N'Trần Thị Mai'` thì giữ nguyên.
-3. **Nghĩ cột số giữ được mọi chữ số.** Cột `decimal(4,1)` chỉ giữ một chữ số sau dấu phẩy: đưa vào 21.25 ngày công thì còn 21.3. Muốn biết một cột giữ được bao nhiêu chữ số, đọc hai số trong ngoặc ở Object Explorer.
+1. **Gõ ngày kiểu 01/02/2024.** SQL Server đọc ngày dạng này theo thiết lập DATEFORMAT của phiên kết nối, mặc định đi theo ngôn ngữ của tài khoản; xem cả hai bằng `DBCC USEROPTIONS;`. Với ngôn ngữ `us_english`, mặc định trên database của khóa học, DATEFORMAT là `mdy` (tháng trước), nên `CAST('01/02/2024' AS date)` ra `2024-01-02`, tức ngày 2 tháng 1 chứ không phải 1 tháng 2. Không báo lỗi gì, chỉ sai. Luôn viết ngày dạng `'2024-02-01'`: với kiểu `date`, cách viết này không phụ thuộc ngôn ngữ hay DATEFORMAT.
+2. **Quên chữ N trước chuỗi tiếng Việt.** Chuỗi không có `N` đi theo bảng mã của database. Database của khóa học dùng bảng mã Latin1, không có đủ chữ tiếng Việt, nên `SELECT 'Trần Thị Mai'` ra `Tr?n Th? Mai`. Viết `N'Trần Thị Mai'` (chuỗi Unicode) thì giữ nguyên.
+3. **Nghĩ cột số giữ được mọi chữ số.** Cột `decimal(4,1)` chỉ giữ một chữ số sau dấu thập phân: đưa vào 21.25 ngày công thì còn 21.3, không báo lỗi gì. Muốn biết một cột giữ được bao nhiêu chữ số, đọc hai số trong ngoặc ở Object Explorer.
 
 </Mistakes>
 
@@ -128,17 +146,40 @@ Còn khi đưa vào cột ngày một thứ không phải ngày, SQL Server báo
 
 <Apply>
 
-- Khi viết yêu cầu import hay mẫu file nhận dữ liệu, ghi rõ kiểu và định dạng từng cột: ngày dạng năm-tháng-ngày, tiền là số nguyên không có dấu chấm ngăn cách, mã không dấu. Người gửi file biết trước, đỡ một vòng sửa.
-- Trước khi so số liệu giữa file Excel và database, mở Object Explorer xem kiểu của các cột cần so. Biết cột nào là `date`, cột nào là chữ thì biết bên Excel cần đổi định dạng gì.
+- Khi viết yêu cầu import hay mẫu file nhận dữ liệu, ghi rõ từng cột: giá trị là ngày, số hay chữ; dạng viết nếu gửi dạng chữ (ngày năm-tháng-ngày, tiền là số đồng không có dấu ngăn cách); đơn vị; cột nào được để trống; và dòng sai thì xử lý thế nào. Người gửi file biết trước, đỡ một vòng sửa.
+- Trước khi so số liệu giữa file Excel và database, mở Object Explorer xem kiểu của các cột cần so, rồi kiểm ô bên Excel đang thật sự là ngày, số hay chữ (đổi Format Cells không đổi được giá trị). Đưa hai bên về cùng kiểu, cùng đơn vị rồi mới so.
 
 </Apply>
 
 ## Ghi nhớ
 
 <Memo rows={[
-  ['Format Cells → Date (chỉ đổi hiển thị)', 'date (bắt buộc là ngày)'],
-  ['Ô chữ có dấu', 'nvarchar(n)'],
-  ['Ô số tiền', 'decimal(18,0)'],
-  ['Ô bắt buộc nhập', 'NOT NULL'],
-  ['Gõ ngày 01/02/2024', "'2024-02-01'"],
+  ['Format Cells → Date (chỉ đổi hiển thị)', 'date: cột lưu giá trị ngày, không lưu chuỗi đã gõ'],
+  ['Ô chữ có dấu', "nvarchar(n); trong câu lệnh viết N'…'"],
+  ['Ô số tiền theo đồng', 'decimal(18,0)'],
+  ['Ô không được bỏ trống', 'NOT NULL: không nhận NULL, vẫn nhận chuỗi rỗng'],
+  ['Gõ ngày 01/02/2024', "'2024-02-01', sau khi đã hỏi rõ là ngày nào"],
 ]} />
+
+**Tự kiểm tra trước khi bấm "Đã học xong":**
+
+<details>
+<summary>Ghi chuỗi "2024-02-31" và "2099-02-01" vào một cột date thì sao?</summary>
+
+Chuỗi thứ nhất không phải ngày có thật nên bị từ chối. Chuỗi thứ hai là ngày có thật nên lưu được; nó có đúng hồ sơ hay không thì kiểu `date` không biết.
+
+</details>
+
+<details>
+<summary>Ghi 21.25 vào cột decimal(4,1) thì sao?</summary>
+
+Lưu được thành 21.3, không báo lỗi. Giá trị đã đổi mà không ai được báo, nên cần thống nhất trước có cho làm tròn hay không.
+
+</details>
+
+<details>
+<summary>Cột HoTen là NOT NULL, vậy chắc chắn mọi nhân viên đều có tên?</summary>
+
+Chưa. NOT NULL chỉ chặn NULL; chuỗi rỗng hay chuỗi toàn dấu cách vẫn lưu được nếu không có luật khác.
+
+</details>

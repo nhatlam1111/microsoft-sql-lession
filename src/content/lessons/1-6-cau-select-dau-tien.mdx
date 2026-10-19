@@ -30,24 +30,24 @@ Nói gọn lại:
 Với Excel, bạn mở sheet nhân viên, nhìn dòng tiêu đề để biết có những cột gì, rồi cuộn xem vài dòng đầu:
 
 <Excel sheets="NhanVien" rows={[
-  ['Mã NV', 'Họ tên', 'Giới tính', 'Ngày sinh', 'Phòng ban'],
+  ['Mã NV', 'Họ tên', 'Giới tính', 'Ngày sinh', 'Mã phòng ban'],
   ['NV001', 'Trần Thị Mai', 'Nữ', '12/04/1992', 'KT'],
   ['NV002', 'Lê Văn Hùng', 'Nam', '03/09/1988', 'KD'],
   ['NV003', 'Nguyễn Thu Hà', 'Nữ', '25/01/1995', 'KD'],
 ]} />
 
-Với database thì không có sheet nào để bấm vào. Bạn hỏi bằng một câu lệnh, và kết quả hiện ra ngay dưới câu lệnh.
+Trong bài này, bạn không mở sheet nào: bạn hỏi database bằng một câu lệnh, và SSMS hiện kết quả ở khung bên dưới câu lệnh.
 
 ## Làm bằng SQL
 
 ### Lý thuyết cơ bản
 
-`SELECT` là câu lệnh để **lấy dữ liệu ra xem**. Câu đơn giản nhất có hai phần: `SELECT` nói lấy những cột nào, `FROM` nói lấy từ bảng nào. Dấu `*` nghĩa là "mọi cột". Thêm `TOP (n)` thì chỉ lấy n dòng, đủ để nhìn qua một bảng lớn.
+`SELECT` là câu lệnh để **lấy dữ liệu ra xem**. Câu đơn giản để đọc một bảng có hai phần: `SELECT` nói lấy những cột nào, `FROM` nói lấy từ bảng nào. Dấu `*` nghĩa là "mọi cột". Thêm `TOP (n)` thì lấy tối đa n dòng, đủ để nhìn qua một bảng lớn.
 
-<Sql title="Cú pháp chung" code={`SELECT * FROM tên bảng;
+<Sql title="Cú pháp chung (thay tên bảng, số dòng trước khi chạy)" copy={false} code={`SELECT * FROM tên bảng;
 SELECT TOP (số dòng) * FROM tên bảng;`} />
 
-Ví dụ thu gọn với bảng `PhongBan` (6 dòng, 2 cột): `SELECT * FROM PhongBan;` ra đủ 6 dòng, 2 cột. `SELECT TOP (2) * FROM PhongBan;` ra 2 dòng bất kỳ trong 6 dòng đó, vẫn đủ 2 cột:
+Ví dụ thu gọn với bảng `PhongBan` (dữ liệu mẫu có 6 dòng, 2 cột): `SELECT * FROM PhongBan;` ra đủ 6 dòng, 2 cột. `SELECT TOP (2) * FROM PhongBan;` ra tối đa 2 dòng, vẫn đủ 2 cột, nhưng không hứa là 2 dòng nào trong 6 dòng đó. Một kết quả có thể ra:
 
 | MaPB | TenPB |
 |---|---|
@@ -57,25 +57,25 @@ Ví dụ thu gọn với bảng `PhongBan` (6 dòng, 2 cột): `SELECT * FROM Ph
 Từng phần nghĩa là gì:
 
 <LineMap rows={[
-  ['SELECT', 'Bắt đầu một câu hỏi lấy dữ liệu ra xem. Câu SELECT chỉ đọc, không bao giờ làm đổi dữ liệu.'],
-  ['*', 'Mọi cột của bảng, theo đúng thứ tự cột trong bảng. Giống mở cả sheet, không ẩn cột nào.'],
-  ['TOP (10)', 'Chỉ lấy 10 dòng. Giống chỉ nhìn 10 dòng đầu màn hình, không cuộn hết sheet.'],
-  ['FROM NhanVien', 'Lấy từ bảng NhanVien. Tên bảng phải đúng như trong Object Explorer.'],
-  [';', 'Kết thúc một câu lệnh. Không bắt buộc với một câu đơn lẻ, nhưng nên tập viết từ đầu.'],
+  ['SELECT', 'Bắt đầu một câu hỏi lấy dữ liệu ra xem. Các câu SELECT trong bài chỉ đọc, không làm đổi dữ liệu. Nhưng đừng thấy chữ SELECT là cho rằng cả câu chỉ đọc: SELECT INTO tạo bảng mới và ghi dữ liệu vào đó, nên luôn đọc hết câu lệnh.'],
+  ['*', 'Mọi cột của bảng, theo đúng thứ tự cột trong bảng (thứ tự cột, không phải thứ tự dòng). Giống mở cả sheet, không ẩn cột nào.'],
+  ['TOP (10)', 'Lấy tối đa 10 dòng. Giống chỉ xem một ít dòng thay vì cuộn hết sheet, nhưng không có ORDER BY thì không hứa đó là những dòng nào.'],
+  ['FROM NhanVien', 'Lấy từ bảng NhanVien, tức dbo.NhanVien trong Object Explorer. Tên bảng phải đúng như ở đó.'],
+  [';', 'Kết thúc một câu lệnh. Các câu SELECT đơn giản này vẫn chạy khi thiếu dấu ;, nhưng nên tập viết từ đầu.'],
 ]} />
 
-Cách chạy trong SSMS: gõ câu lệnh vào cửa sổ New Query, nhìn ô chọn database, rồi bấm **F5** hoặc nút **Execute**. Nếu bạn bôi đen một đoạn, SSMS chỉ chạy đúng đoạn được bôi đen, nên một cửa sổ có thể chứa nhiều câu và bạn chọn chạy từng câu.
+Cách chạy trong SSMS: gõ câu lệnh vào cửa sổ New Query, nhìn ô chọn database, rồi bấm **F5** hoặc nút **Execute**. Nếu bạn bôi đen một đoạn, SSMS chỉ chạy đúng đoạn được bôi đen; không bôi đen thì chạy mọi câu trong cửa sổ. Vì vậy một cửa sổ có thể chứa nhiều câu và bạn chọn chạy từng câu.
 
 <Ssms view="toolbar" caption="F5 hay Execute đều chạy câu lệnh trên database đang chọn ở ô này." />
 
 Kết quả hiện ở hai tab ngay dưới câu lệnh:
 
-- **Results**: lưới kết quả. Ô trống hiện chữ `NULL` nền vàng nhạt. Lưới này chỉ để đọc và chép, không gõ sửa được.
-- **Messages**: số dòng câu lệnh trả về, hoặc nguyên văn lỗi nếu câu sai. Cuối cửa sổ còn một dòng trạng thái ghi database đang dùng và số dòng.
+- **Results**: lưới kết quả. Ô mang giá trị NULL hiện chữ `NULL` nền vàng nhạt; NULL là chưa có giá trị, khác chuỗi rỗng và khác số 0. Lưới này chỉ để đọc và chép, không gõ sửa được.
+- **Messages**: thông tin về lần chạy, hoặc nguyên văn lỗi nếu câu sai. Với câu SELECT, dòng `(10 rows affected)` nghĩa là câu trả về 10 dòng, không phải 10 dòng đã bị sửa, cũng không phải tổng số dòng của bảng. Cuối cửa sổ còn một dòng trạng thái ghi database đang dùng và số dòng.
 
 ### Câu lệnh cho tình huống
 
-Muốn biết bảng nhân viên lưu những gì, lấy mọi cột của 10 người là đủ nhìn:
+Muốn biết bảng nhân viên lưu những gì, lấy mọi cột của 10 người là đủ thấy các cột và vài giá trị mẫu:
 
 <Sql code={`SELECT TOP (10) *
 FROM NhanVien;`} />
@@ -95,11 +95,11 @@ FROM NhanVien;`} />
 
 <Messages lines={['(10 rows affected)']} />
 
-Mười hai cột, từ mã, họ tên, ngày sinh tới phòng ban, chức danh, người quản lý và trạng thái. Đó là những thông tin chị Hạnh cần cho mẫu hồ sơ. Cột `NgayNghiViec` để trống ở cả 10 người vì họ đang làm; NV004 không có `MaQuanLy` vì là giám đốc.
+Mười hai cột, từ mã, họ tên, ngày sinh tới phòng ban, chức danh, người quản lý và trạng thái. Đó là những thông tin bảng `NhanVien` đang lưu. Chị Hạnh đối chiếu chúng với các mục mẫu hồ sơ cần; mục nào không có ở đây thì có thể nằm ở bảng khác (như hợp đồng) hoặc chưa được lưu. Mười dòng chỉ là mẫu: kiểu dữ liệu và luật của từng cột xem ở Object Explorer, còn ý nghĩa của từng cột thì phải hỏi lại. Theo quy ước của bộ mẫu, `NgayNghiViec` là NULL ở cả 10 người vì họ chưa nghỉ việc, và NV004 là giám đốc nên không có `MaQuanLy`.
 
 ### SQL Server chạy câu này thế nào
 
-Câu lệnh viết `SELECT` trước, nhưng SQL Server làm `FROM` trước, rồi mới chọn cột, rồi mới cắt lấy 10 dòng. Bấm vào từng bước để xem dữ liệu lúc đó.
+Câu lệnh viết `SELECT` trước, nhưng theo thứ tự logic, SQL Server xét `FROM` trước, rồi chọn cột, rồi mới giới hạn còn 10 dòng. Đây là thứ tự để hiểu ý nghĩa câu lệnh; khi chạy thật, SQL Server được làm khác miễn ra cùng kết quả, ví dụ dừng đọc ngay khi đã đủ 10 dòng. Bấm vào từng bước để xem dữ liệu ở bước đó.
 
 <RunFlow query={`SELECT TOP (10) *
 FROM NhanVien;`} steps={[
@@ -107,7 +107,7 @@ FROM NhanVien;`} steps={[
     clause: 'FROM',
     title: 'Lấy bảng NhanVien làm nguồn dữ liệu.',
     focus: 'FROM NhanVien',
-    meaning: '`FROM` cho SQL Server biết lấy dữ liệu từ bảng nào. Đây luôn là việc làm đầu tiên, dù khi viết nó đứng sau `SELECT`.',
+    meaning: '`FROM` cho SQL Server biết lấy dữ liệu từ bảng nào. Theo thứ tự logic, đây là bước đầu tiên, dù khi viết nó đứng sau `SELECT`.',
     detail: 'Bảng `NhanVien` có 48 người, mỗi người một dòng, đủ 12 cột. Chưa có dòng nào bị bỏ.',
     sql: `SELECT *
 FROM NhanVien;`,
@@ -132,7 +132,7 @@ FROM NhanVien;`,
     title: 'Chọn cột: dấu * giữ lại cả 12 cột.',
     focus: 'SELECT TOP (10) *',
     meaning: '`SELECT` chọn những cột sẽ có trong kết quả. Dấu `*` nghĩa là mọi cột, theo đúng thứ tự trong bảng.',
-    detail: 'Vì là `*`, không cột nào bị bỏ: vẫn 48 dòng, 12 cột. Bài 2.1 sẽ dạy liệt kê đúng những cột cần lấy.',
+    detail: 'Vì là `*`, câu này không bỏ cột nào: vẫn 48 dòng, 12 cột. Bài 2.1 sẽ dạy liệt kê đúng những cột cần lấy.',
     sql: `SELECT *
 FROM NhanVien;`,
     columns: ['MaNV', 'HoTen', 'GioiTinh', 'NgaySinh', 'SoCCCD', 'Email', 'NgayVaoLam', 'NgayNghiViec', 'MaPB', 'MaCD', 'MaQuanLy', 'TrangThai'],
@@ -153,10 +153,10 @@ FROM NhanVien;`,
   },
   {
     clause: 'TOP',
-    title: 'Chỉ giữ 10 dòng đầu tiên SQL Server lấy được.',
+    title: 'Chỉ giữ tối đa 10 dòng.',
     focus: 'TOP (10)',
-    meaning: '`TOP (10)` cắt kết quả còn 10 dòng. Nó chạy sau cùng, khi các bước trước đã xong.',
-    detail: 'Còn 10 dòng. Không có `ORDER BY` nên SQL Server không hứa đó là 10 người nào: lần này ra NV001 tới NV010 vì dữ liệu đang nằm theo thứ tự mã, nhưng không có gì bảo đảm điều đó. Muốn chọn đúng 10 dòng theo một thứ tự thì phải viết `ORDER BY`, ở bài 2.4.',
+    meaning: '`TOP (10)` giới hạn kết quả còn tối đa 10 dòng. Theo thứ tự logic, nó áp dụng sau cùng; khi chạy thật, SQL Server không cần đọc hết 48 dòng rồi mới bỏ bớt.',
+    detail: 'Còn 10 dòng. Không có `ORDER BY` nên SQL Server không hứa đó là 10 người nào: hình này ra NV001 tới NV010, nhưng không có gì bảo đảm lần chạy khác cũng vậy. Muốn chọn đúng 10 dòng theo một thứ tự thì phải viết `ORDER BY`, ở bài 2.4.',
     sql: `SELECT TOP (10) *
 FROM NhanVien;`,
     columns: ['MaNV', 'HoTen', 'GioiTinh', 'NgaySinh', 'SoCCCD', 'Email', 'NgayVaoLam', 'NgayNghiViec', 'MaPB', 'MaCD', 'MaQuanLy', 'TrangThai'],
@@ -172,7 +172,7 @@ FROM NhanVien;`,
       ['NV009', 'Ngô Thị Thu Trang', 'Nữ', '1993-08-21', '000193194728', 'trang.ntt@hrmdemo.vn', '2019-05-06', null, 'BGD', 'TL', 'NV004', 'Đang làm'],
       ['NV010', 'Đỗ Thị Hồng', 'Nữ', '1983-03-09', '000183202647', 'hong.dt@hrmdemo.vn', '2016-06-01', null, 'NS', 'TP', 'NV004', 'Đang làm'],
     ],
-    excel: 'Chỉ nhìn 10 dòng đầu màn hình.',
+    excel: 'Chỉ xem một ít dòng, chưa sắp xếp.',
   },
 ]} />
 
@@ -180,9 +180,9 @@ FROM NhanVien;`,
 
 <Mistakes>
 
-1. **Tưởng `TOP (10)` là 10 người có mã nhỏ nhất.** Không có `ORDER BY` thì SQL Server được trả về 10 dòng nào cũng đúng. Hôm nay ra NV001 tới NV010, sau khi dữ liệu thay đổi có thể ra khác. Dùng `TOP` không có `ORDER BY` để nhìn qua một bảng thì được; muốn đúng "10 người đầu tiên theo mã" thì phải có `ORDER BY` (bài 2.4).
-2. **Bôi đen thiếu một phần rồi bấm F5.** SSMS chỉ chạy phần được bôi đen. Bôi đen mỗi dòng `SELECT TOP (10) *` thì câu lệnh không còn `FROM`, và tab Messages báo `Must specify table to select from.` Bấm vào chỗ trống trong cửa sổ để bỏ bôi đen rồi chạy lại.
-3. **Dùng Edit Top 200 Rows để xem bảng.** Bấm chuột phải vào bảng trong Object Explorer có mục **Edit Top 200 Rows**. Lưới của mục này trông giống tab Results, nhưng gõ vào ô nào là sửa thẳng vào bảng, mà database của khóa học là của chung mọi học viên. Muốn xem dữ liệu, luôn dùng câu `SELECT`: lưới Results chỉ để đọc.
+1. **Tưởng `TOP (10)` là 10 người có mã nhỏ nhất.** Không có `ORDER BY` thì SQL Server được trả về 10 dòng nào cũng đúng. Hình trong bài ra NV001 tới NV010, nhưng lần chạy khác có thể ra nhóm khác, kể cả khi dữ liệu không đổi. Dùng `TOP` không có `ORDER BY` để nhìn qua một bảng thì được; muốn đúng "10 người đầu tiên theo mã" thì phải có `ORDER BY` (bài 2.4).
+2. **Bôi đen thiếu một phần rồi bấm F5.** SSMS chỉ chạy phần được bôi đen. Bôi đen mỗi dòng `SELECT TOP (10) *` thì câu lệnh không còn `FROM`, mà `*` cần một bảng nguồn, nên tab Messages báo `Must specify table to select from.` Bấm vào chỗ trống trong cửa sổ để bỏ bôi đen rồi chạy lại.
+3. **Dùng Edit Top 200 Rows để xem bảng.** Bấm chuột phải vào bảng trong Object Explorer có mục **Edit Top 200 Rows**. Lưới của mục này trông giống tab Results, nhưng là lưới để sửa: thứ bạn gõ vào được ghi vào bảng khi rời khỏi dòng, mà database của khóa học là của chung mọi học viên. Muốn xem dữ liệu, luôn dùng câu `SELECT`: lưới Results chỉ để đọc.
 
 </Mistakes>
 
@@ -190,8 +190,8 @@ FROM NhanVien;`,
 
 <Apply>
 
-- Gặp một bảng lạ, chạy `SELECT TOP (10) *` trước tiên để xem bảng có những cột gì và dữ liệu mẫu trông ra sao, rồi mới viết yêu cầu hay câu lệnh chi tiết.
-- Sau một đợt import, chạy `SELECT TOP (10) *` trên bảng vừa nhận dữ liệu để kiểm nhanh: ngày có đúng dạng không, tên có giữ dấu tiếng Việt không, có cột nào trống bất thường không.
+- Gặp một bảng lạ mà bạn được phép đọc, xem cấu trúc cột trong Object Explorer, rồi chạy `SELECT TOP (10) *` để xem dữ liệu mẫu trông ra sao, trước khi viết yêu cầu hay câu lệnh chi tiết. Mười dòng có thể không chứa những giá trị hiếm, như ô trống hay dữ liệu lỗi.
+- Sau một đợt import, `SELECT TOP (10) *` trên bảng vừa nhận dữ liệu giúp thấy nhanh vài lỗi lộ rõ: tên mất dấu tiếng Việt, một cột trống hàng loạt. Đó chưa phải nghiệm thu: ngày đúng dạng vẫn có thể bị đảo ngày với tháng, và mười dòng không đại diện cho cả đợt. Đếm số dòng, kiểm giá trị thiếu trên toàn bảng sẽ học ở các bài sau.
 
 </Apply>
 
@@ -199,9 +199,9 @@ FROM NhanVien;`,
 
 <Memo rows={[
   ['Mở sheet ra xem', 'SELECT * FROM NhanVien;'],
-  ['Chỉ nhìn 10 dòng đầu', 'SELECT TOP (10) * FROM NhanVien;'],
+  ['Xem thử một ít dòng', 'SELECT TOP (10) * FROM NhanVien; (tối đa 10 dòng, chưa sắp xếp)'],
   ['Không ẩn cột nào', 'SELECT *'],
-  ['Nhìn thanh trạng thái đếm số dòng', 'Tab Messages: (10 rows affected)'],
+  ['Nhìn thanh trạng thái đếm số dòng', 'Tab Messages: (10 rows affected) là số dòng câu vừa trả về'],
 ]} />
 
 ## Bài tập

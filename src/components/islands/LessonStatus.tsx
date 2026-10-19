@@ -5,7 +5,7 @@ import { useProgress } from './use-progress';
 import StatusIcon, { ICON_LABEL } from './StatusIcon';
 
 /** The done hint for lessons that teach concepts rather than a query (lessons marked noExercises). */
-export const CONCEPT_DONE_HINT = 'Bấm khi bạn tự giải thích lại được nội dung chính của bài mà không nhìn bài.';
+export const CONCEPT_DONE_HINT = 'Bấm khi bạn trả lời được các câu tự kiểm tra cuối bài mà không nhìn bài.';
 const QUERY_DONE_HINT = 'Bấm khi bạn tự viết lại được câu lệnh mà không nhìn bài.';
 
 interface Props {

@@ -5,10 +5,10 @@ shortTitle: Đọc sơ đồ ERD
 level: 1
 area: A1
 kind: full
-minutes: 15
+minutes: 20
 prerequisites:
   - "1.4"
-goal: bạn nhìn sơ đồ là biết muốn lấy dữ liệu nào thì phải đi qua những bảng nào
+goal: bạn chỉ ra được trên sơ đồ HRM_Demo phải đi qua những bảng nào, nối bằng cặp cột nào, để lấy dữ liệu cần, và nhận ra quan hệ nào có thể làm một người hiện nhiều dòng
 excel: Các sheet tham chiếu nhau
 summary: Đọc sơ đồ 7 bảng của HRM_Demo, quan hệ một-nhiều, và cách tìm đường đi qua các bảng để lấy đúng dữ liệu cần.
 noExercises: true
@@ -19,16 +19,16 @@ noExercises: true
 Một yêu cầu hay gặp vào cuối kỳ lương:
 
 <Chat who="Chị Hạnh · Phòng Nhân sự" time="15:30" initial="H">
-Kế toán xin bảng lương tháng 9 có kèm tên phòng ban của từng người. Chị mở bảng lương ra thì có mã nhân viên, có thực lĩnh, mà không thấy cột phòng ban đâu cả. Lấy ở đâu ra em?
+Kế toán xin bảng lương tháng 9 (kỳ 2026-09) có kèm tên phòng ban của từng người. Chị mở bảng lương ra thì có mã nhân viên, có thực lĩnh, mà không thấy cột phòng ban đâu cả. Lấy ở đâu ra em?
 </Chat>
 
 Nói gọn lại:
 
-<Key>Muốn có lương tháng 9 kèm tên phòng ban, dữ liệu phải đi qua những bảng nào?</Key>
+<Key>Muốn có lương kỳ 2026-09 kèm tên phòng ban, dữ liệu phải đi qua những bảng nào?</Key>
 
 ## Với Excel
 
-Với Excel, cách quen thuộc là dò hai lần. Từ sheet bảng lương, VLOOKUP mã NV sang sheet nhân viên để lấy mã phòng, rồi VLOOKUP tiếp mã phòng sang sheet danh mục phòng ban để lấy tên:
+Với Excel, cách quen thuộc là dò hai lần. Từ sheet bảng lương, VLOOKUP mã NV sang sheet nhân viên để lấy mã phòng (lần 1: NV001 ra KT), rồi VLOOKUP tiếp mã phòng sang sheet danh mục phòng ban, nơi cột A là mã phòng và cột B là tên phòng, để lấy tên (lần 2: KT ra Kế toán):
 
 <Excel sheets="BangLuong · NhanVien · PhongBan" cell="E2" formula="=VLOOKUP(D2,PhongBan!A:B,2,FALSE)" selected="E2" rows={[
   ['Mã NV', 'Kỳ lương', 'Thực lĩnh', 'Mã PB (dò lần 1)', 'Tên phòng (dò lần 2)'],
@@ -37,43 +37,43 @@ Với Excel, cách quen thuộc là dò hai lần. Từ sheet bảng lương, VL
   ['NV003', '2026-09', 14088000, 'KD', 'Kinh doanh'],
 ]} />
 
-Cách này chạy được, với điều kiện bạn nhớ sheet nào có cột nào và sheet nào nối với sheet nào. File càng nhiều sheet thì càng khó nhớ. Database có sẵn một tấm bản đồ cho việc đó.
+Cách này chạy được, với điều kiện bạn nhớ sheet nào có cột nào và sheet nào nối với sheet nào. File càng nhiều sheet thì càng khó nhớ. HRM_Demo có các khóa ngoại được khai báo đủ, nên vẽ được thành một tấm bản đồ cho việc đó.
 
 ## Làm bằng SQL
 
 ### Lý thuyết cơ bản
 
-**ERD** (sơ đồ quan hệ) vẽ mỗi bảng thành một hộp liệt kê các cột. Mỗi **đường nối** giữa hai hộp là một cặp khóa ngoại và khóa chính như ở bài 1.4: nó đi từ cột khóa ngoại tới bảng mà cột đó trỏ tới.
+**ERD** (Entity–Relationship Diagram, sơ đồ quan hệ) vẽ mỗi bảng thành một hộp liệt kê các cột. Trong sơ đồ HRM_Demo của bài này, mỗi **đường nối** giữa hai hộp là một khóa ngoại trỏ tới một khóa chính như ở bài 1.4: một đầu là cột khóa ngoại, đầu kia là bảng mà cột đó trỏ tới. Sơ đồ ở hệ thống khác có thể vẽ theo quy ước khác, hoặc vẽ cả những quan hệ chưa được khai báo thành khóa ngoại.
 
-Hầu hết đường nối trong HRM_Demo là quan hệ **một-nhiều**: một dòng ở bảng có khóa chính ứng với nhiều dòng ở bảng có khóa ngoại. Cách đọc một đường nối:
+Cả bảy đường nối trong HRM_Demo là quan hệ **một-nhiều**: một dòng ở bảng được trỏ tới có thể được 0, 1 hoặc nhiều dòng ở bảng kia trỏ về. Cách đọc một đường nối trong sơ đồ này:
 
-1. Tìm cột có nhãn FK, ví dụ `NhanVien.MaPB`. Bảng chứa cột này là phía "nhiều".
+1. Tìm cột có nhãn FK, ví dụ `NhanVien.MaPB`. Trong HRM_Demo, cột FK không bị ràng buộc duy nhất, nên một mã phòng lặp lại được ở nhiều dòng: bên chứa cột này là phía "nhiều". Ở sơ đồ khác, nếu cột FK cũng là cả khóa chính hoặc có ràng buộc UNIQUE thì mỗi mã chỉ xuất hiện tối đa một lần, nên phải xem thêm.
 2. Đi theo đường nối tới bảng nó trỏ tới, ví dụ `PhongBan`. Đó là phía "một".
-3. Đọc thành câu: một phòng ban có nhiều nhân viên; mỗi nhân viên thuộc đúng một phòng ban.
+3. Đọc thành câu: một phòng ban có thể có nhiều nhân viên; mỗi nhân viên thuộc đúng một phòng ban, vì `NhanVien.MaPB` là `NOT NULL` và phải trỏ tới một mã phòng có thật.
 
-Trong HRM_Demo, bảng `NhanVien` nằm giữa: hợp đồng, chấm công, đơn nghỉ phép và bảng lương nối về nó qua `MaNV`, còn nó nối sang phòng ban và chức danh qua `MaPB`, `MaCD`. Đây là sơ đồ, cũng là sơ đồ bạn mở được bằng nút "Sơ đồ database" trên trang bài tập:
+Trong HRM_Demo, bảng `NhanVien` nằm giữa: hợp đồng, chấm công, đơn nghỉ phép và bảng lương nối về nó qua `MaNV`, còn nó nối sang phòng ban và chức danh qua `MaPB`, `MaCD`. Đây là sơ đồ, cũng là sơ đồ bạn mở được bằng nút "Sơ đồ database" trên trang bài tập; sơ đồ rộng, cuộn ngang để xem hết:
 
 <Erd />
 
-Ví dụ thu gọn, mỗi đường nối một dòng, kèm con số thật trong dữ liệu mẫu:
+Ví dụ thu gọn, mỗi đường nối một dòng, kèm con số đếm trên toàn bộ dữ liệu mẫu, chưa lọc trạng thái hay thời điểm:
 
 | Đường nối | Đọc là | Trong dữ liệu mẫu |
 |---|---|---|
-| `NhanVien.MaPB` → `PhongBan` | Một phòng ban có nhiều nhân viên | Phòng IT có 10 người |
-| `NhanVien.MaCD` → `ChucDanh` | Một chức danh có nhiều người giữ | 21 người là Chuyên viên |
-| `NhanVien.MaQuanLy` → `NhanVien` | Một người quản lý nhiều người | NV008 quản lý 9 người |
-| `HopDong.MaNV` → `NhanVien` | Một người có nhiều hợp đồng | NV021 có 3 hợp đồng |
-| `ChamCong.MaNV` → `NhanVien` | Một người có nhiều ngày chấm công | NV001 có 19 ngày công tháng 9 |
-| `DonNghiPhep.MaNV` → `NhanVien` | Một người có thể có nhiều đơn nghỉ | 20 đơn, mỗi người tối đa một đơn |
-| `BangLuong.MaNV` → `NhanVien` | Một người có một dòng lương mỗi kỳ | NV001 có 2 kỳ: 2026-08 và 2026-09 |
+| `NhanVien.MaPB` → `PhongBan` | Một phòng ban có thể có nhiều nhân viên | 10 hồ sơ nhân viên mang mã phòng IT |
+| `NhanVien.MaCD` → `ChucDanh` | Một chức danh có thể có nhiều người giữ | 21 người là Chuyên viên |
+| `NhanVien.MaQuanLy` → `NhanVien` | Một người quản lý trực tiếp 0, 1 hoặc nhiều người; mỗi người có 0 hoặc 1 quản lý trực tiếp | NV008 quản lý trực tiếp 9 người, gồm 2 người đã nghỉ |
+| `HopDong.MaNV` → `NhanVien` | Một người có thể có nhiều hợp đồng | NV021 có 3 hợp đồng nối tiếp nhau; NV047, NV048 chưa có hợp đồng nào |
+| `ChamCong.MaNV` → `NhanVien` | Một người có nhiều dòng chấm công, mỗi ngày tối đa một dòng | NV001 có 19 ngày có dòng chấm công trong tháng 9/2026 |
+| `DonNghiPhep.MaNV` → `NhanVien` | Một người có thể có nhiều đơn nghỉ | 20 đơn, mỗi người tối đa một đơn; đó là dữ liệu đang có, không phải luật |
+| `BangLuong.MaNV` → `NhanVien` | Một người có nhiều dòng lương qua các kỳ, tối đa một dòng lương mỗi kỳ | NV001 có 2 kỳ: 2026-08 và 2026-09 |
 
 Từng phần trên sơ đồ nghĩa là gì:
 
 <LineMap rows={[
-  ['PK', 'Khóa chính của bảng. Bảng ChamCong và BangLuong có hai cột cùng mang nhãn PK vì khóa gồm hai cột.'],
-  ['FK', 'Khóa ngoại: đầu của một đường nối. Bảng có cột FK là phía "nhiều".'],
-  ['NhanVien', 'Bảng nằm giữa sơ đồ. Muốn đi từ bảng lương, chấm công hay hợp đồng sang phòng ban thì gần như luôn phải qua đây.'],
-  ['MaQuanLy', 'Đường nối vòng về chính bảng NhanVien: người quản lý cũng là một nhân viên.'],
+  ['PK', 'Khóa chính của bảng. Bảng ChamCong và BangLuong có hai cột cùng mang nhãn PK vì khóa gồm hai cột: một dòng ChamCong ứng với một nhân viên trong một ngày, một dòng BangLuong ứng với một nhân viên trong một kỳ.'],
+  ['FK', 'Khóa ngoại: cột trỏ tới khóa của bảng khác, hoặc của chính bảng đó. Trong HRM_Demo, bên có cột FK là phía "nhiều".'],
+  ['NhanVien', 'Bảng nằm giữa sơ đồ. Trong sơ đồ này, muốn đi từ bảng lương, chấm công hay hợp đồng sang phòng ban thì phải qua đây.'],
+  ['MaQuanLy', 'Đường nối vòng về chính bảng NhanVien: người quản lý cũng là một nhân viên. Cột này nhận NULL, như với giám đốc. Khóa ngoại chỉ bảo đảm mã quản lý có thật; nó không chặn chuyện tự quản lý mình hay hai người quản lý lẫn nhau.'],
 ]} />
 
 ### Đi đường nào cho câu hỏi của chị Hạnh
@@ -81,8 +81,8 @@ Từng phần trên sơ đồ nghĩa là gì:
 Đọc sơ đồ từ thứ mình có tới thứ mình cần:
 
 1. `BangLuong` có `MaNV`, `KyLuong`, `ThucLinh`, nhưng không có cột phòng ban.
-2. `BangLuong.MaNV` nối tới `NhanVien`, và `NhanVien` có `MaPB`.
-3. `NhanVien.MaPB` nối tới `PhongBan`, và `PhongBan` có `TenPB`.
+2. `BangLuong.MaNV` nối tới `NhanVien.MaNV`, và `NhanVien` có `MaPB`. Ví dụ NV001 có `MaPB` là KT.
+3. `NhanVien.MaPB` nối tới `PhongBan.MaPB`, và `PhongBan` có `TenPB`: KT là Kế toán.
 
 Vậy đường đi là `BangLuong` → `NhanVien` → `PhongBan`, đúng hai lần dò như bên Excel. Câu lệnh đi theo đường đó trông như sau (chưa cần hiểu từng chữ, cách kết bảng có ở bài 3.4):
 
@@ -99,17 +99,21 @@ ORDER BY bl.MaNV;`} />
   ['NV003', 'Nguyễn Thu Hà', 'Kinh doanh', 14088000],
 ]} total={43} />
 
-Mỗi dòng `JOIN … ON` là một đường nối trên sơ đồ. Biết đường đi trước thì câu lệnh gần như tự viết ra.
+Mỗi dòng `JOIN … ON` ở đây đi theo một đường nối trên sơ đồ. Kết quả có 43 dòng: đó là 43 người có dòng lương kỳ 2026-09, không phải cả 48 nhân viên, vì câu bắt đầu từ bảng lương. Biết đường nối giúp chọn đúng bảng và đúng cặp cột; còn giữ những dòng nào, lấy dữ liệu ở thời điểm nào thì phải xác định thêm, bài 3.4 và 3.5 sẽ học.
 
-Nếu bạn tự cài SQL Server trên máy, SSMS còn tự vẽ được sơ đồ ở mục **Database Diagrams** của database (khi tài khoản có quyền). Azure SQL Database không có mục này, nên với máy chủ của khóa học, bạn dùng sơ đồ ở trên.
+Nếu bạn tự cài SQL Server trên máy, SSMS còn vẽ được sơ đồ ở mục **Database Diagrams** của database; lần đầu dùng phải cài thêm phần hỗ trợ, cần tài khoản có quyền cao (db_owner). Azure SQL Database không có mục này trong SSMS, nên với máy chủ của khóa học, bạn dùng sơ đồ ở trên.
+
+### Trả lời chị Hạnh
+
+Tên phòng không nằm trong bảng lương mà lấy qua hai bước: `BangLuong` → `NhanVien` → `PhongBan`. Còn một điều cần nói rõ với Kế toán: câu trên lấy phòng ban đang lưu trong `NhanVien` lúc chạy, không phải phòng của người đó ở kỳ 2026-09. HRM_Demo không lưu lịch sử chuyển phòng, nên ai chuyển phòng sau kỳ lương sẽ hiện với phòng mới. Nếu Kế toán cần phòng tại kỳ lương, phải có dữ liệu lịch sử hoặc dữ liệu chốt theo kỳ.
 
 ## Hay nhầm ở đâu
 
 <Mistakes>
 
-1. **Tìm một đường tắt không có trên sơ đồ.** `BangLuong` và `PhongBan` không có đường nối trực tiếp, nên tìm cột phòng ban trong bảng lương là không thấy. Muốn đi từ bảng này sang bảng kia thì phải qua bảng ở giữa, ở đây là `NhanVien`.
-2. **Quên phía "nhiều" khi kết bảng.** Kết `NhanVien` với `HopDong` thì người có ba hợp đồng như NV021 hiện ba dòng: 48 nhân viên nhưng ra 57 dòng (bài 3.5). Thấy số dòng tăng bất thường, nhìn sơ đồ tìm đường nối một-nhiều vừa đi qua.
-3. **Đọc ngược chiều đường nối.** Đường nối đi từ khóa ngoại sang khóa chính, nên bảng có cột FK là phía "nhiều". Đọc ngược thành "một nhân viên có nhiều phòng ban" là sai, và câu lệnh viết theo cách hiểu đó cũng sai theo.
+1. **Tìm một đường tắt không có trên sơ đồ.** `BangLuong` và `PhongBan` không có cặp cột nào cho biết dòng lương thuộc phòng nào, nên tìm cột phòng ban trong bảng lương là không thấy. Trong HRM_Demo, muốn gắn đúng phòng cho dòng lương thì phải qua bảng ở giữa là `NhanVien`. SQL không cấm kết hai bảng không có đường nối, nhưng câu lệnh chạy được chưa chắc ra kết quả có nghĩa.
+2. **Quên phía "nhiều" khi kết bảng.** Kết `NhanVien` với `HopDong` thì người có ba hợp đồng như NV021 hiện ba dòng. Kết kiểu thông thường (`JOIN`) ra 55 dòng, đúng bằng số hợp đồng, và NV047, NV048 chưa có hợp đồng nên không hiện. Kết kiểu giữ đủ nhân viên (`LEFT JOIN`, bài 3.5) thì 48 nhân viên thành 57 dòng. Số dòng khác số người chưa chắc là sai: báo cáo mỗi dòng một hợp đồng thì đúng là như vậy. Thấy số dòng lạ, nhìn sơ đồ tìm đường nối một-nhiều vừa đi qua, rồi đối chiếu với yêu cầu mỗi dòng kết quả là gì.
+3. **Đọc ngược nghĩa của đường nối.** Một mã phòng có thể nằm ở nhiều dòng `NhanVien`, còn mỗi dòng `NhanVien` chỉ lưu một mã phòng. Đọc thành "một nhân viên có nhiều phòng ban" là sai nghĩa. Chiều viết trong câu lệnh thì không quan trọng: `nv.MaPB = pb.MaPB` và `pb.MaPB = nv.MaPB` là cùng một điều kiện; điều cần đúng là cặp cột và số dòng mong đợi.
 
 </Mistakes>
 
@@ -117,8 +121,8 @@ Nếu bạn tự cài SQL Server trên máy, SSMS còn tự vẽ được sơ đ
 
 <Apply>
 
-- Khi viết yêu cầu báo cáo, ghi luôn đường đi qua các bảng, ví dụ "lương lấy ở BangLuong, tên phòng lấy ở PhongBan, đi qua NhanVien". Người viết câu lệnh đọc là biết cần kết những bảng nào, khỏi hỏi lại.
-- Khi nhận một database lạ, xem sơ đồ trước khi viết câu lệnh đầu tiên: tìm bảng nằm giữa, rồi các bảng nối về nó. Đó thường là các đối tượng chính của nghiệp vụ.
+- Khi viết yêu cầu báo cáo, nói rõ mỗi dòng kết quả là gì và lấy theo thời điểm nào, ví dụ "mỗi dòng là một nhân viên có lương kỳ 2026-09; tên phòng lấy theo phòng đang lưu hiện tại". Ghi kèm đường đi qua các bảng (lương ở `BangLuong`, tên phòng ở `PhongBan`, đi qua `NhanVien`) để người viết câu lệnh đối chiếu, và số dòng dự kiến để hai bên cùng kiểm.
+- Khi nhận một database lạ, xem sơ đồ trước khi viết câu lệnh đầu tiên: bắt đầu từ bảng chứa thứ câu hỏi cần, xem khóa và các bảng nối với nó. Vị trí và số đường nối chỉ là gợi ý; hỏi thêm sơ đồ được vẽ từ database đang chạy hay từ tài liệu cũ, và một dòng ở mỗi bảng nghĩa là gì.
 
 </Apply>
 
@@ -126,7 +130,30 @@ Nếu bạn tự cài SQL Server trên máy, SSMS còn tự vẽ được sơ đ
 
 <Memo rows={[
   ['Sheet tham chiếu sheet khác bằng mã', 'Đường nối: khóa ngoại → khóa chính'],
-  ['Một phòng có nhiều dòng nhân viên', 'Quan hệ một-nhiều'],
+  ['Một phòng có nhiều dòng nhân viên', 'Quan hệ một-nhiều: 0, 1 hoặc nhiều dòng'],
   ['Dò hai lần qua hai sheet', 'BangLuong → NhanVien → PhongBan'],
-  ['Sheet nào cũng tra theo mã NV', 'NhanVien nằm giữa sơ đồ'],
+  ['Các sheet hợp đồng, chấm công, nghỉ phép, lương tra theo mã NV', 'Các bảng này trỏ về NhanVien.MaNV'],
 ]} />
+
+**Tự kiểm tra trước khi bấm "Đã học xong":**
+
+<details>
+<summary>Muốn lấy lương kèm tên phòng, đi qua những bảng nào, nối bằng cặp cột nào?</summary>
+
+`BangLuong.MaNV` với `NhanVien.MaNV`, rồi `NhanVien.MaPB` với `PhongBan.MaPB`.
+
+</details>
+
+<details>
+<summary>Vì sao kết NhanVien với HopDong có thể ra số dòng khác số nhân viên?</summary>
+
+Một người có thể có nhiều hợp đồng nên hiện nhiều dòng. Người chưa có hợp đồng thì mất khi kết kiểu thông thường, còn khi dùng `LEFT JOIN` thì vẫn có một dòng.
+
+</details>
+
+<details>
+<summary>MaQuanLy có luôn có giá trị không?</summary>
+
+Không. Cột nhận NULL; giám đốc NV004 không có quản lý trực tiếp.
+
+</details>

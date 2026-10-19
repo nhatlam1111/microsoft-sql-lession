@@ -10,7 +10,7 @@ interface Props {
   steps: FlowStep[];
   note?: string;
 }
-const { query, steps, note = 'Bạn viết SELECT trước, nhưng SQL Server làm FROM trước.' } = Astro.props;
+const { query, steps, note = 'Bạn viết SELECT trước, nhưng theo thứ tự logic, SQL Server xét FROM trước.' } = Astro.props;
 
 const problems = checkFlow(steps, query);
 if (problems.length) throw new Error(`Sơ đồ thứ tự chạy có lỗi:\n${problems.join('\n')}`);
@@ -85,7 +85,7 @@ const views = steps.map((step, i) => {
           <p class="rf-d-sub">Ở bước này</p>
           <p class="rf-d-text">{v.detail.map(p => (!p.code ? p.text : p.sqlWord ? <code class="rf-kw">{p.tokens.map(t => (t.kind === 'plain' ? t.text : <span class={`t-${t.kind}`}>{t.text}</span>))}</code> : <code class="rf-id">{p.text}</code>))}</p>
           <Result columns={v.step.columns} rows={v.step.rows} total={v.count} />
-          <Sql code={v.step.sql} title="Câu lệnh của bước này" />
+          <Sql code={v.step.sql} title="Câu lệnh để xem dữ liệu ở bước này" />
           {v.step.excel && (
             <p class="rf-excel"><span class="rf-xmark" aria-hidden="true">X</span><span>Liên hệ Excel: {v.step.excel}</span></p>
           )}

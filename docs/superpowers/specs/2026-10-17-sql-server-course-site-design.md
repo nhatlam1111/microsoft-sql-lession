@@ -109,7 +109,7 @@ Thân bài đi theo đúng thứ tự các mục sau, tên mục giữ nguyên:
 6. **Ghi nhớ**: bảng 2 cột "Bên Excel" / "Bên SQL".
 7. **Bài tập**: danh sách bài tập của bài; chưa có thì ghi "Phần bài tập sẽ bổ sung sau.". Bài 1.1–1.5 không có mục này (đổi 2026-10-18).
 
-Cuối bài: nút "Đã học xong bài này" (xanh lá), nút "Cắm cờ xem lại", gợi ý nhỏ "Bấm khi bạn tự viết lại được câu lệnh mà không nhìn bài" (bài khái niệm có `noExercises`: "Bấm khi bạn tự giải thích lại được nội dung chính của bài mà không nhìn bài.", đổi 2026-10-19), thẻ bài trước và bài sau.
+Cuối bài: nút "Đã học xong bài này" (xanh lá), nút "Cắm cờ xem lại", gợi ý nhỏ "Bấm khi bạn tự viết lại được câu lệnh mà không nhìn bài" (bài khái niệm có `noExercises`: "Bấm khi bạn trả lời được các câu tự kiểm tra cuối bài mà không nhìn bài.", đổi 2026-10-19), thẻ bài trước và bài sau.
 
 Quy ước hiển thị:
 

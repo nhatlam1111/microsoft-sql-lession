@@ -63,4 +63,5 @@ it('the done hint can ask to explain the lesson instead of rewriting a query', (
   expect(footer()).toContain('Bấm khi bạn tự viết lại được câu lệnh mà không nhìn bài.');
   expect(footer(CONCEPT_DONE_HINT)).toContain(CONCEPT_DONE_HINT);
   expect(footer(CONCEPT_DONE_HINT)).not.toContain('câu lệnh');
+  expect(CONCEPT_DONE_HINT).toBe('Bấm khi bạn trả lời được các câu tự kiểm tra cuối bài mà không nhìn bài.');
 });
