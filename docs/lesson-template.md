@@ -189,6 +189,9 @@ Dòng trạng thái của `Result` và `Messages` mặc định ghi `free-sql-db
 - Dòng code trong `Sql` và `RunFlow` không bắt đầu bằng dấu cách (MDX sẽ xóa).
 - Câu có kết quả mà thứ tự có ý nghĩa thì có `ORDER BY`. `TOP` đi cùng `ORDER BY`, trừ khi bài đang nói đúng về chuyện không có `ORDER BY`.
 - Level 1 không bảo học viên chạy câu `INSERT`, `UPDATE`, `DELETE` trong SSMS; câu sửa dữ liệu chỉ đưa ra để đọc.
+- Không hứa điều database không tự bảo đảm. Ràng buộc chỉ có khi được khai báo, nên viết "khi `MaNV` được khai báo là khóa chính…" thay cho "database chặn hẳn…". Tách "hợp lệ" với "đúng": mã có thật vẫn có thể gán nhầm người. Khóa ngoại là luật kiểm khi ghi dữ liệu, không phải ô chọn trên màn hình.
+- Không tuyệt đối hóa Excel (Excel có Data Validation, có làm việc chung trên một workbook); nói rõ điều kiện của tình huống ("trong file chưa thiết lập kiểm tra…").
+- Tình huống ở đầu bài phải được khép lại trong bài: có giả định rõ (mốc thời gian, phạm vi), và có câu trả lời cho người hỏi.
 
 ## Kiểm trước khi commit
 

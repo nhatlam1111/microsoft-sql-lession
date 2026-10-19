@@ -183,3 +183,23 @@ Như spec đợt 1 mục 2 và spec đợt 2 mục 2, cộng thêm:
 - Cách vẽ khối SSMS và tên component.
 - Cách ghi "bài này không có mục Bài tập" (trường trong phần đầu file hay danh sách trong code) và cách đổi test tương ứng.
 - Thời gian đọc (`minutes`) của từng bài.
+
+## 11. Sửa sau review bài 1.1 (2026-10-19)
+
+Người làm khóa học đưa một bản review bài 1.1 viết từ góc nhìn người làm nghiệp vụ khó tính (`temp/review-bai-1-1-database.md`, 50 mục). Đã sửa theo phần lớn các mục:
+
+- Bỏ các khẳng định tuyệt đối mà database không tự bảo đảm: "một bản duy nhất", "đặt luật cho từng cột", "không thể có chuyện…", "Excel để bạn gõ gì cũng được", "từ chối ngay lúc nhập". Thay bằng: một nguồn dữ liệu dùng chung theo quyền; ràng buộc do người thiết kế khai báo, được kiểm khi ghi dữ liệu.
+- Thêm đoạn "Hợp lệ chưa chắc đã đúng": mã có thật nhưng gán nhầm người, ngày hợp lệ nhưng sai hồ sơ vẫn lưu được.
+- Khóa ngoại là luật của dữ liệu, không phải ô chọn trên màn hình (sửa cả bài 1.4).
+- Tình huống có giả định về mốc thời gian; thêm tiểu mục "Trả lời chị Hạnh" để khép tình huống bằng quy trình xác minh, thống nhất nguồn, lấy lại số liệu cùng phạm vi.
+- Phân biệt database, SQL Server, SQL; thêm bảng danh mục phòng ban và chú giải tên cột; ví dụ ngày dạng chữ dùng `02.10.2017`.
+- Ứng dụng có bốn câu hỏi về nguồn file và các câu hỏi khi xem thiết kế dữ liệu; Ghi nhớ có ba câu tự kiểm tra.
+- Gợi ý dưới nút "Đã học xong" của bài khái niệm (1.1–1.5) đổi thành "tự giải thích lại được nội dung chính".
+
+Không làm theo, vì trái quyết định đã có:
+
+- Đổi tên mục "Làm bằng SQL": tên mục cố định theo khuôn bài (mục 3.1).
+- Gọi HRM_Demo là tên database: HRM_Demo là tên bộ dữ liệu mẫu, database trên máy chủ khóa học là `free-sql-db-8797714` (mục 2.4, 5.2).
+- Đổi nhãn "Bên Excel / Bên SQL" của khối Ghi nhớ: nhãn chung cho mọi bài.
+- Viết "BA cần…", "trao đổi với developer": bài không nhắc vai trò người đọc; các câu hỏi được giữ ở dạng trung tính.
+

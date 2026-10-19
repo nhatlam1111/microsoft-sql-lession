@@ -71,7 +71,7 @@ Từng phần nghĩa là gì:
 <LineMap rows={[
   ['PRIMARY KEY', 'Đây là khóa chính: không trùng, không trống. Giống cột mã NV không được trùng, nhưng database chặn hẳn chứ không chỉ tô màu.'],
   ['CONSTRAINT PK_NhanVien', 'Tên của khóa. Tên này hiện nguyên văn trong thông báo lỗi, nên đọc lỗi là biết khóa nào bị vi phạm.'],
-  ['REFERENCES dbo.PhongBan (MaPB)', 'Khóa ngoại: cột này chỉ nhận mã đang có ở cột MaPB của bảng PhongBan. Giống dropdown lấy từ sheet danh mục, nhưng không dán đè được.'],
+  ['REFERENCES dbo.PhongBan (MaPB)', 'Khóa ngoại: mỗi khi ghi dữ liệu, cột này chỉ nhận mã đang có ở cột MaPB của bảng PhongBan. Ý giống dropdown lấy từ sheet danh mục, nhưng đây là luật của dữ liệu, không phải ô chọn trên màn hình: dữ liệu ghi từ đâu cũng bị kiểm.'],
 ]} />
 
 ### Thấy khóa trong SSMS
@@ -149,7 +149,7 @@ Muốn xóa phòng VH, trước hết phải chuyển 10 người đó sang phò
 
 <Memo rows={[
   ['Cột mã NV không được trùng', 'PRIMARY KEY'],
-  ['Dropdown lấy từ sheet danh mục', 'FOREIGN KEY … REFERENCES'],
+  ['Mã phòng phải có trong sheet danh mục', 'FOREIGN KEY … REFERENCES'],
   ['Xóa dòng danh mục, sheet khác vẫn giữ mã cũ', 'Không xóa được khi còn dòng trỏ tới'],
   ['Một người một ngày một dòng chấm công', 'PRIMARY KEY (MaNV, Ngay)'],
 ]} />

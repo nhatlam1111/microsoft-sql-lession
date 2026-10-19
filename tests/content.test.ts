@@ -104,6 +104,14 @@ describe('lesson files', () => {
 
 describe('fixes from the final review', () => {
   const body = (slug: string) => readLessonFiles().find(f => f.slug === slug)!.body;
+  it('1.1 makes no promise the database cannot keep, and separates valid from correct (review of 2026-10-19)', () => {
+    const b = body('1-1-database-la-gi');
+    for (const s of ['một bản duy nhất', 'không thể có chuyện', 'Excel để bạn gõ gì cũng được', 'từ chối ngay lúc nhập', 'luật cho từng cột']) expect(b, s).not.toContain(s);
+    for (const s of ['Hợp lệ chưa chắc đã đúng', '### Trả lời chị Hạnh', 'Data Validation', 'không phải ô chọn trên màn hình']) expect(b, s).toContain(s);
+  });
+  it('1.4 says a foreign key is a rule checked on write, not a dropdown', () => {
+    expect(body('1-4-khoa-chinh-khoa-ngoai')).toContain('không phải ô chọn trên màn hình');
+  });
   it('1.2 says what to do when the sleeping course database refuses the first connection', () => {
     expect(body('1-2-sql-server-ssms-hrm-demo')).toContain('40613');
   });

@@ -4,13 +4,19 @@ import { iconOf, isFlagged, statusOf } from '../../lib/progress';
 import { useProgress } from './use-progress';
 import StatusIcon, { ICON_LABEL } from './StatusIcon';
 
+/** The done hint for lessons that teach concepts rather than a query (lessons marked noExercises). */
+export const CONCEPT_DONE_HINT = 'Bấm khi bạn tự giải thích lại được nội dung chính của bài mà không nhìn bài.';
+const QUERY_DONE_HINT = 'Bấm khi bạn tự viết lại được câu lệnh mà không nhìn bài.';
+
 interface Props {
   num: string;
   nums: string[];
   variant: 'rail' | 'footer';
+  /** The line under the done button; lessons without a query to rewrite pass CONCEPT_DONE_HINT. */
+  hint?: string;
 }
 
-export default function LessonStatus({ num, nums, variant }: Props) {
+export default function LessonStatus({ num, nums, variant, hint = QUERY_DONE_HINT }: Props) {
   const { state } = useProgress(nums);
   useEffect(() => {
     if (variant !== 'rail') return;
@@ -47,7 +53,7 @@ export default function LessonStatus({ num, nums, variant }: Props) {
   return (
     <div className="lesson-done">
       <div className="lesson-done-actions">{doneButton}{flagButton}</div>
-      <p className="lesson-done-hint">Bấm khi bạn tự viết lại được câu lệnh mà không nhìn bài.</p>
+      <p className="lesson-done-hint">{hint}</p>
     </div>
   );
 }

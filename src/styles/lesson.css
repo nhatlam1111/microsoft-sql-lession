@@ -269,3 +269,9 @@
 .ssms-field.is-db { min-width: 150px; }
 .ssms figcaption { padding: 6px 10px 8px; font-size: 13px; color: var(--ink-3); background: #FFF; border-top: 1px solid var(--ssms-line); }
 
+/* Self-check questions at the end of a lesson: the answer opens under the question. */
+.prose details { margin: 8px 0; padding: 10px 14px; border: 1px solid var(--rule); border-radius: var(--radius-s); background: var(--surface); }
+.prose details summary { cursor: pointer; font-family: var(--font-ui); font-size: 15px; font-weight: 600; }
+.prose details[open] summary { margin-bottom: 6px; }
+.prose details p { margin: 0; }
+

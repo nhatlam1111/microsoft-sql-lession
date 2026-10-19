@@ -6,6 +6,7 @@ import LessonDrawer from '../src/components/islands/LessonDrawer';
 import { DbDiagram, DbDiagramDialog } from '../src/components/islands/DbDiagram';
 import { parseSchema } from '../src/lib/db-schema';
 import SidebarNav from '../src/components/islands/SidebarNav';
+import LessonStatus, { CONCEPT_DONE_HINT } from '../src/components/islands/LessonStatus';
 import { LEVELS } from '../src/data/curriculum';
 import { emptyState, markSeen } from '../src/lib/progress';
 import { fakeCatalog } from './helpers/expected';
@@ -54,4 +55,12 @@ it('draws the diagram on its own, outside the popup', () => {
   expect(html.match(/class="er-box"/g)).toHaveLength(7);
   for (const s of ['NhanVien', 'PK', 'FK']) expect(html).toContain(s);
   expect(html).not.toContain('role="dialog"');
+});
+
+it('the done hint can ask to explain the lesson instead of rewriting a query', () => {
+  const nums = ['1.1', '1.2'];
+  const footer = (hint?: string) => renderToStaticMarkup(createElement(LessonStatus, { num: '1.1', nums, variant: 'footer', hint }));
+  expect(footer()).toContain('Bấm khi bạn tự viết lại được câu lệnh mà không nhìn bài.');
+  expect(footer(CONCEPT_DONE_HINT)).toContain(CONCEPT_DONE_HINT);
+  expect(footer(CONCEPT_DONE_HINT)).not.toContain('câu lệnh');
 });
