@@ -82,6 +82,8 @@
 .xl-grid .xl-num { text-align: right; }
 .xl-grid .xl-err { background: var(--excel-err-bg); color: var(--excel-err); }
 .xl-grid .xl-sel { outline: 2px solid var(--excel); outline-offset: -2px; }
+/* Excel's own "Neutral" cell style: the cells a lesson points at. */
+.xl-grid .xl-mark { background: #FFEB9C; color: #9C5700; }
 
 /* ---------- SSMS replica: editor ---------- */
 .sql { margin: 1.2em 0; border: 1px solid #CDD5E3; border-radius: var(--radius-s); overflow: hidden; background: #FFF; }
@@ -106,6 +108,8 @@
 .res-grid { border-collapse: collapse; width: 100%; }
 .res-grid th { background: #F0F0F0; border: 1px solid #DCDCDC; padding: 3px 8px; text-align: left; font-weight: 400; white-space: nowrap; }
 .res-grid td { border: 1px solid #E8E8E8; padding: 3px 8px; white-space: nowrap; }
+/* Rows a lesson points at, in the colour SSMS gives selected rows. */
+.res-grid tr.res-mark td:not(.res-null) { background: #CCE8FF; }
 .res-grid .res-rn { width: 30px; background: #F0F0F0; color: #555; text-align: center; }
 .res-grid .res-null { background: var(--ssms-null); }
 .res-status { display: flex; gap: 18px; padding: 4px 10px; border-top: 1px solid #D9D9D9; background: #FAFAFA; font-size: 12px; color: #444; }
@@ -243,7 +247,8 @@
 .ssms-check { display: inline-block; width: 12px; height: 12px; margin-right: 6px; border: 1px solid #767676; background: #FFF; vertical-align: -2px; }
 .ssms-field.is-select { position: relative; padding-right: 20px; }
 .ssms-field.is-select::after { content: '▾'; position: absolute; right: 6px; top: 1px; color: #555; }
-.ssms-field.is-mark { outline: 2px solid var(--ssms-accent); outline-offset: 1px; }
+.ssms-field.is-mark, .ssms-mark { outline: 2px solid var(--ssms-accent); outline-offset: 1px; }
+.ssms-mark { padding: 0 2px; }
 .ssms-buttons { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; padding: 0 10px 10px; }
 .ssms-btn { padding: 3px 12px; border: 1px solid #ADADAD; background: #E1E1E1; }
 .ssms-btn.is-primary { border-color: var(--ssms-accent); box-shadow: inset 0 0 0 1px var(--ssms-accent); }

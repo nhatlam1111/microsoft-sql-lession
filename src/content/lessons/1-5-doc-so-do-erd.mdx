@@ -30,7 +30,7 @@ Nói gọn lại:
 
 Với Excel, cách quen thuộc là dò hai lần. Từ sheet bảng lương, VLOOKUP mã NV sang sheet nhân viên để lấy mã phòng (lần 1: NV001 ra KT), rồi VLOOKUP tiếp mã phòng sang sheet danh mục phòng ban, nơi cột A là mã phòng và cột B là tên phòng, để lấy tên (lần 2: KT ra Kế toán):
 
-<Excel sheets="BangLuong · NhanVien · PhongBan" cell="E2" formula="=VLOOKUP(D2,PhongBan!A:B,2,FALSE)" selected="E2" rows={[
+<Excel sheets="BangLuong · NhanVien · PhongBan" cell="E2" formula="=VLOOKUP(D2,PhongBan!A:B,2,FALSE)" selected="E2" mark={['D2']} rows={[
   ['Mã NV', 'Kỳ lương', 'Thực lĩnh', 'Mã PB (dò lần 1)', 'Tên phòng (dò lần 2)'],
   ['NV001', '2026-09', 13285000, 'KT', 'Kế toán'],
   ['NV002', '2026-09', 21631000, 'KD', 'Kinh doanh'],
@@ -43,17 +43,19 @@ Cách này chạy được, với điều kiện bạn nhớ sheet nào có cộ
 
 ### Lý thuyết cơ bản
 
+Dữ liệu trong database được tách thành nhiều bảng để mỗi thông tin chỉ nằm ở một chỗ: tên phòng ở `PhongBan`, thông tin người ở `NhanVien`, lương ở `BangLuong` (bài 1.1, 1.4). Cái giá của cách tách này là một câu hỏi thường cần dữ liệu từ vài bảng cùng lúc, và phải biết bảng nào nối với bảng nào, qua cột nào. Một tấm sơ đồ cho thấy điều đó trước khi bạn viết câu lệnh nào.
+
 **ERD** (Entity–Relationship Diagram, sơ đồ quan hệ) vẽ mỗi bảng thành một hộp liệt kê các cột. Trong sơ đồ HRM_Demo của bài này, mỗi **đường nối** giữa hai hộp là một khóa ngoại trỏ tới một khóa chính như ở bài 1.4: một đầu là cột khóa ngoại, đầu kia là bảng mà cột đó trỏ tới. Sơ đồ ở hệ thống khác có thể vẽ theo quy ước khác, hoặc vẽ cả những quan hệ chưa được khai báo thành khóa ngoại.
 
-Cả bảy đường nối trong HRM_Demo là quan hệ **một-nhiều**: một dòng ở bảng được trỏ tới có thể được 0, 1 hoặc nhiều dòng ở bảng kia trỏ về. Cách đọc một đường nối trong sơ đồ này:
+Cả bảy đường nối trong HRM_Demo là quan hệ **một-nhiều**: một dòng ở bảng được trỏ tới có thể được 0, 1 hoặc nhiều dòng ở bảng kia trỏ về. Biết phía nào là "nhiều" quan trọng vì nó quyết định số dòng khi lấy dữ liệu từ hai bảng cùng lúc: đi từ một người sang các hợp đồng của người đó, một dòng có thể thành ba dòng. Cách đọc một đường nối trong sơ đồ này:
 
 1. Tìm cột có nhãn FK, ví dụ `NhanVien.MaPB`. Trong HRM_Demo, cột FK không bị ràng buộc duy nhất, nên một mã phòng lặp lại được ở nhiều dòng: bên chứa cột này là phía "nhiều". Ở sơ đồ khác, nếu cột FK cũng là cả khóa chính hoặc có ràng buộc UNIQUE thì mỗi mã chỉ xuất hiện tối đa một lần, nên phải xem thêm.
 2. Đi theo đường nối tới bảng nó trỏ tới, ví dụ `PhongBan`. Đó là phía "một".
 3. Đọc thành câu: một phòng ban có thể có nhiều nhân viên; mỗi nhân viên thuộc đúng một phòng ban, vì `NhanVien.MaPB` là `NOT NULL` và phải trỏ tới một mã phòng có thật.
 
-Trong HRM_Demo, bảng `NhanVien` nằm giữa: hợp đồng, chấm công, đơn nghỉ phép và bảng lương nối về nó qua `MaNV`, còn nó nối sang phòng ban và chức danh qua `MaPB`, `MaCD`. Đây là sơ đồ, cũng là sơ đồ bạn mở được bằng nút "Sơ đồ database" trên trang bài tập; sơ đồ rộng, cuộn ngang để xem hết:
+Trong HRM_Demo, bảng `NhanVien` nằm giữa: hợp đồng, chấm công, đơn nghỉ phép và bảng lương nối về nó qua `MaNV`, còn nó nối sang phòng ban và chức danh qua `MaPB`, `MaCD`. Đây là sơ đồ, cũng là sơ đồ bạn mở được bằng nút "Sơ đồ database" trên trang bài tập; sơ đồ rộng, cuộn ngang để xem hết. Phần tô xanh là đường đi cho câu hỏi của chị Hạnh, phân tích ở dưới:
 
-<Erd />
+<Erd path={['BangLuong', 'NhanVien', 'PhongBan']} caption="Tô xanh: BangLuong → NhanVien → PhongBan, nối qua MaNV rồi MaPB. PK là khóa chính, FK là khóa ngoại; đường nối đi từ khóa ngoại tới bảng nó trỏ tới." />
 
 Ví dụ thu gọn, mỗi đường nối một dòng, kèm con số đếm trên toàn bộ dữ liệu mẫu, chưa lọc trạng thái hay thời điểm:
 
@@ -70,11 +72,13 @@ Ví dụ thu gọn, mỗi đường nối một dòng, kèm con số đếm trê
 Từng phần trên sơ đồ nghĩa là gì:
 
 <LineMap rows={[
-  ['PK', 'Khóa chính của bảng. Bảng ChamCong và BangLuong có hai cột cùng mang nhãn PK vì khóa gồm hai cột: một dòng ChamCong ứng với một nhân viên trong một ngày, một dòng BangLuong ứng với một nhân viên trong một kỳ.'],
-  ['FK', 'Khóa ngoại: cột trỏ tới khóa của bảng khác, hoặc của chính bảng đó. Trong HRM_Demo, bên có cột FK là phía "nhiều".'],
-  ['NhanVien', 'Bảng nằm giữa sơ đồ. Trong sơ đồ này, muốn đi từ bảng lương, chấm công hay hợp đồng sang phòng ban thì phải qua đây.'],
-  ['MaQuanLy', 'Đường nối vòng về chính bảng NhanVien: người quản lý cũng là một nhân viên. Cột này nhận NULL, như với giám đốc. Khóa ngoại chỉ bảo đảm mã quản lý có thật; nó không chặn chuyện tự quản lý mình hay hai người quản lý lẫn nhau.'],
+  ['PK', 'Khóa chính của bảng. Bảng ChamCong và BangLuong có hai cột cùng mang nhãn PK vì khóa gồm hai cột: một dòng ChamCong ứng với một nhân viên trong một ngày, một dòng BangLuong ứng với một nhân viên trong một kỳ. Ví dụ: ChamCong có tối đa một dòng cho cặp NV001 và ngày 2026-09-01.'],
+  ['FK', 'Khóa ngoại: cột trỏ tới khóa của bảng khác, hoặc của chính bảng đó. Trong HRM_Demo, bên có cột FK là phía "nhiều". Ví dụ: NhanVien.MaPB của NV001 là KT, trỏ tới dòng KT trong PhongBan.'],
+  ['NhanVien', 'Bảng nằm giữa sơ đồ. Trong sơ đồ này, muốn đi từ bảng lương, chấm công hay hợp đồng sang phòng ban thì phải qua đây. Ví dụ: dòng lương của NV001 không có mã phòng; qua NhanVien mới biết NV001 thuộc KT.'],
+  ['MaQuanLy', 'Đường nối vòng về chính bảng NhanVien: người quản lý cũng là một nhân viên. Cột này nhận NULL. Ví dụ: NV001 có MaQuanLy là NV005; NV004 là giám đốc nên MaQuanLy là NULL. Khóa ngoại chỉ bảo đảm mã quản lý có thật; nó không chặn chuyện tự quản lý mình hay hai người quản lý lẫn nhau.'],
 ]} />
+
+Ở bài này chỉ cần đọc được sơ đồ và chỉ ra đường đi. Cách viết câu lệnh đi theo đường đó có bài riêng: kết hai bảng ở bài 3.4, giữ cả dòng không khớp ở bài 3.5, kết nhiều bảng và xử lý dòng bị nhân lên ở bài 3.6, bảng tự trỏ về chính nó ở bài 3.7; còn chuyện lưu lịch sử để xem dữ liệu ở một thời điểm cũ ở bài 6.6.
 
 ### Đi đường nào cho câu hỏi của chị Hạnh
 

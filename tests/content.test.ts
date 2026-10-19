@@ -147,6 +147,48 @@ describe('fixes from the review of lessons 1.2 to 1.6 (2026-10-19)', () => {
   });
 });
 
+describe('lessons explain why, show data before totals and mark what they point at (2026-10-19)', () => {
+  const level1 = () => readLessonFiles().filter(f => (f.data as { level: number }).level === 1);
+  const body = (slug: string) => readLessonFiles().find(f => f.slug === slug)!.body;
+  const theory = (b: string) => b.split('### Lý thuyết cơ bản')[1]?.split(/\n### /)[0] ?? '';
+  const lineMapRows = (b: string) => [...b.matchAll(/<LineMap rows=\{\[([\s\S]*?)\]\} \/>/g)].flatMap(m => m[1].split(/\n\s*\[/).slice(1));
+  it('level 1 queries show rows, not totals: aggregates wait for lesson 3.1', () => {
+    for (const f of level1()) for (const m of f.body.matchAll(/(?:\bcode=\{|\bquery=\{|\bsql:\s*)`([\s\S]*?)`/g)) {
+      expect(m[1], f.slug).not.toMatch(/\b(COUNT|SUM|AVG|MIN|MAX)\s*\(|\bGROUP\s+BY\b/i);
+    }
+  });
+  it('level 1 theory explains instead of asking, and says which later lesson goes deeper', () => {
+    for (const f of level1()) {
+      const t = theory(f.body).replace(/`[^`]*`/g, '');
+      expect(t, f.slug).not.toContain('?');
+      expect(t, f.slug).toMatch(/bài [2-6]\.\d+/);
+    }
+  });
+  it('the line-by-line explanations of 1.3 to 1.6 give a sample value for each part', () => {
+    for (const slug of ['1-3-bang-cot-kieu-du-lieu', '1-4-khoa-chinh-khoa-ngoai', '1-5-doc-so-do-erd', '1-6-cau-select-dau-tien']) {
+      const rows = lineMapRows(body(slug));
+      expect(rows.length, slug).toBeGreaterThan(0);
+      for (const r of rows) expect(r, `${slug}: ${r.slice(0, 30)}`).toContain('Ví dụ');
+    }
+  });
+  it('1.3 says where the conversion comes from', () => {
+    expect(theory(body('1-3-bang-cot-kieu-du-lieu'))).toContain('chuyển kiểu ngầm');
+  });
+  it('1.4 lists the records that still point to VH instead of counting them', () => {
+    const b = body('1-4-khoa-chinh-khoa-ngoai');
+    for (const s of ['NV033', 'NV041', "WHERE MaPB = 'VH'"]) expect(b).toContain(s);
+  });
+  it('the SSMS pictures, the results, the sheets and the diagram mark what the text points at', () => {
+    expect(body('1-2-sql-server-ssms-hrm-demo')).toMatch(/<Ssms[^>]*table="PhongBan"[^>]*mark=/);
+    expect(body('1-3-bang-cot-kieu-du-lieu')).toMatch(/<Ssms[^>]*table="HopDong"[^>]*mark=/);
+    expect(body('1-4-khoa-chinh-khoa-ngoai')).toMatch(/<Ssms[^>]*table="NhanVien"[^>]*mark=/);
+    expect(body('1-4-khoa-chinh-khoa-ngoai')).toMatch(/<Result[^>]*mark=/);
+    expect(body('1-5-doc-so-do-erd')).toMatch(/<Erd[^>]*path=/);
+    expect(body('1-1-database-la-gi')).toMatch(/<Excel[^>]*mark=/);
+    expect(body('1-3-bang-cot-kieu-du-lieu')).toMatch(/<Excel[^>]*mark=/);
+  });
+});
+
 describe('fixes from the final review', () => {
   const body = (slug: string) => readLessonFiles().find(f => f.slug === slug)!.body;
   it('1.1 makes no promise the database cannot keep, and separates valid from correct (review of 2026-10-19)', () => {

@@ -4,6 +4,8 @@ import Result from '../src/components/lesson/Result.astro';
 import Messages from '../src/components/lesson/Messages.astro';
 import Excel from '../src/components/lesson/Excel.astro';
 import Sql from '../src/components/lesson/Sql.astro';
+import Erd from '../src/components/lesson/Erd.astro';
+import reactRenderer from '@astrojs/react/server.js';
 import Memo from '../src/components/lesson/Memo.astro';
 import Exercises from '../src/components/lesson/Exercises.astro';
 import LessonHeader from '../src/components/lesson/LessonHeader.astro';
@@ -107,6 +109,32 @@ it('Exercises keeps the placeholder in a lesson with no exercises', async () => 
   expect(html).toContain('Phần bài tập sẽ bổ sung sau.');
 });
 
+it('Ssms boxes the key, type and NULL label of the columns a lesson points at', async () => {
+  const html = await c.renderToString(Ssms, { props: { view: 'explorer', table: 'HopDong', mark: ['LuongCoBan', 'NgayKetThuc'] } });
+  expect(html).toMatch(/LuongCoBan <span class="ssms-mark"[^>]*>\(decimal\(18,0\), not null\)<\/span>/);
+  expect(html).toMatch(/NgayKetThuc <span class="ssms-mark"[^>]*>\(date, null\)<\/span>/);
+  expect(html).toContain('MaHD (PK, varchar(20), not null)');
+  await expect(c.renderToString(Ssms, { props: { view: 'explorer', table: 'HopDong', mark: ['Luong'] } })).rejects.toThrow('Luong');
+});
+it('Result marks the rows a lesson points at and stops the build on a row it does not have', async () => {
+  const html = await c.renderToString(Result, { props: { columns: ['A'], rows: [['x'], ['y']], mark: [2] } });
+  expect(html).toMatch(/<tr class="res-mark"[^>]*>\s*<td class="res-rn"[^>]*>2<\/td>/);
+  expect(html).not.toMatch(/<tr class="res-mark"[^>]*>\s*<td class="res-rn"[^>]*>1</);
+  await expect(c.renderToString(Result, { props: { columns: ['A'], rows: [['x']], mark: [3] } })).rejects.toThrow('3');
+});
+it('Excel marks the cells a lesson points at', async () => {
+  const html = await c.renderToString(Excel, { props: { rows: [['a', 'b'], ['c', 'd']], mark: ['B2'] } });
+  expect(html).toMatch(/<td class="xl-mark"[^>]*>d<\/td>/);
+  expect(html).not.toMatch(/<td class="xl-mark"[^>]*>c<\/td>/);
+});
+it('Erd lights up the path a lesson follows', async () => {
+  // Erd draws a React component, so this container needs the React renderer.
+  const withReact = await AstroContainer.create();
+  withReact.addServerRenderer({ renderer: reactRenderer });
+  const html = await withReact.renderToString(Erd, { props: { path: ['BangLuong', 'NhanVien', 'PhongBan'] } });
+  expect(html.match(/er-box is-on/g)).toHaveLength(3);
+  expect(html.match(/er-link is-on/g)).toHaveLength(2);
+});
 it('Ssms stops the build when the opened table does not exist', async () => {
   await expect(c.renderToString(Ssms, { props: { view: 'explorer', table: 'NhanVen' } })).rejects.toThrow('NhanVen');
 });

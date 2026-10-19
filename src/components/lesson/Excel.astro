@@ -5,13 +5,17 @@ interface Props {
   formula?: string;
   sheets?: string;
   selected?: string;
+  /** Cells such as "C4" that the lesson points at, besides the selected one. */
+  mark?: string[];
 }
-const { rows, cell, formula, sheets, selected } = Astro.props;
+const { rows, cell, formula, sheets, selected, mark = [] } = Astro.props;
 const ERROR_VALUE = /^#(N\/A|VALUE!|REF!|DIV\/0!|NAME\?|NUM!|NULL!)$/;
 const width = Math.max(...rows.map(r => r.length));
 const letters = Array.from({ length: width }, (_, i) => String.fromCharCode(65 + i));
+const refs = new Set(rows.flatMap((_, ri) => letters.map(l => `${l}${ri + 1}`)));
+for (const m of mark) if (!refs.has(m)) throw new Error(`Excel: không có ô ${m} để đánh dấu`);
 const cellClass = (value: string | number, ref: string) =>
-  [ERROR_VALUE.test(String(value)) && 'xl-err', ref === selected && 'xl-sel', typeof value === 'number' && 'xl-num']
+  [ERROR_VALUE.test(String(value)) && 'xl-err', ref === selected && 'xl-sel', mark.includes(ref) && 'xl-mark', typeof value === 'number' && 'xl-num']
     .filter(Boolean).join(' ') || undefined;
 ---
 <figure class="xl">

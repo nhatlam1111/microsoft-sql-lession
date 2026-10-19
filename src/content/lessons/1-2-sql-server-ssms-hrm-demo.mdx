@@ -54,12 +54,12 @@ Máy chủ của khóa học là **Azure SQL Database**, dịch vụ SQL Server 
 
 **SSMS** (SQL Server Management Studio) là công cụ kết nối, cài riêng trên máy bạn: xem có những database nào, bảng nào, gõ câu lệnh và xem kết quả. Dữ liệu không nằm trong SSMS; SSMS chỉ hiện kết quả mà máy chủ trả về.
 
-Với tài khoản khóa học cấp, bạn cần bốn thông tin, như địa chỉ một căn phòng:
+Dữ liệu và công cụ được tách ra như vậy vì database là nguồn dùng chung (bài 1.1): dữ liệu ở một nơi trên máy chủ, mỗi người mở bằng công cụ của mình, và máy chủ quyết định ai được xem, được sửa những gì. Muốn máy chủ cho vào, bạn phải nói rõ tìm ở đâu, bạn là ai, và cần mở database nào. Với tài khoản khóa học cấp, đó là bốn thông tin, như địa chỉ một căn phòng:
 
-1. tên máy chủ;
-2. cách đăng nhập;
-3. tài khoản và mật khẩu;
-4. tên database muốn mở.
+1. tên máy chủ: máy chủ nằm ở đâu;
+2. cách đăng nhập: bạn chứng minh mình là ai theo cách nào;
+3. tài khoản và mật khẩu: bạn là ai; quyền xem, quyền sửa được cấp theo tài khoản này;
+4. tên database muốn mở: một máy chủ chứa nhiều database, nên phải chọn đúng một.
 
 Ví dụ thu gọn với máy chủ của khóa học. Mỗi bảng có một "địa chỉ" đầy đủ gồm ba phần:
 
@@ -72,10 +72,12 @@ Từng phần nghĩa là gì:
 <LineMap rows={[
   ['sql-lession.database.windows.net', 'Tên máy chủ, giống địa chỉ tòa nhà. Gõ đủ cả đuôi .database.windows.net, đúng như tên được cấp.'],
   ['free-sql-db-8797714', 'Tên database trên máy chủ đó, giống tên một file. Đây là tên Azure gợi ý lúc tạo database, khóa học giữ nguyên; bên trong là bộ dữ liệu mẫu HRM_Demo.'],
-  ['dbo.PhongBan', 'Tên bảng, giống tên một sheet. dbo là schema: một ngăn trong database để gom và đặt tên các bảng. Cả 7 bảng của HRM_Demo nằm trong schema dbo, nên dbo.PhongBan là bảng PhongBan trong ngăn dbo.'],
+  ['dbo.PhongBan', 'Tên bảng, giống tên một sheet. dbo là schema: một ngăn trong database để gom các bảng, nhờ đó đặt tên và cấp quyền được theo từng nhóm bảng. Cả 7 bảng của HRM_Demo nằm trong schema dbo, nên dbo.PhongBan là bảng PhongBan trong ngăn dbo.'],
 ]} />
 
 HRM_Demo là tên của bộ dữ liệu mẫu dùng cho cả khóa: 7 bảng với dữ liệu nhân sự giả lập. Trên máy chủ của khóa học, bộ dữ liệu đó nằm trong database `free-sql-db-8797714`, nên dòng trạng thái dưới mọi bảng kết quả trong bài ghi đúng tên này, giống như SSMS của bạn.
+
+Ở bài này chỉ cần kết nối được và mở được một bảng. Phần sâu hơn có bài riêng: quyền truy cập và dữ liệu nhạy cảm ở bài 6.1, các môi trường Dev, UAT, Production ở bài 6.2, giao dịch (transaction) mà trang bài tập dùng để hoàn tác ở bài 5.4.
 
 ### Kết nối SSMS vào máy chủ của khóa học
 
@@ -104,7 +106,7 @@ Nếu hộp kết nối của bạn không có ô Database Name (SSMS 20 trở v
 
 Kết nối xong, cửa sổ **Object Explorer** bên trái hiện một cái cây. Mở lần lượt Databases → `free-sql-db-8797714` → Tables là thấy 7 bảng của HRM_Demo, giống dãy tên sheet ở cuối một file Excel. Mở tiếp một bảng, rồi mục Columns, là thấy các cột của bảng đó:
 
-<Ssms view="explorer" table="PhongBan" caption="Bảng dbo.PhongBan có hai cột. Chữ trong ngoặc là khóa, kiểu dữ liệu và cột có nhận giá trị trống (NULL) hay không; bài 1.3 và 1.4 đọc kỹ phần này." />
+<Ssms view="explorer" table="PhongBan" mark={['MaPB', 'TenPB']} caption="Bảng dbo.PhongBan có hai cột. Phần có viền xanh là khóa, kiểu dữ liệu và cột có nhận giá trị trống (NULL) hay không; bài 1.3 và 1.4 đọc kỹ phần này." />
 
 Bấm chuột phải vào một bảng, bạn sẽ thấy mục **Edit Top 200 Rows**. Đừng dùng mục này: đây là lưới để sửa dữ liệu, thứ bạn gõ vào được ghi vào bảng khi rời khỏi dòng, mà database của khóa học là của chung mọi học viên. Muốn xem dữ liệu thì dùng câu lệnh, như ngay dưới đây.
 

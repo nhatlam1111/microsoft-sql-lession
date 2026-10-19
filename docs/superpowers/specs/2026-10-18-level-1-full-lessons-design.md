@@ -225,3 +225,14 @@ Không làm theo:
 - Gợi ý "Đã học xong" riêng cho 1.6: gợi ý chung cho mọi bài có câu lệnh, giữ nguyên.
 - Các mục "Giữ được" và các mục chỉ xin thêm nhãn "mô phỏng" cho hình SSMS, kết quả: hình trong bài đều là minh họa, không đánh nhãn từng hình.
 - Khẳng định Azure SQL Database không có mục Database Diagrams trong SSMS được giữ (khóa học dùng sơ đồ trên trang); thêm ý cần cài phần hỗ trợ và quyền db_owner khi tự cài trên máy.
+
+## 13. Quy ước mới sau lượt đọc của người làm khóa học (2026-10-19)
+
+Người làm khóa học đọc 1.3, 1.4 và đặt thêm quy ước cho mọi bài:
+
+- **Lý thuyết tự trả lời "vì sao"**, bằng lời dẫn dắt, không chèn câu hỏi vào bài. 1.3 giải thích vì sao mỗi cột có một kiểu (so sánh, sắp xếp, tính toán đúng cho mọi dòng; `'10'` đứng trước `'9'` khi so như chữ) và gọi đúng tên cơ chế chuyển kiểu ngầm, kèm `CAST`. 1.4 giải thích vì sao cần khóa chính (tên trùng, đổi tên, bảng khác cần nhắc đúng một người, câu sửa phải nhắm đúng một dòng) và khóa ngoại (lưu mã thay cho thông tin, nên mã phải trỏ được tới dòng có thật; hồ sơ mồ côi). 1.1, 1.2, 1.5, 1.6 thêm các đoạn tương tự (vì sao tách bảng, vì sao tách dữ liệu với công cụ, vì sao cần sơ đồ và biết phía "nhiều", vì sao phải nói rõ bảng, vì sao `TOP` không hứa thứ tự).
+- **Nói trước phần nào học sâu hơn ở bài sau**: cuối lý thuyết mỗi bài có đoạn "Ở bài này chỉ cần…" kể các bài 2.x–6.x đi tiếp.
+- **Giải thích từng phần có giá trị ví dụ**: mỗi dòng `LineMap` của 1.3–1.6 có "Ví dụ:" (giá trị nào qua, bị từ chối hay bị đổi). Các giá trị đã kiểm trên database khóa học: `9610000.6` thành `9610001`, `'2024-02-30'` không đổi được thành ngày, `'2026-9'` vào `char(7)` được đệm khoảng trắng.
+- **Câu minh họa cho xem dữ liệu, không tóm tắt**: 1.4 bỏ `COUNT(*)`, thay bằng danh sách 10 hồ sơ còn trỏ tới VH (tô hai dòng đã nghỉ). Test chặn `COUNT`, `SUM`, `AVG`, `MIN`, `MAX`, `GROUP BY` trong câu lệnh của Level 1; tổng hợp bắt đầu từ bài 3.1.
+- **Hình đánh dấu chỗ cần nhìn**: thêm `mark` cho `Ssms` (phần khóa, kiểu, null của cột), `Result` (dòng), `Excel` (ô) và `path` cho `Erd` (bảng, cột nối, đường nối). Đã dùng: 1.1 ô C4, A3, A5; 1.2 hai cột `PhongBan`; 1.3 ô C2, D3 và `LuongCoBan`, `NgayKetThuc`; 1.4 khóa của `NhanVien` và hai dòng đã nghỉ; 1.5 ô D2 và đường `BangLuong` → `NhanVien` → `PhongBan`; 1.6 dòng NV004.
+- 1.1 bỏ "dữ liệu ghi từ đâu cũng bị kiểm" ở bảng so sánh, như đã sửa ở 1.4.

@@ -14,7 +14,8 @@ export const DIAGRAM_POSITIONS: Record<string, { x: number; y: number }> = {
   BangLuong: { x: 590, y: 300 },
 };
 
-export interface DiagramLink { d: string; dot: { x: number; y: number } | null }
+/** from and to are "Table.Column": the foreign key and the key it points to. */
+export interface DiagramLink { d: string; dot: { x: number; y: number } | null; from: string; to: string }
 
 function rowY(table: DbTable, column: string): number {
   const at = DIAGRAM_POSITIONS[table.name];
@@ -34,16 +35,38 @@ export function diagramLinks(tables: DbTable[]): DiagramLink[] {
       const y2 = rowY(target, fk.refColumn);
       const from = DIAGRAM_POSITIONS[table.name].x;
       const to = DIAGRAM_POSITIONS[target.name].x;
+      const ends = { from: `${table.name}.${fk.column}`, to: `${target.name}.${fk.refColumn}` };
       if (table === target) {
         // A table pointing at itself (NhanVien.MaQuanLy): loop out on the right.
         const x = from + BOX.width;
-        links.push({ d: `M${x} ${y1} H${x + 22} V${y2} H${x}`, dot: null });
+        links.push({ d: `M${x} ${y1} H${x + 22} V${y2} H${x}`, dot: null, ...ends });
         continue;
       }
       const [x1, x2] = from < to ? [from + BOX.width, to] : [from, to + BOX.width];
       const mid = (x1 + x2) / 2;
-      links.push({ d: `M${x1} ${y1} H${mid} V${y2} H${x2}`, dot: { x: x1, y: y1 } });
+      links.push({ d: `M${x1} ${y1} H${mid} V${y2} H${x2}`, dot: { x: x1, y: y1 }, ...ends });
     }
   }
   return links;
+}
+
+export interface DiagramPath { tables: Set<string>; columns: Set<string>; links: Set<number> }
+
+/**
+ * What to light up when a lesson follows a path such as BangLuong → NhanVien → PhongBan:
+ * the tables, the columns that join each pair ("Table.Column") and the indexes of those links in diagramLinks().
+ * Throws when two tables next to each other in the path have no foreign key between them.
+ */
+export function diagramPath(tables: DbTable[], path: string[]): DiagramPath {
+  const links = diagramLinks(tables);
+  const result: DiagramPath = { tables: new Set(path), columns: new Set(), links: new Set() };
+  const tableOf = (end: string) => end.split('.')[0];
+  for (let i = 1; i < path.length; i++) {
+    const [a, b] = [path[i - 1], path[i]];
+    const found = links.findIndex(l => [tableOf(l.from), tableOf(l.to)].sort().join() === [a, b].sort().join());
+    if (found < 0) throw new Error(`Sơ đồ: không có khóa ngoại nối ${a} với ${b}`);
+    result.links.add(found);
+    result.columns.add(links[found].from).add(links[found].to);
+  }
+  return result;
 }

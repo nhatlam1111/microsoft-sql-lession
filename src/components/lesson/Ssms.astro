@@ -8,20 +8,24 @@ interface Props {
   view: 'connect' | 'explorer' | 'toolbar';
   /** explorer only: the table opened down to its columns. */
   table?: string;
+  /** explorer only: columns of the opened table whose key, type and NULL label get a box. */
+  mark?: string[];
   caption?: string;
 }
-const { view, table = 'NhanVien', caption } = Astro.props;
+const { view, table = 'NhanVien', mark = [], caption } = Astro.props;
 const LOGIN = 'tài khoản được cấp';
 // Object Explorer lists tables by name, as SSMS sorts them.
 const tables = parseSchema(schemaSql).sort((a, b) => a.name.localeCompare(b.name));
 const opened = tables.find(t => t.name === table);
 if (view === 'explorer' && !opened) throw new Error(`Ssms: bảng "${table}" không có trong HRM_Demo.sql`);
+for (const m of mark) if (!opened?.columns.some(c => c.name === m)) throw new Error(`Ssms: bảng "${table}" không có cột "${m}"`);
 const LABEL = {
   connect: 'hộp Connect to Server',
   explorer: `cửa sổ Object Explorer, mở bảng dbo.${table}`,
   toolbar: 'thanh công cụ của cửa sổ câu lệnh',
 } as const;
-type Node = { text: string; icon: string; depth: number; open?: boolean; on?: boolean };
+/** detail is the "(PK, varchar(10), not null)" part of a column label, boxed when the lesson points at that column. */
+type Node = { text: string; icon: string; depth: number; open?: boolean; on?: boolean; detail?: string };
 const tree: Node[] = [
   { text: `${COURSE_SERVER.server} (SQL Server 12.0.2000.8 - ${LOGIN})`, icon: 'server', depth: 0, open: true },
   { text: 'Databases', icon: 'folder', depth: 1, open: true },
@@ -32,7 +36,13 @@ const tree: Node[] = [
     ? [
         { text: `dbo.${t.name}`, icon: 'table', depth: 4, open: true, on: true },
         { text: 'Columns', icon: 'folder', depth: 5, open: true },
-        ...t.columns.map(c => ({ text: ssmsColumnLabel(t, c), icon: t.primaryKey.includes(c.name) ? 'key' : 'col', depth: 6 })),
+        ...t.columns.map(c => {
+          const icon = t.primaryKey.includes(c.name) ? 'key' : 'col';
+          const label = ssmsColumnLabel(t, c);
+          return mark.includes(c.name)
+            ? { text: c.name, detail: label.slice(c.name.length + 1), icon, depth: 6 }
+            : { text: label, icon, depth: 6 };
+        }),
         { text: 'Keys', icon: 'folder', depth: 5 },
         { text: 'Constraints', icon: 'folder', depth: 5 },
         { text: 'Indexes', icon: 'folder', depth: 5 },
@@ -73,7 +83,7 @@ const isLeaf = (n: Node) => n.icon === 'col' || n.icon === 'key';
           <li class={n.on ? 'is-on' : undefined} style={`--depth: ${n.depth}`}>
             <span class="ssms-exp" aria-hidden="true">{isLeaf(n) ? '' : n.open ? '▾' : '▸'}</span>
             <span class={`ssms-i i-${n.icon}`} aria-hidden="true"></span>
-            <span class="ssms-node">{n.text}</span>
+            <span class="ssms-node">{n.detail ? <>{`${n.text} `}<span class="ssms-mark">{n.detail}</span></> : n.text}</span>
           </li>
         ))}
       </ul>

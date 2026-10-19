@@ -57,6 +57,15 @@ it('draws the diagram on its own, outside the popup', () => {
   expect(html).not.toContain('role="dialog"');
 });
 
+it('the diagram lights up a path: its tables, the joining columns and the links between them', () => {
+  const tables = parseSchema(readFileSync('database/HRM_Demo.sql', 'utf8'));
+  const html = renderToStaticMarkup(createElement(DbDiagram, { tables, path: ['BangLuong', 'NhanVien', 'PhongBan'] }));
+  expect(html.match(/class="er-box is-on"/g)).toHaveLength(3);
+  expect(html.match(/class="er-row is-on"/g)).toHaveLength(4);
+  expect(html.match(/class="er-link is-on"/g)).toHaveLength(2);
+  expect(renderToStaticMarkup(createElement(DbDiagram, { tables }))).not.toContain('is-on');
+});
+
 it('the done hint can ask to explain the lesson instead of rewriting a query', () => {
   const nums = ['1.1', '1.2'];
   const footer = (hint?: string) => renderToStaticMarkup(createElement(LessonStatus, { num: '1.1', nums, variant: 'footer', hint }));

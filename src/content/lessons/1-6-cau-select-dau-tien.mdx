@@ -44,6 +44,8 @@ Trong bài này, bạn không mở sheet nào: bạn hỏi database bằng một
 
 `SELECT` là câu lệnh để **lấy dữ liệu ra xem**. Câu đơn giản để đọc một bảng có hai phần: `SELECT` nói lấy những cột nào, `FROM` nói lấy từ bảng nào. Dấu `*` nghĩa là "mọi cột". Thêm `TOP (n)` thì lấy tối đa n dòng, đủ để nhìn qua một bảng lớn.
 
+Câu lệnh phải nói rõ bảng vì một database có nhiều bảng, không có "sheet đang mở" nào để SQL Server tự hiểu. `TOP` có ích vì bảng thật có thể có hàng trăm nghìn dòng: lấy hết vừa chậm vừa ngập màn hình, trong khi để biết một bảng trông ra sao chỉ cần vài dòng. Còn chuyện thứ tự: bảng trong database là một tập các dòng, không có số thứ tự dòng cố định như sheet. Không có `ORDER BY`, SQL Server trả dòng theo thứ tự nào tiện nhất cho nó lúc đó, nên `TOP` không hứa đó là những dòng nào.
+
 <Sql title="Cú pháp chung (thay tên bảng, số dòng trước khi chạy)" copy={false} code={`SELECT * FROM tên bảng;
 SELECT TOP (số dòng) * FROM tên bảng;`} />
 
@@ -57,12 +59,14 @@ Ví dụ thu gọn với bảng `PhongBan` (dữ liệu mẫu có 6 dòng, 2 c�
 Từng phần nghĩa là gì:
 
 <LineMap rows={[
-  ['SELECT', 'Bắt đầu một câu hỏi lấy dữ liệu ra xem. Các câu SELECT trong bài chỉ đọc, không làm đổi dữ liệu. Nhưng đừng thấy chữ SELECT là cho rằng cả câu chỉ đọc: SELECT INTO tạo bảng mới và ghi dữ liệu vào đó, nên luôn đọc hết câu lệnh.'],
-  ['*', 'Mọi cột của bảng, theo đúng thứ tự cột trong bảng (thứ tự cột, không phải thứ tự dòng). Giống mở cả sheet, không ẩn cột nào.'],
-  ['TOP (10)', 'Lấy tối đa 10 dòng. Giống chỉ xem một ít dòng thay vì cuộn hết sheet, nhưng không có ORDER BY thì không hứa đó là những dòng nào.'],
-  ['FROM NhanVien', 'Lấy từ bảng NhanVien, tức dbo.NhanVien trong Object Explorer. Tên bảng phải đúng như ở đó.'],
-  [';', 'Kết thúc một câu lệnh. Các câu SELECT đơn giản này vẫn chạy khi thiếu dấu ;, nhưng nên tập viết từ đầu.'],
+  ['SELECT', 'Bắt đầu một câu hỏi lấy dữ liệu ra xem. Các câu SELECT trong bài chỉ đọc, không làm đổi dữ liệu. Nhưng đừng thấy chữ SELECT là cho rằng cả câu chỉ đọc: câu dạng SELECT INTO có ghi dữ liệu. Ví dụ: SELECT * INTO PhongBanCu FROM PhongBan tạo bảng mới PhongBanCu và ghi dữ liệu vào đó, nên luôn đọc hết câu lệnh.'],
+  ['*', 'Mọi cột của bảng, theo đúng thứ tự cột trong bảng (thứ tự cột, không phải thứ tự dòng). Giống mở cả sheet, không ẩn cột nào. Ví dụ: với PhongBan, dấu * ra hai cột MaPB rồi TenPB.'],
+  ['TOP (10)', 'Lấy tối đa 10 dòng. Ví dụ: NhanVien có 48 dòng thì ra 10 dòng; PhongBan chỉ có 6 dòng thì TOP (10) ra 6 dòng. Giống chỉ xem một ít dòng thay vì cuộn hết sheet, nhưng không có ORDER BY thì không hứa đó là những dòng nào.'],
+  ['FROM NhanVien', 'Lấy từ bảng NhanVien, tức dbo.NhanVien trong Object Explorer. Tên bảng phải đúng như ở đó. Ví dụ: gõ nhầm FROM NhanVen thì Messages báo Invalid object name.'],
+  [';', 'Kết thúc một câu lệnh. Các câu SELECT đơn giản này vẫn chạy khi thiếu dấu ;, nhưng nên tập viết từ đầu. Ví dụ: SELECT * FROM PhongBan, không có dấu ;, vẫn ra 6 dòng.'],
 ]} />
+
+Ở bài này chỉ cần xem được một bảng. Phần sâu hơn có bài riêng: chọn đúng những cột cần lấy ở bài 2.1, lọc dòng bằng `WHERE` ở bài 2.2, sắp xếp và dùng `TOP` cùng `ORDER BY` ở bài 2.4, ý nghĩa của NULL ở bài 2.5; các câu ghi dữ liệu học ở Level 5, bắt đầu từ bài 5.3.
 
 Cách chạy trong SSMS: gõ câu lệnh vào cửa sổ New Query, nhìn ô chọn database, rồi bấm **F5** hoặc nút **Execute**. Nếu bạn bôi đen một đoạn, SSMS chỉ chạy đúng đoạn được bôi đen; không bôi đen thì chạy mọi câu trong cửa sổ. Vì vậy một cửa sổ có thể chứa nhiều câu và bạn chọn chạy từng câu.
 
@@ -80,7 +84,7 @@ Muốn biết bảng nhân viên lưu những gì, lấy mọi cột của 10 ng
 <Sql code={`SELECT TOP (10) *
 FROM NhanVien;`} />
 
-<Result columns={['MaNV', 'HoTen', 'GioiTinh', 'NgaySinh', 'SoCCCD', 'Email', 'NgayVaoLam', 'NgayNghiViec', 'MaPB', 'MaCD', 'MaQuanLy', 'TrangThai']} rows={[
+<Result columns={['MaNV', 'HoTen', 'GioiTinh', 'NgaySinh', 'SoCCCD', 'Email', 'NgayVaoLam', 'NgayNghiViec', 'MaPB', 'MaCD', 'MaQuanLy', 'TrangThai']} mark={[4]} rows={[
   ['NV001', 'Trần Thị Mai', 'Nữ', '1992-04-12', '000192131376', 'mai.tt@hrmdemo.vn', '2024-03-01', null, 'KT', 'CV', 'NV005', 'Đang làm'],
   ['NV002', 'Lê Văn Hùng', 'Nam', '1988-09-03', '000088139295', 'hung.lv@hrmdemo.vn', '2024-04-01', null, 'KD', 'CVC', 'NV006', 'Đang làm'],
   ['NV003', 'Nguyễn Thu Hà', 'Nữ', '1995-01-25', '000195147214', 'ha.nt@hrmdemo.vn', '2023-06-01', null, 'KD', 'CV', 'NV006', 'Đang làm'],
@@ -95,7 +99,7 @@ FROM NhanVien;`} />
 
 <Messages lines={['(10 rows affected)']} />
 
-Mười hai cột, từ mã, họ tên, ngày sinh tới phòng ban, chức danh, người quản lý và trạng thái. Đó là những thông tin bảng `NhanVien` đang lưu. Chị Hạnh đối chiếu chúng với các mục mẫu hồ sơ cần; mục nào không có ở đây thì có thể nằm ở bảng khác (như hợp đồng) hoặc chưa được lưu. Mười dòng chỉ là mẫu: kiểu dữ liệu và luật của từng cột xem ở Object Explorer, còn ý nghĩa của từng cột thì phải hỏi lại. Theo quy ước của bộ mẫu, `NgayNghiViec` là NULL ở cả 10 người vì họ chưa nghỉ việc, và NV004 là giám đốc nên không có `MaQuanLy`.
+Mười hai cột, từ mã, họ tên, ngày sinh tới phòng ban, chức danh, người quản lý và trạng thái. Đó là những thông tin bảng `NhanVien` đang lưu. Chị Hạnh đối chiếu chúng với các mục mẫu hồ sơ cần; mục nào không có ở đây thì có thể nằm ở bảng khác (như hợp đồng) hoặc chưa được lưu. Mười dòng chỉ là mẫu: kiểu dữ liệu và luật của từng cột xem ở Object Explorer, còn ý nghĩa của từng cột thì phải hỏi lại. Theo quy ước của bộ mẫu, `NgayNghiViec` là NULL ở cả 10 người vì họ chưa nghỉ việc, và NV004 (dòng được tô) là giám đốc nên không có `MaQuanLy`.
 
 ### SQL Server chạy câu này thế nào
 

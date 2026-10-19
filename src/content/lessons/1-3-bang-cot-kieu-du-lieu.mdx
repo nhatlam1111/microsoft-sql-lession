@@ -30,28 +30,32 @@ Nói gọn lại, câu hỏi là:
 
 Trong file chị Hạnh gửi, các cột chưa đặt Data Validation (tính năng giới hạn dữ liệu nhập của Excel), nên một cột có thể bị nhập lẫn ngày, số và chữ. Đổi Format Cells sang Date hay Number chỉ đổi cách hiển thị, không biến ô chữ thành ngày hay số:
 
-<Excel sheets="NhanVienMoi" cell="C3" formula="2024.02.01" selected="C3" rows={[
+<Excel sheets="NhanVienMoi" cell="C3" formula="2024.02.01" selected="C3" mark={['C2', 'D3']} rows={[
   ['Mã NV', 'Họ tên', 'Ngày vào làm', 'Lương cơ bản'],
   ['NV049', 'Lý Thu Hằng', '01/02/2024', '9.610.000'],
   ['NV050', 'Mai Văn Tâm', '2024.02.01', '9,61 triệu'],
   ['NV051', 'Đinh Gia Bảo', 'chưa rõ', 9610000],
 ]} />
 
-Ba dòng nhập ngày và lương theo ba cách khác nhau, có ô chỉ là chữ. Trong file này, ô "2024.02.01" đang là chữ, không phải ngày. Ô "01/02/2024" lúc gõ vào được Excel hiểu là ngày 1 tháng 2 hay 2 tháng 1 tùy thiết lập vùng của máy người gõ. Ô "9,61 triệu" là chữ: hàm `SUM` bỏ qua ô chữ nên tổng lương bị thiếu mà không báo gì, còn cộng thẳng bằng dấu `+` thì ra lỗi `#VALUE!`.
+Ba dòng nhập ngày và lương theo ba cách khác nhau, có ô chỉ là chữ. Trong file này, ô C3 "2024.02.01" đang là chữ, không phải ngày. Ô C2 "01/02/2024" lúc gõ vào được Excel hiểu là ngày 1 tháng 2 hay 2 tháng 1 tùy thiết lập vùng của máy người gõ. Ô D3 "9,61 triệu" là chữ: hàm `SUM` bỏ qua ô chữ nên tổng lương bị thiếu mà không báo gì, còn cộng thẳng bằng dấu `+` thì ra lỗi `#VALUE!`.
 
 ## Làm bằng SQL
 
 ### Lý thuyết cơ bản
 
-Trong database, mỗi cột được khai báo một **kiểu dữ liệu** khi tạo bảng, và mọi dòng của cột đó dùng chung kiểu này. Đổi kiểu của một cột là thay đổi cấu trúc bảng, một việc riêng của người quản trị.
+Trong database, mỗi cột được khai báo một **kiểu dữ liệu** khi tạo bảng, và mọi dòng của cột đó dùng chung kiểu này.
 
-Khi ghi một giá trị vào cột, SQL Server đổi giá trị đó sang kiểu của cột nếu đổi được, rồi mới lưu. Có ba khả năng:
+Lý do nằm ở cách dữ liệu được dùng. Mỗi cột ghi một thông tin của cùng một loại đối tượng: cột `NgayVaoLam` là ngày vào làm của mọi nhân viên, nên ở dòng nào nó cũng phải là một ngày. Khi biết chắc cả cột là ngày, SQL Server so sánh và sắp xếp theo thời gian, tính được số ngày giữa hai mốc, và một câu lọc người vào làm từ năm 2024 chạy đúng cho mọi dòng mà không phải đoán từng ô. Nếu cột lưu ngày dạng chữ, mọi phép so sánh thành so sánh chữ: theo thứ tự chữ, `'10'` đứng trước `'9'`, và `'01/02/2024'` đứng trước `'31/12/2023'`. Kiểu dữ liệu còn cho SQL Server biết cần bao nhiêu chỗ để lưu, và giá trị nào không thể có, như ngày 30 tháng 2.
+
+Excel để mỗi ô có loại riêng, nên ở phần trên `SUM` mới lặng lẽ bỏ qua ô "9,61 triệu". Database làm ngược lại: đặt luật một lần cho cả cột, ai ghi gì vào cũng phải theo. Cũng vì vậy, đổi kiểu của một cột là thay đổi cấu trúc bảng, một việc riêng của người quản trị: mọi giá trị đang có trong cột phải đổi theo.
+
+Giá trị bạn ghi vào cột chưa chắc đã cùng kiểu với cột: câu lệnh thường viết ngày dưới dạng chuỗi, như `'2024-02-01'`. SQL Server có sẵn cơ chế **chuyển kiểu ngầm** (implicit conversion): khi kiểu của giá trị khác kiểu của cột, nó tự đổi theo bộ quy tắc chuyển kiểu của mình, nếu cặp kiểu đó đổi được, rồi mới lưu. Bạn cũng có thể tự đổi bằng `CAST`, như câu thử ở phần dưới. Kết quả có ba khả năng:
 
 1. **Đổi được, không có gì phải đoán.** Chuỗi `'2024-02-01'` vào cột `date` là ngày 1 tháng 2 năm 2024.
 2. **Đổi được, nhưng giá trị có thể khác đi.** Chuỗi `'01/02/2024'` có thể thành ngày 2 tháng 1; số 21.25 vào cột `decimal(4,1)` bị làm tròn thành 21.3. Không có lỗi nào hiện ra.
 3. **Không đổi được.** Chuỗi `'chưa rõ'` vào cột `date`: SQL Server báo lỗi và không ghi.
 
-Khả năng thứ hai là chỗ dễ sai nhất. **Lưu được chưa chắc đã đúng ý** người nhập.
+Khả năng thứ hai là chỗ dễ sai nhất, vì không có lỗi nào hiện ra: **Lưu được chưa chắc đã đúng ý** người nhập.
 
 Đây là một phần câu lệnh tạo bảng `NhanVien` trong script `HRM_Demo.sql`, đã lược bớt các cột và khóa khác; đoạn này để đọc, không để chạy. Mỗi dòng là một cột: tên cột, kiểu dữ liệu, rồi cột có nhận NULL (giá trị trống, chưa có) hay không.
 
@@ -81,19 +85,21 @@ Hai kiểu rất hay gặp ở hệ thống khác nhưng 7 bảng của HRM_Demo
 Từng phần nghĩa là gì:
 
 <LineMap rows={[
-  ['varchar(10)', 'Chuỗi tối đa 10 byte. Mã như NV001 chỉ có chữ không dấu và số, mỗi ký tự một byte, nên chứa được tới 10 ký tự. Kiểu này không tự kiểm mã có đúng quy tắc đặt mã hay không.'],
-  ['nvarchar(100)', 'Chữ n là Unicode: giữ được dấu tiếng Việt. Trong HRM_Demo, họ tên và tên phòng ban dùng kiểu này.'],
-  ['date', 'Chỉ lưu được ngày có thật; chuỗi như "chưa rõ" không đổi được thành ngày nên bị từ chối. Ngày có thật vẫn có thể sai hồ sơ, ví dụ gõ nhầm năm.'],
-  ['decimal(18,0)', 'Số tới 18 chữ số, không có phần lẻ. Bộ mẫu quy ước tiền tính bằng đồng; kiểu cột không tự ghi đơn vị, cũng không tự chặn số âm.'],
-  ['NOT NULL', 'Cột không nhận NULL. Chuỗi rỗng hay chuỗi toàn dấu cách không phải NULL nên vẫn lưu được; muốn chặn cần thêm luật khác.'],
-  ['NULL', 'Cột được nhận NULL. Trong bộ mẫu, NgayNghiViec là NULL với người chưa nghỉ việc. Đó là quy ước của bộ dữ liệu, SQL Server không tự hiểu NULL là "đang làm".'],
+  ['varchar(10)', 'Chuỗi tối đa 10 byte. Mã như NV001 chỉ có chữ không dấu và số, mỗi ký tự một byte, nên chứa được tới 10 ký tự. Ví dụ: NV001 (5 byte) lưu được; NV0000000001 (12 ký tự) quá dài nên bị từ chối. Kiểu này không tự kiểm mã có đúng quy tắc đặt mã hay không.'],
+  ['nvarchar(100)', 'Chữ n là Unicode: giữ được dấu tiếng Việt, tối đa 100 ký tự thông thường. Ví dụ: Trần Thị Mai (12 ký tự) lưu nguyên dấu. Trong HRM_Demo, họ tên và tên phòng ban dùng kiểu này.'],
+  ['date', 'Chỉ lưu được ngày có thật. Ví dụ: 2024-03-01 lưu được; 2024-02-30 và "chưa rõ" không đổi được thành ngày nên bị từ chối; 2099-03-01 vẫn lưu được dù có thể sai hồ sơ.'],
+  ['decimal(18,0)', 'Số tới 18 chữ số, không có phần lẻ. Ví dụ: 9610000 lưu nguyên; 9610000.6 được làm tròn thành 9610001; -9610000 vẫn lưu được, vì kiểu cột không tự chặn số âm. Bộ mẫu quy ước tiền tính bằng đồng; kiểu cột không ghi đơn vị.'],
+  ['NOT NULL', 'Cột không nhận NULL (chưa có giá trị). Ví dụ: để HoTen là NULL thì bị từ chối, nhưng chuỗi rỗng hay chuỗi toàn dấu cách không phải NULL nên vẫn lưu được; muốn chặn cần thêm luật khác.'],
+  ['NULL', 'Cột được nhận NULL. Ví dụ: NgayNghiViec là NULL với người chưa nghỉ việc, là 2026-06-30 với NV033 đã nghỉ. Đó là quy ước của bộ dữ liệu, SQL Server không tự hiểu NULL là "đang làm".'],
 ]} />
+
+Ở bài này chỉ cần đọc được kiểu của từng cột và đoán được giá trị nào sẽ qua, giá trị nào bị từ chối. Các phần sâu hơn có bài riêng: NULL ở bài 2.5, chữ `N` và bảng mã ở bài 2.7, hàm ngày và `CAST` ở bài 2.8, các luật thêm như chặn số âm hay chuỗi rỗng ở bài 5.2, và cách đưa file vào qua bảng tạm để kiểm trước ở bài 5.5.
 
 ### Xem kiểu dữ liệu trong SSMS
 
 Không cần mở script. Trong Object Explorer, mở database của khóa học → Tables → `dbo.HopDong` → **Columns**: chữ trong ngoặc sau tên cột là khóa (PK, FK, học ở bài 1.4), kiểu dữ liệu, và cột có nhận NULL hay không.
 
-<Ssms view="explorer" table="HopDong" caption="Bảng dbo.HopDong: LuongCoBan là decimal(18,0), NgayKetThuc là date và nhận NULL. Trong dữ liệu mẫu, hợp đồng không xác định thời hạn để NgayKetThuc là NULL." />
+<Ssms view="explorer" table="HopDong" mark={['LuongCoBan', 'NgayKetThuc']} caption="Bảng dbo.HopDong, phần có viền xanh: LuongCoBan là decimal(18,0) và không nhận NULL; NgayKetThuc là date và nhận NULL. Trong dữ liệu mẫu, hợp đồng không xác định thời hạn để NgayKetThuc là NULL." />
 
 ### Nhìn kiểu dữ liệu trong kết quả
 

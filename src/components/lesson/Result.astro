@@ -6,8 +6,11 @@ interface Props {
   rows: (string | number | null)[][];
   db?: string;
   total?: number;
+  /** Row numbers (from 1, as in the grid) that the lesson points at. */
+  mark?: number[];
 }
-const { columns, rows, db = COURSE_SERVER.database, total } = Astro.props;
+const { columns, rows, db = COURSE_SERVER.database, total, mark = [] } = Astro.props;
+for (const m of mark) if (!Number.isInteger(m) || m < 1 || m > rows.length) throw new Error(`Result: không có dòng ${m} để đánh dấu`);
 const count = `${total ?? rows.length} rows`;
 const trimmed = total !== undefined && total > rows.length ? `Trích ${rows.length} dòng (kết quả có ${total} dòng)` : null;
 ---
@@ -18,7 +21,7 @@ const trimmed = total !== undefined && total > rows.length ? `Trích ${rows.leng
       <thead><tr><th class="res-rn"></th>{columns.map(c => <th>{c}</th>)}</tr></thead>
       <tbody>
         {rows.map((r, i) => (
-          <tr>
+          <tr class={mark.includes(i + 1) ? 'res-mark' : undefined}>
             <td class="res-rn">{i + 1}</td>
             {r.map(v => (v === null ? <td class="res-null">NULL</td> : <td>{v}</td>))}
           </tr>

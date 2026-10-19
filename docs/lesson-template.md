@@ -142,6 +142,11 @@ Gợi ý dưới nút "Đã học xong" của các bài này là "Bấm khi bạ
 Ghi chú về các tiểu mục của "Làm bằng SQL":
 
 - `### Lý thuyết cơ bản` luôn đứng đầu, gồm bốn phần: khái niệm, cú pháp chung, ví dụ thu gọn, bảng từng phần nghĩa là gì.
+- Lý thuyết tự trả lời câu "vì sao" bằng lời dẫn dắt, không đặt câu hỏi vào bài: vì sao cần khái niệm này (ví dụ vì sao mỗi cột có một kiểu, vì sao cần khóa chính), nó giải quyết chuyện gì, và cái giá phải trả. Cơ chế nào SQL Server tự làm thì gọi đúng tên (ví dụ chuyển kiểu ngầm) và nói nó gặp lại ở bài nào.
+- Mỗi dòng của `LineMap` có một giá trị ví dụ, bắt đầu bằng "Ví dụ:", cho thấy giá trị nào qua, giá trị nào bị từ chối hay bị đổi.
+- Cuối lý thuyết có một đoạn "Ở bài này chỉ cần…", kể các bài đi sâu hơn ("bài 5.2", "bài 3.4"…) để người học biết phần còn lại sẽ được học sau.
+- Câu minh họa trước bài 3.1 cho xem dữ liệu, không tóm tắt bằng `COUNT`, `SUM`, `GROUP BY`: liệt kê 10 hồ sơ thay cho con số 10. Phân tích và tổng hợp để dành cho các level sau.
+- Hình minh họa đánh dấu đúng chỗ phần chữ đang nói: `Ssms` có `mark` (cột), `Result` có `mark` (số dòng), `Excel` có `mark` (ô), `Erd` có `path` (đường đi qua các bảng). Chú thích hình nói phần nào được đánh dấu.
 - Có sơ đồ thứ tự chạy (câu lệnh từ 2 bước xử lý trở lên) thì hai tiểu mục cuối là `### Câu lệnh cho tình huống` rồi `### SQL Server chạy câu này thế nào`.
 - Không viết tiểu mục "Bước 1, Bước 2…": phần đi từng bước nằm trong drawer của sơ đồ.
 - Bài chỉ có khái niệm (như 1.2–1.5) thì phần lý thuyết là chính, có thể kèm câu minh họa ngắn, không có sơ đồ.
@@ -177,9 +182,9 @@ Dùng thẳng trong MDX, không cần import.
 |---|---|---|
 | `Chat` | `who`, `time`, `initial`; nội dung là tin nhắn | Bong bóng tin nhắn ở mục Tình huống |
 | `Key` | nội dung | Câu "nói gọn lại" chốt câu hỏi dữ liệu |
-| `Excel` | `rows`, `cell?`, `formula?`, `sheets?`, `selected?` | Lưới Excel; ô `#N/A`, `#VALUE!`… tự tô đỏ |
+| `Excel` | `rows`, `cell?`, `formula?`, `sheets?`, `selected?`, `mark?` (ô như `'C4'`) | Lưới Excel; ô `#N/A`, `#VALUE!`… tự tô đỏ; ô trong `mark` tô kiểu Neutral của Excel |
 | `Sql` | `code`, `title?` (mặc định "SQL Server"), `copy?` (mặc định `true`) | Câu lệnh tô màu kiểu SSMS, có nút "Sao chép". `copy={false}` cho đoạn chỉ để đọc: câu ghi dữ liệu, đoạn trích có `...`, khuôn cú pháp có chỗ cần thay |
-| `Result` | `columns`, `rows`, `total?`, `db?` | Tab Results kiểu SSMS; `null` hiện `NULL` nền vàng; `total` khi chỉ trích |
+| `Result` | `columns`, `rows`, `total?`, `db?`, `mark?` (số dòng, đếm từ 1) | Tab Results kiểu SSMS; `null` hiện `NULL` nền vàng; `total` khi chỉ trích; dòng trong `mark` tô màu dòng được chọn của SSMS |
 | `Messages` | `lines`, `db?` | Tab Messages: số dòng bị ảnh hưởng, lỗi |
 | `LineMap` | `rows`: `[đoạn lệnh, nghĩa]` | Bảng từng phần nghĩa là gì |
 | `RunFlow` | `query`, `steps`, `note?` (câu nhắc trên sơ đồ, mặc định "Bạn viết SELECT trước, nhưng theo thứ tự logic, SQL Server xét FROM trước.") | Sơ đồ thứ tự xử lý logic, mỗi thẻ có drawer |
@@ -187,8 +192,8 @@ Dùng thẳng trong MDX, không cần import.
 | `Apply` | nội dung (danh sách) | Mục Ứng dụng |
 | `Memo` | `rows`: `[bên Excel, bên SQL]` | Mục Ghi nhớ |
 | `Exercises` | không có | Danh sách bài tập, đọc từ `src/content/exercises/<slug>.yaml` |
-| `Ssms` | `view`: `connect`, `explorer` hoặc `toolbar`; `table?`; `caption?` | Mô phỏng SSMS: hộp Connect to Server, Object Explorer, thanh công cụ |
-| `Erd` | `caption?` | Sơ đồ quan hệ của HRM_Demo đặt thẳng trong bài |
+| `Ssms` | `view`: `connect`, `explorer` hoặc `toolbar`; `table?`; `mark?` (tên cột, chỉ với `explorer`); `caption?` | Mô phỏng SSMS: hộp Connect to Server, Object Explorer, thanh công cụ; phần "(khóa, kiểu, null)" của cột trong `mark` có viền xanh |
+| `Erd` | `caption?`, `path?` (tên bảng theo thứ tự đi) | Sơ đồ quan hệ của HRM_Demo đặt thẳng trong bài; `path` tô xanh các bảng, cột nối và đường nối |
 
 Dòng trạng thái của `Result` và `Messages` mặc định ghi `free-sql-db-8797714`, đúng tên database học viên thấy trong SSMS.
 
