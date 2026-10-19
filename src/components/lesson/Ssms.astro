@@ -61,15 +61,15 @@ const isLeaf = (n: Node) => n.icon === 'col' || n.icon === 'key';
   {view === 'connect' && (
     <div class="ssms-dialog">
       <div class="ssms-title">Connect to Server<span class="ssms-x" aria-hidden="true">×</span></div>
+      {/* The modern connection dialog, the default in current SSMS (field names as in Microsoft Learn's SSMS quickstarts). */}
       <dl class="ssms-form">
-        <dt>Server type:</dt><dd><span class="ssms-field is-select">Database Engine</span></dd>
-        <dt>Server name:</dt><dd><span class="ssms-field is-select">{COURSE_SERVER.server}</span></dd>
+        <dt>Server Name:</dt><dd><span class="ssms-field is-select">{COURSE_SERVER.server}</span></dd>
         <dt>Authentication:</dt><dd><span class="ssms-field is-select">SQL Server Authentication</span></dd>
-        <dt>Login:</dt><dd><span class="ssms-field is-select">{LOGIN}</span></dd>
+        <dt>User Name:</dt><dd><span class="ssms-field">{LOGIN}</span></dd>
         <dt>Password:</dt><dd><span class="ssms-field">••••••••••</span></dd>
         <dt>Database Name:</dt><dd><span class="ssms-field is-select is-mark">{COURSE_SERVER.database}</span></dd>
-        <dt>Encryption:</dt><dd><span class="ssms-field is-select">Strict (Minimum SQL Server 2022 and Azure SQL)</span></dd>
-        <dt></dt><dd><span class="ssms-check" aria-hidden="true"></span>Trust server certificate</dd>
+        <dt>Encrypt:</dt><dd><span class="ssms-field is-select">Strict (Minimum SQL Server 2022 and Azure SQL)</span></dd>
+        <dt></dt><dd><span class="ssms-check" aria-hidden="true"></span>Trust Server Certificate</dd>
       </dl>
       <div class="ssms-buttons"><span class="ssms-btn is-primary">Connect</span><span class="ssms-btn">Cancel</span></div>
     </div>

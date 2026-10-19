@@ -249,7 +249,7 @@ Level 1 phải sửa ba vòng sau khi lên web (review bài 1.1, review bài 1.2
 
 ### 5. Review độc lập (bắt buộc, mỗi bài một lần)
 
-Làm xong một bài thì giao cho một agent mới, không mang ngữ cảnh lúc viết, review bài đó. Dùng model mạnh nhất đang có, chạy nền. Lời dặn cho agent gồm đúng đoạn vai trò dưới đây, rồi phần bối cảnh:
+Làm xong một bài thì giao cho một agent mới, không mang ngữ cảnh lúc viết, review bài đó. Dùng model mạnh nhất đang có, chạy nền. Review nhiều bài thì chạy vài agent một lượt (ví dụ ba), vì mỗi bản review tốn nhiều lượt dùng; agent dừng giữa chừng do hết hạn mức thì nhắn cho nó chạy tiếp, không tạo agent mới. Mỗi lượt review ghi vào thư mục riêng theo ngày, như `temp/review/2026-10-19-doc-lap/`, để không ghi đè bản review cũ. Lời dặn cho agent gồm đúng đoạn vai trò dưới đây, rồi phần bối cảnh:
 
 ```text
 Đóng vai Business Consultant khó tính, muốn chuyển sang BA hoặc PM, học Microsoft SQL Server để đủ hiểu và phản biện developer.
@@ -262,8 +262,9 @@ Bối cảnh:
 - Đối chiếu dữ liệu với database/HRM_Demo.sql, đối chiếu kiến thức SQL Server và Excel với tài liệu Microsoft (ghi link nguồn).
 - Không kết nối database và không chạy câu lệnh nào trên database của khóa học. Điều gì chỉ xác minh được bằng cách chạy thì ghi "chưa xác minh".
 - Khung bài và quy tắc viết: docs/lesson-template.md. Các quyết định đã chốt nằm ở mục "Không làm theo" của spec level đang làm; nếu vẫn thấy nên đổi thì ghi rõ là đi ngược quyết định đã chốt.
+- Không đọc các bản review cũ trong temp/review (để giữ độc lập).
 - Với mỗi câu "tại sao, để làm gì" tự đặt ra, ghi bài đã trả lời hay chưa.
-- Kết quả viết vào temp/review/review-bai-<slug>.md: rà theo thứ tự bài, mỗi mục có câu gốc, đánh giá (Cần sửa / Cần làm rõ / Biên tập / Giữ được), lý do và đề xuất; cuối file là thứ tự ưu tiên sửa và nguồn đối chiếu.
+- Kết quả viết vào temp/review/<ngày>-doc-lap/review-bai-<slug>.md: rà theo thứ tự bài, mỗi mục có câu gốc, đánh giá (Cần sửa / Cần làm rõ / Biên tập / Giữ được), lý do và đề xuất; cuối file là thứ tự ưu tiên sửa và nguồn đối chiếu.
 - Không sửa file nào của dự án.
 ```
 

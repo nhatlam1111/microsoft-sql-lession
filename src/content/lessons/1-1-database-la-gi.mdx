@@ -5,7 +5,7 @@ shortTitle: Database là gì
 level: 1
 area: A1
 kind: full
-minutes: 15
+minutes: 20
 prerequisites: []
 goal: bạn giải thích được vì sao nhiều người cùng sửa các bản Excel riêng dễ làm lệch dữ liệu, database dùng chung cùng các ràng buộc giúp giảm những lỗi nào, và những lỗi nào nó không tự chặn được
 excel: Workbook, sheet, dòng, cột
@@ -21,7 +21,7 @@ Một yêu cầu hay gặp từ phòng nhân sự:
 Em ơi, file nhân sự tháng này chị gửi rồi đó. Mà bản chị Thảo bên kế toán đang giữ hình như khác bản của chị, bên đó vẫn còn bạn Quân ở phòng cũ, trong khi bạn ấy chuyển sang IT rồi. Em xem giúp chị bản nào đúng nhé.
 </Chat>
 
-Giả định của tình huống: cả hai file đều đang được dùng làm danh sách phòng ban hiện tại, và việc Quân chuyển sang IT đã có hiệu lực trước lúc lấy dữ liệu. Nếu file bên kế toán là báo cáo chốt từ trước ngày chuyển phòng thì cả hai có thể cùng đúng, mỗi file đúng theo mốc thời gian của nó.
+Giả định của tình huống: cả hai file đều đang được dùng làm danh sách phòng ban hiện tại, và việc Quân chuyển sang IT đã có hiệu lực trước lúc lấy dữ liệu. Nếu file bên kế toán là báo cáo chốt từ trước ngày chuyển phòng thì cả hai có thể cùng đúng, mỗi file đúng theo mốc thời gian của nó. Các nhân vật trong tình huống là giả định, không phải hồ sơ trong bộ dữ liệu mẫu.
 
 Việc trước mắt là xác minh thông tin phòng ban nào đúng. Nhưng còn một câu hỏi lớn hơn:
 
@@ -31,9 +31,11 @@ Việc trước mắt là xác minh thông tin phòng ban nào đúng. Nhưng c�
 
 Trong tình huống này, công ty dùng một workbook nhân sự nhiều sheet (nhân viên, hợp đồng, chấm công) và mỗi tháng gửi bản sao qua email. Mỗi người lưu một bản và sửa trên bản của mình. Excel cũng có cách để nhiều người cùng sửa một workbook dùng chung, nhưng ở đây mỗi người đang giữ một bản riêng.
 
-Dưới đây là một phần sheet nhân viên trong file đó, minh họa thêm vài lỗi nhập liệu hay gặp:
+Đó cũng là chỗ sinh ra chuyện của Quân: bản của chị Hạnh đã sửa Quân sang IT, bản bên kế toán thì chưa. Khi mỗi người giữ một bản, mỗi thay đổi phải được làm lại trên từng bản; sót một bản là lệch. Ngay cả khi mọi người đều cẩn thận, cách làm này khiến sai lệch dễ phát sinh và khó đối chiếu, vì không ai biết bản nào là bản để căn cứ.
 
-<Excel sheets="NhanVien · HopDong · ChamCong" cell="D4" formula="Ke toan" selected="D4" mark={['C4', 'A3', 'A5']} rows={[
+Dưới đây là một phần sheet nhân viên trong file đó, minh họa thêm vài lỗi nhập liệu hay gặp. Các ô tô vàng là chỗ có vấn đề; ô D4 đang được chọn nên nội dung của nó hiện trên thanh công thức:
+
+<Excel sheets="NhanVien · HopDong · ChamCong" cell="D4" formula="Ke toan" selected="D4" mark={['C4', 'D4', 'A3', 'A5']} numeric={['C2', 'C3', 'C5']} rows={[
   ['Mã NV', 'Họ tên', 'Ngày vào làm', 'Phòng ban'],
   ['NV001', 'Trần Thị Mai', '01/03/2024', 'Kế toán'],
   ['NV005', 'Vũ Thị Lan', '14/03/2016', 'Kế toán'],
@@ -43,11 +45,11 @@ Dưới đây là một phần sheet nhân viên trong file đó, minh họa th�
 
 Bảng trên gợi ra ba vấn đề cần kiểm tra:
 
-- **Cột ngày vào làm không thống nhất.** Ô 01/03/2024, đọc theo kiểu ngày/tháng/năm, là ngày 1 tháng 3. Ô C4 được gõ là 02.10.2017, dùng dấu chấm nên Excel giữ nó là chữ chứ không nhận là ngày: sắp xếp hay lọc theo ngày sẽ xử lý dòng này sai. Hai ô trông khác nhau chưa chắc khác loại, hai ô trông giống nhau chưa chắc cùng loại; phải xem Excel đang lưu ô đó là ngày hay chữ.
-- **Hai cách viết một phòng.** Ở đây "Ke toan" (ô D4) và "Kế toán" cùng chỉ phòng Kế toán. Nếu lập PivotTable thẳng từ cột chưa chuẩn hóa này, hai cách viết có thể bị tách thành hai nhóm.
+- **Cột ngày vào làm không thống nhất.** Ô C2 01/03/2024, đọc theo kiểu ngày/tháng/năm, là ngày 1 tháng 3; nếu gõ trên một máy để tháng trước thì Excel hiểu là ngày 3 tháng 1. Trên máy đặt định dạng ngày kiểu ngày/tháng/năm như thường gặp ở Việt Nam, ô C4 gõ 02.10.2017 bằng dấu chấm nên Excel giữ nó là chữ chứ không nhận là ngày: sắp xếp hay lọc theo ngày sẽ xử lý dòng này sai. Khi chưa ai đổi căn lề, ô ngày nằm sát phải, ô chữ nằm sát trái, như cột C trong hình; chắc hơn thì gõ `=ISTEXT(C4)` vào một ô trống: ra TRUE nghĩa là ô đó đang là chữ.
+- **Hai cách viết một phòng.** Ở đây "Ke toan" (ô D4) và "Kế toán" cùng chỉ phòng Kế toán. Nếu lập PivotTable thẳng từ cột chưa thống nhất cách viết này, hai cách viết có thể bị tách thành hai nhóm.
 - **Một người hai dòng.** Trong danh sách này mỗi nhân viên chỉ có một dòng, nhưng NV005 có hai (dòng 3 và dòng 5). Đếm số dòng để ra số người thì dư một.
 
-Ngay cả khi mọi người đều cẩn thận, việc mỗi người sửa một bản riêng khiến sai lệch dễ phát sinh và khó đối chiếu, vì không ai biết bản nào là bản để căn cứ.
+Ba lỗi này nằm ngay trong một bản. Chuyện của Quân là chuyện khác: mỗi dòng trong từng bản đều có thể hợp lệ, chỉ là hai bản không giống nhau. Hai loại vấn đề cần hai cách chữa khác nhau.
 
 ## Làm bằng SQL
 
@@ -55,47 +57,50 @@ Ngay cả khi mọi người đều cẩn thận, việc mỗi người sửa m�
 
 Ba khái niệm hay bị nhập làm một:
 
-- **Database** là nơi dữ liệu được tổ chức và lưu lại.
-- **SQL Server** là phần mềm quản lý việc lưu trữ, truy cập và cập nhật database.
-- **SQL** là ngôn ngữ để hỏi và thao tác với dữ liệu trong database.
+- **Database** (cơ sở dữ liệu) là một tập dữ liệu có cấu trúc: các bảng, mỗi cột có kiểu dữ liệu và có thể có luật, do một phần mềm quản lý để nhiều người cùng dùng theo quyền. Một thư mục chứa các file Excel thì chưa phải database, vì không có phần mềm nào giữ luật chung cho mọi file.
+- **SQL Server** là hệ quản trị cơ sở dữ liệu của Microsoft: phần mềm quản lý việc lưu trữ, truy cập và cập nhật database.
+- **SQL** là ngôn ngữ để hỏi và thao tác với dữ liệu trong database. SQL dùng trong SQL Server có tên riêng là T-SQL (Transact-SQL).
 
-Trong khóa này, ta học database quan hệ trong SQL Server: dữ liệu được tổ chức thành các bảng có hàng và cột.
+Tách ba chữ này giúp nói đúng chỗ hỏng: không vào được máy chủ, dữ liệu trong database sai, hay câu SQL viết sai là ba việc khác nhau, thường do những người khác nhau xử lý.
 
-Với chuyện hai phiên bản, database giúp theo hai cách, mỗi cách giải một loại vấn đề:
+Trong khóa này, bạn học database quan hệ trong SQL Server: dữ liệu nằm trong các bảng có dòng và cột.
 
-1. **Một nguồn dữ liệu dùng chung.** Công ty thống nhất một nguồn chính thức để cập nhật, thay cho việc mỗi người sửa một file riêng. Người được cấp quyền đọc hoặc cập nhật qua hệ thống dùng chung, thường là qua phần mềm nhân sự. Khi mọi người cùng dùng nguồn này, nhu cầu giữ bản riêng để sửa giảm đi, và các danh sách "hiện tại" bớt lệch nhau.
-2. **Ràng buộc do người thiết kế khai báo.** Mỗi cột có kiểu dữ liệu, và bảng có thể có các ràng buộc như mã nhân viên không trùng, mã phòng ban phải có trong danh mục. Mỗi khi có thao tác ghi dữ liệu, SQL Server kiểm tra những ràng buộc này và từ chối thao tác vi phạm. Luật được đặt ở database chứ không chỉ ở từng màn hình, vì cùng một bảng có thể được ghi từ nhiều nơi: phần mềm nhân sự, file import, một chương trình khác. Ràng buộc không tự có: chỉ những gì đã được khai báo mới được kiểm.
+Với hai loại vấn đề ở trên, hai bản lệch nhau và lỗi nhập liệu trong một bản, database giúp theo hai cách:
+
+1. **Một nguồn dữ liệu dùng chung**, cho chuyện hai bản lệch nhau. Công ty thống nhất một nguồn chính thức để cập nhật, thay cho việc mỗi người sửa một file riêng. Người được cấp quyền đọc hoặc cập nhật qua hệ thống dùng chung, thường là qua phần mềm nhân sự. Khi mọi người cùng dùng nguồn này, nhu cầu giữ bản riêng để sửa giảm đi, và các danh sách "hiện tại" bớt lệch nhau. Nhưng thống nhất chưa chắc đã đúng: nguồn chung chưa được cập nhật thì ai cũng thấy cùng một giá trị cũ. Bảng `NhanVien` của bộ mẫu cũng chỉ giữ phòng ban hiện tại của mỗi người; muốn biết phòng ban tại một ngày đã qua thì cần bản chốt, hoặc một thiết kế có lưu lịch sử (bài 6.6).
+2. **Ràng buộc (constraint) do người thiết kế khai báo**, cho lỗi nhập liệu. Mỗi cột có kiểu dữ liệu, và bảng có thể có các ràng buộc như mã nhân viên không trùng, mã phòng ban phải có trong danh mục. Khi ràng buộc đang bật, mỗi câu ghi dữ liệu thông thường đều bị SQL Server kiểm, câu nào vi phạm thì bị từ chối. Luật được đặt ở database chứ không chỉ ở từng màn hình, vì cùng một bảng có thể được ghi từ nhiều nơi: phần mềm nhân sự, file import, một chương trình khác. Có những cách ghi bỏ qua bước kiểm, như tắt khóa ngoại hay nạp dữ liệu hàng loạt, nên khi làm import phải hỏi rõ có kiểm hay không (bài 5.2). Ràng buộc không tự có: chỉ những gì đã được khai báo mới được kiểm.
+
+Bộ mẫu đặt tên cột viết liền, không dấu cho dễ gõ; đó là quy ước của bộ mẫu, không phải luật của SQL Server. `MaNV` là mã nhân viên, `HoTen` là họ tên, `MaPB` là mã phòng ban, `NgayVaoLam` là ngày vào làm.
 
 Đặt Excel và database cạnh nhau. Đây là phép liên tưởng để học, không phải quy tắc đổi một file thành một database:
 
 | Trong Excel | Trong database | Khác ở đâu |
 |---|---|---|
 | Workbook nhân sự nhiều sheet | Database chứa nhiều bảng; khóa học dùng bộ dữ liệu mẫu HRM_Demo (bài 1.2 nói nó nằm ở đâu) | Dữ liệu dùng chung, mỗi người truy cập theo quyền được cấp |
-| Sheet danh sách nhân viên | Bảng `NhanVien` | Các cột được định nghĩa trước; đổi cấu trúc bảng cần thao tác và quyền riêng, không chèn cột tùy ý như trong sheet |
-| Cột trong sheet, ô nào cũng có thể chứa loại dữ liệu khác | Cột trong bảng, có tên và kiểu dữ liệu được khai báo | Cột `NgayVaoLam` kiểu `date` chỉ lưu giá trị ngày; dữ liệu đưa vào phải chuyển được thành một ngày hợp lệ |
-| Một dòng | Một dòng (bản ghi) | Trong bảng `NhanVien`, mỗi dòng là một nhân viên; bảng chấm công thì mỗi dòng là một người trong một ngày |
-| Cột mã NV mà mọi người tự giữ không trùng | Khóa chính `MaNV` | Khi `MaNV` được khai báo là khóa chính, SQL Server không cho lưu hai dòng trùng mã và không cho để trống (`NULL`, tức chưa có giá trị) |
-| Dropdown phòng ban lấy từ sheet danh mục | Khóa ngoại `MaPB` tham chiếu bảng `PhongBan` | Khóa ngoại là luật của dữ liệu, không phải ô chọn trên màn hình: khi khóa ngoại đang bật, mọi câu ghi thông thường đều bị kiểm, mã không có trong danh mục bị từ chối. Ô chọn trên màn hình là việc của phần mềm |
+| Sheet danh sách nhân viên | Bảng `NhanVien` | Các cột được định nghĩa trước; đổi cấu trúc bảng cần thao tác và quyền riêng, không chèn cột tùy ý như trong sheet, vì phần mềm và báo cáo đều dựa vào cấu trúc đó, giống `VLOOKUP` trả sai khi ai đó chèn thêm cột |
+| Cột trong sheet, ô nào cũng có thể chứa loại dữ liệu khác | Cột trong bảng, có tên và kiểu dữ liệu được khai báo | Cột `NgayVaoLam` kiểu `date` chỉ lưu giá trị ngày: chữ không đổi được thành ngày thì bị từ chối. Nhưng kiểu ngày không biết 01/03 là ngày 1 tháng 3 hay 3 tháng 1; một chuỗi ngày được hiểu theo thiết lập của phiên làm việc (bài 1.3) |
+| Một dòng | Một dòng (bản ghi) | Trong bảng `NhanVien`, mỗi dòng là một nhân viên; bảng `ChamCong` thì mỗi dòng là chấm công của một người trong một ngày, mỗi người mỗi ngày tối đa một dòng |
+| Cột mã NV mà mọi người tự giữ không trùng | Khóa chính `MaNV` | Khi `MaNV` được khai báo là khóa chính, SQL Server không cho lưu hai dòng trùng mã và không nhận `NULL` (giá trị chưa biết hoặc chưa có, khác chuỗi rỗng; bài 1.3). Khóa chính chặn được dòng NV005 thứ hai, nhưng không biết hai mã khác nhau có phải cùng một người: nhập lại Vũ Thị Lan với một mã mới vẫn lưu được |
+| Dropdown phòng ban lấy từ sheet danh mục | Khóa ngoại `MaPB` tham chiếu bảng `PhongBan` | Khóa ngoại là luật của dữ liệu, không phải ô chọn trên màn hình: khi khóa ngoại đang bật, mọi câu ghi thông thường đều bị kiểm. `KT` được nhận; "Ke toan" hay `KT01` bị từ chối vì không có trong `PhongBan`. Khóa ngoại không kiểm ô `NULL`; muốn bắt buộc phải có mã thì cột còn phải không nhận `NULL`, như `MaPB` của bộ mẫu. Ô chọn trên màn hình là việc của phần mềm |
 
-Bảng danh mục mà `MaPB` tham chiếu tới trông như sau (ba dòng, lấy từ bộ dữ liệu mẫu):
+Bảng danh mục mà `MaPB` tham chiếu tới trông như sau (trích bốn trong sáu dòng của bảng `PhongBan` trong bộ mẫu, có phòng IT của tình huống):
 
 | MaPB (mã phòng ban) | TenPB (tên phòng ban) |
 |---|---|
 | BGD | Ban Giám đốc |
+| IT | IT |
 | KD | Kinh doanh |
 | KT | Kế toán |
 
-Tên cột viết liền, không dấu: `MaNV` là mã nhân viên, `HoTen` là họ tên, `MaPB` là mã phòng ban, `NgayVaoLam` là ngày vào làm.
-
 Bảng `NhanVien` chỉ ghi mã phòng, còn tên phòng nằm ở bảng `PhongBan`, vì cách tách này giữ mỗi thông tin ở đúng một chỗ: đổi tên phòng thì sửa một dòng trong danh mục, không phải sửa lại tên phòng của từng nhân viên. Cái giá là muốn xem tên phòng của một người thì phải đi qua hai bảng; bài 1.5 chỉ cách đọc đường đi đó.
 
-**Hợp lệ chưa chắc đã đúng.** Database chỉ kiểm những quy tắc đã được khai báo. `KD` là mã có thật, nên gán nhầm `KD` cho một người thuộc phòng Kế toán vẫn lưu được. Ngày 01/01/2099 là một ngày hợp lệ, nhưng chưa chắc khớp với hồ sơ. Lưu được vào database không phải bằng chứng là dữ liệu đúng; quy tắc nghiệp vụ và cách xác minh vẫn phải được xác định rõ.
+**Hợp lệ chưa chắc đã đúng.** Database chỉ kiểm những quy tắc đã được khai báo. `KD` là mã có thật, nên gán nhầm `KD` cho một người thuộc phòng Kế toán vẫn lưu được. Ngày 01/01/2099 là một ngày hợp lệ, nhưng chưa chắc khớp với hồ sơ. Một người bị nhập hai lần với hai mã khác nhau cũng qua được khóa chính; bộ mẫu có cố ý một cặp hồ sơ trùng số CCCD, bài 4.6 sẽ tìm ra. Lưu được vào database không phải bằng chứng là dữ liệu đúng; quy tắc nghiệp vụ và cách xác minh vẫn phải được xác định rõ.
 
-Ở bài này chỉ cần nắm ý chung; mỗi phần đều có bài riêng. Kiểu dữ liệu ở bài 1.3, khóa chính và khóa ngoại ở bài 1.4, cách tách dữ liệu thành nhiều bảng ở bài 5.1, các loại ràng buộc ở bài 5.2, quyền truy cập ở bài 6.1.
+Ở bài này chỉ cần nắm ý chung; mỗi phần đều có bài riêng. Kiểu dữ liệu ở bài 1.3, khóa chính và khóa ngoại ở bài 1.4, cách tách dữ liệu thành nhiều bảng ở bài 5.1, các loại ràng buộc ở bài 5.2, đưa file Excel vào database ở bài 5.5, lưu lịch sử để xem dữ liệu ở một ngày đã qua ở bài 6.6, quyền truy cập ở bài 6.1.
 
 ### Nhìn thử câu lệnh đầu tiên
 
-Muốn xem 5 nhân viên có mã nhỏ nhất, với Excel bạn sắp xếp sheet theo cột Mã NV rồi nhìn 5 dòng đầu. Với database, bạn gõ một câu lệnh:
+Muốn xem 5 hồ sơ đứng đầu theo mã nhân viên, với Excel bạn sắp xếp sheet theo cột Mã NV rồi nhìn 5 dòng đầu; việc này đổi thứ tự ngay trong file. Với database, bạn gõ một câu lệnh; câu này chỉ sắp kết quả trả về, bảng không đổi:
 
 <Sql code={`SELECT TOP (5) MaNV, HoTen, MaPB
 FROM NhanVien
@@ -109,17 +114,25 @@ ORDER BY MaNV;`} />
   ['NV005', 'Vũ Thị Lan', 'KT'],
 ]} />
 
-Chưa cần hiểu từng chữ, và bạn chưa cần chạy câu này: bài 1.6 sẽ quay lại nó. Đây là kết quả thật trên bộ dữ liệu mẫu. Các số 1 tới 5 bên trái là số thứ tự dòng của kết quả, không phải một cột dữ liệu. Dòng trạng thái dưới bảng ghi `free-sql-db-8797714`: đó là tên database trên máy chủ của khóa học, nơi chứa bộ dữ liệu HRM_Demo (bài 1.2 nói rõ).
+Chưa cần hiểu từng chữ, và bạn chưa cần chạy câu này: bài 1.6 dạy `SELECT`, `FROM` và `TOP`, chọn cột ở bài 2.1, `ORDER BY` ở bài 2.4. Đây là kết quả thật trên bộ dữ liệu mẫu. Các số 1 tới 5 bên trái là số thứ tự dòng của kết quả, không phải một cột dữ liệu. Dòng trạng thái dưới bảng ghi `free-sql-db-8797714`: đó là tên database trên máy chủ của khóa học, nơi chứa bộ dữ liệu HRM_Demo (bài 1.2 nói rõ).
 
 Điều đáng để ý: cột `MaPB` trong kết quả chỉ có mã như `KT`, `KD`, đúng với cách tách bảng ở trên. Người nhập nhân viên không phải gõ lại tên phòng cho từng người, nên lỗi khác cách viết như "Kế toán" với "Ke toan" ở bước này giảm hẳn. Tên trong danh mục thì vẫn phải được người quản lý danh mục giữ đúng.
 
 ### Trả lời chị Hạnh
 
-Với giả định ở đầu bài, câu trả lời cho chị Hạnh là một quy trình, chưa cần câu lệnh nào:
+Với giả định ở đầu bài, câu trả lời cho chị Hạnh có phần nghiệp vụ và phần trên hệ thống, chưa cần câu lệnh nào.
 
-1. Xác minh việc Quân chuyển sang IT: theo quyết định nào, có hiệu lực từ ngày nào.
-2. Thống nhất nguồn chính thức cho danh sách phòng ban hiện tại; người có quyền cập nhật sửa phòng của Quân ở nguồn đó.
-3. Hai bên lấy lại danh sách từ cùng nguồn, cùng thời điểm, cùng điều kiện lọc, rồi mới so với nhau.
+Phần nghiệp vụ:
+
+1. Xác minh quyết định chuyển phòng của Quân và ngày hiệu lực. Database của bộ mẫu chỉ lưu phòng ban hiện tại, không lưu lịch sử chuyển phòng, nên việc này phải tra ở quyết định.
+2. Thống nhất nguồn chính thức cho danh sách phòng ban hiện tại: nguồn do bộ phận chịu trách nhiệm về thông tin đó cập nhật (phòng ban của nhân viên thường do phòng Nhân sự), có người chịu trách nhiệm và có mốc thời gian rõ.
+
+Phần trên hệ thống:
+
+3. Người có quyền cập nhật sửa phòng của Quân ở nguồn đó.
+4. Hai bên lấy lại danh sách từ cùng nguồn, cùng thời điểm, cùng điều kiện lọc, rồi mới so với nhau.
+
+Nếu quyết định có hiệu lực trước lúc lấy dữ liệu, thì ở dòng của Quân, bản của chị Hạnh đúng và bản bên kế toán đã cũ; các dòng khác vẫn phải so lại theo bước 4.
 
 Câu `SELECT TOP (5)` ở trên chỉ minh họa cách đọc một bảng, chưa phải cách kiểm tra chuyện chuyển phòng.
 
@@ -127,10 +140,10 @@ Câu `SELECT TOP (5)` ở trên chỉ minh họa cách đọc một bảng, chư
 
 <Mistakes>
 
-1. **Nghĩ database chỉ là Excel to hơn.** Trong tình huống này, khác biệt đáng chú ý không nằm ở dung lượng, mà ở chỗ dữ liệu được quản lý dùng chung và các ràng buộc được kiểm khi ghi dữ liệu. Excel cũng có Data Validation để giới hạn dữ liệu nhập, nhưng trong file chưa thiết lập kiểm tra thì gõ gì cũng lưu được.
-2. **Nghĩ lưu được là đúng.** SQL Server chỉ từ chối thao tác vi phạm kiểu dữ liệu và các ràng buộc đã khai báo. Mã phòng có thật nhưng gán nhầm người, ngày hợp lệ nhưng sai hồ sơ, vẫn lưu được bình thường.
-3. **Sửa trên file Excel xuất ra.** Một file xuất tĩnh là bản dữ liệu tại một thời điểm. Nếu chỉ sửa trên đó mà không có bước nhập lại vào hệ thống, database không nhận được thay đổi; nếu file đó lại được dùng làm nguồn cập nhật thì sinh thêm một "bản khác". Dùng file để phân tích riêng thì không sao.
-4. **Sửa thẳng dữ liệu dùng chung khi chưa nắm cách làm.** Sau khi một thay đổi đã được ghi hẳn (commit), không có Ctrl+Z để quay lại. Ở giai đoạn đầu, bạn chỉ đọc dữ liệu trên database mẫu của khóa học; cách thay đổi dữ liệu an toàn có ở Level 5 và 6.
+1. **Nghĩ database chỉ là Excel to hơn.** Trong tình huống này, khác biệt đáng chú ý không nằm ở dung lượng, mà ở chỗ dữ liệu được quản lý dùng chung và các ràng buộc được kiểm khi ghi dữ liệu. Excel cũng có Data Validation để giới hạn dữ liệu nhập, nhưng trong file chưa thiết lập kiểm tra thì gõ gì cũng lưu được. Kể cả khi đã cài, Data Validation chỉ chặn lúc gõ vào ô; dán đè hay kéo điền vẫn đưa được dữ liệu sai vào (bài 5.2).
+2. **Nghĩ lưu được là đúng.** Về mặt dữ liệu, SQL Server chỉ chặn những gì đã được khai báo: kiểu dữ liệu, ràng buộc, hoặc luật viết sẵn trong database như trigger (bài 5.9). Mã phòng có thật nhưng gán nhầm người, ngày hợp lệ nhưng sai hồ sơ, vẫn lưu được bình thường.
+3. **Sửa trên file Excel xuất ra.** Một file xuất ra là bản dữ liệu tại một thời điểm. Nếu chỉ sửa trên đó mà không có bước nhập lại vào hệ thống, database không nhận được thay đổi; nếu file đó lại được dùng làm nguồn cập nhật thì sinh thêm một "bản khác". Dùng file để phân tích riêng thì không sao.
+4. **Sửa thẳng dữ liệu dùng chung khi chưa nắm cách làm.** Trong SSMS, mặc định mỗi câu sửa dữ liệu chạy xong là ghi hẳn ngay (commit), không có Ctrl+Z hay bước xác nhận nào để quay lại. Việc tự hoàn tác chỉ có trên trang bài tập của khóa học (bài 1.2); cách mở giao dịch để kịp quay lại ở bài 5.4. Ở giai đoạn đầu, bạn chỉ đọc dữ liệu trên database của khóa học, vì mọi học viên dùng chung database này. Đây là quy ước của khóa học: tài khoản của bạn có thể vẫn ghi được, nên càng phải cẩn thận. Cách thay đổi dữ liệu an toàn có ở bài 5.3, 5.4 và Level 6.
 
 </Mistakes>
 
@@ -149,7 +162,7 @@ Câu `SELECT TOP (5)` ở trên chỉ minh họa cách đọc một bảng, chư
 <Memo rows={[
   ['Workbook nhân sự nhiều sheet', 'Database chứa nhiều bảng'],
   ['Sheet danh sách nhân viên', 'Bảng NhanVien'],
-  ['Cột mã NV, mỗi người một mã', 'PRIMARY KEY (MaNV): không trùng, không NULL'],
+  ['Cột mã NV, không mã nào lặp lại', 'PRIMARY KEY (MaNV): mỗi mã tối đa một dòng, không NULL'],
   ['Mã phòng phải có trong sheet danh mục', 'FOREIGN KEY (MaPB) REFERENCES PhongBan'],
   ['Đọc dữ liệu từ một sheet', 'SELECT … FROM'],
 ]} />
@@ -173,6 +186,13 @@ Chưa chắc. So nguồn, thời điểm dữ liệu và điều kiện lọc tr
 <details>
 <summary>Khóa ngoại có tự tạo ra ô chọn (dropdown) trên màn hình không?</summary>
 
-Không. Khóa ngoại kiểm quan hệ dữ liệu mỗi khi ghi; ô chọn trên màn hình là việc của phần mềm.
+Không. Khóa ngoại kiểm quan hệ dữ liệu khi ghi, lúc nó đang bật; ô chọn trên màn hình là việc của phần mềm.
+
+</details>
+
+<details>
+<summary>Bảng có khóa chính MaNV thì còn chuyện một người hai dòng không?</summary>
+
+Còn, nếu dòng thừa mang một mã khác. Khóa chính chỉ chặn trùng mã, không biết hai mã có phải cùng một người.
 
 </details>

@@ -381,7 +381,7 @@ Sau plan này, Level 1 phải sửa thêm ba vòng (spec Level 1 mục 11–13).
 - [ ] **Test trước**: thêm test cho các ý bắt buộc của bài (cụm phải có, cụm không được có), xem fail.
 - [ ] **Viết bài** theo `docs/lesson-template.md`, rồi tự rà theo danh sách ở bước 3 của "Quy trình làm một bài".
 - [ ] **Kiểm bằng máy**: `npm test`, `npm run check`, `npm run build`, `npm run check:dist`; bài có bài tập thì thêm `check:exercises`; xem bản build trên máy.
-- [ ] **Review độc lập**: giao một agent mới, model mạnh nhất, lời dặn đúng như bước 5 của "Quy trình làm một bài"; kết quả ở `temp/review/review-bai-<slug>.md`.
+- [ ] **Review độc lập**: giao một agent mới, model mạnh nhất, lời dặn đúng như bước 5 của "Quy trình làm một bài"; kết quả ở `temp/review/<ngày>-doc-lap/review-bai-<slug>.md`.
 - [ ] **Xử lý review**: kiểm từng mục, sửa mục đúng có test, ghi "Đã sửa / Không làm theo" vào spec của level; chạy lại bước kiểm bằng máy.
 - [ ] **Commit**; push chỉ khi người làm khóa học đồng ý.
 

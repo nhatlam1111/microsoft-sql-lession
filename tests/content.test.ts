@@ -165,7 +165,7 @@ describe('lessons explain why, show data before totals and mark what they point 
     }
   });
   it('the line-by-line explanations of 1.3 to 1.6 give a sample value for each part', () => {
-    for (const slug of ['1-3-bang-cot-kieu-du-lieu', '1-4-khoa-chinh-khoa-ngoai', '1-5-doc-so-do-erd', '1-6-cau-select-dau-tien']) {
+    for (const slug of ['1-2-sql-server-ssms-hrm-demo', '1-3-bang-cot-kieu-du-lieu', '1-4-khoa-chinh-khoa-ngoai', '1-5-doc-so-do-erd', '1-6-cau-select-dau-tien']) {
       const rows = lineMapRows(body(slug));
       expect(rows.length, slug).toBeGreaterThan(0);
       for (const r of rows) expect(r, `${slug}: ${r.slice(0, 30)}`).toContain('Ví dụ');
@@ -186,6 +186,30 @@ describe('lessons explain why, show data before totals and mark what they point 
     expect(body('1-5-doc-so-do-erd')).toMatch(/<Erd[^>]*path=/);
     expect(body('1-1-database-la-gi')).toMatch(/<Excel[^>]*mark=/);
     expect(body('1-3-bang-cot-kieu-du-lieu')).toMatch(/<Excel[^>]*mark=/);
+  });
+});
+
+describe('fixes from the independent reviews of 2026-10-19', () => {
+  const check = (slug: string, present: string[], absent: string[]) => {
+    const f = readLessonFiles().find(x => x.slug === slug)!;
+    const text = JSON.stringify(f.data) + f.body;
+    for (const s of absent) expect(text, `${slug} still says: ${s}`).not.toContain(s);
+    for (const s of present) expect(text, `${slug} lacks: ${s}`).toContain(s);
+  };
+  it('1.1 scopes when constraints are checked, says SSMS commits at once, and what a key or a date type cannot catch', () => check('1-1-database-la-gi',
+    ['Khi ràng buộc đang bật', 'ghi hẳn ngay', 'mỗi mã tối đa một dòng', 'trích bốn trong sáu dòng', 'không biết 01/03', 'T-SQL', '=ISTEXT(C4)', 'constraint', 'thống nhất chưa chắc đã đúng'],
+    ['Mỗi khi có thao tác ghi dữ liệu', 'mỗi người một mã', '(ba dòng, lấy từ bộ dữ liệu mẫu)', 'kiểm quan hệ dữ liệu mỗi khi ghi', 'file xuất tĩnh', 'cột chưa chuẩn hóa']));
+  it('1.2 describes the modern connect box, what the machine and network need, disconnecting, and a local install', () => check('1-2-sql-server-ssms-hrm-demo',
+    ['chỉ chạy trên Windows', '1433', 'Disconnect', '**User Name**', '**Encrypt**', 'Tools > Options > Environment > Connection Dialog', 'máy chủ logic', 'schema mặc định',
+      '12.0.2000.8', 'Select Top 1000 Rows', 'A network-related', 'localhost', 'HRM_Demo đã sẵn sàng', 'Windows Authentication', '### Trả lời chị Hạnh', 'Mỗi lần chạy một câu lệnh'],
+    ['như địa chỉ một căn phòng', 'giá trị trống (NULL)', 'Từ bài 1.6, cuối mỗi bài có mục', '- **Server type**', 'Developer đủ tính năng']));
+  it('1.3 states how the file goes in, sorts every cell into the three outcomes, and covers the silent cases', () => check('1-3-bang-cot-kieu-du-lieu',
+    ['Giả định của tình huống', 'NV00000000', '1900-01-01', 'vì không có tháng 31', 'Arithmetic overflow', "'20240201'", 'Database làm gì', '=ISTEXT(C3)', 'numeric={', 'không dùng để cộng trừ'],
+    ['có người gõ 2024-02-01', 'giá trị trống, chưa có', 'mọi phép so sánh thành so sánh chữ', 'Bên IT nói đúng một nửa', 'một việc riêng của người quản trị', 'không lẻ giây', 'hàm ngày và `CAST` ở bài 2.8']));
+  it('pictures of Excel put real dates on the right', () => {
+    for (const slug of ['1-1-database-la-gi', '1-3-bang-cot-kieu-du-lieu', '1-6-cau-select-dau-tien']) {
+      expect(readLessonFiles().find(f => f.slug === slug)!.body, slug).toMatch(/<Excel[^>]*numeric=\{/);
+    }
   });
 });
 
