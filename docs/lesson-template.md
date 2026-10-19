@@ -214,10 +214,62 @@ Dòng trạng thái của `Result` và `Messages` mặc định ghi `free-sql-db
 - Kết quả không có `ORDER BY` thì nói thứ tự dòng có thể khác hình. `TOP (n)` là "tối đa n dòng". Thứ tự trong `RunFlow` là thứ tự xử lý logic, không phải cách SQL Server thực sự đọc dữ liệu.
 - Lời hứa của công cụ phải nói rõ phạm vi: việc hoàn tác chỉ có trên trang bài tập, SSMS chạy thật; lỗi 40613 thường do database đang thức dậy, nhưng không phải lúc nào cũng vậy; gặp lỗi kéo dài thì gửi nguyên văn lỗi cho người phụ trách.
 
-## Kiểm trước khi commit
+## Quy trình làm một bài
 
-1. Chạy lại mọi câu lệnh trong bài bằng MCP `azure-sql` (chỉ `SELECT`) và so từng ô với bảng kết quả trong bài.
-2. Câu làm đổi dữ liệu (để lấy nguyên văn lỗi) chỉ chạy qua API bài tập trên máy, có hoàn tác; xong thì `npm --prefix api run check:data`.
-3. Bài có bài tập: `npm --prefix api run build` rồi `npm --prefix api run check:exercises`.
+Level 1 phải sửa ba vòng sau khi lên web (review bài 1.1, review bài 1.2–1.6, lượt đọc của người làm khóa học; xem spec Level 1 mục 11–13). Các bước dưới đây đưa những gì học được từ ba vòng đó vào ngay lúc viết, để bài mới không phải sửa lại theo cùng một kiểu.
+
+### 1. Trước khi viết
+
+- Đọc lại các bài đứng trước có liên quan, để không giải thích lại hoặc nói khác đi.
+- Chốt giả định của tình huống: mốc thời gian, phạm vi dữ liệu, ai hỏi và cần câu trả lời gì.
+- Chạy bằng MCP `azure-sql` (chỉ `SELECT`) mọi câu lệnh và mọi con số sẽ đưa vào bài, kể cả các giá trị ví dụ (làm tròn, ngày không có thật, chuỗi bị đệm…).
+
+### 2. Viết theo khung và quy tắc ở trên
+
+### 3. Tự rà từng câu trước khi đưa review
+
+- [ ] Lý thuyết trả lời "vì sao, để làm gì, cái giá là gì" bằng lời dẫn dắt; không có câu hỏi trong phần lý thuyết.
+- [ ] Mỗi dòng `LineMap` có "Ví dụ:" với giá trị cụ thể.
+- [ ] Có đoạn "Ở bài này chỉ cần…" kể các bài học sâu hơn.
+- [ ] Không câu nào hứa quá: ràng buộc chỉ khi đã khai báo; hợp lệ khác đúng; `TOP` là tối đa n dòng; thứ tự trong `RunFlow` là thứ tự logic; lời hứa của công cụ có phạm vi.
+- [ ] Con số nói rõ đếm gì, trên phạm vi nào, và đã chạy lại.
+- [ ] Trước bài 3.1 không có `COUNT`, `SUM`, `AVG`, `MIN`, `MAX`, `GROUP BY`; cho xem dữ liệu thay cho con số.
+- [ ] Hình đánh dấu đúng chỗ phần chữ nói (`mark`, `path`), chú thích hình nói phần nào được đánh dấu.
+- [ ] Tình huống được khép lại; câu trả lời tách việc database làm với quyết định nghiệp vụ.
+- [ ] Excel được tả đúng (có Data Validation, có cùng sửa), chỉ nêu điều kiện của file trong tình huống.
+- [ ] Đoạn chỉ để đọc có `copy={false}`; bài khái niệm có ba câu tự kiểm tra.
+
+### 4. Kiểm bằng máy
+
+1. Câu làm đổi dữ liệu (để lấy nguyên văn lỗi) chỉ chạy qua API bài tập trên máy, có hoàn tác; xong thì `npm --prefix api run check:data`.
+2. Bài có bài tập: `npm --prefix api run build` rồi `npm --prefix api run check:exercises`.
    - `check:dist` báo lỗi nếu bất kỳ trang nào chứa nguyên văn một câu đáp án (bỏ qua khoảng trắng và dấu `;` cuối). Đáp án ngắn như `SELECT * FROM HopDong;` (bài tập 1.6) vì thế không được xuất hiện trong bài nào, kể cả làm ví dụ. Bài tập mới nên dùng đáp án không trùng với câu nào đã có trong bài.
-4. `npm test`, `npm run check`, `npm run build`, `npm run check:dist`.
+3. `npm test`, `npm run check`, `npm run build`, `npm run check:dist`.
+4. Mở bản build trên máy, xem các hình có đánh dấu và các khối mới.
+
+### 5. Review độc lập (bắt buộc, mỗi bài một lần)
+
+Làm xong một bài thì giao cho một agent mới, không mang ngữ cảnh lúc viết, review bài đó. Dùng model mạnh nhất đang có, chạy nền. Lời dặn cho agent gồm đúng đoạn vai trò dưới đây, rồi phần bối cảnh:
+
+```text
+Đóng vai Business Consultant khó tính, muốn chuyển sang BA hoặc PM, học Microsoft SQL Server để đủ hiểu và phản biện developer.
+Học thử từ góc nhìn người học, soi từng câu từng chữ: chỗ mơ hồ, thuật ngữ chưa giải thích, thiếu điều kiện, ví dụ gây hiểu nhầm hoặc kiến thức không chính xác.
+Review chân thật: có lỗi thì chỉ rõ và giải thích; đúng thì công nhận; chưa xác minh được thì nói rõ, không đoán hay cố bới lỗi.
+Phải luôn tự đặt ra các câu hỏi tại sao, để làm gì, vì sao như thế,..., và xem bài học có trả lời được hay không.
+
+Bối cảnh:
+- Bài cần review: src/content/lessons/<slug>.mdx (và src/content/exercises/<slug>.yaml nếu có). Đọc cả các khối Excel, Sql, Result, Messages, LineMap, RunFlow, Ssms, Erd như người học thấy trên trang; bản build ở dist/bai/<slug>/index.html nếu đã build.
+- Đối chiếu dữ liệu với database/HRM_Demo.sql, đối chiếu kiến thức SQL Server và Excel với tài liệu Microsoft (ghi link nguồn).
+- Không kết nối database và không chạy câu lệnh nào trên database của khóa học. Điều gì chỉ xác minh được bằng cách chạy thì ghi "chưa xác minh".
+- Khung bài và quy tắc viết: docs/lesson-template.md. Các quyết định đã chốt nằm ở mục "Không làm theo" của spec level đang làm; nếu vẫn thấy nên đổi thì ghi rõ là đi ngược quyết định đã chốt.
+- Với mỗi câu "tại sao, để làm gì" tự đặt ra, ghi bài đã trả lời hay chưa.
+- Kết quả viết vào temp/review/review-bai-<slug>.md: rà theo thứ tự bài, mỗi mục có câu gốc, đánh giá (Cần sửa / Cần làm rõ / Biên tập / Giữ được), lý do và đề xuất; cuối file là thứ tự ưu tiên sửa và nguồn đối chiếu.
+- Không sửa file nào của dự án.
+```
+
+Sau khi có bản review:
+
+1. Đọc hết bản review rồi mới sửa. Kiểm từng mục với script và với database (chỉ `SELECT`); mục nào đúng thì sửa, mục nào sai hoặc đi ngược quyết định đã chốt thì không làm theo và ghi lý do.
+2. Viết test cho các câu đã sửa (cụm cũ không còn, ý mới có mặt), chạy lại bước 4.
+3. Ghi "Đã sửa" và "Không làm theo" vào spec của level, như spec Level 1 mục 11–13.
+4. Gửi người làm khóa học: bài đã sửa, đường dẫn bản review, tóm tắt những gì đã sửa và chưa sửa. Chỉ push khi người làm khóa học đồng ý.

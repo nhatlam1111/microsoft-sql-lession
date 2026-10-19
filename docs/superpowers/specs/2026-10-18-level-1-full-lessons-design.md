@@ -1,7 +1,7 @@
 # Thiết kế phần C, đợt Level 1: viết đầy đủ các bài Level 1
 
 - Ngày: 2026-10-18
-- Trạng thái: đã duyệt ngày 2026-10-18; đã làm xong và merge vào `main` ngày 2026-10-18 (chưa push). Còn chờ người làm khóa học đọc và duyệt nội dung Level 1 trước khi làm Level 2 (mục 6).
+- Trạng thái: đã duyệt ngày 2026-10-18; đã làm xong và lên web ngày 2026-10-18. Ngày 2026-10-19 sửa ba vòng sau review (mục 11–13), bản cuối lên web ở commit `7c9048d`. Còn chờ người làm khóa học đọc và duyệt nội dung Level 1 trước khi làm Level 2 (mục 6); Level 2 làm theo mục 14.
 - Nối tiếp: [spec đợt 2, mục 6](2026-10-18-step-flow-exercises-full-lessons-design.md) (phần C), [spec đợt 1, mục 4.5 và 4.7](2026-10-17-sql-server-course-site-design.md) (khuôn bài và giọng văn), [spec B](2026-10-18-exercise-runner-design.md) (bài tập trên web). Chỗ nào spec này ghi khác các spec đó thì theo spec này.
 - Web: https://nhatlam1111.github.io/microsoft-sql-lession/
 
@@ -236,3 +236,11 @@ Người làm khóa học đọc 1.3, 1.4 và đặt thêm quy ước cho mọi 
 - **Câu minh họa cho xem dữ liệu, không tóm tắt**: 1.4 bỏ `COUNT(*)`, thay bằng danh sách 10 hồ sơ còn trỏ tới VH (tô hai dòng đã nghỉ). Test chặn `COUNT`, `SUM`, `AVG`, `MIN`, `MAX`, `GROUP BY` trong câu lệnh của Level 1; tổng hợp bắt đầu từ bài 3.1.
 - **Hình đánh dấu chỗ cần nhìn**: thêm `mark` cho `Ssms` (phần khóa, kiểu, null của cột), `Result` (dòng), `Excel` (ô) và `path` cho `Erd` (bảng, cột nối, đường nối). Đã dùng: 1.1 ô C4, A3, A5; 1.2 hai cột `PhongBan`; 1.3 ô C2, D3 và `LuongCoBan`, `NgayKetThuc`; 1.4 khóa của `NhanVien` và hai dòng đã nghỉ; 1.5 ô D2 và đường `BangLuong` → `NhanVien` → `PhongBan`; 1.6 dòng NV004.
 - 1.1 bỏ "dữ liệu ghi từ đâu cũng bị kiểm" ở bảng so sánh, như đã sửa ở 1.4.
+
+## 14. Cho các level sau (2026-10-19)
+
+Ba vòng sửa ở mục 11–13 đều sửa cùng những loại lỗi: hứa quá điều database tự bảo đảm, thiếu điều kiện cho con số, lý thuyết chưa nói "vì sao", thiếu giá trị ví dụ, hình chưa chỉ chỗ cần nhìn, tóm tắt bằng `COUNT` quá sớm. Để Level 2 trở đi không phải sửa lại theo cùng kiểu:
+
+- Quy tắc viết đã gom vào `docs/lesson-template.md` (mục "Quy tắc viết", "Ghi chú về các tiểu mục"), và các test trong `tests/content.test.ts` giữ những quy tắc kiểm được bằng máy (không câu hỏi trong lý thuyết, có chỉ tới bài sau, "Ví dụ:" trong `LineMap`, không hàm tổng hợp ở Level 1). Khi viết Level 2, mở rộng các test này cho Level 2 (hàm tổng hợp được dùng từ bài 3.1).
+- Mỗi bài đi theo "Quy trình làm một bài" của file đó: chạy số liệu trước khi viết, tự rà theo danh sách, kiểm bằng máy, rồi **review độc lập**: một agent mới, model mạnh nhất, đóng vai người học khó tính theo đúng lời dặn ghi trong file, chỉ đọc file (không chạy gì trên database), ghi kết quả ra `temp/review/review-bai-<slug>.md`. Người viết kiểm từng mục, sửa mục đúng, ghi "Đã sửa" và "Không làm theo" vào spec của level.
+- Plan của mỗi level có một bước review độc lập trong task của từng bài (xem mục "Cho plan các level sau" ở plan Level 1), và người làm khóa học chỉ đọc bài sau khi đã qua bước đó.

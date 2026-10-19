@@ -140,6 +140,7 @@ Quy ước hiển thị:
 - Không nhắc vai trò hay xuất thân người đọc; tình huống là yêu cầu công việc trung tính.
 - Tránh các dấu hiệu "máy viết" ở mục 2.
 - Bài mẫu 3.5 trong mockup là chuẩn giọng văn, sau khi sửa 2 chỗ: câu dẫn tình huống thành trung tính, mục "Mang vào việc BA/PM" thành "Ứng dụng".
+- Từ 2026-10-19: mỗi bài đi qua quy trình ở [`docs/lesson-template.md`](../../lesson-template.md), mục "Quy trình làm một bài": tự rà theo danh sách, kiểm bằng máy, rồi một agent độc lập review trong vai người học khó tính trước khi người làm khóa học đọc. Các quy tắc viết rút ra từ các vòng review Level 1 nằm ở mục "Quy tắc viết" và "Ghi chú về các tiểu mục" của file đó.
 
 ### 4.8 Database mẫu `HRM_Demo`
 

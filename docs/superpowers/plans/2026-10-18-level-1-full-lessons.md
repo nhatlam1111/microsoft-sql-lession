@@ -1,6 +1,6 @@
 # Level 1 viết đầy đủ: Implementation Plan
 
-**Trạng thái (2026-10-18):** đã làm xong 13 task theo cách Native, rà soát cuối bằng một reviewer độc lập (kết luận "With fixes": 2 lỗi đáng sửa, 8 lỗi nhỏ, đều đã sửa có test). Đã merge vào `main`. Các quyết định trong lúc làm: tên database thật là `free-sql-db-8797714` (giữ nguyên theo quyết định của người làm khóa học); hộp kết nối theo SSMS 21; bài tập 1.6 dùng ChucDanh, HopDong, DonNghiPhep để không lọt đáp án vào bài.
+**Trạng thái (2026-10-18):** đã làm xong 13 task theo cách Native, rà soát cuối bằng một reviewer độc lập (kết luận "With fixes": 2 lỗi đáng sửa, 8 lỗi nhỏ, đều đã sửa có test). Đã merge vào `main`. Các quyết định trong lúc làm: tên database thật là `free-sql-db-8797714` (giữ nguyên theo quyết định của người làm khóa học); hộp kết nối theo SSMS 21; bài tập 1.6 dùng ChucDanh, HopDong, DonNghiPhep để không lọt đáp án vào bài. Sau khi lên web, Level 1 sửa thêm ba vòng ngày 2026-10-19 (spec Level 1 mục 11–13); bài học rút ra cho plan các level sau ở mục cuối file.
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
@@ -372,3 +372,17 @@ Bài mẫu: `src/content/lessons/3-5-left-join.mdx` (giọng văn, khối, sơ �
 - Task 11 cần Task 4.
 - Task 12 cần Task 1, 2, 5.
 - Task 13 làm cuối.
+
+## Cho plan các level sau (2026-10-19)
+
+Sau plan này, Level 1 phải sửa thêm ba vòng (spec Level 1 mục 11–13). Plan của level sau viết task cho từng bài theo khuôn dưới đây, để các bước đó nằm sẵn trong plan thay vì thành vòng sửa sau khi lên web:
+
+- [ ] **Chạy số liệu**: mọi câu lệnh, con số và giá trị ví dụ của bài chạy bằng MCP `azure-sql` (chỉ `SELECT`) trước khi viết.
+- [ ] **Test trước**: thêm test cho các ý bắt buộc của bài (cụm phải có, cụm không được có), xem fail.
+- [ ] **Viết bài** theo `docs/lesson-template.md`, rồi tự rà theo danh sách ở bước 3 của "Quy trình làm một bài".
+- [ ] **Kiểm bằng máy**: `npm test`, `npm run check`, `npm run build`, `npm run check:dist`; bài có bài tập thì thêm `check:exercises`; xem bản build trên máy.
+- [ ] **Review độc lập**: giao một agent mới, model mạnh nhất, lời dặn đúng như bước 5 của "Quy trình làm một bài"; kết quả ở `temp/review/review-bai-<slug>.md`.
+- [ ] **Xử lý review**: kiểm từng mục, sửa mục đúng có test, ghi "Đã sửa / Không làm theo" vào spec của level; chạy lại bước kiểm bằng máy.
+- [ ] **Commit**; push chỉ khi người làm khóa học đồng ý.
+
+Review độc lập theo từng bài không thay cho lượt rà soát cuối cả nhánh của executing-plans; cả hai đều làm.
