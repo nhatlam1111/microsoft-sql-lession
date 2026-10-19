@@ -5,3 +5,7 @@ api/local.settings.json
 dist/
 .astro/
 .playwright-mcp/
+mcp-azure-sql/
+temp/
+.mcp.json
+.claude/launch.json
