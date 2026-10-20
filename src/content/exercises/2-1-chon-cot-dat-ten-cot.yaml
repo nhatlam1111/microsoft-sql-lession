@@ -1,0 +1,42 @@
+lesson: 2-1-chon-cot-dat-ten-cot
+exercises:
+  - id: 2-1-1
+    title: Rà soát email đang lưu
+    summary: Lấy hai cột cần dùng để rà soát email của mọi hồ sơ.
+    prompt: >-
+      Chị Hạnh muốn rà soát email đang lưu của mọi hồ sơ trong bảng NhanVien, kể cả người đã nghỉ,
+      để tìm hồ sơ còn thiếu email. Chỉ lấy hai cột, theo thứ tự: HoTen rồi Email.
+      Không lấy mã nhân viên hay các thông tin khác. Thứ tự dòng không quan trọng.
+    columns: [HoTen, Email]
+    ordered: false
+    kind: query
+    answer: |
+      SELECT HoTen, Email FROM NhanVien;
+  - id: 2-1-2
+    title: Ngày vào làm đứng trước mã nhân viên
+    summary: Đặt ba cột theo thứ tự của mẫu cần điền.
+    prompt: >-
+      Một mẫu đối chiếu cần toàn bộ hồ sơ trong bảng NhanVien, kể cả người đã nghỉ,
+      với đúng ba cột theo thứ tự từ trái sang phải: NgayVaoLam, MaNV, HoTen.
+      Lấy đúng thứ tự cột này dù chúng nằm ở vị trí khác trong bảng nguồn.
+      Không cần đặt tiêu đề mới. Thứ tự dòng không quan trọng.
+    columns: [NgayVaoLam, MaNV, HoTen]
+    ordered: false
+    kind: query
+    answer: |
+      SELECT NgayVaoLam, MaNV, HoTen FROM NhanVien;
+  - id: 2-1-3
+    title: Danh mục chức danh có tiêu đề tiếng Việt
+    summary: Lấy tên chức danh trước mã chức danh và đặt tiêu đề cho cả hai cột.
+    prompt: >-
+      Chị Hạnh cần toàn bộ danh mục chức danh để dán vào tài liệu nội bộ.
+      Cột đầu là tên chức danh, đặt tiêu đề chính xác là Chức danh;
+      cột thứ hai là mã chức danh, đặt tiêu đề chính xác là Mã chức danh.
+      Chỉ lấy hai cột này. Thứ tự dòng không quan trọng.
+      Bộ chấm không so tên tiêu đề; sau khi chạy, bạn tự đối chiếu
+      hai tiêu đề trên lưới Results với yêu cầu, kể cả khi đã được chấm đúng.
+    columns: [Chức danh, Mã chức danh]
+    ordered: false
+    kind: query
+    answer: |
+      SELECT TenCD AS [Chức danh], MaCD AS [Mã chức danh] FROM ChucDanh;

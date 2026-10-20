@@ -203,3 +203,55 @@ Theo ảnh tham khảo người làm khóa học gửi ("Simple 8-Step Workflow"
 - Đổi `MCP_ALLOW_WRITE` về `false` trong `.env`, hoặc bảo người dựng đổi. (Ngày 2026-10-18 vẫn đang là `true`.)
 - ~~Trả lời câu hỏi ở mục 8.~~ Đã trả lời.
 - ~~Sau bản chạy thử, theo spec B: tạo Function App, tạo tài khoản SQL cho API theo script người dựng đưa, đặt mã truy cập.~~ Đã làm.
+
+## 11. Bài 2.1 đầy đủ và review độc lập (2026-10-20)
+
+Bài `2-1-chon-cot-dat-ten-cot` chuyển từ bản tóm tắt thành bài đầy đủ, 18 phút, theo `docs/lesson-template.md`. Phạm vi: chọn cột, thứ tự cột, alias bằng `AS`, tên có khoảng trắng trong ngoặc vuông; có đối chiếu Excel, Result và hai bước RunFlow `FROM` → `SELECT`. Tình huống lấy toàn bộ 48 hồ sơ của bộ mẫu, kể cả người đã nghỉ, với ba cột và tiêu đề đã chốt. Bài tập có ba câu chọn cột, đổi vị trí và đặt tiêu đề; không yêu cầu thứ tự dòng.
+
+Review do một agent mới thực hiện theo vai người học khó tính, không mang ngữ cảnh lúc viết và không kết nối database: [bản review 38 mục](../../reviews/2026-10-20-bai-2-1.md). Bản review không phát hiện lỗi SQL hay sai dữ liệu qua đối chiếu tĩnh; không coi đó là bằng chứng đã chạy trên Azure SQL.
+
+### Đã sửa
+
+- Làm rõ thao tác Excel: chép ba cột sang **workbook mới để gửi đi**, tránh hiểu thành sheet báo cáo vẫn đi kèm sheet nguồn.
+- Trong ví dụ cụ thể thiếu dấu phẩy, đổi “SQL Server có thể hiểu” thành “SQL Server hiểu” alias; đây là cách phân tích cú pháp xác định, không phải lựa chọn ngẫu nhiên.
+- Cập nhật danh mục kiểm thử để bài 2.1 là `full`, README để chỉ đúng các bài đầy đủ và các bài có bài tập.
+
+### Không làm theo
+
+Không có đề xuất review nào bị bác. Giữ các quyết định chung: bộ chấm không so tên cột, học viên tự đối chiếu alias; chưa dạy `WHERE`, `ORDER BY`, `DISTINCT` ở bài này; tên các mục và nhãn khối dùng theo khuôn. Không thêm kiểm thử chỉ để so từng câu văn; dùng các kiểm tra cấu trúc, dữ liệu, bản build và review để xác minh thay đổi nội dung.
+
+### Kiểm tra và giới hạn
+
+- `npm test`: 213 test qua. Danh mục bài 2.1 đã được kiểm ở trạng thái thất bại trước khi chuyển bài sang `full`, sau đó qua cùng bộ kiểm cấu trúc hiện có.
+- `npm run check`: 0 lỗi, 0 warning và 3 hint có sẵn ở `FormEvent`/`document.execCommand` của các thành phần không đổi.
+- `npm run build`, `npm run check:dist`: 65 trang, 1.313 link; đủ ba trang bài tập mới và không có câu đáp án trong tài nguyên gửi ra web.
+- API: kiểm kiểu và build qua, gói đủ 11 bài tập.
+- Đối chiếu cục bộ bằng SQLite trong bộ nhớ, nạp DDL/INSERT từ script chuẩn và chuyển cách gán quản lý sang câu tương đương: các cột, tổng dòng và mọi ô được trích trong Result/RunFlow/Excel khớp script; ba đáp án ra lần lượt 48, 48 và 6 dòng, đúng thứ tự cột. Đây là kiểm tính nhất quán với dữ liệu nguồn, **không phải** kiểm chạy T-SQL trên SQL Server.
+- Kiểm trong Chromium ở 1440px và 1280px: nội dung, ô đánh dấu, hai drawer RunFlow, điều hướng bài tập và nhắc tự đối chiếu alias hiển thị đúng; không có lỗi JavaScript hay tràn ngang toàn trang ở hai kích thước desktop này. Dưới 1024px vẫn là giao diện desktop và có thông báo máy tính theo thiết kế đã chốt; không làm responsive trong thay đổi này.
+- **Chưa xác minh live Azure SQL/API:** `npm --prefix api run check:exercises` dừng trước khi kết nối vì thiếu `SQL_SERVER`, `SQL_DATABASE`, `SQL_USER`, `SQL_PASSWORD`. Không có câu nào được gửi xuống database khóa học. Khi có cấu hình kết nối hợp lệ, cần chạy lại lệnh này và kiểm các câu minh họa bằng `SELECT` trước khi coi lượt kiểm database đã hoàn tất.
+
+### Review độc lập lượt hai (2026-10-20)
+
+Một agent mới, không đọc bản review ở trên, review lại theo `docs/lesson-template.md`, "Quy trình làm một bài": `temp/review/2026-10-20-doc-lap/review-bai-2-1-chon-cot-dat-ten-cot.md` trong repo chính, 58 mục (2 Cần sửa, 19 Cần làm rõ, 17 Biên tập, 20 Giữ được). Các điều bản review ghi "chưa xác minh" được chạy bằng `SELECT` trên database khóa học: `AS Phòng ban` không ngoặc báo `Incorrect syntax near 'ban'.`; `TenNV` báo `Invalid column name 'TenNV'.`; alias trong `WHERE` báo `Invalid column name 'Họ tên'.`; `AS 'Họ tên'` và `AS Mã` chạy, tiêu đề giữ dấu; hai cột cùng tiêu đề vẫn chạy; cột tính ra không có tên; `NhanVien` có KD 14 hồ sơ, 48 ngày vào làm khác nhau, 3 người đã nghỉ (NV020, NV033, NV041); đáp án mới của bài tập 3 ra 6 dòng.
+
+Đã sửa:
+
+- Bài tập 3 đổi sang `ChucDanh` (tiêu đề "Chức danh", "Mã chức danh"), để câu `SELECT TenPB, MaPB FROM PhongBan;` in trong Ghi nhớ không nộp được; đáp án không trùng `SELECT * FROM ChucDanh;` của bài 1.6 (khác thứ tự cột). Đề và đoạn giới thiệu bài tập nói "bộ chấm không so tên tiêu đề" thay cho "hiện chưa". Bài tập 1 đổi bối cảnh thành rà soát email, cho hợp với "mọi hồ sơ, kể cả người đã nghỉ".
+- Ứng dụng gạch 2 viết lại cho đúng nghĩa; gạch 3 thêm ý SQL Server không kiểm nghĩa của tiêu đề.
+- Thứ tự logic và alias: drawer bước `SELECT` và đoạn sau sơ đồ nói alias không dùng được trong `WHERE` (kèm lỗi thật), dùng được trong `ORDER BY`.
+- Vì sao `[Họ tên]` không cần `N` (tên là `sysname`, Unicode); khi nào bắt buộc ngoặc vuông, `[Mã]` là quy ước của khóa học; `AS 'Họ tên'`, `AS "Họ tên"` trong câu lệnh của người khác.
+- Copy with Headers và ô Include column headers; dạng ngày cho người nhận (định dạng trong Excel, đổi thành chuỗi trong SQL thì thành chữ).
+- "Trả lời chị Hạnh" tách phần gửi người nhận (3 người đã nghỉ không phân biệt được trong ba cột, hỏi lại có cần cột trạng thái) với ghi chú cho người học. Đặt thành đoạn in đậm, vì tiểu mục cuối của "Làm bằng SQL" phải là sơ đồ.
+- Hay nhầm: thêm quên ngoặc vuông; ví dụ "chọn một cột" đổi sang `SELECT MaPB FROM NhanVien;` (KD lặp 14 lần) vì dữ liệu mẫu không có ai trùng ngày vào làm; `SELECT *` rồi xóa tay có hậu quả cụ thể và trỏ bài 6.1.
+- Lý thuyết: lặp lại được là chỗ SQL hơn chép tay (Excel có Power Query, bài 4.9); vì sao tên cột là tên kỹ thuật; ví dụ "đọc cột theo vị trí"; alias đặt tên cho cột tính ra, `(No column name)`; `AS` sau tên bảng (bài 3.4); alias không lưu vào bảng, view ở bài 4.5; tìm tên cột ở đâu và lỗi khi gõ sai.
+- Biên tập: mục tiêu, thêm bài 1.3 vào cần biết trước, "Nói gọn lại" và `Key` dạng câu hỏi, cầu nối với cách ví của bài 1.6, "trường" thành "cột", khuôn cú pháp ghi chỗ cần thay như bài 1.6, `N'Trần Thị Mai'` ở bài 1.3, dòng đầu `LineMap`, dấu `;:`, Ghi nhớ thêm Copy with Headers và sửa dòng 5, câu tự đối chiếu rõ hơn và thêm câu đoán kết quả khi thiếu dấu phẩy. Thời gian đọc 22 phút.
+- Nhãn "có N dòng" ở thẻ đầu của `RunFlow` đã sửa trên main (commit `c80534b`), sẽ có ở bài này khi nhánh được gộp.
+
+Không làm theo:
+
+- Cho riêng bài tập 3 so tên cột: đi ngược quyết định "Không so tên cột" ở mục 5.4 và 7.6; để người làm khóa học quyết. Đã đổi bảng để câu trong bài không nộp được.
+- Thêm dòng nhắc kiểm tiêu đề vào dải "Đúng rồi." của bài tập: cần thêm một trường cho bài tập và đổi trang làm bài; đề bài và đoạn giới thiệu đã nhắc.
+- Viết câu lệnh mỗi cột một dòng: cả khóa viết danh sách cột ngắn trên một dòng; Hay nhầm 1 thêm lời khuyên viết mỗi cột một dòng khi danh sách dài.
+- Thêm phần đổi dạng hiển thị ngày vào bài 2.8: bài 2.8 dạy hàm tính ngày; bài 2.1 nói định dạng ở Excel.
+
+Kiểm tra: `npm test` 215 test qua (thêm `tests/content-level-2.test.ts`, đã thấy đỏ trước khi sửa); `npm run check` 0 lỗi; `npm run build` và `npm run check:dist` qua, 65 trang, 1.314 link. `npm --prefix api run check:exercises` vẫn chưa chạy được vì cần thông tin kết nối SQL; ba đáp án đã được chạy bằng `SELECT` qua công cụ chỉ đọc.

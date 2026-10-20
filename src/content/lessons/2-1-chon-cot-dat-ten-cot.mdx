@@ -4,30 +4,198 @@ title: Chọn cột và đặt tên cột
 shortTitle: Chọn cột, đặt tên cột
 level: 2
 area: A2
-kind: summary
-minutes: 8
+kind: full
+minutes: 22
 prerequisites:
+  - "1.3"
   - "1.6"
-goal: bạn lấy đúng những cột cần dùng, với tên cột dễ đọc
-excel: Ẩn cột, đổi tiêu đề
-summary: Liệt kê cột cần lấy, đặt tên mới bằng AS, và vì sao báo cáo không nên dùng SELECT *.
+goal: bạn lấy được đúng các cột theo thứ tự yêu cầu, đặt tiêu đề bằng AS, và giải thích được vì sao AS chỉ đổi tiêu đề của kết quả, không đổi cột trong bảng
+excel: Chọn cột, đổi tiêu đề
+summary: Liệt kê cột thay cho SELECT *, sắp thứ tự cột trong kết quả và đặt tiêu đề bằng AS; phân biệt tên cột với chuỗi chữ.
 ---
 
-## Nội dung chính
+## Tình huống
 
-- Liệt kê đúng những cột cần lấy: `SELECT MaNV, HoTen, NgayVaoLam FROM NhanVien;`.
-- `AS` đặt tên mới cho cột trong kết quả, ví dụ `HoTen AS [Họ tên]`.
-- Thứ tự cột trong kết quả là thứ tự bạn viết, không phụ thuộc thứ tự cột trong bảng.
-- Báo cáo không nên dùng `SELECT *`: bảng thêm cột là báo cáo đổi theo, lại lấy dư cả dữ liệu nhạy cảm như số CCCD.
+Bạn đã biết xem nhanh bảng nhân viên bằng `SELECT *`. Lần này, yêu cầu là một danh sách để gửi đi:
 
-## Liên hệ Excel
+<Chat who="Chị Hạnh · Phòng Nhân sự" time="09:15" initial="H">
+Kế toán cần danh sách toàn bộ hồ sơ nhân viên đang lưu, kể cả người đã nghỉ. Em lấy giúp chị đúng ba cột theo thứ tự: Mã nhân viên, Họ tên, Ngày vào làm. Đặt tiêu đề tiếng Việt như vậy luôn nhé; không cần ngày sinh, số CCCD hay email.
+</Chat>
 
-Giống ẩn bớt cột và sửa chữ ở dòng tiêu đề trước khi gửi file. Khác ở chỗ cột thừa không bị ẩn đi mà không được lấy ra ngay từ đầu.
+**Phạm vi của tình huống:** lấy toàn bộ hồ sơ trong bảng `NhanVien` của bộ dữ liệu mẫu hiện tại, không giới hạn theo ngày vào làm hay trạng thái. Chị Hạnh yêu cầu thứ tự cột, chưa yêu cầu sắp xếp dòng.
 
-## Tình huống ví dụ
+Nói gọn lại:
 
-Kế toán cần danh sách mã NV, họ tên và ngày vào làm, không cần các cột khác.
+<Key>Lấy ba cột nào từ bảng nhân viên, theo thứ tự nào, với tiêu đề gì?</Key>
+
+## Với Excel
+
+Với một sheet có đủ thông tin nhân viên, bạn có thể chép ba cột cần dùng sang một workbook mới để gửi đi, đặt chúng theo thứ tự yêu cầu rồi sửa dòng tiêu đề. Đây là bản báo cáo sau khi chọn cột, trích ba hồ sơ từ dữ liệu mẫu:
+
+<Excel sheets="Danh sách gửi kế toán" mark={['A1', 'B1', 'C1']} numeric={['C2', 'C3', 'C4']} rows={[
+  ['Mã nhân viên', 'Họ tên', 'Ngày vào làm'],
+  ['NV001', 'Trần Thị Mai', '01/03/2024'],
+  ['NV002', 'Lê Văn Hùng', '01/04/2024'],
+  ['NV003', 'Nguyễn Thu Hà', '01/06/2023'],
+]} />
+
+Ba ô tiêu đề được đánh dấu là tên người nhận muốn thấy. Cột ngày trong hình chứa giá trị ngày thật (căn phải, như bài 1.3), đang được Excel hiển thị theo dạng ngày/tháng/năm.
+
+Nếu chỉ ẩn các cột thừa rồi gửi nguyên workbook, các cột đó vẫn nằm trong file và có thể được hiện lại. Khi cần một bản chỉ gồm ba cột, bạn chép đúng ba cột sang bản gửi đi. Ở bài 1.6, dấu `*` được ví như mở cả sheet, không ẩn cột nào; còn liệt kê cột trong SQL giống chép đúng các cột sang bản mới hơn là ẩn cột: cột không chọn không có trong kết quả.
+
+Chỗ Excel bắt đầu tốn công là lần sau. Tháng sau có người mới, bạn lại phải chép, sắp và sửa tiêu đề bằng tay; Excel làm lặp lại được bằng Power Query (bài 4.9), nhưng một file chép tay thì không. Câu lệnh SQL lưu lại được trong một file `.sql`: chạy lại là ra đúng các cột và tiêu đề đó trên dữ liệu mới.
+
+## Làm bằng SQL
+
+### Lý thuyết cơ bản
+
+Sau `SELECT`, bạn có thể viết **danh sách cột**, ngăn cách bằng dấu phẩy, thay cho dấu `*`. SQL Server trả các cột theo thứ tự bạn liệt kê. Chọn cột chỉ thay đổi những thông tin xuất hiện trong kết quả; với câu đọc một bảng như ở bài này, nó không lọc bớt dòng.
+
+Danh sách cột giúp câu lệnh thể hiện đúng yêu cầu: người nhận cần cột nào, cột nào đứng trước. Nó cũng giảm lượng dữ liệu trả về khi bạn chỉ cần một phần của bảng, và không kéo theo thông tin cá nhân không ai cần, như số CCCD. Với `SELECT *`, kết quả thay đổi theo danh sách cột của bảng: thêm một cột vào bảng thì câu lệnh đó cũng trả thêm cột. Một báo cáo đọc cột theo vị trí sẽ bị ảnh hưởng, ví dụ một mẫu Excel dán kết quả vào từ cột A, bên phải là các cột công thức: bảng có thêm một cột thì dữ liệu tràn sang cột công thức. Liệt kê cột tránh sự phụ thuộc vào các cột không cần dùng; nếu chính cột bạn chọn bị đổi tên hoặc xóa thì câu lệnh vẫn cần sửa.
+
+Tên cột trong bảng thường là tên kỹ thuật như `NgayVaoLam`: không dấu, không khoảng trắng nên viết câu lệnh không cần ngoặc, gõ không phụ thuộc bộ gõ tiếng Việt, và các chương trình khác dùng lại dễ. Tiêu đề cho người đọc, như `Ngày vào làm`, thì đặt lúc lấy dữ liệu ra. **Bí danh cột**, thường gọi là *alias*, là tên bạn đặt cho cột trong kết quả bằng `AS`. Nó không đổi tên cột trong bảng, không đổi giá trị hay kiểu dữ liệu của cột đó. Alias nằm trong câu lệnh, không được lưu vào bảng: câu nào cần tiêu đề này thì câu đó ghi alias. Lưu câu lệnh lại thì lần sau chạy lại là có; muốn lưu sẵn trong database thì dùng view (bài 4.5).
+
+Alias còn có việc thứ hai: đặt tên cho cột tính ra. Cột lấy từ một phép tính hay một hàm, như câu `CAST` ở bài 1.3, không có tên sẵn; SSMS hiện tiêu đề `(No column name)`. Viết `AS` sau phép tính là đặt tên cho nó; bạn sẽ dùng cách này nhiều ở bài 2.7 tới 2.9. Còn `AS` đứng sau tên bảng, như `BangLuong AS bl` ở bài 1.5, là tên ngắn cho bảng trong câu lệnh, không phải tiêu đề cột; cách dùng đó học ở bài 3.4.
+
+<Sql title="Cú pháp chung (thay tên cột, tiêu đề và tên bảng trước khi chạy)" copy={false} code={`SELECT cột 1 AS [tiêu đề 1], cột 2 AS [tiêu đề 2]
+FROM tên bảng;`} />
+
+Bạn có thể chọn cột mà không đặt alias, hoặc chỉ đặt alias cho một vài cột. Ngoặc vuông `[]` bao một tên lại để SQL Server hiểu đó là một tên. Ngoặc là bắt buộc khi tiêu đề có khoảng trắng, có ký tự đặc biệt như `%` hay `/`, hoặc trùng một từ khóa của SQL. Với tên một từ như `Mã` thì không bắt buộc: chữ có dấu vẫn dùng được trong tên thường. Bao mọi tiêu đề bằng `[]` là quy ước của khóa học, cho thống nhất.
+
+Không thêm `N` trước ngoặc vuông. Chữ trong ngoặc vuông là một tên, không phải chuỗi giá trị. SQL Server giữ mọi tên dạng Unicode (kiểu `sysname`), nên `[Họ tên]` giữ nguyên dấu mà không cần `N`. Chữ `N` chỉ dùng trước chuỗi trong dấu nháy đơn, như `N'Trần Thị Mai'` ở bài 1.3, vì chuỗi không có `N` mới bị đổi theo bảng mã của database.
+
+Trong câu lệnh của người khác, bạn có thể gặp `AS 'Họ tên'` hoặc `AS "Họ tên"`. Đứng ngay sau `AS`, cả hai đều là tiêu đề cột kết quả, và tiêu đề vẫn giữ dấu. Khóa học dùng `[]` để không lẫn với chuỗi giá trị, vì ở những chỗ khác, chữ trong nháy đơn là một giá trị cố định (xem mục Hay nhầm ở đâu).
+
+Ví dụ thu gọn với bảng `PhongBan`: chọn tên phòng trước, mã phòng sau, đồng thời đặt hai tiêu đề cho kết quả:
+
+<Sql code={`SELECT TenPB AS [Phòng ban], MaPB AS [Mã]
+FROM PhongBan;`} />
+
+Một phần kết quả có thể trông như sau, trích hai trong sáu phòng ban của dữ liệu mẫu, không phải hai dòng liền nhau. Câu lệnh không có `ORDER BY`, nên thứ tự dòng khi bạn chạy có thể khác hình:
+
+| Phòng ban | Mã |
+|---|---|
+| Ban Giám đốc | BGD |
+| Nhân sự | NS |
+
+Trong bảng gốc, cột `MaPB` đứng trước `TenPB`. Trong kết quả này, tên phòng đứng trước vì `TenPB` được viết trước trong danh sách cột. Đổi thứ tự cột không phải sắp xếp dòng: cả sáu phòng vẫn có mặt, và các dòng chưa có thứ tự được bảo đảm.
+
+Từng phần nghĩa là gì:
+
+<LineMap rows={[
+  ['SELECT TenPB …, MaPB …', 'Lấy hai cột theo thứ tự tên phòng rồi mã phòng (bỏ phần alias cho dễ nhìn). Ví dụ: một dòng gồm Ban Giám đốc rồi BGD; viết MaPB trước thì BGD nằm ở cột đầu.'],
+  [',', 'Ngăn cách hai mục trong danh sách cột. Ví dụ: SELECT MaPB, TenPB trả hai cột; nếu viết SELECT MaPB TenPB, SQL Server hiểu TenPB là alias của MaPB và chỉ trả một cột.'],
+  ['TenPB AS [Phòng ban]', 'Lấy giá trị của TenPB nhưng đặt tiêu đề kết quả là Phòng ban. Ví dụ: ô vẫn chứa Ban Giám đốc, không bị đổi thành chữ Phòng ban; tên cột trong bảng vẫn là TenPB.'],
+  ['[Phòng ban]', 'Ngoặc vuông bao một tên có khoảng trắng. Ví dụ: AS [Phòng ban] đặt một tiêu đề gồm hai từ, dấu ngoặc không xuất hiện trong tiêu đề kết quả; viết AS Phòng ban không có ngoặc thì câu không chạy, SQL Server báo lỗi cú pháp ở chữ ban.'],
+  ['FROM PhongBan', 'Chỉ ra bảng nguồn có các cột TenPB và MaPB. Ví dụ: đổi thành FROM ChucDanh thì không tìm được hai cột này, vì bảng đó dùng TenCD và MaCD.'],
+]} />
+
+Ở bài này chỉ cần chọn đúng cột, đặt đúng thứ tự cột và tiêu đề. Lọc dòng bằng `WHERE` ở bài 2.2, sắp xếp dòng bằng `ORDER BY` ở bài 2.4; alias dùng được trong `ORDER BY` nhưng không dùng được trong `WHERE`, sơ đồ ở dưới cho thấy vì sao. Bỏ các dòng trùng trong kết quả bằng `DISTINCT` ở bài 2.6. Các hàm xử lý chữ và ngày học ở bài 2.7 và 2.8; quyền xem từng cột ở bài 6.1.
+
+### Câu lệnh cho tình huống
+
+Ba tên trong bảng `NhanVien` tương ứng với yêu cầu là `MaNV`, `HoTen`, `NgayVaoLam`. Tên cột xem ở Object Explorer → Columns (bài 1.2) hoặc ở nút "Sơ đồ database" trên trang bài tập. Gõ sai tên, ví dụ `SELECT TenNV FROM NhanVien;`, thì câu không chạy và tab Messages báo `Invalid column name 'TenNV'.` Viết ba cột theo thứ tự chị Hạnh cần và đặt tiêu đề bằng `AS`:
+
+<Sql code={`SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên], NgayVaoLam AS [Ngày vào làm]
+FROM NhanVien;`} />
+
+<Result columns={['Mã nhân viên', 'Họ tên', 'Ngày vào làm']} rows={[
+  ['NV001', 'Trần Thị Mai', '2024-03-01'],
+  ['NV002', 'Lê Văn Hùng', '2024-04-01'],
+  ['NV003', 'Nguyễn Thu Hà', '2023-06-01'],
+  ['NV004', 'Hoàng Minh Tuấn', '2015-01-05'],
+  ['NV005', 'Vũ Thị Lan', '2016-03-14'],
+]} total={48} mark={[1]} />
+
+Hình trích năm trong tổng số **48 hồ sơ** của bảng `NhanVien` trong dữ liệu mẫu, gồm cả người đã nghỉ. Dòng được đánh dấu là NV001: họ tên và ngày vào làm vẫn là giá trị của hồ sơ đó, chỉ tiêu đề đã đổi sang tiếng Việt. Ngày ở đây được hiển thị theo dạng năm-tháng-ngày; `AS` không chuyển cách hiển thị thành ngày/tháng/năm như hình Excel và không đổi kiểu `date`. Cột vẫn là ngày, và dạng năm-tháng-ngày không bị hiểu nhầm ngày với tháng. Người nhận muốn xem ngày/tháng/năm thì định dạng trong Excel bằng Format Cells; đổi ngày thành chuỗi ngay trong SQL thì giá trị thành chữ, dễ quay lại lỗi ngày ở bài 1.3.
+
+Để đưa kết quả sang file gửi đi, chọn vùng trên lưới Results rồi bấm chuột phải → **Copy with Headers** (Ctrl+Shift+C). Lệnh Copy thường chỉ chép dữ liệu, nên file mất đúng ba tiêu đề vừa đặt mà không ai báo. Muốn lần nào chép cũng kèm tiêu đề, bật ô Include column headers when copying or saving the results trong Tools → Options → Query Results → SQL Server → Results to Grid.
+
+**Trả lời chị Hạnh:** danh sách có đủ 48 hồ sơ, gồm 3 người đã nghỉ (NV020, NV033, NV041); đúng ba cột, đúng thứ tự và tiêu đề yêu cầu; không có ngày sinh, số CCCD, email. Danh sách chưa sắp theo thứ tự nào; nếu Kế toán cần theo mã nhân viên thì thêm sắp xếp (bài 2.4). Còn một câu nên hỏi lại: ba cột này không cho Kế toán biết ai đã nghỉ. Nếu Kế toán cần phân biệt, thêm cột trạng thái hoặc ngày nghỉ việc; đó là việc của người nhận quyết định, không phải của câu lệnh.
+
+Ghi chú cho bạn: kết quả gồm toàn bộ hồ sơ vì câu lệnh chưa có điều kiện lọc; nếu phạm vi đổi thành chỉ người đang làm, cần thêm điều kiện ở bài 2.2. Câu này không có `ORDER BY`, nên không hứa NV001 đứng ở dòng đầu; điều đó không ảnh hưởng thứ tự ba cột.
+
+### SQL Server chạy câu này thế nào
+
+Theo **thứ tự xử lý logic**, `FROM` xác định bảng nguồn, rồi `SELECT` chọn cột, thứ tự cột và alias. Hai bước đều giữ 48 dòng. Sơ đồ mô tả ý nghĩa câu lệnh, không khẳng định SQL Server phải đọc đủ mọi cột của bảng rồi mới bỏ cột thừa khi chạy thật. Các bảng trong drawer chỉ trích một phần dữ liệu; thứ tự dòng có thể khác khi bạn chạy.
+
+<RunFlow query={`SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên], NgayVaoLam AS [Ngày vào làm]
+FROM NhanVien;`} steps={[
+  {
+    clause: 'FROM',
+    title: 'Xác định bảng NhanVien làm nguồn.',
+    focus: 'FROM NhanVien',
+    meaning: '`FROM` cho biết các cột nguồn nằm ở bảng nào. Bảng `NhanVien` có 12 cột; bước này chưa chọn ba cột cần gửi.',
+    detail: 'Nguồn có 48 hồ sơ, bao gồm cả người đã nghỉ. Hình trích ba hồ sơ với đủ 12 cột để đối chiếu với bước chọn cột.',
+    sql: `SELECT * FROM NhanVien;`,
+    columns: ['MaNV', 'HoTen', 'GioiTinh', 'NgaySinh', 'SoCCCD', 'Email', 'NgayVaoLam', 'NgayNghiViec', 'MaPB', 'MaCD', 'MaQuanLy', 'TrangThai'],
+    rows: [
+      ['NV001', 'Trần Thị Mai', 'Nữ', '1992-04-12', '000192131376', 'mai.tt@hrmdemo.vn', '2024-03-01', null, 'KT', 'CV', 'NV005', 'Đang làm'],
+      ['NV002', 'Lê Văn Hùng', 'Nam', '1988-09-03', '000088139295', 'hung.lv@hrmdemo.vn', '2024-04-01', null, 'KD', 'CVC', 'NV006', 'Đang làm'],
+      ['NV003', 'Nguyễn Thu Hà', 'Nữ', '1995-01-25', '000195147214', 'ha.nt@hrmdemo.vn', '2023-06-01', null, 'KD', 'CV', 'NV006', 'Đang làm'],
+    ],
+    total: 48,
+    excel: 'Mở sheet nguồn có đủ thông tin nhân viên.',
+  },
+  {
+    clause: 'SELECT',
+    title: 'Chọn ba cột và đặt tiêu đề cho kết quả.',
+    focus: 'SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên], NgayVaoLam AS [Ngày vào làm]',
+    meaning: '`SELECT` liệt kê các cột cần trả về theo thứ tự yêu cầu. `AS` đặt tiêu đề cho từng cột trong kết quả.',
+    detail: 'Kết quả vẫn có 48 dòng nhưng chỉ còn ba cột: Mã nhân viên, Họ tên, Ngày vào làm. Không có điều kiện lọc, và không có cột nguồn nào bị sửa hay xóa. Tiêu đề `[Họ tên]` chỉ có từ bước này trở đi. `WHERE` (bài 2.2) được xét trước `SELECT` nên chưa biết tên này và vẫn phải dùng `HoTen`; `ORDER BY` (bài 2.4) được xét sau nên dùng được `[Họ tên]`.',
+    sql: `SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên], NgayVaoLam AS [Ngày vào làm]
+FROM NhanVien;`,
+    columns: ['Mã nhân viên', 'Họ tên', 'Ngày vào làm'],
+    rows: [
+      ['NV001', 'Trần Thị Mai', '2024-03-01'],
+      ['NV002', 'Lê Văn Hùng', '2024-04-01'],
+      ['NV003', 'Nguyễn Thu Hà', '2023-06-01'],
+    ],
+    total: 48,
+    excel: 'Chép ba cột sang bản báo cáo, đặt thứ tự và sửa tiêu đề.',
+  },
+]} />
+
+Vì vậy, nếu thêm `WHERE [Họ tên] = N'Trần Thị Mai'` vào câu trên, câu không chạy và tab Messages báo `Invalid column name 'Họ tên'.`: lúc xét `WHERE`, tiêu đề đó chưa được đặt.
+
+## Hay nhầm ở đâu
+
+<Mistakes>
+
+1. **Thiếu dấu phẩy nhưng câu vẫn chạy.** SQL Server cho phép bỏ từ khóa `AS` khi đặt alias. Vì vậy `SELECT MaNV HoTen FROM NhanVien;` được hiểu như `SELECT MaNV AS HoTen FROM NhanVien;`. Kết quả có một cột mang tiêu đề `HoTen` nhưng chứa các mã như `NV001`. Muốn hai cột mã và họ tên, viết `SELECT MaNV, HoTen FROM NhanVien;`. Giữ `AS` khi chủ động đặt alias giúp nhìn rõ sự khác nhau này; danh sách dài thì viết mỗi cột một dòng để dễ soát dấu phẩy.
+2. **Quên ngoặc vuông quanh tiêu đề có khoảng trắng.** `SELECT TenPB AS Phòng ban FROM PhongBan;` không chạy: SQL Server đọc `Phòng` là tiêu đề rồi gặp chữ `ban` không hiểu, nên tab Messages báo `Incorrect syntax near 'ban'.` Viết `AS [Phòng ban]`.
+3. **Viết tên cột thành chuỗi chữ.** `HoTen` lấy giá trị của cột họ tên; `N'HoTen'` là một chuỗi cố định. Câu `SELECT N'HoTen' AS [Họ tên] FROM NhanVien;` trả chữ `HoTen` ở mọi dòng, không trả tên của từng người. Còn `[Họ tên]` sau `AS` là tên cho cột kết quả, không phải giá trị cần lấy.
+4. **Tưởng alias đã đổi tên cột trong bảng.** Sau khi chạy `HoTen AS [Họ tên]`, bảng `NhanVien` vẫn có cột `HoTen`. Một câu khác lấy `[Họ tên]` trực tiếp từ bảng này sẽ báo lỗi vì bảng không có cột mang tên đó. `AS` cũng không sửa họ tên của bất kỳ người nào.
+5. **Tưởng chọn một cột sẽ ra danh sách giá trị khác nhau.** `SELECT MaPB FROM NhanVien;` ra 48 dòng, mỗi hồ sơ một dòng, trong đó KD lặp lại 14 lần, chứ không phải 6 phòng. Chọn cột không bỏ dòng nào; chọn dòng học ở bài 2.2, mỗi giá trị một dòng là việc của `DISTINCT` ở bài 2.6.
+6. **Dùng `SELECT *` rồi xóa tay các cột thừa trước khi gửi.** Lúc xem nhanh một bảng, `*` có ích như bài 1.6. Nhưng chép cả lưới sang Excel thì số CCCD, ngày sinh của 48 người đã nằm trong file và trong bộ nhớ tạm của máy; xóa tay dễ sót một cột, và lần sau lại phải xóa. Khi làm bản gửi đi, liệt kê đúng cột ngay trong câu lệnh. Chọn cột cũng không thay thế phân quyền (bài 6.1): người vẫn có quyền đọc cột khác có thể viết câu lệnh khác để lấy cột đó.
+
+</Mistakes>
+
+## Ứng dụng
+
+<Apply>
+
+- Chuẩn bị một danh sách để gửi hoặc dán vào mẫu Excel: chốt cột nào cần có, thứ tự từ trái sang phải và tiêu đề của từng cột, rồi viết danh sách `SELECT` theo đúng yêu cầu và chép kết quả kèm tiêu đề.
+- Kiểm tra một báo cáo đang dùng `SELECT *`: đối chiếu cột nào người nhận thực sự cần. Khi đã liệt kê cột, bảng nguồn có thêm cột thì báo cáo cũng không tự trả thêm thông tin ngoài yêu cầu.
+- Duyệt một câu SQL của người khác: tiêu đề là chữ người viết tự đặt, SQL Server không kiểm nghĩa. `NgaySinh AS [Ngày vào làm]` vẫn chạy bình thường và cho ra một danh sách trông hoàn toàn đúng; hai cột đặt cùng một tiêu đề cũng chạy được. Đối chiếu từng tiêu đề với cột đứng trước `AS`, và soát dấu phẩy: thiếu một dấu phẩy là cột tiêu đề `HoTen` chứa mã nhân viên.
+
+</Apply>
+
+## Ghi nhớ
+
+<Memo rows={[
+  ['Chọn các cột cần chép sang báo cáo', 'Liệt kê tên cột sau SELECT, ngăn cách bằng dấu phẩy'],
+  ['Đặt cột tên phòng trước cột mã phòng', 'SELECT TenPB, MaPB FROM PhongBan;'],
+  ['Sửa tiêu đề trên bản báo cáo', 'HoTen AS [Họ tên]: đổi tiêu đề kết quả, giữ tên và giá trị cột nguồn'],
+  ['Tiêu đề gồm nhiều từ', 'Dùng ngoặc vuông: [Ngày vào làm]'],
+  ['Kéo cột sang vị trí khác (không phải Sort)', 'Thứ tự cột theo SELECT; thứ tự dòng chỉ được bảo đảm khi có ORDER BY'],
+  ['Copy kèm dòng tiêu đề', 'Copy with Headers trên lưới Results'],
+]} />
+
+**Tự đối chiếu phần đặt tên cột:** nhìn lại câu lệnh trong tình huống, bạn cần giải thích được vì sao tiêu đề là `Họ tên` nhưng ô bên dưới chứa `Trần Thị Mai`; vì sao một câu lệnh khác viết sau đó vẫn phải dùng `HoTen`; và vì sao `WHERE` trong cùng câu cũng phải dùng `HoTen`, còn `ORDER BY` thì dùng được `[Họ tên]`. Thử đoán trước: `SELECT MaNV HoTen, NgayVaoLam FROM NhanVien;` ra mấy cột, tiêu đề là gì, cột đầu chứa gì? (Hai cột: cột tiêu đề `HoTen` chứa mã nhân viên, rồi cột `NgayVaoLam`.)
 
 ## Bài tập
+
+Ba bài tập luyện chọn cột, đổi vị trí cột và đặt tiêu đề. Bộ chấm so số cột, số dòng và giá trị từng ô theo vị trí cột; bộ chấm không so tên tiêu đề. Với bài yêu cầu đặt tiêu đề, bạn tự đối chiếu tên trên lưới Results với đề, kể cả khi đã được chấm đúng.
 
 <Exercises />
