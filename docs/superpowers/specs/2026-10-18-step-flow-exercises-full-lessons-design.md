@@ -203,3 +203,29 @@ Theo ảnh tham khảo người làm khóa học gửi ("Simple 8-Step Workflow"
 - Đổi `MCP_ALLOW_WRITE` về `false` trong `.env`, hoặc bảo người dựng đổi. (Ngày 2026-10-18 vẫn đang là `true`.)
 - ~~Trả lời câu hỏi ở mục 8.~~ Đã trả lời.
 - ~~Sau bản chạy thử, theo spec B: tạo Function App, tạo tài khoản SQL cho API theo script người dựng đưa, đặt mã truy cập.~~ Đã làm.
+
+## 11. Bài 2.1 đầy đủ và review độc lập (2026-10-20)
+
+Bài `2-1-chon-cot-dat-ten-cot` chuyển từ bản tóm tắt thành bài đầy đủ, 18 phút, theo `docs/lesson-template.md`. Phạm vi: chọn cột, thứ tự cột, alias bằng `AS`, tên có khoảng trắng trong ngoặc vuông; có đối chiếu Excel, Result và hai bước RunFlow `FROM` → `SELECT`. Tình huống lấy toàn bộ 48 hồ sơ của bộ mẫu, kể cả người đã nghỉ, với ba cột và tiêu đề đã chốt. Bài tập có ba câu chọn cột, đổi vị trí và đặt tiêu đề; không yêu cầu thứ tự dòng.
+
+Review do một agent mới thực hiện theo vai người học khó tính, không mang ngữ cảnh lúc viết và không kết nối database: [bản review 38 mục](../../reviews/2026-10-20-bai-2-1.md). Bản review không phát hiện lỗi SQL hay sai dữ liệu qua đối chiếu tĩnh; không coi đó là bằng chứng đã chạy trên Azure SQL.
+
+### Đã sửa
+
+- Làm rõ thao tác Excel: chép ba cột sang **workbook mới để gửi đi**, tránh hiểu thành sheet báo cáo vẫn đi kèm sheet nguồn.
+- Trong ví dụ cụ thể thiếu dấu phẩy, đổi “SQL Server có thể hiểu” thành “SQL Server hiểu” alias; đây là cách phân tích cú pháp xác định, không phải lựa chọn ngẫu nhiên.
+- Cập nhật danh mục kiểm thử để bài 2.1 là `full`, README để chỉ đúng các bài đầy đủ và các bài có bài tập.
+
+### Không làm theo
+
+Không có đề xuất review nào bị bác. Giữ các quyết định chung: bộ chấm không so tên cột, học viên tự đối chiếu alias; chưa dạy `WHERE`, `ORDER BY`, `DISTINCT` ở bài này; tên các mục và nhãn khối dùng theo khuôn. Không thêm kiểm thử chỉ để so từng câu văn; dùng các kiểm tra cấu trúc, dữ liệu, bản build và review để xác minh thay đổi nội dung.
+
+### Kiểm tra và giới hạn
+
+- `npm test`: 213 test qua. Danh mục bài 2.1 đã được kiểm ở trạng thái thất bại trước khi chuyển bài sang `full`, sau đó qua cùng bộ kiểm cấu trúc hiện có.
+- `npm run check`: 0 lỗi, 0 warning và 3 hint có sẵn ở `FormEvent`/`document.execCommand` của các thành phần không đổi.
+- `npm run build`, `npm run check:dist`: 65 trang, 1.313 link; đủ ba trang bài tập mới và không có câu đáp án trong tài nguyên gửi ra web.
+- API: kiểm kiểu và build qua, gói đủ 11 bài tập.
+- Đối chiếu cục bộ bằng SQLite trong bộ nhớ, nạp DDL/INSERT từ script chuẩn và chuyển cách gán quản lý sang câu tương đương: các cột, tổng dòng và mọi ô được trích trong Result/RunFlow/Excel khớp script; ba đáp án ra lần lượt 48, 48 và 6 dòng, đúng thứ tự cột. Đây là kiểm tính nhất quán với dữ liệu nguồn, **không phải** kiểm chạy T-SQL trên SQL Server.
+- Kiểm trong Chromium ở 1440px và 1280px: nội dung, ô đánh dấu, hai drawer RunFlow, điều hướng bài tập và nhắc tự đối chiếu alias hiển thị đúng; không có lỗi JavaScript hay tràn ngang toàn trang ở hai kích thước desktop này. Dưới 1024px vẫn là giao diện desktop và có thông báo máy tính theo thiết kế đã chốt; không làm responsive trong thay đổi này.
+- **Chưa xác minh live Azure SQL/API:** `npm --prefix api run check:exercises` dừng trước khi kết nối vì thiếu `SQL_SERVER`, `SQL_DATABASE`, `SQL_USER`, `SQL_PASSWORD`. Không có câu nào được gửi xuống database khóa học. Khi có cấu hình kết nối hợp lệ, cần chạy lại lệnh này và kiểm các câu minh họa bằng `SELECT` trước khi coi lượt kiểm database đã hoàn tất.

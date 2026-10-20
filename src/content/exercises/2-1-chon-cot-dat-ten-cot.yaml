@@ -1,0 +1,43 @@
+lesson: 2-1-chon-cot-dat-ten-cot
+exercises:
+  - id: 2-1-1
+    title: Danh bạ chỉ có họ tên và email
+    summary: Lấy hai cột cần dùng để chuẩn bị danh bạ liên hệ.
+    prompt: >-
+      Chị Hạnh cần bản danh bạ từ toàn bộ hồ sơ nhân viên đang lưu trong bảng NhanVien,
+      kể cả người đã nghỉ và người chưa có email. Chỉ lấy hai cột, theo thứ tự:
+      HoTen rồi Email. Không lấy mã nhân viên hay các thông tin khác.
+      Thứ tự dòng không quan trọng.
+    columns: [HoTen, Email]
+    ordered: false
+    kind: query
+    answer: |
+      SELECT HoTen, Email FROM NhanVien;
+  - id: 2-1-2
+    title: Ngày vào làm đứng trước mã nhân viên
+    summary: Đặt ba cột theo thứ tự của mẫu cần điền.
+    prompt: >-
+      Một mẫu đối chiếu cần toàn bộ hồ sơ trong bảng NhanVien, kể cả người đã nghỉ,
+      với đúng ba cột theo thứ tự từ trái sang phải: NgayVaoLam, MaNV, HoTen.
+      Lấy đúng thứ tự cột này dù chúng nằm ở vị trí khác trong bảng nguồn.
+      Không cần đặt tiêu đề mới. Thứ tự dòng không quan trọng.
+    columns: [NgayVaoLam, MaNV, HoTen]
+    ordered: false
+    kind: query
+    answer: |
+      SELECT NgayVaoLam, MaNV, HoTen FROM NhanVien;
+  - id: 2-1-3
+    title: Danh mục phòng ban có tiêu đề tiếng Việt
+    summary: Lấy tên phòng trước mã phòng và đặt tiêu đề cho cả hai cột.
+    prompt: >-
+      Chị Hạnh cần toàn bộ danh mục từ bảng PhongBan để dán vào tài liệu nội bộ.
+      Cột đầu lấy TenPB và đặt tiêu đề chính xác là Tên phòng;
+      cột thứ hai lấy MaPB và đặt tiêu đề chính xác là Mã phòng.
+      Chỉ lấy hai cột này. Thứ tự dòng không quan trọng.
+      Bộ chấm hiện chưa kiểm tra tên tiêu đề; sau khi chạy, bạn tự đối chiếu
+      hai tiêu đề trên lưới Results với yêu cầu, kể cả khi đã được chấm đúng.
+    columns: [Tên phòng, Mã phòng]
+    ordered: false
+    kind: query
+    answer: |
+      SELECT TenPB AS [Tên phòng], MaPB AS [Mã phòng] FROM PhongBan;

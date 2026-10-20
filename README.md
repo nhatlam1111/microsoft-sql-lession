@@ -7,10 +7,10 @@ Web: https://nhatlam1111.github.io/microsoft-sql-lession/
 ## Trên web có gì
 
 - **Mindmap** 8 mảng kiến thức làm trang chủ. Bấm vào một bài thì drawer tóm tắt bài mở ra; nút "Menu khóa học" mở danh sách bài.
-- **51 bài, 6 level.** Bài 1.1, 3.5 và 6.5 viết đầy đủ, các bài còn lại là bản tóm tắt. Mỗi bài có tình huống, đối chiếu Excel, câu lệnh tô màu kiểu SSMS và kết quả thật từ `HRM_Demo`.
+- **51 bài, 6 level.** Bài 1.1–1.6, 2.1, 3.5 và 6.5 viết đầy đủ, các bài còn lại là bản tóm tắt. Bài đầy đủ có tình huống, đối chiếu Excel, câu lệnh tô màu kiểu SSMS và kết quả từ `HRM_Demo`.
 - **Popup "Lộ trình của bạn"** và trạng thái từng bài (chưa học, đã xem, đã học, cần xem lại). Tiến độ lưu trong trình duyệt và xuất/nhập được bằng file JSON.
 - **Sơ đồ thứ tự chạy câu lệnh** (bài 3.5): từng bước SQL Server làm, mỗi bước có drawer giải thích và bảng dữ liệu sau bước đó.
-- **Bài tập chạy SQL trên database thật** (bài 3.5 và 6.5): viết câu lệnh, chạy (F5), nộp bài và biết đúng hay chưa. Trang có popup sơ đồ database. Mọi lần chạy đều nằm trong một transaction rồi `ROLLBACK`, nên dữ liệu không đổi. Muốn chạy cần mã truy cập, xin người phụ trách khóa học. Bài tập không có gợi ý và không có nút xem đáp án.
+- **Bài tập chạy SQL trên database thật** (bài 1.6, 2.1, 3.5 và 6.5): viết câu lệnh, chạy (F5), nộp bài và biết đúng hay chưa. Trang có popup sơ đồ database. Mọi lần chạy đều nằm trong một transaction rồi `ROLLBACK`, nên dữ liệu không đổi. Muốn chạy cần mã truy cập, xin người phụ trách khóa học. Bài tập không có gợi ý và không có nút xem đáp án. Bộ chấm không so tên cột; bài 2.1 nhắc học viên tự đối chiếu tiêu đề alias với đề.
 - **Script `HRM_Demo.sql`** tải được từ trang Giới thiệu.
 
 ## Công nghệ
@@ -169,4 +169,6 @@ Cấu hình cần có (giá trị do người phụ trách tự điền, không 
 | 2. Sơ đồ thứ tự chạy, bài tập, bài đầy đủ | [phase 2 design](docs/superpowers/specs/2026-10-18-step-flow-exercises-full-lessons-design.md) | [plan phần A và chạy thử](docs/superpowers/plans/2026-10-18-run-flow-and-runner-spike.md) |
 | 2B. Bài tập chạy SQL trên web | [spec B](docs/superpowers/specs/2026-10-18-exercise-runner-design.md) (mục 12: hiện trạng) | [plan](docs/superpowers/plans/2026-10-18-exercise-runner.md) |
 
-Việc tiếp theo là phần C: viết đầy đủ bài theo từng level, bắt đầu từ Level 1, mỗi bài có bài tập.
+Phần C đã có đầy đủ Level 1 và bài 2.1; tiếp tục viết bài theo từng level. Bài có câu lệnh có bài tập, còn bài khái niệm 1.1–1.5 có câu tự kiểm tra.
+
+Review độc lập bài 2.1: [bản review](docs/reviews/2026-10-20-bai-2-1.md). Các mục đã sửa, quyết định giữ nguyên và giới hạn kiểm live database được ghi trong spec đợt 2, mục 11.
