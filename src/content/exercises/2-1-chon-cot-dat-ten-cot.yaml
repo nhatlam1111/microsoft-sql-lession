@@ -1,13 +1,12 @@
 lesson: 2-1-chon-cot-dat-ten-cot
 exercises:
   - id: 2-1-1
-    title: Danh bạ chỉ có họ tên và email
-    summary: Lấy hai cột cần dùng để chuẩn bị danh bạ liên hệ.
+    title: Rà soát email đang lưu
+    summary: Lấy hai cột cần dùng để rà soát email của mọi hồ sơ.
     prompt: >-
-      Chị Hạnh cần bản danh bạ từ toàn bộ hồ sơ nhân viên đang lưu trong bảng NhanVien,
-      kể cả người đã nghỉ và người chưa có email. Chỉ lấy hai cột, theo thứ tự:
-      HoTen rồi Email. Không lấy mã nhân viên hay các thông tin khác.
-      Thứ tự dòng không quan trọng.
+      Chị Hạnh muốn rà soát email đang lưu của mọi hồ sơ trong bảng NhanVien, kể cả người đã nghỉ,
+      để tìm hồ sơ còn thiếu email. Chỉ lấy hai cột, theo thứ tự: HoTen rồi Email.
+      Không lấy mã nhân viên hay các thông tin khác. Thứ tự dòng không quan trọng.
     columns: [HoTen, Email]
     ordered: false
     kind: query
@@ -27,17 +26,17 @@ exercises:
     answer: |
       SELECT NgayVaoLam, MaNV, HoTen FROM NhanVien;
   - id: 2-1-3
-    title: Danh mục phòng ban có tiêu đề tiếng Việt
-    summary: Lấy tên phòng trước mã phòng và đặt tiêu đề cho cả hai cột.
+    title: Danh mục chức danh có tiêu đề tiếng Việt
+    summary: Lấy tên chức danh trước mã chức danh và đặt tiêu đề cho cả hai cột.
     prompt: >-
-      Chị Hạnh cần toàn bộ danh mục từ bảng PhongBan để dán vào tài liệu nội bộ.
-      Cột đầu lấy TenPB và đặt tiêu đề chính xác là Tên phòng;
-      cột thứ hai lấy MaPB và đặt tiêu đề chính xác là Mã phòng.
+      Chị Hạnh cần toàn bộ danh mục chức danh để dán vào tài liệu nội bộ.
+      Cột đầu là tên chức danh, đặt tiêu đề chính xác là Chức danh;
+      cột thứ hai là mã chức danh, đặt tiêu đề chính xác là Mã chức danh.
       Chỉ lấy hai cột này. Thứ tự dòng không quan trọng.
-      Bộ chấm hiện chưa kiểm tra tên tiêu đề; sau khi chạy, bạn tự đối chiếu
+      Bộ chấm không so tên tiêu đề; sau khi chạy, bạn tự đối chiếu
       hai tiêu đề trên lưới Results với yêu cầu, kể cả khi đã được chấm đúng.
-    columns: [Tên phòng, Mã phòng]
+    columns: [Chức danh, Mã chức danh]
     ordered: false
     kind: query
     answer: |
-      SELECT TenPB AS [Tên phòng], MaPB AS [Mã phòng] FROM PhongBan;
+      SELECT TenCD AS [Chức danh], MaCD AS [Mã chức danh] FROM ChucDanh;
