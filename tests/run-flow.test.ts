@@ -31,6 +31,15 @@ it('previews at most 3 rows and 3 columns and counts the rest', () => {
   expect([p.columns.length, p.rows.length, p.moreRows, p.moreCols]).toEqual([3, 3, 45, 9]);
   expect(previewOf({ ...sampleFlow()[2], rows: [], total: 0 })).toMatchObject({ rows: [], moreRows: 0 });
 });
+it('a step can choose which columns its card previews, and they must be its own', () => {
+  const step = { ...sampleFlow()[0], preview: ['MaPB', 'MaNV'] };
+  const p = previewOf(step);
+  expect(p.columns).toEqual(['MaPB', 'MaNV']);
+  expect(p.rows[0]).toEqual([step.rows[0][step.columns.indexOf('MaPB')], step.rows[0][step.columns.indexOf('MaNV')]]);
+  expect(p.moreCols).toBe(step.columns.length - 2);
+  const f = sampleFlow();
+  expect(checkFlow([{ ...f[0], preview: ['KhongCo'] }, f[1]], sampleQuery())[0]).toMatch(/^bước 1: .*KhongCo/);
+});
 it('widens the highlighted part of the query to whole lines', () => {
   const q = 'SELECT a\nFROM T\nWHERE x IS NULL   -- note\nORDER BY a;';
   expect(splitFocus(q, 'WHERE x IS NULL')).toEqual({ before: 'SELECT a\nFROM T\n', focus: 'WHERE x IS NULL   -- note', after: '\nORDER BY a;' });

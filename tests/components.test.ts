@@ -129,6 +129,12 @@ it('Excel marks the cells a lesson points at', async () => {
   expect(html).toMatch(/<td class="xl-mark"[^>]*>d<\/td>/);
   expect(html).not.toMatch(/<td class="xl-mark"[^>]*>c<\/td>/);
 });
+it('Excel can show the row numbers a filtered sheet keeps, and cell names follow them', async () => {
+  const html = await c.renderToString(Excel, { props: { rows: [['Mã'], ['NV002'], ['NV020']], rowNumbers: [1, 3, 21], mark: ['A21'] } });
+  expect(html).toMatch(/<th class="xl-rn"[^>]*>21<\/th>\s*<td class="xl-mark"[^>]*>NV020<\/td>/);
+  expect(html).toMatch(/<th class="xl-rn"[^>]*>3<\/th>/);
+  await expect(c.renderToString(Excel, { props: { rows: [['a'], ['b']], rowNumbers: [1] } })).rejects.toThrow('rowNumbers');
+});
 it('Excel aligns a real date to the right like a number, and leaves text on the left', async () => {
   const html = await c.renderToString(Excel, { props: { rows: [['Ngày'], ['01/02/2024'], ['2024.02.01']], numeric: ['A2'] } });
   expect(html).toMatch(/<td class="xl-num"[^>]*>01\/02\/2024<\/td>/);

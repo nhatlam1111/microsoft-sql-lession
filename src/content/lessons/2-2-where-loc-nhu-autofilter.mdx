@@ -4,30 +4,250 @@ title: "WHERE: lọc như AutoFilter"
 shortTitle: WHERE
 level: 2
 area: A2
-kind: summary
-minutes: 10
+kind: full
+minutes: 25
 prerequisites:
   - "2.1"
-goal: bạn lọc được danh sách nhân viên theo một điều kiện
+goal: bạn lọc được các hồ sơ theo một điều kiện về mã, trạng thái hoặc ngày và giải thích được những dòng được giữ lại
 excel: AutoFilter
-summary: Các phép so sánh =, <>, >, < để lọc theo phòng ban, trạng thái, ngày vào làm.
+summary: "WHERE giữ các dòng thỏa điều kiện: dùng = để lọc mã và chữ tiếng Việt, dùng =, <>, >, <, >=, <= để lọc ngày; SELECT chọn cột của các dòng đó."
 ---
 
-## Nội dung chính
+## Tình huống
 
-- `WHERE` giữ lại những dòng thỏa điều kiện, ví dụ `WHERE MaPB = 'KD'`.
-- Các phép so sánh: `=`, `<>`, `>`, `<`, `>=`, `<=`; chữ và ngày đặt trong dấu nháy đơn.
-- Lọc theo ngày: `WHERE NgayVaoLam >= '2026-01-01'`.
-- Lọc chữ có dấu thì thêm chữ N đứng trước: `WHERE TrangThai = N'Đang làm'`.
+Bài 2.1 giúp bạn lấy đúng các cột. Lần này, người nhận chỉ cần một nhóm hồ sơ:
 
-## Liên hệ Excel
+<Chat who="Chị Hạnh · Phòng Nhân sự" time="10:20" initial="H">
+Chị cần đối chiếu toàn bộ hồ sơ đang gán phòng Kinh doanh, mã KD, kể cả người đã nghỉ. Em lấy giúp chị mã nhân viên, họ tên, mã phòng và trạng thái nhé. Đặt tiêu đề tiếng Việt như lần trước nhé.
+</Chat>
 
-Giống AutoFilter: bấm mũi tên ở tiêu đề cột rồi chọn giá trị. Khác là điều kiện được viết ra thành chữ, lưu lại được và chạy lại y như cũ.
+**Phạm vi của tình huống:** lấy những hồ sơ trong bảng `NhanVien` đang có `MaPB` bằng `KD` trong bộ dữ liệu mẫu. Đây là mã phòng hiện lưu trên hồ sơ, không phải lịch sử phòng ban tại một thời điểm cũ. Yêu cầu không giới hạn trạng thái, ngày vào làm hay thứ tự dòng.
 
-## Tình huống ví dụ
+Nói gọn lại:
 
-Trưởng phòng Kinh doanh xin danh sách nhân viên đang làm trong phòng mình.
+<Key>Chỉ lấy các hồ sơ có MaPB bằng KD, rồi hiển thị bốn cột chị Hạnh cần.</Key>
+
+## Với Excel
+
+Giả sử sheet nhân viên có các cột mã, họ tên, mã phòng và trạng thái, xếp theo mã. Bạn chọn vùng dữ liệu có hàng tiêu đề, bật **Data > Filter**, bấm mũi tên ở cột `MaPB`, bỏ **(Select All)**, chỉ chọn `KD` rồi bấm **OK**.
+
+Đây là phần dữ liệu nhìn thấy sau khi lọc `MaPB` bằng `KD`, trích ba hồ sơ được giữ lại:
+
+<Excel sheets="NhanVien" rowNumbers={[1, 3, 4, 21]} mark={['C3', 'C4', 'C21', 'D21']} rows={[
+  ['MaNV', 'HoTen', 'MaPB', 'TrangThai'],
+  ['NV002', 'Lê Văn Hùng', 'KD', 'Đang làm'],
+  ['NV003', 'Nguyễn Thu Hà', 'KD', 'Đang làm'],
+  ['NV020', 'Kiều Thị Hạnh', 'KD', 'Đã nghỉ'],
+]} />
+
+Ba ô `KD` được đánh dấu cho thấy các hồ sơ đều đạt điều kiện phòng ban. Ô trạng thái của NV020 cũng được đánh dấu: hồ sơ đã nghỉ vẫn hiện vì bạn chưa lọc trạng thái. Số dòng bên trái nhảy từ 1 lên 3, từ 4 lên 21, vì AutoFilter ẩn những dòng không đạt điều kiện chứ không xóa chúng khỏi sheet; xóa điều kiện lọc thì bạn xem lại được các dòng đó.
+
+Với câu `SELECT` trong bài, `WHERE` xác định những dòng nào có trong kết quả. Những hồ sơ không được trả về vẫn nằm trong bảng nguồn. Trong câu sửa hay xóa dữ liệu, cũng chữ `WHERE` này quyết định dòng nào bị đổi (bài 5.3, bài 6.5); ở đây chỉ cần biết để đọc, không chạy câu đó.
+
+Excel cũng có thể lưu điều kiện lọc và áp dụng lại. Khác biệt nằm ở hai chỗ. Điều kiện của SQL nằm thành chữ ngay trong câu lệnh, ai đọc câu cũng biết đang lọc gì; trên sheet thì phải xem nút lọc của từng cột mới biết cột nào đang lọc. Và `WHERE` lọc trên dữ liệu đang lưu lúc chạy, còn AutoFilter lọc trên dữ liệu đang có trong file: nếu file là bản xuất từ hệ thống thì phải xuất lại mới có dữ liệu mới (Excel có cách lấy dữ liệu trực tiếp, bài 4.9).
+
+## Làm bằng SQL
+
+### Lý thuyết cơ bản
+
+`WHERE` là phần của câu lệnh dùng để **lọc dòng theo điều kiện**. Một điều kiện đơn giản so sánh giá trị của cột với một giá trị bạn chỉ định, như `MaPB = 'KD'`. Với mỗi dòng, `WHERE` chỉ giữ dòng khi điều kiện đúng (`TRUE`). Điều kiện sai (`FALSE`) hoặc không xác định (`UNKNOWN`) không giữ dòng. Không xác định xảy ra khi giá trị của cột ở dòng đó là NULL: chưa có giá trị thì SQL Server không biết nó bằng hay khác giá trị đem so. Phần NULL học kỹ ở bài 2.5.
+
+Cần có điều kiện vì việc chọn cột ở bài 2.1 chưa nói bạn muốn hồ sơ nào. `SELECT MaNV, HoTen` chọn hai thông tin của mỗi hồ sơ; thêm `WHERE MaPB = 'KD'` mới giới hạn nhóm hồ sơ. Bạn đã thấy `WHERE MaPB = 'VH'` ở bài 1.4; giờ là lúc đọc kỹ nó. Khi viết, thứ tự là `SELECT`, `FROM`, rồi `WHERE`. Đổi lại, SQL Server không biết ý người yêu cầu: điều kiện viết lệch ý vẫn chạy và vẫn ra một danh sách trông hợp lý. Mã phòng không tự thay cho trạng thái, ngày vào làm không tự thay cho ngày nghỉ việc, nên phải đối chiếu điều kiện với yêu cầu trước khi gửi kết quả. Trên bảng lớn, tốc độ lọc còn phụ thuộc index (bài 5.6).
+
+<Sql title="Cú pháp chung (thay tên cột, bảng và điều kiện trước khi chạy)" copy={false} code={`SELECT cac_cot_can_lay
+FROM ten_bang
+WHERE dieu_kien;`} />
+
+Ví dụ thu gọn: tạm xét ba hồ sơ trích từ bảng `NhanVien`, rồi áp dụng điều kiện `MaPB = 'KD'` cho từng hồ sơ:
+
+| MaNV | HoTen | MaPB | Điều kiện `MaPB = 'KD'` |
+|---|---|---|---|
+| NV001 | Trần Thị Mai | KT | Sai, không giữ trong kết quả |
+| NV002 | Lê Văn Hùng | KD | Đúng, giữ trong kết quả |
+| NV003 | Nguyễn Thu Hà | KD | Đúng, giữ trong kết quả |
+
+Trong ba hồ sơ này, NV002 và NV003 được giữ. Khi chạy câu lệnh trên toàn bảng, những hồ sơ KD khác cũng được giữ; ba dòng ở đây chỉ để nhìn rõ cách xét điều kiện.
+
+<Sql code={`SELECT MaNV, HoTen, MaPB
+FROM NhanVien
+WHERE MaPB = 'KD';`} />
+
+Từng phần nghĩa là gì, theo thứ tự SQL Server xét (sơ đồ ở cuối mục nói kỹ hơn):
+
+<LineMap rows={[
+  ['FROM NhanVien', 'Chỉ ra bảng nguồn chứa các hồ sơ. Ví dụ: NV001, NV002 và NV003 đều có trong nguồn trước khi xét điều kiện.'],
+  ["WHERE MaPB = 'KD'", 'Chỉ giữ dòng có giá trị MaPB bằng KD. Ví dụ: NV001 có MaPB là KT nên không được trả về; NV002 có MaPB là KD nên được trả về.'],
+  ['=', 'So sánh hai giá trị, không phải thao tác gán giá trị mới cho cột. Ví dụ: so giá trị MaPB của NV002 với chuỗi KD là đúng; câu SELECT này không chuyển NV001 từ KT sang KD.'],
+  ["'KD'", 'Chuỗi chữ dùng làm giá trị so sánh. Nháy đơn cho SQL Server biết đây là một giá trị, không phải tên cột. Ví dụ: cột MaPB lưu mã KD, không lưu tên Kinh doanh, nên cần so với KD; KD không có dấu và cột MaPB là varchar, nên không cần N.'],
+  ['SELECT MaNV, HoTen, MaPB', 'Chọn các cột của những hồ sơ đã qua điều kiện. Ví dụ: NV002 ra ba ô NV002, Lê Văn Hùng, KD; viết thêm cột không làm hồ sơ NV001 được giữ lại.'],
+]} />
+
+**Sáu phép so sánh thường dùng.** Với ngày, lớn hơn nghĩa là sau mốc, nhỏ hơn nghĩa là trước mốc. Để thấy rõ dấu bằng ở biên, xét ba giá trị ngày vào làm trong dữ liệu mẫu: NV003 là 01/06/2023, NV001 là 01/03/2024, NV002 là 01/04/2024. Bảng dưới chỉ xét ba ngày đó, với mốc 01/03/2024, trên cột kiểu `date`:
+
+| Phép so sánh | Nghĩa | Trong ba ngày mẫu, giữ ngày nào |
+|---|---|---|
+| `= '20240301'` | Bằng mốc | 01/03/2024 của NV001 |
+| `<> '20240301'` | Khác mốc | 01/06/2023 của NV003 và 01/04/2024 của NV002 |
+| `> '20240301'` | Sau mốc, không lấy ngày mốc | 01/04/2024 của NV002 |
+| `< '20240301'` | Trước mốc, không lấy ngày mốc | 01/06/2023 của NV003 |
+| `>= '20240301'` | Từ ngày mốc trở đi, gồm ngày mốc | 01/03/2024 của NV001 và 01/04/2024 của NV002 |
+| `<= '20240301'` | Đến hết ngày mốc, gồm ngày mốc (cột `date`) | 01/06/2023 của NV003 và 01/03/2024 của NV001 |
+
+Mỗi dòng trong bảng là phần so sánh sau tên cột, ví dụ `WHERE NgayVaoLam >= '20240301'`. Ở đây SQL Server đổi chuỗi `'20240301'` thành ngày rồi mới so: khi hai bên khác kiểu, kiểu `date` được ưu tiên hơn chuỗi, nên chuỗi bị đổi chứ không phải ngày. Nhờ vậy phép so theo ngày, không theo chữ. Nếu cột lưu ngày dưới dạng chữ thì phép so đi theo thứ tự chữ và có thể sai, như ví dụ ở bài 1.3. Trong câu lệnh của người khác bạn có thể gặp `!=`; trong SQL Server nó nghĩa như `<>`. Bên AutoFilter, các phép so này nằm ở Number Filters và Date Filters: chọn một phép so rồi gõ mốc, thay cho tick từng giá trị. Số thì viết không có nháy, ví dụ `WHERE LuongCoBan >= 20000000` trên bảng `HopDong` giữ 10 hợp đồng của bộ mẫu.
+
+**Lọc chữ tiếng Việt.** Tên cột viết như trong bảng; giá trị chữ đặt trong nháy đơn. Chuỗi tiếng Việt có dấu dùng tiền tố `N` để giữ Unicode, như bài 1.3:
+
+<Sql code={`SELECT MaNV, HoTen
+FROM NhanVien
+WHERE TrangThai = N'Đang làm';`} />
+
+Câu này chỉ lọc theo trạng thái, không giới hạn phòng ban. Cột `TrangThai` có thể dùng trong điều kiện dù không được đưa vào danh sách `SELECT`: SQL Server dùng cột nguồn để lọc, còn kết quả chỉ hiển thị mã và họ tên.
+
+Khác danh sách tick của AutoFilter, SQL không đưa sẵn các giá trị cho bạn chọn, nên phải gõ đúng giá trị đang lưu. Trong bộ mẫu, `TrangThai` chỉ có hai giá trị `Đang làm` và `Đã nghỉ` (45 và 3 hồ sơ), nhưng cột này không có luật giới hạn giá trị nào, nên viết khác một chữ là không khớp. Mã phòng hợp lệ xem ở bảng `PhongBan`; cách liệt kê các giá trị khác nhau của một cột có ở bài 2.6. So chữ có phân biệt hoa thường hay dấu hay không là do collation của database. Database của khóa học không phân biệt hoa thường nhưng phân biệt dấu: `'kd'` vẫn khớp `KD`, `N'đang LÀM'` vẫn khớp `Đang làm`, còn `N'Dang lam'` thì không khớp. Collation học ở bài 2.7.
+
+**Lọc ngày.** Trong câu lệnh dưới, `'20260101'` là chuỗi ngày theo dạng `yyyymmdd`: năm bốn chữ số, tháng hai chữ số, ngày hai chữ số. SQL Server chuyển chuỗi này sang kiểu `date` để so với cột `NgayVaoLam`; đây là chuyển kiểu ngầm đã gặp ở bài 1.3. Dạng tám chữ số này tránh cách hiểu nhập nhằng ngày với tháng của chuỗi như `'01/02/2026'`. Với cột `date`, viết `'2026-01-01'` như bài 1.3 cũng không bị hiểu nhầm. Từ bài này khóa học dùng `'20260101'`, vì dạng này còn an toàn với các kiểu có giờ như `datetime` (bài 1.3, Hay nhầm 1). Trong lời văn, ngày vẫn viết theo ngày/tháng/năm; SSMS hiện năm-tháng-ngày.
+
+<Sql code={`SELECT MaNV, HoTen, NgayVaoLam
+FROM NhanVien
+WHERE NgayVaoLam >= '20260101';`} />
+
+<Result columns={['MaNV', 'HoTen', 'NgayVaoLam']} rows={[
+  ['NV045', 'Ung Văn Lực', '2026-07-01'],
+  ['NV046', 'Hứa Thị Phương', '2026-09-14'],
+  ['NV047', 'Phạm Ngọc Ánh', '2026-10-01'],
+  ['NV048', 'Đỗ Minh Quân', '2026-10-05'],
+]} />
+
+Trong bộ mẫu, câu này trả bốn hồ sơ có ngày vào làm từ 01/01/2026 trở đi. Đó không phải điều kiện “chỉ trong năm 2026”: nếu sau này có hồ sơ vào làm năm 2027 thì hồ sơ đó cũng đạt điều kiện. `NgayVaoLam` ở đây là kiểu `date`, không có phần giờ. Với cột có cả ngày lẫn giờ, `'20240301'` là 00:00 ngày 01/03/2024, nên `<= '20240301'` bỏ mọi bản ghi phát sinh trong ngày đó, còn `= '20240301'` chỉ khớp bản ghi đúng nửa đêm; cách đặt mốc cho cột ngày giờ học ở bài 2.8. Các dòng trong hình có thể hiện theo thứ tự khác khi bạn chạy vì câu chưa có `ORDER BY`.
+
+Ở bài này chỉ cần lọc theo một điều kiện trên một cột. Chọn nhiều giá trị như tick nhiều ô bằng `IN`, lọc một khoảng ngày bằng `BETWEEN`, kết hợp điều kiện bằng `AND`, `OR` và tìm theo mẫu bằng `LIKE` ở bài 2.3; sắp xếp dòng và lấy `TOP` ở bài 2.4; lọc ô trống, tương ứng mục (Blanks) của AutoFilter, bằng `IS NULL`, `IS NOT NULL` ở bài 2.5; so chữ có phân biệt hoa thường, có dấu hay không ở bài 2.7.
+
+### Câu lệnh cho tình huống
+
+Điều kiện chị Hạnh cần là mã phòng trên hồ sơ bằng `KD`. Dùng `WHERE` để giữ những hồ sơ đó, rồi đặt bốn tiêu đề như cách đã học ở bài 2.1:
+
+<Sql code={`SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
+MaPB AS [Mã phòng], TrangThai AS [Trạng thái]
+FROM NhanVien
+WHERE MaPB = 'KD';`} />
+
+<Result columns={['Mã nhân viên', 'Họ tên', 'Mã phòng', 'Trạng thái']} rows={[
+  ['NV002', 'Lê Văn Hùng', 'KD', 'Đang làm'],
+  ['NV003', 'Nguyễn Thu Hà', 'KD', 'Đang làm'],
+  ['NV006', 'Đặng Quốc Bảo', 'KD', 'Đang làm'],
+  ['NV013', 'Mai Đức Anh', 'KD', 'Đang làm'],
+  ['NV016', 'Lâm Thị Kim', 'KD', 'Đang làm'],
+  ['NV020', 'Kiều Thị Hạnh', 'KD', 'Đã nghỉ'],
+]} total={14} mark={[6]} />
+
+Hình trích sáu trong tổng số **14 hồ sơ có `MaPB = 'KD'`** của bộ mẫu. Dòng được đánh dấu là NV020, trạng thái `Đã nghỉ`: hồ sơ này vẫn đúng điều kiện phòng ban và vẫn thuộc phạm vi chị Hạnh yêu cầu. Thứ tự dòng có thể khác hình; câu lệnh chưa yêu cầu sắp xếp.
+
+Bạn có thể trả lời chị Hạnh: có 14 hồ sơ đang lưu mã phòng KD, gồm 13 hồ sơ `Đang làm` và một hồ sơ `Đã nghỉ` là NV020 (theo bộ mẫu lúc viết bài; khi chạy, bạn tự kiểm bằng cột Trạng thái của 14 dòng). Danh sách gồm đúng bốn cột cần đối chiếu. Câu lệnh chỉ làm đúng điều kiện đã viết: chữ "phòng Kinh doanh" trong tin nhắn không tự mang nghĩa "đang làm". Nếu chị cần người đang làm thì thêm điều kiện trạng thái (bài 2.3); nếu cần phòng ban tại một kỳ cũ thì HRM_Demo không lưu lịch sử chuyển phòng (bài 1.5), phải tìm nguồn dữ liệu khác.
+
+### SQL Server chạy câu này thế nào
+
+Theo **thứ tự xử lý logic**, `FROM` xác định nguồn 48 hồ sơ, `WHERE` giữ 14 hồ sơ mang mã phòng KD, rồi `SELECT` chọn bốn cột và đặt tiêu đề. Sơ đồ giải thích ý nghĩa câu lệnh; khi chạy thật, SQL Server có thể chọn cách truy cập dữ liệu khác, không nhất thiết đọc hết bảng rồi bỏ từng dòng như hình minh họa. Bấm từng thẻ để mở phần giải thích; các bảng trong đó chỉ trích một phần dữ liệu và không bảo đảm thứ tự dòng khi bạn chạy.
+
+<RunFlow query={`SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
+MaPB AS [Mã phòng], TrangThai AS [Trạng thái]
+FROM NhanVien
+WHERE MaPB = 'KD';`} steps={[
+  {
+    clause: 'FROM',
+    title: 'Xác định nguồn là bảng NhanVien.',
+    focus: 'FROM NhanVien',
+    meaning: '`FROM` chỉ ra bảng có các cột dùng để lọc và hiển thị. Bảng nguồn có 12 cột.',
+    detail: 'Nguồn có 48 hồ sơ, gồm người thuộc các phòng khác nhau và cả người đã nghỉ. Chưa áp dụng điều kiện MaPB bằng KD.',
+    sql: `SELECT * FROM NhanVien;`,
+    columns: ['MaNV', 'HoTen', 'GioiTinh', 'NgaySinh', 'SoCCCD', 'Email', 'NgayVaoLam', 'NgayNghiViec', 'MaPB', 'MaCD', 'MaQuanLy', 'TrangThai'],
+    rows: [
+      ['NV001', 'Trần Thị Mai', 'Nữ', '1992-04-12', '000192131376', 'mai.tt@hrmdemo.vn', '2024-03-01', null, 'KT', 'CV', 'NV005', 'Đang làm'],
+      ['NV002', 'Lê Văn Hùng', 'Nam', '1988-09-03', '000088139295', 'hung.lv@hrmdemo.vn', '2024-04-01', null, 'KD', 'CVC', 'NV006', 'Đang làm'],
+      ['NV003', 'Nguyễn Thu Hà', 'Nữ', '1995-01-25', '000195147214', 'ha.nt@hrmdemo.vn', '2023-06-01', null, 'KD', 'CV', 'NV006', 'Đang làm'],
+    ],
+    total: 48,
+    preview: ['MaNV', 'MaPB', 'TrangThai'],
+    excel: 'Mở sheet nhân viên trước khi áp dụng bộ lọc.',
+  },
+  {
+    clause: 'WHERE',
+    title: 'Giữ các hồ sơ có mã phòng KD.',
+    focus: "WHERE MaPB = 'KD'",
+    meaning: '`WHERE` chỉ giữ dòng khi điều kiện đúng. Ở đây nó xét giá trị của cột nguồn `MaPB`, chưa đặt các tiêu đề alias.',
+    detail: 'Còn 14 hồ sơ, vẫn đủ 12 cột của nguồn. NV001 có MaPB là KT không nằm trong kết quả; NV020 có MaPB là KD nên vẫn được giữ dù đã nghỉ.',
+    sql: `SELECT * FROM NhanVien WHERE MaPB = 'KD';`,
+    columns: ['MaNV', 'HoTen', 'GioiTinh', 'NgaySinh', 'SoCCCD', 'Email', 'NgayVaoLam', 'NgayNghiViec', 'MaPB', 'MaCD', 'MaQuanLy', 'TrangThai'],
+    rows: [
+      ['NV002', 'Lê Văn Hùng', 'Nam', '1988-09-03', '000088139295', 'hung.lv@hrmdemo.vn', '2024-04-01', null, 'KD', 'CVC', 'NV006', 'Đang làm'],
+      ['NV003', 'Nguyễn Thu Hà', 'Nữ', '1995-01-25', '000195147214', 'ha.nt@hrmdemo.vn', '2023-06-01', null, 'KD', 'CV', 'NV006', 'Đang làm'],
+      ['NV020', 'Kiều Thị Hạnh', 'Nữ', '1990-05-19', '000190281837', 'hanh.kt@hrmdemo.vn', '2019-04-01', '2025-12-31', 'KD', 'CV', 'NV006', 'Đã nghỉ'],
+    ],
+    total: 14,
+    preview: ['MaNV', 'MaPB', 'TrangThai'],
+    excel: 'Bật AutoFilter ở cột MaPB và chỉ chọn KD.',
+  },
+  {
+    clause: 'SELECT',
+    title: 'Hiển thị bốn cột với tiêu đề yêu cầu.',
+    focus: `SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
+MaPB AS [Mã phòng], TrangThai AS [Trạng thái]`,
+    meaning: '`SELECT` chọn các cột trả về từ những hồ sơ đã qua điều kiện. `AS` đặt tên trong kết quả như bài 2.1.',
+    detail: 'Vẫn 14 hồ sơ nhưng chỉ còn bốn cột: Mã nhân viên, Họ tên, Mã phòng, Trạng thái. Phần chọn cột không lọc thêm trạng thái và không sửa bảng nguồn.',
+    sql: `SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
+MaPB AS [Mã phòng], TrangThai AS [Trạng thái]
+FROM NhanVien
+WHERE MaPB = 'KD';`,
+    columns: ['Mã nhân viên', 'Họ tên', 'Mã phòng', 'Trạng thái'],
+    rows: [
+      ['NV002', 'Lê Văn Hùng', 'KD', 'Đang làm'],
+      ['NV003', 'Nguyễn Thu Hà', 'KD', 'Đang làm'],
+      ['NV020', 'Kiều Thị Hạnh', 'KD', 'Đã nghỉ'],
+    ],
+    total: 14,
+    excel: 'Lấy bốn cột của các dòng đang được giữ, rồi đặt tiêu đề cho bản đối chiếu.',
+  },
+]} />
+
+## Hay nhầm ở đâu
+
+<Mistakes>
+
+1. **Chọn cột rồi tưởng đã lọc dòng.** Bỏ `WHERE MaPB = 'KD'` khỏi câu trong tình huống thì bạn nhận đủ 48 hồ sơ của bộ mẫu, vẫn với bốn cột. Điều kiện phòng ban phải nằm trong câu lệnh; chọn cột `MaPB` để xem không làm các phòng khác tự biến mất.
+2. **Đặt tên cột vào nháy đơn hoặc lấy tên phòng để so với mã.** `WHERE 'MaPB' = 'KD'` so hai chuỗi cố định khác nhau nên không giữ dòng nào. `WHERE MaPB = 'Kinh doanh'` cũng không giữ dòng nào trong bộ mẫu vì `MaPB` lưu mã như `KD`. Câu vẫn chạy thành công: lưới Results chỉ có dòng tiêu đề, tab Messages ghi `(0 rows affected)` (bài 1.6). Kết quả 0 dòng không nhất thiết là lỗi chạy câu lệnh: có thể không hồ sơ nào đạt điều kiện bạn đã viết.
+3. **Quên `N` trước chuỗi có dấu.** `WHERE TrangThai = 'Đã nghỉ'` thiếu `N`: chuỗi bị đổi theo bảng mã của database như ở bài 1.3, không còn khớp giá trị đang lưu, nên câu ra 0 dòng mà không báo lỗi; trên database của khóa học, `'Đang làm'` thiếu `N` cũng ra 0 dòng. Viết `N'Đã nghỉ'` thì ra đủ 3 hồ sơ.
+4. **Viết `"KD"` theo thói quen công thức Excel.** Trong SQL Server, nháy kép bao một tên, như tên cột, chứ không bao giá trị. `WHERE MaPB = "KD"` không chạy, tab Messages báo `Invalid column name 'KD'.` Giá trị chữ luôn đặt trong nháy đơn.
+5. **Đọc sai mốc ngày.** “Từ ngày 01/03/2024, gồm ngày đó” dùng `>= '20240301'`; dùng `> '20240301'` sẽ bỏ hồ sơ NV001 vào làm đúng ngày mốc. Viết `'01/03/2024'` theo ngày/tháng/năm thì database của khóa học (DATEFORMAT `mdy`, bài 1.3) hiểu là ngày 3 tháng 1: `= '01/03/2024'` ra 0 dòng thay vì NV001, còn `>= '01/03/2024'` tình cờ ra cùng 11 hồ sơ như `>= '20240301'`, chỉ vì không ai vào làm từ 03/01 tới 29/02/2024. Kết quả đúng trên bộ mẫu chưa chứng minh câu đúng. Bỏ nháy, `>= 20260101`, thì vế phải là một con số chứ không phải chuỗi ngày, và câu báo `Operand type clash: date is incompatible with int`.
+6. **Dùng alias của SELECT trong WHERE cùng câu.** Với `MaPB AS [Mã phòng]`, điều kiện vẫn viết theo cột nguồn `MaPB`. `WHERE [Mã phòng] = 'KD'` không chạy, tab Messages báo `Invalid column name 'Mã phòng'.`, vì theo thứ tự logic `WHERE` xét trước `SELECT`, nên alias chưa có ở bước lọc (bài 2.1). Ngoặc vuông không làm alias trở thành cột của bảng nguồn.
+7. **Tưởng “khác một giá trị” sẽ lấy cả NULL.** `WHERE Email <> 'mai.tt@hrmdemo.vn'` không giữ NV044 và NV045 có Email là NULL. Với hai dòng này, phép so sánh cho kết quả không xác định (`UNKNOWN`), không phải đúng, nên hai dòng không qua `WHERE`. Cách yêu cầu lấy cả giá trị thiếu học ở bài 2.5.
+8. **Tưởng lọc KD là chỉ người đang làm ở Kinh doanh.** Điều kiện mã phòng không kiểm tra trạng thái. NV020 vẫn được giữ đúng yêu cầu ban đầu. Nếu cần đồng thời mã phòng và trạng thái, phải viết rõ cả hai điều kiện; cách kết hợp bằng `AND` ở bài 2.3.
+
+</Mistakes>
+
+## Ứng dụng
+
+<Apply>
+
+- Khi nhận yêu cầu danh sách, tách rõ cột cần hiển thị với điều kiện chọn hồ sơ. “Có cột trạng thái” và “chỉ lấy người đang làm” là hai yêu cầu khác nhau.
+- Khi đối chiếu một con số hoặc danh sách, kiểm tra câu lọc có cùng mã phòng, trạng thái và mốc ngày với yêu cầu hay chưa. Cùng một bảng nhưng khác điều kiện có thể cho những nhóm hồ sơ khác nhau.
+- Khi câu lệnh chạy thành công nhưng trả 0 dòng, kiểm tra trước khi kết luận database thiếu dữ liệu: đúng cột nguồn chưa; giá trị đang lưu là mã hay tên (mã phòng xem ở bảng `PhongBan`; với cột khác, chọn cột đó ra xem vài dòng như bài 2.1); chuỗi có dấu đã có `N` chưa; mốc ngày đã viết dạng năm-tháng-ngày chưa. Kết quả còn phụ thuộc dữ liệu tại lúc chạy.
+
+</Apply>
+
+## Ghi nhớ
+
+<Memo rows={[
+  ['AutoFilter chọn KD trong cột MaPB', "WHERE MaPB = 'KD'"],
+  ['Chỉ hiện những dòng đạt điều kiện', 'WHERE giữ TRUE, bỏ FALSE và UNKNOWN'],
+  ['Đổi cột cần xem sau khi lọc', 'SELECT chọn cột của những hồ sơ đã qua WHERE'],
+  ['Lọc một giá trị chữ tiếng Việt', "WHERE TrangThai = N'Đang làm'"],
+  ['Date Filters, từ ngày 01/01/2026 trở đi', "WHERE NgayVaoLam >= '20260101'"],
+  ['Xem lại tất cả dòng của nguồn', 'Bỏ điều kiện WHERE khỏi câu SELECT đang đọc một bảng'],
+]} />
+
+**Tự đối chiếu trước khi làm bài:** giải thích được vì sao NV020 vẫn xuất hiện khi lọc `MaPB = 'KD'`, và vì sao chọn thêm cột `TrangThai` không tự loại hồ sơ đã nghỉ.
 
 ## Bài tập
+
+Ba bài thực hành lần lượt lọc theo mã phòng, trạng thái tiếng Việt và ngày vào làm. Mỗi bài chỉ cần một điều kiện; thứ tự dòng không quan trọng, còn cột cần trả về phải đúng vị trí đề yêu cầu.
 
 <Exercises />

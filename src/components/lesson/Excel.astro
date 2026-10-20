@@ -9,12 +9,16 @@ interface Props {
   mark?: string[];
   /** Cells written as text here but holding a real date or number in Excel, so they sit on the right like numbers. */
   numeric?: string[];
+  /** Row numbers on the left, one per row, when they are not 1, 2, 3…: a filtered sheet keeps the numbers of its hidden rows. Cell names follow them. */
+  rowNumbers?: number[];
 }
-const { rows, cell, formula, sheets, selected, mark = [], numeric = [] } = Astro.props;
+const { rows, cell, formula, sheets, selected, mark = [], numeric = [], rowNumbers } = Astro.props;
+if (rowNumbers && rowNumbers.length !== rows.length) throw new Error(`Excel: rowNumbers có ${rowNumbers.length} số, bảng có ${rows.length} dòng`);
+const rowNo = (ri: number) => rowNumbers?.[ri] ?? ri + 1;
 const ERROR_VALUE = /^#(N\/A|VALUE!|REF!|DIV\/0!|NAME\?|NUM!|NULL!)$/;
 const width = Math.max(...rows.map(r => r.length));
 const letters = Array.from({ length: width }, (_, i) => String.fromCharCode(65 + i));
-const refs = new Set(rows.flatMap((_, ri) => letters.map(l => `${l}${ri + 1}`)));
+const refs = new Set(rows.flatMap((_, ri) => letters.map(l => `${l}${rowNo(ri)}`)));
 for (const m of [...mark, ...numeric]) if (!refs.has(m)) throw new Error(`Excel: không có ô ${m} trong bảng`);
 const cellClass = (value: string | number, ref: string) =>
   [ERROR_VALUE.test(String(value)) && 'xl-err', ref === selected && 'xl-sel', mark.includes(ref) && 'xl-mark', (typeof value === 'number' || numeric.includes(ref)) && 'xl-num']
@@ -31,8 +35,8 @@ const cellClass = (value: string | number, ref: string) =>
       <tbody>
         {rows.map((r, ri) => (
           <tr class={ri === 0 ? 'xl-first' : undefined}>
-            <th class="xl-rn">{ri + 1}</th>
-            {letters.map((l, ci) => <td class={cellClass(r[ci] ?? '', `${l}${ri + 1}`)}>{r[ci] ?? ''}</td>)}
+            <th class="xl-rn">{rowNo(ri)}</th>
+            {letters.map((l, ci) => <td class={cellClass(r[ci] ?? '', `${l}${rowNo(ri)}`)}>{r[ci] ?? ''}</td>)}
           </tr>
         ))}
       </tbody>

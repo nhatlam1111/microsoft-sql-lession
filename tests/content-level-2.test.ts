@@ -21,6 +21,12 @@ describe('fixes from the independent reviews of 2026-10-20', () => {
     ['giúp bảng nguồn thêm cột mà', 'hiện chưa kiểm tra tên tiêu đề', 'người nhận cần trường nào', 'Kể cả khi nhiều người có cùng ngày vào làm', 'NhanVien;: kết quả',
       'như `N\'Đang làm\'`, đã gặp ở bài 1.3', 'vì sao câu lệnh tiếp theo']));
 
+  it('2.2 shows what the common slips return, why dates use eight digits, and keeps the picture of a filtered sheet honest', () => check('2-2-where-loc-nhu-autofilter',
+    ['Đặt tiêu đề tiếng Việt', "Invalid column name 'KD'", 'Operand type clash', "Invalid column name 'Mã phòng'", 'tình cờ ra cùng 11 hồ sơ', "'2026-01-01'", 'datetime',
+      '(0 rows affected)', 'không phân biệt hoa thường', 'phân biệt dấu', '!=', 'Date Filters', 'IN', 'BETWEEN', '(Blanks)', 'bài 2.7', 'rowNumbers={[1, 3, 4, 21]}',
+      "preview: ['MaNV', 'MaPB', 'TrangThai']", '13 hồ sơ', 'Đang làm` và `Đã nghỉ', 'bài 6.5', 'được ưu tiên hơn', 'trông hợp lý'],
+    ['sau khi lọc MaPB = KD"', "WHERE MaPB = N'Kinh doanh'", 'SQL không tự suy ra yêu cầu đó từ tên phòng', 'WHERE giữ TRUE; FALSE']));
+
   it('2.1 exercise 3 cannot be passed by a query printed in the lesson', () => {
     const ex = exercises('2-1-chon-cot-dat-ten-cot');
     const third = ex.find(e => e.id === '2-1-3')!;

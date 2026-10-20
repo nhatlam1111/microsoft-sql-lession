@@ -255,3 +255,66 @@ Không làm theo:
 - Thêm phần đổi dạng hiển thị ngày vào bài 2.8: bài 2.8 dạy hàm tính ngày; bài 2.1 nói định dạng ở Excel.
 
 Kiểm tra: `npm test` 215 test qua (thêm `tests/content-level-2.test.ts`, đã thấy đỏ trước khi sửa); `npm run check` 0 lỗi; `npm run build` và `npm run check:dist` qua, 65 trang, 1.314 link. `npm --prefix api run check:exercises` vẫn chưa chạy được vì cần thông tin kết nối SQL; ba đáp án đã được chạy bằng `SELECT` qua công cụ chỉ đọc.
+
+## 12. Bài 2.2 đầy đủ và review độc lập (2026-10-20)
+
+Bài `2-2-where-loc-nhu-autofilter` chuyển thành bài đầy đủ, 20 phút, nối tiếp bài 2.1. Phạm vi là một điều kiện trên một cột: sáu phép so sánh, mã phòng, trạng thái tiếng Việt và ngày. Tình huống lấy toàn bộ hồ sơ hiện lưu `MaPB = 'KD'`, kể cả người đã nghỉ, với bốn cột để đối chiếu. RunFlow có ba bước `FROM` → `WHERE` → `SELECT`, số dòng theo seed là 48 → 14 → 14. Ba bài tập lần lượt lọc KT, trạng thái Đã nghỉ và ngày vào làm từ 01/10/2026 gồm ngày mốc; không yêu cầu thứ tự dòng.
+
+Review do một agent mới thực hiện theo vai người học khó tính, không mang ngữ cảnh lúc viết và không truy cập database: [bản review 36 mục](../../reviews/2026-10-20-bai-2-2.md). Reviewer đối chiếu DDL, INSERT và UPDATE bằng parser văn bản riêng, xác nhận các dòng và giá trị khớp seed; không coi kết quả đó là kiểm chạy T-SQL live.
+
+### Đã sửa
+
+- Bọc `MaPB = 'KD'` trong tiêu đề bảng bằng code span, giữ dấu nháy đơn thẳng ở HTML thay vì để trình biên dịch đổi sang nháy cong.
+- Trong Memo, chuyển lời chú thích ngày 01/01/2026 sang nhãn bên Excel; phần bên SQL chỉ còn điều kiện hợp lệ `WHERE NgayVaoLam >= '20260101'`.
+- Thay từ “drawer” bằng hướng dẫn bấm từng thẻ để mở phần giải thích, giúp người học biết cách đọc dữ liệu của từng bước.
+- Rút câu kết quả phụ thuộc quyền truy cập trong mục Ứng dụng, giữ ý dữ liệu có thể thay đổi theo lúc chạy; không mở thêm chủ đề phân quyền trong bài WHERE.
+- Cập nhật danh mục kiểm thử để bài 2.2 là `full`, README để chỉ đúng các bài đầy đủ, bài có bài tập và bản review.
+
+### Không làm theo
+
+- Chưa đổi cột trên thẻ xem trước của RunFlow: component hiện lấy ba cột đầu và chưa hỗ trợ cấu hình cột xem trước theo từng bước. Đề xuất review chỉ áp dụng nếu khả năng đó đã có; không mở rộng component trong thay đổi bài học này. Mã phòng và trạng thái vẫn có trong bảng đầy đủ của phần giải thích; hướng dẫn mở thẻ đã được làm rõ.
+- Giữ phạm vi một điều kiện; không thêm bài dạy AND/OR/IN/BETWEEN/LIKE, ORDER BY/TOP hay xử lý NULL sâu. Các chủ đề đó được chỉ đến bài kế tiếp. Không thêm kiểm thử chỉ để so từng câu văn; dùng kiểm cấu trúc hiện có, đối chiếu dữ liệu và kiểm bản build.
+
+### Kiểm tra và giới hạn
+
+- `npm test`: 213 test qua. Danh mục bài 2.2 đã được kiểm ở trạng thái thất bại trước khi chuyển sang `full`, rồi qua cùng bộ kiểm cấu trúc hiện có.
+- `npm run check`: 0 lỗi, 0 warning và 3 hint có sẵn ở các thành phần không đổi.
+- `npm run build`, `npm run check:dist`: 68 trang, 1.344 link; đủ ba trang bài tập mới, không có câu đáp án trong tài nguyên gửi ra web.
+- API kiểm kiểu và build qua, gói đủ 14 bài tập.
+- Kiểm cục bộ bằng SQLite nạp dữ liệu từ seed: mọi ô trích trong Excel/Result/RunFlow, các tổng dòng 48/14/4, sáu ví dụ so sánh và các bẫy NULL/0 dòng khớp. Ba đáp án ra 7, 3 và 2 dòng, đúng thứ tự cột. Bài tập ngày giữ NV047 đúng mốc và NV048 sau mốc. Kiểm SQLite chuẩn hóa chuỗi `yyyymmdd` sang dạng ISO khi so với cột ngày, không mô phỏng việc chuyển kiểu ngầm của SQL Server; ngữ nghĩa T-SQL được đối chiếu tài liệu Microsoft trong review.
+- Kiểm Chromium ở 1440px và 1280px: nội dung, bốn ô Excel được đánh dấu, dòng NV020 đã nghỉ, ba bước và điều hướng phần giải thích, ba link bài tập và đề có ngày mốc đều đúng; không có lỗi JavaScript hay tràn ngang toàn trang ở desktop. Giữ thông báo dành cho máy tính dưới 1024px theo thiết kế hiện có.
+- **Chưa xác minh live Azure SQL/API:** `npm --prefix api run check:exercises` dừng trước khi kết nối vì thiếu `SQL_SERVER`, `SQL_DATABASE`, `SQL_USER`, `SQL_PASSWORD`. Không có câu nào được gửi xuống database khóa học. Cần cấu hình hợp lệ và chạy lại kiểm đáp án cùng các câu minh họa bằng `SELECT` để hoàn tất bước kiểm database thật. PR giữ trạng thái draft và dựa trên nhánh bài 2.1 trong khi PR bài 2.1 chưa merge.
+
+### Review độc lập lượt hai (2026-10-20)
+
+Một agent mới, không đọc bản review ở trên, review lại theo `docs/lesson-template.md`, "Quy trình làm một bài": `temp/review/2026-10-20-doc-lap/review-bai-2-2-where-loc-nhu-autofilter.md` trong repo chính, 61 mục (3 Cần sửa, 20 Cần làm rõ, 10 Biên tập, 28 Giữ được). Các điều bản review ghi "chưa xác minh" được chạy bằng `SELECT` trên database khóa học. Kết quả:
+
+- `TrangThai = 'Đã nghỉ'` và `'Đang làm'` thiếu `N` đều ra 0 dòng, còn `N'Đã nghỉ'` ra 3.
+- `MaPB = "KD"` báo `Invalid column name 'KD'.`; `NgayVaoLam >= 20260101` báo `Operand type clash: date is incompatible with int`; `WHERE [Mã phòng] = 'KD'` báo `Invalid column name 'Mã phòng'.`
+- Ngày dạng ngày/tháng/năm: `>= '01/10/2026'` ra 4 hồ sơ, `>= '20261001'` ra 2; `= '01/03/2024'` ra 0; `>= '01/03/2024'` và `>= '20240301'` cùng ra 11.
+- So chữ: `'kd'` ra 14; `N'đang LÀM'` ra 45; `N'Dang lam'` ra 0.
+- Giá trị của `TrangThai`: chỉ có `Đang làm` (45) và `Đã nghỉ` (3), và script không khai báo CHECK nào. KD có 1 hồ sơ đã nghỉ.
+- Các con số khác: `!=` chạy như `<>`; 10 hợp đồng có `LuongCoBan >= 20000000`; `MaPB = N'Kế toán'` ra 0; ba đáp án ra 7, 3 và 2 dòng.
+
+Đã sửa:
+
+- Tin nhắn của chị Hạnh có yêu cầu đặt tiêu đề tiếng Việt, nên alias trong câu lệnh và thẻ SELECT có lý do.
+- Component: `Excel` có thuộc tính `rowNumbers`, hình sau khi lọc hiện số dòng 1, 3, 4, 21 và tên ô theo số đó. `RunFlow` cho mỗi bước chọn cột xem trước (`preview`), và `checkFlow` báo khi cột không có trong `columns`. Bước `FROM` và `WHERE` xem trước `MaNV`, `MaPB`, `TrangThai`. Việc này thay cho mục "Không làm theo" đầu tiên ở trên.
+- Hay nhầm có thêm các lỗi đã chạy ra kết quả thật: quên `N`, nháy kép, ngày dạng ngày/tháng/năm, bỏ nháy quanh ngày, alias `[Mã phòng]` trong `WHERE`. Ví dụ tên phòng đổi thành `'Kinh doanh'` (không dấu, không cần `N`) và tả kết quả 0 dòng trong SSMS.
+- Lý thuyết và ví dụ:
+  - Vì sao so với NULL ra `UNKNOWN`; cái giá của `WHERE` (điều kiện lệch ý vẫn ra danh sách trông hợp lý; index ở bài 5.6); nối với `WHERE MaPB = 'VH'` của bài 1.4; `WHERE` trong câu sửa dữ liệu (bài 5.3, 6.5).
+  - Vì sao chuỗi được đổi thành ngày (kiểu `date` được ưu tiên hơn chuỗi); cột có giờ và mốc 00:00; vì sao từ bài này dùng `'20260101'` thay cho `'2026-01-01'`.
+  - `!=`; Number Filters, Date Filters; số không có nháy; hoa thường và dấu trên database khóa học; `TrangThai` chỉ có hai giá trị nhưng không có luật giới hạn.
+  - Hai khác biệt có điều kiện giữa `WHERE` và AutoFilter.
+  - Đoạn "Ở bài này chỉ cần…" nhắc `IN`, `BETWEEN`, mục (Blanks) và collation.
+- Câu trả lời cho chị Hạnh nói rõ 13 hồ sơ đang làm, 1 hồ sơ đã nghỉ, và viết lại câu "SQL không tự suy ra…".
+- Biên tập: tóm tắt bài, tên sheet chỉ còn `NhanVien`, "Nói gọn lại", LineMap nói thứ tự SQL Server xét và vì sao `'KD'` có nháy mà không cần `N`, Ghi nhớ bỏ dấu `;` trong lời và ghi Date Filters, danh sách kiểm khi ra 0 dòng. Thời gian đọc 25 phút.
+
+Không làm theo:
+
+- Đổi hồ sơ đã nghỉ minh họa để khỏi trùng tên với chị Hạnh: trong KD chỉ có NV020 đã nghỉ; bài luôn gọi bằng mã.
+- Ví dụ `'01/10/2026'` ra 4 dòng thay vì 2: đúng là bẫy của bài tập 3, nên nêu ra thì lộ số dòng của đáp án. Hay nhầm dùng `'01/03/2024'` để cho thấy cùng lỗi.
+- Thêm bài tập dùng `<`: giữ ba bài tập; phép `<` có trong bảng sáu phép so sánh.
+- Nhắc dấu `=` là gán sau `SET` của `UPDATE`: để bài 5.3.
+
+Kiểm tra: `npm test` 218 test qua (test mới cho `rowNumbers`, `preview` và nội dung 2.2 đã thấy đỏ trước khi sửa); `npm run check` 0 lỗi; `npm run build` và `npm run check:dist` qua, 68 trang, 1.345 link. `npm --prefix api run check:exercises` vẫn chưa chạy được vì cần thông tin kết nối SQL.
