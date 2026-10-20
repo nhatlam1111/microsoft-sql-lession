@@ -1,0 +1,41 @@
+lesson: 2-2-where-loc-nhu-autofilter
+exercises:
+  - id: 2-2-1
+    title: Hồ sơ mang mã phòng Kế toán
+    summary: Lọc đúng mã phòng và lấy ba cột cần đối chiếu.
+    prompt: >-
+      Chị Hạnh cần tất cả hồ sơ trong bảng NhanVien đang lưu mã phòng KT,
+      kể cả người đã nghỉ nếu có. Lấy đúng ba cột theo thứ tự: MaNV, HoTen, MaPB.
+      Không giới hạn thêm theo trạng thái hay ngày vào làm. Thứ tự dòng không quan trọng.
+    columns: [MaNV, HoTen, MaPB]
+    ordered: false
+    kind: query
+    answer: |
+      SELECT MaNV, HoTen, MaPB FROM NhanVien WHERE MaPB = 'KT';
+  - id: 2-2-2
+    title: Hồ sơ có trạng thái Đã nghỉ
+    summary: Lọc theo trạng thái và xem ngày nghỉ việc đang lưu.
+    prompt: >-
+      Lấy mọi hồ sơ của bảng NhanVien có TrangThai bằng Đã nghỉ, ở mọi phòng ban.
+      Trả về đúng bốn cột theo thứ tự: MaNV, HoTen, NgayNghiViec, TrangThai.
+      Chọn hồ sơ theo trạng thái đang lưu, không thêm điều kiện về ngày nghỉ việc.
+      Thứ tự dòng không quan trọng.
+    columns: [MaNV, HoTen, NgayNghiViec, TrangThai]
+    ordered: false
+    kind: query
+    answer: |
+      SELECT MaNV, HoTen, NgayNghiViec, TrangThai FROM NhanVien WHERE TrangThai = N'Đã nghỉ';
+  - id: 2-2-3
+    title: Vào làm từ đầu tháng 10 năm 2026
+    summary: Lọc từ mốc ngày và giữ cả hồ sơ vào làm đúng ngày mốc.
+    prompt: >-
+      Lấy mọi hồ sơ của bảng NhanVien có ngày vào làm từ 01/10/2026 trở đi,
+      bao gồm cả ngày 01/10/2026. Đây là ngày 1 tháng 10 năm 2026;
+      không giới hạn phòng ban hay trạng thái, và không đặt ngày kết thúc khoảng lọc.
+      Trả về đúng ba cột theo thứ tự: MaNV, HoTen, NgayVaoLam.
+      Thứ tự dòng không quan trọng.
+    columns: [MaNV, HoTen, NgayVaoLam]
+    ordered: false
+    kind: query
+    answer: |
+      SELECT MaNV, HoTen, NgayVaoLam FROM NhanVien WHERE NgayVaoLam >= '20261001';

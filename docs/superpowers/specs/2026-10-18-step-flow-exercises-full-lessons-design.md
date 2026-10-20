@@ -229,3 +229,32 @@ Không có đề xuất review nào bị bác. Giữ các quyết định chung:
 - Đối chiếu cục bộ bằng SQLite trong bộ nhớ, nạp DDL/INSERT từ script chuẩn và chuyển cách gán quản lý sang câu tương đương: các cột, tổng dòng và mọi ô được trích trong Result/RunFlow/Excel khớp script; ba đáp án ra lần lượt 48, 48 và 6 dòng, đúng thứ tự cột. Đây là kiểm tính nhất quán với dữ liệu nguồn, **không phải** kiểm chạy T-SQL trên SQL Server.
 - Kiểm trong Chromium ở 1440px và 1280px: nội dung, ô đánh dấu, hai drawer RunFlow, điều hướng bài tập và nhắc tự đối chiếu alias hiển thị đúng; không có lỗi JavaScript hay tràn ngang toàn trang ở hai kích thước desktop này. Dưới 1024px vẫn là giao diện desktop và có thông báo máy tính theo thiết kế đã chốt; không làm responsive trong thay đổi này.
 - **Chưa xác minh live Azure SQL/API:** `npm --prefix api run check:exercises` dừng trước khi kết nối vì thiếu `SQL_SERVER`, `SQL_DATABASE`, `SQL_USER`, `SQL_PASSWORD`. Không có câu nào được gửi xuống database khóa học. Khi có cấu hình kết nối hợp lệ, cần chạy lại lệnh này và kiểm các câu minh họa bằng `SELECT` trước khi coi lượt kiểm database đã hoàn tất.
+
+## 12. Bài 2.2 đầy đủ và review độc lập (2026-10-20)
+
+Bài `2-2-where-loc-nhu-autofilter` chuyển thành bài đầy đủ, 20 phút, nối tiếp bài 2.1. Phạm vi là một điều kiện trên một cột: sáu phép so sánh, mã phòng, trạng thái tiếng Việt và ngày. Tình huống lấy toàn bộ hồ sơ hiện lưu `MaPB = 'KD'`, kể cả người đã nghỉ, với bốn cột để đối chiếu. RunFlow có ba bước `FROM` → `WHERE` → `SELECT`, số dòng theo seed là 48 → 14 → 14. Ba bài tập lần lượt lọc KT, trạng thái Đã nghỉ và ngày vào làm từ 01/10/2026 gồm ngày mốc; không yêu cầu thứ tự dòng.
+
+Review do một agent mới thực hiện theo vai người học khó tính, không mang ngữ cảnh lúc viết và không truy cập database: [bản review 36 mục](../../reviews/2026-10-20-bai-2-2.md). Reviewer đối chiếu DDL, INSERT và UPDATE bằng parser văn bản riêng, xác nhận các dòng và giá trị khớp seed; không coi kết quả đó là kiểm chạy T-SQL live.
+
+### Đã sửa
+
+- Bọc `MaPB = 'KD'` trong tiêu đề bảng bằng code span, giữ dấu nháy đơn thẳng ở HTML thay vì để trình biên dịch đổi sang nháy cong.
+- Trong Memo, chuyển lời chú thích ngày 01/01/2026 sang nhãn bên Excel; phần bên SQL chỉ còn điều kiện hợp lệ `WHERE NgayVaoLam >= '20260101'`.
+- Thay từ “drawer” bằng hướng dẫn bấm từng thẻ để mở phần giải thích, giúp người học biết cách đọc dữ liệu của từng bước.
+- Rút câu kết quả phụ thuộc quyền truy cập trong mục Ứng dụng, giữ ý dữ liệu có thể thay đổi theo lúc chạy; không mở thêm chủ đề phân quyền trong bài WHERE.
+- Cập nhật danh mục kiểm thử để bài 2.2 là `full`, README để chỉ đúng các bài đầy đủ, bài có bài tập và bản review.
+
+### Không làm theo
+
+- Chưa đổi cột trên thẻ xem trước của RunFlow: component hiện lấy ba cột đầu và chưa hỗ trợ cấu hình cột xem trước theo từng bước. Đề xuất review chỉ áp dụng nếu khả năng đó đã có; không mở rộng component trong thay đổi bài học này. Mã phòng và trạng thái vẫn có trong bảng đầy đủ của phần giải thích; hướng dẫn mở thẻ đã được làm rõ.
+- Giữ phạm vi một điều kiện; không thêm bài dạy AND/OR/IN/BETWEEN/LIKE, ORDER BY/TOP hay xử lý NULL sâu. Các chủ đề đó được chỉ đến bài kế tiếp. Không thêm kiểm thử chỉ để so từng câu văn; dùng kiểm cấu trúc hiện có, đối chiếu dữ liệu và kiểm bản build.
+
+### Kiểm tra và giới hạn
+
+- `npm test`: 213 test qua. Danh mục bài 2.2 đã được kiểm ở trạng thái thất bại trước khi chuyển sang `full`, rồi qua cùng bộ kiểm cấu trúc hiện có.
+- `npm run check`: 0 lỗi, 0 warning và 3 hint có sẵn ở các thành phần không đổi.
+- `npm run build`, `npm run check:dist`: 68 trang, 1.344 link; đủ ba trang bài tập mới, không có câu đáp án trong tài nguyên gửi ra web.
+- API kiểm kiểu và build qua, gói đủ 14 bài tập.
+- Kiểm cục bộ bằng SQLite nạp dữ liệu từ seed: mọi ô trích trong Excel/Result/RunFlow, các tổng dòng 48/14/4, sáu ví dụ so sánh và các bẫy NULL/0 dòng khớp. Ba đáp án ra 7, 3 và 2 dòng, đúng thứ tự cột. Bài tập ngày giữ NV047 đúng mốc và NV048 sau mốc. Kiểm SQLite chuẩn hóa chuỗi `yyyymmdd` sang dạng ISO khi so với cột ngày, không mô phỏng việc chuyển kiểu ngầm của SQL Server; ngữ nghĩa T-SQL được đối chiếu tài liệu Microsoft trong review.
+- Kiểm Chromium ở 1440px và 1280px: nội dung, bốn ô Excel được đánh dấu, dòng NV020 đã nghỉ, ba bước và điều hướng phần giải thích, ba link bài tập và đề có ngày mốc đều đúng; không có lỗi JavaScript hay tràn ngang toàn trang ở desktop. Giữ thông báo dành cho máy tính dưới 1024px theo thiết kế hiện có.
+- **Chưa xác minh live Azure SQL/API:** `npm --prefix api run check:exercises` dừng trước khi kết nối vì thiếu `SQL_SERVER`, `SQL_DATABASE`, `SQL_USER`, `SQL_PASSWORD`. Không có câu nào được gửi xuống database khóa học. Cần cấu hình hợp lệ và chạy lại kiểm đáp án cùng các câu minh họa bằng `SELECT` để hoàn tất bước kiểm database thật. PR giữ trạng thái draft và dựa trên nhánh bài 2.1 trong khi PR bài 2.1 chưa merge.
