@@ -23,10 +23,19 @@ function rowY(table: DbTable, column: string): number {
   return at.y + BOX.head + i * BOX.row + BOX.row / 2;
 }
 
-/** One elbow line per foreign key, from the edge of its table to the edge of the table it points to. */
+/** Gap between two vertical lanes that share the space between the same two columns of boxes. */
+const LANE = 12;
+
+/**
+ * One elbow line per foreign key, from the edge of its table to the edge of the table it points to.
+ * Links that end at the same key may share their vertical stretch; links that end at different keys get
+ * their own lane, so two lines never merge into one that seems to join the wrong columns.
+ */
 export function diagramLinks(tables: DbTable[]): DiagramLink[] {
   const byName = new Map(tables.map(t => [t.name, t]));
-  const links: DiagramLink[] = [];
+  type Elbow = { x1: number; y1: number; mid: number; y2: number; x2: number; from: string; to: string };
+  const elbows: Elbow[] = [];
+  const links: (DiagramLink | Elbow)[] = [];
   for (const table of tables) {
     for (const fk of table.foreignKeys) {
       const target = byName.get(fk.refTable);
@@ -43,11 +52,24 @@ export function diagramLinks(tables: DbTable[]): DiagramLink[] {
         continue;
       }
       const [x1, x2] = from < to ? [from + BOX.width, to] : [from, to + BOX.width];
-      const mid = (x1 + x2) / 2;
-      links.push({ d: `M${x1} ${y1} H${mid} V${y2} H${x2}`, dot: { x: x1, y: y1 }, ...ends });
+      const elbow = { x1, y1, mid: (x1 + x2) / 2, y2, x2, ...ends };
+      elbows.push(elbow);
+      links.push(elbow);
     }
   }
-  return links;
+  // Spread the elbows that share a gap over one lane per target key, in the order the keys first appear.
+  const lanes = new Map<number, string[]>();
+  for (const e of elbows) {
+    const keys = lanes.get(e.mid) ?? [];
+    if (!keys.includes(e.to)) keys.push(e.to);
+    lanes.set(e.mid, keys);
+  }
+  return links.map(l => {
+    if ('d' in l) return l;
+    const keys = lanes.get(l.mid)!;
+    const x = l.mid + (keys.indexOf(l.to) - (keys.length - 1) / 2) * LANE;
+    return { d: `M${l.x1} ${l.y1} H${x} V${l.y2} H${l.x2}`, dot: { x: l.x1, y: l.y1 }, from: l.from, to: l.to };
+  });
 }
 
 export interface DiagramPath { tables: Set<string>; columns: Set<string>; links: Set<number> }

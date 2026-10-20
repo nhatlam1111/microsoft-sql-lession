@@ -64,6 +64,8 @@ it('the diagram lights up a path: its tables, the joining columns and the links 
   expect(html.match(/class="er-row is-on"/g)).toHaveLength(4);
   expect(html.match(/class="er-link is-on"/g)).toHaveLength(2);
   expect(renderToStaticMarkup(createElement(DbDiagram, { tables }))).not.toContain('is-on');
+  // SVG paints in order: the lit links come last so grey lines never cover them.
+  expect(html.lastIndexOf('class="er-link"')).toBeLessThan(html.indexOf('class="er-link is-on"'));
 });
 
 it('the done hint can ask to explain the lesson instead of rewriting a query', () => {

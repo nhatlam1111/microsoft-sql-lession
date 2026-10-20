@@ -220,11 +220,11 @@ Không làm theo:
 
 - Đổi tên mục "Làm bằng SQL" hay tiêu đề "SQL Server chạy câu này thế nào": tên cố định theo khuôn bài (mục 3.1); thay vào đó, đoạn mở đầu và câu nhắc nói rõ đây là thứ tự logic.
 - Thêm `dbo.` vào mọi câu lệnh: cả khóa viết tên bảng không kèm schema; bài 1.2 và 1.6 giải thích `dbo.PhongBan`, `dbo.NhanVien`.
-- Sửa sơ đồ ERD (ký hiệu số lượng, dấu NULL, tách các đoạn đường trùng, phóng to): phần chữ của bài 1.5 đã nói `MaQuanLy` nhận NULL và quan hệ 0, 1 hoặc nhiều; sửa hình là việc riêng nếu cần.
+- Sửa sơ đồ ERD (ký hiệu số lượng, dấu NULL, tách các đoạn đường trùng, phóng to): phần chữ của bài 1.5 đã nói `MaQuanLy` nhận NULL và quan hệ 0, 1 hoặc nhiều; sửa hình là việc riêng nếu cần. Phần tách đường trùng được làm ở mục 15.
 - Thêm bài tập về `TOP` ở 1.6: `TOP` không có `ORDER BY` không chấm được một cách xác định; `ORDER BY` ở bài 2.4.
 - Gợi ý "Đã học xong" riêng cho 1.6: gợi ý chung cho mọi bài có câu lệnh, giữ nguyên.
 - Các mục "Giữ được" và các mục chỉ xin thêm nhãn "mô phỏng" cho hình SSMS, kết quả: hình trong bài đều là minh họa, không đánh nhãn từng hình.
-- Khẳng định Azure SQL Database không có mục Database Diagrams trong SSMS được giữ (khóa học dùng sơ đồ trên trang); thêm ý cần cài phần hỗ trợ và quyền db_owner khi tự cài trên máy.
+- Khẳng định Azure SQL Database không có mục Database Diagrams trong SSMS được giữ (khóa học dùng sơ đồ trên trang); thêm ý cần cài phần hỗ trợ và quyền db_owner khi tự cài trên máy. Đổi ở mục 15.
 
 ## 13. Quy ước mới sau lượt đọc của người làm khóa học (2026-10-19)
 
@@ -244,3 +244,46 @@ Ba vòng sửa ở mục 11–13 đều sửa cùng những loại lỗi: hứa 
 - Quy tắc viết đã gom vào `docs/lesson-template.md` (mục "Quy tắc viết", "Ghi chú về các tiểu mục"), và các test trong `tests/content.test.ts` giữ những quy tắc kiểm được bằng máy (không câu hỏi trong lý thuyết, có chỉ tới bài sau, "Ví dụ:" trong `LineMap`, không hàm tổng hợp ở Level 1). Khi viết Level 2, mở rộng các test này cho Level 2 (hàm tổng hợp được dùng từ bài 3.1).
 - Mỗi bài đi theo "Quy trình làm một bài" của file đó: chạy số liệu trước khi viết, tự rà theo danh sách, kiểm bằng máy, rồi **review độc lập**: một agent mới, model mạnh nhất, đóng vai người học khó tính theo đúng lời dặn ghi trong file, chỉ đọc file (không chạy gì trên database), ghi kết quả ra `temp/review/<ngày>-doc-lap/review-bai-<slug>.md`. Người viết kiểm từng mục, sửa mục đúng, ghi "Đã sửa" và "Không làm theo" vào spec của level.
 - Plan của mỗi level có một bước review độc lập trong task của từng bài (xem mục "Cho plan các level sau" ở plan Level 1), và người làm khóa học chỉ đọc bài sau khi đã qua bước đó.
+
+## 15. Sửa sau lượt review độc lập bài 1.1–1.6 (2026-10-19, 2026-10-20)
+
+Lượt review đầu tiên theo quy trình ở mục 14: sáu agent mới, mỗi agent một bài, chỉ đọc file, không đọc bản review cũ (`temp/review/2026-10-19-doc-lap/review-bai-<slug>.md`). Số mục: 1.1 có 57 (4 Cần sửa), 1.2 có 58 (4), 1.3 có 61 (3), 1.4 có 67 (3), 1.5 có 41 (3), 1.6 có 49 (4). Mọi con số đưa vào bài được chạy lại trên database khóa học bằng `SELECT` trước khi sửa, ví dụ: 43 dòng lương kỳ 2026-09, thiếu NV020, NV033, NV041 (đã nghỉ trước tháng 9) và NV047, NV048 (vào làm tháng 10); NV046 có 1 kỳ lương; chấm công chỉ có từ 2026-09-03 tới 2026-09-30; 21 hồ sơ mang mã CV, gồm NV020 đã nghỉ; `TOP (10)` của `NhanVien` ra NV001–NV010, `TOP (2)` của `PhongBan` ra BGD, IT; schema mặc định là `dbo`; 48 hồ sơ nhưng chỉ 47 số CCCD khác nhau.
+
+Đã sửa:
+
+- **1.1**: giả định nhân vật là hư cấu; ô C4, D4, A3, A5 được tô, ngày thật căn phải; ràng buộc chỉ được kiểm "khi đang bật"; nói T-SQL; "thống nhất chưa chắc đã đúng"; khóa chính, kiểu ngày không bắt được gì; SSMS ghi hẳn ngay; "Trả lời chị Hạnh" tách việc nghiệp vụ với việc hệ thống; câu tự kiểm tra thứ tư.
+- **1.2**: tả hộp kết nối kiểu mới (Server Name, Authentication, User Name, Password, Database Name, Encrypt, Trust Server Certificate) thay cho hộp kiểu cũ; điều kiện máy và mạng (Windows, cổng 1433); Disconnect; cài máy chủ trên máy riêng (localhost, Windows Authentication); chỉ chạy những câu chỉ đọc có trong bài; thời gian đọc 25 phút.
+- **1.3**: giả định cách file được đưa vào; mỗi ô trong file xếp vào ba khả năng ở bảng "Ô trong file | Database làm gì | Cần làm gì"; `CAST` cắt chuỗi mà không báo, còn `INSERT` từ chối; chuỗi rỗng vào cột ngày thành 1900-01-01; DATEFORMAT và ví dụ 31/12; viết ngày dạng `'20240201'`; lỗi tràn số (Arithmetic overflow); câu tự kiểm tra thứ tư.
+- **1.4**: liệt kê đủ bảy khóa ngoại, kể cả `MaCD` và `MaQuanLy`; giả định của tình huống; khóa chính không nhận NULL và vì sao; vẫn kiểm khi nạp hàng loạt; `nv001` trùng `NV001`; mỗi bảng tối đa một khóa chính; khóa ngoại trỏ tới khóa chính hoặc cột có ràng buộc duy nhất; chỉ cần `REFERENCES`; NO ACTION và ON DELETE CASCADE; đổi mã VH cũng bị chặn; cách đọc bốn phần của thông báo lỗi 547 (Msg là số hiệu lỗi, FOREIGN KEY và REFERENCE constraint); báo cáo chạy lại khác báo cáo đã xuất; `SoCCCD` không có ràng buộc UNIQUE (bài 4.6); câu tự kiểm tra về `FK_NhanVien_ChucDanh`.
+- **1.5**:
+  - Sơ đồ: đường được tô vẽ sau cùng để nét xám không đè lên; các đường đi tới khóa khác nhau có trục dọc riêng (`diagramLinks`, cách nhau 12px), nên không còn đoạn thẳng giả nối `PhongBan.MaPB` với `NhanVien.MaNV`.
+  - Lý do 43 dòng: bỏ "vì câu bắt đầu từ bảng lương" (với `JOIN`, thứ tự bảng không đổi kết quả); nêu năm người không có lương kỳ này và vì sao không dòng lương nào bị rơi.
+  - Đọc sơ đồ: "có thể có nhiều" ở `ChamCong`, `BangLuong`, có số cho người có 1 kỳ hoặc chưa có kỳ nào; bước 1 nói rõ PK kèm FK (khóa hai cột, `MaNV` một mình vẫn lặp lại); bước 2 nói vì sao bên được trỏ tới là phía "một", nên đi về phía đó không làm tăng số dòng.
+  - Lý thuyết: VLOOKUP chỉ lấy dòng khớp đầu tiên (thêm vào Ghi nhớ); Excel cũng có Data Model; "mỗi thông tin chỉ phải lưu và sửa ở một chỗ", với `LuongCoBan` cố ý chép sang `BangLuong` (bài 5.1); chữ "thực thể"; chấm tròn ở đầu khóa ngoại; database không khai báo khóa ngoại thì sơ đồ không có đường nối; ký hiệu chìa khóa và ∞ của SSMS; một-một và nhiều-nhiều; sơ đồ không ghi NULL.
+  - Ví dụ và dẫn bài: ví dụ khóa chính đổi sang ngày 2026-09-03 (1/9 là ngày nghỉ lễ); "21 hồ sơ mang mã CV"; thời điểm dữ liệu ở bài 6.6.
+  - Database Diagrams: tạo `sysdiagrams` và thủ tục trong database, cần `db_owner`, trình vẽ sửa được bảng.
+  - Câu tự kiểm tra thứ tư; thời gian đọc 25 phút.
+- **1.6**:
+  - Đếm hồ sơ, không đếm người ("48 dòng, mỗi dòng một hồ sơ"; "10 hồ sơ").
+  - Cách chạy: bôi đen lại trọn câu thay cho "bỏ bôi đen rồi chạy lại"; F5 không bôi đen chạy mọi câu, nên nhìn lại cả cửa sổ trước khi chạy.
+  - Soát sau import: `TOP (10)` chỉ có ích trên bảng chứa riêng đợt nhập, vì trên bảng có sẵn dòng cũ, 10 dòng có thể toàn là dòng cũ; trỏ bài 5.5, 2.2, 3.1, 2.5, 4.6.
+  - Khép tình huống: gửi danh sách cột kèm ý nghĩa, che `SoCCCD`, `Email`, `NgaySinh`; quyền với dữ liệu cá nhân ở bài 6.1. Bảng lưu mã chứ không lưu tên.
+  - Các câu "vì sao": cái giá của `*`; số thứ tự bên trái lưới; vì sao `TOP` trông ổn định trên bảng nhỏ (bài 5.6); `TOP 10` không ngoặc; bỏ được `dbo.` vì schema mặc định; hoa thường; dấu `;` và `WITH`; thứ tự logic dùng để làm gì; `TOP` có `ORDER BY` thường phải xét hết.
+  - SSMS: ví dụ `SELECT INTO` chỉ để đọc; chú thích thanh công cụ nói ô viền xanh và nút Parse.
+  - Trang bài tập: F5 gửi cả khung soạn, chỉ nhận một câu; dòng `--` là ghi chú.
+  - Lưới kết quả: NULL thật khác chữ "NULL"; Copy with Headers; Completion time; Select Top 1000 Rows an toàn.
+  - Bài học trước và bài tập: thêm bài 1.4 vào phần cần biết trước; Ghi nhớ so Count của Excel với thanh trạng thái SSMS; đề bài tập 2 ghi "kể cả hợp đồng thử việc", đề bài tập 3 ghi "mọi loại nghỉ, mọi trạng thái"; thời gian đọc 20 phút.
+- **Chung**: thẻ đầu tiên của `RunFlow` ghi "có N dòng", các thẻ sau ghi "còn N dòng" (bước đầu chưa bỏ dòng nào).
+
+Đổi so với mục 12:
+
+- Tách đường trùng trên sơ đồ ERD: mục 12 để lại, vì khi đó hình chưa tô đường đi. Từ khi có `path` (mục 13), chỗ trùng che đúng phần được tô và tạo một đường thẳng giả giữa hai cột đang tô, nên đã sửa. Ký hiệu số lượng và dấu NULL vẫn không thêm vào hình; phần chữ nói thay.
+- Câu "Azure SQL Database không có mục Database Diagrams trong SSMS": tài liệu Microsoft ghi các trang Database Diagrams áp dụng cho cả Azure SQL Database, nên bỏ khẳng định chung. Bài chỉ nói vì sao không dùng mục này trên máy chủ khóa học: nó ghi thêm đối tượng vào database dùng chung và cần `db_owner`.
+
+Không làm theo:
+
+- 1.5, đổi màu nhãn FK cho khác màu tô: chú thích và câu dẫn đã nói phần tô gồm hộp viền đậm, dòng nền xanh, đường nét dày; đổi màu nhãn là đổi giao diện chung của sơ đồ.
+- 1.5, đường vòng `MaQuanLy` nhập vào đoạn cuối của đường `BangLuong`: cả hai cùng đi tới `NhanVien.MaNV`, nên chỗ nhập không nói sai cột nào.
+- 1.6, tô riêng `TOP (10)` và `*` trên cùng một dòng của `RunFlow`: component tô theo dòng; phần chữ của từng bước đã nói đúng. Viết câu lệnh thành ba dòng chỉ để tô thì lệch cách viết của cả khóa.
+- 1.6, nhắc cột ẩn của temporal table khi dùng `*`: để bài 6.6.
+- Các mục "Giữ được" và các gợi ý ghi "không bắt buộc" mà bài đã trả lời ở chỗ khác. Không mục nào của 1.1–1.4 đi ngược quyết định đã chốt.

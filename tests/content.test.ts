@@ -206,6 +206,26 @@ describe('fixes from the independent reviews of 2026-10-19', () => {
   it('1.3 states how the file goes in, sorts every cell into the three outcomes, and covers the silent cases', () => check('1-3-bang-cot-kieu-du-lieu',
     ['Giả định của tình huống', 'NV00000000', '1900-01-01', 'vì không có tháng 31', 'Arithmetic overflow', "'20240201'", 'Database làm gì', '=ISTEXT(C3)', 'numeric={', 'không dùng để cộng trừ'],
     ['có người gõ 2024-02-01', 'giá trị trống, chưa có', 'mọi phép so sánh thành so sánh chữ', 'Bên IT nói đúng một nửa', 'một việc riêng của người quản trị', 'không lẻ giây', 'hàm ngày và `CAST` ở bài 2.8']));
+  it('1.4 lists every foreign key, states its assumptions, and teaches how to read the error lines', () => check('1-4-khoa-chinh-khoa-ngoai',
+    ['Giả định của tình huống', '`NhanVien.MaCD` trỏ sang `ChucDanh.MaCD`', 'chỉ cần `REFERENCES`', 'Msg là số hiệu lỗi', 'REFERENCE constraint', 'thư mục Keys', 'chứ không chỉ ở từng màn hình', 'Ai quản lý những người chuyển sang', 'không có ràng buộc UNIQUE'],
+    ['Đây chính là lỗi bên IT gặp', 'thay cho kiểm ở từng màn hình', 'nghỉ từ 2026-06-30', 'các hồ sơ con']));
+  it('1.5 says why each side is "one" or "many", who the 43 rows leave out, and what Database Diagrams writes', () => check('1-5-doc-so-do-erd',
+    ['chỉ lấy dòng đầu tiên', 'Data Model', 'thực thể', 'chấm tròn', 'một-một', 'nhiều-nhiều', 'cả cặp', 'không làm tăng số dòng', 'không ghi cột nào nhận NULL',
+      'NV020, NV033, NV041', 'NV047, NV048', 'không dòng lương nào bị rơi', '2026-09-03', 'gồm NV020 đã nghỉ', 'Một người có thể có nhiều dòng chấm công',
+      'Một người có thể có nhiều dòng lương', 'sysdiagrams', 'db_owner', 'bài 5.1', 'không có đường nối nào', 'ở bài 6.6'],
+    ['vì câu bắt đầu từ bảng lương', 'Azure SQL Database không có', 'cũng là cả khóa chính', 'nên phải xem thêm', '21 người là Chuyên viên', 'Đây là sơ đồ, cũng là sơ đồ',
+      'mỗi thông tin chỉ nằm ở một chỗ', 'được khai báo đủ', 'cặp NV001 và ngày 2026-09-01', 'bài 3.4 và 3.5 sẽ học']));
+  it('1.6 counts records not people, keeps the run advice safe, answers the small whys and closes the scenario without personal data', () => check('1-6-cau-select-dau-tien',
+    ['48 dòng, mỗi dòng một hồ sơ', 'Bôi đen lại trọn câu', 'chỉ để đọc, đừng chạy', 'Mỗi lần chỉ chạy một câu lệnh', 'là ghi chú', 'bài 6.1', 'SoCCCD',
+      'chỉ là số thứ tự trong kết quả', 'bài 5.6', 'TOP 10', 'schema mặc định', 'phiên bản sau', 'Copy with Headers', 'Completion time', 'Select Top 1000 Rows',
+      'mã phòng ban, mã chức danh', 'có thể toàn là dòng cũ', 'bài 2.2', 'bài 3.1', 'bài 4.6', 'thường phải xét hết', 'Ô có viền xanh', 'Parse', '10 hồ sơ'],
+    ['48 người, mỗi người một dòng', 'Bấm vào chỗ trống trong cửa sổ để bỏ bôi đen rồi chạy lại', 'sẽ học ở các bài sau', 'luật của từng cột xem ở Object Explorer',
+      'Nhìn thanh trạng thái đếm số dòng', 'của 10 người là đủ', 'đó là 10 người nào']));
+  it('1.6 exercises ask for the whole table without hinting at a filter', () => {
+    const y = readFileSync('src/content/exercises/1-6-cau-select-dau-tien.yaml', 'utf8');
+    for (const s of ['hợp đồng lao động', 'kể cả những ô đang là NULL (để trống)']) expect(y, s).not.toContain(s);
+    for (const s of ['kể cả hợp đồng thử việc', 'mọi loại nghỉ, mọi trạng thái']) expect(y, s).toContain(s);
+  });
   it('pictures of Excel put real dates on the right', () => {
     for (const slug of ['1-1-database-la-gi', '1-3-bang-cot-kieu-du-lieu', '1-6-cau-select-dau-tien']) {
       expect(readLessonFiles().find(f => f.slug === slug)!.body, slug).toMatch(/<Excel[^>]*numeric=\{/);
@@ -267,7 +287,7 @@ describe('fixes from the final review', () => {
   });
   it('summaries state the corrected facts', () => {
     expect(body('1-5-doc-so-do-erd')).toContain('`MaPB`, `MaCD`');
-    expect(body('1-5-doc-so-do-erd')).toContain('Azure SQL Database không có');
+    expect(body('1-5-doc-so-do-erd')).toContain('máy chủ của khóa học');
     expect(body('5-2-rang-buoc-du-lieu')).toContain('BULK INSERT');
     expect(body('6-6-temporal-table')).toContain('UTC');
   });

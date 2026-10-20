@@ -61,7 +61,8 @@ export function DbDiagram({ tables, path = [] }: { tables: DbTable[]; path?: str
   return (
     <div className="er" style={{ width: DIAGRAM_SIZE.width, height: DIAGRAM_SIZE.height }}>
       <svg width={DIAGRAM_SIZE.width} height={DIAGRAM_SIZE.height} aria-hidden="true">
-        {links.map((l, i) => (
+        {/* SVG paints in document order: lit links go last so the grey ones never cover them. */}
+        {links.map((l, i) => ({ l, i })).sort((a, b) => Number(lit.links.has(a.i)) - Number(lit.links.has(b.i))).map(({ l, i }) => (
           <g key={i}>
             <path d={l.d} className={on('er-link', lit.links.has(i))} />
             {l.dot && <circle cx={l.dot.x} cy={l.dot.y} r={3} className={on('er-dot', lit.links.has(i))} />}

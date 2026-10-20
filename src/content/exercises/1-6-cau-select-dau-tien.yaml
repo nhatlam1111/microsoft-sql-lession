@@ -13,11 +13,12 @@ exercises:
       SELECT * FROM ChucDanh;
   - id: 1-6-2
     title: Toàn bộ hợp đồng
-    summary: Xem mọi hợp đồng, kể cả các ô ngày kết thúc để trống.
+    summary: Xem mọi hợp đồng, kể cả hợp đồng chưa có ngày kết thúc.
     prompt: >-
-      Kế toán hỏi danh sách tất cả hợp đồng lao động đang lưu trên hệ thống, đủ mọi cột:
-      mã hợp đồng, mã nhân viên ký hợp đồng, loại hợp đồng, ngày bắt đầu, ngày kết thúc và lương cơ bản,
-      kể cả những ô đang là NULL (để trống). Thứ tự dòng không quan trọng.
+      Kế toán hỏi danh sách mọi hợp đồng đang lưu trong bảng hợp đồng, kể cả hợp đồng thử việc, đủ mọi cột:
+      mã hợp đồng, mã nhân viên ký hợp đồng, loại hợp đồng, ngày bắt đầu, ngày kết thúc và lương cơ bản.
+      Trong kết quả sẽ có ô NgayKetThuc là NULL: trong dữ liệu mẫu, đó là hợp đồng chưa có ngày kết thúc.
+      Thứ tự dòng không quan trọng.
     columns: [MaHD, MaNV, LoaiHD, NgayBatDau, NgayKetThuc, LuongCoBan]
     ordered: false
     kind: query
@@ -27,9 +28,9 @@ exercises:
     title: Toàn bộ đơn nghỉ phép
     summary: Xem mọi đơn nghỉ phép, có ngày nghỉ và số ngày.
     prompt: >-
-      Trước khi chốt công tháng, chị Hạnh muốn xem toàn bộ đơn nghỉ phép đang lưu,
-      đủ mọi cột: mã đơn, mã nhân viên nghỉ, loại nghỉ, từ ngày, đến ngày, số ngày và trạng thái duyệt.
-      Thứ tự dòng không quan trọng.
+      Trước khi chốt công tháng, chị Hạnh muốn xem bảng đơn nghỉ đang lưu những gì: lấy toàn bộ đơn
+      (mọi loại nghỉ, mọi trạng thái), đủ mọi cột: mã đơn, mã nhân viên nghỉ, loại nghỉ, từ ngày, đến ngày,
+      số ngày và trạng thái duyệt. Lọc theo tháng hay trạng thái học ở bài 2.2. Thứ tự dòng không quan trọng.
     columns: [MaDon, MaNV, LoaiNghi, TuNgay, DenNgay, SoNgay, TrangThai]
     ordered: false
     kind: query

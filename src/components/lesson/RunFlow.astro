@@ -49,7 +49,7 @@ const views = steps.map((step, i) => {
             <span class="rf-clause">{v.clause.map(t => (t.kind === 'plain' ? t.text : <span class={`t-${t.kind}`}>{t.text}</span>))}</span>
           </span>
           <span class="rf-title">{v.step.title}</span>
-          <span class="rf-count">còn {v.count} dòng</span>
+          <span class="rf-count">{i === 0 ? 'có' : 'còn'} {v.count} dòng</span>
           {v.preview.rows.length === 0
             ? <span class="rf-empty">Không còn dòng nào</span>
             : (

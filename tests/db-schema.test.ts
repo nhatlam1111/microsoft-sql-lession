@@ -31,6 +31,20 @@ it('a path through the diagram names its tables, the joining columns and the lin
   expect(() => diagramPath(tables, ['BangLuong', 'PhongBan'])).toThrow('BangLuong');
 });
 
+it('links that end at different keys never share a stretch of vertical line, so no false joint appears', () => {
+  const links = diagramLinks(tables);
+  const vertical = (d: string) => {
+    const m = d.match(/^M\d+ (\d+) H(\d+) V(\d+)/)!;
+    const [y1, x, y2] = [Number(m[1]), Number(m[2]), Number(m[3])];
+    return { x, lo: Math.min(y1, y2), hi: Math.max(y1, y2) };
+  };
+  for (const a of links) for (const b of links) {
+    if (a === b || a.to === b.to) continue;
+    const [va, vb] = [vertical(a.d), vertical(b.d)];
+    if (va.x === vb.x) expect(va.hi <= vb.lo || vb.hi <= va.lo, `${a.from}>${a.to} and ${b.from}>${b.to}`).toBe(true);
+  }
+});
+
 it('the sample script starts with a UTF-8 BOM, so SSMS and sqlcmd read its Vietnamese text as UTF-8', () => {
   expect([...readFileSync('database/HRM_Demo.sql').subarray(0, 3)]).toEqual([0xEF, 0xBB, 0xBF]);
 });
