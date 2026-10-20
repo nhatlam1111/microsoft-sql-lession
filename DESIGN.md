@@ -174,6 +174,8 @@ Color/border/shadow feedback uses 140ms; overlay entrances use 200ms and `cubic-
 
 Copy, links, SQL, data, level order and progress meanings are unchanged. Diagrams communicate existing relationships; their coordinates and teaching highlights are not decoration.
 
+HRM_Demo relationship lines show `1` beside the referenced primary key and `∞` beside the foreign key, including the employee/manager loop. These indicate the one and many sides, not whether a value is required. Keep labels outside table boxes, share labels at common endpoints, and color them with the highlighted path. Both lesson diagrams and the database popup use the same component and legend.
+
 ## Do's and Don'ts
 
 - Do derive shared visual decisions from the canonical CSS tokens and verify a sibling screen.

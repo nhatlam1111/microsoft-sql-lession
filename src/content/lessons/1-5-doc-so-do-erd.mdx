@@ -51,17 +51,28 @@ Dữ liệu trong database thường được tách thành nhiều bảng để 
 
 Sơ đồ vẽ từ database chỉ có những đường nối đã được khai báo thành khóa ngoại. Nhiều database không khai báo khóa ngoại mà để phần mềm tự giữ luật; sơ đồ vẽ từ database đó không có đường nối nào, dù các bảng vẫn liên quan và vẫn kết được với nhau. Ngược lại, sơ đồ vẽ tay trong tài liệu có thể có cả những quan hệ chưa được khai báo. Ký hiệu cũng khác nhau giữa các công cụ: Database Diagrams của SSMS vẽ hình chìa khóa ở phía "một", hình ∞ ở phía "nhiều", và nét đứt cho ràng buộc không được kiểm khi ghi.
 
-Cả bảy đường nối trong HRM_Demo là quan hệ **một-nhiều**: một dòng ở bảng được trỏ tới có thể được 0, 1 hoặc nhiều dòng ở bảng kia trỏ về. Ngoài ra còn có quan hệ **một-một** (mỗi mã ở cột khóa ngoại cũng chỉ xuất hiện tối đa một lần) và **nhiều-nhiều** (một người làm nhiều dự án, một dự án có nhiều người); database tách nhiều-nhiều thành một bảng ở giữa, nối về hai bên bằng hai quan hệ một-nhiều. HRM_Demo không có hai kiểu này. Biết phía nào là "nhiều" quan trọng vì nó quyết định số dòng khi lấy dữ liệu từ hai bảng cùng lúc: đi từ một người sang các hợp đồng của người đó, một dòng có thể thành ba dòng. Cách đọc một đường nối trong sơ đồ này:
+<Erd path={['BangLuong', 'NhanVien', 'PhongBan']} caption="Tô xanh: BangLuong → NhanVien → PhongBan, nối qua MaNV rồi MaPB. 1 là phía một, ∞ là phía nhiều. PK là khóa chính, FK là khóa ngoại; đầu có chấm tròn là cột FK." />
 
-1. Tìm cột có nhãn FK, ví dụ `NhanVien.MaPB`. Trong HRM_Demo, không cột FK nào tự nó bị ràng buộc không trùng, nên một mã lặp lại được ở nhiều dòng: bên chứa cột FK là phía "nhiều". `BangLuong.MaNV` và `ChamCong.MaNV` mang cả nhãn PK lẫn FK vì mỗi cột là một trong hai cột của khóa chính. Cái không được trùng là cả cặp (kỳ lương và mã NV, hoặc mã NV và ngày), nên `MaNV` một mình vẫn lặp lại qua các kỳ, các ngày, và hai bảng này vẫn là phía "nhiều". Ở sơ đồ khác, nếu một mình cột FK đã là toàn bộ khóa chính, hoặc có ràng buộc UNIQUE, thì mỗi mã xuất hiện tối đa một lần: đó là quan hệ một-một.
-2. Đi theo đường nối tới bảng nó trỏ tới, ví dụ `PhongBan`. Đó là phía "một": cột được trỏ tới là khóa chính, mỗi mã phòng chỉ có ở một dòng, nên mỗi dòng nhân viên khớp tối đa một dòng phòng ban. Vì thế đi từ phía "nhiều" sang phía "một" không làm tăng số dòng; đi theo chiều ngược lại, từ phòng ban sang nhân viên, thì có thể.
-3. Đọc thành câu: một phòng ban có thể có nhiều nhân viên; mỗi nhân viên thuộc đúng một phòng ban, vì `NhanVien.MaPB` là `NOT NULL` và khóa ngoại bắt nó trỏ tới một mã phòng có thật.
+Các kiểu quan hệ giữa các bảng:
+
+Trên sơ đồ và trong các ký hiệu dưới đây, `1` là phía "một", `∞` là phía "nhiều".
+
+- **Một-nhiều (1 — ∞):** một dòng ở bảng được trỏ tới có thể được 0, 1 hoặc nhiều dòng ở bảng kia trỏ về. Cả bảy đường nối trong HRM_Demo đều thuộc kiểu này.
+- **Một-một (1 — 1):** mỗi mã ở cột khóa ngoại cũng chỉ xuất hiện tối đa một lần. HRM_Demo không có kiểu quan hệ này.
+- **Nhiều-nhiều (∞ — ∞):** một người làm nhiều dự án, một dự án có nhiều người. Database tách nhiều-nhiều thành một bảng ở giữa, nối về hai bên bằng hai quan hệ một-nhiều. HRM_Demo không có kiểu quan hệ này.
+
+Cách đọc một quan hệ giữa 2 bảng, ví dụ: Quan hệ giữa `PhongBan` và `NhanVien` có thể đọc từ hai phía:
+
+- **Từ bảng `PhongBan`:** một phòng ban, ví dụ KT (Kế toán), có thể có 0, 1 hoặc nhiều nhân viên trong bảng `NhanVien` (`PhongBan` 1 — ∞ `NhanVien`).
+- **Từ bảng `NhanVien`:** mỗi nhân viên thuộc đúng một phòng ban. Ví dụ, nhân viên có `MaPB` là KT thì thuộc phòng Kế toán (`NhanVien` ∞ — 1 `PhongBan`).
+
+Vì vậy, đây là quan hệ **một-nhiều**: `PhongBan` là phía "một", `NhanVien` là phía "nhiều".
+
+**Lưu ý:** `BangLuong.MaNV` và `ChamCong.MaNV` có cả nhãn PK và FK nhưng chỉ là một phần của khóa chính. Chỉ cả cặp giá trị mới không được trùng; riêng `MaNV` vẫn được lặp, nên hai bảng này vẫn ở phía "nhiều". Nếu riêng cột FK đã là toàn bộ khóa chính hoặc có ràng buộc `UNIQUE` (không trùng), thì đó là quan hệ một-một.
 
 Sơ đồ này không ghi cột nào nhận NULL. Muốn biết `MaPB` bắt buộc có giá trị còn `MaQuanLy` được để trống, xem chữ trong ngoặc sau tên cột ở Object Explorer (bài 1.3). "Đúng một phòng" cũng là điều thiết kế này ghi được, chưa chắc là sự thật nghiệp vụ: hồ sơ chỉ có một ô `MaPB`, nên nếu công ty có người kiêm nhiệm hai phòng thì đó là câu hỏi cho thiết kế (bài 5.1).
 
 Trong HRM_Demo, bảng `NhanVien` nằm giữa: hợp đồng, chấm công, đơn nghỉ phép và bảng lương nối về nó qua `MaNV`, còn nó nối sang phòng ban và chức danh qua `MaPB`, `MaCD`. Sơ đồ dưới đây giống sơ đồ mở bằng nút "Sơ đồ database" trên trang bài tập, chỉ khác là ở đó không có phần tô; sơ đồ rộng, cuộn ngang để xem hết. Phần tô xanh (hộp viền đậm, dòng nền xanh, đường nét dày) là đường đi cho câu hỏi của chị Hạnh, phân tích ở dưới:
-
-<Erd path={['BangLuong', 'NhanVien', 'PhongBan']} caption="Tô xanh: BangLuong → NhanVien → PhongBan, nối qua MaNV rồi MaPB. PK là khóa chính, FK là khóa ngoại; đường nối đi từ cột khóa ngoại (đầu có chấm tròn) tới khóa chính của bảng nó trỏ tới." />
 
 Ví dụ thu gọn, mỗi đường nối một dòng, kèm con số đếm trên toàn bộ dữ liệu mẫu, chưa lọc trạng thái hay thời điểm (riêng chấm công, dữ liệu mẫu chỉ có tháng 9/2026):
 

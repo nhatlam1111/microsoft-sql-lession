@@ -15,7 +15,16 @@ export const DIAGRAM_POSITIONS: Record<string, { x: number; y: number }> = {
 };
 
 /** from and to are "Table.Column": the foreign key and the key it points to. */
-export interface DiagramLink { d: string; dot: { x: number; y: number } | null; from: string; to: string }
+export interface DiagramLink {
+  d: string;
+  dot: { x: number; y: number } | null;
+  from: string;
+  to: string;
+  /** Both ends sit just outside their table; all seven HRM_Demo foreign keys are many-to-one. */
+  markers: { x: number; y: number; symbol: '1' | '∞'; column: string }[];
+}
+
+export const DIAGRAM_LEGEND = '1 là phía "một", ∞ là phía "nhiều". PK là khóa chính, FK là khóa ngoại; đầu có chấm tròn là cột FK.';
 
 function rowY(table: DbTable, column: string): number {
   const at = DIAGRAM_POSITIONS[table.name];
@@ -48,7 +57,10 @@ export function diagramLinks(tables: DbTable[]): DiagramLink[] {
       if (table === target) {
         // A table pointing at itself (NhanVien.MaQuanLy): loop out on the right.
         const x = from + BOX.width;
-        links.push({ d: `M${x} ${y1} H${x + 22} V${y2} H${x}`, dot: null, ...ends });
+        links.push({ d: `M${x} ${y1} H${x + 22} V${y2} H${x}`, dot: null, ...ends, markers: [
+          { x: x + 12, y: y1, symbol: '∞', column: ends.from },
+          { x: x + 12, y: y2, symbol: '1', column: ends.to },
+        ] });
         continue;
       }
       const [x1, x2] = from < to ? [from + BOX.width, to] : [from, to + BOX.width];
@@ -68,7 +80,11 @@ export function diagramLinks(tables: DbTable[]): DiagramLink[] {
     if ('d' in l) return l;
     const keys = lanes.get(l.mid)!;
     const x = l.mid + (keys.indexOf(l.to) - (keys.length - 1) / 2) * LANE;
-    return { d: `M${l.x1} ${l.y1} H${x} V${l.y2} H${l.x2}`, dot: { x: l.x1, y: l.y1 }, from: l.from, to: l.to };
+    const direction = Math.sign(l.x2 - l.x1);
+    return { d: `M${l.x1} ${l.y1} H${x} V${l.y2} H${l.x2}`, dot: { x: l.x1, y: l.y1 }, from: l.from, to: l.to, markers: [
+      { x: l.x1 + direction * 12, y: l.y1, symbol: '∞', column: l.from },
+      { x: l.x2 - direction * 12, y: l.y2, symbol: '1', column: l.to },
+    ] };
   });
 }
 

@@ -226,7 +226,7 @@
 
 /* ---------- Database diagram popup (exercise page) ---------- */
 .dbd-backdrop { position: fixed; inset: 0; z-index: 55; display: grid; place-items: center; padding: 24px; background: var(--scrim); }
-.dbd { max-width: min(880px, 100%); max-height: calc(100vh - 48px); display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius-l); box-shadow: var(--shadow-l); outline: none; }
+.dbd { min-width: 0; max-width: min(880px, 100%); max-height: calc(100vh - 48px); display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius-l); box-shadow: var(--shadow-l); outline: none; }
 .dbd-head { position: relative; display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; padding: 20px 60px 16px 24px; border-bottom: 1px solid var(--rule); background: var(--surface-subtle); border-radius: var(--radius-l) var(--radius-l) 0 0; }
 .dbd-head h2 { margin: 0; font-size: 17px; font-weight: 700; }
 .dbd-head p { margin: 0; font-size: 13px; color: var(--ink-3); }
@@ -238,9 +238,11 @@
 .er svg { position: absolute; inset: 0; }
 .er-link { fill: none; stroke: var(--control-line); stroke-width: 1.4; }
 .er-dot { fill: var(--control-line); }
+.er-cardinality { fill: var(--ink-2); font-size: 13px; font-weight: 700; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round; paint-order: stroke fill; }
 /* A path a lesson follows: its tables, joining columns and links. */
 .er-link.is-on { stroke: var(--accent); stroke-width: 2.4; }
 .er-dot.is-on { fill: var(--accent); }
+.er-cardinality.is-on { fill: var(--accent); }
 .er-box.is-on { border-color: var(--accent); box-shadow: 0 0 0 2px var(--focus-ring); }
 .er-box.is-on .er-head { background: var(--accent-soft); color: var(--accent); }
 .er-row.is-on { background: var(--accent-soft); font-weight: 650; }

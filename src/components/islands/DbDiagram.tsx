@@ -1,7 +1,7 @@
 import { useEffect, useRef, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { nextFocusIndex } from '../../lib/focus-trap';
 import type { DbTable } from '../../lib/db-schema';
-import { BOX, DIAGRAM_POSITIONS, DIAGRAM_SIZE, diagramLinks, diagramPath } from '../../lib/db-diagram';
+import { BOX, DIAGRAM_POSITIONS, DIAGRAM_SIZE, DIAGRAM_LEGEND, diagramLinks, diagramPath } from '../../lib/db-diagram';
 
 interface Props {
   tables: DbTable[];
@@ -39,7 +39,7 @@ export function DbDiagramDialog({ tables, open, onClose }: Props) {
       <div className="dbd" role="dialog" aria-modal="true" aria-labelledby="dbd-title" tabIndex={-1} ref={ref} onKeyDown={keepTabInside}>
         <div className="dbd-head">
           <h2 id="dbd-title">Sơ đồ HRM_Demo</h2>
-          <p>PK là khóa chính, FK là khóa ngoại; đường nối đi từ khóa ngoại tới bảng nó trỏ tới.</p>
+          <p>{DIAGRAM_LEGEND}</p>
           <button type="button" className="dbd-close" aria-label="Đóng" onClick={onClose}>×</button>
         </div>
         <div className="dbd-scroll" tabIndex={0} role="group" aria-label="Sơ đồ các bảng, dùng phím mũi tên để cuộn">
@@ -58,15 +58,28 @@ export function DbDiagram({ tables, path = [] }: { tables: DbTable[]; path?: str
   const links = diagramLinks(tables);
   const lit = diagramPath(tables, path);
   const on = (base: string, yes: boolean) => (yes ? `${base} is-on` : base);
+  // Several links reach the same key. Share its label and keep it blue if any of those links is lit.
+  const markers = new Map<string, (typeof links)[number]['markers'][number] & { lit: boolean }>();
+  links.forEach((link, i) => link.markers.forEach(marker => {
+    const key = `${marker.column}:${marker.x}:${marker.y}`;
+    markers.set(key, { ...marker, lit: lit.links.has(i) || !!markers.get(key)?.lit });
+  }));
   return (
     <div className="er" style={{ width: DIAGRAM_SIZE.width, height: DIAGRAM_SIZE.height }}>
-      <svg width={DIAGRAM_SIZE.width} height={DIAGRAM_SIZE.height} aria-hidden="true">
+      <svg width={DIAGRAM_SIZE.width} height={DIAGRAM_SIZE.height} role="group" aria-label="Đường nối quan hệ: 1 là phía một, ∞ là phía nhiều">
         {/* SVG paints in document order: lit links go last so the grey ones never cover them. */}
         {links.map((l, i) => ({ l, i })).sort((a, b) => Number(lit.links.has(a.i)) - Number(lit.links.has(b.i))).map(({ l, i }) => (
           <g key={i}>
             <path d={l.d} className={on('er-link', lit.links.has(i))} />
             {l.dot && <circle cx={l.dot.x} cy={l.dot.y} r={3} className={on('er-dot', lit.links.has(i))} />}
           </g>
+        ))}
+        {[...markers].map(([key, marker]) => (
+          <text key={key} className={on('er-cardinality', marker.lit)} data-column={marker.column}
+            x={marker.x} y={marker.y} textAnchor="middle" dominantBaseline="central"
+            aria-label={`${marker.column}: phía ${marker.symbol === '1' ? 'một' : 'nhiều'}`}>
+            {marker.symbol}
+          </text>
         ))}
       </svg>
       {tables.map(t => {

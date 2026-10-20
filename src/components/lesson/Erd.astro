@@ -2,6 +2,7 @@
 import { DbDiagram } from '../islands/DbDiagram';
 import { parseSchema } from '../../lib/db-schema';
 import schemaSql from '../../../database/HRM_Demo.sql?raw';
+import { DIAGRAM_LEGEND } from '../../lib/db-diagram';
 
 interface Props {
   caption?: string;
@@ -15,5 +16,5 @@ const tables = parseSchema(schemaSql);
   <div class="erd-scroll" tabindex="0" role="group" aria-label="Sơ đồ quan hệ của HRM_Demo, cuộn ngang để xem hết">
     <DbDiagram tables={tables} path={path} />
   </div>
-  <figcaption>{caption ?? 'PK là khóa chính, FK là khóa ngoại; đường nối đi từ khóa ngoại tới bảng nó trỏ tới.'}</figcaption>
+  <figcaption>{caption ?? DIAGRAM_LEGEND}</figcaption>
 </figure>

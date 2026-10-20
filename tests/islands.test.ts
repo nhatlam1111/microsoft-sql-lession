@@ -57,6 +57,29 @@ it('draws the diagram on its own, outside the popup', () => {
   expect(html).not.toContain('role="dialog"');
 });
 
+it('marks the correct end of each HRM_Demo relation as one or many, including the manager loop', () => {
+  const tables = parseSchema(readFileSync('database/HRM_Demo.sql', 'utf8'));
+  const html = renderToStaticMarkup(createElement(DbDiagram, { tables }));
+  for (const [column, symbol] of [
+    ['PhongBan.MaPB', '1'], ['ChucDanh.MaCD', '1'], ['NhanVien.MaNV', '1'],
+    ['NhanVien.MaPB', '∞'], ['NhanVien.MaCD', '∞'], ['NhanVien.MaQuanLy', '∞'],
+    ['HopDong.MaNV', '∞'], ['ChamCong.MaNV', '∞'], ['DonNghiPhep.MaNV', '∞'], ['BangLuong.MaNV', '∞'],
+  ]) {
+    const markers = [...html.matchAll(new RegExp(`<text[^>]*data-column="${column.replace('.', '\\.')}"[^>]*>([^<]+)</text>`, 'g'))];
+    expect(markers.length, column).toBeGreaterThan(0);
+    expect(markers.every(m => m[1] === symbol), column).toBe(true);
+  }
+  // Four links share NhanVien.MaNV on the right; draw their common '1' only once.
+  expect(html.match(/class="er-cardinality"/g)).toHaveLength(11);
+});
+
+it('keeps shared cardinality labels highlighted when any connected link is highlighted', () => {
+  const tables = parseSchema(readFileSync('database/HRM_Demo.sql', 'utf8'));
+  const html = renderToStaticMarkup(createElement(DbDiagram, { tables, path: ['BangLuong', 'NhanVien', 'PhongBan'] }));
+  expect(html.match(/class="er-cardinality is-on"/g)).toHaveLength(4);
+  expect(html).toMatch(/<text[^>]*class="er-cardinality is-on"[^>]*data-column="NhanVien\.MaNV"[^>]*>1<\/text>/);
+});
+
 it('the diagram lights up a path: its tables, the joining columns and the links between them', () => {
   const tables = parseSchema(readFileSync('database/HRM_Demo.sql', 'utf8'));
   const html = renderToStaticMarkup(createElement(DbDiagram, { tables, path: ['BangLuong', 'NhanVien', 'PhongBan'] }));

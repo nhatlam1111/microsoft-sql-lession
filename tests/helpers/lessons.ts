@@ -28,3 +28,38 @@ export function sqlSubheadings(body: string): string[] {
   const section = body.split(/^## /m).find(s => s.startsWith('Làm bằng SQL')) ?? '';
   return [...section.matchAll(/^### (.+?)\s*$/gm)].map(m => m[1]);
 }
+
+/**
+ * The prose paragraphs of a lesson body, list items counted one by one: text outside components,
+ * tables, headings and code. Words are counted the way a Vietnamese reader counts them, one per syllable.
+ */
+export function proseParagraphs(body: string): { text: string; words: number }[] {
+  const out: { text: string; words: number }[] = [];
+  let cur: string[] = [];
+  let inComponent = false;
+  const flush = () => {
+    if (cur.length) {
+      const text = cur.join(' ');
+      out.push({ text, words: text.replace(/^(\d+\.|-)\s+/, '').replace(/[`*_]/g, '').split(/\s+/).filter(Boolean).length });
+    }
+    cur = [];
+  };
+  for (const raw of body.split(/\r?\n/)) {
+    const line = raw.trim();
+    if (inComponent) {
+      if (line.endsWith('/>')) inComponent = false;
+      continue;
+    }
+    if (line.startsWith('<')) {
+      flush();
+      // A component whose attributes run over several lines, like <LineMap rows={[ … ]} />.
+      if (/^<[A-Z]/.test(line) && !line.endsWith('>')) inComponent = true;
+      continue;
+    }
+    if (!line || /^(#|\||```|---)/.test(line)) { flush(); continue; }
+    if (/^(\d+\.|-)\s/.test(line)) flush();
+    cur.push(line);
+  }
+  flush();
+  return out;
+}

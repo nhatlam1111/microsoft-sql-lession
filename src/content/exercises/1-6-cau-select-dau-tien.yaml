@@ -15,9 +15,8 @@ exercises:
     title: Toàn bộ hợp đồng
     summary: Xem mọi hợp đồng, kể cả hợp đồng chưa có ngày kết thúc.
     prompt: >-
-      Kế toán hỏi danh sách mọi hợp đồng đang lưu trong bảng hợp đồng, kể cả hợp đồng thử việc, đủ mọi cột:
-      mã hợp đồng, mã nhân viên ký hợp đồng, loại hợp đồng, ngày bắt đầu, ngày kết thúc và lương cơ bản.
-      Trong kết quả sẽ có ô NgayKetThuc là NULL: trong dữ liệu mẫu, đó là hợp đồng chưa có ngày kết thúc.
+      Kế toán hỏi danh sách mọi hợp đồng đang lưu trong bảng hợp đồng, kể cả hợp đồng thử việc, đủ mọi cột.
+      Trong kết quả sẽ có ô NgayKetThuc là NULL: trong dữ liệu mẫu, đó là hợp đồng không xác định thời hạn.
       Thứ tự dòng không quan trọng.
     columns: [MaHD, MaNV, LoaiHD, NgayBatDau, NgayKetThuc, LuongCoBan]
     ordered: false
@@ -29,8 +28,7 @@ exercises:
     summary: Xem mọi đơn nghỉ phép, có ngày nghỉ và số ngày.
     prompt: >-
       Trước khi chốt công tháng, chị Hạnh muốn xem bảng đơn nghỉ đang lưu những gì: lấy toàn bộ đơn
-      (mọi loại nghỉ, mọi trạng thái), đủ mọi cột: mã đơn, mã nhân viên nghỉ, loại nghỉ, từ ngày, đến ngày,
-      số ngày và trạng thái duyệt. Lọc theo tháng hay trạng thái học ở bài 2.2. Thứ tự dòng không quan trọng.
+      (mọi loại nghỉ, mọi trạng thái), đủ mọi cột. Lọc theo tháng hay trạng thái học ở bài 2.2. Thứ tự dòng không quan trọng.
     columns: [MaDon, MaNV, LoaiNghi, TuNgay, DenNgay, SoNgay, TrangThai]
     ordered: false
     kind: query

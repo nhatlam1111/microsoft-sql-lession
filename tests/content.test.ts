@@ -6,7 +6,7 @@ import { lessonSchema, SECTION_HEADINGS, BANNED_PHRASES, sectionHeadings } from 
 import { validateCatalog } from '../src/lib/catalog';
 import { findUnprefixedUnicodeStrings } from '../src/lib/tsql-lexer';
 import { EXPECTED } from './helpers/expected';
-import { readLessonFiles, readCatalog, sqlSubheadings } from './helpers/lessons';
+import { readLessonFiles, readCatalog, sqlSubheadings, proseParagraphs } from './helpers/lessons';
 
 describe('lesson files', () => {
   const files = readLessonFiles();
@@ -126,8 +126,8 @@ describe('fixes from the review of lessons 1.2 to 1.6 (2026-10-19)', () => {
     ['không bao giờ làm đổi dữ liệu', 'Đây luôn là việc làm đầu tiên', 'vì dữ liệu đang nằm theo thứ tự mã', 'Đó là những thông tin chị Hạnh cần', 'Chỉ nhìn 10 dòng đầu']));
   it('the 1.6 exercises name the employee code, not a person', () => {
     const text = readFileSync(join('src', 'content', 'exercises', '1-6-cau-select-dau-tien.yaml'), 'utf8');
+    // The column list sits in the "Kết quả cần" box of the exercise page, so the prompt no longer spells it out.
     for (const s of ['người ký', 'người nghỉ']) expect(text).not.toContain(s);
-    expect(text).toContain('mã nhân viên');
   });
   it('every concept lesson ends with at least three self-check questions', () => {
     for (const f of readLessonFiles()) {
@@ -210,17 +210,20 @@ describe('fixes from the independent reviews of 2026-10-19', () => {
     ['Giả định của tình huống', '`NhanVien.MaCD` trỏ sang `ChucDanh.MaCD`', 'chỉ cần `REFERENCES`', 'Msg là số hiệu lỗi', 'REFERENCE constraint', 'thư mục Keys', 'chứ không chỉ ở từng màn hình', 'Ai quản lý những người chuyển sang', 'không có ràng buộc UNIQUE'],
     ['Đây chính là lỗi bên IT gặp', 'thay cho kiểm ở từng màn hình', 'nghỉ từ 2026-06-30', 'các hồ sơ con']));
   it('1.5 says why each side is "one" or "many", who the 43 rows leave out, and what Database Diagrams writes', () => check('1-5-doc-so-do-erd',
-    ['chỉ lấy dòng đầu tiên', 'Data Model', 'thực thể', 'chấm tròn', 'một-một', 'nhiều-nhiều', 'cả cặp', 'không làm tăng số dòng', 'không ghi cột nào nhận NULL',
+    ['chỉ lấy dòng đầu tiên', 'Data Model', 'thực thể', 'chấm tròn', 'một-một', 'nhiều-nhiều', 'cả cặp', 'Từ bảng `PhongBan`', 'Từ bảng `NhanVien`', 'thuộc đúng một phòng ban', 'không ghi cột nào nhận NULL',
       'NV020, NV033, NV041', 'NV047, NV048', 'không dòng lương nào bị rơi', '2026-09-03', 'gồm NV020 đã nghỉ', 'Một người có thể có nhiều dòng chấm công',
       'Một người có thể có nhiều dòng lương', 'sysdiagrams', 'db_owner', 'bài 5.1', 'không có đường nối nào', 'ở bài 6.6'],
     ['vì câu bắt đầu từ bảng lương', 'Azure SQL Database không có', 'cũng là cả khóa chính', 'nên phải xem thêm', '21 người là Chuyên viên', 'Đây là sơ đồ, cũng là sơ đồ',
       'mỗi thông tin chỉ nằm ở một chỗ', 'được khai báo đủ', 'cặp NV001 và ngày 2026-09-01', 'bài 3.4 và 3.5 sẽ học']));
   it('1.6 counts records not people, keeps the run advice safe, answers the small whys and closes the scenario without personal data', () => check('1-6-cau-select-dau-tien',
-    ['48 dòng, mỗi dòng một hồ sơ', 'Bôi đen lại trọn câu', 'chỉ để đọc, đừng chạy', 'Mỗi lần chỉ chạy một câu lệnh', 'là ghi chú', 'bài 6.1', 'SoCCCD',
-      'chỉ là số thứ tự trong kết quả', 'bài 5.6', 'TOP 10', 'schema mặc định', 'phiên bản sau', 'Copy with Headers', 'Completion time', 'Select Top 1000 Rows',
-      'mã phòng ban, mã chức danh', 'có thể toàn là dòng cũ', 'bài 2.2', 'bài 3.1', 'bài 4.6', 'thường phải xét hết', 'Ô có viền xanh', 'Parse', '10 hồ sơ'],
+    ['48 dòng, mỗi dòng một hồ sơ', 'Bôi đen lại trọn câu', 'mỗi lần chỉ nhận một câu', 'là ghi chú', 'bài 6.1', 'SoCCCD',
+      'đánh lại mỗi lần chạy', 'bài 5.6', 'TOP 10', 'phiên bản sau', 'Copy with Headers', 'Completion time', 'Select Top 1000 Rows',
+      'mã phòng ban, mã chức danh', 'có thể toàn là dòng cũ', 'bài 2.2', 'bài 4.6', 'thường phải xét hết', 'Ô có viền xanh', 'Parse', '10 hồ sơ',
+      // Learner review of 2026-10-20: one place per idea, the Count row fixed, the scenario closed.
+      'câu truy vấn (query)', 'Giả định của tình huống', 'chưa cho thấy một người đã nghỉ', 'Chạy (F5)', 'Sơ đồ database', 'liệt kê từng cột trong dấu `[ ]`'],
     ['48 người, mỗi người một dòng', 'Bấm vào chỗ trống trong cửa sổ để bỏ bôi đen rồi chạy lại', 'sẽ học ở các bài sau', 'luật của từng cột xem ở Object Explorer',
-      'Nhìn thanh trạng thái đếm số dòng', 'của 10 người là đủ', 'đó là 10 người nào']));
+      'Nhìn thanh trạng thái đếm số dòng', 'của 10 người là đủ', 'đó là 10 người nào', 'đếm ô có dữ liệu', 'Bài 2.1 sẽ dạy liệt kê', 'câu bắt đầu bằng WITH',
+      'PhongBanCu', 'dừng đọc ngay khi đã đủ 10 dòng']));
   it('1.6 exercises ask for the whole table without hinting at a filter', () => {
     const y = readFileSync('src/content/exercises/1-6-cau-select-dau-tien.yaml', 'utf8');
     for (const s of ['hợp đồng lao động', 'kể cả những ô đang là NULL (để trống)']) expect(y, s).not.toContain(s);
@@ -290,5 +293,18 @@ describe('fixes from the final review', () => {
     expect(body('1-5-doc-so-do-erd')).toContain('máy chủ của khóa học');
     expect(body('5-2-rang-buoc-du-lieu')).toContain('BULK INSERT');
     expect(body('6-6-temporal-table')).toContain('UTC');
+  });
+});
+
+describe('lessons stay short (docs/quy-uoc.md, section 1)', () => {
+  it('no paragraph or list item of a full lesson runs past 120 words', () => {
+    const long = readLessonFiles()
+      .filter(f => (f.data as { kind: string }).kind === 'full')
+      .flatMap(f => proseParagraphs(f.body).filter(p => p.words > 120).map(p => `${f.slug} (${p.words}): ${p.text.slice(0, 60)}`));
+    expect(long).toEqual([]);
+  });
+  it('counts paragraphs outside components only', () => {
+    const body = ['Một hai ba.', '', '<LineMap rows={[', "  ['a', 'b c d'],", ']} />', '', '1. **Lỗi.** Bốn năm.', '2. Sáu.', '', '| a | b |'].join('\n');
+    expect(proseParagraphs(body).map(p => p.words)).toEqual([3, 3, 1]);
   });
 });
