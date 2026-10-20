@@ -1,5 +1,7 @@
 # Thiết kế phần C, đợt Level 1: viết đầy đủ các bài Level 1
 
+> Cập nhật 20/10/2026: khung bài và cách trình bày hiện hành theo [quy ước](../../quy-uoc.md) và [lesson-template](../../lesson-template.md), lấy bài 1.1 đã duyệt làm mẫu. Các chỉ dẫn tách "Với Excel" / "Làm bằng SQL", ép đủ khối hoặc trả lời tình huống riêng trong phần lịch sử bên dưới đã được thay thế. Các quyết định khác áp dụng khi không mâu thuẫn với quy ước hiện hành và các quyết định được duyệt sau đó.
+
 - Ngày: 2026-10-18
 - Trạng thái: đã duyệt ngày 2026-10-18; đã làm xong và lên web ngày 2026-10-18. Ngày 2026-10-19 sửa ba vòng sau review (mục 11–13), bản cuối lên web ở commit `7c9048d`. Còn chờ người làm khóa học đọc và duyệt nội dung Level 1 trước khi làm Level 2 (mục 6); Level 2 làm theo mục 14.
 - Nối tiếp: [spec đợt 2, mục 6](2026-10-18-step-flow-exercises-full-lessons-design.md) (phần C), [spec đợt 1, mục 4.5 và 4.7](2026-10-17-sql-server-course-site-design.md) (khuôn bài và giọng văn), [spec B](2026-10-18-exercise-runner-design.md) (bài tập trên web). Chỗ nào spec này ghi khác các spec đó thì theo spec này.
@@ -242,7 +244,7 @@ Người làm khóa học đọc 1.3, 1.4 và đặt thêm quy ước cho mọi 
 Ba vòng sửa ở mục 11–13 đều sửa cùng những loại lỗi: hứa quá điều database tự bảo đảm, thiếu điều kiện cho con số, lý thuyết chưa nói "vì sao", thiếu giá trị ví dụ, hình chưa chỉ chỗ cần nhìn, tóm tắt bằng `COUNT` quá sớm. Để Level 2 trở đi không phải sửa lại theo cùng kiểu:
 
 - Quy tắc viết đã gom vào `docs/quy-uoc.md` (từ 2026-10-20; trước đó ở `docs/lesson-template.md`), và các test trong `tests/content.test.ts` giữ những quy tắc kiểm được bằng máy (không câu hỏi trong lý thuyết, có chỉ tới bài sau, "Ví dụ:" trong `LineMap`, không hàm tổng hợp ở Level 1). Khi viết Level 2, mở rộng các test này cho Level 2 (hàm tổng hợp được dùng từ bài 3.1).
-- Mỗi bài đi theo mục 4 "Quy trình làm một bài" của `docs/quy-uoc.md`: chạy số liệu trước khi viết, tự rà theo danh sách, kiểm bằng máy, rồi **review độc lập**: một agent mới (từ 2026-10-20: Sonnet, effort high), đóng vai người học khó tính theo đúng lời dặn ghi trong file, chỉ đọc file (không chạy gì trên database), ghi kết quả ra `temp/review/<ngày>-doc-lap/review-bai-<slug>.md`. Người viết kiểm từng mục, sửa mục đúng, ghi "Đã sửa" và "Không làm theo" vào spec của level.
+- Mỗi bài đi theo mục 4 "Quy trình làm một bài" của `docs/quy-uoc.md`: chạy số liệu trước khi viết, tự rà theo danh sách, kiểm bằng máy, rồi **review độc lập**: một agent mới (Claude dùng Sonnet, effort high; Codex kế thừa model đang dùng của phiên), đóng vai người học khó tính theo đúng lời dặn ghi trong file, chỉ đọc file (không chạy gì trên database), ghi kết quả ra `temp/review/<ngày>-doc-lap/review-bai-<slug>.md`. Người viết kiểm từng mục, sửa mục đúng, ghi "Đã sửa" và "Không làm theo" vào spec của level.
 - Plan của mỗi level có một bước review độc lập trong task của từng bài (xem mục "Cho plan các level sau" ở plan Level 1), và người làm khóa học chỉ đọc bài sau khi đã qua bước đó.
 
 ## 15. Sửa sau lượt review độc lập bài 1.1–1.6 (2026-10-19, 2026-10-20)
@@ -287,3 +289,111 @@ Không làm theo:
 - 1.6, tô riêng `TOP (10)` và `*` trên cùng một dòng của `RunFlow`: component tô theo dòng; phần chữ của từng bước đã nói đúng. Viết câu lệnh thành ba dòng chỉ để tô thì lệch cách viết của cả khóa.
 - 1.6, nhắc cột ẩn của temporal table khi dùng `*`: để bài 6.6.
 - Các mục "Giữ được" và các gợi ý ghi "không bắt buộc" mà bài đã trả lời ở chỗ khác. Không mục nào của 1.1–1.4 đi ngược quyết định đã chốt.
+
+## 16. Thử khung kể liền ở riêng bài 1.1 (2026-10-20)
+
+Người làm khóa học duyệt thử nghiệm: giữ tình huống; gộp Excel và database trong một mạch giải thích; rút chi tiết sâu; để câu lệnh đọc dữ liệu tới bài 1.6. Sau khi xem nội dung, người làm khóa học nhận xét nội dung đã ổn và yêu cầu in đậm từ trọng tâm. Chưa nhân rộng khung này sang bài khác, chưa sửa `quy-uoc.md`, `lesson-template.md` hay `DESIGN.md`.
+
+Đã sửa:
+
+- Bài 1.1 có phần chính "Từ hai bản Excel đến một nguồn dữ liệu chung": mỗi người cập nhật một bản → nguồn chung cần cấu trúc và luật → lấy danh sách từ nguồn đã thống nhất. Phần cuối khép yêu cầu của chị Hạnh, vẫn tách căn cứ nghiệp vụ với người có quyền cập nhật.
+- Bỏ bảng đối chiếu dài, mục trả lời riêng và preview SQL. Giữ hình Excel cùng dấu ô/ngày thật, ba lỗi nhập liệu và các giới hạn về nguồn cũ, luật được khai báo, hợp lệ khác đúng. Kiểu dữ liệu, khóa, nhập file và lịch sử có chỉ dẫn sang bài sâu hơn.
+- Rút Hay nhầm, Ứng dụng, Ghi nhớ; giữ bốn câu tự kiểm tra, trong đó có phân biệt database, SQL Server và SQL. Thời lượng là 12 phút. In đậm có chọn lọc workbook, sheet, database, bảng, dòng, cột, bản ghi, kiểu dữ liệu và các khái niệm chính tại chỗ giải thích.
+- Bài 1.6 tự giải thích số thứ tự dòng trong Results, không dẫn về preview đã bỏ. Không đổi câu lệnh hay bài tập của bài 1.6.
+- Test ngoại lệ chỉ theo đúng slug bài 1.1; khung các bài khác và frontmatter dùng chung giữ nguyên. Cách đọc phần chính trong test nhận cả LF và CRLF.
+
+Review độc lập: `temp/review/2026-10-20-1-1-narrative/review-bai-1-1-database-la-gi.md`. Reviewer là agent Codex độc lập kế thừa model của phiên, đúng quy ước đã được người làm khóa học làm rõ: Sonnet áp dụng cho Claude, Codex giữ model đang dùng. Ghi chú thiếu Sonnet trong báo cáo ban đầu là cách diễn giải trước khi có làm rõ này, không phải một bước còn thiếu. Reviewer không thấy lỗi chặn. Đã làm rõ câu hỏi bên IT về ràng buộc khi nhập file và cách hủy thay đổi trước khi ghi hẳn, cắt một câu kết lặp, thay câu tự kiểm tra về dropdown bằng ba khái niệm nền tảng.
+
+Không làm theo / giữ ngoài phạm vi:
+
+- Không khôi phục khuôn cũ hoặc các chi tiết đã rút: đây là thay đổi người làm khóa học đã duyệt cho bản thử.
+- Không sửa các bài khác để làm xanh kiểm độ dài, không sửa giao diện bài tập theo audit chung. Các lỗi này không thuộc thử nghiệm bài 1.1.
+
+Kiểm chứng:
+
+- `npm run check`: 0 lỗi, 0 warning, 3 hint deprecation ở component bài tập có sẵn. `npm run build` đạt; `npm run check:dist` đạt, 68 trang và 1.345 link.
+- `npm test`: 231/232 test đạt. Test duy nhất lỗi là giới hạn đoạn 120 chữ: 13 đoạn có sẵn ở bài 1.4, 1.5, 2.1, 2.2; đã thấy trước khi sửa bài 1.1. Không nới hoặc bỏ test này. Log ở `temp/verification/2026-10-20-1-1-narrative/vitest.log`.
+- Xem bản build trên trình duyệt ở 1280×900 và 1440×900: mục lục đúng năm mục, liên kết cuộn đúng, hình Excel giữ bốn ô đánh dấu và ba ô ngày căn phải, không tràn ngang. Enter/Tab/Space mở và di chuyển giữa các câu tự kiểm tra, có focus bàn phím. Đối chiếu bài 1.2: giữ cùng giao diện và khung cũ của bài đó. 980px giữ thông báo dành cho máy tính và không tràn ngang; đã khôi phục viewport sau kiểm tra.
+- Audit strict của Frontend Design Premium ghi hai lỗi có sẵn ngoài phạm vi: form chưa khai báo `noValidate` ở `ExerciseWorkspace.tsx`, và thiếu bằng chứng quy tắc resize ở `SqlEditor.tsx`. JSON ở `temp/verification/2026-10-20-1-1-narrative/premium-audit.json`; không tuyên bố audit toàn dự án đã đạt.
+- Không thêm SQL hay giá trị mẫu mới, không kết nối hay đổi database. Đối chiếu kiến thức còn giữ với [ràng buộc khóa của SQL Server](https://learn.microsoft.com/en-us/sql/relational-databases/tables/primary-and-foreign-key-constraints?view=sql-server-ver16) và [giới hạn kiểm tra dữ liệu khi dán/kéo điền trong Excel](https://support.microsoft.com/en-gb/excel/display-or-hide-circles-around-invalid-data).
+
+Chỉnh mục Ứng dụng theo phản hồi tiếp theo của người làm khóa học:
+
+- Thay ba lời khuyên nhận file, đọc thiết kế và chuẩn bị import bằng bốn ứng dụng của database: lưu trữ dữ liệu thống nhất, hạn chế sai lệch bằng luật đã khai báo, tra cứu/lập báo cáo và tra cứu lịch sử khi có thiết kế lưu lịch sử. In đậm tên ứng dụng để dễ quét ý.
+- Lịch sử là khả năng của hệ thống được thiết kế để lưu nó, không phải lời hứa về bảng `NhanVien` hiện tại. Đối chiếu [Microsoft: temporal tables](https://learn.microsoft.com/en-us/sql/relational-databases/tables/temporal/overview?view=sql-server-ver17); giữ nguyên giới hạn bộ mẫu trong phần chính và hồ sơ công ty.
+
+Đánh dấu dẫn chứng theo phản hồi tiếp theo: các giá trị được nhắc lại trong lời giải thích (`NV005`, `KT`, `KD`, `Kế toán`, `Ke toan`, `Kinh doanh`), tên bảng/cột và địa chỉ ô dùng kiểu code có nền sẵn có để phân biệt với lời văn. Khái niệm trọng tâm vẫn in đậm. Giữ nguyên dữ liệu và dấu ô trong hình Excel, không đổi component hay quy ước chung.
+
+## 17. Duyệt bài 1.1 và đưa khung mới thành chuẩn (2026-10-20)
+
+Người làm khóa học xác nhận bài 1.1 đã tốt và yêu cầu cập nhật quy ước/hướng dẫn để các bài sau tránh lặp lỗi. Từ đây, các ghi chú "chưa đổi quy ước" ở mục 16 chỉ phản ánh giai đoạn thử nghiệm trước khi được duyệt.
+
+- `docs/quy-uoc.md` là chuẩn viết: một phần chính lồng Excel/SQL, ví dụ cạnh lời giải thích, trả lời tình huống ngay tại đó, độ sâu theo mục tiêu, khái niệm in đậm và dẫn chứng có nền code. Mục Ứng dụng nêu ứng dụng thật của chủ đề; lịch sử cần thiết kế lưu lịch sử; tự kiểm tra phủ mục tiêu và thuật ngữ nền tảng.
+- `docs/lesson-template.md` có khung MDX chung và hướng dẫn riêng cho bài khái niệm/truy vấn, thuộc tính các khối, cách điền kết quả đã kiểm và thứ tự dùng khung. Bài 1.1 là mẫu trình bày; bài 3.5 chỉ tham khảo kỹ thuật RunFlow.
+- AGENTS, README, CLAUDE và DESIGN trỏ về chuẩn hiện hành. Các spec/plan có bố cục cũ được đánh dấu lịch sử ngay đầu, giữ nguyên diễn biến thiết kế và chỉ áp dụng quyết định không mâu thuẫn với chuẩn mới. README sửa lời dặn chạy lại script khi checksum lệch thành báo người phụ trách và chờ đồng ý trước khi ghi thật, đúng quy ước database dùng chung.
+- Test nhận phần chính có tiêu đề theo chủ đề cho mọi bài đầy đủ; không còn ngoại lệ chỉ riêng bài 1.1. Danh sách bài cũ được dùng khung tách hai phần là danh sách đóng trong `tests/content.test.ts`; bài mới không được thêm vào. Khi chỉnh một bài cũ, chuyển khung và cập nhật assertion về bố cục, giữ kiểm về kiến thức và số liệu.
+- Không chuyển nội dung hàng loạt, không đổi frontmatter, route, component, dữ liệu hay chức năng. Các bài còn dùng khung cũ được chuyển khi chỉnh từng bài. Bài 6.5 giữ cách kể xử lý sự cố khi chuyển khung.
+
+Kiểm chứng và rà độc lập:
+
+- Test bổ sung cho tiêu đề phần chính tùy bài, có/không bài tập, đọc LF/CRLF và cấu trúc template. `npm test`: 235/236 đạt; lỗi duy nhất vẫn là 13 đoạn quá 120 chữ có sẵn ở bài 1.4, 1.5, 2.1, 2.2. Không nới test này. Log: `temp/verification/2026-10-20-1-1-narrative/guidelines-vitest.log`.
+- `npm run check`: 0 lỗi, 0 warning, 3 hint cũ. Build đạt; `check:dist` đạt, 68 trang và 1.345 link. Các link local trong tài liệu hiện hành đã đối chiếu đường dẫn tồn tại; `git diff --check` không lỗi.
+- Agent độc lập rà quy ước/template, README/CLAUDE/DESIGN, banner lịch sử, schema/helper/test: không thấy vấn đề cần sửa. Ba khối MDX của template compile cú pháp được; allowlist khung cũ khớp đúng chín bài đầy đủ hiện có. Không chạy database, không sửa nội dung bài hay component trong lượt chuẩn hóa hướng dẫn này.
+
+Làm rõ lựa chọn model review theo phản hồi của người làm khóa học: Claude dùng Sonnet với effort high; Codex giữ model đang dùng, reviewer kế thừa cấu hình model của phiên. Đã đồng bộ quy ước, AGENTS, CLAUDE và hướng dẫn review trong plan; không đổi model hay cấu hình công cụ thực tế.
+
+## 18. Chuyển bài 1.2 và 1.3 theo khung đã duyệt (20–21/10/2026)
+
+Người làm khóa học duyệt kế hoạch trong chat: dùng mạch kể của 1.1, giữ thao tác cốt lõi và rút chi tiết sâu. Chọn giữ hướng dẫn cài SQL Server riêng dưới dạng ngắn, không tạo tài liệu mới. Hoàn tất ngày 21/10/2026; phạm vi gồm hai bài, test liên quan và phần ghi nhận này cùng plan. Giữ mọi thay đổi từ lượt trước.
+
+Đã sửa:
+
+- **1.2:** phần chính "Từ SSMS đến danh mục phòng ban" gộp liên hệ workbook/sheet với máy chủ/database/bảng, giải nghĩa SSMS, bốn thông tin kết nối và hai tên HRM_Demo/database thật. Giữ ba hình SSMS, câu `SELECT * FROM PhongBan;`, kết quả sáu phòng và lời trả lời ngay cạnh kết quả. Không đồng nhất có tên trong danh mục với còn hoạt động. Bỏ hình Excel trùng kết quả, LineMap, phần trả lời riêng và chi tiết phiên bản/instance/schema không cần cho thao tác.
+- **1.2:** giữ hướng dẫn máy riêng tùy chọn bốn bước, phạm vi Developer và cảnh báo script tạo lại bảy bảng. Phân biệt web luôn rollback với SSMS chạy thật, chỉ đọc trên database khóa học dùng chung; kết thúc bằng Disconnect và đóng các kết nối. Rút lỗi kết nối còn thông tin cần để kiểm hoặc báo người phụ trách. Thời lượng 20 phút không tính cài đặt.
+- **1.3:** phần chính "Từ ô Excel đến kiểu dữ liệu của cột" đặt hình Excel cạnh Format Cells, bảng kiểu thực của bộ mẫu cạnh hình Columns của HopDong, bảng xử lý đủ sáu ô cạnh lời trả lời chị Hạnh. Giữ DATEFORMAT theo phiên, ngày hợp lệ chưa chắc đúng, rounding/overflow, NULL theo quy ước, NOT NULL không chặn chuỗi rỗng và giả định công cụ import. Bỏ CREATE TABLE, SELECT TOP 5, CAST gây lỗi, Messages và LineMap lặp. Thời lượng 15 phút.
+- **Chung:** giữ năm mục cấp 2 và mỗi bài năm câu tự kiểm tra, chữ đậm chọn lọc và code có nền cho dẫn chứng. Ứng dụng bám đúng chủ đề. Hai slug được bỏ khỏi legacy allowlist; sửa assertion khóa chi tiết đã cắt thành bảo vệ kiến thức, số liệu và giới hạn còn cần giữ. Không đổi giao diện/component, API, schema frontmatter hoặc nội dung bài khác.
+
+Review độc lập và xử lý:
+
+- Hai agent Codex mới, `fork_turns: none`, kế thừa model của phiên; không truyền model/effort override. Report ở `temp/review/2026-10-20-1-2-1-3-narrative/review-bai-1-2-sql-server-ssms-hrm-demo.md` (34 mục) và `review-bai-1-3-bang-cot-kieu-du-lieu.md` (25 mục). Agent 1.3 dừng vì hạn mức sau khi đã ghi report, sau đó được tiếp tục đúng agent và xác nhận report hoàn tất; không tạo review mới thay thế.
+- **1.2 đã sửa:** thêm mốc tháng 10/2026, định nghĩa máy chủ bằng một vế; chỉ vị trí Object Explorer, giải nghĩa lựa chọn Default instance tại chỗ. Làm trơn câu mã truy cập, phân biệt 10 giây thực thi với thời gian chờ kết nối (đối chiếu runner: requestTimeout 10.000 ms, connectionTimeout 90.000 ms). Giới hạn lời dặn chỉ đọc/đáp án vào database chung, chốt "Ở bài này chỉ cần…", cắt hai vế lặp.
+- **1.3 đã sửa:** giả định lấy đúng chữ hiển thị được nói ngay đầu; phân biệt chuyển kiểu với việc giữ/đổi giá trị mong muốn. Sửa hàng Format Cells trong Memo: bên SQL mô tả khả năng đổi chữ sang kiểu cột. Giải nghĩa chuỗi rỗng, dùng đúng decimal(18,0), highlight dẫn chứng còn thiếu, chốt phạm vi và cắt checklist/vế lặp sau bảng. Các kết quả chuyển đổi được người viết kiểm lại bằng SELECT trước khi giữ.
+- **Không làm theo:** không có đề xuất còn lại cần loại vì đi ngược quyết định. Nhận xét ban đầu về hai backslash ở localhost đã được chính reviewer rút sau khi đếm ký tự thật: source và DOM đều có đúng một ký tự mã 92; không sửa chỗ đó. Những mục "Giữ được" được giữ nguyên theo nội dung phù hợp.
+
+Kiểm chứng cuối:
+
+- SELECT trên database thật xác nhận sáu phòng, metadata kiểu/NULL, các ví dụ trong bảng kiểu và thiết lập us_english/mdy. Chuyển chuỗi ngày cho kết quả 2024-01-02/2024-02-01; "chưa rõ" và hai chuỗi tiền không đổi được; 9610000 giữ giá trị; 9610000.6 làm tròn 9610001; 21.25 làm tròn 21.3; 1000.0 vượt decimal(4,1); chuỗi rỗng thành ngày 1900-01-01. Không ghi dữ liệu, không chạy script tạo bảng. Bằng chứng: `temp/verification/2026-10-20-1-2-1-3-narrative/data-evidence.json`.
+- Đối chiếu Microsoft Learn về hộp kết nối SSMS, decimal và nvarchar. Kiểm script mẫu bằng đọc source; không thử cài hoặc thao tác SSMS thật. Reviewer đọc như học viên, không được coi review là bằng chứng đã chạy SQL.
+- `npm test`: **238/239 đạt**. Lỗi duy nhất vẫn là `no paragraph or list item of a full lesson runs past 120 words`, gồm 13 đoạn nền ở 1.4, 1.5, 2.1, 2.2; 1.2 và 1.3 không có đoạn vượt. Không nới test hay sửa lan các bài đó. `npm run check`: 0 lỗi, 0 warning, 3 hint deprecation cũ. `npm run build`: 68 trang; `npm run check:dist`: đạt 68 trang/1.344 link. Log cuối có tiền tố `final-` trong thư mục verification trên.
+- Bản cuối 1280×900 và 1440×900: đúng năm mục lục, không tràn ngang trang/bảng; hình Excel giữ ô C2/D3 tô vàng, C3 đang chọn và ngày/số căn phải; hình SSMS đánh dấu đúng cột. Đối chiếu giao diện 1.1, giữ typography và chiều rộng đọc hiện có. Enter mở câu đầu, Tab chuyển câu kế, Space mở câu đó ở cả hai bài. Memo đã kiểm lại trên bản render sau sửa. Ảnh lưu trong cùng thư mục verification; viewport được khôi phục sau kiểm tra.
+
+Bàn giao local để người làm khóa học review; không push/deploy.
+
+## 19. Tiếp tục bài 1.4, 1.5, 1.6 theo khung đã duyệt (21/10/2026)
+
+Người làm khóa học yêu cầu tiếp tục ba bài, dùng Superpowers và cùng chuẩn đã áp dụng ở 1.1–1.3. Dùng checkout/nhánh đang có, giữ các thay đổi trước. Không thay thiết kế chung, component, API, frontmatter schema hoặc YAML bài tập; không chỉnh bài ngoài phạm vi.
+
+Đã sửa:
+
+- **1.4 — 15 phút:** phần chính "Từ mã nhân viên đến quan hệ giữa các bảng": khóa chính xác định dòng → khóa ngoại giữ mã tham chiếu → đọc lỗi xóa phòng cùng các hồ sơ liên quan → chốt quyết định nghiệp vụ. Giữ hình Excel/SSMS có đánh dấu, một câu DELETE chỉ để đọc không có nút copy, nguyên văn phần lỗi API trả và đủ10hồsơ với hai dòng đã nghỉ được tô. Bỏ hai INSERT, DDL, LineMap, giảng mức độ/số hiệu lỗi và phần trả lời riêng. Giữ khóa nhiều cột, FK tự tham chiếu/NULL, điều kiện kiểm và NO ACTION, hợp lệ khác đúng, phòng hiện tại khác lịch sử; năm câu tự kiểm tra phủ mục tiêu.
+- **1.5 — 15 phút:** phần chính "Tìm đường lấy dữ liệu trên sơ đồ HRM_Demo": hai lần dò Excel → ERD và hai phía một/nhiều → đường BangLuong → NhanVien → PhongBan. Giữ hình Excel, đường xanh cùng hai cặp cột, giới hạn PK ghép, NULL, quan hệ khai báo, số dòng có thể tăng và phòng ban hiện tại. Bỏ preview JOIN/Result, bảng thống kê bảy quan hệ, LineMap và phần trả lời riêng. Cú pháp kết bảng, cách giữ dòng và xử lý nhiều bảng dẫn tới3.4–3.7; năm câu tự kiểm tra không đòi viết SQL.
+- **1.6 — 20 phút:** phần chính "Từ mở sheet đến câu SELECT đầu tiên": bảng/cột/số dòng → chạy SSMS và đọc hai tab → câu lệnh/lời giải → sơ đồ logic. Giữ nguyên query TOP10khôngORDERBY để dạy giới hạn thứ tự, Result12cột/10dòng, Messages, ba bước RunFlow và ba bài tập. Rút khuôn cú pháp, ví dụ TOP2/LineMap và các lời giảng lặp; giữ đánh dấu NV004, số thứ tự kết quả, giới hạn mẫu, SELECT INTO, bôi đen/F5, phân biệt trang bài tập và SSMS, điều kiện gửi dữ liệu cá nhân. Các giá trị trong lời văn và drawer có code, khái niệm in đậm chọn lọc.
+- Bỏ ba slug khỏi legacy allowlist, còn bốn bài đầy đủ dùng khung cũ. Assertion về chi tiết xem trước/thống kê/Msg đã bỏ được đổi thành kiểm quan hệ, điều kiện và lời giải còn cần giữ; không hạ yêu cầu về độ dài hoặc dữ liệu. Không thêm test chỉ để khóa câu biên tập; kiểm chuyển khung đã có bước RED trước sửa.
+
+Review độc lập:
+
+- Ba agent Codex mới, mỗi bài một agent, `fork_turns: none`, kế thừa model phiên và không truyền model/effort override. Report ở `temp/review/2026-10-21-1-4-1-6-narrative/`: `review-bai-1-4-khoa-chinh-khoa-ngoai.md` (32 mục), `review-bai-1-5-doc-so-do-erd.md` (31 mục), `review-bai-1-6-cau-select-dau-tien.md` (24 mục). Reviewer chỉ học từ bài/các bài trước và tài liệu quy ước/bối cảnh; không chạy database, đọc script hay report cũ. Reviewer1.5 còn đối chiếu ba ảnh ERD của người viết; các phần chưa kiểm trực quan đều được ghi rõ.
+- **1.4 đã sửa:** thêm điều kiện "nếu quyết định xóa phòng" ở mục tiêu, dùng code cho VH trong Key và giữ NO ACTION ngay tại ý Ứng dụng về chặn xóa. Điều kiện NO ACTION đã kiểm qua metadata và tài liệu Microsoft.
+- **1.5 đã sửa:** sửa câu vấp nghĩa về đường liên kết không tự chọn kỳ lương; rút chú thích ERD bị lặp, câu lặp trường hợp0nhânviên, cảnh báo lịch sử lặp và phần thừa ở đáp án5. Giới hạn phát biểu VLOOKUP theo dò chính xác như công thức FALSE đang minh họa, không giảng thêm chế độ dò.
+- **1.6 đã sửa:** nói rõ nhập câu mẫu trước F5; Copy with Headers rồi dán vào Excel, gọi kết quả là bản chép; bỏ chữ "nghiệm thu", cảnh báo TOP lặp ở đầu, lời kể lại cả sơ đồ trước RunFlow và câu import/"mẫu đại diện" ở Hay nhầm. Rút nhánh bài sâu không cần thiết, giữ giới hạn mẫu ngay trong Ứng dụng. Không đổi câu truy vấn, dữ liệu, sơ đồ hay bài tập sau review.
+- **Không làm theo:** không có đề xuất còn cần loại; các mục Giữ được giữ nguyên. Không lấy việc reviewer chưa chạy SQL làm lý do bịa kết quả hoặc thêm chi tiết sâu trở lại. Giữ đúng các quyết định trước về tên bảng ngắn, nhãn Memo, cách tô RunFlow và thiết kế sơ đồ chung.
+
+Kiểm chứng:
+
+- `temp/verification/2026-10-21-1-4-1-6-narrative/data-evidence.json` lưu SELECT thực tế:10hồsơ VH gồm2đãnghỉ;7FKđangbật/NO_ACTION;48hồsơ, mẫu10dòng; giá trị lương/dò của ba dòng Excel1.5;3hợpđồng NV021; mã quản lý NV001/NV004/NV005. Script `check-fixtures.mjs` đối chiếu từng ô Result1.4/1.6, toàn bộ dòng trích của ba bước RunFlow và tổng48/48/10, ba dòng Excel1.5, tên/giá trị mã và điều kiện metadata; tất cả khớp.
+- DELETE và câu thiếu FROM chỉ chạy qua `handleRun` của API bài tập, dùng guard và runner luôn rollback; không gửi câu ghi trực tiếp qua kết nối đọc. Messages1.4 khớp đúng chuỗi lỗi API, không tự dựng Msg/Level/State. `check:exercises` đạt cả14bài hiện có (riêng1.6 trả6/55/20dòng); `check:data` sau cùng báo "Không bảng nào lệch." Không đổi dữ liệu dùng chung.
+- Đối chiếu [ràng buộc khóa](https://learn.microsoft.com/en-us/sql/relational-databases/tables/primary-and-foreign-key-constraints?view=sql-server-ver17), [thứ tự logic SELECT](https://learn.microsoft.com/en-us/sql/t-sql/queries/select-transact-sql?view=azuresqldb-mi-current), [TOP](https://learn.microsoft.com/en-us/sql/t-sql/queries/top-transact-sql?view=sql-server-ver17) và [VLOOKUP](https://support.microsoft.com/en-us/excel/functions/vlookup-function). Không thử SSMS hoặc Excel thật, không khẳng định đã kiểm giao diện công cụ ngoài các hình mô phỏng.
+- Bốn lệnh cuối: `npm test` **238/239 đạt**, còn đúng sáu đoạn nền quá120chữ ở2.1/2.2; toàn bộ1.4/1.5/1.6 không có đoạn vượt. Tên test lỗi: `no paragraph or list item of a full lesson runs past 120 words`; không nới test hoặc sửa lan hai bài đó. `npm run check`:0lỗi/0warning/3hint deprecation cũ. `npm run build`:68trang; `npm run check:dist`:đạt68trang/1.341link. Log `final-*.log`, `exercises.log` và `check-data.log` trong thư mục verification trên.
+- Bản cuối1280×900/1440×900: mục lục5/5/6mục, đúng hình và dấu, không tràn ngang trang; bảng12cột và ERD có vùng cuộn riêng. Excel1.4 tô C4, Excel1.5 tô D2/chọn E2, ngày thật ở1.6 căn phải; SSMS1.4 đánh dấu4cột, Results1.4 tô2dòng nghỉ và1.6 tôNV004. Enter/Tab/Space mở và chuyển câu tự kiểm tra của1.4/1.5; RunFlow mở bằng Enter, đổi FROM/SELECT/TOP bằng phím mũi tên, Escape đóng và trả focus về thẻ. Bài1.6 còn đủ3link bài tập, các trang đề đã được reviewer đọc. `ui-checks.json` và ảnh trong thư mục verification ghi lại trạng thái; viewport được khôi phục trước bàn giao.
+
+Bàn giao bản local để review; không commit/push/deploy trong lượt này.

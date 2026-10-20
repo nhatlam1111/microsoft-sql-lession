@@ -1,5 +1,7 @@
 # Level 1 viết đầy đủ: Implementation Plan
 
+> Cập nhật 20/10/2026: khung bài và cách trình bày hiện hành theo [quy ước](../../quy-uoc.md) và [lesson-template](../../lesson-template.md), lấy bài 1.1 đã duyệt làm mẫu. Các chỉ dẫn tách "Với Excel" / "Làm bằng SQL", ép đủ khối hoặc trả lời tình huống riêng trong phần lịch sử bên dưới đã được thay thế. Các quyết định khác áp dụng khi không mâu thuẫn với quy ước hiện hành và các quyết định được duyệt sau đó.
+
 **Trạng thái (2026-10-18):** đã làm xong 13 task theo cách Native, rà soát cuối bằng một reviewer độc lập (kết luận "With fixes": 2 lỗi đáng sửa, 8 lỗi nhỏ, đều đã sửa có test). Đã merge vào `main`. Các quyết định trong lúc làm: tên database thật là `free-sql-db-8797714` (giữ nguyên theo quyết định của người làm khóa học); hộp kết nối theo SSMS 21; bài tập 1.6 dùng ChucDanh, HopDong, DonNghiPhep để không lọt đáp án vào bài. Sau khi lên web, Level 1 sửa thêm ba vòng ngày 2026-10-19 (spec Level 1 mục 11–13); bài học rút ra cho plan các level sau ở mục cuối file.
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
@@ -381,8 +383,57 @@ Sau plan này, Level 1 phải sửa thêm ba vòng (spec Level 1 mục 11–13).
 - [ ] **Test trước**: thêm test cho các ý bắt buộc của bài (cụm phải có, cụm không được có), xem fail.
 - [ ] **Viết bài** theo `docs/lesson-template.md` và `docs/quy-uoc.md`, khớp `docs/ho-so-cong-ty.md`, rồi tự rà theo danh sách ở mục 4.3 của `docs/quy-uoc.md`.
 - [ ] **Kiểm bằng máy**: `npm test`, `npm run check`, `npm run build`, `npm run check:dist`; bài có bài tập thì thêm `check:exercises`; xem bản build trên máy.
-- [ ] **Review độc lập**: giao một agent mới, model Sonnet, effort high, lời dặn đúng như mục 4.5 của `docs/quy-uoc.md`; kết quả ở `temp/review/<ngày>-doc-lap/review-bai-<slug>.md`.
+- [ ] **Review độc lập**: giao một agent mới; Claude dùng Sonnet, effort high; Codex giữ model đang dùng của phiên và để reviewer kế thừa, không đổi model. Lời dặn theo mục 4.5 của `docs/quy-uoc.md`; kết quả ở `temp/review/<ngày>-doc-lap/review-bai-<slug>.md`.
 - [ ] **Xử lý review**: kiểm từng mục, sửa mục đúng có test, ghi "Đã sửa / Không làm theo" vào spec của level; chạy lại bước kiểm bằng máy.
 - [ ] **Commit**; push chỉ khi người làm khóa học đồng ý.
 
 Review độc lập theo từng bài không thay cho lượt rà soát cuối cả nhánh của executing-plans; cả hai đều làm.
+
+## Thử khung kể liền ở bài 1.1 (2026-10-20)
+
+Theo kế hoạch thử nghiệm đã được người làm khóa học duyệt; chi tiết và giới hạn kiểm chứng ở spec Level 1 mục 16.
+
+- [x] Gộp Excel và database theo ba nhịp, giữ hình minh họa cạnh giải thích và khép tình huống trong phần chính.
+- [x] Bỏ bảng so sánh dài, mục trả lời riêng và preview SQL; rút chi tiết sâu, đặt thời lượng 12 phút.
+- [x] Giữ các phần cuối và bốn câu tự kiểm tra; in đậm từ trọng tâm theo phản hồi của người làm khóa học.
+- [x] Sửa câu dẫn ở Results bài 1.6; cập nhật kiểm cấu trúc chỉ riêng bài 1.1, giữ chuẩn cho bài khác.
+- [x] Chạy test, check, build và check:dist; kiểm trình duyệt 1280/1440px, mục lục, Excel, bàn phím, đối chiếu bài 1.2. Ghi riêng test độ dài và audit toàn dự án còn lỗi có sẵn, không sửa lan phạm vi.
+- [x] Review bằng agent Codex độc lập kế thừa model của phiên; xử lý các mục đúng. Đây là đúng quy ước của Codex, không yêu cầu Sonnet.
+- [x] Sửa mục Ứng dụng theo phản hồi: tập trung vào ứng dụng database, gồm nguồn thống nhất, giảm sai lệch, tra cứu/báo cáo và lịch sử có điều kiện; giữ nhãn in đậm.
+- [x] Đánh dấu dẫn chứng dữ liệu, tên bảng/cột và địa chỉ ô trong lời giải thích bằng kiểu code có nền; giữ dữ liệu trong các khối minh họa.
+- [x] Người làm khóa học duyệt bài 1.1 và yêu cầu cập nhật quy ước/template chung.
+
+## Đưa khung đã duyệt thành chuẩn (2026-10-20)
+
+- [x] Cập nhật quy ước, checklist và lời dặn review: mạch kể, độ sâu, Ứng dụng, chữ đậm, dẫn chứng code và tự kiểm tra.
+- [x] Viết lại template theo mẫu 1.1, có hướng dẫn bài khái niệm/truy vấn và cách điền các khối theo dữ liệu đã kiểm.
+- [x] Đồng bộ AGENTS, README, CLAUDE, DESIGN và đánh dấu các chỉ dẫn bố cục cũ trong spec/plan là lịch sử.
+- [x] Mở kiểm cấu trúc cho khung mới ở mọi bài đầy đủ, giữ danh sách đóng cho các bài cũ và chuẩn bản tóm tắt; không thêm trường frontmatter.
+- [x] Chạy kiểm tra và rà độc lập tính nhất quán của tài liệu, template và test; ghi đúng lỗi độ dài có sẵn ngoài phạm vi, xem spec mục 17.
+- [x] Làm rõ model review theo công cụ: Claude dùng Sonnet/effort high; Codex giữ model hiện tại, không truyền model override cho reviewer.
+
+## Chuyển bài 1.2 và 1.3 theo khung đã duyệt (2026-10-20)
+
+Kế hoạch được người làm khóa học duyệt trong chat; chỉ sửa hai bài, test liên quan và ghi nhận ở spec/plan. Các thay đổi quy ước cùng bài 1.1/1.6 từ lượt trước được giữ nguyên. Làm trên checkout hiện có, nhánh `codex/lessons-1-2-1-3`.
+
+- [x] 1.2: gộp giải thích Excel/database; giữ đường máy chủ → database → bảng, kết nối SSMS, Object Explorer, câu `SELECT * FROM PhongBan;` và kết quả giải tình huống. Giữ phần máy riêng tùy chọn, rút thành bốn bước. Thời lượng 20 phút không tính cài đặt.
+- [x] 1.3: giữ file ngày/lương và giả định nhập dạng chữ, hình SSMS, bảng kiểu và bảng kết quả từng ô; bỏ CREATE TABLE, TOP 5, CAST gây lỗi và LineMap lặp. Thời lượng 15 phút.
+- [x] Hai bài giữ năm mục cấp 2, giá trị code có nền, khái niệm đậm, ứng dụng đúng chủ đề và năm câu tự kiểm tra. Không đổi component/API/frontmatter schema.
+- [x] Bỏ hai slug khỏi legacy allowlist và điều chỉnh assertion về kiến thức còn cần bảo vệ; chạy RED trước sửa nội dung.
+- [x] Đối chiếu script, Microsoft Learn và SELECT trên database thật: danh mục phòng ban, kiểu/NULL, ngày mơ hồ, chuỗi tiền, làm tròn, tràn số và ngày từ chuỗi rỗng. Không ghi dữ liệu.
+- [x] Xem bản build ở 1280/1440px; mục lục, hình Excel/SSMS, bảng và Enter/Tab/Space ở tự kiểm tra. Không tràn ngang.
+- [x] Review độc lập mỗi bài bằng agent mới kế thừa model của phiên, xử lý từng mục sau xác minh; ghi Đã sửa/Không làm theo ở spec mục 18.
+- [x] Chạy đủ bốn lệnh kiểm tra sau chỉnh cuối; ghi lỗi nền ngoài phạm vi và bàn giao local cùng hai bản review. Không push/deploy. Hoàn tất ngày 21/10/2026: 238/239 test đạt, còn lỗi nền 13 đoạn ngoài hai bài; check/build/check:dist đạt.
+
+## Tiếp tục bài 1.4, 1.5, 1.6 (21/10/2026)
+
+Người làm khóa học yêu cầu tiếp tục cùng khung đã duyệt và dùng Superpowers. Không mở lại quyết định bố cục chung; dùng checkout/nhánh hiện có, giữ các sửa trước. Chi tiết nhận xét và bằng chứng ở spec mục 19.
+
+- [x] 1.4: gộp khóa chính/ngoại với Excel và hình SSMS; giữ lỗi DELETE cùng 10 hồ sơ tham chiếu, lời giải nghiệp vụ và năm câu tự kiểm tra; bỏ INSERT/DDL/LineMap và giảng lỗi sâu. 15 phút.
+- [x] 1.5: gộp hai lần dò Excel, đọc ERD/một-nhiều và đường BangLuong → NhanVien → PhongBan; bỏ JOIN/Result xem trước, thống kê dài và LineMap; giữ phòng hiện tại khác lịch sử, năm câu tự kiểm tra. 15 phút.
+- [x] 1.6: gộp mở sheet với SELECT, cách chạy/đọc kết quả; giữ query/Result/Messages/RunFlow và ba bài tập, rút các lời giảng lặp. 20 phút.
+- [x] Bỏ ba slug khỏi legacy allowlist; cập nhật assertion bố cục và chi tiết sâu đã rút, giữ bảo vệ tính đúng và giới hạn dữ liệu. Không đổi component/API/frontmatter schema hoặc YAML bài tập.
+- [x] Đối chiếu database và Microsoft: dữ liệu bảng/Excel/ba bước RunFlow khớp SELECT; DELETE và lỗi thiếu FROM qua handleRun của API, được guard và luôn rollback. Check:data sau kiểm báo không bảng nào lệch; check:exercises đạt cả 14 bài hiện có.
+- [x] Ba agent review mới, mỗi agent một bài, kế thừa model của phiên không override. Đã đọc các report và xử lý hết mục đúng; không yêu cầu khôi phục chi tiết sâu đã chủ động rút.
+- [x] Bốn lệnh kiểm tra: 238/239 test đạt, còn đúng sáu đoạn quá 120 chữ ở2.1/2.2 ngoài phạm vi; check0lỗi/0warning/3hint cũ; build68trang, check:dist1341link đạt.
+- [x] Hoàn tất kiểm bản cuối 1280/1440px, bàn phím/tự kiểm tra/RunFlow và bàn giao local cùng ba report; khôi phục viewport, không push/deploy.

@@ -109,7 +109,7 @@ A SQL study workbench: the knowledge map is the visual signature, white reading 
 - Language: Vietnamese UI and prose; SQL identifiers and authentic Excel/SSMS labels retain their original language.
 - Usage: desktop study at widths from 1280px. Preserve the existing notice below 1024px and existing navigation at every width.
 - Register: a learning product with interactive workspaces; the home page remains a knowledge map.
-- Restraint: retain all words, routes, section order, actions, progress semantics and tool replicas.
+- Restraint: preserve routes, actions, progress semantics and tool replicas. Lesson authoring follows the approved content structure in docs/quy-uoc.md and docs/lesson-template.md; style-only work preserves the current lesson's wording and order.
 - Anti-references: marketing heroes, decorative gradients, floating cards around every paragraph, or a new navigation model.
 - Runtime ownership: `src/styles/tokens.css` is canonical. This document mirrors the accepted values and explains their use; it does not generate CSS. Update both in the same change when changing the system.
 
@@ -172,7 +172,9 @@ Color/border/shadow feedback uses 140ms; overlay entrances use 200ms and `cubic-
 
 ### Content and data visualization
 
-Copy, links, SQL, data, level order and progress meanings are unchanged. Diagrams communicate existing relationships; their coordinates and teaching highlights are not decoration.
+Lesson content follows docs/quy-uoc.md and docs/lesson-template.md. The approved reference is lesson 1.1: one teaching section combines Excel and SQL in a narrative, with examples next to their explanation and the situation answered there. Use bold selectively for key concepts and the existing inline-code background for cited data values, identifiers and cell references in MDX prose. Keep authentic Excel/SSMS/Results rendering and their existing teaching marks. Content changes do not imply token or component changes.
+
+For style-only changes, preserve copy, links, SQL, data, level order and progress meanings. Diagrams communicate existing relationships; their coordinates and teaching highlights are not decoration.
 
 HRM_Demo relationship lines show `1` beside the referenced primary key and `∞` beside the foreign key, including the employee/manager loop. These indicate the one and many sides, not whether a value is required. Keep labels outside table boxes, share labels at common endpoints, and color them with the highlighted path. Both lesson diagrams and the database popup use the same component and legend.
 

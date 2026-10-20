@@ -23,9 +23,15 @@ export function readCatalog(): CatalogEntry[] {
   return sortCatalog(readLessonFiles().map(f => ({ slug: f.slug, ...lessonSchema.parse(f.data) })));
 }
 
-/** The level-3 headings inside the "Làm bằng SQL" section, in order. */
+/** The merged main section, or the SQL section of a lesson that still uses the old layout. */
+export function lessonMainSection(body: string): string {
+  const sections = body.split(/^## /m).slice(1);
+  return sections.find(s => s.split(/\r?\n/, 1)[0] === 'Làm bằng SQL') ?? sections[1] ?? '';
+}
+
+/** Level-3 headings inside the main teaching section, in order, for both layouts. */
 export function sqlSubheadings(body: string): string[] {
-  const section = body.split(/^## /m).find(s => s.startsWith('Làm bằng SQL')) ?? '';
+  const section = lessonMainSection(body);
   return [...section.matchAll(/^### (.+?)\s*$/gm)].map(m => m[1]);
 }
 

@@ -1,5 +1,21 @@
 # Sơ đồ thứ tự chạy và chạy thử bài tập trên web: Implementation Plan
 
+## Tiếp tục bài 2.1 và 2.2 theo khung gộp (21/10/2026)
+
+Phạm vi do người làm khóa học yêu cầu sau lượt 1.4–1.6; thực hiện theo quy ước hiện hành và spec `2026-10-18-step-flow-exercises-full-lessons-design.md`, mục 13. Giữ nguyên giao diện, component/API, frontmatter schema và bài tập. Dùng checkout đang có; không commit, push hay deploy trong lượt này.
+
+Pre-flight: MDX giữ cùng thuộc tính component và cấu trúc truy vấn/RunFlow; test cấu trúc nhận tiêu đề phần chính tùy bài, chỉ bỏ hai slug khỏi danh sách cho phép khung cũ. Không có thay đổi giao diện giữa các thành phần.
+
+- [x] Đọc quy ước, template, hồ sơ công ty, bài đã duyệt và quyết định cũ; chốt mạch 2.1 chọn cột/alias, 2.2 lọc một điều kiện.
+- [x] RED: bỏ hai slug khung cũ, chạy test và xác nhận lỗi cấu trúc cùng sáu đoạn nền quá dài trước khi viết.
+- [x] Chạy SELECT trên database khóa học để kiểm dẫn chứng; viết lại hai bài, giữ lời giải/kết quả/RunFlow/bài tập, cập nhật assertion nội dung theo phạm vi mới.
+- [x] Bản đầu: 239/239 test; check/build/check:dist đạt; API build và 14/14 bài tập đạt; check:data không lệch bảng.
+- [x] Kiểm bản build 1280px/1440px: mục lục, hình, bảng, highlight và bàn phím RunFlow; evidence trong thư mục verification của lượt.
+- [x] Đọc đủ hai report độc lập (52 mục/bài), xác minh/sửa mục phù hợp, ghi Đã sửa/Không làm theo vào spec mục 13.
+- [x] Kiểm bản cuối sau sửa: 239/239 test, check 0 lỗi/0 warning/3 hint cũ, build 68 trang, check:dist 1.339 link. Đọc lại các câu vừa sửa trên browser, lưu ảnh cuối, phục hồi viewport và bàn giao link local cùng đường dẫn review.
+
+> Cập nhật 20/10/2026: khung bài và cách trình bày hiện hành theo [quy ước](../../quy-uoc.md) và [lesson-template](../../lesson-template.md), lấy bài 1.1 đã duyệt làm mẫu. Các chỉ dẫn tách "Với Excel" / "Làm bằng SQL", ép đủ khối hoặc trả lời tình huống riêng trong phần lịch sử bên dưới đã được thay thế. Các quyết định khác áp dụng khi không mâu thuẫn với quy ước hiện hành và các quyết định được duyệt sau đó.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Trạng thái (2026-10-18):** đã làm xong; sơ đồ đã lên web ở bài 3.5. Bản chạy thử nằm ở nhánh `spike/exercise-runner` (giữ lại, không merge); kết quả ở [file kết quả chạy thử](../specs/2026-10-18-exercise-runner-spike-results.md).

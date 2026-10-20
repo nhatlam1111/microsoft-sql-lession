@@ -1,111 +1,79 @@
 # Khung một bài học
 
-File này chỉ tả khung bài và các khối dùng được. Quy tắc viết, quy trình làm và review một bài nằm ở [`quy-uoc.md`](quy-uoc.md); hiện trạng công ty nằm ở [`ho-so-cong-ty.md`](ho-so-cong-ty.md).
+Chuẩn hiện hành từ 20/10/2026, sau khi người làm khóa học duyệt [`bài 1.1`](../src/content/lessons/1-1-database-la-gi.mdx). Dùng bài này để đối chiếu mạch kể, độ sâu, chữ đậm và giá trị được highlight. [`Bài 3.5`](../src/content/lessons/3-5-left-join.mdx) chỉ tham khảo kỹ thuật `RunFlow`, không lấy bố cục cũ làm khuôn.
 
-Chép phần khung dưới đây vào `src/content/lessons/<số>-<slug>.mdx` (ví dụ `2-2-where-loc-nhu-autofilter.mdx`), rồi thay nội dung. Bài mẫu để đối chiếu giọng văn và cách dùng khối: [`3-5-left-join.mdx`](../src/content/lessons/3-5-left-join.mdx). Quy định gốc nằm ở [spec Level 1, mục 3](superpowers/specs/2026-10-18-level-1-full-lessons-design.md) và [spec đợt 1, mục 4.7](superpowers/specs/2026-10-17-sql-server-course-site-design.md).
+File này hướng dẫn dựng bài và dùng các khối. Quy tắc viết, định dạng, số liệu, review và an toàn database nằm ở [`quy-uoc.md`](quy-uoc.md); bối cảnh, nhân vật và dữ liệu mẫu ở [`ho-so-cong-ty.md`](ho-so-cong-ty.md). Các spec/plan/mockup cũ ghi hai phần Excel/SQL là lịch sử thiết kế; khi viết tiếp dùng hai tài liệu hiện hành này.
 
 ## Phần đầu file
 
+Không thêm trường frontmatter để chọn khung. Giữ `kind: full` hoặc `summary`; tiêu đề phần chính được đọc trực tiếp từ MDX.
+
 ```yaml
 ---
-num: "2.2"                     # số bài, đúng bảng 51 bài
+num: "2.2"                     # đúng bảng 51 bài
 title: "WHERE: lọc như AutoFilter"
-shortTitle: WHERE              # tối đa 28 ký tự, hiện ở sidebar và mindmap
-level: 2                       # trùng số đầu của num
-area: A2                       # mảng kiến thức A1–A8
-kind: full                     # full (bài đầy đủ) hoặc summary (bản tóm tắt)
-minutes: 12                    # thời gian đọc, chỉ hiện với bài đầy đủ
-prerequisites:                 # các bài cần biết trước, phải là bài đứng trước
+shortTitle: WHERE              # tối đa 28 ký tự
+level: 2
+area: A2
+kind: full
+minutes: 12                    # ước lượng theo bài thực tế, không mặc định mọi bài 12 phút
+prerequisites:
   - "2.1"
-goal: bạn tự lọc được danh sách nhân viên theo một điều kiện   # không bắt đầu bằng "Học xong"
-excel: AutoFilter              # liên hệ Excel, một cụm ngắn
-summary: Một câu tóm tắt bài, hiện trong drawer trên mindmap và khi tìm kiếm.
-# noExercises: true            # chỉ khi bài không có mục "Bài tập" (bài 1.1–1.5)
+goal: bạn tự lọc được danh sách nhân viên theo một điều kiện
+excel: AutoFilter
+summary: Một câu nói đúng vấn đề và nội dung chính của bài.
+# noExercises: true            # bài khái niệm không có mục Bài tập, hiện là 1.1–1.5
 ---
 ```
 
 ## Thân bài đầy đủ
 
-Tên mục và thứ tự cố định; `npm test` kiểm.
+Thứ tự cấp 2: **Tình huống → phần chính theo chủ đề → Hay nhầm ở đâu → Ứng dụng → Ghi nhớ → Bài tập**. Tiêu đề phần chính được đặt theo bài, như "Từ hai bản Excel đến một nguồn dữ liệu chung" ở bài 1.1 hoặc "Lọc danh sách nhân viên theo điều kiện" ở bài `WHERE`. Các tên mục còn lại giữ đúng như khung.
+
+Khung dưới chép vào file MDX được; thay toàn bộ lời chỉ dẫn bằng nội dung thật. Các tiểu mục chỉ gợi ý nhịp kể, chọn khoảng 2–4 tiểu mục theo mục tiêu bài. Ví dụ và hình đặt ngay cạnh ý cần minh họa.
 
 ````mdx
 ## Tình huống
 
-Một yêu cầu hay gặp từ phòng nhân sự:
+Chị Hạnh gửi bạn một yêu cầu công việc:
 
 <Chat who="Chị Hạnh · Phòng Nhân sự" time="16:05" initial="H">
-Nội dung tin nhắn, giọng nói chuyện bình thường.
+Yêu cầu cụ thể, giọng nói chuyện bình thường.
 </Chat>
 
-Nói gọn lại, chị Hạnh đang hỏi:
+Giả định: nêu gọn mốc thời gian và phạm vi cần để kết luận.
 
-<Key>Câu hỏi dữ liệu, một câu.</Key>
+<Key>Một câu chốt điều cần tìm hoặc xử lý.</Key>
 
-## Với Excel
+## Hiểu và xử lý yêu cầu
 
-Cách quen thuộc để làm việc đó trên Excel, và chỗ Excel bắt đầu chật vật.
+### Từ cách làm Excel đến khái niệm đang học
 
-<Excel sheets="NhanVien" cell="D3" formula="=VLOOKUP(A3,HopDong!A:B,2,FALSE)" selected="D3" rows={[
-  ['Mã NV', 'Họ tên', 'Phòng ban'],
-  ['NV001', 'Trần Thị Mai', 'Kế toán'],
-]} />
+Xuất phát từ vấn đề trong tình huống. Nêu cách làm quen thuộc với Excel,
+rồi dẫn sang cách database hoặc SQL xử lý ngay trong cùng ý.
+Giải thích khái niệm mới bằng lời thường và in đậm có chọn lọc.
 
-## Làm bằng SQL
+### Giải thích bằng dẫn chứng
 
-### Lý thuyết cơ bản
+Đặt hình hoặc ví dụ cạnh ý cần làm rõ. Giá trị dẫn chứng, tên bảng/cột
+và địa chỉ ô trong lời giải thích dùng code có nền, như `NV005`, `MaNV`, `C4`.
+Chọn khối phù hợp trong bảng thuộc tính cuối tài liệu; chỉ dùng khi cần.
+Nêu giới hạn quan trọng và cái giá của cách làm bằng một vế câu.
 
-Một câu nói khái niệm là gì.
+Ở bài này chỉ cần nắm ý chính đang học; chỉ sang đúng bài đào sâu hơn.
 
-<Sql title="Cú pháp chung" code={`SELECT các cột
-FROM bảng
-WHERE điều kiện;`} />
+### Áp dụng ngay vào yêu cầu
 
-Ví dụ thu gọn, viết bằng bảng Markdown (không dùng khối `Result`, vì khối đó ghi dòng trạng thái của database thật):
-
-| MaNV | MaPB |
-|---|---|
-| NV001 | KT |
-
-Từng phần nghĩa là gì:
-
-<LineMap rows={[
-  ["WHERE MaPB = 'KT'", 'Chỉ giữ người phòng Kế toán, giống chọn một giá trị trong AutoFilter.'],
-]} />
-
-### Câu lệnh cho tình huống
-
-<Sql code={`SELECT MaNV, HoTen
-FROM NhanVien
-WHERE MaPB = 'KT'
-ORDER BY MaNV;`} />
-
-<Result columns={['MaNV', 'HoTen']} rows={[
-  ['NV001', 'Trần Thị Mai'],
-]} total={9} />
-
-### SQL Server chạy câu này thế nào
-
-<RunFlow query={`…đúng câu ở trên…`} steps={[
-  {
-    clause: 'FROM',                 // từ khóa của bước, theo thứ tự SQL Server chạy
-    title: 'Một câu trên thẻ và đầu drawer.',
-    focus: 'FROM NhanVien',         // phần của câu lệnh bước này chạy, được tô vàng
-    meaning: 'Từ khóa làm gì nói chung. Chữ trong `…` là code.',
-    detail: 'Dữ liệu ở bước này thay đổi ra sao, có số dòng thật.',
-    sql: `SELECT * FROM NhanVien;`, // câu ra đúng kết quả của bước này
-    columns: ['MaNV', 'HoTen'],
-    rows: [['NV001', 'Trần Thị Mai']],  // tối đa 10 dòng
-    total: 48,                      // tổng số dòng khi rows chỉ là trích
-    excel: 'Cách làm tương ứng bên Excel (không bắt buộc).',
-  },
-]} />
+Trả lời chị Hạnh ngay trong mạch này, đủ điều kiện và đúng phạm vi dữ kiện.
+Tách căn cứ nghiệp vụ với thao tác mà database hay người có quyền thực hiện.
+Bài truy vấn thay tiểu mục này bằng biến thể có câu lệnh ở phần hướng dẫn bên dưới.
 
 ## Hay nhầm ở đâu
 
 <Mistakes>
 
-1. **Lỗi hay gặp.** Hậu quả cụ thể (ra 0 dòng, ra thừa dòng…).
-2. **Lỗi thứ hai.** …
+1. **Lỗi thường gặp.** Hậu quả cụ thể, không giảng lại phần chính.
+2. **Lỗi thứ hai.** Hậu quả cụ thể.
 
 </Mistakes>
 
@@ -113,14 +81,15 @@ ORDER BY MaNV;`} />
 
 <Apply>
 
-- Một cách dùng trong việc thật, không gắn với vị trí của người đọc.
+- **Tên ứng dụng của chủ đề:** việc làm được nhờ kiến thức của bài, kèm mục đích cụ thể.
+- **Một ứng dụng khác:** ví dụ công việc đúng khả năng đã giải thích, có điều kiện nếu cần.
 
 </Apply>
 
 ## Ghi nhớ
 
 <Memo rows={[
-  ['AutoFilter chọn một giá trị', "WHERE cột = 'giá trị'"],
+  ['Điểm tựa Excel đã dùng trong bài', 'Ý chính SQL hoặc database cần nhớ'],
 ]} />
 
 ## Bài tập
@@ -128,26 +97,58 @@ ORDER BY MaNV;`} />
 <Exercises />
 ````
 
-Bài khái niệm (`noExercises: true`) không có mục "Bài tập"; thay vào đó, ngay sau khối `Memo` có dòng `**Tự kiểm tra trước khi bấm "Đã học xong":**` và ít nhất ba câu hỏi, mỗi câu một khối:
+### Bài khái niệm
+
+Giữ lời giải ngay trong phần chính, không thêm preview SQL hay mục trả lời riêng. Với `noExercises: true`, bỏ toàn bộ mục "Bài tập" ở khung trên; ngay sau `Memo` đặt dòng dưới cùng ít nhất ba câu tự kiểm tra. Bộ câu hỏi phải kiểm được các mục tiêu, gồm thuật ngữ nền tảng, không chỉ hỏi lỗi và trường hợp ngoại lệ.
 
 ````mdx
-<details>
-<summary>Câu hỏi?</summary>
+**Tự kiểm tra trước khi bấm "Đã học xong":**
 
-Câu trả lời ngắn.
+<details>
+<summary>Câu hỏi kiểm một ý chính đã học?</summary>
+
+Đáp án ngắn, đủ nghĩa và không dạy thêm kiến thức ngoài bài.
 
 </details>
 ````
 
-Gợi ý dưới nút "Đã học xong" của các bài này là "Bấm khi bạn trả lời được các câu tự kiểm tra cuối bài mà không nhìn bài."
+Gợi ý dưới nút "Đã học xong" là "Bấm khi bạn trả lời được các câu tự kiểm tra cuối bài mà không nhìn bài."
 
-Ghi chú về các tiểu mục của "Làm bằng SQL" (nội dung từng phần viết theo `quy-uoc.md`):
+### Bài có câu lệnh và kết quả
 
-- `### Lý thuyết cơ bản` luôn đứng đầu, gồm bốn phần: khái niệm, cú pháp chung, ví dụ thu gọn, bảng từng phần nghĩa là gì; cuối là đoạn "Ở bài này chỉ cần…".
-- Có sơ đồ thứ tự chạy (câu lệnh từ 2 bước xử lý trở lên) thì hai tiểu mục cuối là `### Câu lệnh cho tình huống` rồi `### SQL Server chạy câu này thế nào`.
-- Không viết tiểu mục "Bước 1, Bước 2…": phần đi từng bước nằm trong drawer của sơ đồ.
-- Bài chỉ có khái niệm (như 1.2–1.5) thì phần lý thuyết là chính, có thể kèm câu minh họa ngắn, không có sơ đồ.
-- Bài 6.5 viết theo kiểu xử lý sự cố, không theo khuôn này.
+Giữ lý thuyết, Excel và ví dụ trong phần chính theo chủ đề. Cuối phần đó dùng `### Câu lệnh cho tình huống`, đặt câu SQL đầy đủ và kết quả đã kiểm chứng, rồi trả lời người hỏi ngay cạnh kết quả. Nếu có `RunFlow`, tiểu mục cuối cùng là `### SQL Server chạy câu này thế nào`. Không chép thêm một phần giải SQL độc lập hay "Trả lời chị Hạnh" ở sau.
+
+Sơ đồ đặt khối dưới đây là **mã minh họa thuộc tính**, không dán nguyên các tên biến vào bài. Thay `sqlDaKiemChung`, `cacCot`, `cacDong`, `tongSoDong`, `cacBuocDaKiemChung` bằng các giá trị literal đã chạy và kiểm trước khi viết.
+
+````mdx
+### Câu lệnh cho tình huống
+
+<Sql code={sqlDaKiemChung} />
+
+<Result columns={cacCot} rows={cacDong} total={tongSoDong} />
+
+Câu trả lời nghiệp vụ từ kết quả này, đúng giả định đầu bài.
+
+### SQL Server chạy câu này thế nào
+
+<RunFlow query={sqlDaKiemChung} steps={cacBuocDaKiemChung} />
+````
+
+- `Sql` dùng câu lệnh đầy đủ giải đúng tình huống. Đoạn trích, khuôn cú pháp và câu ghi dữ liệu chỉ để đọc có `copy={false}`. Kết quả lỗi dùng `Messages` với nguyên văn đã kiểm; không tự sáng tác thông báo.
+- `Result.rows` là các dòng đã chạy, `total` là tổng thật khi chỉ trích; không lấy vài dòng minh họa rồi gắn tổng ước lượng. Ví dụ thu gọn giả lập dùng bảng Markdown, ghi rõ phạm vi, không giả làm kết quả database thật.
+- Mỗi phần tử `RunFlow.steps` có `clause`, `title`, `focus`, `meaning`, `detail`, `sql`, `columns`, `rows`, `total`; `excel` là tùy chọn. `query` trùng câu cho tình huống, `focus` thuộc câu đó, `sql` trả đúng trạng thái dữ liệu của bước. Chỉ thêm sơ đồ khi có từ hai bước xử lý logic trở lên và sơ đồ giúp hiểu bài.
+- `rows` mỗi bước trích tối đa 10 dòng; `total` là số dòng thật sau bước đó. Giải thích trong drawer bắt đầu từ từ khóa, nêu dòng nào giữ/bỏ/đổi. Thứ tự logic không mô tả cách SQL Server đọc vật lý.
+- `LineMap` là khối tùy chọn khi cần tách nghĩa từng phần. Mỗi dòng có "Ví dụ:" và giá trị cụ thể được nhận, loại hoặc đổi; không chép lại cùng lời giải thích ở cả bảng lẫn đoạn văn.
+- Bài xử lý sự cố như 6.5 có thể đặt tên tiểu mục theo diễn biến sự cố; vẫn đi từ tình huống tới lời giải, giữ giới hạn an toàn và các mục cuối.
+
+## Trình tự dùng khung
+
+1. Đọc quy ước và hồ sơ công ty; chốt mục tiêu, giả định và câu trả lời cần có.
+2. Chọn biến thể khái niệm hoặc truy vấn; đặt tiêu đề phần chính theo vấn đề cụ thể.
+3. Chọn ví dụ tối thiểu và các khối thật sự cần; chạy, đối chiếu dữ liệu theo quy trình trước khi điền.
+4. Viết mạch Excel → khái niệm/cách SQL xử lý → giải yêu cầu; không tách lại hai phần Excel/SQL.
+5. Rà chữ đậm, code của giá trị dẫn chứng, dấu ô trong hình, ứng dụng đúng chủ đề và câu tự kiểm tra phủ mục tiêu.
+6. Chạy kiểm tra và review theo mục 4 của `quy-uoc.md`. Bài cũ chuyển khung thì cập nhật các assertion về tiêu đề, giữ các kiểm về kiến thức và số liệu.
 
 ## Thân bản tóm tắt
 

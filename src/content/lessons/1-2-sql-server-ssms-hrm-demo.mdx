@@ -5,128 +5,94 @@ shortTitle: SSMS và HRM_Demo
 level: 1
 area: A1
 kind: full
-minutes: 25
+minutes: 20
 prerequisites:
   - "1.1"
-goal: bạn kết nối được database của khóa học bằng SSMS, tìm được bảng PhongBan trong Object Explorer và chạy được một câu lệnh để xem dữ liệu
+goal: bạn phân biệt được SQL Server, database và SSMS, kết nối đúng database và xem được danh mục phòng ban
 excel: Mở file so với kết nối máy chủ
-summary: Máy chủ, database, bảng; kết nối SSMS vào máy chủ của khóa học, đọc Object Explorer, chạy câu lệnh đầu tiên và làm quen trang bài tập.
+summary: Từ tên máy chủ và tài khoản được cấp, kết nối bằng SSMS, tìm bảng PhongBan và xem danh mục phòng ban cho chị Hạnh.
 noExercises: true
 ---
 
 ## Tình huống
 
-Một yêu cầu hay gặp ở ngày đầu được cấp quyền vào hệ thống:
+Tháng 10/2026, ngày đầu được cấp quyền vào hệ thống, bạn nhận tin nhắn:
 
 <Chat who="Chị Hạnh · Phòng Nhân sự" time="10:20" initial="H">
 Bên IT vừa gửi em tên máy chủ với tài khoản vào database nhân sự rồi đó. Chiều nay họp, em mở bảng phòng ban xem giúp chị bây giờ công ty có những phòng nào nhé.
 </Chat>
 
-Nói gọn lại, bạn đang có trong tay một tên máy chủ và một tài khoản, và cần:
+Trước khi kết nối, hỏi thêm IT **tên database** và **cách đăng nhập**. Tên máy chủ và tài khoản chưa đủ để biết phải mở dữ liệu ở đâu, đăng nhập theo cách nào.
 
-<Key>Làm sao mở được một bảng dữ liệu trên máy chủ để xem, khi không có file nào để bấm vào?</Key>
+<Key>Không có file để bấm mở: làm sao kết nối tới dữ liệu và lấy danh mục phòng ban?</Key>
 
-## Với Excel
+## Từ SSMS đến danh mục phòng ban
 
-Trong ví dụ này, danh sách phòng ban là một file Excel trên máy của bạn. Bấm đúp là file mở ra:
+### Từ mở workbook đến kết nối máy chủ
 
-<Excel sheets="PhongBan" rows={[
-  ['Mã PB', 'Tên phòng ban'],
-  ['BGD', 'Ban Giám đốc'],
-  ['IT', 'IT'],
-  ['KD', 'Kinh doanh'],
-  ['KT', 'Kế toán'],
-  ['NS', 'Nhân sự'],
-  ['VH', 'Vận hành'],
-]} />
+Với Excel, bạn mở một **workbook** rồi chọn **sheet** cần xem. Workbook có thể ở máy bạn hoặc được dùng chung trên OneDrive/SharePoint. Với database khóa học, dữ liệu ở **máy chủ**, tức hệ thống cung cấp dữ liệu qua mạng; bạn dùng công cụ kết nối tới đó, thay vì mở trực tiếp file dữ liệu.
 
-Muốn người khác cùng xem, cách hay gặp là gửi file qua email, và từ lúc đó mỗi người giữ một bản riêng. Excel cũng cho nhiều người cùng sửa một workbook đặt trên OneDrive hay SharePoint. Dù vậy, thứ bạn mở vẫn là cả một file: mở ra là thấy mọi sheet, và quyền được cấp theo cả file.
+Nhắc lại bài 1.1: **database** là tập dữ liệu có cấu trúc; **SQL Server** là phần mềm quản lý database. **SSMS** (SQL Server Management Studio) là công cụ cài trên máy bạn để kết nối, tìm bảng, gửi câu lệnh và xem kết quả. Đóng SSMS không làm mất dữ liệu trên máy chủ.
 
-Với database của khóa học, bạn không nhận file nào để mở. Dữ liệu nằm trên máy chủ; ai được cấp quyền thì dùng một công cụ kết nối tới đó, gửi câu lệnh, và máy chủ chỉ trả về những dòng được hỏi. Quyền có thể cấp tới từng bảng, và các luật đã khai báo được kiểm khi ghi dữ liệu (bài 1.1). Database cũng được lưu thành file trên máy chủ, nhưng chỉ SQL Server mở các file đó; người dùng không mở trực tiếp.
+Khóa học dùng **Azure SQL Database**, dịch vụ database trên Azure của Microsoft, cùng họ với SQL Server và dùng T-SQL. Database đã có sẵn, nên bạn không cần tự cài SQL Server. **HRM_Demo** là tên bộ dữ liệu nhân sự giả lập gồm bảy bảng; trên máy chủ khóa học, nó nằm trong database `free-sql-db-8797714`.
 
-## Làm bằng SQL
+Đường đi tới bảng phòng ban là **máy chủ → database → bảng**:
 
-### Lý thuyết cơ bản
+- Máy chủ: `sql-lession.database.windows.net` — địa chỉ để SSMS kết nối.
+- Database: `free-sql-db-8797714` — tương tự workbook chứa nhiều sheet.
+- Bảng: `dbo.PhongBan` — tương tự sheet danh mục phòng ban. `dbo` là **schema**, một nhóm chứa các bảng; bảy bảng mẫu đều nằm trong nhóm này.
 
-**SQL Server** là hệ quản trị cơ sở dữ liệu của Microsoft: phần mềm lưu dữ liệu, nhận câu lệnh, trả kết quả và kiểm các luật đã khai báo. Một bản SQL Server đã cài (gọi là instance) quản lý nhiều database, mỗi database có thể chứa nhiều bảng.
+Để đi được đường đó, bạn cần bốn thông tin: **tên máy chủ**, **cách đăng nhập**, **tài khoản và mật khẩu**, **tên database**. Khóa học dùng **SQL Server Authentication**, tức tên đăng nhập và mật khẩu riêng được cấp; không lấy tài khoản Windows điền thay.
 
-Database của khóa học chạy trên **Azure SQL Database**, dịch vụ SQL Server trên cloud Azure của Microsoft; Microsoft lo phần cài đặt và vận hành. Tên `sql-lession.database.windows.net` là một máy chủ logic: điểm vào và nơi quản lý tài khoản, tường lửa cho các database của khóa học, không phải một cái máy cụ thể. Câu lệnh viết bằng T-SQL (bài 1.1). Các câu lệnh của khóa học chạy giống nhau trên Azure SQL Database và trên SQL Server cài ở máy; chỉ một số lệnh cấp máy chủ, như đổi sang database khác bằng `USE` hay sao lưu (backup), là khác. Vì vậy bạn không cần tự cài SQL Server để học.
+### Chuẩn bị công cụ và nơi thực hành
 
-**SSMS** (SQL Server Management Studio) là công cụ kết nối, cài riêng trên máy bạn: xem có những database nào, bảng nào, gõ câu lệnh và xem kết quả. Dữ liệu không nằm trong SSMS; SSMS chỉ hiện kết quả mà máy chủ trả về. Khi bạn copy kết quả sang Excel hay lưu ra file, bản đó nằm trên máy bạn và không tự cập nhật theo database, giống file Excel xuất ra ở bài 1.1.
+SSMS chỉ chạy trên Windows. Cài theo [hướng dẫn của Microsoft](https://learn.microsoft.com/en-us/ssms/install/install), hoặc nhờ IT cài trên máy công ty. Chuẩn bị tài khoản được cấp và mạng cho phép kết nối ra cổng `1433`. Thời lượng bài không tính thời gian cài phần mềm.
 
-Dữ liệu và công cụ được tách ra như vậy vì database là nguồn dùng chung (bài 1.1): dữ liệu ở một nơi trên máy chủ, mỗi người mở bằng công cụ của mình, và máy chủ quyết định ai được xem, được sửa những gì. Muốn máy chủ cho vào, bạn phải nói rõ tìm ở đâu, bạn là ai, và cần mở database nào, giống vào một tòa nhà: địa chỉ tòa nhà, cách qua cửa và thẻ ra vào, rồi phòng cần tới. Với tài khoản khóa học cấp, đó là bốn thông tin:
+**Thực hành trên web:** không có máy Windows thì bạn vẫn đọc được bài. Từ bài 1.6, bài đã có bài tập sẽ có nút **Làm bài**, mở khung viết SQL ngay trên trình duyệt. Trang dùng cùng database khóa học; **mã truy cập** do người phụ trách cấp, khác tài khoản SSMS, và được trình duyệt nhớ lại.
 
-1. tên máy chủ: máy chủ nằm ở đâu;
-2. cách đăng nhập: bạn chứng minh mình là ai theo cách nào;
-3. tài khoản và mật khẩu: bạn là ai; quyền xem, quyền sửa được cấp theo tài khoản này;
-4. tên database muốn mở: một máy chủ chứa nhiều database, nên phải chọn đúng một.
+Trên trang bài tập, **Chạy (F5)** hiện kết quả; **Nộp bài** còn đối chiếu với yêu cầu. Trang nhận mỗi lần một câu lệnh, giới hạn thời gian thực thi câu lệnh ở 10 giây; bước kết nối lần đầu có thể chờ lâu hơn để database thức dậy. Nút **Sơ đồ database** giúp tra bảng và cột.
 
-Có ba cách đăng nhập hay gặp. SQL Server Authentication dùng tên và mật khẩu riêng của SQL Server; khóa học dùng cách này. Windows Authentication dùng tài khoản đăng nhập máy tính, hay gặp ở SQL Server cài trong công ty; Azure SQL Database không hỗ trợ cách này. Microsoft Entra dùng tài khoản Microsoft 365 của công ty, thường kèm xác thực nhiều bước. Được cấp tài khoản mà không rõ là loại nào thì hỏi lại, vì chọn sai cách đăng nhập cũng bị từ chối.
+Mỗi lần chạy trên trang nằm trong một **giao dịch (transaction)**, luôn **hoàn tác (rollback)** sau đó; trang chặn các câu có thể thoát giao dịch như `COMMIT`. Cơ chế này chỉ có trên trang bài tập. Trong SSMS, câu lệnh chạy thật, nên trên database khóa học dùng chung, ở Level 1 bạn chỉ chạy các câu chỉ đọc có trong bài. Giao dịch học ở bài 5.4.
 
-Ví dụ thu gọn với máy chủ của khóa học. Đường đi để tìm tới một bảng gồm ba chặng:
+**Bản riêng trên máy — tùy chọn:** bỏ qua đoạn này nếu dùng database khóa học. Muốn có dữ liệu riêng để thử:
 
-| Máy chủ | Database | Bảng |
-|---|---|---|
-| sql-lession.database.windows.net | free-sql-db-8797714 | dbo.PhongBan |
+1. Cài [SQL Server Express hoặc Developer](https://www.microsoft.com/en-us/sql-server/sql-server-downloads) và SSMS. Hai bản đều miễn phí; Developer chỉ dành cho học, phát triển và thử nghiệm, không dùng cho hệ thống chạy thật.
+2. Kết nối tới `localhost` nếu lúc cài chọn **Default instance** (bản SQL Server không đặt tên riêng), hoặc `localhost\SQLEXPRESS` nếu Express giữ tên mặc định; chọn **Windows Authentication**. Trên máy riêng, nếu dùng chứng chỉ tự ký thì chọn **Encrypt: Mandatory** và **Trust Server Certificate**; không áp dụng cách bỏ kiểm chứng chỉ này cho máy chủ khóa học.
+3. Trong **Object Explorer**, khung cây bên trái SSMS, bấm chuột phải **Databases → New Database…**, tạo database `HRM_Demo`.
+4. Tải [HRM_Demo.sql](/microsoft-sql-lession/HRM_Demo.sql) ở [trang Giới thiệu](/microsoft-sql-lession/gioi-thieu/), mở bằng SSMS, chọn database riêng vừa tạo rồi bấm **Execute**. Kết quả báo `HRM_Demo đã sẵn sàng`; bấm chuột phải **Tables → Refresh** để thấy bảy bảng.
 
-Đây là đường đi để tìm bảng, không phải cách viết trong câu lệnh: trong câu lệnh bạn chỉ cần tên bảng, vì máy chủ và database đã được chọn lúc kết nối.
+Script chỉ dùng trên database riêng: nó **xóa và tạo lại bảy bảng mẫu**, làm mất thay đổi bạn đã thực hiện trên các bảng đó. Nếu gặp bảng trùng tên không do script tạo hoặc bảng khác trỏ vào bảng mẫu, script dừng lại. Không chạy script trên database khóa học dùng chung.
 
-Từng phần nghĩa là gì:
+### Kết nối và tìm bảng phòng ban
 
-<LineMap rows={[
-  ['sql-lession.database.windows.net', 'Tên máy chủ, giống địa chỉ tòa nhà. Gõ đủ cả đuôi .database.windows.net, đúng như tên được cấp. Ví dụ: chỉ gõ sql-lession thì SSMS không tìm ra máy chủ.'],
-  ['free-sql-db-8797714', 'Tên database trên máy chủ đó, giống tên một file. Đây là tên Azure gợi ý lúc tạo database, khóa học giữ nguyên; bên trong là bộ dữ liệu mẫu HRM_Demo. Ví dụ: để trống ô Database Name thì bạn bị đưa vào database master, nơi không có bảng nào của HRM_Demo.'],
-  ['dbo.PhongBan', 'Tên bảng, giống tên một sheet. dbo (database owner) là schema mặc định, có sẵn trong mọi database: một ngăn để gom các bảng, nhờ đó đặt tên và cấp quyền được theo từng nhóm bảng. Cả 7 bảng của HRM_Demo nằm trong schema dbo. Khi câu lệnh không ghi schema, SQL Server tìm bảng trong schema mặc định của tài khoản, thường là dbo. Ví dụ: FROM PhongBan và FROM dbo.PhongBan ở đây cùng chỉ một bảng.'],
-]} />
-
-HRM_Demo là tên của bộ dữ liệu mẫu dùng cho cả khóa: 7 bảng với dữ liệu nhân sự giả lập. Trên máy chủ của khóa học, bộ dữ liệu đó nằm trong database `free-sql-db-8797714`, nên dòng trạng thái dưới mọi bảng kết quả trong bài ghi đúng tên này, giống như SSMS của bạn.
-
-Ở bài này chỉ cần kết nối được và mở được một bảng. Phần sâu hơn có bài riêng: quyền truy cập và dữ liệu nhạy cảm ở bài 6.1, các môi trường Dev, UAT, Production ở bài 6.2, giao dịch (transaction) mà trang bài tập dùng để hoàn tác ở bài 5.4.
-
-### Kết nối SSMS vào máy chủ của khóa học
-
-Trước khi kết nối, cần có:
-
-- máy Windows và quyền cài phần mềm: SSMS chỉ chạy trên Windows, cài theo [hướng dẫn cài SSMS của Microsoft](https://learn.microsoft.com/en-us/ssms/install/install); máy công ty thường phải nhờ IT cài. Lần cài đầu có thể mất thêm vài chục phút, nên cài trước khi đọc bài;
-- tài khoản và mật khẩu người phụ trách khóa học cấp;
-- mạng cho phép kết nối ra cổng 1433, cổng mà SQL Server dùng; một số mạng công ty chặn cổng này.
-
-Khóa học chỉ hướng dẫn SSMS. Không có máy Windows thì bạn vẫn đọc được bài, và từ bài 1.6 các câu lệnh thực hành chạy được trên trang bài tập ngay trong trình duyệt.
-
-SSMS 21 trở lên có hai kiểu hộp kết nối: kiểu mới, mặc định ở bản hiện tại, và kiểu cũ. Bài tả kiểu mới. Mở SSMS, hộp **Connect to Server** hiện ra; nếu không thấy, bấm **Connect > Database Engine** ở Object Explorer. Điền:
+Phần còn lại dùng database khóa học. Mở SSMS; nếu hộp **Connect to Server** chưa hiện, chọn **Connect → Database Engine** trong Object Explorer bên trái. Với hộp kết nối kiểu mới, điền:
 
 - **Server Name**: `sql-lession.database.windows.net`.
-- **Authentication**: SQL Server Authentication, vì khóa học cấp tài khoản theo cách này.
-- **User Name** và **Password**: tài khoản người phụ trách khóa học cấp cho bạn.
-- **Database Name**: `free-sql-db-8797714`. Luôn điền ô này (xem mục Hay nhầm ở đâu).
-- **Encrypt**: chọn mục bắt đầu bằng Strict, như Strict (Minimum SQL Server 2022 and Azure SQL), theo khuyến nghị của Microsoft cho Azure SQL. Mật khẩu và dữ liệu nhân sự đi qua Internet, nên kết nối phải được mã hóa, và SSMS kiểm chứng chỉ của máy chủ để chắc mình đang nói chuyện với đúng máy chủ Azure.
-- **Trust Server Certificate**: để trống. Tick ô này nghĩa là bỏ qua bước kiểm máy chủ; chỉ dùng cho SQL Server tự cài trên máy của bạn (xem phần cuối).
+- **Authentication**: SQL Server Authentication.
+- **User Name** và **Password**: tài khoản và mật khẩu được cấp.
+- **Database Name**: `free-sql-db-8797714`.
+- **Encrypt**: chọn **Strict** (tên đầy đủ có thể kèm SQL Server 2022 và Azure SQL).
+- **Trust Server Certificate**: để trống, để kết nối kiểm chứng chỉ máy chủ.
 
-<Ssms view="connect" caption="Hộp kết nối kiểu mới của SSMS. Ô Database Name có viền xanh: ô hay bị bỏ trống." />
+<Ssms view="connect" caption="Hộp kết nối kiểu mới. Ô Database Name có viền xanh: phải chỉ rõ database khóa học." />
 
-Nếu hộp kết nối của bạn là kiểu cũ: ô Server type để Database Engine, ô Login thay cho User Name, ô Encryption thay cho Encrypt, và không có ô Database Name. Khi đó bấm **Options >>**, chọn tab **Connection Properties**, rồi ghi `free-sql-db-8797714` vào ô **Connect to database**. Muốn đổi kiểu hộp kết nối, vào **Tools > Options > Environment > Connection Dialog**.
+Nếu dùng hộp kiểu cũ, **Login** thay cho User Name; bấm **Options >> → Connection Properties**, điền `free-sql-db-8797714` vào **Connect to database**. Thiết lập mã hóa và tên trường đối chiếu theo [hướng dẫn kết nối SSMS của Microsoft](https://learn.microsoft.com/sql/ssms/quickstarts/ssms-connect-query-sql-server).
 
-Bấm **Connect**. Database của khóa học được đặt chế độ tự tạm dừng khi một lúc không ai dùng, để tiết kiệm; kết nối đầu tiên sau đó sẽ đánh thức nó. Lần đó có thể bị từ chối với lỗi 40613 (`… is not currently available. Please retry the connection later.`) hoặc báo hết thời gian chờ. Thường chỉ cần chờ khoảng một phút rồi bấm **Connect** lại.
+Bấm **Connect**. Database có thể đang tự tạm dừng; nếu lần đầu chưa vào được, xem lỗi `40613` ở mục Hay nhầm ở đâu. Nếu xuất hiện **New Firewall Rule** yêu cầu đăng nhập Azure, bấm **Cancel** và nhờ người phụ trách xử lý.
 
-Nếu thử lại vài lần vẫn lỗi, hoặc thông báo nhắc tới địa chỉ IP hay không tới được máy chủ, hãy gửi nguyên văn lỗi cho người phụ trách khóa học; gõ lại hay xin mật khẩu mới không giúp gì trong các trường hợp này. Nếu SSMS hiện hộp tạo quy tắc tường lửa (New Firewall Rule) và đòi đăng nhập tài khoản Azure, bấm Cancel: việc mở tường lửa là của người phụ trách.
+Trong **Object Explorer**, mở **Databases → `free-sql-db-8797714` → Tables → `dbo.PhongBan` → Columns**. Giống xem tên cột trong sheet, bạn sẽ thấy bảng này có hai cột `MaPB` (mã phòng ban) và `TenPB` (tên phòng ban).
 
-Học xong thì ngắt kết nối: bấm chuột phải vào máy chủ trong Object Explorer, chọn **Disconnect**, hoặc đóng SSMS. Database của khóa học dùng hạn mức miễn phí theo tháng, chung cho mọi học viên. Kết nối còn mở thì database không tạm dừng được và hạn mức vẫn bị trừ; hết hạn mức, database tạm dừng tới đầu tháng sau, lúc đó cả SSMS lẫn trang bài tập đều không chạy được.
+<Ssms view="explorer" table="PhongBan" mark={['MaPB', 'TenPB']} caption="Hai cột của dbo.PhongBan được đánh dấu. Chữ trong ngoặc mô tả khóa, kiểu dữ liệu và khả năng nhận NULL; bài 1.3 và 1.4 giải thích kỹ hơn." />
 
-### Đọc Object Explorer
+**Columns** cho biết cấu trúc, chưa phải các dòng dữ liệu. Để đọc danh mục, bạn gửi một câu lệnh như phần dưới. Tránh **Edit Top 200 Rows**: đó là lưới sửa dữ liệu dùng chung, không phải chế độ xem an toàn.
 
-Kết nối xong, cửa sổ **Object Explorer** bên trái hiện một cái cây. Mở lần lượt Databases → `free-sql-db-8797714` → Tables là thấy 7 bảng `dbo.…` của HRM_Demo, giống dãy tên sheet ở cuối một file Excel; bên cạnh còn vài thư mục hệ thống như System Tables. Mở tiếp một bảng, rồi mục Columns, là thấy các cột của bảng đó. Dòng đầu cây ghi SQL Server 12.0.2000.8: đó là số mà Azure SQL Database luôn báo, không phải SQL Server 2014; Azure luôn chạy bản engine mới nhất.
+### Câu lệnh cho tình huống
 
-<Ssms view="explorer" table="PhongBan" mark={['MaPB', 'TenPB']} caption="Bảng dbo.PhongBan có hai cột. Phần có viền xanh là khóa, kiểu dữ liệu và cột có nhận NULL (chưa có giá trị) hay không; bài 1.3 và 1.4 đọc kỹ phần này." />
+Bấm **New Query**. Ô chọn database bên cạnh nút **Execute** phải là `free-sql-db-8797714`; kết nối đúng máy chủ nhưng chọn nhầm database vẫn không tìm thấy bảng cần xem.
 
-Bấm chuột phải vào một bảng, bạn sẽ thấy mục **Edit Top 200 Rows**. Đừng dùng mục này: đây là lưới để sửa dữ liệu, thứ bạn gõ vào được ghi vào bảng khi rời khỏi dòng, mà database của khóa học là của chung mọi học viên. Mục **Select Top 1000 Rows** ngay trên nó thì chỉ đọc: nó tự viết một câu `SELECT TOP (1000)` vào cửa sổ câu lệnh rồi chạy; chuyện `TOP` lấy những dòng nào có ở bài 1.6. Muốn xem dữ liệu thì dùng câu lệnh, như ngay dưới đây.
+<Ssms view="toolbar" caption="Kiểm ô chọn database có viền xanh trước khi chạy câu lệnh." />
 
-### Chạy câu lệnh đầu tiên
-
-Bấm **New Query** trên thanh công cụ để mở một cửa sổ câu lệnh. Trước khi chạy, nhìn ô chọn database ngay bên cạnh nút **Execute**: ô đó phải ghi `free-sql-db-8797714`.
-
-<Ssms view="toolbar" caption="Ô chọn database (viền xanh): các câu lệnh trong khóa học chạy trên database đang chọn ở đây." />
-
-Gõ câu lệnh dưới đây rồi bấm **F5** (hoặc nút Execute):
+Gõ câu dưới đây, bấm **F5** hoặc **Execute** để lấy các dòng trong bảng `PhongBan`. Ở bài này chỉ cần kết nối đúng database và đọc danh mục; cú pháp `SELECT` học ở bài 1.6.
 
 <Sql code={`SELECT * FROM PhongBan;`} />
 
@@ -139,43 +105,19 @@ Gõ câu lệnh dưới đây rồi bấm **F5** (hoặc nút Execute):
   ['VH', 'Vận hành'],
 ]} />
 
-Sáu phòng ban, khớp với sheet Excel ở trên. Câu này không có `ORDER BY`, nên thứ tự dòng trên máy bạn có thể khác hình; câu `SELECT` và chuyện thứ tự được giải thích kỹ ở bài 1.6.
+Bạn có thể trả lời chị Hạnh: danh mục đang lưu sáu phòng, gồm `Ban Giám đốc`, `IT`, `Kinh doanh`, `Kế toán`, `Nhân sự`, `Vận hành`. Bảng `PhongBan` không có cột trạng thái hay ngày hiệu lực; muốn chắc phòng nào còn hoạt động trước buổi họp thì xác nhận với người quản lý danh mục.
 
-### Trang làm bài tập trên web
+Câu này không có `ORDER BY`, nên thứ tự dòng trên máy bạn có thể khác hình. Nếu chép kết quả sang Excel, file đó chỉ phản ánh dữ liệu lúc lấy, không tự cập nhật theo database.
 
-Từ bài 1.6, bài nào đã có bài tập thì cuối bài có danh sách bài tập. Bấm "Làm bài" là mở trang làm bài: đề ở bên trái, khung viết SQL ở bên phải, chạy thẳng trên database của khóa học, không cần mở SSMS.
-
-- Lần đầu chạy, trang hỏi **mã truy cập**. Mã này khác tài khoản SSMS: trang chạy câu lệnh bằng tài khoản riêng của trang, mã chỉ để trang biết bạn là học viên. Xin mã ở người phụ trách khóa học. Trình duyệt bạn đang dùng sẽ nhớ mã; đổi sang trình duyệt hay máy khác, mở cửa sổ ẩn danh, hoặc xóa dữ liệu trang, thì nhập lại.
-- **Chạy (F5)** chỉ chạy và hiện kết quả. **Nộp bài** thì so kết quả với yêu cầu của đề và báo đúng hay chưa đúng, kèm chỗ bị lệch.
-- Mỗi lần chạy một câu lệnh; câu chạy quá 10 giây bị dừng. Lần chạy đầu có thể chờ tới một phút vì database đang khởi động, như khi kết nối SSMS.
-- Nút **Sơ đồ database** mở sơ đồ 7 bảng để tra tên bảng, tên cột.
-- Mỗi lần chạy trên trang nằm trong một giao dịch (transaction) và luôn được hoàn tác (rollback) ngay sau đó; trang cũng chặn trước những câu lệnh có thể thoát khỏi giao dịch này, như `COMMIT`. Nhờ vậy dữ liệu mẫu giữ nguyên sau mỗi lần chạy. Việc hoàn tác tự động này chỉ có trên trang bài tập: câu lệnh chạy trong SSMS là chạy thật. Vì vậy, ở Level 1, trong SSMS bạn chỉ chạy những câu chỉ đọc có trong bài, như các câu `SELECT`.
-
-### Muốn có bản riêng trên máy
-
-Phần này không bắt buộc. Nếu muốn thử thoải mái trên máy của mình:
-
-1. Cài SQL Server bản Express hoặc bản Developer, theo [trang tải SQL Server của Microsoft](https://www.microsoft.com/en-us/sql-server/sql-server-downloads), và SSMS. Các bản này đều miễn phí. Bản Developer chỉ được dùng để học, phát triển và thử nghiệm, không dùng cho hệ thống chạy thật; từ SQL Server 2025 có hai bản Developer (Enterprise Developer và Standard Developer), bản nào cũng đủ cho khóa học. Express dùng được cho hệ thống nhỏ nhưng bị giới hạn dung lượng và tài nguyên.
-2. Kết nối SSMS vào SQL Server trên máy: Server Name là `localhost` (bản Developer) hoặc `localhost\SQLEXPRESS` (bản Express, nếu giữ tên mặc định lúc cài); Authentication là Windows Authentication; Encrypt để Mandatory và tick Trust Server Certificate. SQL Server tự cài thường không có chứng chỉ được tin cậy, nên không tick thì SSMS báo lỗi chứng chỉ (`The certificate chain was issued by an authority that is not trusted`). Chỉ tick ô này cho SQL Server trên máy của bạn.
-3. Bấm chuột phải vào **Databases** trong Object Explorer, chọn **New Database…**, đặt tên `HRM_Demo` rồi bấm OK.
-4. Tải script [HRM_Demo.sql](/microsoft-sql-lession/HRM_Demo.sql) ở [trang Giới thiệu](/microsoft-sql-lession/gioi-thieu/), mở bằng SSMS, chọn database `HRM_Demo` ở ô chọn database rồi bấm Execute. Chạy xong, tab Results có một dòng `HRM_Demo đã sẵn sàng`; bấm chuột phải **Tables** > **Refresh** để thấy 7 bảng.
-
-Script tạo đủ 7 bảng và dữ liệu. Chạy lại lúc nào cũng được: mỗi lần chạy, nó xóa và tạo lại đúng 7 bảng của mình, đưa dữ liệu về như ban đầu, nên mọi thay đổi bạn đã làm trên 7 bảng đó sẽ mất. Nếu database đã có bảng trùng tên mà không phải do script tạo, hoặc bạn đã tạo bảng của riêng mình trỏ tới các bảng này, script dừng lại và không đổi gì.
-
-### Trả lời chị Hạnh
-
-Danh mục phòng ban trong database đang có sáu phòng: Ban Giám đốc, IT, Kinh doanh, Kế toán, Nhân sự, Vận hành. Đó là những gì danh mục đang lưu. Bảng `PhongBan` không có cột trạng thái hay ngày hiệu lực, nên một phòng đã ngừng hoạt động mà chưa ai xóa khỏi danh mục thì vẫn hiện ở đây; cần chắc phòng nào còn hoạt động thì hỏi người quản lý danh mục trước buổi họp.
-
-Một điều nữa: tin nhắn của IT mới có hai trong bốn thông tin cần để kết nối. Trước khi kết nối, hỏi lại IT tên database và cách đăng nhập.
+Học xong, bấm chuột phải máy chủ trong Object Explorer → **Disconnect**, rồi đóng các cửa sổ truy vấn hoặc đóng SSMS để ngắt hết kết nối. Kết nối còn mở có thể giữ database thức và tiêu hao hạn mức miễn phí chung. Quyền truy cập học ở bài 6.1; môi trường làm việc học ở bài 6.2.
 
 ## Hay nhầm ở đâu
 
 <Mistakes>
 
-1. **Bỏ trống Database Name.** Có hai kiểu tài khoản: tài khoản cấp máy chủ, lưu ở database `master`, và tài khoản chỉ có trong một database. Với kiểu thứ hai, bỏ trống ô Database Name thì SQL Server đi kiểm ở `master`, không thấy tài khoản của bạn, và báo `Login failed for user '…'. (Microsoft SQL Server, Error: 18456)`, dù mật khẩu đúng. Lỗi 18456 cũng gặp khi sai mật khẩu, nên kiểm ô Database Name trước rồi mới nghĩ tới mật khẩu. Nếu vẫn vào được, cửa sổ câu lệnh đứng ở `master`, và `SELECT * FROM PhongBan;` báo `Invalid object name 'PhongBan'.` vì `master` không có bảng nào tên như vậy.
-2. **Gõ thiếu đuôi của tên máy chủ.** Chỉ gõ `sql-lession` thì SSMS không tìm ra máy chủ nào với tên ngắn đó, chờ một lúc rồi báo lỗi bắt đầu bằng `A network-related or instance-specific error occurred…`. Thấy câu này thì kiểm tên máy chủ và mạng trước, không phải mật khẩu. Chép nguyên tên máy chủ được cấp, có cả đuôi `.database.windows.net`.
-3. **Chạy script khi ô chọn database đang là `master`** (chỉ gặp khi tự cài trên máy). Script vẫn chạy và tạo 7 bảng ngay trong database hệ thống `master`. Luôn nhìn ô chọn database trước khi bấm Execute. Nếu lỡ chạy, 7 bảng nằm thừa trong `master` của máy bạn, không ảnh hưởng database `HRM_Demo`; muốn dọn thì xóa 7 bảng đó trong `master` (bảy dòng `DROP TABLE IF EXISTS` ở đầu script làm đúng việc này).
-4. **Tưởng sai mật khẩu khi gặp lỗi 40613.** Lỗi này báo database chưa sẵn sàng nhận kết nối. Với máy chủ của khóa học, nguyên nhân thường gặp là database đang thức dậy sau một lúc tạm dừng; Azure cũng có thể báo lỗi này khi đang bảo trì. Đổi mật khẩu hay xin tài khoản mới không giúp gì: chờ khoảng một phút rồi kết nối lại, vẫn lỗi thì gửi nguyên văn lỗi cho người phụ trách. Lỗi kéo dài cả ngày, kèm thông báo nhắc tới hạn mức miễn phí (free limit), nghĩa là database đã dùng hết hạn mức của tháng.
+1. **Bỏ trống Database Name hoặc chọn nhầm database khi chạy.** Bạn có thể gặp lỗi đăng nhập `18456` dù mật khẩu đúng, hoặc vào được nhưng không tìm thấy `PhongBan`. Kiểm tên database cùng thông tin đăng nhập trước khi xin mật khẩu mới.
+2. **Gõ thiếu tên máy chủ.** Phải dùng đủ `sql-lession.database.windows.net`. Nếu tên đúng mà vẫn không tới được máy chủ, hoặc lỗi nhắc địa chỉ IP, gửi nguyên văn lỗi cho người phụ trách để kiểm mạng và tường lửa.
+3. **Gặp 40613 rồi nghĩ sai tài khoản.** Lỗi này thường xuất hiện khi database đang thức dậy, nhưng cũng có thể do dịch vụ tạm thời không sẵn sàng. Chờ khoảng một phút rồi thử lại; nếu vẫn lỗi sau vài lần, gửi nguyên văn lỗi cho người phụ trách. Nếu thông báo nhắc hết hạn mức miễn phí, chờ khởi động không giải quyết được.
 
 </Mistakes>
 
@@ -183,51 +125,54 @@ Một điều nữa: tin nhắn của IT mới có hai trong bốn thông tin c�
 
 <Apply>
 
-- Khi được cấp quyền vào một database mới, ghi lại máy chủ, cách đăng nhập, tên tài khoản và database (mật khẩu thì không ghi ra giấy hay file), và hỏi thêm: đây là môi trường nào (bài 6.2), tài khoản được xem hay được sửa (bài 6.1), có yêu cầu gì về mã hóa kết nối không. Thiếu thông tin nào thì hỏi lại ngay, đừng đoán.
-- Trước khi viết câu lệnh đầu tiên trên một hệ thống lạ, mở Object Explorer xem có những bảng nào, mỗi bảng có những cột nào. Năm phút đó giúp bạn hỏi đúng câu, đúng bảng. Tên bảng, tên cột chỉ là gợi ý; ý nghĩa nghiệp vụ của từng cột vẫn phải hỏi lại người nắm dữ liệu.
-- Khi kết nối báo lỗi, đọc thông báo để biết lỗi thuộc loại nào: 18456 là đăng nhập, `A network-related…` là mạng hoặc sai tên máy chủ, 40613 là database chưa sẵn sàng. Rồi mới nhờ người khác, kèm nguyên văn lỗi.
-- Xong việc với một database dùng chung thì ngắt kết nối.
+- **Truy cập nguồn dữ liệu chung:** kết nối đúng database để lấy danh mục phòng ban đang lưu, thay vì chờ một file gửi riêng.
+- **Xem cấu trúc dữ liệu:** dùng Object Explorer tìm bảng và cột trước khi đọc dữ liệu hoặc trao đổi yêu cầu với IT.
+- **Tra cứu và xuất kết quả:** chạy câu lệnh đọc dữ liệu, lấy danh sách về Excel để dùng cho buổi họp.
 
 </Apply>
 
 ## Ghi nhớ
 
 <Memo rows={[
-  ['Bấm đúp mở file', 'Kết nối máy chủ trong SSMS, chọn database'],
-  ['Tên file', 'Tên database'],
-  ['Dãy tên sheet ở cuối file', 'Object Explorer → Tables'],
-  ['Một sheet', 'dbo.PhongBan: bảng PhongBan trong schema dbo'],
-  ['Mở sheet ra xem', 'SELECT * FROM PhongBan;'],
+  ['Mở workbook rồi chọn sheet', 'Kết nối máy chủ, chọn database rồi tìm bảng'],
+  ['Excel là công cụ mở file', 'SSMS là công cụ kết nối; dữ liệu ở máy chủ'],
+  ['Xem tên cột của sheet', 'Object Explorer → bảng → Columns'],
+  ['Chép kết quả ra workbook', 'Bản xuất không tự cập nhật theo database'],
 ]} />
 
 **Tự kiểm tra trước khi bấm "Đã học xong":**
 
-Trước hết, bạn đã tự kết nối và chạy được câu `SELECT * FROM PhongBan;` trong SSMS chưa? Nếu bị chặn ở bước kết nối, ghi lại các bước đã làm cùng nguyên văn lỗi để nhờ người phụ trách. Sau đó trả lời thử:
-
 <details>
-<summary>SSMS có chứa dữ liệu của khóa học không?</summary>
+<summary>SQL Server, database và SSMS giữ vai trò gì?</summary>
 
-Không. SSMS là công cụ kết nối cài trên máy bạn. Dữ liệu nằm trong database `free-sql-db-8797714` trên máy chủ Azure; SSMS chỉ hiện kết quả máy chủ trả về. Kết quả bạn copy hay lưu ra file thì nằm trên máy bạn và không tự cập nhật.
+Database là tập dữ liệu có cấu trúc; SQL Server là phần mềm quản lý database; SSMS là công cụ kết nối và gửi câu lệnh. Đóng SSMS không xóa dữ liệu trên máy chủ.
 
 </details>
 
 <details>
-<summary>Bỏ trống ô Database Name thì có thể gặp gì?</summary>
+<summary>Cần đủ những thông tin nào để kết nối database khóa học?</summary>
 
-Đăng nhập bị từ chối với lỗi 18456, hoặc vào được nhưng đứng ở `master` và không thấy bảng `PhongBan`.
-
-</details>
-
-<details>
-<summary>Chạy câu lệnh trên trang bài tập và chạy trong SSMS khác nhau thế nào?</summary>
-
-Trên trang bài tập, mỗi lần chạy đều được hoàn tác. Trong SSMS, câu lệnh chạy thật trên database dùng chung, nên ở Level 1 bạn chỉ chạy những câu chỉ đọc có trong bài, như các câu `SELECT`.
+Tên máy chủ, cách đăng nhập, tài khoản và mật khẩu, tên database. Khóa học dùng SQL Server Authentication và database `free-sql-db-8797714`.
 
 </details>
 
 <details>
-<summary>Học xong mà để SSMS mở thì sao?</summary>
+<summary>Tìm thấy <code>dbo.PhongBan</code> trong Object Explorer rồi thì xem các dòng ở đâu?</summary>
 
-Kết nối còn mở thì database không tạm dừng được và hạn mức miễn phí của tháng vẫn bị trừ, chung cho mọi học viên. Học xong thì Disconnect hoặc đóng SSMS.
+Mở New Query, kiểm đúng database, chạy `SELECT * FROM PhongBan;` bằng F5 hoặc Execute. Mục Columns chỉ mô tả cột, không hiện các dòng phòng ban.
+
+</details>
+
+<details>
+<summary>Kết quả có sáu dòng thì chắc cả sáu phòng còn hoạt động?</summary>
+
+Chưa chắc. Đó là sáu phòng trong danh mục đang lưu; bảng không có trạng thái hay ngày hiệu lực. Cần xác nhận với người quản lý danh mục nếu yêu cầu là các phòng còn hoạt động.
+
+</details>
+
+<details>
+<summary>SSMS có tự hoàn tác như trang bài tập không?</summary>
+
+Không. Việc luôn hoàn tác chỉ có trên trang bài tập. Trong SSMS, trên database khóa học dùng chung, ở giai đoạn này bạn chỉ chạy các câu chỉ đọc trong bài; không dùng Edit Top 200 Rows. Học xong ngắt hết kết nối.
 
 </details>

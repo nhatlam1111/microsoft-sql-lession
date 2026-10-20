@@ -1,5 +1,7 @@
 # Thiết kế đợt 2: sơ đồ thứ tự chạy, bài tập chạy trên web, bài đầy đủ
 
+> Cập nhật 20/10/2026: khung bài và cách trình bày hiện hành theo [quy ước](../../quy-uoc.md) và [lesson-template](../../lesson-template.md), lấy bài 1.1 đã duyệt làm mẫu. Các chỉ dẫn tách "Với Excel" / "Làm bằng SQL", ép đủ khối hoặc trả lời tình huống riêng trong phần lịch sử bên dưới đã được thay thế. Các quyết định khác áp dụng khi không mâu thuẫn với quy ước hiện hành và các quyết định được duyệt sau đó.
+
 - Ngày: 2026-10-18
 - Trạng thái: đã duyệt ngày 2026-10-18. Phần A (sơ đồ thứ tự chạy, mẫu ở bài 3.5) và phần B (bài tập chạy trên web, xem [spec B](2026-10-18-exercise-runner-design.md)) đã làm và đã lên web; phần C (viết đầy đủ bài theo level) chưa làm.
 - Nối tiếp: [spec đợt 1](2026-10-17-sql-server-course-site-design.md) (mọi quy định ở đó vẫn giữ, trừ chỗ spec này ghi khác)
@@ -318,3 +320,39 @@ Không làm theo:
 - Nhắc dấu `=` là gán sau `SET` của `UPDATE`: để bài 5.3.
 
 Kiểm tra: `npm test` 218 test qua (test mới cho `rowNumbers`, `preview` và nội dung 2.2 đã thấy đỏ trước khi sửa); `npm run check` 0 lỗi; `npm run build` và `npm run check:dist` qua, 68 trang, 1.345 link. `npm --prefix api run check:exercises` vẫn chưa chạy được vì cần thông tin kết nối SQL.
+
+## 13. Chuyển bài 2.1 và 2.2 sang mạch đã duyệt (21/10/2026)
+
+Người làm khóa học yêu cầu tiếp tục hai bài sau lượt 1.4–1.6. Áp dụng khung gộp Excel/SQL, độ sâu và highlight đã duyệt ở bài 1.1, theo quy ước hiện hành; không đổi thiết kế, component, API, schema frontmatter hay sáu bài tập hiện có. Phạm vi tình huống và hồ sơ công ty giữ nguyên.
+
+- **2.1 — 15 phút:** từ bản Excel gửi Kế toán tới danh sách cột và alias; giữ thứ tự cột, dấu phẩy, ngoặc vuông, alias không đổi nguồn, Copy with Headers và tự đối chiếu tiêu đề bài tập. Giữ câu trả đủ 48 hồ sơ và RunFlow 48 → 48. Rút khuôn cú pháp, LineMap, ví dụ phòng ban có kết quả riêng, các cách viết alias khác và phần sâu về Unicode/sysname/view; tên ngắn của bảng và xử lý biểu thức để bài sau. Lọc alias trong WHERE được giải thích tại bài 2.2.
+- **2.2 — 20 phút:** từ AutoFilter tới WHERE, giá trị mã/chữ/ngày và sáu phép so sánh. Giữ hình số dòng 1/3/4/21, dấu ô mã phòng và trạng thái đã nghỉ, ví dụ Unicode/ngày, giới hạn NULL/collation/cột ngày có giờ, lời giải 14 hồ sơ (13 đang làm, 1 đã nghỉ) và RunFlow 48 → 14 → 14. Rút khuôn cú pháp, LineMap và ví dụ lọc KD lặp lại; rút phần sâu về DATEFORMAT, ưu tiên kiểu và nhiều lỗi riêng. Kết hợp điều kiện, sắp xếp và NULL vẫn dẫn sang bài tương ứng.
+
+### Đối chiếu dữ liệu và kiểm thử
+
+Evidence cục bộ: `temp/verification/2026-10-21-2-1-2-2-narrative/`. Các truy vấn minh họa và số liệu được chạy bằng SELECT qua kết nối của API trên máy; không có tool azure-sql trong phiên. Script kiểm mọi ô Excel/Result/RunFlow, tổng dòng, các phép so sánh ngày, bẫy alias/chuỗi, Unicode và NULL. Không dùng SQLite để khẳng định hành vi T-SQL.
+
+Hai slug đã bỏ khỏi danh sách khung cũ; bước RED có lỗi cấu trúc và sáu đoạn nền trên 120 chữ đúng dự kiến. Assertion nội dung cũ được đổi sang bảo vệ kiến thức/giới hạn còn cần, giữ kiểm ngắn đoạn và tính đúng dữ liệu; không thêm ngoại lệ. Bản đầu sau viết đạt 239/239 test, check 0 lỗi/0 warning/3 hint deprecation cũ, build 68 trang và check:dist 1.339 link. API build và 14/14 đáp án đạt; check:data xác nhận không bảng nào lệch sau các câu ghi luôn hoàn tác của bộ kiểm bài tập.
+
+Đã xem bản build ở 1280px và 1440px: mục lục sáu mục, hình Excel và dấu ô, bảng sáu phép so sánh, Result đánh dấu, ba link bài tập mỗi bài; không tràn ngang toàn trang. RunFlow mở bằng Enter, chuyển bước bằng mũi tên và đóng bằng Escape, trả focus đúng thẻ. Bảng rộng/cuộn trong khối giữ hành vi sẵn có.
+
+### Review độc lập và xử lý nhận xét
+
+Hai agent mới, không mang ngữ cảnh lúc viết, đã review riêng từng bài theo vai người học ở mục 4.5 quy ước. Công cụ Codex, model kế thừa phiên, không truyền model/effort khác. Mỗi report có 52 mục:
+
+- `temp/review/2026-10-21-2-1-2-2-narrative/review-bai-2-1-chon-cot-dat-ten-cot.md`.
+- `temp/review/2026-10-21-2-1-2-2-narrative/review-bai-2-2-where-loc-nhu-autofilter.md`.
+
+Đã đọc hết hai report trước khi sửa. Reviewer chỉ học và đọc trang, không chạy SQL; các dữ kiện cần thực thi được người viết kiểm bằng evidence SELECT nêu trên, không coi nhận xét giữ được là bằng chứng database.
+
+**Đã sửa:**
+
+- 2.1: thêm điều kiện ô dán là ngày thật trước Format Cells (khớp bài 1.3 và Microsoft); mô tả bộ chấm rõ giữ thứ tự cột, ba bài không yêu cầu thứ tự dòng và không chấm tiêu đề (đối chiếu YAML và `compareResults`). Đổi câu ngoặc vuông sang cách viết theo quy ước, không tuyên bố đó là cách duy nhất. Cắt câu cảnh báo tiêu đề bị lặp và vế chọn cột không lọc dòng ở drawer; số liệu dẫn chứng dùng inline code.
+- 2.2: chú thích rõ AutoFilter ẩn dòng không đạt điều kiện, còn hình chỉ trích ba dòng đạt điều kiện, tránh gán mọi khoảng nhảy số cho bộ lọc. Bỏ đối chiếu `(Blanks)` với `IS NULL`, giữ hướng dẫn học NULL tại 2.5; giải nghĩa `yyyymmdd` là năm–tháng–ngày. Cắt vế lịch sử đã nói ở phạm vi, lời không sửa nguồn lặp trong drawer, rút Hay nhầm 5 thành hậu quả. Bớt từ “nhé” lặp, chuẩn hóa WHERE vừa đậm vừa code, số liệu dùng code, đổi ứng dụng thành “lọc hồ sơ”.
+- Assertion kiến thức bỏ phụ thuộc kiểu nhấn đậm/code; bổ sung bảo vệ điều kiện Format Cells, thứ tự cột/dòng, định dạng ngày và chú thích hình không hứa quá. Đã thấy RED ở hai test trước sửa rồi GREEN; không đổi giới hạn 120 chữ.
+
+**Không làm theo / giữ nguyên:** không có nhận xét chính còn bị bỏ. Giữ vế danh sách đúng bốn cột/tiêu đề ở lời giải 2.2 (gợi ý cắt tùy chọn mục 34) vì nó khép yêu cầu của chị Hạnh, không giảng lại cú pháp. Không thay YAML, bộ chấm, component hoặc thêm cú pháp ngoài phạm vi; các mục Giữ được giữ theo nội dung phù hợp.
+
+**Kiểm bản cuối:** 239/239 test đạt, không còn lỗi nền đoạn dài ở 2.1/2.2; check 0 lỗi/0 warning/3 hint deprecation cũ; build 68 trang; check:dist đạt 68 trang/1.339 link. Mọi câu Sql, ô Excel/Result/RunFlow và tổng dòng còn khớp SELECT live sau biên tập. Đã đọc lại câu Format Cells/cách chấm 2.1, chú thích Excel/định dạng ngày/NULL 2.2 trên bản render mới, lưu ảnh `2-1-result-final-1280.png` và `2-2-narrative-final-1440.png`; phục hồi viewport trước bàn giao. Log cuối có tiền tố `final-` trong thư mục verification; kiểm API 14/14 và check:data ở trên vẫn áp dụng vì câu lệnh/bài tập không đổi. Không chạy SSMS hoặc Excel thật để chứng nhận thao tác copy/dán; điều kiện Format Cells được đối chiếu tài liệu, không đoán kết quả của một thiết lập máy cụ thể.
+
+Nguồn Microsoft đối chiếu: [SELECT và alias](https://learn.microsoft.com/en-us/sql/t-sql/queries/select-clause-transact-sql?view=sql-server-ver17), [WHERE](https://learn.microsoft.com/en-us/sql/t-sql/queries/where-transact-sql?view=sql-server-ver17), [chuỗi Unicode](https://learn.microsoft.com/en-us/sql/t-sql/data-types/constants-transact-sql?view=sql-server-ver17), [đổi ngày dạng chữ thành ngày trong Excel](https://support.microsoft.com/en-us/excel/convert-dates-stored-as-text-to-dates).

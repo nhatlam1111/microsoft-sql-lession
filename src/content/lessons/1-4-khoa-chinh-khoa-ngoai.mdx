@@ -5,147 +5,71 @@ shortTitle: Khóa chính, khóa ngoại
 level: 1
 area: A1
 kind: full
-minutes: 20
+minutes: 15
 prerequisites:
   - "1.3"
-goal: bạn chỉ ra được khóa chính, khóa ngoại trong HRM_Demo, giải thích được vì sao mã trùng, mã không có trong danh mục, hay xóa một dòng danh mục còn được tham chiếu bị chặn, và đọc được tên ràng buộc trong thông báo lỗi
+goal: bạn phân biệt được khóa chính và khóa ngoại, đọc được ràng buộc trong lỗi xóa phòng và giải thích vì sao cần xử lý các hồ sơ tham chiếu trước nếu quyết định xóa phòng
 excel: Cột mã không trùng; dropdown lấy từ sheet khác
-summary: Khóa chính, khóa ngoại, và vì sao không xóa được một phòng ban khi vẫn còn hồ sơ nhân viên trỏ tới nó.
+summary: Từ lỗi không xóa được phòng Vận hành, hiểu khóa chính xác định dòng và khóa ngoại giữ quan hệ giữa các bảng.
 noExercises: true
 ---
 
 ## Tình huống
 
-Một yêu cầu hay gặp khi công ty sắp xếp lại bộ máy:
+Tháng 10/2026, chị Hạnh hỏi bạn về một lỗi khi sắp xếp lại phòng ban:
 
 <Chat who="Chị Hạnh · Phòng Nhân sự" time="9:45" initial="H">
 Công ty gộp phòng Vận hành vào phòng Kinh doanh rồi. Chị nhờ bên IT xóa phòng Vận hành khỏi danh mục, mà hệ thống báo lỗi, không xóa được. Sao lại vậy em?
 </Chat>
 
-Nói gọn lại:
+Giả định của tình huống: đây là phương án gộp phòng riêng của bài, dữ liệu mẫu vẫn như ban đầu. IT thử xóa thẳng dòng `VH` trong `PhongBan`. Nếu phần mềm chỉ báo lỗi chung, cần xin IT nguyên văn lỗi từ database.
 
-<Key>Bảng phòng ban và bảng nhân viên liên kết với nhau bằng gì, mà database không cho xóa phòng Vận hành?</Key>
+<Key>Điều gì giữ bảng phòng ban và bảng nhân viên liên quan với nhau, khiến không xóa được `VH`?</Key>
 
-Giả định của tình huống: hệ thống nhân sự lưu dữ liệu như bộ mẫu HRM_Demo, dữ liệu đang như ban đầu, và bên IT xóa thẳng dòng VH trong bảng `PhongBan`. Nếu xóa qua phần mềm, màn hình có thể chỉ hiện một thông báo chung; khi đó xin bên IT nguyên văn lỗi từ database.
+## Từ mã nhân viên đến quan hệ giữa các bảng
 
-## Với Excel
+### Khóa chính xác định đúng một dòng
 
-Trong file ví dụ này có hai sheet: sheet danh mục phòng ban, và sheet nhân viên có cột "Mã PB" làm dropdown (Data Validation dạng List) lấy từ sheet danh mục. Cột mã NV thì tô màu khi trùng để dễ thấy.
+Trong Excel, bạn có thể tô màu mã nhân viên bị trùng để kiểm lại. Với database, khi `NhanVien.MaNV` được khai báo là **khóa chính (primary key)**, SQL Server từ chối hai dòng trùng mã và không nhận `NULL` ở cột khóa. Đây là **ràng buộc (constraint)** của dữ liệu, chứ không chỉ là cảnh báo bằng màu.
 
-<Excel sheets="NhanVien · DanhMucPB" cell="C4" formula="Van hanh" selected="C4" rows={[
+Mã dùng để xác định một hồ sơ vì họ tên có thể trùng hoặc thay đổi. Hồ sơ `NV001` là `Trần Thị Mai`; dùng lại `NV001` cho một người có tên khác vẫn vi phạm khóa chính. Các bảng hợp đồng, chấm công và lương dùng mã này để nhắc tới đúng hồ sơ.
+
+Một bảng có tối đa một khóa chính, nhưng khóa đó có thể gồm nhiều cột. `ChamCong` dùng cặp `(MaNV, Ngay)` vì mỗi nhân viên có tối đa một dòng mỗi ngày; `BangLuong` dùng `(KyLuong, MaNV)` vì mỗi người có tối đa một dòng lương mỗi kỳ. Chỉ cả cặp không được trùng; riêng `MaNV` vẫn lặp qua các ngày hoặc kỳ.
+
+### Khóa ngoại giữ mã tham chiếu có thật
+
+Trong file minh họa, cột mã phòng dùng **Data Validation dạng List**, tức dropdown lấy từ sheet danh mục. Dù vậy, dán hoặc kéo điền vẫn có thể đưa chữ `Van hanh` vào ô; hình đánh dấu `C4` để chỉ lỗi này:
+
+<Excel sheets="NhanVien · DanhMucPB" cell="C4" formula="Van hanh" selected="C4" mark={['C4']} rows={[
   ['Mã NV', 'Họ tên', 'Mã PB'],
   ['NV008', 'Phan Văn Lợi', 'VH'],
   ['NV015', 'Dương Văn Nam', 'VH'],
   ['NV019', 'Châu Văn Phúc', 'Van hanh'],
 ]} />
 
-Cách làm này đỡ được nhiều lỗi gõ tay, nhưng còn hai lỗ hổng quen thuộc. Dán hoặc kéo điền dữ liệu có thể đưa một giá trị ngoài danh sách như "Van hanh" vào ô dropdown mà không hiện cảnh báo. Và xóa dòng VH ở sheet danh mục thì không có gì chặn: sheet nhân viên vẫn giữ nguyên chữ VH, trỏ vào một phòng không còn trong danh mục. Muốn phát hiện, bạn phải tự kiểm thêm, ví dụ bằng lệnh Circle Invalid Data (khoanh các ô không hợp lệ).
+Nếu xóa `VH` khỏi sheet danh mục, các ô đã chứa `VH` ở sheet nhân viên cũng không tự mất đi. Trong database, **khóa ngoại (foreign key)** là luật buộc mã khác `NULL` phải trỏ tới một giá trị khóa có thật. Với `NhanVien.MaPB` trỏ sang `PhongBan.MaPB`, `KT` được nhận vì có trong danh mục; `KT01` không có thì bị từ chối.
 
-## Làm bằng SQL
+Khóa ngoại là luật kiểm khi ghi, **không phải ô chọn trên màn hình**. Khi ràng buộc đang bật, các câu ghi thông thường đều bị kiểm; việc nạp hàng loạt có kiểm khóa ngoại hay không còn tùy cách nạp (bài 5.5). Trong bộ mẫu, khóa ngoại dùng cách xử lý mặc định **`NO ACTION`**: còn hồ sơ trỏ tới `VH` thì không xóa hoặc đổi mã `VH` trong danh mục được.
 
-### Lý thuyết cơ bản
+Một mã phòng được nhiều nhân viên dùng là bình thường: phía `PhongBan` giữ một dòng cho mỗi mã, phía `NhanVien` có nhiều dòng cùng mã phòng. Khóa ngoại cũng có thể trỏ về chính bảng đó: `NhanVien.MaQuanLy` trỏ về `NhanVien.MaNV`, vì người quản lý cũng là nhân viên. `NhanVien.MaCD` trỏ sang `ChucDanh.MaCD` để lấy chức danh.
 
-**Khóa chính** (primary key) là cột, hoặc nhóm cột, được chọn để xác định đúng một dòng trong bảng.
+Trong Object Explorer → **Tables → `dbo.NhanVien` → Columns**, nhãn **`PK`** chỉ khóa chính, **`FK`** chỉ khóa ngoại. Thư mục **Keys** của bảng cho xem tên các ràng buộc, như `PK_NhanVien` và `FK_NhanVien_PhongBan`.
 
-Cần một cột như vậy vì họ tên không đủ để phân biệt người: công ty có thể có hai người trùng tên, và một người có thể đổi tên. Các bảng khác lại phải nhắc tới một nhân viên cụ thể (hợp đồng của ai, bảng lương của ai), và một câu sửa dữ liệu phải nhắm đúng một người. Vì thế mỗi nhân viên được cấp một mã, và mã đó được khai báo là khóa chính. Khi đã khai báo, SQL Server bảo đảm hai điều ở mọi lần ghi, dù dữ liệu đến từ màn hình, file import hay một chương trình khác: giá trị khóa không trùng giữa các dòng, và mọi cột trong khóa không nhận NULL, vì một dòng không có mã thì không bảng nào nhắc tới nó được. Luật được kiểm ở database chứ không chỉ ở từng màn hình, vì cùng một bảng có thể được ghi từ nhiều nơi; khác khóa ngoại ở dưới, khóa chính vẫn được kiểm cả khi nạp dữ liệu hàng loạt. Chuỗi rỗng hay chuỗi toàn dấu cách không phải NULL, nên khóa chính không tự chặn chúng. Trên database của khóa học, so chữ không phân biệt hoa thường, nên `nv001` cũng bị coi là trùng `NV001`.
+<Ssms view="explorer" table="NhanVien" mark={['MaNV', 'MaPB', 'MaCD', 'MaQuanLy']} caption="Phần có viền xanh: MaNV là khóa chính; MaPB, MaCD, MaQuanLy là khóa ngoại. MaQuanLy trỏ về NhanVien và nhận NULL." />
 
-Mỗi bảng có tối đa một khóa chính. Trong HRM_Demo, `NhanVien.MaNV` và `PhongBan.MaPB` được khai báo là khóa chính. Có bảng dùng khóa nhiều cột, nhưng vẫn là một khóa chính, và cái không được trùng là cả bộ giá trị: `ChamCong` lấy cặp `(MaNV, Ngay)`, vì trong bảng mẫu này mỗi dòng là chấm công của một người trong một ngày; `BangLuong` lấy cặp `(KyLuong, MaNV)`, mỗi người tối đa một dòng lương mỗi kỳ.
+### Đọc lỗi xóa phòng và các hồ sơ đang trỏ tới
 
-**Khóa ngoại** (foreign key) là luật đặt trên một cột, hoặc nhóm cột: giá trị khác NULL ghi vào đó phải có sẵn ở cột khóa (khóa chính, hoặc cột có ràng buộc duy nhất) của bảng được tham chiếu.
-
-Luật này cần có vì database lưu mã thay cho cả thông tin: bảng `NhanVien` chỉ ghi mã phòng KT, còn tên "Kế toán" nằm ở bảng `PhongBan` (bài 1.1). Nhờ vậy tên phòng chỉ phải sửa ở một chỗ, nhưng đổi lại, mỗi mã phải trỏ được tới một dòng có thật. Một mã trỏ vào khoảng trống, như `KT01`, sinh ra hồ sơ mồ côi: báo cáo theo phòng không biết xếp người đó vào đâu, còn khi kết hai bảng theo kiểu thông thường (bài 3.4) thì người đó mất khỏi kết quả. Khóa ngoại chặn chuyện này ngay lúc ghi, ở cả hai phía: không cho ghi một mã không có trong danh mục, và không cho xóa hay đổi mã của một dòng danh mục khi còn dòng đang trỏ tới nó.
-
-Bảng được tham chiếu thường là bảng khác, nhưng cũng có thể là chính bảng đó. Trong HRM_Demo có bảy khóa ngoại, đều trỏ tới khóa chính: `NhanVien.MaPB` trỏ sang `PhongBan.MaPB`; `NhanVien.MaCD` trỏ sang `ChucDanh.MaCD` (ví dụ CV là Chuyên viên); `NhanVien.MaQuanLy` trỏ về chính `NhanVien.MaNV`, vì người quản lý cũng là một nhân viên; `HopDong.MaNV`, `ChamCong.MaNV`, `DonNghiPhep.MaNV`, `BangLuong.MaNV` đều trỏ về `NhanVien.MaNV`.
-
-Khóa ngoại chỉ xác nhận mã **có tồn tại**, không xác nhận mã **đúng cho hồ sơ đó**: một người thuộc phòng KT mà bị nhập thành KD vẫn qua được, vì KD có thật.
-
-Trong script `HRM_Demo.sql`, hai khóa một cột dưới đây được khai báo ngay cạnh cột. Khai báo cạnh cột thì khóa ngoại chỉ cần `REFERENCES`, không cần chữ `FOREIGN KEY`, nên tìm "FOREIGN KEY" trong script sẽ không thấy các khóa này. Khóa nhiều cột được khai báo thành một dòng riêng cho cả bảng, như `CONSTRAINT PK_ChamCong PRIMARY KEY (MaNV, Ngay)`. Đoạn dưới trích từ câu tạo bảng `NhanVien`, để đọc:
-
-<Sql title="Trích đoạn khai báo khóa của bảng NhanVien (chỉ để đọc)" copy={false} code={`MaNV  varchar(10)  NOT NULL CONSTRAINT PK_NhanVien PRIMARY KEY,
-MaPB  varchar(10)  NOT NULL CONSTRAINT FK_NhanVien_PhongBan REFERENCES dbo.PhongBan (MaPB),`} />
-
-`MaPB` có hai luật riêng: `NOT NULL` bắt mỗi nhân viên phải có mã phòng, còn khóa ngoại bắt mã đó phải có trong `PhongBan`.
-
-Ví dụ thu gọn: phòng VH có trong `PhongBan`, và ba nhân viên trỏ tới nó. Một mã phòng được nhiều nhân viên dùng là bình thường; chỉ bên `PhongBan` mã mới không được trùng.
-
-| PhongBan.MaPB | PhongBan.TenPB |
-|---|---|
-| VH | Vận hành |
-
-| NhanVien.MaNV | NhanVien.HoTen | NhanVien.MaPB |
-|---|---|---|
-| NV008 | Phan Văn Lợi | VH |
-| NV015 | Dương Văn Nam | VH |
-| NV019 | Châu Văn Phúc | VH |
-
-Trong HRM_Demo, khóa ngoại này dùng cách xử lý mặc định khi xóa (gọi là NO ACTION): còn dòng nào trong `NhanVien` trỏ tới VH thì dòng VH trong `PhongBan` không xóa được, và cũng không đổi được mã VH. Hệ thống khác có thể khai báo cách khác, ví dụ xóa luôn các dòng đang trỏ tới (ON DELETE CASCADE), nên gặp hệ thống lạ thì hỏi lại.
-
-Từng phần nghĩa là gì:
-
-<LineMap rows={[
-  ['PRIMARY KEY', 'Đây là khóa chính: giá trị không trùng và không nhận NULL. Ví dụ: thêm một người mã NV049 thì được; thêm NV001 lần nữa, hay để MaNV là NULL, thì bị từ chối. Giống cột mã NV tô màu khi trùng, nhưng khi MaNV được khai báo là khóa chính, SQL Server từ chối ghi chứ không chỉ tô màu.'],
-  ['CONSTRAINT PK_NhanVien', 'Tên của ràng buộc khóa chính. Ví dụ: lỗi trùng mã ghi nguyên văn Violation of PRIMARY KEY constraint PK_NhanVien, nên đọc lỗi là biết ràng buộc nào bị vi phạm. Không đặt tên thì SQL Server tự sinh một tên khó đọc. PK_ và FK_ chỉ là cách đặt tên cho dễ đọc; muốn chắc, xem định nghĩa của ràng buộc, các tên này nằm ở thư mục Keys của bảng trong Object Explorer.'],
-  ['REFERENCES dbo.PhongBan (MaPB)', 'Khóa ngoại: khi ghi dữ liệu, cột này chỉ nhận mã đang có ở cột MaPB của bảng PhongBan. Ví dụ: KT được nhận vì PhongBan có dòng KT; KT01 bị từ chối. Ý giống dropdown lấy từ sheet danh mục, nhưng đây là luật của dữ liệu, không phải ô chọn trên màn hình: khi khóa ngoại đang bật, mọi câu ghi thông thường đều bị kiểm, dù dữ liệu không đi qua màn hình nào. Khóa ngoại có thể bị tắt, và lệnh nạp dữ liệu hàng loạt có thể bỏ qua bước kiểm này (bài 5.2).'],
-]} />
-
-Ở bài này chỉ cần đọc được khóa và hiểu vì sao thao tác bị chặn. Phần sâu hơn có bài riêng: cách khai báo khóa, các ràng buộc khác (UNIQUE, CHECK, DEFAULT) và cách chọn hành vi khi xóa ở bài 5.2; chọn khóa khi thiết kế bảng ở bài 5.1; kết hai bảng qua khóa ở bài 3.4; sửa dữ liệu an toàn ở bài 5.3.
-
-### Thấy khóa trong SSMS
-
-Trong Object Explorer, cột là khóa có chữ PK hoặc FK trong ngoặc:
-
-<Ssms view="explorer" table="NhanVien" mark={['MaNV', 'MaPB', 'MaCD', 'MaQuanLy']} caption="Bảng dbo.NhanVien, phần có viền xanh: MaNV là khóa chính; MaPB, MaCD, MaQuanLy là khóa ngoại. MaQuanLy trỏ về chính bảng NhanVien và nhận NULL." />
-
-### Database chặn những gì
-
-Ba câu dưới đây chỉ để đọc, **đừng chạy chúng trên SSMS**, nên chúng không có nút sao chép. Trên dữ liệu mẫu ban đầu, viết đúng như dưới đây thì SQL Server báo lỗi và không đổi gì, nhưng chỉ cần sửa một giá trị (một mã NV chưa có, một mã phòng có thật) là câu `INSERT` ghi thật vào bảng mà mọi học viên đang dùng chung.
-
-**Thêm một người trùng mã NV.** Khóa chính chặn:
-
-<Sql copy={false} code={`INSERT INTO NhanVien (MaNV, HoTen, GioiTinh, NgaySinh, SoCCCD, NgayVaoLam, MaPB, MaCD, TrangThai)
-VALUES ('NV001', N'Lý Thu Hằng', N'Nữ', '1996-05-20', '000196000049', '2026-10-12', 'KT', 'CV', N'Đang làm');`} />
-
-<Messages lines={[
-  'Msg 2627, Level 14, State 1, Line 1',
-  "Violation of PRIMARY KEY constraint 'PK_NhanVien'. Cannot insert duplicate key in object 'dbo.NhanVien'. The duplicate key value is (NV001).",
-  'The statement has been terminated.',
-]} />
-
-NV001 đã có trong dữ liệu mẫu (Trần Thị Mai); đổi họ tên không làm mã này thành mã mới. Thông báo nêu bốn thứ cần đọc: loại ràng buộc (PRIMARY KEY), tên ràng buộc (`PK_NhanVien`), bảng (`dbo.NhanVien`) và giá trị bị trùng (NV001).
-
-Dòng đầu của mọi thông báo lỗi đọc như sau. Msg là số hiệu lỗi. Level là mức độ: từ 11 tới 16 là lỗi do câu lệnh hay dữ liệu, người dùng tự sửa được; từ 17 trở lên là lỗi của hệ thống, cần báo người quản trị. Line là dòng của câu lệnh trong đoạn đang chạy. Câu The statement has been terminated nghĩa là câu lệnh đã dừng và không dòng nào của câu đó được ghi.
-
-**Thêm một người với mã phòng không có trong danh mục.** Khóa ngoại chặn (NV049 chưa có, nhưng `KT01` không có trong `PhongBan`):
-
-<Sql copy={false} code={`INSERT INTO NhanVien (MaNV, HoTen, GioiTinh, NgaySinh, SoCCCD, NgayVaoLam, MaPB, MaCD, TrangThai)
-VALUES ('NV049', N'Lý Thu Hằng', N'Nữ', '1996-05-20', '000196000049', '2026-10-12', 'KT01', 'CV', N'Đang làm');`} />
-
-<Messages lines={[
-  'Msg 547, Level 16, State 0, Line 1',
-  'The INSERT statement conflicted with the FOREIGN KEY constraint "FK_NhanVien_PhongBan". The conflict occurred in database "free-sql-db-8797714", table "dbo.PhongBan", column \'MaPB\'.',
-  'The statement has been terminated.',
-]} />
-
-Câu thêm vào `NhanVien`, mà lỗi lại nhắc `dbo.PhongBan`, cột `MaPB`: đó là nơi SQL Server đi tìm `KT01` và không thấy. Khác lỗi trùng khóa, lỗi này không ghi giá trị gây lỗi; nạp nhiều dòng một lúc thì phải tự tìm dòng sai (bài 5.5).
-
-**Xóa phòng Vận hành khi còn nhân viên.** Nếu xóa thẳng trong database, SQL Server trả về lỗi này:
+Câu dưới minh họa thao tác IT đã thử, **chỉ để đọc, không chạy trong SSMS trên database khóa học**. Một câu ghi được chỉnh cho hợp lệ sẽ thay đổi dữ liệu dùng chung; SSMS không tự hoàn tác như trang bài tập.
 
 <Sql copy={false} code={`DELETE FROM PhongBan WHERE MaPB = 'VH';`} />
 
 <Messages lines={[
-  'Msg 547, Level 16, State 0, Line 1',
   'The DELETE statement conflicted with the REFERENCE constraint "FK_NhanVien_PhongBan". The conflict occurred in database "free-sql-db-8797714", table "dbo.NhanVien", column \'MaPB\'.',
-  'The statement has been terminated.',
 ]} />
 
-Đọc lỗi: ràng buộc `FK_NhanVien_PhongBan` cản lệnh xóa, vì bên phụ thuộc là bảng `dbo.NhanVien`, cột `MaPB`, vẫn còn dòng trỏ tới VH. Đây vẫn là khóa ngoại ở trên. Khi câu lệnh đụng vào bảng đang trỏ đi (thêm, sửa `NhanVien`), SQL Server ghi FOREIGN KEY constraint và nêu bảng danh mục; khi câu lệnh đụng vào bảng danh mục (xóa, đổi mã trong `PhongBan`), nó ghi REFERENCE constraint và nêu bảng đang trỏ tới. Bảng trong thông báo luôn là bảng ở đầu kia của quan hệ. Trong HRM_Demo, chỉ bảng `NhanVien` trỏ tới `PhongBan`; ở hệ thống khác, xem sơ đồ (bài 1.5) hoặc hỏi người dựng hệ thống còn bảng nào trỏ tới danh mục đó.
+Thông báo chỉ ra ràng buộc `FK_NhanVien_PhongBan`, bảng `dbo.NhanVien` và cột `MaPB`: vẫn còn hồ sơ nhân viên trỏ tới phòng định xóa. Chữ `REFERENCE constraint` ở đây nói về khóa ngoại. Thông báo không liệt kê các hồ sơ đó, nên cần kiểm dữ liệu liên quan.
 
-Thông báo không nói đó là những dòng nào; muốn biết thì liệt kê ra (chưa cần hiểu từng chữ, `WHERE` có ở bài 2.2, `ORDER BY` ở bài 2.4):
-
-<Sql code={`SELECT MaNV, HoTen, TrangThai, NgayNghiViec
-FROM NhanVien
-WHERE MaPB = 'VH'
-ORDER BY MaNV;`} />
+Dưới đây là các hồ sơ có `MaPB` là `VH` trong dữ liệu mẫu ban đầu. Hai dòng được tô là hồ sơ đã nghỉ:
 
 <Result columns={['MaNV', 'HoTen', 'TrangThai', 'NgayNghiViec']} mark={[7, 9]} rows={[
   ['NV008', 'Phan Văn Lợi', 'Đang làm', null],
@@ -160,28 +84,27 @@ ORDER BY MaNV;`} />
   ['NV044', 'Lã Thị Oanh', 'Đang làm', null],
 ]} />
 
-Có 10 hồ sơ nhân viên còn trỏ tới VH. Nhìn cột `TrangThai`, 8 người đang làm và 2 người đã nghỉ (hai dòng được tô): `NgayNghiViec` của NV033 là 2026-06-30, của NV041 là 2026-08-15; trong bộ mẫu, đó là ngày làm việc cuối. Hồ sơ của người đã nghỉ vẫn mang mã VH, nên cũng cản việc xóa như mọi hồ sơ khác.
+Có 10 hồ sơ còn trỏ tới `VH`, gồm 8 người đang làm và 2 người đã nghỉ: `NV033`, `NV041`. Khóa ngoại không xét trạng thái làm việc, nên hai hồ sơ đã nghỉ cũng cản việc xóa phòng.
 
-### Trả lời chị Hạnh
+### Chốt cách xử lý với chị Hạnh
 
-Hệ thống báo lỗi không phải vì hỏng: khóa ngoại `FK_NhanVien_PhongBan` đang làm đúng việc, giữ cho không hồ sơ nào trỏ tới một phòng không còn trong danh mục. Trước khi nhờ sửa dữ liệu, cần chốt với chị Hạnh những điều mà database không quyết định thay:
+Bạn có thể trả lời chị Hạnh: hệ thống đang giữ cho hồ sơ không trỏ tới một phòng đã bị xóa. Lỗi này chưa quyết định phải chuyển tất cả sang Kinh doanh; cần chốt:
 
-1. Gộp phòng có hiệu lực từ ngày nào, và những ai chuyển sang Kinh doanh.
-2. Hai người đã nghỉ thì sao. Muốn xóa VH thì hồ sơ của họ cũng phải đổi mã phòng, vì khóa ngoại không phân biệt người đang làm hay đã nghỉ; mà đổi thì hồ sơ cũ sẽ ghi một phòng họ chưa từng làm.
-3. Báo cáo các kỳ trước có cần giữ tên phòng Vận hành không. HRM_Demo chỉ lưu phòng hiện tại trong `NhanVien.MaPB`, không lưu lịch sử chuyển phòng, nên đổi mã phòng thì các báo cáo kỳ cũ chạy lại từ database cũng xếp những người này vào phòng mới; báo cáo đã xuất trước đó thì không đổi.
-4. Có thật cần xóa mã VH, hay chỉ cần không cho chọn VH nữa. Bảng `PhongBan` hiện không có cột đánh dấu ngừng dùng; chọn cách này thì phải thêm vào thiết kế.
-5. Ai quản lý những người chuyển sang, và trưởng phòng Vận hành giữ chức danh gì. Đổi mã phòng không tự đổi `MaQuanLy` hay `MaCD`; database cũng không bắt người quản lý phải cùng phòng, nên dữ liệu vẫn hợp lệ mà có thể sai.
+- Việc gộp có hiệu lực từ ngày nào, những hồ sơ nào chuyển phòng; hai người đã nghỉ được giữ thông tin cũ thế nào.
+- Có cần giữ tên phòng Vận hành trên báo cáo kỳ trước hay không. `NhanVien.MaPB` chỉ lưu phòng hiện tại; đổi mã rồi chạy lại báo cáo cũ có thể hiện phòng mới. Bản báo cáo đã xuất trước đó không tự đổi.
+- Có thật cần xóa `VH`, hay chỉ ngừng cho chọn mã này. `PhongBan` hiện chưa có cột đánh dấu ngừng dùng; phương án đó cần bổ sung thiết kế.
 
-Chỉ khi đã chốt là xóa VH thì mới đổi phòng cho hết các hồ sơ đang trỏ tới VH, rồi xóa dòng danh mục. Cách sửa dữ liệu an toàn có ở bài 5.3 và 5.4.
+Nếu quyết định cuối là xóa, người có quyền phải xử lý hết các dòng đang tham chiếu rồi mới xóa danh mục. Chuyển phòng cũng không tự đổi `MaQuanLy` hoặc `MaCD`; cần chốt cả quản lý và chức danh nếu nghiệp vụ thay đổi. Không xóa hồ sơ nhân viên hoặc tắt khóa ngoại chỉ để hết lỗi.
+
+Ở bài này chỉ cần phân biệt hai loại khóa và đọc được quan hệ đang chặn thao tác. Khai báo `PRIMARY KEY`, `REFERENCES`, ràng buộc `UNIQUE` và các cách xử lý khi xóa học ở bài 5.2; sửa dữ liệu an toàn ở bài 5.3–5.4, lưu lịch sử ở bài 6.6.
 
 ## Hay nhầm ở đâu
 
 <Mistakes>
 
-1. **Xóa danh mục trước, định sửa nhân viên sau.** Thứ tự này làm được trên Excel. Với khóa ngoại dùng cách xử lý mặc định như trong HRM_Demo, database chặn ngay ở bước đầu. Nếu phương án đã chốt là xóa dòng danh mục, thứ tự đúng là xử lý hết các dòng đang trỏ tới, rồi mới xóa. Đừng xóa các dòng đang trỏ tới (ở đây là hồ sơ nhân viên) cho hết lỗi: các hồ sơ này còn hợp đồng, chấm công, bảng lương trỏ tới, và vẫn còn giá trị.
-2. **Nghĩ khóa chính luôn là một cột.** Trong `ChamCong`, cột `MaNV` lặp lại mỗi ngày là bình thường. Cái không được trùng là cặp `(MaNV, Ngay)`: cùng mã khác ngày thì được, khác mã cùng ngày thì được, trùng cả hai thì bị chặn. Khóa chính chỉ chặn hai dòng trùng cặp; nó không bắt mỗi người phải có đủ dòng cho mọi ngày.
-3. **Nghĩ khóa ngoại bắt buộc phải có giá trị.** `MaQuanLy` là khóa ngoại nhưng nhận NULL: NV004 Hoàng Minh Tuấn là giám đốc, và trong bộ mẫu, NULL ở `MaQuanLy` nghĩa là không có quản lý trực tiếp; đó là quy ước, SQL Server không tự hiểu như vậy. Khóa ngoại một cột chỉ kiểm khi giá trị khác NULL; muốn bắt buộc thì cột phải thêm `NOT NULL`. Chuỗi rỗng không phải NULL, nên vẫn bị khóa ngoại kiểm như mọi mã khác.
-4. **Nghĩ mã khác nhau là người khác nhau.** Khóa chính `MaNV` chỉ chặn hai dòng trùng mã. Một người được cấp hai mã khác nhau thì vẫn thành hai dòng hợp lệ; muốn phát hiện trùng người phải so thêm thông tin khác, như số CCCD. Trong bộ mẫu, cột `SoCCCD` cũng không có ràng buộc UNIQUE, nên chính số CCCD cũng có thể trùng; bài 4.6 soát chuyện này.
+1. **Thấy mã có thật thì nghĩ đã đúng hồ sơ.** Gán nhầm `KD` cho người thuộc `KT` vẫn qua khóa ngoại vì cả hai mã đều tồn tại. Luật giữ liên kết hợp lệ, không thay bước xác minh nghiệp vụ.
+2. **Nghĩ khóa ngoại bắt buộc có giá trị.** `MaQuanLy` nhận `NULL`; hồ sơ `NV004` không có quản lý trực tiếp theo quy ước bộ mẫu. Muốn bắt buộc có mã thì cột còn phải được khai báo `NOT NULL`.
+3. **Nghĩ khóa chính chặn mọi hồ sơ trùng người.** Một người có hai mã khác nhau vẫn có thể thành hai dòng. Trong bộ mẫu, `SoCCCD` không có ràng buộc `UNIQUE`, nên số này cũng có thể trùng; bài 4.6 hướng dẫn soát dữ liệu.
 
 </Mistakes>
 
@@ -189,46 +112,54 @@ Chỉ khi đã chốt là xóa VH thì mới đổi phòng cho hết các hồ s
 
 <Apply>
 
-- Khi viết đặc tả một màn hình hay một file import, ghi rõ: một dòng đại diện cho gì; mã nào phải duy nhất, trong phạm vi nào; cột nào bắt buộc; cột nào lấy từ danh mục nào. Rồi hỏi người dựng hệ thống mỗi luật đó được giữ bằng gì: khóa chính, ràng buộc duy nhất (UNIQUE), khóa ngoại, hay chỉ kiểm trên màn hình. Mã duy nhất về nghiệp vụ không nhất thiết là khóa chính: mã nghiệp vụ có thể phải đổi, ví dụ khi đổi quy tắc đặt mã, nên nhiều hệ thống dùng một mã nội bộ không bao giờ đổi làm khóa chính và giữ mã nghiệp vụ bằng UNIQUE. Một dropdown trên màn hình cũng không chứng minh database có khóa ngoại.
-- Khi phần mềm chỉ báo "không xóa được" chung chung, xin nguyên văn lỗi từ database. Khi thấy chữ "conflicted with the REFERENCE constraint", đọc tên ràng buộc, tên bảng và cột trong thông báo để biết cần kiểm quan hệ nào, rồi liệt kê các dòng liên quan như ở trên trước khi đề xuất cách xử lý. Mã lỗi 547 còn dùng cho các loại ràng buộc khác, nên đọc cả loại ràng buộc trong thông báo, đừng chỉ nhìn con số.
+- **Xác định đúng bản ghi:** dùng khóa chính để tham chiếu một hồ sơ cụ thể, kể cả khi họ tên trùng hoặc thay đổi.
+- **Giữ liên kết hợp lệ:** dùng khóa ngoại đã khai báo để chặn mã phòng không có trong danh mục; với `NO ACTION`, chặn xóa phòng còn hồ sơ tham chiếu.
+- **Tìm nguyên nhân thao tác bị chặn:** đọc tên ràng buộc, bảng và cột trong lỗi để xác định dữ liệu liên quan trước khi đề xuất xử lý.
 
 </Apply>
 
 ## Ghi nhớ
 
 <Memo rows={[
-  ['Cột mã NV không được trùng', 'MaNV là PRIMARY KEY: không trùng, không NULL'],
-  ['Mã phòng phải có trong sheet danh mục', 'Khóa ngoại (REFERENCES, có thể kèm chữ FOREIGN KEY): mã phải có trong PhongBan'],
-  ['Xóa dòng danh mục, sheet khác vẫn giữ mã cũ', 'Khóa ngoại kiểu mặc định: không xóa được khi còn dòng trỏ tới'],
-  ['Một người một ngày một dòng chấm công', 'PRIMARY KEY (MaNV, Ngay): tối đa một dòng mỗi cặp'],
+  ['Cột mã NV không được trùng', 'Khóa chính: không trùng, không nhận NULL'],
+  ['Mã phòng lấy từ danh mục', 'Khóa ngoại: mã khác NULL phải có ở bảng được tham chiếu'],
+  ['Xóa danh mục, ô ở sheet khác vẫn giữ mã', 'NO ACTION: còn dòng trỏ tới thì chưa xóa được'],
+  ['Một người một ngày một dòng chấm công', 'Khóa chính (MaNV, Ngay): không trùng cả cặp'],
 ]} />
 
 **Tự kiểm tra trước khi bấm "Đã học xong":**
 
 <details>
-<summary>Vì sao MaNV lặp lại được trong ChamCong, mà cặp (MaNV, Ngay) thì không?</summary>
+<summary>Khóa chính và khóa ngoại khác nhau thế nào?</summary>
 
-Khóa chính của `ChamCong` là cả cặp. Chỉ khi trùng cả mã nhân viên lẫn ngày mới vi phạm.
-
-</details>
-
-<details>
-<summary>MaQuanLy để NULL khác gì với MaQuanLy ghi một mã không có trong NhanVien?</summary>
-
-NULL được nhận vì cột cho phép NULL và khóa ngoại không kiểm NULL. Một mã không có trong `NhanVien` thì bị khóa ngoại từ chối.
+Khóa chính xác định một dòng, không trùng và không nhận `NULL`. Khóa ngoại giữ mã tham chiếu có thật; nhiều dòng có thể cùng trỏ tới một mã.
 
 </details>
 
 <details>
-<summary>Lỗi khi xóa phòng VH có nghĩa là phải chuyển cả 10 hồ sơ sang Kinh doanh?</summary>
+<summary>Vì sao <code>MaNV</code> lặp trong <code>ChamCong</code> mà không vi phạm khóa chính?</summary>
 
-Không. Lỗi chỉ cho biết còn hồ sơ trỏ tới VH. Chuyển ai, từ ngày nào, giữ lịch sử ra sao là quyết định nghiệp vụ, phải chốt trước khi sửa dữ liệu.
+Khóa chính là cặp `(MaNV, Ngay)`. Cùng nhân viên ở ngày khác vẫn được; trùng cả mã và ngày mới bị chặn.
 
 </details>
 
 <details>
-<summary>Thông báo ghi "conflicted with the FOREIGN KEY constraint FK_NhanVien_ChucDanh … table dbo.ChucDanh, column MaCD" thì cho biết gì?</summary>
+<summary><code>MaQuanLy</code> là <code>NULL</code> khác gì một mã nhân viên không tồn tại?</summary>
 
-Câu lệnh đang ghi vào `NhanVien` một mã chức danh không có trong bảng `ChucDanh`. Cần kiểm giá trị đưa vào cột `MaCD`; thông báo không ghi giá trị đó là gì.
+Cột cho phép `NULL` nên nhận giá trị này. Một mã khác `NULL` nhưng không có trong `NhanVien.MaNV` thì bị khóa ngoại từ chối.
+
+</details>
+
+<details>
+<summary>Lỗi xóa <code>VH</code> có bắt buộc chuyển cả 10 hồ sơ sang Kinh doanh không?</summary>
+
+Không. Lỗi chỉ cho biết còn hồ sơ tham chiếu. Chuyển ai, từ khi nào và giữ lịch sử ra sao phải được chốt với người chịu trách nhiệm nghiệp vụ trước.
+
+</details>
+
+<details>
+<summary>Lỗi nhắc <code>FK_NhanVien_PhongBan</code>, bảng <code>dbo.NhanVien</code>, cột <code>MaPB</code> thì cần kiểm gì?</summary>
+
+Kiểm các hồ sơ nhân viên còn mang mã phòng định xóa. Cả hồ sơ đã nghỉ vẫn tham chiếu danh mục, nên không được bỏ qua.
 
 </details>
