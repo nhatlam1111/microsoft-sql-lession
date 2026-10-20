@@ -19,15 +19,18 @@ export const lessonSchema = z.object({
 
 export type LessonFrontmatter = z.infer<typeof lessonSchema>;
 
-/** The level-2 headings every lesson body uses, in this order. */
+/** Legacy full-lesson headings and unchanged summary headings; new full lessons merge Excel and SQL. */
 export const SECTION_HEADINGS = {
   full: ['Tình huống', 'Với Excel', 'Làm bằng SQL', 'Hay nhầm ở đâu', 'Ứng dụng', 'Ghi nhớ', 'Bài tập'],
   summary: ['Nội dung chính', 'Liên hệ Excel', 'Tình huống ví dụ', 'Bài tập'],
 } as const;
 
-/** The level-2 headings a lesson must have, in order; a lesson marked `noExercises` ends without "Bài tập". */
-export function sectionHeadings(kind: 'full' | 'summary', noExercises = false): string[] {
-  return SECTION_HEADINGS[kind].filter(h => !(noExercises && h === 'Bài tập'));
+/** Pass the descriptive main-section title for the narrative format; omission preserves existing lessons. */
+export function sectionHeadings(kind: 'full' | 'summary', noExercises = false, mainSectionTitle?: string): string[] {
+  const headings = kind === 'full' && mainSectionTitle !== undefined
+    ? ['Tình huống', mainSectionTitle, ...SECTION_HEADINGS.full.slice(3)]
+    : SECTION_HEADINGS[kind];
+  return headings.filter(h => !(noExercises && h === 'Bài tập'));
 }
 
 /** Phrases that make the text read machine-written or tie it to one reader's job (matched in lower case). */

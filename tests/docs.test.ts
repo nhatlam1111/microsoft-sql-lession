@@ -1,5 +1,6 @@
 import { it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
+import { sectionHeadings } from '../src/lib/lesson-schema';
 
 const script = readFileSync('database/HRM_Demo.sql', 'utf8');
 const profile = readFileSync('docs/ho-so-cong-ty.md', 'utf8');
@@ -42,4 +43,16 @@ it('the conventions file is the one place for the rules, and the lesson template
   expect(template).toContain('quy-uoc.md');
   expect(template).not.toContain('## Quy tắc viết');
   expect(template).not.toContain('## Quy trình làm một bài');
+});
+
+it('the copyable full-lesson template follows the approved narrative structure', () => {
+  const template = readFileSync('docs/lesson-template.md', 'utf8');
+  const intro = template.split('## Phần đầu file')[0];
+  expect(intro).toContain('1-1-database-la-gi.mdx');
+  const body = template.match(/````mdx\r?\n([\s\S]*?)\r?\n````/)?.[1] ?? '';
+  const headings = [...body.matchAll(/^## (.+?)\s*$/gm)].map(m => m[1]);
+  expect(headings.length).toBe(6);
+  expect(headings[1]).not.toBe('Với Excel');
+  expect(headings).toEqual(sectionHeadings('full', false, headings[1]));
+  expect(body).not.toMatch(/^### (Lý thuyết cơ bản|Trả lời chị Hạnh)$/m);
 });

@@ -112,8 +112,10 @@ Mỗi bài là một file `src/content/lessons/<số>-<slug>.mdx`, ví dụ `3-5
 | `goal`, `excel`, `summary` | Học xong làm được gì, liên hệ Excel, đoạn tóm tắt hiện trong drawer |
 | `noExercises` | `true` khi bài không có mục "Bài tập" (bài 1.1–1.5) |
 
-- Bài đầy đủ có các mục theo thứ tự: Tình huống, Với Excel, Làm bằng SQL, Hay nhầm ở đâu, Ứng dụng, Ghi nhớ, Bài tập. Bản tóm tắt có: Nội dung chính, Liên hệ Excel, Tình huống ví dụ, Bài tập. Bài có `noExercises: true` thì không có mục Bài tập.
-- "Làm bằng SQL" mở đầu bằng `### Lý thuyết cơ bản`; bài có sơ đồ thứ tự chạy thì kết thúc bằng `### Câu lệnh cho tình huống` rồi `### SQL Server chạy câu này thế nào`. Không viết tiểu mục "Bước 1, Bước 2…".
+- Chuẩn được duyệt ngày 20/10/2026, lấy [bài 1.1](src/content/lessons/1-1-database-la-gi.mdx) làm mẫu: Tình huống → phần chính có tiêu đề theo chủ đề, gộp cách Excel và SQL xử lý → Hay nhầm ở đâu → Ứng dụng → Ghi nhớ → Bài tập. Bài `noExercises: true` bỏ mục Bài tập và có ít nhất ba câu tự kiểm tra theo mục tiêu. Các bài cũ chuyển khung khi được chỉnh tới; bài đầy đủ mới dùng khung này.
+- Trong phần chính, đặt ví dụ cạnh lời giải thích và khép yêu cầu ngay tại đó. Bài khái niệm không cần preview SQL; bài truy vấn có câu lệnh và kết quả đã kiểm chứng, thêm `RunFlow` khi cần. Không thêm mục trả lời riêng. Tiểu mục và cách đặt khối xem [khung bài](docs/lesson-template.md).
+- In đậm có chọn lọc khái niệm; highlight giá trị dẫn chứng, tên bảng/cột và địa chỉ ô bằng kiểu code có nền. Mục Ứng dụng nêu việc làm được nhờ chủ đề, kèm điều kiện cần thiết; lịch sử chỉ tra được khi hệ thống có lưu lịch sử. Chi tiết và danh sách tự rà ở [quy ước](docs/quy-uoc.md).
+- Bản tóm tắt giữ: Nội dung chính, Liên hệ Excel, Tình huống ví dụ, Bài tập; không có khối SQL, kết quả hay sơ đồ chạy lệnh.
 - Trong MDX dùng thẳng các khối `Sql`, `Result`, `Messages`, `Excel`, `Chat`, `Key`, `LineMap`, `Mistakes`, `Apply`, `Memo`, `Exercises`, `RunFlow`, `Ssms` (mô phỏng SSMS), `Erd` (sơ đồ quan hệ), không cần import.
 - Quy tắc viết: xưng "bạn"; dùng "kết bảng" cho `JOIN`; chuỗi tiếng Việt trong SQL có `N`; không nhắc vai trò hay xuất thân của người đọc. `npm test` kiểm phần lớn các quy tắc này.
 
@@ -158,7 +160,7 @@ Cấu hình cần có (giá trị do người phụ trách tự điền, không 
 - Bộ chặn lệnh chạy trước khi câu lệnh tới database. Câu phải bắt đầu bằng `SELECT`, `WITH`, `INSERT`, `UPDATE` hoặc `DELETE`. Các lệnh như `DROP`, `COMMIT`, `EXEC`, `SET` hay `SELECT … INTO` bị chặn, và mỗi lần chỉ chạy một câu.
 - Mỗi lần chạy là một transaction có `XACT_ABORT`, `LOCK_TIMEOUT 3000` và `ROWCOUNT 5001`, và luôn `ROLLBACK`. Câu lệnh chạy quá 10 giây thì bị dừng. Mỗi mã truy cập gọi tối đa 30 lần mỗi phút.
 - Mọi đầu gọi của API đều cần mã truy cập, thiếu hoặc sai mã thì trả 401. Trình duyệt chỉ gọi được API từ web này và từ `localhost:4321` (CORS).
-- Nếu `npm --prefix api run check:data` báo lệch, chạy lại `database/HRM_Demo.sql`.
+- Nếu `npm --prefix api run check:data` báo lệch, dừng thao tác ghi và báo người phụ trách. Chỉ chạy lại script trên database dùng chung sau khi được đồng ý theo [quy ước an toàn dữ liệu](docs/quy-uoc.md).
 - Không commit mật khẩu, mã truy cập hay secret. `.env` và `api/local.settings.json` đã nằm trong `.gitignore`.
 
 ## Tài liệu thiết kế
