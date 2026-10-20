@@ -18,6 +18,8 @@ export interface FlowStep {
   /** Full row count when `rows` is an excerpt. */
   total?: number;
   excel?: string;
+  /** Columns the card previews, in this order; by default the first three. Use it when the step is about a column further right. */
+  preview?: string[];
 }
 
 const MAX_ROWS = 10;
@@ -66,6 +68,7 @@ export function checkFlow(steps: FlowStep[], query: string): string[] {
     if (step.total !== undefined && step.total < step.rows.length) problems.push(`${at} total nhỏ hơn số dòng đã ghi`);
     if (step.rows.length === 0 && rowCount(step) !== 0) problems.push(`${at} không ghi dòng nào thì total phải là 0`);
     if (step.rows.length > MAX_ROWS) problems.push(`${at} ghi tối đa ${MAX_ROWS} dòng, phần còn lại dùng total`);
+    for (const c of step.preview ?? []) if (!step.columns.includes(c)) problems.push(`${at} preview có cột ${c} không nằm trong columns`);
     previous = step;
   });
   return problems;
@@ -89,8 +92,9 @@ export function snakeLayout(count: number, perRow = 3): SnakeCell[] {
 export interface Preview { columns: string[]; rows: FlowCell[][]; moreRows: number; moreCols: number }
 
 export function previewOf(step: FlowStep, maxRows = 3, maxCols = 3): Preview {
-  const columns = step.columns.slice(0, maxCols);
-  const rows = step.rows.slice(0, maxRows).map(r => r.slice(0, maxCols));
+  const picked = (step.preview ?? step.columns.slice(0, maxCols)).map(c => step.columns.indexOf(c)).filter(i => i >= 0);
+  const columns = picked.map(i => step.columns[i]);
+  const rows = step.rows.slice(0, maxRows).map(r => picked.map(i => r[i]));
   // With no rows the card shows no table, so there are no hidden columns to count either.
   const moreCols = rows.length === 0 ? 0 : step.columns.length - columns.length;
   return { columns, rows, moreRows: rowCount(step) - rows.length, moreCols };
