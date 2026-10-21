@@ -27,7 +27,7 @@ exercises:
     summary: Phân nhóm cả hồ sơ đang làm lẫn đã nghỉ theo cùng một ngày chốt.
     prompt: >-
       Trong NhanVien, lấy toàn bộ hồ sơ hiện có MaPB bằng KD và NgayVaoLam không
-      sau ngày 2026-10-21, kể cả hồ sơ đã nghỉ; không lọc trạng thái hay ngày nghỉ việc.
+      sau ngày 2026-08-14, kể cả hồ sơ đã nghỉ; không lọc trạng thái hay ngày nghỉ việc.
       Phân nhóm thời gian từ NgayVaoLam đến ngày chốt, không dừng ở NgayNghiViec:
       dưới 1 năm tròn trả chuỗi Unicode “Dưới 1 năm”; từ đủ 1 đến chưa đủ 3 năm trả
       “Từ 1 đến dưới 3 năm”; từ đủ 3 năm trở lên trả “Từ 3 năm trở lên”. Dùng mốc
@@ -40,12 +40,12 @@ exercises:
     answer: |
       SELECT MaNV, TrangThai, NgayVaoLam,
       CASE
-      WHEN DATEADD(year, 3, NgayVaoLam) <= '20261021' THEN N'Từ 3 năm trở lên'
-      WHEN DATEADD(year, 1, NgayVaoLam) <= '20261021' THEN N'Từ 1 đến dưới 3 năm'
+      WHEN DATEADD(year, 3, NgayVaoLam) <= '20260814' THEN N'Từ 3 năm trở lên'
+      WHEN DATEADD(year, 1, NgayVaoLam) <= '20260814' THEN N'Từ 1 đến dưới 3 năm'
       ELSE N'Dưới 1 năm'
       END AS NhomThamNien
       FROM NhanVien
-      WHERE MaPB = 'KD' AND NgayVaoLam <= '20261021'
+      WHERE MaPB = 'KD' AND NgayVaoLam <= '20260814'
       ORDER BY MaNV ASC;
   - id: 2-9-3
     title: Chỉ ghi nhãn mốc ba năm của Nhân sự

@@ -31,7 +31,7 @@ Giả định của tình huống: lấy toàn bộ hồ sơ có `MaPB = 'IT'` �
 
 ### Cắt, ghép và trình bày chuỗi
 
-**Chuỗi** là một dãy ký tự, như `NV007` hoặc `Bùi Thanh Sơn`. Trong Excel, nếu mã ở `A2` và họ tên ở `B2`, công thức `=CONCAT(A2," - ",B2)` tạo nhãn ở `C2`. Hình minh họa ba hồ sơ IT lấy từ bộ mẫu; ô `C2` được đánh dấu là nhãn vừa tạo.
+**Chuỗi** là một dãy ký tự, như `NV007` hoặc `Bùi Thanh Sơn`. Trong Excel, nếu mã ở `A2` và họ tên ở `B2`, công thức `=CONCAT(A2," - ",B2)` tạo nhãn ở `C2`. Hình minh họa ba hồ sơ `IT` lấy từ bộ mẫu; ô `C2` được đánh dấu là nhãn vừa tạo.
 
 <Excel sheets="Minh họa danh sách ký nhận" cell="C2" formula={'=CONCAT(A2," - ",B2)'} selected="C2" mark={['C2']} rows={[
   ['MaNV', 'HoTen', 'Nhãn ký nhận'],
@@ -450,6 +450,22 @@ ORDER BY MaNV ASC;`,
 ]} />
 
 ## Bài tập
+
+**Tự kiểm tra trước khi viết truy vấn:**
+
+<details>
+<summary>TRIM có gộp hai dấu cách giữa các từ trong chuỗi `N'  Kế  toán  '` không?</summary>
+
+Không. `TRIM` chỉ bỏ dấu cách mã `32` ở hai đầu; hai dấu cách giữa từ vẫn còn, nên `LEN` của kết quả là `8`.
+
+</details>
+
+<details>
+<summary>Tiền tố `N` và `COLLATE Vietnamese_CI_AI` giải quyết hai việc gì khác nhau?</summary>
+
+`N` giữ ký tự Unicode trong chuỗi tự viết, như `N'Nguyễn'`. `COLLATE Vietnamese_CI_AI` chọn luật so sánh không phân biệt hoa thường và dấu; nó không khôi phục ký tự đã mất vì chuyển kiểu.
+
+</details>
 
 Ba bài đều chấm vị trí cột và **thứ tự dòng**, không so tên cột. Giữ đúng phạm vi từng đề; chú ý phân biệt email `NULL` ở nguồn với nhãn do hàm tạo.
 

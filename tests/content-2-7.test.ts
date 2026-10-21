@@ -79,15 +79,18 @@ describe('2.7 string projections preserve identity and source values', () => {
       expect(lesson().body.replace(/\s+/g, ' ')).not.toContain(e.answer.replace(/\s+/g, ' ').trim());
     }
     expect(file.exercises[0].answer).toMatch(/LEFT\(MaNV, 2\)[\s\S]*SUBSTRING\(MaNV, 3, 3\)[\s\S]*MaPB = 'KT'/);
-    expect(file.exercises[1].answer).toMatch(/LEN\(HoTen\)[\s\S]*HoTen COLLATE Vietnamese_CI_AI LIKE N'nguyen%'/);
-    expect(file.exercises[2].answer).toMatch(/MaNV, Email, CONCAT\(N'\[', LOWER\(Email\), N'\]'\)[\s\S]*MaPB = 'VH'/);
+    expect(file.exercises[1].answer).toMatch(/LEN\(HoTen\)[\s\S]*HoTen COLLATE Vietnamese_CI_AI LIKE N'ho%'/);
+    expect(file.exercises[2].answer).toMatch(/MaNV, Email, CONCAT\(N'\[', UPPER\(Email\), N'\]'\)[\s\S]*MaPB = 'VH'/);
     const source = people();
     expect(source.filter(p => p.MaPB === 'KT')).toHaveLength(7);
-    const matches = source.filter(p => p.HoTen!.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase().startsWith('nguyen'));
-    expect(matches.map(p => [p.MaNV, p.HoTen, p.HoTen!.length])).toEqual([['NV003', 'Nguyễn Thu Hà', 13]]);
-    const labels = source.filter(p => p.MaPB === 'VH').map(p => [p.MaNV, p.Email, `[${p.Email?.toLowerCase() ?? ''}]`]);
+    const matches = source.filter(p => p.HoTen!.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase().startsWith('ho'));
+    expect(matches.map(p => [p.MaNV, p.HoTen, p.HoTen!.length])).toEqual([
+      ['NV004', 'Hoàng Minh Tuấn', 15], ['NV014', 'Hồ Thị Bích', 11],
+    ]);
+    const labels = source.filter(p => p.MaPB === 'VH').map(p => [p.MaNV, p.Email, `[${p.Email?.toUpperCase() ?? ''}]`]);
     expect(labels).toHaveLength(10);
     expect(labels.find(r => r[0] === 'NV044')).toEqual(['NV044', null, '[]']);
     expect(labels.filter(r => r[1] === null)).toHaveLength(1);
+    expect(labels.some(r => r[1] !== null && r[2] !== `[${r[1]}]`)).toBe(true);
   });
 });

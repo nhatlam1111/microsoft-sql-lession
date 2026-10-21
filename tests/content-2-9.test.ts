@@ -73,8 +73,8 @@ it('2.9 keeps the three distinct exercise scopes, column order and ordered gradi
   expect(third).toMatch(/MaPB = 'NS'/);
   expect(third).toContain("N'Đủ 3 năm'");
   expect(third).not.toMatch(/\bELSE\b/);
-  for (const answer of [first, second, third]) {
-    expect(answer).toMatch(/NgayVaoLam <= '20261021'/);
+  for (const [index, answer] of [first, second, third].entries()) {
+    expect(answer).toContain(`NgayVaoLam <= '${index === 1 ? '20260814' : '20261021'}'`);
     expect(answer).toMatch(/ORDER BY MaNV ASC;/);
     expect(answer).not.toMatch(/\bDATEDIFF\b/);
     expect(lesson().replace(/\s+/g, ' ')).not.toContain(answer.replace(/\s+/g, ' ').trim());

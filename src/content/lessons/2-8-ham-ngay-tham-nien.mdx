@@ -23,7 +23,7 @@ Em lấy giúp chị các dòng hợp đồng có ngày kết thúc từ hôm na
 
 Phạm vi là toàn bộ bảng `HopDong`, gồm cả hợp đồng lịch sử nếu thỏa khoảng ngày; mỗi dòng là một hợp đồng. Ngày chốt cố định là `2026-10-21`: lấy từ ngày 21/10 đến hết ngày 20/11/2026, gồm hôm nay và mốc sau `30` ngày. Đây là khoảng cách `30` ngày giữa hai mốc, có `31` ngày lịch khi tính cả hai đầu.
 
-<Key>Chốt ngày báo cáo và hai đầu khoảng lọc trước khi tính hoặc so sánh ngày.</Key>
+<Key>Tìm các dòng hợp đồng kết thúc từ `2026-10-21` đến hết `2026-11-20`, kèm số ngày còn lại.</Key>
 
 ## Tính mốc thời gian rồi lọc ngày kết thúc
 
@@ -43,7 +43,7 @@ Sang SQL Server, **`GETDATE()`** trả ngày giờ hệ thống của máy chủ
 <Sql code={`SELECT GETDATE() AS NgayGioHeThong,
 CAST(GETDATE() AS date) AS NgayHeThong;`} />
 
-Database học trên Azure SQL Database dùng giờ UTC; ngày đó có thể khác ngày ở Việt Nam gần lúc chuyển ngày. Báo cáo theo ngày nghiệp vụ cần thống nhất múi giờ trước; bài này dùng `CAST('20261021' AS date)` để cố định ngày, với chuỗi tám chữ số theo dạng năm-tháng-ngày.
+Database học trên Azure SQL Database dùng **UTC**, giờ chuẩn quốc tế chậm hơn giờ Việt Nam `7` giờ; ngày đó có thể khác ngày ở Việt Nam gần lúc chuyển ngày. Báo cáo theo ngày nghiệp vụ cần thống nhất múi giờ trước; bài này dùng `CAST('20261021' AS date)` để cố định ngày, với chuỗi tám chữ số theo dạng năm-tháng-ngày.
 
 **`DATEADD(đơn vị, số lượng, ngày gốc)`** tạo ngày mới bằng cách cộng một khoảng thời gian; số âm để lùi lại. Đơn vị `day`, `month`, `year` lần lượt là ngày, tháng, năm và không đặt trong dấu nháy. `DATEADD(day, 30, ...)` khác cộng một tháng: tháng có độ dài khác nhau.
 
@@ -63,6 +63,8 @@ EOMONTH(CAST('20261021' AS date)) AS CuoiThang;`} />
 ]} />
 
 Dùng `>=` và `<=` khi lấy cả hai đầu. Nếu yêu cầu bỏ hôm nay thì đổi riêng đầu dưới thành `>`; không tự đổi mốc trên. Trong bảng này `NgayKetThuc` có kiểu `date`, nên không có phần giờ cần xét thêm.
+
+Với cột có giờ, muốn lấy hết ngày `2026-11-20` thì giữ đầu dưới và dùng đầu trên `< DATEADD(day, 1, CAST('20261120' AS date))`: lấy trước `00:00` ngày `2026-11-21`, nên không bỏ các giờ trong ngày cuối.
 
 ### Đếm ranh giới khác với đủ thâm niên
 
@@ -97,7 +99,7 @@ ORDER BY MaNV ASC;`} />
 
 Ngày kết thúc `NULL` không thỏa các phép so sánh khoảng ngày; trong bộ mẫu, các hợp đồng không xác định thời hạn dùng giá trị này. Bộ mẫu còn có hợp đồng lịch sử với ngày kết thúc trước ngày bắt đầu. Bộ lọc ngày không kiểm đúng/sai của dữ liệu và không sửa các dòng đó.
 
-Ở bài này chỉ cần tạo mốc, đếm đúng loại khoảng cách và lọc theo ngày đã thống nhất. Bài 2.9 dùng `CASE` để phân nhóm theo các mốc kỷ niệm; lấy thêm họ tên bằng kết bảng ở bài 3.4, kiểm chất lượng ngày ở bài 4.6 và xem ảnh hưởng của cách lọc tới index ở bài 5.6.
+Ở bài này chỉ cần tạo mốc, đếm đúng loại khoảng cách và lọc theo ngày đã thống nhất. Bài 2.9 dùng `CASE` để phân nhóm theo các mốc kỷ niệm; lấy thêm họ tên bằng kết bảng ở bài 3.4, kiểm chất lượng ngày ở bài 4.6.
 
 ### Câu lệnh cho tình huống
 

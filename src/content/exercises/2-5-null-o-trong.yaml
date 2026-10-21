@@ -17,10 +17,10 @@ exercises:
       WHERE NgayNghiViec IS NOT NULL
       ORDER BY MaNV ASC;
   - id: 2-5-2
-    title: Hồ sơ Kế toán có giá trị email
+    title: Hồ sơ Kinh doanh có giá trị email
     summary: Kết hợp phạm vi phòng với điều kiện email khác NULL.
     prompt: >-
-      Trong NhanVien, lấy toàn bộ hồ sơ hiện có MaPB bằng KT và Email khác NULL,
+      Trong NhanVien, lấy toàn bộ hồ sơ hiện có MaPB bằng KD và Email khác NULL,
       không thêm điều kiện trạng thái hay ngày vào làm.
       Chỉ kiểm có giá trị khác NULL, không kiểm định dạng hoặc khả năng liên hệ.
       Trả về đúng ba cột theo thứ tự: MaNV, HoTen, Email.
@@ -31,7 +31,7 @@ exercises:
     answer: |
       SELECT MaNV, HoTen, Email
       FROM NhanVien
-      WHERE MaPB = 'KT' AND Email IS NOT NULL
+      WHERE MaPB = 'KD' AND Email IS NOT NULL
       ORDER BY MaNV ASC;
   - id: 2-5-3
     title: Danh sách email của phòng Vận hành

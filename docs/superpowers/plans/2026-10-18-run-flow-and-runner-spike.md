@@ -425,3 +425,16 @@ Khung chung đã được duyệt trong hội thoại. Bốn nhánh riêng nối
 - [x] Hoàn thiện, kiểm tra và xử lý review bài 2.9: 255/255 test, check không lỗi, build 90 trang, 1.561 liên kết; API build/typecheck đạt. HTML tĩnh đủ bốn bài và 12 trang bài tập mới; SQL live và browser chưa xác minh.
 
 SQL Server live còn thiếu cấu hình kết nối; không coi fixture là thực thi T-SQL. Browser chưa khả dụng; HTML build không xác nhận giao diện hay bàn phím.
+
+## Review và nhập main bài 2.3–2.9 (21/10/2026)
+
+Người làm khóa học yêu cầu rõ: “review và hoàn thiện các bài từ 2.3 - 2.9 trên nhánh riêng, sau đó đưa vào main”. Yêu cầu này cho phép đưa kết quả đã kiểm lên `main` và phát hành theo workflow hiện có, thay bước hỏi push của lượt local trước. Không đổi quy ước chung.
+
+- [x] Fetch và xác nhận bảy nhánh nối tiếp; tạo `codex/review-lessons-2-3-2-9` từ main mới nhất, merge nhánh 2.9 giữ lịch sử cả bảy bài.
+- [x] Review độc lập từng bài bằng agent Codex mới kế thừa model, đọc hết và xác minh nhận xét trước sửa; thêm review tích hợp cuối độc lập, không có mục bắt buộc còn mở.
+- [x] Sửa độ phân biệt các bài tập `_`, `NULL`, hoa/thường, dấu và ngày kỷ niệm; làm rõ cột có giờ/NULL; rút câu lặp và giữ khung gộp đã duyệt.
+- [x] SQL Server live: câu ví dụ/Result/RunFlow, bảy hình Excel, đáp án và các bài làm sai tiêu biểu khớp kỳ vọng; API 36/36 đáp án, kiểm dữ liệu sau hoàn tác không lệch bảng.
+- [x] Web 258/258 test, check 0 lỗi/0 warning, build 90 trang, check:dist 1.561 liên kết; API build/typecheck đạt. Sửa test fixture CRLF, không nới điều kiện kiểm.
+- [x] Browser 1280/1440px, mục lục/hình/bảng/highlight, bàn phím ở sơ đồ và tự kiểm tra; ghi đúng giới hạn xác minh.
+- [x] Ghi [báo cáo tổng và tám report](../../reviews/2026-10-21-level-2-completion/README.md), Đã sửa/Không làm theo ở spec.
+- [ ] Commit/push nhánh review, nhập vào main không force, kiểm lại kết quả merge và workflow phát hành.

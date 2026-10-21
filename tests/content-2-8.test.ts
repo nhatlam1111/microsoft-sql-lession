@@ -25,7 +25,8 @@ const dayDistance = (start: string, end: string) => (Date.parse(end) - Date.pars
 // must change this source-backed result contract. It does not claim T-SQL execution.
 it('2.8 filters contract rows at the fixed inclusive horizon before calculating and sorting dates', () => {
   const contracts = seedRows('HopDong');
-  const body = readLessonFiles().find(f => f.slug === '2-8-ham-ngay-tham-nien')!.body;
+  // MDX and JavaScript literals normalize CRLF; compare the captured query in the same form.
+  const body = readLessonFiles().find(f => f.slug === '2-8-ham-ngay-tham-nien')!.body.replace(/\r\n?/g, '\n');
   const flow = body.match(/<RunFlow query=\{`([\s\S]*?)`\} steps=\{([\s\S]*?)\} \/>/);
   expect(flow).not.toBeNull();
   const steps = literal<FlowStep[]>(flow![2]);

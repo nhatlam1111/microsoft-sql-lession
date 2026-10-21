@@ -18,10 +18,10 @@ exercises:
       WHERE MaPB = 'KT'
       ORDER BY MaNV ASC;
   - id: 2-7-2
-    title: Tìm họ Nguyễn bằng chữ không dấu
+    title: Tìm đầu họ tên bằng chữ không dấu
     summary: Tìm theo luật không phân biệt dấu và trả thêm độ dài họ tên.
     prompt: >-
-      Trong NhanVien, tìm tất cả hồ sơ có HoTen bắt đầu bằng nguyen, so sánh không
+      Trong NhanVien, tìm tất cả hồ sơ có HoTen bắt đầu bằng ho, so sánh không
       phân biệt hoa thường và không phân biệt dấu bằng collation Vietnamese_CI_AI.
       Không thêm điều kiện phòng, trạng thái hay ngày. Trả về đúng ba cột theo
       thứ tự: MaNV, HoTen nguyên bản có dấu, rồi số ký tự của HoTen theo hàm LEN
@@ -32,7 +32,7 @@ exercises:
     answer: |
       SELECT MaNV, HoTen, LEN(HoTen) AS DoDai
       FROM NhanVien
-      WHERE HoTen COLLATE Vietnamese_CI_AI LIKE N'nguyen%'
+      WHERE HoTen COLLATE Vietnamese_CI_AI LIKE N'ho%'
       ORDER BY MaNV ASC;
   - id: 2-7-3
     title: Nhãn email của hồ sơ Vận hành
@@ -41,14 +41,14 @@ exercises:
       Trong NhanVien, lấy toàn bộ hồ sơ hiện có MaPB bằng VH, kể cả đã nghỉ nếu có.
       Không lọc bỏ email NULL và không thêm điều kiện ngày hay trạng thái.
       Trả về đúng ba cột theo thứ tự: MaNV, Email nguyên bản, rồi nhãn NhanEmail
-      ghép dấu [ với Email chuyển thành chữ thường và dấu ]. Dùng CONCAT để
+      ghép dấu [ với Email chuyển thành chữ hoa và dấu ]. Dùng CONCAT để
       email NULL tạo nhãn [] nhưng cột Email gốc vẫn là NULL; không thêm nhãn thay thế.
       Sắp MaNV tăng dần. Thứ tự dòng được chấm, tên cột không được chấm.
     columns: [MaNV, Email, NhanEmail]
     ordered: true
     kind: query
     answer: |
-      SELECT MaNV, Email, CONCAT(N'[', LOWER(Email), N']') AS NhanEmail
+      SELECT MaNV, Email, CONCAT(N'[', UPPER(Email), N']') AS NhanEmail
       FROM NhanVien
       WHERE MaPB = 'VH'
       ORDER BY MaNV ASC;

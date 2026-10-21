@@ -100,7 +100,7 @@ Với phép cộng số, `10 + NULL` cho `NULL`, còn `10 + 0` cho `10`. Câu `S
 
 Thay `NULL` bằng `0` là một lựa chọn về ý nghĩa dữ liệu: chưa biết số ngày không có nghĩa là không có ngày nào. Cần thống nhất cách xử lý trước khi tính, thay vì làm mất dấu hiệu còn thiếu chỉ để có kết quả số.
 
-Ở bài này chỉ cần phân biệt giá trị thiếu, lọc đúng và chọn giá trị hiển thị hoặc thay thế. Kiểu dữ liệu và chuyển kiểu đã gặp ở bài 1.3; hàm chuỗi và Unicode ở bài 2.7, hàm ngày ở bài 2.8, điều kiện `CASE` ở bài 2.9. Cách hàm tổng hợp xử lý `NULL` học ở bài 3.1, kiểm chất lượng dữ liệu ở bài 4.6.
+Ở bài này chỉ cần phân biệt giá trị thiếu, lọc đúng và chọn giá trị hiển thị hoặc thay thế. Kiểu dữ liệu và chuyển kiểu đã gặp ở bài 1.3; hàm chuỗi và Unicode ở bài 2.7. Cách hàm tổng hợp xử lý `NULL` học ở bài 3.1, kiểm chất lượng dữ liệu ở bài 4.6.
 
 ### Câu lệnh cho tình huống
 
@@ -132,9 +132,7 @@ ORDER BY MaNV ASC;`} />
   ]
 ]} mark={[1, 2]} />
 
-Bạn có thể trả lời chị Hạnh: có `2` hồ sơ chưa có giá trị email là `NV044` ở `VH` và `NV045` ở `KD`. Cả hai dòng được đánh dấu để đối chiếu với ô trống trong hình Excel. Danh sách đã có bốn cột và được xếp theo mã; kết quả không cho biết hai người có địa chỉ email ngoài hệ thống hay chưa.
-
-Việc nhắc bổ sung và xác minh địa chỉ cần người phụ trách thực hiện.
+Bạn có thể trả lời chị Hạnh: có `2` hồ sơ chưa có giá trị email là `NV044` ở `VH` và `NV045` ở `KD`. Cả hai dòng được đánh dấu để đối chiếu với ô trống trong hình Excel. Danh sách đã có bốn cột và được xếp theo mã; kết quả không cho biết hai người có địa chỉ email ngoài hệ thống hay chưa. Việc nhắc bổ sung và xác minh địa chỉ cần người phụ trách thực hiện.
 
 ### SQL Server chạy câu này thế nào
 

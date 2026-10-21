@@ -72,7 +72,7 @@ Thâm niên ở đây tính theo **mốc kỷ niệm**, không chỉ lấy năm 
 
 **`ELSE`** cung cấp giá trị khi không nhánh `WHEN` nào đúng. Ở yêu cầu này, `NgayVaoLam` có `NOT NULL` và đã lọc ngày không sau mốc chốt, nên phần còn lại chính là nhóm `Dưới 1 năm`. Đây là một nhóm nghiệp vụ có chủ đích, không phải nhãn để gom mọi dữ liệu chưa hiểu vào đó.
 
-Nếu bỏ `ELSE`, dòng không khớp nhánh nào nhận **`NULL`**. So sánh với ngày `NULL` cũng không cho kết quả đúng; trên nguồn cho phép thiếu ngày, cần nhánh `WHEN NgayVaoLam IS NULL` trả nhãn như `Chưa rõ ngày vào làm` trước các nhánh ngày. Bộ mẫu hiện không có trường hợp thiếu này; `ELSE` không tự nhận biết nguyên nhân thiếu dữ liệu.
+Nếu bỏ `ELSE`, dòng không khớp nhánh nào nhận **`NULL`**. So sánh với ngày `NULL` cũng không cho kết quả đúng; trên nguồn cho phép thiếu ngày, nếu phạm vi giữ cả dòng thiếu ngày qua `WHERE`, thêm nhánh `WHEN NgayVaoLam IS NULL` trả nhãn như `Chưa rõ ngày vào làm` trước các nhánh ngày. Bộ mẫu hiện không có trường hợp thiếu này.
 
 Các nhánh trong bài cùng trả chuỗi Unicode `N'…'`, để kết quả là một cột chữ. Trộn nhãn chữ với số có thể dẫn tới chuyển kiểu ngầm hoặc lỗi, như cách chọn kiểu ở bài 1.3. Ở bài này chỉ cần tạo giá trị bằng các điều kiện của từng dòng; tổng hợp theo nhóm học ở bài 3.1–3.2, kiểm dữ liệu bất thường ở bài 4.6.
 
@@ -674,6 +674,6 @@ ORDER BY MaNV ASC;`,
 
 ## Bài tập
 
-Ba bài dùng ngày chốt `2026-10-21`, nhưng khác phạm vi và cách trả nhãn. Trả đúng vị trí cột, đúng chữ trong nhãn và xếp mã tăng dần; bộ chấm so **thứ tự dòng**, không so tên cột.
+Mỗi đề chốt rõ mốc ngày, phạm vi và cách trả nhãn. Trả đúng vị trí cột, đúng chữ trong nhãn và xếp mã tăng dần; bộ chấm so **thứ tự dòng**, không so tên cột.
 
 <Exercises />

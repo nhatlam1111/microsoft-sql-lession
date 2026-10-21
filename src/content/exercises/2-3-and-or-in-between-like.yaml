@@ -45,14 +45,15 @@ exercises:
     answer: |
       SELECT MaNV, HoTen FROM NhanVien WHERE HoTen LIKE N'%Thị%';
   - id: 2-3-4
-    title: Mã còn thiếu một ký tự
-    summary: Tìm mã bắt đầu bằng NV04 và còn đúng một ký tự cuối.
+    title: Họ tên còn đúng một ký tự sau H
+    summary: Tìm họ tên có H ở vị trí áp chót bằng mẫu một ký tự.
     prompt: >-
-      Trong bảng NhanVien, lấy các hồ sơ có MaNV bắt đầu bằng NV04 và sau đó còn
-      đúng một ký tự. Không lấy mã dài hơn hay ngắn hơn mẫu đó; không thêm điều kiện khác.
+      Trong bảng NhanVien, lấy các hồ sơ có HoTen chứa chữ H ở vị trí áp chót:
+      trước H có thể là chuỗi bất kỳ, sau H phải còn đúng một ký tự rồi kết thúc.
+      Không thêm điều kiện phòng, trạng thái hay ngày vào làm.
       Trả về đúng hai cột theo thứ tự: MaNV, HoTen. Thứ tự dòng không quan trọng.
     columns: [MaNV, HoTen]
     ordered: false
     kind: query
     answer: |
-      SELECT MaNV, HoTen FROM NhanVien WHERE MaNV LIKE 'NV04_';
+      SELECT MaNV, HoTen FROM NhanVien WHERE HoTen LIKE N'%H_';
