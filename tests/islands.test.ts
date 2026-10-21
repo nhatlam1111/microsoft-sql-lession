@@ -31,11 +31,12 @@ it('the lesson drawer shows what the lesson is about and links to it', () => {
   expect(html).toMatch(/aria-label="Đã xem"[^>]*><\/span><span[^>]*>2\.2</);
 });
 it('the drawer marks summary lessons and gives minutes only for full ones', () => {
-  expect(drawer('2.3')).toContain('Bản tóm tắt');
-  expect(drawer('2.3')).not.toContain('phút');
+  const summary = CAT.find(e => e.kind === 'summary')!.num;
+  expect(drawer(summary)).toContain('Bản tóm tắt');
+  expect(drawer(summary)).not.toContain('phút');
   expect(drawer('3.5')).not.toContain('Bản tóm tắt');
   expect(drawer('3.5')).toContain('Khoảng 10 phút');
-  expect(drawer('2.3')).not.toContain('Cần biết trước');
+  expect(drawer(summary)).not.toContain('Cần biết trước');
 });
 it('the course menu works without a current lesson', () => {
   const html = renderToStaticMarkup(createElement(SidebarNav, { catalog: CAT, levels: LEVELS }));

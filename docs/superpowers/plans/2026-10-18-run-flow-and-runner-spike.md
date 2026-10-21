@@ -1,5 +1,19 @@
 # Sơ đồ thứ tự chạy và chạy thử bài tập trên web: Implementation Plan
 
+## Bổ sung bài 2.3 theo thiết kế đã duyệt (21/10/2026)
+
+Thay đổi có phạm vi trong luồng bài học hiện có, đã duyệt khung ngắn trong chat. Ghi nhận tại spec đợt 2 mục 14; không mở lại phần thiết kế lịch sử bên dưới.
+
+- [x] Đọc quy ước/template/hồ sơ và bài 1.1–2.2; chốt KD hoặc IT trong sáu tháng đầu năm 2023.
+- [x] Baseline và RED trước viết; thêm kiểm kết quả/RunFlow theo seed và bốn bài tập, chuyển catalog kỳ vọng thành full.
+- [x] Viết bài 25 phút, bốn bài tập, cập nhật hồ sơ/README; giữ sáu mục, khung gộp và câu trả lời cạnh kết quả.
+- [x] Đối chiếu toàn bộ ô hình/kết quả/sơ đồ với script mẫu và đối chiếu kiến thức Microsoft; ghi rõ fixture không thay live SQL.
+- [x] 242/242 test, check/build/check:dist web, API build/typecheck đạt; HTML có đủ link/trang/panel/ô đánh dấu.
+- [ ] Chạy mọi ví dụ và check:exercises/check:data trên SQL Server thật: hiện thiếu cấu hình kết nối, chưa thể xác minh live.
+- [ ] Kiểm trực quan và bàn phím trên browser: hiện không có browser hoạt động; kiểm HTML không thay bước này.
+- [x] Đọc hết review độc lập, làm rõ %, đổi cách nói chuỗi ký tự và cắt lặp; giữ SQL/YAML. Cập nhật spec/plan, kiểm bản cuối và bàn giao local; hai mục live SQL/browser phía trên vẫn chưa xác minh.
+
+
 ## Tiếp tục bài 2.1 và 2.2 theo khung gộp (21/10/2026)
 
 Phạm vi do người làm khóa học yêu cầu sau lượt 1.4–1.6; thực hiện theo quy ước hiện hành và spec `2026-10-18-step-flow-exercises-full-lessons-design.md`, mục 13. Giữ nguyên giao diện, component/API, frontmatter schema và bài tập. Dùng checkout đang có; không commit, push hay deploy trong lượt này.
