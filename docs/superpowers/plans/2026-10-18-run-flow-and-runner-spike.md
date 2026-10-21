@@ -1,5 +1,47 @@
 # Sơ đồ thứ tự chạy và chạy thử bài tập trên web: Implementation Plan
 
+## Bổ sung bài 2.5 theo khung đã duyệt (21/10/2026)
+
+Nhánh local `codex/lesson-2-5-full`, snapshot bài 2.4 làm gốc; spec đợt 2 mục 16 ghi nội dung và giới hạn xác minh.
+
+- [x] Đọc quy ước/template/hồ sơ và các bài liên quan; duyệt phạm vi hồ sơ Email NULL, nhãn chỉ ở kết quả.
+- [x] Baseline và RED; giữ bản 2.4, thêm kiểm dữ liệu gốc/nhãn của RunFlow, không khóa câu văn.
+- [x] Viết bài 25 phút, ba đề chấm thứ tự; cập nhật hồ sơ/README/catalog, giữ component/API và seed.
+- [x] Test/check/build/check:dist và API build/typecheck đạt; ghi rõ lỗi shortTitle đã sửa và kiểm fixture không thay SQL Server.
+- [x] Đọc hết review độc lập 40 mục, đối chiếu và xử lý đủ 10 nhận xét sửa/làm rõ/cắt/biên tập; ghi Đã sửa/Không làm theo.
+- [ ] Kiểm bản cuối và bàn giao local cùng báo cáo; không push/deploy.
+- [ ] Chạy SELECT/đáp án live và check:data: thiếu cấu hình kết nối.
+- [ ] Kiểm trực quan/bàn phím: chưa có browser hoạt động; không lấy HTML làm bằng chứng thay thế.
+
+
+## Bổ sung bài 2.4 theo khung đã duyệt (21/10/2026)
+
+Nhánh local `codex/lesson-2-4-full` nối từ bài 2.3; spec đợt 2 mục 15 ghi nội dung, xử lý review và giới hạn xác minh.
+
+- [x] Đọc quy ước/template/hồ sơ và các bài liên quan; duyệt phạm vi năm hồ sơ đang làm mới nhất, ngày DESC/mã ASC.
+- [x] Baseline và RED trước viết; thêm kiểm kết quả/RunFlow theo seed và chấm thứ tự của ba bài tập.
+- [x] Viết bài 20 phút, ba đề `ordered: true`; cập nhật hồ sơ/README và catalog kỳ vọng full, không đổi component/API.
+- [x] Test, web check/build/check:dist, API build/typecheck và kiểm fixture đạt; ghi rõ fixture không thay chạy SQL Server.
+- [x] Review độc lập 10 mục, đọc hết rồi sửa bốn nhận xét câu chữ; không đổi SQL/dữ liệu.
+- [ ] Chạy ví dụ/đáp án live và check:data: hiện thiếu cấu hình kết nối.
+- [ ] Kiểm trực quan/bàn phím: browser timeout, chưa thể xác minh; không lấy kiểm HTML làm bằng chứng thay thế.
+- [x] Kiểm bản cuối và bàn giao local, ghi các bước còn thiếu; không push/deploy.
+
+
+## Bổ sung bài 2.3 theo thiết kế đã duyệt (21/10/2026)
+
+Thay đổi có phạm vi trong luồng bài học hiện có, đã duyệt khung ngắn trong chat. Ghi nhận tại spec đợt 2 mục 14; không mở lại phần thiết kế lịch sử bên dưới.
+
+- [x] Đọc quy ước/template/hồ sơ và bài 1.1–2.2; chốt KD hoặc IT trong sáu tháng đầu năm 2023.
+- [x] Baseline và RED trước viết; thêm kiểm kết quả/RunFlow theo seed và bốn bài tập, chuyển catalog kỳ vọng thành full.
+- [x] Viết bài 25 phút, bốn bài tập, cập nhật hồ sơ/README; giữ sáu mục, khung gộp và câu trả lời cạnh kết quả.
+- [x] Đối chiếu toàn bộ ô hình/kết quả/sơ đồ với script mẫu và đối chiếu kiến thức Microsoft; ghi rõ fixture không thay live SQL.
+- [x] 242/242 test, check/build/check:dist web, API build/typecheck đạt; HTML có đủ link/trang/panel/ô đánh dấu.
+- [ ] Chạy mọi ví dụ và check:exercises/check:data trên SQL Server thật: hiện thiếu cấu hình kết nối, chưa thể xác minh live.
+- [ ] Kiểm trực quan và bàn phím trên browser: hiện không có browser hoạt động; kiểm HTML không thay bước này.
+- [x] Đọc hết review độc lập, làm rõ %, đổi cách nói chuỗi ký tự và cắt lặp; giữ SQL/YAML. Cập nhật spec/plan, kiểm bản cuối và bàn giao local; hai mục live SQL/browser phía trên vẫn chưa xác minh.
+
+
 ## Tiếp tục bài 2.1 và 2.2 theo khung gộp (21/10/2026)
 
 Phạm vi do người làm khóa học yêu cầu sau lượt 1.4–1.6; thực hiện theo quy ước hiện hành và spec `2026-10-18-step-flow-exercises-full-lessons-design.md`, mục 13. Giữ nguyên giao diện, component/API, frontmatter schema và bài tập. Dùng checkout đang có; không commit, push hay deploy trong lượt này.
@@ -369,3 +411,17 @@ git commit -m "record the exercise runner spike results"
 - [ ] **Step 1: Chạy `npm test`, `npm run build`, `npm run check:dist` trên `main`, kỳ vọng tất cả PASS**
 - [ ] **Step 2: `git status` sạch (trừ các file chưa theo dõi đã biết: `.claude/`, `.mcp.json`, `CLAUDE.md`, `mcp-azure-sql/`); `git branch` còn `spike/exercise-runner` chưa merge**
 - [ ] **Step 3: Báo người làm khóa học kết quả và hỏi có push `main` không; không tự push**
+
+
+## Lượt bài 2.6–2.9 — ngày 21/10/2026
+
+Khung chung đã được duyệt trong hội thoại. Bốn nhánh riêng nối tiếp từ bài 2.5; tác giả làm các file bài độc lập, sau đó tích hợp theo thứ tự và review mỗi bài bằng agent mới kế thừa model phiên.
+
+- [x] Đọc quy ước, kiểm bản nền 245/245 test và tách bốn nhánh.
+- [x] Chốt mốc ngày cố định 21/10/2026; đối chiếu seed độc lập.
+- [x] Hoàn thiện, kiểm tra và xử lý review bài 2.6: 247/247 test, check không lỗi, build 81 trang, 1.469 liên kết; API build/typecheck đạt. SQL live và browser chưa xác minh.
+- [x] Hoàn thiện, kiểm tra và xử lý review bài 2.7: 250/250 test, check không lỗi, build 84 trang, 1.501 liên kết; API build/typecheck đạt. SQL live và browser chưa xác minh.
+- [x] Hoàn thiện, kiểm tra và xử lý review bài 2.8: 252/252 test, check không lỗi, build 87 trang, 1.531 liên kết; API build/typecheck đạt. SQL live và browser chưa xác minh.
+- [x] Hoàn thiện, kiểm tra và xử lý review bài 2.9: 255/255 test, check không lỗi, build 90 trang, 1.561 liên kết; API build/typecheck đạt. HTML tĩnh đủ bốn bài và 12 trang bài tập mới; SQL live và browser chưa xác minh.
+
+SQL Server live còn thiếu cấu hình kết nối; không coi fixture là thực thi T-SQL. Browser chưa khả dụng; HTML build không xác nhận giao diện hay bàn phím.

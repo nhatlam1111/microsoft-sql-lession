@@ -1,0 +1,52 @@
+lesson: 2-5-null-o-trong
+exercises:
+  - id: 2-5-1
+    title: Hồ sơ có ngày nghỉ việc
+    summary: Lọc hồ sơ đã có giá trị ngày nghỉ việc để đối chiếu.
+    prompt: >-
+      Trong NhanVien, lấy tất cả hồ sơ có NgayNghiViec khác NULL, ở mọi phòng.
+      Không thêm điều kiện trạng thái hay khoảng ngày.
+      Trả về đúng ba cột theo thứ tự: MaNV, HoTen, NgayNghiViec.
+      Sắp MaNV tăng dần. Thứ tự dòng được chấm.
+    columns: [MaNV, HoTen, NgayNghiViec]
+    ordered: true
+    kind: query
+    answer: |
+      SELECT MaNV, HoTen, NgayNghiViec
+      FROM NhanVien
+      WHERE NgayNghiViec IS NOT NULL
+      ORDER BY MaNV ASC;
+  - id: 2-5-2
+    title: Hồ sơ Kế toán có giá trị email
+    summary: Kết hợp phạm vi phòng với điều kiện email khác NULL.
+    prompt: >-
+      Trong NhanVien, lấy toàn bộ hồ sơ hiện có MaPB bằng KT và Email khác NULL,
+      không thêm điều kiện trạng thái hay ngày vào làm.
+      Chỉ kiểm có giá trị khác NULL, không kiểm định dạng hoặc khả năng liên hệ.
+      Trả về đúng ba cột theo thứ tự: MaNV, HoTen, Email.
+      Sắp MaNV tăng dần. Thứ tự dòng được chấm.
+    columns: [MaNV, HoTen, Email]
+    ordered: true
+    kind: query
+    answer: |
+      SELECT MaNV, HoTen, Email
+      FROM NhanVien
+      WHERE MaPB = 'KT' AND Email IS NOT NULL
+      ORDER BY MaNV ASC;
+  - id: 2-5-3
+    title: Danh sách email của phòng Vận hành
+    summary: Giữ toàn bộ hồ sơ VH và hiển thị nhãn ở email NULL.
+    prompt: >-
+      Trong NhanVien, lấy tất cả hồ sơ hiện có MaPB bằng VH, kể cả đã nghỉ nếu có.
+      Không lọc bỏ hồ sơ thiếu email. Trả về đúng ba cột theo thứ tự: MaNV, HoTen,
+      rồi giá trị Email; riêng Email là NULL thì hiển thị chuỗi Unicode “(chưa có)”.
+      Email khác NULL phải được giữ nguyên. Không thêm điều kiện trạng thái hay ngày.
+      Sắp MaNV tăng dần. Thứ tự dòng được chấm, tên cột không được chấm.
+    columns: [MaNV, HoTen, Email]
+    ordered: true
+    kind: query
+    answer: |
+      SELECT MaNV, HoTen, COALESCE(Email, N'(chưa có)') AS Email
+      FROM NhanVien
+      WHERE MaPB = 'VH'
+      ORDER BY MaNV ASC;

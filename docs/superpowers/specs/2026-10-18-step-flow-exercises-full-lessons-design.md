@@ -356,3 +356,182 @@ Hai agent mới, không mang ngữ cảnh lúc viết, đã review riêng từng
 **Kiểm bản cuối:** 239/239 test đạt, không còn lỗi nền đoạn dài ở 2.1/2.2; check 0 lỗi/0 warning/3 hint deprecation cũ; build 68 trang; check:dist đạt 68 trang/1.339 link. Mọi câu Sql, ô Excel/Result/RunFlow và tổng dòng còn khớp SELECT live sau biên tập. Đã đọc lại câu Format Cells/cách chấm 2.1, chú thích Excel/định dạng ngày/NULL 2.2 trên bản render mới, lưu ảnh `2-1-result-final-1280.png` và `2-2-narrative-final-1440.png`; phục hồi viewport trước bàn giao. Log cuối có tiền tố `final-` trong thư mục verification; kiểm API 14/14 và check:data ở trên vẫn áp dụng vì câu lệnh/bài tập không đổi. Không chạy SSMS hoặc Excel thật để chứng nhận thao tác copy/dán; điều kiện Format Cells được đối chiếu tài liệu, không đoán kết quả của một thiết lập máy cụ thể.
 
 Nguồn Microsoft đối chiếu: [SELECT và alias](https://learn.microsoft.com/en-us/sql/t-sql/queries/select-clause-transact-sql?view=sql-server-ver17), [WHERE](https://learn.microsoft.com/en-us/sql/t-sql/queries/where-transact-sql?view=sql-server-ver17), [chuỗi Unicode](https://learn.microsoft.com/en-us/sql/t-sql/data-types/constants-transact-sql?view=sql-server-ver17), [đổi ngày dạng chữ thành ngày trong Excel](https://support.microsoft.com/en-us/excel/convert-dates-stored-as-text-to-dates).
+
+
+## 14. Bài 2.3 đầy đủ: kết hợp điều kiện (21/10/2026)
+
+Người làm khóa học duyệt thiết kế trong chat: lấy hồ sơ hiện mang mã phòng KD hoặc IT, vào làm sáu tháng đầu năm 2023, kể cả người đã nghỉ nếu có. Chuyển bản tóm tắt thành bài đầy đủ theo chuẩn bài 1.1; thời lượng 25 phút. Lượt này chuẩn bị bản local trên nhánh `codex/lesson-2-3-full`, xuất phát từ `da5ead569e450da743c4dca50622a9ae006aec66`.
+
+### Nội dung và phạm vi
+
+- Phần chính gộp AutoFilter/SQL theo bốn tiểu mục: AND/OR/ngoặc/IN; BETWEEN và LIKE; câu lệnh giải tình huống; RunFlow. Giải nghĩa `%` và `_`, giữ dấu Unicode, phân biệt mẫu chữ với tên người, ngày kiểu date với cột có giờ. Không giảng sâu NULL/collation/NOT hoặc cú pháp bài sau.
+- Câu chính dùng IN kết hợp BETWEEN, bốn alias tiếng Việt. Theo script mẫu, kết quả là NV003 và NV043; RunFlow có tổng 48 → 2 → 2. Câu thiếu ngoặc giữ cả NV002 ngoài khoảng ngày. Kết quả không được cam kết thứ tự khi chưa có ORDER BY.
+- Thêm bốn bài tập chỉ đọc: nhóm KD/VH đang làm; KT/NS trong khoảng có hai đầu mút; họ tên chứa Thị; mã NV04 rồi đúng một ký tự. Không lộ đáp án trên web; bộ chấm vẫn chấp nhận cách viết tương đương.
+- Cập nhật hồ sơ công ty, README và catalog kỳ vọng. Test drawer chọn một bài summary theo loại thay vì cố định 2.3 vì bài này đã chuyển full. Không đổi component, CSS, API/bộ chấm hoặc dữ liệu.
+
+### Kiểm chứng và giới hạn thực tế
+
+- Baseline 239/239 test. RED xác nhận bài chưa full, chưa có Result/RunFlow và chưa có bốn bài tập. Sau viết, 242/242 test đạt; kiểm kiểu web 0 lỗi/0 warning/3 hint deprecation có sẵn. API build đóng gói 18 bài tập, API typecheck đạt. Web build 72 trang; check:dist đạt 1.379 link, không lộ đáp án.
+- `temp/verification/2026-10-21-2-3-full/source-evidence.json`: đọc INSERT và luật gán quản lý trong script mẫu, đối chiếu mọi ô Excel/Result/RunFlow, tổng 48/2/2 và các ví dụ. Bộ lọc thiếu ngoặc giữ 15 hồ sơ; bốn bài tập dự kiến 21/6/22/9 dòng. Bài tập khoảng ngày có hồ sơ ở cả hai đầu mút. Đây là kiểm fixture bằng JavaScript, không phải thực thi T-SQL hoặc chứng nhận dữ liệu live.
+- `check:exercises` đã thử nhưng dừng trước khi kết nối vì thiếu SQL_SERVER, SQL_DATABASE, SQL_USER, SQL_PASSWORD. Không có MCP azure-sql, file cấu hình hay các biến kết nối trong phiên. Chưa chạy live các ví dụ/đáp án hoặc check:data, không có câu ghi nào được gửi tới database. Cần hoàn tất bước live trước khi coi bài đủ quy trình để đăng.
+- HTML build có đúng sáu mục, bốn link/trang bài tập, ba thẻ và ba panel RunFlow, bốn ô Excel đánh dấu (`html-evidence.json`). Chưa xác minh hình ảnh 1280/1440px, tràn ngang hoặc bàn phím: Playwright thiếu browser và tải Chrome nhận zip không hợp lệ; browser cloud sau đó timeout và bị gỡ khỏi phiên. Không dùng kiểm HTML để tuyên bố đã kiểm trực quan.
+- Đối chiếu tài liệu Microsoft về [ưu tiên AND/OR](https://learn.microsoft.com/en-us/sql/t-sql/language-elements/operator-precedence-transact-sql?view=sql-server-ver17), [IN](https://learn.microsoft.com/en-us/sql/t-sql/language-elements/in-transact-sql?view=sql-server-ver17), [BETWEEN](https://learn.microsoft.com/en-us/sql/t-sql/language-elements/between-transact-sql?view=sql-server-ver17), [LIKE](https://learn.microsoft.com/en-us/sql/t-sql/language-elements/like-transact-sql?view=sql-server-ver17) và [AutoFilter](https://support.microsoft.com/en-us/excel/get-started/filter-data-in-a-range-or-table-in-excel). Không thử Excel hay SSMS thật.
+
+### Review độc lập
+
+Reviewer Codex độc lập, không kế thừa lịch sử viết, dùng model kế thừa phiên; chỉ đọc bài/các bài trước, quy ước/hồ sơ và HTML build, không đọc script hay chạy SQL. Report của lượt ở `temp/review/2026-10-21-2-3-full/`. Đã đọc hết report trước khi sửa. Bản report được giữ tại [docs/reviews/2026-10-21-bai-2-3.md](../../reviews/2026-10-21-bai-2-3.md).
+
+
+**Đã sửa sau review:**
+
+- Định nghĩa `%` thành “từ 0 ký tự trở lên” ở phần giảng và Ghi nhớ, bao gồm rõ trường hợp đúng một ký tự.
+- Đổi “mẫu chỉ xét chữ” thành “mẫu so khớp chuỗi ký tự”; bỏ vế diễn lại mẫu Nguyễn%.
+- Cắt câu nhắc lại phạm vi kiểu date và mục Hay nhầm về xuống dòng/ngoặc đã có đủ ở phần chính. Giữ ba lỗi riêng còn lại; không thêm nội dung bù.
+- Làm rõ hình Excel dùng sheet xếp theo mã trước khi lọc để số dòng 4/44 có căn cứ. Không đổi SQL, ô dữ liệu hay bốn đề bài tập.
+
+**Không làm theo:** không có nhận xét cần loại bỏ. Những mục Giữ được được giữ nguyên. Các yêu cầu SQL live và kiểm trực quan/bàn phím vẫn là phần xác minh còn thiếu do giới hạn môi trường, không coi reviewer hoặc test fixture là bằng chứng thay thế.
+
+
+**Kiểm bản cuối sau review:** 242/242 test, check 0 lỗi/0 warning/3 hint deprecation có sẵn, build 72 trang, check:dist đạt 1.379 link. Log `final-*.log` trong thư mục verification của lượt. Bộ test component có cảnh báo placeholder collection như baseline, không phải test thất bại. Source-fixture kiểm lại toàn bộ ô vẫn khớp; không đổi SQL/YAML nên API build/typecheck trước đó còn áp dụng. Chưa có xác minh SQL live hoặc browser; không push/deploy.
+
+
+## 15. Bài 2.4 đầy đủ: sắp xếp và TOP (21/10/2026)
+
+Người làm khóa học duyệt khung ngắn trong chat. Bản local ở `codex/lesson-2-4-full`, xuất phát từ commit bài 2.3 `b98cacd1e1793465902fb2b0c5ea84d8508e3fad`; chỉ bổ sung bài 2.4 và tài liệu/test liên quan, không sửa lại bài 2.3 hoặc đổi UI/API.
+
+### Nội dung
+
+- Bài 20 phút theo khung gộp, bốn tiểu mục chính: Sort/ORDER BY nhiều cột; WHERE/TOP/alias; câu lệnh và lời giải; RunFlow. Tình huống lấy tối đa năm hồ sơ hiện Đang làm, mọi phòng/mọi năm, NgayVaoLam DESC rồi MaNV ASC. Không đồng nhất ngày vào làm với ngày nhập hồ sơ hoặc ngày chuyển phòng.
+- Giải nghĩa ASC/DESC theo từng cột, thứ tự xét nhiều cột và mã khóa chính để chốt trường hợp trùng ngày; TOP tối đa N, thiếu ORDER BY không chốt nhóm, lọc trước lấy TOP. ORDER BY không đổi giá trị hay lưu thứ tự vào bảng nguồn. Giữ điều kiện dữ liệu không đổi khi nói thứ tự xác định; không thêm WITH TIES/phân trang.
+- Excel minh họa thu gọn bốn hồ sơ thật, tô C4/D4/C5/D5 cho NV029 IT đứng trước NV047 NS dù ngày cũ hơn. Câu chính có bốn alias; kết quả theo script là NV048/NV047/NV046/NV045/NV044, tô dòng đầu/cuối. RunFlow 48 → 45 → 45 → 45 → 5, ORDER BY trích 10 dòng đầu và không làm bớt dòng.
+- Ba bài tập đều `ordered: true`: KT/NS theo phòng/ngày/mã, tối đa ba hồ sơ IT đang làm mới nhất, tối đa bốn hồ sơ KT đang làm sớm nhất. Đề nói rõ vị trí cột và thứ tự dòng. Giữ API/bộ chấm hiện có; cập nhật catalog full, README và hồ sơ công ty.
+
+### Review độc lập và xử lý
+
+Agent Codex mới, không mang ngữ cảnh lúc viết, kế thừa model của phiên và không override; chỉ đọc bài/các bài trước, quy ước/hồ sơ và HTML build, không đọc script hoặc chạy SQL. [Bản report 10 mục](../../reviews/2026-10-21-bai-2-4.md) được đọc hết trước khi sửa.
+
+**Đã sửa:** thêm “WHERE nếu có” để không khiến người học nghĩ sắp xếp luôn cần bộ lọc; đổi tiêu đề bài tập 2 để không hiểu NgayVaoLam là ngày vào/chuyển phòng IT; sửa câu dẫn bài tập thành không thêm giới hạn/điều kiện ngoài đề; cắt câu logic/vật lý lặp trước RunFlow. Không đổi câu SQL hoặc dữ liệu sau review. **Không làm theo:** không có nhận xét cần loại; các mục Giữ được giữ nguyên.
+
+### Kiểm chứng và giới hạn
+
+- Baseline 242/242 test; RED thấy bài chưa full, chưa có Result/RunFlow và ba bài tập. Bản trước review 244/244 test; web check 0 lỗi/0 warning/3 hint deprecation có sẵn, build 75 trang, check:dist 1.409 link. API build 21 bài tập và API typecheck đạt.
+- Fixture đọc từ INSERT và luật quản lý của script HRM_Demo: 48 hồ sơ/45 đang làm, năm mã mới nhất nêu trên; ba bài tập dự kiến 12/3/4 dòng. Kiểm thứ tự bài tập gọi bộ so kết quả thật với `ordered: true` và xác nhận đảo thứ tự bị chấm sai. Đây không phải thực thi SQL Server hoặc chứng nhận collation.
+- `check:exercises` đã thử và dừng trước kết nối vì thiếu SQL_SERVER/SQL_DATABASE/SQL_USER/SQL_PASSWORD. Phiên không có file/biến kết nối hoặc MCP azure-sql. Chưa chạy SELECT/đáp án live, không chạy check:data vì không có kết nối và không có câu ghi nào được gửi tới database.
+- Browser cloud tiếp tục timeout ngay khi mở tab dù gọi có giới hạn 10 giây; chưa kiểm trực quan 1280/1440px, tràn ngang hoặc bàn phím. HTML build và test cấu trúc không thay thế xác minh tương tác. Không lặp lại các thử mở browser sau lỗi này.
+- Đối chiếu Microsoft: [ORDER BY](https://learn.microsoft.com/en-us/sql/t-sql/queries/select-order-by-clause-transact-sql?view=sql-server-ver17), [TOP](https://learn.microsoft.com/en-us/sql/t-sql/queries/top-transact-sql?view=sql-server-ver17), [thứ tự logic SELECT](https://learn.microsoft.com/en-us/sql/t-sql/queries/select-transact-sql?view=sql-server-ver17), [Sort trong Excel](https://support.microsoft.com/en-us/excel/sort-data-in-a-range-or-table-in-excel). Không thử SSMS hay Excel thật. Evidence và log nằm ở `temp/verification/2026-10-21-2-4-full/`.
+
+**Kiểm bản cuối sau review:** 244/244 test (29 file); web check 0 lỗi/0 warning/3 hint deprecation có sẵn, build 75 trang và check:dist 1.409 link. `source-evidence.json` đối chiếu đủ 180 ô Excel/Result/RunFlow với INSERT và luật quản lý, kiểm tổng 48 → 45 → 45 → 45 → 5 cùng ba tập bài tập 12/3/4 dòng. `html-evidence.json` xác nhận sáu mục, năm thẻ/năm panel, bốn ô Excel và hai dòng Result đánh dấu, đủ ba link/trang đề; tiêu đề bài tập 2 sau sửa đã có trong HTML. File `pending-live-selects.sql` gom SELECT để kiểm live sau. Các kiểm fixture/HTML không thay thế SQL Server và browser. API không đổi sau lần build/typecheck đạt.
+
+Bản soạn local để review, cần kiểm live SQL và browser trước khi coi đủ toàn bộ quy trình đăng bài; không push/deploy trong lượt này.
+
+
+## 16. Bài 2.5 đầy đủ: NULL, lọc và hiển thị giá trị thiếu (21/10/2026)
+
+Người làm khóa học duyệt khung ngắn trong chat. Thực hiện trong clone riêng, nhánh local `codex/lesson-2-5-full`; gốc là snapshot bài 2.4 `e606869` (chỉ commit local để giữ bản đã bàn giao), nối từ bài 2.3 `b98cacd`. Checkout bài 2.4 được giữ nguyên. Không push/deploy.
+
+### Phạm vi đã duyệt và bản soạn
+
+- Bài 25 phút, sáu mục theo khung gộp; bốn tiểu mục trong phần chính. Tháng 10/2026, chị Hạnh cần toàn bộ hồ sơ Email NULL ở mọi phòng/trạng thái, bốn cột có tiêu đề tiếng Việt, mã tăng dần; nhãn `(chưa có)` chỉ trong kết quả. Bộ mẫu có NV044/VH và NV045/KD. Không kết luận hai người không có địa chỉ ngoài hệ thống.
+- Phân biệt NULL/0/chuỗi rỗng/dấu cách và chữ 'NULL'; ý nghĩa tùy quy ước như NgayNghiViec NULL. Excel thu gọn bốn hồ sơ và giả định rõ cách xuất NULL thành ô trống, tô D3/D4; không đồng nhất mọi ô trống với NULL.
+- IS NULL/IS NOT NULL, so sánh = hoặc <> NULL là UNKNOWN và WHERE chỉ giữ TRUE; không dạy bảng chân trị đầy đủ/NOT IN. COALESCE lấy ứng viên đầu khác NULL, không thay chuỗi rỗng; ISNULL nhận hai đầu vào và giữ kiểu/độ dài khi đầu vào đầu là cột. Dùng COALESCE với chuỗi N để giữ nhãn Unicode cho Email varchar(100), giữ test bảo vệ cũ.
+- Phép cộng số 10 + NULL so với thay bằng 0, không dùng ví dụ tiền; không coi chưa biết là bằng 0. RunFlow 48 → 2 → 2 → 2: FROM/WHERE giữ dữ liệu gốc, SELECT tạo nhãn, ORDER BY chốt thứ tự.
+- Ba đề `ordered: true`: NgayNghiViec khác NULL (3 dòng theo script), KT có Email khác NULL (7 dòng), toàn bộ VH có nhãn cho Email NULL (10 dòng, chỉ NV044 nhận nhãn). Không đổi component/CSS/API/bộ chấm/database, không lộ câu đáp án trên trang. Cập nhật hồ sơ công ty/README/catalog.
+
+### Kiểm ban đầu
+
+- Baseline 244/244 test. RED có hai lỗi đúng dự kiến: catalog chưa full và chưa có RunFlow. Sau viết, schema bắt shortTitle NULL không có nháy bị YAML đọc thành null; đã xác minh parse và sửa thành chuỗi có nháy, không nới schema/test. Bản đầu sau sửa 245/245 test, web check 0 lỗi/0 warning/3 hint deprecation có sẵn; build 78 trang, check:dist 1.439 link. API build 24 bài tập, API typecheck đạt.
+- Evidence ở `temp/verification/2026-10-21-2-5-full/`: đối chiếu ô hình/kết quả/sơ đồ với INSERT và luật quản lý, kiểm tập bài tập 3/7/10. `pending-live-selects.sql` gom các SELECT cần chạy sau; kiểm fixture không phải thực thi T-SQL. Câu scalar và kiểu Unicode mới chỉ đối chiếu tài liệu, chưa chứng nhận live.
+- `check:exercises` dừng trước kết nối vì thiếu SQL_SERVER/SQL_DATABASE/SQL_USER/SQL_PASSWORD. Không có file/biến kết nối hoặc MCP azure-sql; chưa chạy SELECT/đáp án/check:data live. Không gửi câu ghi nào tới database.
+- Máy không có Chrome/Chromium hoặc cache Playwright; không thử lại browser cloud đã treo ở các lượt trước. Chưa kiểm trực quan 1280/1440px, tràn ngang hay bàn phím. Kiểm HTML không thay kiểm giao diện.
+- Nguồn Microsoft đã đối chiếu: [NULL và UNKNOWN](https://learn.microsoft.com/en-us/sql/t-sql/language-elements/null-and-unknown-transact-sql?view=sql-server-ver17), [IS NULL](https://learn.microsoft.com/en-us/sql/t-sql/queries/is-null-transact-sql?view=sql-server-ver17), [ISNULL](https://learn.microsoft.com/en-us/sql/t-sql/functions/isnull-transact-sql?view=sql-server-ver17), [COALESCE](https://learn.microsoft.com/en-us/sql/t-sql/language-elements/coalesce-transact-sql?view=sql-server-ver17), [xử lý NULL](https://learn.microsoft.com/sql/connect/ado-net/sql/handle-null-values?view=sql-server-ver17), [lọc ô trống Excel](https://support.microsoft.com/en-us/excel/get-started/filter-data-in-a-range-or-table-in-excel), [IF kiểm ô trống](https://support.microsoft.com/vi-vn/excel/using-if-to-check-if-a-cell-is-blank). Không thử SSMS/Excel thật.
+
+### Review và kiểm bản cuối
+
+Reviewer độc lập mới, không mang lịch sử viết, kế thừa model của phiên Codex và không override; chỉ đọc bài/các bài trước, tài liệu nội bộ và HTML, không đọc seed, review cũ hay chạy database. Đã đọc hết [report 40 mục](../../reviews/2026-10-21-bai-2-5.md) trước khi sửa; giữ bản gốc tại `temp/review/2026-10-21-2-5-full/`.
+
+**Đã sửa:**
+
+- Mục 21/30: dẫn chuyển kiểu về bài 1.3, giữ 2.8 là hàm ngày; đổi lỗi “dùng ISNULL trong WHERE” thành nhầm hàm trả giá trị với phép kiểm IS NULL, không dạy thành lệnh cấm vị trí.
+- Mục 18: thêm một vế vì cặp varchar/nvarchar ở COALESCE này ưu tiên kiểu nvarchar của nhãn khi chuyển kiểu ngầm. Đối chiếu Microsoft COALESCE phần Return types/Compare COALESCE and ISNULL và khai báo Email varchar(100) trong seed; chưa xác minh metadata live. Giữ giới hạn ISNULL khi đầu vào đầu là cột; không mở rộng bảng ưu tiên kiểu.
+- Mục 11/12/24/32: cắt câu xuất/import lặp, cảnh báo chất lượng lặp, đoạn nhãn/nguồn lặp trong lời giải và vế giảng lại quy ước ngày nghỉ ở Hay nhầm. Giữ hành động người phụ trách và hậu quả điền ngày giả.
+- Mục 01/04/40: mục tiêu gọi rõ chuỗi rỗng/dấu cách, đổi “Email bằng NULL” thành “Email là NULL”, đặt nhãn nguyên văn trong dấu nháy ở đề 3. Không chèn Markdown vào prompt văn bản thuần, không sửa renderer.
+
+**Không làm theo:** không có nhận xét cần loại. Giới hạn prompt chưa có định dạng code riêng được giữ theo phạm vi không đổi UI; không coi văn bản thuần là đã được định dạng như MDX. Những mục Giữ được giữ nguyên. Không đổi SQL hoặc ô dữ liệu sau review; chỉ đổi một nhãn yêu cầu trong prompt. Live SQL và browser vẫn là phần chưa xác minh.
+
+
+## Bổ sung bài 2.6–2.9 — khung duyệt ngày 21/10/2026
+
+Người làm khóa học duyệt chung khung bốn bài trong hội thoại. Giữ bố cục gộp đã duyệt, mỗi bài ba bài tập, review độc lập và branch riêng nối tiếp từ bài 2.5. Không sửa UI/API hay dữ liệu mẫu.
+
+- **2.6:** danh sách mã phòng xuất hiện trong hồ sơ; DISTINCT một/nhiều cột, độ chi tiết của dòng và giới hạn bỏ trùng. Phần đếm dành cho bài 3.1.
+- **2.7:** danh sách ký nhận có nhãn mã–họ tên; hàm cắt/ghép/độ dài/TRIM/hoa thường, Unicode và tìm không dấu bằng collation. Không suy tên riêng từ từ cuối.
+- **2.8:** hợp đồng hết hạn từ 21/10/2026 đến mốc sau 30 ngày, ngày sinh, EOMONTH và ranh giới DATEDIFF; phân biệt với số năm thâm niên tròn.
+- **2.9:** người đang làm chia nhóm dưới một năm, từ một đến dưới ba năm, từ ba năm trở lên tại 21/10/2026; CASE trả giá trị, thứ tự WHEN, ELSE và NULL.
+
+### Bài 2.6 — phạm vi triển khai
+
+Branch `codex/lesson-2-6-full` nối tiếp `codex/lesson-2-5-full`. Bài/exercises/test riêng; README, hồ sơ công ty và catalog cập nhật khi chuyển bài thành full. Đối chiếu nguồn độc lập có 48 hồ sơ, 6 mã phòng và 19 cặp phòng/chức danh. Đây là đọc script, không phải thực thi SQL Server. Chưa có cấu hình SQL live hoặc browser hoạt động trong phiên; kiểm tra tĩnh không thay kiểm tương tác. Kết quả kiểm tra và xử lý review được ghi sau khi hoàn tất.
+
+
+### Bài 2.6 — xử lý review và kiểm bản cuối
+
+Review độc lập Codex, kế thừa model phiên, không mang lịch sử viết; bản gốc giữ ở temp/review/2026-10-21-2-6-2-9-doc-lap và bản bàn giao ở [docs/reviews/2026-10-21-bai-2-6.md](../../reviews/2026-10-21-bai-2-6.md).
+
+**Đã sửa:** mục 2 thêm điều kiện phòng chưa có hồ sơ; mục 3 gọi đúng bỏ dòng trùng trong vùng Excel; mục 15 giải thích vì sao ngày của nhiều hồ sơ không còn là một giá trị sắp cho mỗi mã phòng; mục 23 nêu điều kiện DISTINCT che hồ sơ nhập lặp khi không chọn mã; mục 25 làm rõ mục đích đối chiếu chức danh; mục 28 đặt khóa chính ở bảng nguồn. Không đổi SQL, ô dữ liệu hoặc đề bài.
+
+**Không làm theo:** không có; các mục Giữ được giữ nguyên. Không mở rộng COUNT hay UI/API. Kết quả local cuối ghi sau lệnh kiểm; SQL Server thực tế và browser vẫn chưa xác minh.
+
+**Kiểm bản cuối 2.6:** 247/247 test; Astro check 0 lỗi, 0 warning, 3 hint deprecation có sẵn; web build 81 trang; check:dist 1.469 link. API build 27 bài tập, typecheck đạt. Đối chiếu nguồn 80 ô, flow 48→48→6→6, bài tập 6/7/2 dòng. check:exercises đã thử và dừng trước kết nối vì thiếu SQL_SERVER/SQL_DATABASE/SQL_USER/SQL_PASSWORD. HTML tĩnh đã review; chưa kiểm SQL live, giao diện hay bàn phím. Không push/deploy.
+
+
+### Bài 2.7 — phạm vi triển khai
+
+Branch `codex/lesson-2-7-full` nối tiếp `codex/lesson-2-6-full`. Mỗi bài ba bài tập truy vấn có yêu cầu thứ tự; giữ bộ chấm không so tên cột. Chị Hạnh cần danh sách ký nhận của toàn bộ hồ sơ hiện mang MaPB = IT, không lọc trạng thái hay ngày. Theo script có 10 hồ sơ; nhãn mã–họ tên chỉ tạo trong kết quả. Ví dụ TRIM, Unicode và collation không sửa dữ liệu nguồn. Kiểm nguồn không thay thế thực thi SQL Server; kết quả kiểm tra và xử lý review ghi ở cuối lượt.
+
+
+### Bài 2.7 — xử lý review
+
+Review độc lập Codex kế thừa model phiên, không mang lịch sử viết; bản gốc ở temp/review/2026-10-21-2-6-2-9-doc-lap và [bản bàn giao](../../reviews/2026-10-21-bai-2-7.md).
+
+**Đã sửa:** mục 4 đổi alias thành DoDaiCoDauCachCuoi; mục 6 thêm LEN(TRIM(...)) = 8 để thấy bằng số rằng còn hai dấu cách bên trong, không phụ thuộc HTML thu gọn khoảng trắng (đã xác nhận CSS white-space: nowrap); test dữ liệu ghi nhận RED trước rồi sửa ví dụ; mục 7 nói rõ LOWER(NULL) vẫn là NULL; mục 10 bổ sung tìm dấu %/_ thật bằng [%]/[_] đúng lời hẹn 2.3; mục 18 build lại sau chỉnh. Không sửa UI/API hoặc câu đáp án. SQL mới vẫn chờ chạy trên SQL Server thật.
+
+**Không làm theo:** không có; các mục Giữ được giữ nguyên. Cách nhập nhằng không dấu/Unicode được đối chiếu Microsoft Learn, không khẳng định mọi varchar đều mất mọi dấu. Nguồn chính: [LIKE — literal wildcard](https://learn.microsoft.com/en-us/sql/t-sql/language-elements/like-transact-sql), [LEN](https://learn.microsoft.com/en-us/sql/t-sql/functions/len-transact-sql), [TRIM](https://learn.microsoft.com/en-us/sql/t-sql/functions/trim-transact-sql), [LOWER](https://learn.microsoft.com/en-us/sql/t-sql/functions/lower-transact-sql). Bộ chấm so kết quả/vị trí cột/thứ tự, không kiểm alias hay bắt buộc cú pháp hàm.
+
+**Kiểm bản cuối 2.7:** 250/250 test; Astro check 0 lỗi/0 warning/3 hint có sẵn; build 84 trang; check:dist 1.501 link. API build 30 bài tập và typecheck đạt. Source checker kiểm 72 ô nguồn, flow 48→10→10→10, bài tập 7/1/10 dòng; test minh họa TRIM đã RED rồi GREEN khi thêm độ dài 8. Lần thử check:exercises dừng trước kết nối vì thiếu cấu hình SQL; các ảnh/giá trị chưa được xác minh live. HTML mới sẽ được rà lại trong kiểm cuối của toàn lượt. Không push/deploy.
+
+
+### Bài 2.8 — phạm vi triển khai
+
+Branch `codex/lesson-2-8-full` nối tiếp `codex/lesson-2-7-full`. Mỗi bài ba bài tập truy vấn có yêu cầu thứ tự; giữ bộ chấm không so tên cột. Tại mốc cố định 21/10/2026, chị Hạnh cần các dòng hợp đồng có ngày kết thúc từ ngày đó đến hết 20/11/2026 (gồm hai đầu). Theo script có HD2025-014/NV025 (31/10), HD2026-004/NV046 (13/11), HD2024-008/NV036 (14/11). Đây là danh sách hợp đồng theo ngày lưu, không kết luận phải gia hạn. Kiểm nguồn không thay thế thực thi SQL Server; kết quả kiểm tra và xử lý review ghi ở cuối lượt.
+
+
+### Bài 2.8 — xử lý review
+
+Review độc lập Codex kế thừa model phiên, không mang lịch sử viết; [bản bàn giao](../../reviews/2026-10-21-bai-2-8.md), bản gốc ở temp/review/2026-10-21-2-6-2-9-doc-lap.
+
+**Đã sửa:** mục 9 định dạng code SoNgayConLai/MaHD trong drawer, đồng bộ code từ khóa đầu meaning/detail; mục 10 cắt hai vế giảng lại trong Hay nhầm; mục 12 bỏ EDATE mới xuất hiện ở phần ôn và metadata thay vì thêm lý thuyết ngoài mục tiêu; build mới xử lý bản HTML cũ ở mục ưu tiên 3. Từ trước kết thúc review đã sửa lời hẹn 2.9 thành phân nhóm theo mốc kỷ niệm và chuyển giới hạn kiểm live khỏi lời giảng sang báo cáo. Không đổi SQL/ô dữ liệu/đáp án.
+
+**Không làm theo:** không có nhận xét biên tập bị bác. Yêu cầu xác minh SQL Server thật còn thiếu vì không có cấu hình; không thay bằng tuyên bố SQLite/Python là SQL Server. Đối chiếu script độc lập khớp ba hợp đồng và ngày sinh NV036; kiểm nguồn không xác nhận dữ liệu live. Nguồn Microsoft Learn: [DATEADD](https://learn.microsoft.com/en-us/sql/t-sql/functions/dateadd-transact-sql), [DATEDIFF](https://learn.microsoft.com/en-us/sql/t-sql/functions/datediff-transact-sql), [GETDATE](https://learn.microsoft.com/en-us/sql/t-sql/functions/getdate-transact-sql), [EOMONTH](https://learn.microsoft.com/en-us/sql/t-sql/functions/eomonth-transact-sql).
+
+**Kiểm bản cuối 2.8:** 252/252 test; Astro check 0 lỗi/0 warning/3 hint có sẵn; build 87 trang; check:dist 1.531 link. API build 33 bài tập và typecheck đạt. Kiểm nguồn/SQLite thích nghi minh bạch khớp 22 dòng minh họa, flow 55→3→3→3 và bài tập 4/4/1 dòng; đây không phải chạy T-SQL hoặc chứng nhận dữ liệu live. check:exercises đã thử và dừng vì thiếu cấu hình SQL; Playwright thiếu Chromium, không có xác minh trực quan/bàn phím. HTML mới được rà trong lượt kiểm toàn bộ cuối. Không push/deploy.
+
+
+### Bài 2.9 — phạm vi triển khai
+
+Branch `codex/lesson-2-9-full` nối tiếp `codex/lesson-2-8-full`. Mỗi bài ba bài tập truy vấn có yêu cầu thứ tự; giữ bộ chấm không so tên cột. Tại mốc cố định 21/10/2026, chị Hạnh chia các hồ sơ đang làm, đã vào làm tới ngày đó, theo ngày kỷ niệm đủ năm. Theo script có 45 hồ sơ: 4 dưới một năm, 8 từ một đến dưới ba năm, 33 từ ba năm trở lên. CASE chỉ tạo nhãn kết quả, không sửa trạng thái hoặc dữ liệu nguồn. Kiểm nguồn không thay thế thực thi SQL Server; kết quả kiểm tra và xử lý review ghi ở cuối lượt.
+
+
+### Bài 2.9 — xử lý review
+
+Review độc lập Codex kế thừa model phiên, không mang lịch sử viết; [bản bàn giao](../../reviews/2026-10-21-bai-2-9.md), bản gốc ở temp/review/2026-10-21-2-6-2-9-doc-lap. Reviewer đã rà bổ sung ví dụ đổi MaCD thành nhãn bằng CASE WHEN; dữ liệu NV001/CV và NV005/TP đã đối chiếu nguồn, test dữ liệu mới ghi RED rồi GREEN.
+
+**Đã sửa:** mục 3 đổi dấu chấm phẩy sau EDATE thành dấu chấm; mục 5 gắn ELSE với nhãn mặc định ngay tại ví dụ; mục 13 gọi đúng ba nhóm thay vì ba ranh giới; mục 15 định dạng code cho dẫn chứng 45; mục 19 cắt ý ứng dụng lặp và dễ gây hiểu nhầm trả nhiều nhãn. Bỏ vế giới hạn ngày 28 không cần thiết trước khi review kết thúc. Lời dẫn 2.8 hiện khớp phần phân nhóm, không hứa tính cột số năm. Không đổi SQL, ô dữ liệu hoặc đáp án khi xử lý các nhận xét này.
+
+**Không làm theo:** không có; các mục Giữ được giữ nguyên. Giữ ba nhóm theo ngày kỷ niệm và phạm vi bản chốt; không dùng DATEDIFF(year) làm số năm tròn, không mở rộng sang công thức tổng quát hoặc grader cú pháp. Nguồn chính: [Microsoft Learn CASE](https://learn.microsoft.com/en-us/sql/t-sql/language-elements/case-transact-sql), [DATEADD](https://learn.microsoft.com/en-us/sql/t-sql/functions/dateadd-transact-sql). Giới hạn SQL Server live và browser được ghi riêng, không chèn chi tiết biên soạn vào lời giảng.
+
+
+**Kiểm bản cuối 2.9 và toàn lượt:** 255/255 test (34 file); Astro check 0 lỗi/0 warning/3 hint deprecation có sẵn; web build 90 trang; check:dist 1.561 link. API build 36 bài tập và typecheck đạt. Source checker 327 ô, flow 48→45→45→45, nhóm 4/8/33, bài tập 10/14/5 dòng và 4 ca mốc tổng hợp. Đã kiểm HTML tĩnh cả 2.6–2.9: mỗi bài sáu mục, bốn thẻ/bốn drawer và ba trang bài tập; cột độ dài TRIM = 8, mẫu [%]/[_], lời dẫn 2.8→2.9 và ví dụ CASE đổi MaCD đều có trong build mới.
+
+Lần gọi check:dist trong pipeline đầu không ghi dòng OK dù tiến trình trả 0; đã gọi trực tiếp để xác minh và chạy lại `npm run check:dist`, nhận rõ `check-dist: OK (90 trang, 1561 link)`. Bộ phân tích HTML tạm ban đầu chưa bỏ cột số thứ tự của Result; đã đối chiếu component, sửa riêng bộ kiểm tạm rồi kiểm đủ bốn trang. Không sửa script hoặc UI sản phẩm cho hai việc kiểm này.
+
+**Giới hạn bàn giao:** không có SQL_SERVER/SQL_DATABASE/SQL_USER/SQL_PASSWORD hoặc MCP SQL; các lần check:exercises đều dừng trước kết nối. Không câu ghi nào được gửi tới database. Dữ liệu được đối chiếu seed và tài liệu Microsoft, chưa chứng nhận T-SQL/collation/dữ liệu live. Browser/Chromium không khả dụng, nên chưa kiểm trực quan hoặc bàn phím; HTML tĩnh không thay các bước đó. Các yêu cầu live/visual còn thiếu được giữ rõ; không đánh dấu đạt toàn quy trình phát hành. Bốn nhánh giữ local, mỗi commit chỉ bổ sung bài tương ứng và tài liệu; không push/deploy.

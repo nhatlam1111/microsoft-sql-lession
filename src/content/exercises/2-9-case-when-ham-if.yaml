@@ -1,0 +1,72 @@
+lesson: 2-9-case-when-ham-if
+exercises:
+  - id: 2-9-1
+    title: Mốc một năm của phòng IT
+    summary: Tạo hai nhãn từ mốc kỷ niệm một năm trên hồ sơ đang làm ở IT.
+    prompt: >-
+      Coi dữ liệu hiện tại là bản chốt ngày 2026-10-21. Trong NhanVien, lấy tất cả
+      hồ sơ có MaPB bằng IT, TrangThai bằng “Đang làm” và NgayVaoLam không sau
+      ngày chốt. Trả về đúng ba cột theo thứ tự: MaNV, NgayVaoLam, MocMotNam.
+      MocMotNam là chuỗi Unicode “Đã đủ 1 năm” nếu mốc DATEADD(year, 1, NgayVaoLam)
+      nhỏ hơn hoặc bằng ngày chốt; còn lại là “Chưa đủ 1 năm”. Đúng ngày kỷ niệm
+      đã được tính là đủ. Sắp MaNV tăng dần. Thứ tự dòng được chấm, tên cột không được chấm.
+    columns: [MaNV, NgayVaoLam, MocMotNam]
+    ordered: true
+    kind: query
+    answer: |
+      SELECT MaNV, NgayVaoLam,
+      CASE
+      WHEN DATEADD(year, 1, NgayVaoLam) <= '20261021' THEN N'Đã đủ 1 năm'
+      ELSE N'Chưa đủ 1 năm'
+      END AS MocMotNam
+      FROM NhanVien
+      WHERE MaPB = 'IT' AND TrangThai = N'Đang làm' AND NgayVaoLam <= '20261021'
+      ORDER BY MaNV ASC;
+  - id: 2-9-2
+    title: Ba nhóm của toàn bộ hồ sơ Kinh doanh
+    summary: Phân nhóm cả hồ sơ đang làm lẫn đã nghỉ theo cùng một ngày chốt.
+    prompt: >-
+      Trong NhanVien, lấy toàn bộ hồ sơ hiện có MaPB bằng KD và NgayVaoLam không
+      sau ngày 2026-10-21, kể cả hồ sơ đã nghỉ; không lọc trạng thái hay ngày nghỉ việc.
+      Phân nhóm thời gian từ NgayVaoLam đến ngày chốt, không dừng ở NgayNghiViec:
+      dưới 1 năm tròn trả chuỗi Unicode “Dưới 1 năm”; từ đủ 1 đến chưa đủ 3 năm trả
+      “Từ 1 đến dưới 3 năm”; từ đủ 3 năm trở lên trả “Từ 3 năm trở lên”. Dùng mốc
+      kỷ niệm DATEADD: đúng ngày kỷ niệm được tính là đã đủ số năm đó.
+      Trả về đúng bốn cột theo thứ tự: MaNV, TrangThai, NgayVaoLam, NhomThamNien.
+      Sắp MaNV tăng dần. Thứ tự dòng được chấm, tên cột không được chấm.
+    columns: [MaNV, TrangThai, NgayVaoLam, NhomThamNien]
+    ordered: true
+    kind: query
+    answer: |
+      SELECT MaNV, TrangThai, NgayVaoLam,
+      CASE
+      WHEN DATEADD(year, 3, NgayVaoLam) <= '20261021' THEN N'Từ 3 năm trở lên'
+      WHEN DATEADD(year, 1, NgayVaoLam) <= '20261021' THEN N'Từ 1 đến dưới 3 năm'
+      ELSE N'Dưới 1 năm'
+      END AS NhomThamNien
+      FROM NhanVien
+      WHERE MaPB = 'KD' AND NgayVaoLam <= '20261021'
+      ORDER BY MaNV ASC;
+  - id: 2-9-3
+    title: Chỉ ghi nhãn mốc ba năm của Nhân sự
+    summary: Giữ cả hồ sơ chưa đạt mốc, nhưng cố ý để giá trị kết quả là NULL.
+    prompt: >-
+      Coi dữ liệu hiện tại là bản chốt ngày 2026-10-21. Trong NhanVien, lấy tất cả
+      hồ sơ có MaPB bằng NS, TrangThai bằng “Đang làm” và NgayVaoLam không sau
+      ngày chốt. Trả về đúng ba cột theo thứ tự: MaNV, NgayVaoLam, MocBaNam.
+      Nếu DATEADD(year, 3, NgayVaoLam) nhỏ hơn hoặc bằng ngày chốt, MocBaNam trả
+      chuỗi Unicode “Đủ 3 năm”; đúng ngày kỷ niệm đã được tính là đủ. Hồ sơ chưa
+      đủ 3 năm vẫn phải có trong kết quả, với MocBaNam là NULL của SQL, không phải
+      chuỗi chữ “NULL”. Dùng CASE có một nhánh WHEN và bỏ ELSE để tạo giá trị NULL này.
+      Sắp MaNV tăng dần. Thứ tự dòng được chấm, tên cột không được chấm.
+    columns: [MaNV, NgayVaoLam, MocBaNam]
+    ordered: true
+    kind: query
+    answer: |
+      SELECT MaNV, NgayVaoLam,
+      CASE
+      WHEN DATEADD(year, 3, NgayVaoLam) <= '20261021' THEN N'Đủ 3 năm'
+      END AS MocBaNam
+      FROM NhanVien
+      WHERE MaPB = 'NS' AND TrangThai = N'Đang làm' AND NgayVaoLam <= '20261021'
+      ORDER BY MaNV ASC;

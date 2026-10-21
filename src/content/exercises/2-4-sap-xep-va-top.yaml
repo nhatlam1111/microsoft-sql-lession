@@ -1,0 +1,50 @@
+lesson: 2-4-sap-xep-va-top
+exercises:
+  - id: 2-4-1
+    title: Danh sách hai phòng theo ngày vào làm
+    summary: Sắp theo phòng, trong cùng phòng thì người vào làm sớm đứng trước.
+    prompt: >-
+      Lấy toàn bộ hồ sơ trong NhanVien hiện mang mã phòng KT hoặc NS, kể cả người đã nghỉ nếu có.
+      Xếp MaPB tăng dần; trong cùng phòng xếp NgayVaoLam tăng dần; nếu cùng ngày thì MaNV tăng dần.
+      Trả về đúng bốn cột theo thứ tự: MaPB, MaNV, HoTen, NgayVaoLam.
+      Không giới hạn số dòng và không thêm điều kiện trạng thái hay ngày. Thứ tự dòng được chấm.
+    columns: [MaPB, MaNV, HoTen, NgayVaoLam]
+    ordered: true
+    kind: query
+    answer: |
+      SELECT MaPB, MaNV, HoTen, NgayVaoLam
+      FROM NhanVien
+      WHERE MaPB IN ('KT', 'NS')
+      ORDER BY MaPB ASC, NgayVaoLam ASC, MaNV ASC;
+  - id: 2-4-2
+    title: Ba hồ sơ IT đang làm có ngày vào làm gần nhất
+    summary: Lọc hồ sơ đang làm của IT rồi lấy tối đa ba hồ sơ vào làm gần nhất.
+    prompt: >-
+      Trong NhanVien, lấy tối đa ba hồ sơ hiện có MaPB bằng IT và TrangThai bằng Đang làm,
+      theo NgayVaoLam mới nhất trước. Nếu cùng ngày, xếp MaNV tăng dần.
+      Trả về đúng ba cột theo thứ tự: MaNV, HoTen, NgayVaoLam.
+      Không giới hạn năm vào làm. Thứ tự dòng được chấm.
+    columns: [MaNV, HoTen, NgayVaoLam]
+    ordered: true
+    kind: query
+    answer: |
+      SELECT TOP (3) MaNV, HoTen, NgayVaoLam
+      FROM NhanVien
+      WHERE MaPB = 'IT' AND TrangThai = N'Đang làm'
+      ORDER BY NgayVaoLam DESC, MaNV ASC;
+  - id: 2-4-3
+    title: Bốn hồ sơ Kế toán vào làm sớm nhất
+    summary: Lấy tối đa bốn hồ sơ đang làm của Kế toán có ngày vào làm sớm nhất.
+    prompt: >-
+      Trong NhanVien, chỉ xét hồ sơ hiện có MaPB bằng KT và TrangThai bằng Đang làm.
+      Lấy tối đa bốn hồ sơ có NgayVaoLam sớm nhất, xếp ngày cũ đến mới;
+      nếu cùng ngày thì MaNV tăng dần. Trả về đúng ba cột theo thứ tự: MaNV, HoTen, NgayVaoLam.
+      Không giới hạn năm vào làm. Thứ tự dòng được chấm.
+    columns: [MaNV, HoTen, NgayVaoLam]
+    ordered: true
+    kind: query
+    answer: |
+      SELECT TOP (4) MaNV, HoTen, NgayVaoLam
+      FROM NhanVien
+      WHERE MaPB = 'KT' AND TrangThai = N'Đang làm'
+      ORDER BY NgayVaoLam ASC, MaNV ASC;
