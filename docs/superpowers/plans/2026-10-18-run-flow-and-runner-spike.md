@@ -420,7 +420,7 @@ Khung chung đã được duyệt trong hội thoại. Bốn nhánh riêng nối
 - [x] Đọc quy ước, kiểm bản nền 245/245 test và tách bốn nhánh.
 - [x] Chốt mốc ngày cố định 21/10/2026; đối chiếu seed độc lập.
 - [x] Hoàn thiện, kiểm tra và xử lý review bài 2.6: 247/247 test, check không lỗi, build 81 trang, 1.469 liên kết; API build/typecheck đạt. SQL live và browser chưa xác minh.
-- [ ] Hoàn thiện, kiểm tra và xử lý review bài 2.7.
+- [x] Hoàn thiện, kiểm tra và xử lý review bài 2.7: 250/250 test, check không lỗi, build 84 trang, 1.501 liên kết; API build/typecheck đạt. SQL live và browser chưa xác minh.
 - [ ] Hoàn thiện, kiểm tra và xử lý review bài 2.8.
 - [ ] Hoàn thiện, kiểm tra và xử lý review bài 2.9.
 

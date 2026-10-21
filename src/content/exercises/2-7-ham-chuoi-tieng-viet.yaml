@@ -1,0 +1,54 @@
+lesson: 2-7-ham-chuoi-tieng-viet
+exercises:
+  - id: 2-7-1
+    title: Hai phần mã của hồ sơ Kế toán
+    summary: Cắt tiền tố và phần số của mã mà vẫn giữ số không ở đầu.
+    prompt: >-
+      Trong NhanVien, lấy toàn bộ hồ sơ hiện có MaPB bằng KT, không thêm điều kiện
+      trạng thái hay ngày vào làm. Trả về đúng ba cột theo thứ tự: MaNV,
+      hai ký tự đầu của MaNV (DauMa), rồi ba ký tự bắt đầu ở vị trí thứ ba của MaNV
+      (PhanSo). Giữ PhanSo là chuỗi, gồm cả số 0 ở đầu; ví dụ NV001 cho NV và 001.
+      Sắp MaNV tăng dần. Thứ tự dòng được chấm, tên cột không được chấm.
+    columns: [MaNV, DauMa, PhanSo]
+    ordered: true
+    kind: query
+    answer: |
+      SELECT MaNV, LEFT(MaNV, 2) AS DauMa, SUBSTRING(MaNV, 3, 3) AS PhanSo
+      FROM NhanVien
+      WHERE MaPB = 'KT'
+      ORDER BY MaNV ASC;
+  - id: 2-7-2
+    title: Tìm họ Nguyễn bằng chữ không dấu
+    summary: Tìm theo luật không phân biệt dấu và trả thêm độ dài họ tên.
+    prompt: >-
+      Trong NhanVien, tìm tất cả hồ sơ có HoTen bắt đầu bằng nguyen, so sánh không
+      phân biệt hoa thường và không phân biệt dấu bằng collation Vietnamese_CI_AI.
+      Không thêm điều kiện phòng, trạng thái hay ngày. Trả về đúng ba cột theo
+      thứ tự: MaNV, HoTen nguyên bản có dấu, rồi số ký tự của HoTen theo hàm LEN
+      của SQL (DoDai). Sắp MaNV tăng dần. Thứ tự dòng được chấm, tên cột không được chấm.
+    columns: [MaNV, HoTen, DoDai]
+    ordered: true
+    kind: query
+    answer: |
+      SELECT MaNV, HoTen, LEN(HoTen) AS DoDai
+      FROM NhanVien
+      WHERE HoTen COLLATE Vietnamese_CI_AI LIKE N'nguyen%'
+      ORDER BY MaNV ASC;
+  - id: 2-7-3
+    title: Nhãn email của hồ sơ Vận hành
+    summary: Ghép nhãn email đồng thời giữ cột gốc để nhận ra giá trị thiếu.
+    prompt: >-
+      Trong NhanVien, lấy toàn bộ hồ sơ hiện có MaPB bằng VH, kể cả đã nghỉ nếu có.
+      Không lọc bỏ email NULL và không thêm điều kiện ngày hay trạng thái.
+      Trả về đúng ba cột theo thứ tự: MaNV, Email nguyên bản, rồi nhãn NhanEmail
+      ghép dấu [ với Email chuyển thành chữ thường và dấu ]. Dùng CONCAT để
+      email NULL tạo nhãn [] nhưng cột Email gốc vẫn là NULL; không thêm nhãn thay thế.
+      Sắp MaNV tăng dần. Thứ tự dòng được chấm, tên cột không được chấm.
+    columns: [MaNV, Email, NhanEmail]
+    ordered: true
+    kind: query
+    answer: |
+      SELECT MaNV, Email, CONCAT(N'[', LOWER(Email), N']') AS NhanEmail
+      FROM NhanVien
+      WHERE MaPB = 'VH'
+      ORDER BY MaNV ASC;

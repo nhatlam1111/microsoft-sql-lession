@@ -482,3 +482,19 @@ Review độc lập Codex, kế thừa model phiên, không mang lịch sử vi�
 **Không làm theo:** không có; các mục Giữ được giữ nguyên. Không mở rộng COUNT hay UI/API. Kết quả local cuối ghi sau lệnh kiểm; SQL Server thực tế và browser vẫn chưa xác minh.
 
 **Kiểm bản cuối 2.6:** 247/247 test; Astro check 0 lỗi, 0 warning, 3 hint deprecation có sẵn; web build 81 trang; check:dist 1.469 link. API build 27 bài tập, typecheck đạt. Đối chiếu nguồn 80 ô, flow 48→48→6→6, bài tập 6/7/2 dòng. check:exercises đã thử và dừng trước kết nối vì thiếu SQL_SERVER/SQL_DATABASE/SQL_USER/SQL_PASSWORD. HTML tĩnh đã review; chưa kiểm SQL live, giao diện hay bàn phím. Không push/deploy.
+
+
+### Bài 2.7 — phạm vi triển khai
+
+Branch `codex/lesson-2-7-full` nối tiếp `codex/lesson-2-6-full`. Mỗi bài ba bài tập truy vấn có yêu cầu thứ tự; giữ bộ chấm không so tên cột. Chị Hạnh cần danh sách ký nhận của toàn bộ hồ sơ hiện mang MaPB = IT, không lọc trạng thái hay ngày. Theo script có 10 hồ sơ; nhãn mã–họ tên chỉ tạo trong kết quả. Ví dụ TRIM, Unicode và collation không sửa dữ liệu nguồn. Kiểm nguồn không thay thế thực thi SQL Server; kết quả kiểm tra và xử lý review ghi ở cuối lượt.
+
+
+### Bài 2.7 — xử lý review
+
+Review độc lập Codex kế thừa model phiên, không mang lịch sử viết; bản gốc ở temp/review/2026-10-21-2-6-2-9-doc-lap và [bản bàn giao](../../reviews/2026-10-21-bai-2-7.md).
+
+**Đã sửa:** mục 4 đổi alias thành DoDaiCoDauCachCuoi; mục 6 thêm LEN(TRIM(...)) = 8 để thấy bằng số rằng còn hai dấu cách bên trong, không phụ thuộc HTML thu gọn khoảng trắng (đã xác nhận CSS white-space: nowrap); test dữ liệu ghi nhận RED trước rồi sửa ví dụ; mục 7 nói rõ LOWER(NULL) vẫn là NULL; mục 10 bổ sung tìm dấu %/_ thật bằng [%]/[_] đúng lời hẹn 2.3; mục 18 build lại sau chỉnh. Không sửa UI/API hoặc câu đáp án. SQL mới vẫn chờ chạy trên SQL Server thật.
+
+**Không làm theo:** không có; các mục Giữ được giữ nguyên. Cách nhập nhằng không dấu/Unicode được đối chiếu Microsoft Learn, không khẳng định mọi varchar đều mất mọi dấu. Nguồn chính: [LIKE — literal wildcard](https://learn.microsoft.com/en-us/sql/t-sql/language-elements/like-transact-sql), [LEN](https://learn.microsoft.com/en-us/sql/t-sql/functions/len-transact-sql), [TRIM](https://learn.microsoft.com/en-us/sql/t-sql/functions/trim-transact-sql), [LOWER](https://learn.microsoft.com/en-us/sql/t-sql/functions/lower-transact-sql). Bộ chấm so kết quả/vị trí cột/thứ tự, không kiểm alias hay bắt buộc cú pháp hàm.
+
+**Kiểm bản cuối 2.7:** 250/250 test; Astro check 0 lỗi/0 warning/3 hint có sẵn; build 84 trang; check:dist 1.501 link. API build 30 bài tập và typecheck đạt. Source checker kiểm 72 ô nguồn, flow 48→10→10→10, bài tập 7/1/10 dòng; test minh họa TRIM đã RED rồi GREEN khi thêm độ dài 8. Lần thử check:exercises dừng trước kết nối vì thiếu cấu hình SQL; các ảnh/giá trị chưa được xác minh live. HTML mới sẽ được rà lại trong kiểm cuối của toàn lượt. Không push/deploy.
