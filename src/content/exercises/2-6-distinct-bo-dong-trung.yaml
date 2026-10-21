@@ -1,0 +1,48 @@
+lesson: 2-6-distinct-bo-dong-trung
+exercises:
+  - id: 2-6-1
+    title: Mã chức danh xuất hiện trong hồ sơ
+    summary: Lấy mỗi mã chức danh một lần từ toàn bộ hồ sơ.
+    prompt: >-
+      Trong NhanVien, lấy danh sách MaCD không trùng trên toàn bộ hồ sơ đang lưu,
+      gồm cả đang làm và đã nghỉ. Không thêm điều kiện lọc.
+      Trả về đúng một cột MaCD, sắp MaCD tăng dần. Thứ tự dòng được chấm.
+    columns: [MaCD]
+    ordered: true
+    kind: query
+    answer: |
+      SELECT DISTINCT MaCD
+      FROM NhanVien
+      ORDER BY MaCD ASC;
+  - id: 2-6-2
+    title: Cặp phòng và chức danh của IT, Nhân sự
+    summary: Lấy các cặp mã khác nhau trong hai phòng được yêu cầu.
+    prompt: >-
+      Trong NhanVien, chỉ xét hồ sơ có MaPB là IT hoặc NS, gồm cả đang làm
+      và đã nghỉ nếu có. Lấy mỗi cặp MaPB, MaCD một lần.
+      Trả về đúng hai cột theo thứ tự MaPB, MaCD. Sắp MaPB tăng dần,
+      trong cùng mã phòng sắp MaCD tăng dần. Thứ tự dòng được chấm.
+    columns: [MaPB, MaCD]
+    ordered: true
+    kind: query
+    answer: |
+      SELECT DISTINCT MaPB, MaCD
+      FROM NhanVien
+      WHERE MaPB IN ('IT', 'NS')
+      ORDER BY MaPB ASC, MaCD ASC;
+  - id: 2-6-3
+    title: Mã phòng trong hồ sơ có ngày nghỉ việc
+    summary: Lọc theo ngày nghỉ việc rồi lấy mã phòng không trùng.
+    prompt: >-
+      Trong NhanVien, chỉ xét hồ sơ có NgayNghiViec khác NULL.
+      Không thêm điều kiện trạng thái hoặc khoảng ngày.
+      Lấy mỗi mã MaPB một lần, trả về đúng một cột MaPB.
+      Sắp MaPB giảm dần. Thứ tự dòng được chấm.
+    columns: [MaPB]
+    ordered: true
+    kind: query
+    answer: |
+      SELECT DISTINCT MaPB
+      FROM NhanVien
+      WHERE NgayNghiViec IS NOT NULL
+      ORDER BY MaPB DESC;

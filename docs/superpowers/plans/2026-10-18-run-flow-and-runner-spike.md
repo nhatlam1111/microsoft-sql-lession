@@ -411,3 +411,17 @@ git commit -m "record the exercise runner spike results"
 - [ ] **Step 1: Chạy `npm test`, `npm run build`, `npm run check:dist` trên `main`, kỳ vọng tất cả PASS**
 - [ ] **Step 2: `git status` sạch (trừ các file chưa theo dõi đã biết: `.claude/`, `.mcp.json`, `CLAUDE.md`, `mcp-azure-sql/`); `git branch` còn `spike/exercise-runner` chưa merge**
 - [ ] **Step 3: Báo người làm khóa học kết quả và hỏi có push `main` không; không tự push**
+
+
+## Lượt bài 2.6–2.9 — ngày 21/10/2026
+
+Khung chung đã được duyệt trong hội thoại. Bốn nhánh riêng nối tiếp từ bài 2.5; tác giả làm các file bài độc lập, sau đó tích hợp theo thứ tự và review mỗi bài bằng agent mới kế thừa model phiên.
+
+- [x] Đọc quy ước, kiểm bản nền 245/245 test và tách bốn nhánh.
+- [x] Chốt mốc ngày cố định 21/10/2026; đối chiếu seed độc lập.
+- [x] Hoàn thiện, kiểm tra và xử lý review bài 2.6: 247/247 test, check không lỗi, build 81 trang, 1.469 liên kết; API build/typecheck đạt. SQL live và browser chưa xác minh.
+- [ ] Hoàn thiện, kiểm tra và xử lý review bài 2.7.
+- [ ] Hoàn thiện, kiểm tra và xử lý review bài 2.8.
+- [ ] Hoàn thiện, kiểm tra và xử lý review bài 2.9.
+
+SQL Server live còn thiếu cấu hình kết nối; không coi fixture là thực thi T-SQL. Browser chưa khả dụng; HTML build không xác nhận giao diện hay bàn phím.

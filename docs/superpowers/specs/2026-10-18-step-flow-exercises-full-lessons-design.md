@@ -457,3 +457,28 @@ Reviewer độc lập mới, không mang lịch sử viết, kế thừa model c
 - Mục 01/04/40: mục tiêu gọi rõ chuỗi rỗng/dấu cách, đổi “Email bằng NULL” thành “Email là NULL”, đặt nhãn nguyên văn trong dấu nháy ở đề 3. Không chèn Markdown vào prompt văn bản thuần, không sửa renderer.
 
 **Không làm theo:** không có nhận xét cần loại. Giới hạn prompt chưa có định dạng code riêng được giữ theo phạm vi không đổi UI; không coi văn bản thuần là đã được định dạng như MDX. Những mục Giữ được giữ nguyên. Không đổi SQL hoặc ô dữ liệu sau review; chỉ đổi một nhãn yêu cầu trong prompt. Live SQL và browser vẫn là phần chưa xác minh.
+
+
+## Bổ sung bài 2.6–2.9 — khung duyệt ngày 21/10/2026
+
+Người làm khóa học duyệt chung khung bốn bài trong hội thoại. Giữ bố cục gộp đã duyệt, mỗi bài ba bài tập, review độc lập và branch riêng nối tiếp từ bài 2.5. Không sửa UI/API hay dữ liệu mẫu.
+
+- **2.6:** danh sách mã phòng xuất hiện trong hồ sơ; DISTINCT một/nhiều cột, độ chi tiết của dòng và giới hạn bỏ trùng. Phần đếm dành cho bài 3.1.
+- **2.7:** danh sách ký nhận có nhãn mã–họ tên; hàm cắt/ghép/độ dài/TRIM/hoa thường, Unicode và tìm không dấu bằng collation. Không suy tên riêng từ từ cuối.
+- **2.8:** hợp đồng hết hạn từ 21/10/2026 đến mốc sau 30 ngày, ngày sinh, EOMONTH và ranh giới DATEDIFF; phân biệt với số năm thâm niên tròn.
+- **2.9:** người đang làm chia nhóm dưới một năm, từ một đến dưới ba năm, từ ba năm trở lên tại 21/10/2026; CASE trả giá trị, thứ tự WHEN, ELSE và NULL.
+
+### Bài 2.6 — phạm vi triển khai
+
+Branch `codex/lesson-2-6-full` nối tiếp `codex/lesson-2-5-full`. Bài/exercises/test riêng; README, hồ sơ công ty và catalog cập nhật khi chuyển bài thành full. Đối chiếu nguồn độc lập có 48 hồ sơ, 6 mã phòng và 19 cặp phòng/chức danh. Đây là đọc script, không phải thực thi SQL Server. Chưa có cấu hình SQL live hoặc browser hoạt động trong phiên; kiểm tra tĩnh không thay kiểm tương tác. Kết quả kiểm tra và xử lý review được ghi sau khi hoàn tất.
+
+
+### Bài 2.6 — xử lý review và kiểm bản cuối
+
+Review độc lập Codex, kế thừa model phiên, không mang lịch sử viết; bản gốc giữ ở temp/review/2026-10-21-2-6-2-9-doc-lap và bản bàn giao ở [docs/reviews/2026-10-21-bai-2-6.md](../../reviews/2026-10-21-bai-2-6.md).
+
+**Đã sửa:** mục 2 thêm điều kiện phòng chưa có hồ sơ; mục 3 gọi đúng bỏ dòng trùng trong vùng Excel; mục 15 giải thích vì sao ngày của nhiều hồ sơ không còn là một giá trị sắp cho mỗi mã phòng; mục 23 nêu điều kiện DISTINCT che hồ sơ nhập lặp khi không chọn mã; mục 25 làm rõ mục đích đối chiếu chức danh; mục 28 đặt khóa chính ở bảng nguồn. Không đổi SQL, ô dữ liệu hoặc đề bài.
+
+**Không làm theo:** không có; các mục Giữ được giữ nguyên. Không mở rộng COUNT hay UI/API. Kết quả local cuối ghi sau lệnh kiểm; SQL Server thực tế và browser vẫn chưa xác minh.
+
+**Kiểm bản cuối 2.6:** 247/247 test; Astro check 0 lỗi, 0 warning, 3 hint deprecation có sẵn; web build 81 trang; check:dist 1.469 link. API build 27 bài tập, typecheck đạt. Đối chiếu nguồn 80 ô, flow 48→48→6→6, bài tập 6/7/2 dòng. check:exercises đã thử và dừng trước kết nối vì thiếu SQL_SERVER/SQL_DATABASE/SQL_USER/SQL_PASSWORD. HTML tĩnh đã review; chưa kiểm SQL live, giao diện hay bàn phím. Không push/deploy.
