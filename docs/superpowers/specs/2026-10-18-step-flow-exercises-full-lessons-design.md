@@ -423,3 +423,37 @@ Agent Codex mới, không mang ngữ cảnh lúc viết, kế thừa model của
 **Kiểm bản cuối sau review:** 244/244 test (29 file); web check 0 lỗi/0 warning/3 hint deprecation có sẵn, build 75 trang và check:dist 1.409 link. `source-evidence.json` đối chiếu đủ 180 ô Excel/Result/RunFlow với INSERT và luật quản lý, kiểm tổng 48 → 45 → 45 → 45 → 5 cùng ba tập bài tập 12/3/4 dòng. `html-evidence.json` xác nhận sáu mục, năm thẻ/năm panel, bốn ô Excel và hai dòng Result đánh dấu, đủ ba link/trang đề; tiêu đề bài tập 2 sau sửa đã có trong HTML. File `pending-live-selects.sql` gom SELECT để kiểm live sau. Các kiểm fixture/HTML không thay thế SQL Server và browser. API không đổi sau lần build/typecheck đạt.
 
 Bản soạn local để review, cần kiểm live SQL và browser trước khi coi đủ toàn bộ quy trình đăng bài; không push/deploy trong lượt này.
+
+
+## 16. Bài 2.5 đầy đủ: NULL, lọc và hiển thị giá trị thiếu (21/10/2026)
+
+Người làm khóa học duyệt khung ngắn trong chat. Thực hiện trong clone riêng, nhánh local `codex/lesson-2-5-full`; gốc là snapshot bài 2.4 `e606869` (chỉ commit local để giữ bản đã bàn giao), nối từ bài 2.3 `b98cacd`. Checkout bài 2.4 được giữ nguyên. Không push/deploy.
+
+### Phạm vi đã duyệt và bản soạn
+
+- Bài 25 phút, sáu mục theo khung gộp; bốn tiểu mục trong phần chính. Tháng 10/2026, chị Hạnh cần toàn bộ hồ sơ Email NULL ở mọi phòng/trạng thái, bốn cột có tiêu đề tiếng Việt, mã tăng dần; nhãn `(chưa có)` chỉ trong kết quả. Bộ mẫu có NV044/VH và NV045/KD. Không kết luận hai người không có địa chỉ ngoài hệ thống.
+- Phân biệt NULL/0/chuỗi rỗng/dấu cách và chữ 'NULL'; ý nghĩa tùy quy ước như NgayNghiViec NULL. Excel thu gọn bốn hồ sơ và giả định rõ cách xuất NULL thành ô trống, tô D3/D4; không đồng nhất mọi ô trống với NULL.
+- IS NULL/IS NOT NULL, so sánh = hoặc <> NULL là UNKNOWN và WHERE chỉ giữ TRUE; không dạy bảng chân trị đầy đủ/NOT IN. COALESCE lấy ứng viên đầu khác NULL, không thay chuỗi rỗng; ISNULL nhận hai đầu vào và giữ kiểu/độ dài khi đầu vào đầu là cột. Dùng COALESCE với chuỗi N để giữ nhãn Unicode cho Email varchar(100), giữ test bảo vệ cũ.
+- Phép cộng số 10 + NULL so với thay bằng 0, không dùng ví dụ tiền; không coi chưa biết là bằng 0. RunFlow 48 → 2 → 2 → 2: FROM/WHERE giữ dữ liệu gốc, SELECT tạo nhãn, ORDER BY chốt thứ tự.
+- Ba đề `ordered: true`: NgayNghiViec khác NULL (3 dòng theo script), KT có Email khác NULL (7 dòng), toàn bộ VH có nhãn cho Email NULL (10 dòng, chỉ NV044 nhận nhãn). Không đổi component/CSS/API/bộ chấm/database, không lộ câu đáp án trên trang. Cập nhật hồ sơ công ty/README/catalog.
+
+### Kiểm ban đầu
+
+- Baseline 244/244 test. RED có hai lỗi đúng dự kiến: catalog chưa full và chưa có RunFlow. Sau viết, schema bắt shortTitle NULL không có nháy bị YAML đọc thành null; đã xác minh parse và sửa thành chuỗi có nháy, không nới schema/test. Bản đầu sau sửa 245/245 test, web check 0 lỗi/0 warning/3 hint deprecation có sẵn; build 78 trang, check:dist 1.439 link. API build 24 bài tập, API typecheck đạt.
+- Evidence ở `temp/verification/2026-10-21-2-5-full/`: đối chiếu ô hình/kết quả/sơ đồ với INSERT và luật quản lý, kiểm tập bài tập 3/7/10. `pending-live-selects.sql` gom các SELECT cần chạy sau; kiểm fixture không phải thực thi T-SQL. Câu scalar và kiểu Unicode mới chỉ đối chiếu tài liệu, chưa chứng nhận live.
+- `check:exercises` dừng trước kết nối vì thiếu SQL_SERVER/SQL_DATABASE/SQL_USER/SQL_PASSWORD. Không có file/biến kết nối hoặc MCP azure-sql; chưa chạy SELECT/đáp án/check:data live. Không gửi câu ghi nào tới database.
+- Máy không có Chrome/Chromium hoặc cache Playwright; không thử lại browser cloud đã treo ở các lượt trước. Chưa kiểm trực quan 1280/1440px, tràn ngang hay bàn phím. Kiểm HTML không thay kiểm giao diện.
+- Nguồn Microsoft đã đối chiếu: [NULL và UNKNOWN](https://learn.microsoft.com/en-us/sql/t-sql/language-elements/null-and-unknown-transact-sql?view=sql-server-ver17), [IS NULL](https://learn.microsoft.com/en-us/sql/t-sql/queries/is-null-transact-sql?view=sql-server-ver17), [ISNULL](https://learn.microsoft.com/en-us/sql/t-sql/functions/isnull-transact-sql?view=sql-server-ver17), [COALESCE](https://learn.microsoft.com/en-us/sql/t-sql/language-elements/coalesce-transact-sql?view=sql-server-ver17), [xử lý NULL](https://learn.microsoft.com/sql/connect/ado-net/sql/handle-null-values?view=sql-server-ver17), [lọc ô trống Excel](https://support.microsoft.com/en-us/excel/get-started/filter-data-in-a-range-or-table-in-excel), [IF kiểm ô trống](https://support.microsoft.com/vi-vn/excel/using-if-to-check-if-a-cell-is-blank). Không thử SSMS/Excel thật.
+
+### Review và kiểm bản cuối
+
+Reviewer độc lập mới, không mang lịch sử viết, kế thừa model của phiên Codex và không override; chỉ đọc bài/các bài trước, tài liệu nội bộ và HTML, không đọc seed, review cũ hay chạy database. Đã đọc hết [report 40 mục](../../reviews/2026-10-21-bai-2-5.md) trước khi sửa; giữ bản gốc tại `temp/review/2026-10-21-2-5-full/`.
+
+**Đã sửa:**
+
+- Mục 21/30: dẫn chuyển kiểu về bài 1.3, giữ 2.8 là hàm ngày; đổi lỗi “dùng ISNULL trong WHERE” thành nhầm hàm trả giá trị với phép kiểm IS NULL, không dạy thành lệnh cấm vị trí.
+- Mục 18: thêm một vế vì cặp varchar/nvarchar ở COALESCE này ưu tiên kiểu nvarchar của nhãn khi chuyển kiểu ngầm. Đối chiếu Microsoft COALESCE phần Return types/Compare COALESCE and ISNULL và khai báo Email varchar(100) trong seed; chưa xác minh metadata live. Giữ giới hạn ISNULL khi đầu vào đầu là cột; không mở rộng bảng ưu tiên kiểu.
+- Mục 11/12/24/32: cắt câu xuất/import lặp, cảnh báo chất lượng lặp, đoạn nhãn/nguồn lặp trong lời giải và vế giảng lại quy ước ngày nghỉ ở Hay nhầm. Giữ hành động người phụ trách và hậu quả điền ngày giả.
+- Mục 01/04/40: mục tiêu gọi rõ chuỗi rỗng/dấu cách, đổi “Email bằng NULL” thành “Email là NULL”, đặt nhãn nguyên văn trong dấu nháy ở đề 3. Không chèn Markdown vào prompt văn bản thuần, không sửa renderer.
+
+**Không làm theo:** không có nhận xét cần loại. Giới hạn prompt chưa có định dạng code riêng được giữ theo phạm vi không đổi UI; không coi văn bản thuần là đã được định dạng như MDX. Những mục Giữ được giữ nguyên. Không đổi SQL hoặc ô dữ liệu sau review; chỉ đổi một nhãn yêu cầu trong prompt. Live SQL và browser vẫn là phần chưa xác minh.

@@ -1,5 +1,19 @@
 # Sơ đồ thứ tự chạy và chạy thử bài tập trên web: Implementation Plan
 
+## Bổ sung bài 2.5 theo khung đã duyệt (21/10/2026)
+
+Nhánh local `codex/lesson-2-5-full`, snapshot bài 2.4 làm gốc; spec đợt 2 mục 16 ghi nội dung và giới hạn xác minh.
+
+- [x] Đọc quy ước/template/hồ sơ và các bài liên quan; duyệt phạm vi hồ sơ Email NULL, nhãn chỉ ở kết quả.
+- [x] Baseline và RED; giữ bản 2.4, thêm kiểm dữ liệu gốc/nhãn của RunFlow, không khóa câu văn.
+- [x] Viết bài 25 phút, ba đề chấm thứ tự; cập nhật hồ sơ/README/catalog, giữ component/API và seed.
+- [x] Test/check/build/check:dist và API build/typecheck đạt; ghi rõ lỗi shortTitle đã sửa và kiểm fixture không thay SQL Server.
+- [x] Đọc hết review độc lập 40 mục, đối chiếu và xử lý đủ 10 nhận xét sửa/làm rõ/cắt/biên tập; ghi Đã sửa/Không làm theo.
+- [ ] Kiểm bản cuối và bàn giao local cùng báo cáo; không push/deploy.
+- [ ] Chạy SELECT/đáp án live và check:data: thiếu cấu hình kết nối.
+- [ ] Kiểm trực quan/bàn phím: chưa có browser hoạt động; không lấy HTML làm bằng chứng thay thế.
+
+
 ## Bổ sung bài 2.4 theo khung đã duyệt (21/10/2026)
 
 Nhánh local `codex/lesson-2-4-full` nối từ bài 2.3; spec đợt 2 mục 15 ghi nội dung, xử lý review và giới hạn xác minh.

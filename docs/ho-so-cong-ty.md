@@ -95,7 +95,7 @@ Các nhân vật là giả định, không phải hồ sơ trong bộ mẫu (bà
 
 | Nhân vật | Là ai | Xuất hiện |
 |---|---|---|
-| Chị Hạnh · Phòng Nhân sự | Người đưa yêu cầu trong mọi bài đầy đủ; xưng "chị", gọi người học là "em" | 1.1–1.6, 2.1–2.4, 3.5 |
+| Chị Hạnh · Phòng Nhân sự | Người đưa yêu cầu trong mọi bài đầy đủ; xưng "chị", gọi người học là "em" | 1.1–1.6, 2.1–2.5, 3.5 |
 | Người học ("em", "bạn") | Người đọc và lấy dữ liệu từ hệ thống nhân sự cho chị Hạnh; có tài khoản vào database qua SSMS | mọi bài |
 | Chị Thảo · Kế toán | Giữ một bản file nhân sự riêng | 1.1 |
 | Quân | Nhân viên chuyển sang IT, nhưng file của Kế toán còn ghi phòng cũ | 1.1 |
@@ -131,5 +131,6 @@ Các lỗi này có chủ ý, dành cho bài 4.6 và 4.7; bài khác không đư
 | 2.2 | Chị Hạnh đối chiếu 14 hồ sơ mang mã phòng KD, kể cả người đã nghỉ. |
 | 2.3 | Chị Hạnh lấy hồ sơ hiện mang mã phòng KD hoặc IT, vào làm từ 01/01/2023 đến hết 30/06/2023, không loại người đã nghỉ nếu có. Theo script mẫu, NV003 và NV043 đạt điều kiện; đây không phải phòng tại thời điểm vào làm. |
 | 2.4 | Chị Hạnh cần tối đa năm hồ sơ đang làm có ngày vào làm gần nhất, ở mọi phòng và không giới hạn năm. Xếp ngày giảm dần, cùng ngày thì mã tăng dần. Theo script mẫu: NV048, NV047, NV046, NV045, NV044. |
+| 2.5 | Chị Hạnh cần toàn bộ hồ sơ có Email là NULL, mọi phòng và trạng thái, xếp mã tăng dần. Theo script là NV044 (VH), NV045 (KD); nhãn Unicode (chưa có) chỉ hiển thị trong kết quả, không thay email nguồn. |
 | 3.5 | Chị Hạnh phải báo cáo sếp vào thứ Hai về những người mới vào chưa có hợp đồng trên hệ thống. |
 | 6.5 | Một chiều thứ Sáu, câu `UPDATE` phụ cấp của NV012 kỳ 2026-09 bị bôi đen thiếu, chạy cho cả bảng lương. |
