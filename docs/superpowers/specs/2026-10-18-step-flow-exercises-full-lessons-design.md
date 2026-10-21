@@ -514,3 +514,24 @@ Review độc lập Codex kế thừa model phiên, không mang lịch sử vi�
 **Không làm theo:** không có nhận xét biên tập bị bác. Yêu cầu xác minh SQL Server thật còn thiếu vì không có cấu hình; không thay bằng tuyên bố SQLite/Python là SQL Server. Đối chiếu script độc lập khớp ba hợp đồng và ngày sinh NV036; kiểm nguồn không xác nhận dữ liệu live. Nguồn Microsoft Learn: [DATEADD](https://learn.microsoft.com/en-us/sql/t-sql/functions/dateadd-transact-sql), [DATEDIFF](https://learn.microsoft.com/en-us/sql/t-sql/functions/datediff-transact-sql), [GETDATE](https://learn.microsoft.com/en-us/sql/t-sql/functions/getdate-transact-sql), [EOMONTH](https://learn.microsoft.com/en-us/sql/t-sql/functions/eomonth-transact-sql).
 
 **Kiểm bản cuối 2.8:** 252/252 test; Astro check 0 lỗi/0 warning/3 hint có sẵn; build 87 trang; check:dist 1.531 link. API build 33 bài tập và typecheck đạt. Kiểm nguồn/SQLite thích nghi minh bạch khớp 22 dòng minh họa, flow 55→3→3→3 và bài tập 4/4/1 dòng; đây không phải chạy T-SQL hoặc chứng nhận dữ liệu live. check:exercises đã thử và dừng vì thiếu cấu hình SQL; Playwright thiếu Chromium, không có xác minh trực quan/bàn phím. HTML mới được rà trong lượt kiểm toàn bộ cuối. Không push/deploy.
+
+
+### Bài 2.9 — phạm vi triển khai
+
+Branch `codex/lesson-2-9-full` nối tiếp `codex/lesson-2-8-full`. Mỗi bài ba bài tập truy vấn có yêu cầu thứ tự; giữ bộ chấm không so tên cột. Tại mốc cố định 21/10/2026, chị Hạnh chia các hồ sơ đang làm, đã vào làm tới ngày đó, theo ngày kỷ niệm đủ năm. Theo script có 45 hồ sơ: 4 dưới một năm, 8 từ một đến dưới ba năm, 33 từ ba năm trở lên. CASE chỉ tạo nhãn kết quả, không sửa trạng thái hoặc dữ liệu nguồn. Kiểm nguồn không thay thế thực thi SQL Server; kết quả kiểm tra và xử lý review ghi ở cuối lượt.
+
+
+### Bài 2.9 — xử lý review
+
+Review độc lập Codex kế thừa model phiên, không mang lịch sử viết; [bản bàn giao](../../reviews/2026-10-21-bai-2-9.md), bản gốc ở temp/review/2026-10-21-2-6-2-9-doc-lap. Reviewer đã rà bổ sung ví dụ đổi MaCD thành nhãn bằng CASE WHEN; dữ liệu NV001/CV và NV005/TP đã đối chiếu nguồn, test dữ liệu mới ghi RED rồi GREEN.
+
+**Đã sửa:** mục 3 đổi dấu chấm phẩy sau EDATE thành dấu chấm; mục 5 gắn ELSE với nhãn mặc định ngay tại ví dụ; mục 13 gọi đúng ba nhóm thay vì ba ranh giới; mục 15 định dạng code cho dẫn chứng 45; mục 19 cắt ý ứng dụng lặp và dễ gây hiểu nhầm trả nhiều nhãn. Bỏ vế giới hạn ngày 28 không cần thiết trước khi review kết thúc. Lời dẫn 2.8 hiện khớp phần phân nhóm, không hứa tính cột số năm. Không đổi SQL, ô dữ liệu hoặc đáp án khi xử lý các nhận xét này.
+
+**Không làm theo:** không có; các mục Giữ được giữ nguyên. Giữ ba nhóm theo ngày kỷ niệm và phạm vi bản chốt; không dùng DATEDIFF(year) làm số năm tròn, không mở rộng sang công thức tổng quát hoặc grader cú pháp. Nguồn chính: [Microsoft Learn CASE](https://learn.microsoft.com/en-us/sql/t-sql/language-elements/case-transact-sql), [DATEADD](https://learn.microsoft.com/en-us/sql/t-sql/functions/dateadd-transact-sql). Giới hạn SQL Server live và browser được ghi riêng, không chèn chi tiết biên soạn vào lời giảng.
+
+
+**Kiểm bản cuối 2.9 và toàn lượt:** 255/255 test (34 file); Astro check 0 lỗi/0 warning/3 hint deprecation có sẵn; web build 90 trang; check:dist 1.561 link. API build 36 bài tập và typecheck đạt. Source checker 327 ô, flow 48→45→45→45, nhóm 4/8/33, bài tập 10/14/5 dòng và 4 ca mốc tổng hợp. Đã kiểm HTML tĩnh cả 2.6–2.9: mỗi bài sáu mục, bốn thẻ/bốn drawer và ba trang bài tập; cột độ dài TRIM = 8, mẫu [%]/[_], lời dẫn 2.8→2.9 và ví dụ CASE đổi MaCD đều có trong build mới.
+
+Lần gọi check:dist trong pipeline đầu không ghi dòng OK dù tiến trình trả 0; đã gọi trực tiếp để xác minh và chạy lại `npm run check:dist`, nhận rõ `check-dist: OK (90 trang, 1561 link)`. Bộ phân tích HTML tạm ban đầu chưa bỏ cột số thứ tự của Result; đã đối chiếu component, sửa riêng bộ kiểm tạm rồi kiểm đủ bốn trang. Không sửa script hoặc UI sản phẩm cho hai việc kiểm này.
+
+**Giới hạn bàn giao:** không có SQL_SERVER/SQL_DATABASE/SQL_USER/SQL_PASSWORD hoặc MCP SQL; các lần check:exercises đều dừng trước kết nối. Không câu ghi nào được gửi tới database. Dữ liệu được đối chiếu seed và tài liệu Microsoft, chưa chứng nhận T-SQL/collation/dữ liệu live. Browser/Chromium không khả dụng, nên chưa kiểm trực quan hoặc bàn phím; HTML tĩnh không thay các bước đó. Các yêu cầu live/visual còn thiếu được giữ rõ; không đánh dấu đạt toàn quy trình phát hành. Bốn nhánh giữ local, mỗi commit chỉ bổ sung bài tương ứng và tài liệu; không push/deploy.

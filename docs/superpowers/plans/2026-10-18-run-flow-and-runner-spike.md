@@ -422,6 +422,6 @@ Khung chung đã được duyệt trong hội thoại. Bốn nhánh riêng nối
 - [x] Hoàn thiện, kiểm tra và xử lý review bài 2.6: 247/247 test, check không lỗi, build 81 trang, 1.469 liên kết; API build/typecheck đạt. SQL live và browser chưa xác minh.
 - [x] Hoàn thiện, kiểm tra và xử lý review bài 2.7: 250/250 test, check không lỗi, build 84 trang, 1.501 liên kết; API build/typecheck đạt. SQL live và browser chưa xác minh.
 - [x] Hoàn thiện, kiểm tra và xử lý review bài 2.8: 252/252 test, check không lỗi, build 87 trang, 1.531 liên kết; API build/typecheck đạt. SQL live và browser chưa xác minh.
-- [ ] Hoàn thiện, kiểm tra và xử lý review bài 2.9.
+- [x] Hoàn thiện, kiểm tra và xử lý review bài 2.9: 255/255 test, check không lỗi, build 90 trang, 1.561 liên kết; API build/typecheck đạt. HTML tĩnh đủ bốn bài và 12 trang bài tập mới; SQL live và browser chưa xác minh.
 
 SQL Server live còn thiếu cấu hình kết nối; không coi fixture là thực thi T-SQL. Browser chưa khả dụng; HTML build không xác nhận giao diện hay bàn phím.
