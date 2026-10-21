@@ -498,3 +498,19 @@ Review độc lập Codex kế thừa model phiên, không mang lịch sử vi�
 **Không làm theo:** không có; các mục Giữ được giữ nguyên. Cách nhập nhằng không dấu/Unicode được đối chiếu Microsoft Learn, không khẳng định mọi varchar đều mất mọi dấu. Nguồn chính: [LIKE — literal wildcard](https://learn.microsoft.com/en-us/sql/t-sql/language-elements/like-transact-sql), [LEN](https://learn.microsoft.com/en-us/sql/t-sql/functions/len-transact-sql), [TRIM](https://learn.microsoft.com/en-us/sql/t-sql/functions/trim-transact-sql), [LOWER](https://learn.microsoft.com/en-us/sql/t-sql/functions/lower-transact-sql). Bộ chấm so kết quả/vị trí cột/thứ tự, không kiểm alias hay bắt buộc cú pháp hàm.
 
 **Kiểm bản cuối 2.7:** 250/250 test; Astro check 0 lỗi/0 warning/3 hint có sẵn; build 84 trang; check:dist 1.501 link. API build 30 bài tập và typecheck đạt. Source checker kiểm 72 ô nguồn, flow 48→10→10→10, bài tập 7/1/10 dòng; test minh họa TRIM đã RED rồi GREEN khi thêm độ dài 8. Lần thử check:exercises dừng trước kết nối vì thiếu cấu hình SQL; các ảnh/giá trị chưa được xác minh live. HTML mới sẽ được rà lại trong kiểm cuối của toàn lượt. Không push/deploy.
+
+
+### Bài 2.8 — phạm vi triển khai
+
+Branch `codex/lesson-2-8-full` nối tiếp `codex/lesson-2-7-full`. Mỗi bài ba bài tập truy vấn có yêu cầu thứ tự; giữ bộ chấm không so tên cột. Tại mốc cố định 21/10/2026, chị Hạnh cần các dòng hợp đồng có ngày kết thúc từ ngày đó đến hết 20/11/2026 (gồm hai đầu). Theo script có HD2025-014/NV025 (31/10), HD2026-004/NV046 (13/11), HD2024-008/NV036 (14/11). Đây là danh sách hợp đồng theo ngày lưu, không kết luận phải gia hạn. Kiểm nguồn không thay thế thực thi SQL Server; kết quả kiểm tra và xử lý review ghi ở cuối lượt.
+
+
+### Bài 2.8 — xử lý review
+
+Review độc lập Codex kế thừa model phiên, không mang lịch sử viết; [bản bàn giao](../../reviews/2026-10-21-bai-2-8.md), bản gốc ở temp/review/2026-10-21-2-6-2-9-doc-lap.
+
+**Đã sửa:** mục 9 định dạng code SoNgayConLai/MaHD trong drawer, đồng bộ code từ khóa đầu meaning/detail; mục 10 cắt hai vế giảng lại trong Hay nhầm; mục 12 bỏ EDATE mới xuất hiện ở phần ôn và metadata thay vì thêm lý thuyết ngoài mục tiêu; build mới xử lý bản HTML cũ ở mục ưu tiên 3. Từ trước kết thúc review đã sửa lời hẹn 2.9 thành phân nhóm theo mốc kỷ niệm và chuyển giới hạn kiểm live khỏi lời giảng sang báo cáo. Không đổi SQL/ô dữ liệu/đáp án.
+
+**Không làm theo:** không có nhận xét biên tập bị bác. Yêu cầu xác minh SQL Server thật còn thiếu vì không có cấu hình; không thay bằng tuyên bố SQLite/Python là SQL Server. Đối chiếu script độc lập khớp ba hợp đồng và ngày sinh NV036; kiểm nguồn không xác nhận dữ liệu live. Nguồn Microsoft Learn: [DATEADD](https://learn.microsoft.com/en-us/sql/t-sql/functions/dateadd-transact-sql), [DATEDIFF](https://learn.microsoft.com/en-us/sql/t-sql/functions/datediff-transact-sql), [GETDATE](https://learn.microsoft.com/en-us/sql/t-sql/functions/getdate-transact-sql), [EOMONTH](https://learn.microsoft.com/en-us/sql/t-sql/functions/eomonth-transact-sql).
+
+**Kiểm bản cuối 2.8:** 252/252 test; Astro check 0 lỗi/0 warning/3 hint có sẵn; build 87 trang; check:dist 1.531 link. API build 33 bài tập và typecheck đạt. Kiểm nguồn/SQLite thích nghi minh bạch khớp 22 dòng minh họa, flow 55→3→3→3 và bài tập 4/4/1 dòng; đây không phải chạy T-SQL hoặc chứng nhận dữ liệu live. check:exercises đã thử và dừng vì thiếu cấu hình SQL; Playwright thiếu Chromium, không có xác minh trực quan/bàn phím. HTML mới được rà trong lượt kiểm toàn bộ cuối. Không push/deploy.

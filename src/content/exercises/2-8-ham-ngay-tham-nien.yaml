@@ -1,0 +1,64 @@
+lesson: 2-8-ham-ngay-tham-nien
+exercises:
+  - id: 2-8-1
+    title: Tháng sinh của tháng kế tiếp
+    summary: Từ ngày chốt, tìm tháng kế tiếp rồi lọc theo tháng sinh.
+    prompt: >-
+      Ngày chốt là 21/10/2026. Trong NhanVien, lấy mọi hồ sơ có tháng sinh
+      trùng tháng của ngày cách ngày chốt một tháng, bất kể năm sinh,
+      phòng hay trạng thái. Chỉ xét tháng, không xét sinh nhật đã qua hay chưa.
+      Dùng DATEADD và MONTH với ngày chốt cố định, không dùng GETDATE.
+      Trả về đúng ba cột theo thứ tự: MaNV, HoTen, NgaySinh.
+      Sắp MaNV tăng dần. Thứ tự dòng được chấm.
+    columns: [MaNV, HoTen, NgaySinh]
+    ordered: true
+    kind: query
+    answer: |
+      SELECT MaNV, HoTen, NgaySinh
+      FROM NhanVien
+      WHERE MONTH(NgaySinh) = MONTH(DATEADD(month, 1, CAST('20261021' AS date)))
+      ORDER BY MaNV ASC;
+  - id: 2-8-2
+    title: Đang làm và chưa đủ một năm
+    summary: So ngày kỷ niệm đủ một năm với ngày chốt thay vì đếm ranh giới năm.
+    prompt: >-
+      Trong NhanVien, lấy hồ sơ có TrangThai là Đang làm, NgayVaoLam
+      không sau ngày chốt 21/10/2026 và chưa đến mốc đủ một năm tại ngày chốt.
+      Mốc đủ một năm là DATEADD(year, 1, NgayVaoLam); chỉ giữ mốc này sau ngày chốt,
+      không lấy hồ sơ đạt mốc đúng ngày chốt. Không giới hạn phòng.
+      Dùng ngày chốt cố định, không dùng GETDATE.
+      Trả về đúng ba cột theo thứ tự: MaNV, NgayVaoLam,
+      rồi mốc đủ một năm với tên gợi ý MocMotNam.
+      Sắp NgayVaoLam tăng dần, cùng ngày thì MaNV tăng dần. Thứ tự dòng được chấm.
+    columns: [MaNV, NgayVaoLam, MocMotNam]
+    ordered: true
+    kind: query
+    answer: |
+      SELECT MaNV, NgayVaoLam, DATEADD(year, 1, NgayVaoLam) AS MocMotNam
+      FROM NhanVien
+      WHERE TrangThai = N'Đang làm'
+      AND NgayVaoLam <= CAST('20261021' AS date)
+      AND DATEADD(year, 1, NgayVaoLam) > CAST('20261021' AS date)
+      ORDER BY NgayVaoLam ASC, MaNV ASC;
+  - id: 2-8-3
+    title: Kết thúc sau ngày chốt đến hết tháng
+    summary: Dùng EOMONTH làm mốc trên và tính số ngày còn lại.
+    prompt: >-
+      Trong HopDong, lấy các dòng có NgayKetThuc sau ngày chốt 21/10/2026
+      đến hết ngày cuối tháng chứa ngày chốt. Bỏ ngày chốt, lấy ngày cuối tháng;
+      dùng EOMONTH để tạo mốc trên. Không thêm điều kiện loại hợp đồng hay nhân viên.
+      NgayKetThuc là NULL không thuộc khoảng này. Dùng ngày chốt cố định, không dùng GETDATE.
+      Trả về đúng bốn cột theo thứ tự: MaHD, MaNV, NgayKetThuc,
+      rồi số ngày từ ngày chốt tới NgayKetThuc tính bằng DATEDIFF(day, ...),
+      tên gợi ý SoNgayConLai. Sắp NgayKetThuc tăng dần, cùng ngày thì MaHD tăng dần.
+      Thứ tự dòng được chấm.
+    columns: [MaHD, MaNV, NgayKetThuc, SoNgayConLai]
+    ordered: true
+    kind: query
+    answer: |
+      SELECT MaHD, MaNV, NgayKetThuc,
+      DATEDIFF(day, CAST('20261021' AS date), NgayKetThuc) AS SoNgayConLai
+      FROM HopDong
+      WHERE NgayKetThuc > CAST('20261021' AS date)
+      AND NgayKetThuc <= EOMONTH(CAST('20261021' AS date))
+      ORDER BY NgayKetThuc ASC, MaHD ASC;

@@ -95,7 +95,7 @@ Các nhân vật là giả định, không phải hồ sơ trong bộ mẫu (bà
 
 | Nhân vật | Là ai | Xuất hiện |
 |---|---|---|
-| Chị Hạnh · Phòng Nhân sự | Người đưa yêu cầu trong mọi bài đầy đủ; xưng "chị", gọi người học là "em" | 1.1–1.6, 2.1–2.7, 3.5 |
+| Chị Hạnh · Phòng Nhân sự | Người đưa yêu cầu trong mọi bài đầy đủ; xưng "chị", gọi người học là "em" | 1.1–1.6, 2.1–2.8, 3.5 |
 | Người học ("em", "bạn") | Người đọc và lấy dữ liệu từ hệ thống nhân sự cho chị Hạnh; có tài khoản vào database qua SSMS | mọi bài |
 | Chị Thảo · Kế toán | Giữ một bản file nhân sự riêng | 1.1 |
 | Quân | Nhân viên chuyển sang IT, nhưng file của Kế toán còn ghi phòng cũ | 1.1 |
@@ -134,5 +134,6 @@ Các lỗi này có chủ ý, dành cho bài 4.6 và 4.7; bài khác không đư
 | 2.5 | Chị Hạnh cần toàn bộ hồ sơ có Email là NULL, mọi phòng và trạng thái, xếp mã tăng dần. Theo script là NV044 (VH), NV045 (KD); nhãn Unicode (chưa có) chỉ hiển thị trong kết quả, không thay email nguồn. |
 | 2.6 | Chị Hạnh cần danh sách mã phòng xuất hiện trong toàn bộ hồ sơ NhanVien, mọi trạng thái. Theo script có 48 hồ sơ và 6 mã phòng; DISTINCT chỉ bỏ dòng trùng trong kết quả, không xóa hồ sơ nguồn hoặc chứng nhận đây là danh mục phòng đầy đủ. |
 | 2.7 | Chị Hạnh cần danh sách ký nhận của toàn bộ hồ sơ hiện mang MaPB = IT, không lọc trạng thái hay ngày. Theo script có 10 hồ sơ; nhãn mã–họ tên chỉ tạo trong kết quả. Ví dụ TRIM, Unicode và collation không sửa dữ liệu nguồn. |
+| 2.8 | Tại mốc cố định 21/10/2026, chị Hạnh cần các dòng hợp đồng có ngày kết thúc từ ngày đó đến hết 20/11/2026 (gồm hai đầu). Theo script có HD2025-014/NV025 (31/10), HD2026-004/NV046 (13/11), HD2024-008/NV036 (14/11). Đây là danh sách hợp đồng theo ngày lưu, không kết luận phải gia hạn. |
 | 3.5 | Chị Hạnh phải báo cáo sếp vào thứ Hai về những người mới vào chưa có hợp đồng trên hệ thống. |
 | 6.5 | Một chiều thứ Sáu, câu `UPDATE` phụ cấp của NV012 kỳ 2026-09 bị bôi đen thiếu, chạy cho cả bảng lương. |
