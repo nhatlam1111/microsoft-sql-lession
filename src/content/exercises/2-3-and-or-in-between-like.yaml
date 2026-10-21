@@ -1,0 +1,59 @@
+lesson: 2-3-and-or-in-between-like
+exercises:
+  - id: 2-3-1
+    title: Hai phòng, chỉ hồ sơ đang làm
+    summary: Lấy hồ sơ đang làm thuộc một trong hai phòng yêu cầu.
+    prompt: >-
+      Chị Hạnh cần hồ sơ trong NhanVien mang mã phòng KD hoặc VH,
+      đồng thời có TrangThai bằng Đang làm. Điều kiện trạng thái áp dụng cho cả hai phòng.
+      Lấy đúng bốn cột theo thứ tự: MaNV, HoTen, MaPB, TrangThai.
+      Không giới hạn ngày vào làm. Thứ tự dòng không quan trọng.
+    columns: [MaNV, HoTen, MaPB, TrangThai]
+    ordered: false
+    kind: query
+    answer: |
+      SELECT MaNV, HoTen, MaPB, TrangThai
+      FROM NhanVien
+      WHERE (MaPB = 'KD' OR MaPB = 'VH') AND TrangThai = N'Đang làm';
+  - id: 2-3-2
+    title: Hai phòng trong một khoảng ngày
+    summary: Chọn hồ sơ thuộc hai phòng và nằm trong khoảng gồm cả hai mốc.
+    prompt: >-
+      Lấy hồ sơ trong NhanVien hiện mang mã phòng KT hoặc NS, vào làm từ ngày 01/03/2021
+      đến hết ngày 01/07/2024, gồm cả hai ngày mốc. Kể cả người đã nghỉ nếu có.
+      Trả về đúng bốn cột theo thứ tự: MaNV, HoTen, NgayVaoLam, MaPB.
+      Dùng ngày vào làm và mã phòng đang lưu, không thêm điều kiện trạng thái.
+      Thứ tự dòng không quan trọng.
+    columns: [MaNV, HoTen, NgayVaoLam, MaPB]
+    ordered: false
+    kind: query
+    answer: |
+      SELECT MaNV, HoTen, NgayVaoLam, MaPB
+      FROM NhanVien
+      WHERE MaPB IN ('KT', 'NS') AND NgayVaoLam BETWEEN '20210301' AND '20240701';
+  - id: 2-3-3
+    title: Phần tên còn nhớ
+    summary: Tìm họ tên có chứa chuỗi Thị ở bất kỳ vị trí nào.
+    prompt: >-
+      Chị Hạnh chỉ nhớ họ tên có chứa chuỗi Thị. Trong toàn bộ hồ sơ NhanVien,
+      lấy các dòng có HoTen chứa chuỗi này ở bất kỳ vị trí nào; không giới hạn phòng,
+      ngày vào làm hay trạng thái. Trả về đúng hai cột theo thứ tự: MaNV, HoTen.
+      Đây là tìm chuỗi ký tự, không yêu cầu tách thành từ riêng. Thứ tự dòng không quan trọng.
+    columns: [MaNV, HoTen]
+    ordered: false
+    kind: query
+    answer: |
+      SELECT MaNV, HoTen FROM NhanVien WHERE HoTen LIKE N'%Thị%';
+  - id: 2-3-4
+    title: Họ tên còn đúng một ký tự sau H
+    summary: Tìm họ tên có H ở vị trí áp chót bằng mẫu một ký tự.
+    prompt: >-
+      Trong bảng NhanVien, lấy các hồ sơ có HoTen chứa chữ H ở vị trí áp chót:
+      trước H có thể là chuỗi bất kỳ, sau H phải còn đúng một ký tự rồi kết thúc.
+      Không thêm điều kiện phòng, trạng thái hay ngày vào làm.
+      Trả về đúng hai cột theo thứ tự: MaNV, HoTen. Thứ tự dòng không quan trọng.
+    columns: [MaNV, HoTen]
+    ordered: false
+    kind: query
+    answer: |
+      SELECT MaNV, HoTen FROM NhanVien WHERE HoTen LIKE N'%H_';

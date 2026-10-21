@@ -4,30 +4,512 @@ title: Sắp xếp và lấy TOP
 shortTitle: ORDER BY và TOP
 level: 2
 area: A2
-kind: summary
-minutes: 8
+kind: full
+minutes: 20
 prerequisites:
-  - "2.2"
-goal: bạn sắp xếp được kết quả và lấy đúng N dòng đầu
-excel: Sort, Top 10
-summary: ORDER BY nhiều cột, và vì sao TOP luôn phải đi cùng ORDER BY.
+  - "2.3"
+goal: bạn sắp xếp được kết quả theo nhiều cột và lấy tối đa N hồ sơ đầu theo đúng tiêu chí, kể cả khi trùng giá trị sắp xếp
+excel: Sort, Add Level, lấy các dòng đầu
+summary: Từ danh sách năm hồ sơ đang làm có ngày vào làm gần nhất, dùng ORDER BY, ASC/DESC và TOP; chốt thứ tự khi trùng ngày bằng mã nhân viên.
 ---
 
-## Nội dung chính
+## Tình huống
 
-- `ORDER BY NgayVaoLam DESC` đưa người vào làm gần nhất lên đầu; `ASC` (mặc định) là tăng dần.
-- Sắp theo nhiều cột: `ORDER BY MaPB, HoTen` sắp theo phòng, cùng phòng thì theo họ tên.
-- `TOP (5)` lấy 5 dòng đầu, và chỉ có nghĩa khi đi cùng `ORDER BY`.
-- Không có `ORDER BY` thì SQL Server không hứa thứ tự nào, kể cả khi lần nào chạy trông cũng giống nhau.
+Tháng 10/2026, chị Hạnh cần một danh sách ngắn để đối chiếu hồ sơ:
 
-## Liên hệ Excel
+<Chat who="Chị Hạnh · Phòng Nhân sự" time="11:25" initial="H">
+Sếp cần năm hồ sơ đang làm có ngày vào làm gần nhất. Em lấy giúp chị mã nhân viên, họ tên, mã phòng và ngày vào làm, đặt tiêu đề tiếng Việt nhé. Nếu cùng ngày thì xếp mã nhân viên tăng dần cho dễ đối chiếu.
+</Chat>
 
-Giống Sort và bộ lọc Top 10. Khác ở chỗ thứ tự không được lưu trong bảng; muốn có thứ tự thì lần nào cũng phải ghi `ORDER BY`.
+Phạm vi: bảng `NhanVien` hiện tại, chỉ lấy `TrangThai` bằng `Đang làm`, ở mọi phòng và không giới hạn năm vào làm. “Gần nhất” xét theo `NgayVaoLam`, không phải ngày nhập hồ sơ hay thứ tự cấp mã.
 
-## Tình huống ví dụ
+<Key>Lọc đúng nhóm đang làm, xếp ngày mới nhất trước, rồi lấy tối đa năm hồ sơ đầu.</Key>
 
-Ban giám đốc muốn biết 5 người vào làm gần đây nhất.
+## Sắp danh sách trước khi lấy những dòng đầu
+
+### Từ Sort đến ORDER BY nhiều cột
+
+Trong Excel, bạn lọc nhóm cần xem, chọn vùng dữ liệu có tiêu đề rồi mở **Data → Sort**. Đặt cột ngày theo **Newest to Oldest** để ngày mới nhất lên đầu; **Add Level** thêm tiêu chí thứ hai. Sắp cả vùng để mã, họ tên và ngày của mỗi hồ sơ vẫn đi cùng nhau.
+
+Trong SQL, **`ORDER BY`** ghi sau `FROM` và sau `WHERE` nếu có, quyết định thứ tự các dòng kết quả. **`ASC`** là tăng dần, với ngày là cũ đến mới; **`DESC`** là giảm dần, với ngày là mới đến cũ. Mỗi cột có hướng riêng; không ghi hướng thì mặc định là `ASC`.
+
+Khi có nhiều cột, SQL Server xét từ trái sang phải: chỉ khi cột trước bằng nhau mới xét cột tiếp theo. Đoạn dưới ưu tiên phòng, trong cùng phòng mới ưu tiên ngày; mã nhân viên là tiêu chí cuối:
+
+<Sql copy={false} title="Đoạn sắp xếp nhiều cột, chỉ để đọc" code={`ORDER BY MaPB ASC, NgayVaoLam DESC, MaNV ASC`} />
+
+Hình Excel thu gọn bốn hồ sơ có thật để minh họa cách xếp này, không phải toàn bộ danh sách phòng. Các ô `C4`, `D4`, `C5`, `D5` đánh dấu hai dòng cần so: `NV029` thuộc `IT` vẫn đứng trước `NV047` thuộc `NS`, dù ngày vào làm cũ hơn. Cột ngày chứa ngày thật.
+
+<Excel sheets="Minh họa Sort nhiều cột" mark={['C4', 'D4', 'C5', 'D5']} numeric={['D2', 'D3', 'D4', 'D5']} rows={[
+  [
+    "MaNV",
+    "HoTen",
+    "MaPB",
+    "NgayVaoLam"
+  ],
+  [
+    "NV048",
+    "Đỗ Minh Quân",
+    "IT",
+    "05/10/2026"
+  ],
+  [
+    "NV046",
+    "Hứa Thị Phương",
+    "IT",
+    "14/09/2026"
+  ],
+  [
+    "NV029",
+    "Mạc Văn Đông",
+    "IT",
+    "01/03/2025"
+  ],
+  [
+    "NV047",
+    "Phạm Ngọc Ánh",
+    "NS",
+    "01/10/2026"
+  ]
+]} />
+
+Nếu chỉ xếp theo ngày, những hồ sơ cùng ngày chưa có thứ tự xác định giữa chúng. Thêm `MaNV ASC` thì mã nhỏ hơn đứng trước; `MaNV` là khóa chính không trùng của bộ mẫu, nên đủ để chốt thứ tự khi dữ liệu không đổi. Quy tắc này cũng xác định ai được lấy nếu một nhóm trùng ngày nằm ở ranh giới năm dòng.
+
+`ORDER BY` chỉ sắp kết quả, không đổi giá trị hay lưu một thứ tự mới vào bảng nguồn. Mỗi lần cần thứ tự đó, bạn giữ mệnh đề này trong câu lệnh. Nó cũng không đổi vị trí các cột đã chọn sau `SELECT`.
+
+### Kết hợp WHERE và TOP để chọn đúng nhóm đầu
+
+**`TOP (5)`** viết ngay sau `SELECT`, lấy **tối đa năm dòng** từ tập kết quả; nếu chỉ có ba dòng đạt điều kiện thì chỉ trả ba. Với yêu cầu của chị Hạnh, lọc hồ sơ đang làm bằng `WHERE`, xếp theo ngày rồi mới giới hạn năm dòng. Đây là năm dòng của cả tập sau lọc, không phải năm dòng cho từng phòng.
+
+Ở bài 1.6, `TOP` chưa kèm `ORDER BY` chỉ giúp xem mẫu, không bảo đảm chọn hồ sơ nào. Muốn “gần nhất”, dùng `NgayVaoLam DESC`; mã lớn hơn chưa chắc có ngày vào làm mới hơn. Giả sử hai mã `A02`, `A03` cùng ngày và chỉ còn một chỗ trong `TOP`: `MaNV ASC` chọn `A02`. Đây là ví dụ giả định, không phải hồ sơ trong bộ mẫu.
+
+Bạn có thể dùng tên nguồn hoặc alias để sắp: `ORDER BY [Ngày vào làm] DESC, [Mã nhân viên] ASC` có cùng ý nghĩa trong câu phía dưới. Khác `WHERE` ở bài 2.2, `ORDER BY` đứng sau `SELECT` trong thứ tự logic, nên dùng được alias của cột.
+
+Ở bài này chỉ cần sắp nhiều cột, chốt thứ tự và lấy nhóm đầu sau lọc. Giá trị `NULL` học ở bài 2.5, quy tắc sắp chữ tiếng Việt ở bài 2.7; cách tăng tốc truy vấn học ở bài 5.6.
+
+### Câu lệnh cho tình huống
+
+Viết câu lệnh với bốn cột và tiêu đề yêu cầu:
+
+<Sql code={`SELECT TOP (5) MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
+MaPB AS [Mã phòng], NgayVaoLam AS [Ngày vào làm]
+FROM NhanVien
+WHERE TrangThai = N'Đang làm'
+ORDER BY NgayVaoLam DESC, MaNV ASC;`} />
+
+<Result columns={[
+  "Mã nhân viên",
+  "Họ tên",
+  "Mã phòng",
+  "Ngày vào làm"
+]} rows={[
+  [
+    "NV048",
+    "Đỗ Minh Quân",
+    "IT",
+    "2026-10-05"
+  ],
+  [
+    "NV047",
+    "Phạm Ngọc Ánh",
+    "NS",
+    "2026-10-01"
+  ],
+  [
+    "NV046",
+    "Hứa Thị Phương",
+    "IT",
+    "2026-09-14"
+  ],
+  [
+    "NV045",
+    "Ung Văn Lực",
+    "KD",
+    "2026-07-01"
+  ],
+  [
+    "NV044",
+    "Lã Thị Oanh",
+    "VH",
+    "2025-08-04"
+  ]
+]} mark={[1, 5]} />
+
+Bạn có thể trả lời chị Hạnh: năm hồ sơ phù hợp theo thứ tự là `NV048`, `NV047`, `NV046`, `NV045`, `NV044`. Hai dòng được đánh dấu là đầu và cuối danh sách: `NV048` vào làm `2026-10-05`, còn `NV044` vào làm `2025-08-04`. “Gần nhất” trong nhóm đang lưu vì vậy không đồng nghĩa với chỉ lấy hồ sơ năm 2026.
+
+Bốn cột có đúng thứ tự và tiêu đề cần gửi. Nếu ngày vào làm hoặc trạng thái được cập nhật, lần chạy sau có thể cho danh sách khác; câu lệnh giữ tiêu chí lựa chọn, không giữ nguyên một bản chốt dữ liệu.
+
+### SQL Server chạy câu này thế nào
+
+Sơ đồ là **thứ tự xử lý logic**, không phải cách SQL Server quét hay sắp dữ liệu vật lý. Bấm từng thẻ để thấy `48` hồ sơ nguồn còn `45` sau lọc; sắp xếp giữ nguyên số dòng, rồi `TOP` mới giới hạn còn `5`:
+
+<RunFlow query={`SELECT TOP (5) MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
+MaPB AS [Mã phòng], NgayVaoLam AS [Ngày vào làm]
+FROM NhanVien
+WHERE TrangThai = N'Đang làm'
+ORDER BY NgayVaoLam DESC, MaNV ASC;`} steps={[
+  {
+    clause: "FROM",
+    title: "Xác định bảng nhân viên làm nguồn.",
+    focus: "FROM NhanVien",
+    meaning: "`FROM` xác định bảng có các cột dùng để lọc, chọn và sắp xếp.",
+    detail: "Có `48` hồ sơ, đủ `12` cột. Hình trích `NV020`, `NV047`, `NV048`; `NV020` có trạng thái `Đã nghỉ`.",
+    sql: `SELECT * FROM NhanVien;`,
+    columns: [
+  "MaNV",
+  "HoTen",
+  "GioiTinh",
+  "NgaySinh",
+  "SoCCCD",
+  "Email",
+  "NgayVaoLam",
+  "NgayNghiViec",
+  "MaPB",
+  "MaCD",
+  "MaQuanLy",
+  "TrangThai"
+],
+    rows: [
+  [
+    "NV020",
+    "Kiều Thị Hạnh",
+    "Nữ",
+    "1990-05-19",
+    "000190281837",
+    "hanh.kt@hrmdemo.vn",
+    "2019-04-01",
+    "2025-12-31",
+    "KD",
+    "CV",
+    "NV006",
+    "Đã nghỉ"
+  ],
+  [
+    "NV047",
+    "Phạm Ngọc Ánh",
+    "Nữ",
+    "1999-02-17",
+    "000199495650",
+    "anh.pn@hrmdemo.vn",
+    "2026-10-01",
+    null,
+    "NS",
+    "CV",
+    "NV010",
+    "Đang làm"
+  ],
+  [
+    "NV048",
+    "Đỗ Minh Quân",
+    "Nam",
+    "2000-08-25",
+    "000200503569",
+    "quan.dm@hrmdemo.vn",
+    "2026-10-05",
+    null,
+    "IT",
+    "NV",
+    "NV007",
+    "Đang làm"
+  ]
+],
+    total: 48,
+    preview: [
+  "MaNV",
+  "NgayVaoLam",
+  "TrangThai"
+],
+    excel: "Mở danh sách nguồn, chưa áp dụng bộ lọc.",
+  },
+  {
+    clause: "WHERE",
+    title: "Chỉ giữ hồ sơ có trạng thái Đang làm.",
+    focus: "WHERE TrangThai = N'Đang làm'",
+    meaning: "`WHERE` giữ những hồ sơ có `TrangThai` bằng `Đang làm` trước khi chọn nhóm gần nhất.",
+    detail: "Còn `45` hồ sơ, vẫn đủ `12` cột; `NV020` đã bị loại. Hình trích ba hồ sơ được giữ, chưa có thứ tự được bảo đảm.",
+    sql: `SELECT *
+FROM NhanVien
+WHERE TrangThai = N'Đang làm';`,
+    columns: [
+  "MaNV",
+  "HoTen",
+  "GioiTinh",
+  "NgaySinh",
+  "SoCCCD",
+  "Email",
+  "NgayVaoLam",
+  "NgayNghiViec",
+  "MaPB",
+  "MaCD",
+  "MaQuanLy",
+  "TrangThai"
+],
+    rows: [
+  [
+    "NV001",
+    "Trần Thị Mai",
+    "Nữ",
+    "1992-04-12",
+    "000192131376",
+    "mai.tt@hrmdemo.vn",
+    "2024-03-01",
+    null,
+    "KT",
+    "CV",
+    "NV005",
+    "Đang làm"
+  ],
+  [
+    "NV047",
+    "Phạm Ngọc Ánh",
+    "Nữ",
+    "1999-02-17",
+    "000199495650",
+    "anh.pn@hrmdemo.vn",
+    "2026-10-01",
+    null,
+    "NS",
+    "CV",
+    "NV010",
+    "Đang làm"
+  ],
+  [
+    "NV048",
+    "Đỗ Minh Quân",
+    "Nam",
+    "2000-08-25",
+    "000200503569",
+    "quan.dm@hrmdemo.vn",
+    "2026-10-05",
+    null,
+    "IT",
+    "NV",
+    "NV007",
+    "Đang làm"
+  ]
+],
+    total: 45,
+    preview: [
+  "MaNV",
+  "NgayVaoLam",
+  "TrangThai"
+],
+    excel: "AutoFilter tại TrangThai, chỉ chọn Đang làm.",
+  },
+  {
+    clause: "SELECT",
+    title: "Chọn bốn cột và đặt tiêu đề.",
+    focus: `SELECT TOP (5) MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
+MaPB AS [Mã phòng], NgayVaoLam AS [Ngày vào làm]`,
+    meaning: "`SELECT` chọn cột đưa ra kết quả; `AS` đặt tiêu đề tiếng Việt.",
+    detail: "Vẫn `45` hồ sơ, còn `4` cột. `TOP (5)` tuy viết trên dòng SELECT nhưng chưa giới hạn dòng ở bước logic này.",
+    sql: `SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
+MaPB AS [Mã phòng], NgayVaoLam AS [Ngày vào làm]
+FROM NhanVien
+WHERE TrangThai = N'Đang làm';`,
+    columns: [
+  "Mã nhân viên",
+  "Họ tên",
+  "Mã phòng",
+  "Ngày vào làm"
+],
+    rows: [
+  [
+    "NV001",
+    "Trần Thị Mai",
+    "KT",
+    "2024-03-01"
+  ],
+  [
+    "NV047",
+    "Phạm Ngọc Ánh",
+    "NS",
+    "2026-10-01"
+  ],
+  [
+    "NV048",
+    "Đỗ Minh Quân",
+    "IT",
+    "2026-10-05"
+  ]
+],
+    total: 45,
+    excel: "Giữ bốn cột cần gửi, đặt tiêu đề theo mẫu.",
+  },
+  {
+    clause: "ORDER BY",
+    title: "Xếp ngày mới nhất trước, cùng ngày thì xếp theo mã.",
+    focus: "ORDER BY NgayVaoLam DESC, MaNV ASC",
+    meaning: "`ORDER BY` xếp `NgayVaoLam` giảm dần; nếu cùng ngày thì xét `MaNV` tăng dần.",
+    detail: "Vẫn `45` hồ sơ; hình trích `10` dòng đầu sau sắp xếp. Chưa bỏ hồ sơ ở bước này.",
+    sql: `SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
+MaPB AS [Mã phòng], NgayVaoLam AS [Ngày vào làm]
+FROM NhanVien
+WHERE TrangThai = N'Đang làm'
+ORDER BY NgayVaoLam DESC, MaNV ASC;`,
+    columns: [
+  "Mã nhân viên",
+  "Họ tên",
+  "Mã phòng",
+  "Ngày vào làm"
+],
+    rows: [
+  [
+    "NV048",
+    "Đỗ Minh Quân",
+    "IT",
+    "2026-10-05"
+  ],
+  [
+    "NV047",
+    "Phạm Ngọc Ánh",
+    "NS",
+    "2026-10-01"
+  ],
+  [
+    "NV046",
+    "Hứa Thị Phương",
+    "IT",
+    "2026-09-14"
+  ],
+  [
+    "NV045",
+    "Ung Văn Lực",
+    "KD",
+    "2026-07-01"
+  ],
+  [
+    "NV044",
+    "Lã Thị Oanh",
+    "VH",
+    "2025-08-04"
+  ],
+  [
+    "NV040",
+    "Lục Thị Xuân",
+    "KD",
+    "2025-05-05"
+  ],
+  [
+    "NV029",
+    "Mạc Văn Đông",
+    "IT",
+    "2025-03-01"
+  ],
+  [
+    "NV036",
+    "Doãn Thị Thảo",
+    "KD",
+    "2024-11-15"
+  ],
+  [
+    "NV042",
+    "Bạch Thị Tuyết",
+    "KT",
+    "2024-07-01"
+  ],
+  [
+    "NV002",
+    "Lê Văn Hùng",
+    "KD",
+    "2024-04-01"
+  ]
+],
+    total: 45,
+    preview: [
+  "Mã nhân viên",
+  "Ngày vào làm"
+],
+    excel: "Sort theo NgayVaoLam: Newest to Oldest; Add Level MaNV: A to Z.",
+  },
+  {
+    clause: "TOP",
+    title: "Giữ tối đa năm dòng đầu của danh sách đã xếp.",
+    focus: "TOP (5)",
+    meaning: "`TOP (5)` giới hạn kết quả ở tối đa `5` dòng theo thứ tự đã chọn.",
+    detail: "Từ `45` hồ sơ còn `5`: `NV048`, `NV047`, `NV046`, `NV045`, `NV044`.",
+    sql: `SELECT TOP (5) MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
+MaPB AS [Mã phòng], NgayVaoLam AS [Ngày vào làm]
+FROM NhanVien
+WHERE TrangThai = N'Đang làm'
+ORDER BY NgayVaoLam DESC, MaNV ASC;`,
+    columns: [
+  "Mã nhân viên",
+  "Họ tên",
+  "Mã phòng",
+  "Ngày vào làm"
+],
+    rows: [
+  [
+    "NV048",
+    "Đỗ Minh Quân",
+    "IT",
+    "2026-10-05"
+  ],
+  [
+    "NV047",
+    "Phạm Ngọc Ánh",
+    "NS",
+    "2026-10-01"
+  ],
+  [
+    "NV046",
+    "Hứa Thị Phương",
+    "IT",
+    "2026-09-14"
+  ],
+  [
+    "NV045",
+    "Ung Văn Lực",
+    "KD",
+    "2026-07-01"
+  ],
+  [
+    "NV044",
+    "Lã Thị Oanh",
+    "VH",
+    "2025-08-04"
+  ]
+],
+    total: 5,
+    preview: [
+  "Mã nhân viên",
+  "Ngày vào làm"
+],
+    excel: "Lấy năm dòng đầu đang hiển thị sau lọc và sắp xếp.",
+  },
+]} />
+
+## Hay nhầm ở đâu
+
+<Mistakes>
+
+1. **Nghĩ một `DESC` áp dụng cho mọi cột.** Trong `ORDER BY MaPB, NgayVaoLam DESC`, mã phòng vẫn tăng dần; chỉ ngày giảm dần. Đặt hướng ngay sau từng cột để tránh gửi danh sách theo thứ tự khác yêu cầu.
+2. **Sắp `HoTen` rồi nghĩ đã xếp theo tên gọi.** SQL Server so cả chuỗi từ đầu theo quy tắc so chữ; nó không tự tách họ, tên đệm và tên gọi. Cần thống nhất tiêu chí trước khi yêu cầu một danh sách “theo tên”.
+3. **Chỉ lấy năm dòng rồi mới tự chọn người đang làm trong đó.** Danh sách có thể thiếu người đủ điều kiện vì đã giới hạn nhầm tập nguồn. Điều kiện trạng thái phải tham gia trước bước lấy nhóm đầu.
+
+</Mistakes>
+
+## Ứng dụng
+
+<Apply>
+
+- **Lấy nhóm hồ sơ mới nhất:** lọc đúng phạm vi và sắp theo ngày để chuẩn bị danh sách đối chiếu gần đây.
+- **Chuẩn hóa thứ tự báo cáo:** xếp theo phòng, rồi theo ngày và mã để các bên dễ so từng dòng khi dùng cùng dữ liệu.
+- **Chọn nhóm cần ưu tiên:** lấy một số hồ sơ đứng đầu theo tiêu chí đã thống nhất, như ngày vào làm sớm nhất để rà hồ sơ lâu năm.
+
+</Apply>
+
+## Ghi nhớ
+
+<Memo rows={[
+  ['Sort: Oldest to Newest / Newest to Oldest', 'ORDER BY NgayVaoLam ASC / DESC'],
+  ['Add Level: chỉ xét tiếp khi tiêu chí trước bằng nhau', 'ORDER BY cột_1, cột_2; mỗi cột có hướng riêng'],
+  ['Lọc rồi sắp và lấy những dòng đầu', 'WHERE → ORDER BY → TOP; TOP (5) lấy tối đa 5 dòng'],
+  ['Thêm mã để phân thứ tự khi trùng ngày', 'ORDER BY NgayVaoLam DESC, MaNV ASC'],
+]} />
 
 ## Bài tập
+
+Ba bài đều chấm **thứ tự dòng** và vị trí cột; trả đủ dữ liệu nhưng xếp sai vẫn bị chấm sai. Dùng đúng phạm vi của từng đề, không thêm giới hạn hay điều kiện ngoài đề.
 
 <Exercises />
