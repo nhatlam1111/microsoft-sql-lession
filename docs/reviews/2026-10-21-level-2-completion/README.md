@@ -36,3 +36,7 @@ Lỗi nền đầu lượt: test 2.8 so chuỗi SQL có CRLF với literal JavaS
 - Evidence local ở `temp/verification/2026-10-21-level-2-review/`, không chứa cấu hình kết nối trong tài liệu bàn giao. Các giới hạn SQL/browser của lượt viết trước được bổ sung bằng bằng chứng mới này; không sửa lại kết quả lịch sử thành “đã đạt”.
 
 Tài liệu chính đã đối chiếu: Microsoft Learn về [LIKE](https://learn.microsoft.com/en-us/sql/t-sql/language-elements/like-transact-sql), [TOP](https://learn.microsoft.com/en-us/sql/t-sql/queries/top-transact-sql), [ISNULL](https://learn.microsoft.com/en-us/sql/t-sql/functions/isnull-transact-sql), [TRIM](https://learn.microsoft.com/en-us/sql/t-sql/functions/trim-transact-sql), [GETDATE](https://learn.microsoft.com/en-us/sql/t-sql/functions/getdate-transact-sql), [DATEADD](https://learn.microsoft.com/en-us/sql/t-sql/functions/dateadd-transact-sql), [DATEDIFF](https://learn.microsoft.com/en-us/sql/t-sql/functions/datediff-transact-sql) và [CASE](https://learn.microsoft.com/en-us/sql/t-sql/language-elements/case-transact-sql).
+
+## Nhật ký tích hợp
+
+Nhánh review đã push tại `b4500fd`. Local `main` cập nhật từ `origin/main` bằng fast-forward rồi merge không force tại `05a4a48`; cây tệp sau merge giống hệt nhánh review và kiểm lại đạt 258/258 test. Theo yêu cầu người làm khóa học, phát hành main với cả lịch sử bảy bài và bản sửa review. Trạng thái web/API được đối chiếu theo commit main tại [GitHub Actions](https://github.com/nhatlam1111/microsoft-sql-lession/actions); kết quả local nêu trên không tự chứng nhận CI thành công.

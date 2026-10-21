@@ -437,4 +437,4 @@ Người làm khóa học yêu cầu rõ: “review và hoàn thiện các bài 
 - [x] Web 258/258 test, check 0 lỗi/0 warning, build 90 trang, check:dist 1.561 liên kết; API build/typecheck đạt. Sửa test fixture CRLF, không nới điều kiện kiểm.
 - [x] Browser 1280/1440px, mục lục/hình/bảng/highlight, bàn phím ở sơ đồ và tự kiểm tra; ghi đúng giới hạn xác minh.
 - [x] Ghi [báo cáo tổng và tám report](../../reviews/2026-10-21-level-2-completion/README.md), Đã sửa/Không làm theo ở spec.
-- [ ] Commit/push nhánh review, nhập vào main không force, kiểm lại kết quả merge và workflow phát hành.
+- [x] Commit/push nhánh review `b4500fd`; nhập local main bằng merge `05a4a48`, cây tệp khớp nhánh đã kiểm, 258/258 test sau merge. Phát hành main theo yêu cầu; theo dõi hai workflow bằng commit main tại [GitHub Actions](https://github.com/nhatlam1111/microsoft-sql-lession/actions).
