@@ -393,3 +393,33 @@ Reviewer Codex độc lập, không kế thừa lịch sử viết, dùng model 
 
 
 **Kiểm bản cuối sau review:** 242/242 test, check 0 lỗi/0 warning/3 hint deprecation có sẵn, build 72 trang, check:dist đạt 1.379 link. Log `final-*.log` trong thư mục verification của lượt. Bộ test component có cảnh báo placeholder collection như baseline, không phải test thất bại. Source-fixture kiểm lại toàn bộ ô vẫn khớp; không đổi SQL/YAML nên API build/typecheck trước đó còn áp dụng. Chưa có xác minh SQL live hoặc browser; không push/deploy.
+
+
+## 15. Bài 2.4 đầy đủ: sắp xếp và TOP (21/10/2026)
+
+Người làm khóa học duyệt khung ngắn trong chat. Bản local ở `codex/lesson-2-4-full`, xuất phát từ commit bài 2.3 `b98cacd1e1793465902fb2b0c5ea84d8508e3fad`; chỉ bổ sung bài 2.4 và tài liệu/test liên quan, không sửa lại bài 2.3 hoặc đổi UI/API.
+
+### Nội dung
+
+- Bài 20 phút theo khung gộp, bốn tiểu mục chính: Sort/ORDER BY nhiều cột; WHERE/TOP/alias; câu lệnh và lời giải; RunFlow. Tình huống lấy tối đa năm hồ sơ hiện Đang làm, mọi phòng/mọi năm, NgayVaoLam DESC rồi MaNV ASC. Không đồng nhất ngày vào làm với ngày nhập hồ sơ hoặc ngày chuyển phòng.
+- Giải nghĩa ASC/DESC theo từng cột, thứ tự xét nhiều cột và mã khóa chính để chốt trường hợp trùng ngày; TOP tối đa N, thiếu ORDER BY không chốt nhóm, lọc trước lấy TOP. ORDER BY không đổi giá trị hay lưu thứ tự vào bảng nguồn. Giữ điều kiện dữ liệu không đổi khi nói thứ tự xác định; không thêm WITH TIES/phân trang.
+- Excel minh họa thu gọn bốn hồ sơ thật, tô C4/D4/C5/D5 cho NV029 IT đứng trước NV047 NS dù ngày cũ hơn. Câu chính có bốn alias; kết quả theo script là NV048/NV047/NV046/NV045/NV044, tô dòng đầu/cuối. RunFlow 48 → 45 → 45 → 45 → 5, ORDER BY trích 10 dòng đầu và không làm bớt dòng.
+- Ba bài tập đều `ordered: true`: KT/NS theo phòng/ngày/mã, tối đa ba hồ sơ IT đang làm mới nhất, tối đa bốn hồ sơ KT đang làm sớm nhất. Đề nói rõ vị trí cột và thứ tự dòng. Giữ API/bộ chấm hiện có; cập nhật catalog full, README và hồ sơ công ty.
+
+### Review độc lập và xử lý
+
+Agent Codex mới, không mang ngữ cảnh lúc viết, kế thừa model của phiên và không override; chỉ đọc bài/các bài trước, quy ước/hồ sơ và HTML build, không đọc script hoặc chạy SQL. [Bản report 10 mục](../../reviews/2026-10-21-bai-2-4.md) được đọc hết trước khi sửa.
+
+**Đã sửa:** thêm “WHERE nếu có” để không khiến người học nghĩ sắp xếp luôn cần bộ lọc; đổi tiêu đề bài tập 2 để không hiểu NgayVaoLam là ngày vào/chuyển phòng IT; sửa câu dẫn bài tập thành không thêm giới hạn/điều kiện ngoài đề; cắt câu logic/vật lý lặp trước RunFlow. Không đổi câu SQL hoặc dữ liệu sau review. **Không làm theo:** không có nhận xét cần loại; các mục Giữ được giữ nguyên.
+
+### Kiểm chứng và giới hạn
+
+- Baseline 242/242 test; RED thấy bài chưa full, chưa có Result/RunFlow và ba bài tập. Bản trước review 244/244 test; web check 0 lỗi/0 warning/3 hint deprecation có sẵn, build 75 trang, check:dist 1.409 link. API build 21 bài tập và API typecheck đạt.
+- Fixture đọc từ INSERT và luật quản lý của script HRM_Demo: 48 hồ sơ/45 đang làm, năm mã mới nhất nêu trên; ba bài tập dự kiến 12/3/4 dòng. Kiểm thứ tự bài tập gọi bộ so kết quả thật với `ordered: true` và xác nhận đảo thứ tự bị chấm sai. Đây không phải thực thi SQL Server hoặc chứng nhận collation.
+- `check:exercises` đã thử và dừng trước kết nối vì thiếu SQL_SERVER/SQL_DATABASE/SQL_USER/SQL_PASSWORD. Phiên không có file/biến kết nối hoặc MCP azure-sql. Chưa chạy SELECT/đáp án live, không chạy check:data vì không có kết nối và không có câu ghi nào được gửi tới database.
+- Browser cloud tiếp tục timeout ngay khi mở tab dù gọi có giới hạn 10 giây; chưa kiểm trực quan 1280/1440px, tràn ngang hoặc bàn phím. HTML build và test cấu trúc không thay thế xác minh tương tác. Không lặp lại các thử mở browser sau lỗi này.
+- Đối chiếu Microsoft: [ORDER BY](https://learn.microsoft.com/en-us/sql/t-sql/queries/select-order-by-clause-transact-sql?view=sql-server-ver17), [TOP](https://learn.microsoft.com/en-us/sql/t-sql/queries/top-transact-sql?view=sql-server-ver17), [thứ tự logic SELECT](https://learn.microsoft.com/en-us/sql/t-sql/queries/select-transact-sql?view=sql-server-ver17), [Sort trong Excel](https://support.microsoft.com/en-us/excel/sort-data-in-a-range-or-table-in-excel). Không thử SSMS hay Excel thật. Evidence và log nằm ở `temp/verification/2026-10-21-2-4-full/`.
+
+**Kiểm bản cuối sau review:** 244/244 test (29 file); web check 0 lỗi/0 warning/3 hint deprecation có sẵn, build 75 trang và check:dist 1.409 link. `source-evidence.json` đối chiếu đủ 180 ô Excel/Result/RunFlow với INSERT và luật quản lý, kiểm tổng 48 → 45 → 45 → 45 → 5 cùng ba tập bài tập 12/3/4 dòng. `html-evidence.json` xác nhận sáu mục, năm thẻ/năm panel, bốn ô Excel và hai dòng Result đánh dấu, đủ ba link/trang đề; tiêu đề bài tập 2 sau sửa đã có trong HTML. File `pending-live-selects.sql` gom SELECT để kiểm live sau. Các kiểm fixture/HTML không thay thế SQL Server và browser. API không đổi sau lần build/typecheck đạt.
+
+Bản soạn local để review, cần kiểm live SQL và browser trước khi coi đủ toàn bộ quy trình đăng bài; không push/deploy trong lượt này.

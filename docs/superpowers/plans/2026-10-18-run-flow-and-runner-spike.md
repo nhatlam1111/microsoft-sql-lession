@@ -1,5 +1,19 @@
 # Sơ đồ thứ tự chạy và chạy thử bài tập trên web: Implementation Plan
 
+## Bổ sung bài 2.4 theo khung đã duyệt (21/10/2026)
+
+Nhánh local `codex/lesson-2-4-full` nối từ bài 2.3; spec đợt 2 mục 15 ghi nội dung, xử lý review và giới hạn xác minh.
+
+- [x] Đọc quy ước/template/hồ sơ và các bài liên quan; duyệt phạm vi năm hồ sơ đang làm mới nhất, ngày DESC/mã ASC.
+- [x] Baseline và RED trước viết; thêm kiểm kết quả/RunFlow theo seed và chấm thứ tự của ba bài tập.
+- [x] Viết bài 20 phút, ba đề `ordered: true`; cập nhật hồ sơ/README và catalog kỳ vọng full, không đổi component/API.
+- [x] Test, web check/build/check:dist, API build/typecheck và kiểm fixture đạt; ghi rõ fixture không thay chạy SQL Server.
+- [x] Review độc lập 10 mục, đọc hết rồi sửa bốn nhận xét câu chữ; không đổi SQL/dữ liệu.
+- [ ] Chạy ví dụ/đáp án live và check:data: hiện thiếu cấu hình kết nối.
+- [ ] Kiểm trực quan/bàn phím: browser timeout, chưa thể xác minh; không lấy kiểm HTML làm bằng chứng thay thế.
+- [x] Kiểm bản cuối và bàn giao local, ghi các bước còn thiếu; không push/deploy.
+
+
 ## Bổ sung bài 2.3 theo thiết kế đã duyệt (21/10/2026)
 
 Thay đổi có phạm vi trong luồng bài học hiện có, đã duyệt khung ngắn trong chat. Ghi nhận tại spec đợt 2 mục 14; không mở lại phần thiết kế lịch sử bên dưới.
