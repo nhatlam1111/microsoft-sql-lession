@@ -50,6 +50,7 @@
   --font-ui: 'Be Vietnam Pro', system-ui, sans-serif;
   --font-read: 'Literata', Georgia, serif;
   --font-code: 'JetBrains Mono', Consolas, monospace;
+  --sql-tab-size: 4;
   --font-tool: 'Segoe UI', 'Be Vietnam Pro', system-ui, sans-serif;
 
   --radius-s: 6px;

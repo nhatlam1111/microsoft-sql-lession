@@ -135,11 +135,30 @@ Câu trả lời nghiệp vụ từ kết quả này, đúng giả định đầ
 ````
 
 - `Sql` dùng câu lệnh đầy đủ giải đúng tình huống. Đoạn trích, khuôn cú pháp và câu ghi dữ liệu chỉ để đọc có `copy={false}`. Kết quả lỗi dùng `Messages` với nguyên văn đã kiểm; không tự sáng tác thông báo.
+- SQL nhiều dòng theo mục 2.4 của `quy-uoc.md`: mệnh đề chính thẳng cột, phần tiếp dòng lùi một cấp 4 cột. Ghi `\t` trong template literal MDX để giữ thụt lề sau build; `focus` phải dùng cùng khoảng trắng với `query`. Không dán khoảng trắng/tab literal đầu dòng vào MDX rồi chỉ kiểm file nguồn.
 - `Result.rows` là các dòng đã chạy, `total` là tổng thật khi chỉ trích; không lấy vài dòng minh họa rồi gắn tổng ước lượng. Ví dụ thu gọn giả lập dùng bảng Markdown, ghi rõ phạm vi, không giả làm kết quả database thật.
 - Mỗi phần tử `RunFlow.steps` có `clause`, `title`, `focus`, `meaning`, `detail`, `sql`, `columns`, `rows`, `total`; `excel` là tùy chọn. `query` trùng câu cho tình huống, `focus` thuộc câu đó, `sql` trả đúng trạng thái dữ liệu của bước. Chỉ thêm sơ đồ khi có từ hai bước xử lý logic trở lên và sơ đồ giúp hiểu bài.
 - `rows` mỗi bước trích tối đa 10 dòng; `total` là số dòng thật sau bước đó. Giải thích trong drawer bắt đầu từ từ khóa, nêu dòng nào giữ/bỏ/đổi. Thứ tự logic không mô tả cách SQL Server đọc vật lý.
 - `LineMap` là khối tùy chọn khi cần tách nghĩa từng phần. Mỗi dòng có "Ví dụ:" và giá trị cụ thể được nhận, loại hoặc đổi; không chép lại cùng lời giải thích ở cả bảng lẫn đoạn văn.
 - Bài xử lý sự cố như 6.5 có thể đặt tên tiểu mục theo diễn biến sự cố; vẫn đi từ tình huống tới lời giải, giữ giới hạn an toàn và các mục cuối.
+
+### Ví dụ thụt lề SQL trong MDX
+
+Đây là mẫu **định dạng để đọc**, không phải câu cho học viên chạy hay kết quả đã kiểm. Trong file MDX dưới đây, `\t` được viết bằng dấu gạch chéo ngược và chữ `t`; khi render và sao chép nó trở thành một tab rộng 4 cột. Với chuỗi `focus` một dòng có escape xuống dòng, dùng `\n\t` cho phần điều kiện tiếp theo.
+
+````mdx
+<Sql copy={false} code={`SELECT MaNV,
+\tHoTen,
+\tCASE
+\t\tWHEN Email IS NULL THEN N'Chưa có'
+\t\tELSE Email
+\tEND AS [Email hiển thị]
+FROM NhanVien
+WHERE TrangThai = N'Đang làm'
+\tAND MaPB = 'IT';`} />
+````
+
+Kết quả cần thấy: `SELECT`/`FROM`/`WHERE` cùng cột; `HoTen`, `CASE`, `END` và `AND` lùi 4 cột; `WHEN`/`ELSE` lùi 8 cột. Các dòng trong `RunFlow.query` và `steps[].sql` ghi cùng cách này; ví dụ `focus: "WHERE TrangThai = N'Đang làm'\n\tAND MaPB = 'IT'"`. Khi kiểm, thử nút Sao chép và dán vào editor để xác nhận tab thật, không chỉ nhìn file MDX.
 
 ## Trình tự dùng khung
 

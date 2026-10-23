@@ -30,7 +30,7 @@ it('2.8 filters contract rows at the fixed inclusive horizon before calculating 
   const flow = body.match(/<RunFlow query=\{`([\s\S]*?)`\} steps=\{([\s\S]*?)\} \/>/);
   expect(flow).not.toBeNull();
   const steps = literal<FlowStep[]>(flow![2]);
-  expect(checkFlow(steps, flow![1])).toEqual([]);
+  expect(checkFlow(steps, literal<string>('`' + flow![1] + '`'))).toEqual([]);
   expect(contracts).toHaveLength(55);
   const chosen = contracts.filter(c => typeof c.NgayKetThuc === 'string'
     && c.NgayKetThuc >= '2026-10-21' && c.NgayKetThuc <= '2026-11-20');

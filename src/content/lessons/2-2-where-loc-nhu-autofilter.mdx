@@ -93,7 +93,7 @@ Dạng `yyyymmdd` tránh nhầm ngày với tháng của chuỗi như `'01/03/20
 Điều kiện là `MaPB = 'KD'`; bốn cột và tiêu đề viết như bài 2.1:
 
 <Sql code={`SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
-MaPB AS [Mã phòng], TrangThai AS [Trạng thái]
+\tMaPB AS [Mã phòng], TrangThai AS [Trạng thái]
 FROM NhanVien
 WHERE MaPB = 'KD';`} />
 
@@ -115,7 +115,7 @@ Nếu yêu cầu đổi thành chỉ người đang làm, cần thêm điều ki
 Sơ đồ thể hiện **thứ tự xử lý logic**, không phải cách đọc dữ liệu vật lý. Bấm từng bước để xem từ nguồn 48 hồ sơ còn 14 hồ sơ, rồi chọn bốn cột:
 
 <RunFlow query={`SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
-MaPB AS [Mã phòng], TrangThai AS [Trạng thái]
+\tMaPB AS [Mã phòng], TrangThai AS [Trạng thái]
 FROM NhanVien
 WHERE MaPB = 'KD';`} steps={[
   {
@@ -155,12 +155,11 @@ WHERE MaPB = 'KD';`} steps={[
   {
     clause: 'SELECT',
     title: 'Hiển thị bốn cột với tiêu đề yêu cầu.',
-    focus: `SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
-MaPB AS [Mã phòng], TrangThai AS [Trạng thái]`,
+    focus: "SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],\n\tMaPB AS [Mã phòng], TrangThai AS [Trạng thái]",
     meaning: '`SELECT` chọn các cột trả về từ những hồ sơ đã qua điều kiện. `AS` đặt tên trong kết quả như bài 2.1.',
     detail: 'Vẫn `14` hồ sơ, còn bốn cột với tiêu đề `Mã nhân viên`, `Họ tên`, `Mã phòng`, `Trạng thái`. Không lọc thêm trạng thái.',
     sql: `SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
-MaPB AS [Mã phòng], TrangThai AS [Trạng thái]
+\tMaPB AS [Mã phòng], TrangThai AS [Trạng thái]
 FROM NhanVien
 WHERE MaPB = 'KD';`,
     columns: ['Mã nhân viên', 'Họ tên', 'Mã phòng', 'Trạng thái'],

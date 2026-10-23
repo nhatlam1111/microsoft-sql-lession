@@ -111,12 +111,18 @@ describe('lesson files', () => {
     const h2 = [...page.matchAll(/<h2[^>]*>([^<]+)<\/h2>/g)].map(m => m[1].trim());
     expect(h2).toEqual(['Khóa học này dạy gì', 'Cách dùng trang', '6 level', 'Database mẫu HRM_Demo', 'Tiến độ của bạn được lưu ở đâu']);
   });
-  it('lesson SQL does not start lines with spaces, which MDX strips', () => {
+  it('lesson SQL uses escaped tabs instead of literal leading whitespace that MDX strips', () => {
     for (const f of files) for (const m of f.body.matchAll(/<Sql[^>]*code=\{`([\s\S]*?)`\}/g)) {
-      expect(m[1].split(/\r?\n/).filter(l => /^\s+\S/.test(l)), f.slug).toEqual([]);
+      const lines = m[1].split(/\r?\n/);
+      expect(lines.filter(l => /^\s+\S/.test(l)), f.slug).toEqual([]);
+      for (const [i, line] of lines.entries()) {
+        if (i > 0 && (lines[i - 1].trimEnd().endsWith(',') || /^(?:\\t)*(?:AND|OR|WHEN|ELSE|END)\b/.test(line))) {
+          expect(line.startsWith('\\t'), `${f.slug}: ${line}`).toBe(true);
+        }
+      }
     }
   });
-  it('SQL inside run-flow steps keeps the N prefix and has no leading spaces', () => {
+  it('SQL inside run-flow steps keeps the N prefix and MDX-safe indentation', () => {
     for (const f of files) for (const m of f.body.matchAll(/(?:\bsql:\s*|\bquery=\{)`([\s\S]*?)`/g)) {
       expect(findUnprefixedUnicodeStrings(m[1]), f.slug).toEqual([]);
       expect(m[1].split(/\r?\n/).filter(l => /^\s+\S/.test(l)), f.slug).toEqual([]);

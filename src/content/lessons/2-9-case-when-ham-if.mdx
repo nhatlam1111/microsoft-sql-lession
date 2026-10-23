@@ -45,8 +45,10 @@ Trong SQL Server, **`CASE` là một biểu thức**: một đoạn tính toán 
 Một ví dụ nhỏ đổi mã chức danh thành nhãn: kiểm `MaCD` bằng `TP`, rồi trả chữ tương ứng.
 
 <Sql code={`SELECT MaNV, MaCD,
-CASE WHEN MaCD = 'TP' THEN N'Trưởng phòng'
-ELSE N'Chức danh khác' END AS [Nhãn chức danh]
+\tCASE
+\t\tWHEN MaCD = 'TP' THEN N'Trưởng phòng'
+\t\tELSE N'Chức danh khác'
+\tEND AS [Nhãn chức danh]
 FROM NhanVien
 WHERE MaNV IN ('NV001', 'NV005')
 ORDER BY MaNV ASC;`} />
@@ -81,12 +83,12 @@ Các nhánh trong bài cùng trả chuỗi Unicode `N'…'`, để kết quả l
 Lọc phạm vi trước, rồi dùng hai mốc kỷ niệm để tạo cột nhóm:
 
 <Sql code={`SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
-NgayVaoLam AS [Ngày vào làm],
-CASE
-WHEN DATEADD(year, 3, NgayVaoLam) <= '20261021' THEN N'Từ 3 năm trở lên'
-WHEN DATEADD(year, 1, NgayVaoLam) <= '20261021' THEN N'Từ 1 đến dưới 3 năm'
-ELSE N'Dưới 1 năm'
-END AS [Nhóm thâm niên]
+\tNgayVaoLam AS [Ngày vào làm],
+\tCASE
+\t\tWHEN DATEADD(year, 3, NgayVaoLam) <= '20261021' THEN N'Từ 3 năm trở lên'
+\t\tWHEN DATEADD(year, 1, NgayVaoLam) <= '20261021' THEN N'Từ 1 đến dưới 3 năm'
+\t\tELSE N'Dưới 1 năm'
+\tEND AS [Nhóm thâm niên]
 FROM NhanVien
 WHERE TrangThai = N'Đang làm' AND NgayVaoLam <= '20261021'
 ORDER BY MaNV ASC;`} />
@@ -168,12 +170,12 @@ Bạn có thể gửi chị Hạnh danh sách đủ bốn cột theo mã tăng d
 Sơ đồ trình bày **thứ tự xử lý logic**, không phải cách đọc dữ liệu vật lý. Các bước đầu trích một nhóm hồ sơ để thấy ba người đã nghỉ bị loại; bước cuối hiển thị `10` dòng đầu sau khi sắp xếp:
 
 <RunFlow query={`SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
-NgayVaoLam AS [Ngày vào làm],
-CASE
-WHEN DATEADD(year, 3, NgayVaoLam) <= '20261021' THEN N'Từ 3 năm trở lên'
-WHEN DATEADD(year, 1, NgayVaoLam) <= '20261021' THEN N'Từ 1 đến dưới 3 năm'
-ELSE N'Dưới 1 năm'
-END AS [Nhóm thâm niên]
+\tNgayVaoLam AS [Ngày vào làm],
+\tCASE
+\t\tWHEN DATEADD(year, 3, NgayVaoLam) <= '20261021' THEN N'Từ 3 năm trở lên'
+\t\tWHEN DATEADD(year, 1, NgayVaoLam) <= '20261021' THEN N'Từ 1 đến dưới 3 năm'
+\t\tELSE N'Dưới 1 năm'
+\tEND AS [Nhóm thâm niên]
 FROM NhanVien
 WHERE TrangThai = N'Đang làm' AND NgayVaoLam <= '20261021'
 ORDER BY MaNV ASC;`} steps={[
@@ -486,12 +488,12 @@ WHERE TrangThai = N'Đang làm' AND NgayVaoLam <= '20261021';`,
     meaning: "`SELECT` chọn bốn cột và dùng `CASE` trả nhãn thâm niên cho từng dòng.",
     detail: "Vẫn `45` hồ sơ, còn `4` cột. Bảy dòng trích được gán đủ ba nhóm: `NV003` đủ ba năm, `NV025` chưa đủ ba năm, `NV045` chưa đủ một năm. Dữ liệu nguồn không đổi.",
     sql: `SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
-NgayVaoLam AS [Ngày vào làm],
-CASE
-WHEN DATEADD(year, 3, NgayVaoLam) <= '20261021' THEN N'Từ 3 năm trở lên'
-WHEN DATEADD(year, 1, NgayVaoLam) <= '20261021' THEN N'Từ 1 đến dưới 3 năm'
-ELSE N'Dưới 1 năm'
-END AS [Nhóm thâm niên]
+\tNgayVaoLam AS [Ngày vào làm],
+\tCASE
+\t\tWHEN DATEADD(year, 3, NgayVaoLam) <= '20261021' THEN N'Từ 3 năm trở lên'
+\t\tWHEN DATEADD(year, 1, NgayVaoLam) <= '20261021' THEN N'Từ 1 đến dưới 3 năm'
+\t\tELSE N'Dưới 1 năm'
+\tEND AS [Nhóm thâm niên]
 FROM NhanVien
 WHERE TrangThai = N'Đang làm' AND NgayVaoLam <= '20261021';`,
     columns: [
@@ -558,12 +560,12 @@ WHERE TrangThai = N'Đang làm' AND NgayVaoLam <= '20261021';`,
     meaning: "`ORDER BY` sắp danh sách `45` hồ sơ theo mã tăng dần.",
     detail: "Vẫn `45` hồ sơ và `4` cột. Hình đổi sang trích `10` dòng đầu từ `NV001` tới `NV010`; sắp xếp không bỏ bớt dòng nào.",
     sql: `SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
-NgayVaoLam AS [Ngày vào làm],
-CASE
-WHEN DATEADD(year, 3, NgayVaoLam) <= '20261021' THEN N'Từ 3 năm trở lên'
-WHEN DATEADD(year, 1, NgayVaoLam) <= '20261021' THEN N'Từ 1 đến dưới 3 năm'
-ELSE N'Dưới 1 năm'
-END AS [Nhóm thâm niên]
+\tNgayVaoLam AS [Ngày vào làm],
+\tCASE
+\t\tWHEN DATEADD(year, 3, NgayVaoLam) <= '20261021' THEN N'Từ 3 năm trở lên'
+\t\tWHEN DATEADD(year, 1, NgayVaoLam) <= '20261021' THEN N'Từ 1 đến dưới 3 năm'
+\t\tELSE N'Dưới 1 năm'
+\tEND AS [Nhóm thâm niên]
 FROM NhanVien
 WHERE TrangThai = N'Đang làm' AND NgayVaoLam <= '20261021'
 ORDER BY MaNV ASC;`,

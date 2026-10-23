@@ -94,7 +94,7 @@ Trong `COALESCE(Email, N'(chưa có)')`, hồ sơ có email giữ email, còn em
 Với phép cộng số, `10 + NULL` cho `NULL`, còn `10 + 0` cho `10`. Câu `SELECT` dưới đây kiểm hai phép tính trực tiếp, không đọc bảng; cột thứ hai dùng `ISNULL` thay phần thiếu bằng số `0` trước khi cộng:
 
 <Sql code={`SELECT 10 + NULL AS [Giữ phần thiếu],
-10 + ISNULL(NULL, 0) AS [Thay phần thiếu bằng 0];`} />
+\t10 + ISNULL(NULL, 0) AS [Thay phần thiếu bằng 0];`} />
 
 <Result columns={['Giữ phần thiếu', 'Thay phần thiếu bằng 0']} rows={[[null, 10]]} />
 
@@ -107,7 +107,7 @@ Thay `NULL` bằng `0` là một lựa chọn về ý nghĩa dữ liệu: chưa 
 Kiểm email gốc bằng `IS NULL`, rồi tạo nhãn trong phần `SELECT`:
 
 <Sql code={`SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
-MaPB AS [Mã phòng], COALESCE(Email, N'(chưa có)') AS [Email]
+\tMaPB AS [Mã phòng], COALESCE(Email, N'(chưa có)') AS [Email]
 FROM NhanVien
 WHERE Email IS NULL
 ORDER BY MaNV ASC;`} />
@@ -139,7 +139,7 @@ Bạn có thể trả lời chị Hạnh: có `2` hồ sơ chưa có giá trị 
 Sơ đồ là **thứ tự xử lý logic**, không phải cách SQL Server đọc dữ liệu vật lý. Chú ý bước `WHERE` còn giữ email `NULL`, tới `SELECT` mới tạo nhãn hiển thị:
 
 <RunFlow query={`SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
-MaPB AS [Mã phòng], COALESCE(Email, N'(chưa có)') AS [Email]
+\tMaPB AS [Mã phòng], COALESCE(Email, N'(chưa có)') AS [Email]
 FROM NhanVien
 WHERE Email IS NULL
 ORDER BY MaNV ASC;`} steps={[
@@ -283,7 +283,7 @@ WHERE Email IS NULL;`,
     meaning: "`SELECT` chọn cột, đặt tiêu đề và dùng `COALESCE` tạo giá trị email hiển thị.",
     detail: "Vẫn `2` hồ sơ, còn `4` cột. Email trong kết quả là `(chưa có)`; email ở bảng nguồn vẫn là `NULL`. Chưa chốt thứ tự dòng.",
     sql: `SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
-MaPB AS [Mã phòng], COALESCE(Email, N'(chưa có)') AS [Email]
+\tMaPB AS [Mã phòng], COALESCE(Email, N'(chưa có)') AS [Email]
 FROM NhanVien
 WHERE Email IS NULL;`,
     columns: [
@@ -320,7 +320,7 @@ WHERE Email IS NULL;`,
     meaning: "`ORDER BY` sắp hai dòng kết quả theo mã nhân viên để dễ đối chiếu.",
     detail: "Vẫn `2` hồ sơ và `4` cột: `NV044` trước `NV045`. Sắp xếp không làm bớt hồ sơ.",
     sql: `SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
-MaPB AS [Mã phòng], COALESCE(Email, N'(chưa có)') AS [Email]
+\tMaPB AS [Mã phòng], COALESCE(Email, N'(chưa có)') AS [Email]
 FROM NhanVien
 WHERE Email IS NULL
 ORDER BY MaNV ASC;`,

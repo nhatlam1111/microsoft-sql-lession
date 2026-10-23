@@ -49,6 +49,23 @@ it('Sql leaves out the copy button for a snippet that is only for reading', asyn
   expect(html).not.toContain('data-copy');
   expect(html).toMatch(/<span class="t-keyword"[^>]*>DELETE<\/span>/);
 });
+it('Sql preserves indentation in both highlighted text and copied SQL', async () => {
+  const code = "SELECT MaNV,\n\tHoTen\nFROM NhanVien\nWHERE MaPB = 'IT'\n\tAND Email IS NOT NULL;";
+  const html = await c.renderToString(Sql, { props: { code } });
+  const plain = html.replace(/<[^>]+>/g, '').replace(/&#39;/g, "'");
+  expect(plain).toContain(code);
+  const copied = html.match(/data-copy="([\s\S]*?)"/)![1].replace(/&#39;/g, "'").replace(/&#x27;/g, "'");
+  expect(copied).toBe(code);
+  expect(copied).not.toContain('\\t');
+});
+it('RunFlow retains a continued SELECT line when highlighting its focus', async () => {
+  const query = 'SELECT MaNV,\n\tHoTen\nFROM NhanVien;';
+  const base = { title: 'Xem dữ liệu.', meaning: 'Đọc hồ sơ.', detail: 'Một hồ sơ.', sql: query, columns: ['MaNV', 'HoTen'], rows: [['NV001', 'Trần Thị Mai']] };
+  const steps = [{ ...base, clause: 'FROM', focus: 'FROM NhanVien' }, { ...base, clause: 'SELECT', focus: 'SELECT MaNV,\n\tHoTen' }];
+  const html = await c.renderToString(RunFlow, { props: { query, steps } });
+  const focus = [...html.matchAll(/<mark class="rf-q-on"[^>]*>([\s\S]*?)<\/mark>/g)][1][1].replace(/<[^>]+>/g, '');
+  expect(focus).toBe('SELECT MaNV,\n\tHoTen');
+});
 it('Memo and Exercises use the fixed copy', async () => {
   const memo = await c.renderToString(Memo, { props: { rows: [['VLOOKUP dò theo mã', 'LEFT JOIN … ON']] } });
   expect(memo).toContain('Bên Excel'); expect(memo).toContain('Bên SQL');

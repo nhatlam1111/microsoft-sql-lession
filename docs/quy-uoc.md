@@ -28,7 +28,7 @@ Mọi quy ước khi viết bài, review bài và làm việc với database c�
 - Lời hứa của công cụ nói rõ phạm vi: hoàn tác chỉ có trên trang bài tập, SSMS chạy thật; lỗi 40613 thường do database đang thức dậy, lỗi kéo dài thì gửi nguyên văn cho người phụ trách.
 - Tình huống được khép lại ngay trong phần chính: có giả định rõ (mốc thời gian, phạm vi) và câu trả lời cho người hỏi, tách việc database làm với quyết định nghiệp vụ. Bài có truy vấn trả lời ngay cạnh câu lệnh và kết quả. Bài khái niệm trả lời bằng lời trong mạch giải thích. Không tách thêm mục "Trả lời chị Hạnh".
 - Bài khái niệm có ít nhất ba câu tự kiểm tra, bao phủ mục tiêu đầu bài; không chỉ hỏi các trường hợp ngoại lệ. Mỗi đáp án ngắn và tự đủ nghĩa.
-- SQL: chuỗi tiếng Việt có `N`; dòng code trong `Sql` và `RunFlow` không bắt đầu bằng dấu cách (MDX xóa). Đoạn chỉ để đọc (câu ghi dữ liệu, đoạn trích có `...`, khuôn cú pháp) có `copy={false}`. Level 1 không bảo học viên chạy `INSERT`, `UPDATE`, `DELETE` trong SSMS.
+- SQL: chuỗi tiếng Việt có `N`; xuống dòng và thụt lề theo mục 2.4. Đoạn chỉ để đọc (câu ghi dữ liệu, đoạn trích có `...`, khuôn cú pháp) có `copy={false}`. Level 1 không bảo học viên chạy `INSERT`, `UPDATE`, `DELETE` trong SSMS.
 
 ### 2.1 Khung bài và độ sâu
 
@@ -53,6 +53,15 @@ Mọi quy ước khi viết bài, review bài và làm việc với database c�
 - Bài database nói về nguồn lưu trữ thống nhất, kiểm dữ liệu bằng luật đã khai báo, tra cứu/lập báo cáo và lịch sử khi có thiết kế lưu lịch sử. Bài `WHERE` nói về lọc danh sách theo điều kiện; bài kết bảng nói về lấy thông tin qua các bảng liên quan.
 - Chỉ nêu khả năng trong phạm vi bài đã giải thích. Không hứa database tự biết dữ liệu đúng, tự đồng bộ mọi file Excel hoặc tự lưu lịch sử. Điều kiện viết ngay trong ý ứng dụng, không thêm một đoạn rào đón riêng.
 - Lời khuyên kiểm nguồn file, đọc đặc tả hoặc chuẩn bị import chỉ dùng khi đó là chủ đề cần áp dụng; không thay cho ứng dụng cụ thể của kiến thức SQL/database đang học.
+
+### 2.4 Thụt lề SQL (duyệt 23/10/2026)
+
+- Một cấp thụt lề tương đương **4 dấu cách**. Các mệnh đề chính `SELECT`, `FROM`, `WHERE`, `GROUP BY`, `HAVING`, `ORDER BY`, `UPDATE`, `SET` và `JOIN` bắt đầu cùng cột. Câu ngắn có thể giữ một dòng.
+- Khi danh sách cột hoặc biểu thức của `SELECT` xuống dòng, dòng tiếp theo lùi một cấp. `AND`/`OR` nối điều kiện ở dòng mới cũng lùi một cấp dưới `WHERE`/`HAVING`/`ON`; không thay ngoặc hoặc thứ tự điều kiện để căn lề.
+- `CASE` là một biểu thức trong danh sách cột: đặt cùng cấp với các biểu thức tiếp dòng, `WHEN`/`ELSE` lùi thêm một cấp, `END` thẳng với `CASE`. Khối lồng nhau tăng từng cấp; không căn bằng nhiều dấu cách tùy ý.
+- **Trong thuộc tính MDX**, viết ký tự escape `\t` ở đầu dòng trong template literal của `Sql.code`, `RunFlow.query` và `steps[].sql`. Một `\t` là một cấp, `\t\t` là hai cấp; không dùng khoảng trắng hoặc tab literal đầu dòng vì MDX có thể xóa. Chuỗi `focus` chứa xuống dòng phải có đúng `\n`/`\t` như phần tương ứng của `query`. Xem ví dụ chép được ở `lesson-template.md`.
+- Dùng cùng quy tắc ở câu chính, câu trong sơ đồ, `LineMap`, `Memo` và màn bài tập. CSS dùng token `--sql-tab-size: 4`; editor và lớp tô màu phải cùng mốc tab. Nút **Sao chép** giữ đúng xuống dòng/thụt lề đang hiển thị, không chép ra hai ký tự `\` và `t`. Không tự định dạng lại bản nháp người học khi gõ, mở trang hay chạy SQL.
+- Kiểm trên **bản build**: ít nhất một câu có nhiều cột/điều kiện, một `CASE` có hai cấp thụt lề, câu có highlight trong drawer và thao tác sao chép/dán vào editor. Khi chỉ sửa định dạng, đối chiếu token SQL, giữ nguyên literal/comment/điều kiện, kết quả và thông báo lỗi; không bỏ kiểm số liệu vì test cũ đang đọc chuỗi escape chưa giải mã.
 
 ## 3. Số liệu và hình
 
@@ -93,6 +102,7 @@ Mọi quy ước khi viết bài, review bài và làm việc với database c�
 - [ ] Hình đánh dấu đúng chỗ, chú thích nói phần được đánh dấu.
 - [ ] Tình huống được khép lại, khớp hồ sơ công ty; Excel được tả đúng.
 - [ ] `copy={false}` cho đoạn chỉ để đọc; bài khái niệm có ít nhất ba câu tự kiểm tra bao phủ mục tiêu, gồm thuật ngữ nền tảng.
+- [ ] SQL có mốc thụt lề 4 cột, giữ được sau build và khi sao chép; `query`/`focus`/`sql` của sơ đồ khớp nhau cả khoảng trắng.
 
 ### 4.4 Kiểm bằng máy
 
