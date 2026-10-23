@@ -1,7 +1,7 @@
 # Bài 3.1–3.3: từ tổng hợp đến lọc nhóm
 
 - Ngày: 23/10/2026.
-- Trạng thái: bản thiết kế ngắn, chờ người làm khóa học duyệt trước khi viết bài.
+- Trạng thái: người làm khóa học đã duyệt trong hội thoại ngày 23/10/2026; đang triển khai.
 - Yêu cầu: tiếp tục bài 3.1–3.3 theo quy ước hiện hành; giữ cách tách mỗi bài một branch của lượt trước.
 - Gốc: `main` tại `0f1963af2248ffe11728fffea89776ef314cdaed`, đã gồm các sửa sau review phần 2.
 - Tài liệu chi phối: [quy ước](../../quy-uoc.md), [khung bài](../../lesson-template.md), [hồ sơ công ty](../../ho-so-cong-ty.md), bài 1.1 đã duyệt và spec bài đầy đủ đợt 2. Quy ước mới hơn thay các chỉ dẫn bố cục cũ.
