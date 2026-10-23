@@ -34,3 +34,10 @@ Evidence local: `temp/verification/2026-10-23-level-3-review/`. Không commit c�
 - Lượt kiểm browser tập trung phần bài học mới; không phải một audit đầy đủ mọi trạng thái mạng, đăng nhập, 200% zoom hoặc thiết bị di động của sản phẩm. `DESIGN.md` và các component hiện hành được giữ nguyên.
 
 Nguồn ngữ nghĩa đã đối chiếu: Microsoft Learn về [AVG](https://learn.microsoft.com/en-us/sql/t-sql/functions/avg-transact-sql), [COUNT](https://learn.microsoft.com/en-us/sql/t-sql/functions/count-transact-sql), [GROUP BY](https://learn.microsoft.com/en-us/sql/t-sql/queries/select-group-by-transact-sql) và [HAVING](https://learn.microsoft.com/en-us/sql/t-sql/queries/select-having-transact-sql). Các số liệu trong báo cáo này có thêm bằng chứng thực thi live, không suy từ tài liệu thành kết quả database.
+
+## Nhập main và xuất bản
+
+- Nhánh review đã push tại `98cf19c`; fetch trước nhập xác nhận main vẫn là `0f1963a`. Merge không force thành `973994c`, cây sản phẩm trùng nhánh review; toàn bộ 267 test đạt trên cây đã nhập. Push main và đối chiếu SHA remote thành công, không có xung đột hoặc thay đổi người dùng bị ghi đè.
+- Với SHA đầy đủ `973994cdd77d8b49e0b8556235b250ab5b0c1531`, [Deploy to GitHub Pages](https://github.com/nhatlam1111/microsoft-sql-lession/actions/runs/39984684083) và [Deploy the exercise API](https://github.com/nhatlam1111/microsoft-sql-lession/actions/runs/39984684535) đều **success**. API đã qua bước kiểm ping không mã trả 401; đây là kiểm health, không phải nộp một bài làm qua browser.
+- Browser công khai xác nhận [3.1](https://nhatlam1111.github.io/microsoft-sql-lession/bai/3-1-count-sum-avg/), [3.2](https://nhatlam1111.github.io/microsoft-sql-lession/bai/3-2-group-by-pivottable/) và [3.3](https://nhatlam1111.github.io/microsoft-sql-lession/bai/3-3-having-loc-sau-khi-gop/) có câu sửa mới, đủ sáu mục và ba liên kết bài tập mỗi bài. Đã xem và lưu ảnh `published-3-2.png` trong thư mục evidence local. Không dùng số liệu CI để thay kiểm SQL Server độc lập ở trên.
+- Commit hồ sơ sau bước này chỉ ghi kết quả thực tế và hoàn tất checkbox của plan; giữ nguyên source/YAML đã kiểm và giữ các nhánh để tra lại.
