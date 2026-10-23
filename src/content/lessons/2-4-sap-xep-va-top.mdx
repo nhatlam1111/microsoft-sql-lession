@@ -91,7 +91,7 @@ Bạn có thể dùng tên nguồn hoặc alias để sắp: `ORDER BY [Ngày v�
 Viết câu lệnh với bốn cột và tiêu đề yêu cầu:
 
 <Sql code={`SELECT TOP (5) MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
-MaPB AS [Mã phòng], NgayVaoLam AS [Ngày vào làm]
+\tMaPB AS [Mã phòng], NgayVaoLam AS [Ngày vào làm]
 FROM NhanVien
 WHERE TrangThai = N'Đang làm'
 ORDER BY NgayVaoLam DESC, MaNV ASC;`} />
@@ -143,7 +143,7 @@ Bốn cột có đúng thứ tự và tiêu đề cần gửi. Nếu ngày vào 
 Sơ đồ là **thứ tự xử lý logic**, không phải cách SQL Server quét hay sắp dữ liệu vật lý. Bấm từng thẻ để thấy `48` hồ sơ nguồn còn `45` sau lọc; sắp xếp giữ nguyên số dòng, rồi `TOP` mới giới hạn còn `5`:
 
 <RunFlow query={`SELECT TOP (5) MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
-MaPB AS [Mã phòng], NgayVaoLam AS [Ngày vào làm]
+\tMaPB AS [Mã phòng], NgayVaoLam AS [Ngày vào làm]
 FROM NhanVien
 WHERE TrangThai = N'Đang làm'
 ORDER BY NgayVaoLam DESC, MaNV ASC;`} steps={[
@@ -298,12 +298,11 @@ WHERE TrangThai = N'Đang làm';`,
   {
     clause: "SELECT",
     title: "Chọn bốn cột và đặt tiêu đề.",
-    focus: `SELECT TOP (5) MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
-MaPB AS [Mã phòng], NgayVaoLam AS [Ngày vào làm]`,
+    focus: "SELECT TOP (5) MaNV AS [Mã nhân viên], HoTen AS [Họ tên],\n\tMaPB AS [Mã phòng], NgayVaoLam AS [Ngày vào làm]",
     meaning: "`SELECT` chọn cột đưa ra kết quả; `AS` đặt tiêu đề tiếng Việt.",
     detail: "Vẫn `45` hồ sơ, còn `4` cột. `TOP (5)` tuy viết trên dòng SELECT nhưng chưa giới hạn dòng ở bước logic này.",
     sql: `SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
-MaPB AS [Mã phòng], NgayVaoLam AS [Ngày vào làm]
+\tMaPB AS [Mã phòng], NgayVaoLam AS [Ngày vào làm]
 FROM NhanVien
 WHERE TrangThai = N'Đang làm';`,
     columns: [
@@ -342,7 +341,7 @@ WHERE TrangThai = N'Đang làm';`,
     meaning: "`ORDER BY` xếp `NgayVaoLam` giảm dần; nếu cùng ngày thì xét `MaNV` tăng dần.",
     detail: "Vẫn `45` hồ sơ; hình trích `10` dòng đầu sau sắp xếp. Chưa bỏ hồ sơ ở bước này.",
     sql: `SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
-MaPB AS [Mã phòng], NgayVaoLam AS [Ngày vào làm]
+\tMaPB AS [Mã phòng], NgayVaoLam AS [Ngày vào làm]
 FROM NhanVien
 WHERE TrangThai = N'Đang làm'
 ORDER BY NgayVaoLam DESC, MaNV ASC;`,
@@ -428,7 +427,7 @@ ORDER BY NgayVaoLam DESC, MaNV ASC;`,
     meaning: "`TOP (5)` giới hạn kết quả ở tối đa `5` dòng theo thứ tự đã chọn.",
     detail: "Từ `45` hồ sơ còn `5`: `NV048`, `NV047`, `NV046`, `NV045`, `NV044`.",
     sql: `SELECT TOP (5) MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
-MaPB AS [Mã phòng], NgayVaoLam AS [Ngày vào làm]
+\tMaPB AS [Mã phòng], NgayVaoLam AS [Ngày vào làm]
 FROM NhanVien
 WHERE TrangThai = N'Đang làm'
 ORDER BY NgayVaoLam DESC, MaNV ASC;`,

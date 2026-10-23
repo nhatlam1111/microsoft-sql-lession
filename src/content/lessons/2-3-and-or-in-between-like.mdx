@@ -42,12 +42,12 @@ Trong SQL, **`AND`** yêu cầu các điều kiện cùng đúng; **`OR`** chỉ
 Khi kết hợp, SQL Server xét **`AND` trước `OR`** về mặt logic. Dùng **ngoặc tròn** để nhóm hai phòng trước khi ràng buộc khoảng ngày; xuống dòng hoặc thụt lề không thay cho ngoặc. So hai cách viết dưới đây, chỉ trích phần điều kiện:
 
 <Sql copy={false} title="Đặt ngoặc để khoảng ngày áp dụng cho cả hai phòng" code={`WHERE (MaPB = 'KD' OR MaPB = 'IT')
-AND NgayVaoLam >= '20230101'
-AND NgayVaoLam <= '20230630'`} />
+\tAND NgayVaoLam >= '20230101'
+\tAND NgayVaoLam <= '20230630'`} />
 
 <Sql copy={false} title="Thiếu ngoặc: mọi hồ sơ KD đều được giữ" code={`WHERE MaPB = 'KD' OR MaPB = 'IT'
-AND NgayVaoLam >= '20230101'
-AND NgayVaoLam <= '20230630'`} />
+\tAND NgayVaoLam >= '20230101'
+\tAND NgayVaoLam <= '20230630'`} />
 
 Ở cách thiếu ngoặc, điều kiện được hiểu là `KD` **hoặc** (`IT` **và** đạt hai mốc ngày). `NV002` thuộc `KD` nhưng vào làm `2024-04-01` vẫn lọt vào, dù nằm ngoài khoảng yêu cầu. Với ngoặc đúng, hồ sơ này bị loại. Đây là cách hiểu điều kiện, không phải lời hứa SQL Server sẽ kiểm từng vế theo thứ tự vật lý đó.
 
@@ -89,10 +89,10 @@ WHERE HoTen LIKE N'Nguyễn%';`} />
 Dùng `IN` để gom hai phòng và `BETWEEN` để ghi khoảng ngày, rồi đặt bốn tiêu đề như bài 2.1:
 
 <Sql code={`SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
-MaPB AS [Mã phòng], NgayVaoLam AS [Ngày vào làm]
+\tMaPB AS [Mã phòng], NgayVaoLam AS [Ngày vào làm]
 FROM NhanVien
 WHERE MaPB IN ('KD', 'IT')
-AND NgayVaoLam BETWEEN '20230101' AND '20230630';`} />
+\tAND NgayVaoLam BETWEEN '20230101' AND '20230630';`} />
 
 <Result columns={['Mã nhân viên', 'Họ tên', 'Mã phòng', 'Ngày vào làm']} rows={[
   ['NV003', 'Nguyễn Thu Hà', 'KD', '2023-06-01'],
@@ -108,10 +108,10 @@ Bạn có thể trả lời chị Hạnh: có `2` hồ sơ đạt cả nhóm ph�
 Sơ đồ thể hiện **thứ tự xử lý logic**, không phải thứ tự đọc dữ liệu vật lý. Các điều kiện nằm chung trong bước `WHERE`; sơ đồ không tách thành những lượt quét bảng theo từng từ khóa:
 
 <RunFlow query={`SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
-MaPB AS [Mã phòng], NgayVaoLam AS [Ngày vào làm]
+\tMaPB AS [Mã phòng], NgayVaoLam AS [Ngày vào làm]
 FROM NhanVien
 WHERE MaPB IN ('KD', 'IT')
-AND NgayVaoLam BETWEEN '20230101' AND '20230630';`} steps={[
+\tAND NgayVaoLam BETWEEN '20230101' AND '20230630';`} steps={[
   {
     clause: 'FROM',
     title: 'Xác định bảng NhanVien làm nguồn.',
@@ -132,13 +132,12 @@ AND NgayVaoLam BETWEEN '20230101' AND '20230630';`} steps={[
   {
     clause: 'WHERE',
     title: 'Giữ hồ sơ qua cả nhóm phòng và khoảng ngày.',
-    focus: `WHERE MaPB IN ('KD', 'IT')
-AND NgayVaoLam BETWEEN '20230101' AND '20230630'`,
+    focus: "WHERE MaPB IN ('KD', 'IT')\n\tAND NgayVaoLam BETWEEN '20230101' AND '20230630'",
     meaning: '`WHERE` chỉ giữ hồ sơ khi toàn bộ điều kiện đúng: phòng thuộc danh sách `IN` và ngày trong khoảng `BETWEEN`.',
     detail: 'Còn `2` hồ sơ, vẫn đủ `12` cột. `NV003`, `NV043` được giữ; `NV030` bị loại vì mã phòng là `NS`.',
     sql: `SELECT * FROM NhanVien
 WHERE MaPB IN ('KD', 'IT')
-AND NgayVaoLam BETWEEN '20230101' AND '20230630';`,
+\tAND NgayVaoLam BETWEEN '20230101' AND '20230630';`,
     columns: ['MaNV', 'HoTen', 'GioiTinh', 'NgaySinh', 'SoCCCD', 'Email', 'NgayVaoLam', 'NgayNghiViec', 'MaPB', 'MaCD', 'MaQuanLy', 'TrangThai'],
     rows: [
       ['NV003', 'Nguyễn Thu Hà', 'Nữ', '1995-01-25', '000195147214', 'ha.nt@hrmdemo.vn', '2023-06-01', null, 'KD', 'CV', 'NV006', 'Đang làm'],
@@ -151,15 +150,14 @@ AND NgayVaoLam BETWEEN '20230101' AND '20230630';`,
   {
     clause: 'SELECT',
     title: 'Lấy bốn cột và đặt tiêu đề tiếng Việt.',
-    focus: `SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
-MaPB AS [Mã phòng], NgayVaoLam AS [Ngày vào làm]`,
+    focus: "SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],\n\tMaPB AS [Mã phòng], NgayVaoLam AS [Ngày vào làm]",
     meaning: '`SELECT` chọn cột từ những hồ sơ đã qua điều kiện; `AS` đặt tiêu đề trong kết quả.',
     detail: 'Vẫn `2` hồ sơ, còn `4` cột để gửi chị Hạnh; không thêm hoặc loại hồ sơ ở bước này.',
     sql: `SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
-MaPB AS [Mã phòng], NgayVaoLam AS [Ngày vào làm]
+\tMaPB AS [Mã phòng], NgayVaoLam AS [Ngày vào làm]
 FROM NhanVien
 WHERE MaPB IN ('KD', 'IT')
-AND NgayVaoLam BETWEEN '20230101' AND '20230630';`,
+\tAND NgayVaoLam BETWEEN '20230101' AND '20230630';`,
     columns: ['Mã nhân viên', 'Họ tên', 'Mã phòng', 'Ngày vào làm'],
     rows: [
       ['NV003', 'Nguyễn Thu Hà', 'KD', '2023-06-01'],

@@ -52,10 +52,10 @@ Trong SQL Server, **hàm chuỗi** nhận giá trị đầu vào và trả giá 
 Câu dưới là **ví dụ giá trị trực tiếp**, không đọc bảng và không đổi mã trong hệ thống. Cột cuối cho thấy `LEN` của SQL khác `LEN` trong Excel: dấu cách cuối `NV007 ` không được tính.
 
 <Sql code={`SELECT LEFT('NV007', 2) AS DauMa,
-RIGHT('NV007', 3) AS DuoiMa,
-SUBSTRING('NV007', 3, 3) AS PhanSo,
-LEN('NV007') AS DoDai,
-LEN('NV007 ') AS DoDaiCoDauCachCuoi;`} />
+\tRIGHT('NV007', 3) AS DuoiMa,
+\tSUBSTRING('NV007', 3, 3) AS PhanSo,
+\tLEN('NV007') AS DoDai,
+\tLEN('NV007 ') AS DoDaiCoDauCachCuoi;`} />
 
 <Result columns={['DauMa', 'DuoiMa', 'PhanSo', 'DoDai', 'DoDaiCoDauCachCuoi']} rows={[
   ['NV', '007', '007', 5, 5],
@@ -70,10 +70,10 @@ LEN('NV007 ') AS DoDaiCoDauCachCuoi;`} />
 **`UPPER`** đổi chữ thường thành hoa, **`LOWER`** đổi chữ hoa thành thường; chúng không bỏ dấu tiếng Việt. `LOWER` nhận `NULL` thì vẫn trả `NULL`. Ví dụ trực tiếp dưới đây dùng chuỗi tự viết có hai dấu cách giữa `Kế` và `toán`, cột độ dài sau `TRIM` cho kết quả `8`, thay vì `7` nếu chỉ có một dấu cách:
 
 <Sql code={`SELECT TRIM(N'  Kế  toán  ') AS BoHaiDau,
-LEN(TRIM(N'  Kế  toán  ')) AS DoDaiSauTRIM,
-UPPER(N'Kế toán') AS ChuHoa,
-LOWER('IT') AS ChuThuong,
-CONCAT(N'[', NULL, N']') AS GhepVoiNULL;`} />
+\tLEN(TRIM(N'  Kế  toán  ')) AS DoDaiSauTRIM,
+\tUPPER(N'Kế toán') AS ChuHoa,
+\tLOWER('IT') AS ChuThuong,
+\tCONCAT(N'[', NULL, N']') AS GhepVoiNULL;`} />
 
 <Result columns={['BoHaiDau', 'DoDaiSauTRIM', 'ChuHoa', 'ChuThuong', 'GhepVoiNULL']} rows={[
   ['Kế  toán', 8, 'KẾ TOÁN', 'it', '[]'],
@@ -111,7 +111,7 @@ Muốn tìm chính dấu `%` hoặc `_` trong dữ liệu, đặt nó trong ngo�
 Danh sách ký nhận cần nguyên họ tên, nên ghép trực tiếp `MaNV`, dấu phân cách và `HoTen`:
 
 <Sql code={`SELECT MaNV AS [Mã nhân viên],
-CONCAT(MaNV, N' - ', HoTen) AS [Nhãn ký nhận]
+\tCONCAT(MaNV, N' - ', HoTen) AS [Nhãn ký nhận]
 FROM NhanVien
 WHERE MaPB = 'IT'
 ORDER BY MaNV ASC;`} />
@@ -136,7 +136,7 @@ Bạn có thể gửi chị Hạnh danh sách `10` hồ sơ hiện mang mã phò
 Sơ đồ mô tả **thứ tự xử lý logic**, không phải cách SQL Server đọc dữ liệu vật lý. Lọc phòng trước, rồi mới ghép nhãn trong phần `SELECT`:
 
 <RunFlow query={`SELECT MaNV AS [Mã nhân viên],
-CONCAT(MaNV, N' - ', HoTen) AS [Nhãn ký nhận]
+\tCONCAT(MaNV, N' - ', HoTen) AS [Nhãn ký nhận]
 FROM NhanVien
 WHERE MaPB = 'IT'
 ORDER BY MaNV ASC;`} steps={[
@@ -295,7 +295,7 @@ WHERE MaPB = 'IT';`,
     "meaning": "`SELECT` chọn mã, ghép nhãn cho từng hồ sơ và đặt hai tiêu đề.",
     "detail": "Vẫn `10` dòng, còn `2` cột. `NV007` tạo nhãn `NV007 - Bùi Thanh Sơn`; họ tên nguồn vẫn giữ nguyên. Chưa chốt thứ tự dòng.",
     sql: `SELECT MaNV AS [Mã nhân viên],
-CONCAT(MaNV, N' - ', HoTen) AS [Nhãn ký nhận]
+\tCONCAT(MaNV, N' - ', HoTen) AS [Nhãn ký nhận]
 FROM NhanVien
 WHERE MaPB = 'IT';`,
     "columns": [
@@ -358,7 +358,7 @@ WHERE MaPB = 'IT';`,
     "meaning": "`ORDER BY` xếp mười dòng kết quả theo mã nhân viên tăng dần.",
     "detail": "Vẫn `10` dòng và `2` cột; `NV007` đứng đầu, `NV048` đứng cuối. Sắp xếp không đổi nội dung nhãn.",
     sql: `SELECT MaNV AS [Mã nhân viên],
-CONCAT(MaNV, N' - ', HoTen) AS [Nhãn ký nhận]
+\tCONCAT(MaNV, N' - ', HoTen) AS [Nhãn ký nhận]
 FROM NhanVien
 WHERE MaPB = 'IT'
 ORDER BY MaNV ASC;`,

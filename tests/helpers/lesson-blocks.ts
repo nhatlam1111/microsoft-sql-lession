@@ -12,5 +12,5 @@ export function lessonBlocks(slug: string) {
   const results = [...body.matchAll(/<Result columns=\{(\[[\s\S]*?\])\} rows=\{(\[[\s\S]*?\])\}([^>]*?)\/>/g)]
     .map(m => ({ columns: literal<string[]>(m[1]), rows: literal<FlowCell[][]>(m[2]),
       total: Number(m[3].match(/total=\{(\d+)\}/)?.[1] ?? literal<FlowCell[][]>(m[2]).length) }));
-  return { ...lesson, body, results, query: flow?.[1] ?? '', steps: flow ? literal<FlowStep[]>(flow[2]) : [] };
+  return { ...lesson, body, results, query: flow ? literal<string>('`' + flow[1] + '`') : '', steps: flow ? literal<FlowStep[]>(flow[2]) : [] };
 }

@@ -81,12 +81,12 @@ Khi không có dòng nào đạt `WHERE`, truy vấn tổng hợp không `GROUP 
 `SoNgay` đã là số thập phân nên `AVG(SoNgay)` giữ phần lẻ. `CAST(... AS decimal(10,2))` chuyển kết quả bình quân sang số có hai chữ số thập phân, làm tròn ở kết quả; không sửa số ngày trên từng đơn. `10` là tổng số chữ số tối đa, `2` là số chữ số sau dấu thập phân (xem kiểu số ở bài 1.3).
 
 <Sql code={`SELECT COUNT(*) AS [SoDon],
-SUM(SoNgay) AS [TongNgay],
-CAST(AVG(SoNgay) AS decimal(10,2)) AS [BinhQuan],
-MIN(SoNgay) AS [ItNhat], MAX(SoNgay) AS [NhieuNhat]
+\tSUM(SoNgay) AS [TongNgay],
+\tCAST(AVG(SoNgay) AS decimal(10,2)) AS [BinhQuan],
+\tMIN(SoNgay) AS [ItNhat], MAX(SoNgay) AS [NhieuNhat]
 FROM DonNghiPhep
 WHERE TrangThai = N'Đã duyệt'
-AND TuNgay >= '20260901' AND TuNgay < '20261001';`} />
+\tAND TuNgay >= '20260901' AND TuNgay < '20261001';`} />
 
 <Result columns={['SoDon', 'TongNgay', 'BinhQuan', 'ItNhat', 'NhieuNhat']} rows={[
   [9, '16.0', '1.78', '1.0', '3.0'],
@@ -99,12 +99,12 @@ Chị Hạnh có `9` đơn đạt điều kiện, tổng `16.0` ngày, bình qu�
 Theo thứ tự logic, câu này lấy bảng, lọc đơn, rồi tổng hợp ra một dòng. Trong bảng chi tiết, `FROM` trích `10` trong `20` đơn; `WHERE` hiện đủ `9` đơn. Câu chưa có `ORDER BY` thì thứ tự dòng có thể khác hình. Sơ đồ không mô tả thứ tự đọc dữ liệu vật lý của SQL Server.
 
 <RunFlow query={`SELECT COUNT(*) AS [SoDon],
-SUM(SoNgay) AS [TongNgay],
-CAST(AVG(SoNgay) AS decimal(10,2)) AS [BinhQuan],
-MIN(SoNgay) AS [ItNhat], MAX(SoNgay) AS [NhieuNhat]
+\tSUM(SoNgay) AS [TongNgay],
+\tCAST(AVG(SoNgay) AS decimal(10,2)) AS [BinhQuan],
+\tMIN(SoNgay) AS [ItNhat], MAX(SoNgay) AS [NhieuNhat]
 FROM DonNghiPhep
 WHERE TrangThai = N'Đã duyệt'
-AND TuNgay >= '20260901' AND TuNgay < '20261001';`} steps={[
+\tAND TuNgay >= '20260901' AND TuNgay < '20261001';`} steps={[
   {
     clause: 'FROM',
     title: 'Lấy các đơn nghỉ đang lưu.',
@@ -133,13 +133,13 @@ FROM DonNghiPhep;`,
   {
     clause: 'WHERE',
     title: 'Giữ đơn đã duyệt bắt đầu tháng 9.',
-    focus: "WHERE TrangThai = N'Đã duyệt'\nAND TuNgay >= '20260901' AND TuNgay < '20261001'",
+    focus: "WHERE TrangThai = N'Đã duyệt'\n\tAND TuNgay >= '20260901' AND TuNgay < '20261001'",
     meaning: '`WHERE` chọn từng dòng đạt điều kiện trước khi tính các hàm tổng hợp.',
     detail: '`WHERE` giữ `9` trong `20` đơn: đã duyệt và bắt đầu trong tháng 9. `DP010` bị loại vì từ chối; `DP018` bị loại vì bắt đầu trong tháng 8 dù kết thúc trong tháng 9.',
     sql: `SELECT MaDon, TuNgay, SoNgay, TrangThai
 FROM DonNghiPhep
 WHERE TrangThai = N'Đã duyệt'
-AND TuNgay >= '20260901' AND TuNgay < '20261001';`,
+\tAND TuNgay >= '20260901' AND TuNgay < '20261001';`,
     columns: ['MaDon', 'TuNgay', 'SoNgay', 'TrangThai'],
     rows: [
       ['DP001', '2026-09-07', '2.0', 'Đã duyệt'],
@@ -159,16 +159,16 @@ AND TuNgay >= '20260901' AND TuNgay < '20261001';`,
   {
     clause: 'SELECT',
     title: 'Tính năm con số cho cả phạm vi.',
-    focus: 'SELECT COUNT(*) AS [SoDon],\nSUM(SoNgay) AS [TongNgay],\nCAST(AVG(SoNgay) AS decimal(10,2)) AS [BinhQuan],\nMIN(SoNgay) AS [ItNhat], MAX(SoNgay) AS [NhieuNhat]',
+    focus: "SELECT COUNT(*) AS [SoDon],\n\tSUM(SoNgay) AS [TongNgay],\n\tCAST(AVG(SoNgay) AS decimal(10,2)) AS [BinhQuan],\n\tMIN(SoNgay) AS [ItNhat], MAX(SoNgay) AS [NhieuNhat]",
     meaning: '`SELECT` ở câu tổng hợp này trả các giá trị tính trên toàn bộ những dòng qua `WHERE`; `AS` đặt tên cột kết quả.',
     detail: '`SELECT` biến `9` dòng chi tiết thành `1` dòng gồm `5` chỉ tiêu. Tổng số ngày là `16.0`; chia cho `9` đơn rồi làm tròn hai chữ số thập phân được `1.78` ngày mỗi đơn.',
     sql: `SELECT COUNT(*) AS [SoDon],
-SUM(SoNgay) AS [TongNgay],
-CAST(AVG(SoNgay) AS decimal(10,2)) AS [BinhQuan],
-MIN(SoNgay) AS [ItNhat], MAX(SoNgay) AS [NhieuNhat]
+\tSUM(SoNgay) AS [TongNgay],
+\tCAST(AVG(SoNgay) AS decimal(10,2)) AS [BinhQuan],
+\tMIN(SoNgay) AS [ItNhat], MAX(SoNgay) AS [NhieuNhat]
 FROM DonNghiPhep
 WHERE TrangThai = N'Đã duyệt'
-AND TuNgay >= '20260901' AND TuNgay < '20261001';`,
+\tAND TuNgay >= '20260901' AND TuNgay < '20261001';`,
     columns: ['SoDon', 'TongNgay', 'BinhQuan', 'ItNhat', 'NhieuNhat'],
     rows: [[9, '16.0', '1.78', '1.0', '3.0']],
     total: 1,

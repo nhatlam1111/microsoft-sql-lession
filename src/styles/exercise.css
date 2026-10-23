@@ -19,7 +19,7 @@
 .ed { position: relative; height: 280px; border: 1px solid var(--rule-strong); border-radius: var(--radius-m); background: #FFF; overflow: hidden; transition: border-color var(--motion-fast) var(--ease-ui), box-shadow var(--motion-fast) var(--ease-ui); }
 .ed-highlight, .ed-input {
   position: absolute; inset: 0; margin: 0; padding: 12px 14px; border: 0;
-  font-family: var(--font-code); font-size: 13.5px; line-height: 1.65; tab-size: 4;
+  font-family: var(--font-code); font-size: 13.5px; line-height: 1.65; tab-size: var(--sql-tab-size);
   white-space: pre; overflow: auto; letter-spacing: normal;
 }
 .ed-highlight { color: #000; pointer-events: none; overflow: hidden; }

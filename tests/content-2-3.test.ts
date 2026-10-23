@@ -22,7 +22,7 @@ function seedPeople() {
 describe('lesson 2.3 combines conditions without changing their scope', () => {
   it('is a full lesson whose main example keeps both departments inside the date range', () => {
     expect((lesson().data as { kind: string }).kind).toBe('full');
-    const blocks = [...lesson().body.matchAll(/<Sql[^>]*code=\{`([\s\S]*?)`\}/g)].map(m => m[1]);
+    const blocks = [...lesson().body.matchAll(/<Sql[^>]*code=\{(`([\s\S]*?)`)\}/g)].map(m => runInNewContext(m[1]) as string);
     expect(blocks.some(sql => /MaPB IN \('KD', 'IT'\)\s+AND NgayVaoLam BETWEEN '20230101' AND '20230630'/.test(sql))).toBe(true);
     const text = lesson().body.replace(/`|\*\*/g, '');
     for (const pattern of [/AND.{0,35}trước OR/, /cả hai (?:đầu mút|mốc)/, /không.{0,30}thứ tự.{0,30}(?:vật lý|đọc dữ liệu)/s]) {
