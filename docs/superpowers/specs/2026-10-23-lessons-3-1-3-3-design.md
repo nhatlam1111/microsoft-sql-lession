@@ -75,3 +75,17 @@ Review độc lập: [bản đầy đủ](../../reviews/2026-10-23-bai-3-1.md), 
 **Kiểm cuối 3.1:** 261/261 test, 36 file; Astro check 0 lỗi/0 warning, 3 hint nền; build 93 trang; check-dist OK 93 trang/1.591 link; API build 39 bài tập, typecheck đạt. Kiểm nguồn độc lập 88 ô và ba answer qua SQLite có chuyển N-prefix, literal ngày, CAST kết quả AVG sang ROUND; chỉ là kiểm fixture, không phải T-SQL live. HTML tĩnh khớp sáu mục, ba card/panel, năm bảng Result và ba trang bài tập.
 
 **Còn thiếu:** check:exercises thoát trước khi kết nối với lỗi `SQL_SERVER, SQL_DATABASE, SQL_USER and SQL_PASSWORD must be set.` Không có browser binary để kiểm hình thức, click và bàn phím. Không thay đổi dữ liệu hoặc push/deploy. Trong lúc chờ review đã chuẩn bị test 3.2 (đã thấy RED) và bản nháp trong temp; không đưa chúng vào commit/branch 3.1.
+
+## Nhật ký triển khai 3.2
+
+Branch `codex/lesson-3-2-full` nối từ commit 3.1 `6b8cce1`. Tình huống có 45 hồ sơ đang làm, nhóm theo MaPB thành sáu dòng, xếp số lượng giảm dần/mã tăng dần. Ví dụ hai khóa chỉ lấy KD ở mọi trạng thái, tránh trở thành đáp án nguyên vẹn cho bài tập nhóm toàn bộ phòng/trạng thái. Ba bài tập lần lượt đổi sang MaCD đang làm, tám cặp phòng/trạng thái của toàn bộ hồ sơ, và ba loại nghỉ trên mọi đơn đã duyệt.
+
+Review độc lập: [report 3.2](../../reviews/2026-10-23-bai-3-2.md), agent mới Codex kế thừa model phiên, không đọc seed/fixture/review cũ. Đã đọc toàn bộ trước khi sửa.
+
+**Đã sửa:** mục 2 nói rõ lọc TrangThai ở Filters của PivotTable; mục 3 chú thích cả A2/B2/B8; mục 7 cắt giới hạn quá khứ lặp lại, vẫn giữ giả định đầu bài; mục 8 thay “drawer” bằng thao tác bấm bước để xem; mục 10 thống nhất đơn vị hồ sơ thay vì người; mục 11 highlight số liệu trong lời giải từng bước. Làm rõ goal thành tổng hợp theo một/nhiều cột nhóm. Giữ ví dụ GROUP BY trước SELECT: câu kiểm dùng SELECT riêng để nhìn nhóm, không khẳng định alias của câu gốc có sớm hơn.
+
+**Không làm theo:** không có đề xuất sửa nội dung trong report bị loại; không mở rộng sang tổng cộng nhiều cấp hoặc sửa component để phân biệt hai bảng trung gian giống nhau. Đối chiếu [Field List](https://support.microsoft.com/en-us/excel/get-started/use-the-field-list-to-arrange-fields-in-a-pivottable), [lọc PivotTable](https://support.microsoft.com/en-us/excel/get-started/filter-data-in-a-pivottable) và GROUP BY/SELECT của Microsoft khi xử lý review.
+
+**Kiểm cuối 3.2:** 264/264 test, 37 file; Astro check 0 lỗi/0 warning, 3 hint nền; build 96 trang; check-dist OK 96 trang/1.621 link; API build 42 bài tập và typecheck đạt. Kiểm fixture độc lập qua SQLite cho cả 3.1–3.2: 202 ô Result/RunFlow, sáu answer và kiểm không có query minh họa giải đúng nguyên vẹn bài tập mới. HTML tĩnh khớp sáu mục, năm card/panel, bảy bảng Result và ba trang bài tập của 3.2.
+
+**Còn thiếu:** check:exercises vẫn bị chặn trước kết nối do thiếu SQL_SERVER/DATABASE/USER/PASSWORD; không có xác nhận SQL Server hay kiểm trình duyệt. Không ghi database, không push/deploy. Test 3.3 đã thấy 2 FAIL trên bài/YAML còn thiếu, 1 PASS trên fixture ngưỡng; giữ test và nháp 3.3 trong temp khi chốt branch 3.2.
