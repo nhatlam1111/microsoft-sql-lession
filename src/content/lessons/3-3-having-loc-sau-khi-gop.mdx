@@ -43,7 +43,7 @@ Trong SQL, **`HAVING`** đặt điều kiện lên các nhóm sau khi `GROUP BY`
 | `WHERE TrangThai = N'Đang làm'` | Từng dòng hồ sơ, trước khi nhóm | Từ `48` hồ sơ giữ `45` |
 | `HAVING COUNT(*) > 10` | Từng nhóm phòng đã tổng hợp | Từ `6` nhóm giữ `1` |
 
-`HAVING` loại cả nhóm không đạt điều kiện khỏi kết quả, không chọn lại từng hồ sơ trong nhóm. Phòng còn lại vẫn mang số lượng được tính từ toàn bộ hồ sơ đã qua `WHERE`; hai bộ lọc làm hai việc khác nhau, không thay thế nhau.
+`HAVING` loại cả nhóm không đạt điều kiện khỏi kết quả, không chọn lại từng hồ sơ trong nhóm. Phòng còn lại vẫn mang số lượng được tính từ toàn bộ hồ sơ đã qua `WHERE`.
 
 ### Đặt điều kiện mà không đổi ý nghĩa báo cáo
 

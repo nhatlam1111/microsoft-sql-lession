@@ -42,7 +42,7 @@ Với Excel, bạn tạo PivotTable từ danh sách hồ sơ, đưa trạng thá
   ['Grand Total', 45],
 ]} />
 
-Trong SQL, **`GROUP BY`** chia các dòng đã qua `WHERE` thành các nhóm theo cột bạn chọn. `GROUP BY MaPB` gom những hồ sơ cùng mã phòng; `COUNT(*)` đếm trong từng nhóm, thay cho đếm cả phạm vi như bài 3.1. `MaPB` là **khóa nhóm**: giá trị dùng để xác định hồ sơ nào thuộc cùng một nhóm.
+Trong SQL, **`GROUP BY`** chia các dòng đã qua `WHERE` thành các nhóm theo cột bạn chọn. `GROUP BY MaPB` gom những hồ sơ cùng mã phòng; `COUNT(*)` đếm trong từng nhóm. `MaPB` là **khóa nhóm**: giá trị dùng để xác định hồ sơ nào thuộc cùng một nhóm. Nếu nhóm theo một cột có `NULL`, các dòng mang `NULL` được gom thành một nhóm.
 
 Bạn viết `GROUP BY` sau `WHERE` và trước `ORDER BY`. Cột nằm sau `GROUP BY` giống trường đặt vào Rows; các hàm như `COUNT`, `SUM`, `AVG` giống phép tính chọn trong Values. Với cột mã dạng chữ trong PivotTable, chọn Count; cộng mã bằng Sum không có ý nghĩa.
 

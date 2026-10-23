@@ -96,7 +96,7 @@ Chị Hạnh có `9` đơn đạt điều kiện, tổng `16.0` ngày, bình qu�
 
 ### SQL Server chạy câu này thế nào
 
-Theo thứ tự logic, câu này lấy bảng, lọc đơn, rồi tổng hợp ra một dòng. Các bảng trước bước cuối là phần trích; câu chưa có `ORDER BY` thì thứ tự dòng có thể khác hình. Sơ đồ không mô tả thứ tự đọc dữ liệu vật lý của SQL Server.
+Theo thứ tự logic, câu này lấy bảng, lọc đơn, rồi tổng hợp ra một dòng. Trong bảng chi tiết, `FROM` trích `10` trong `20` đơn; `WHERE` hiện đủ `9` đơn. Câu chưa có `ORDER BY` thì thứ tự dòng có thể khác hình. Sơ đồ không mô tả thứ tự đọc dữ liệu vật lý của SQL Server.
 
 <RunFlow query={`SELECT COUNT(*) AS [SoDon],
 SUM(SoNgay) AS [TongNgay],

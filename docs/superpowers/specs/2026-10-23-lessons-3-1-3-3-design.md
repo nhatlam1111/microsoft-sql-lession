@@ -1,7 +1,7 @@
 # Bài 3.1–3.3: từ tổng hợp đến lọc nhóm
 
 - Ngày: 23/10/2026.
-- Trạng thái: người làm khóa học duyệt ngày 23/10/2026; đã soạn, review và chốt local cả ba bài. Kiểm SQL Server live và tương tác trình duyệt còn chờ môi trường.
+- Trạng thái: người làm khóa học duyệt ngày 23/10/2026; đã soạn và review cả ba bài. Lượt hoàn thiện sau đó đã kiểm SQL Server live và browser; yêu cầu đưa vào main được ghi ở cuối tài liệu.
 - Yêu cầu: tiếp tục bài 3.1–3.3 theo quy ước hiện hành; giữ cách tách mỗi bài một branch của lượt trước.
 - Gốc: `main` tại `0f1963af2248ffe11728fffea89776ef314cdaed`, đã gồm các sửa sau review phần 2.
 - Tài liệu chi phối: [quy ước](../../quy-uoc.md), [khung bài](../../lesson-template.md), [hồ sơ công ty](../../ho-so-cong-ty.md), bài 1.1 đã duyệt và spec bài đầy đủ đợt 2. Quy ước mới hơn thay các chỉ dẫn bố cục cũ.
@@ -120,3 +120,19 @@ Các mục reviewer chưa phán đoán được tác giả xử lý như sau:
 - Kiểm nguồn độc lập: **282 ô Result/RunFlow**, chín answer, qua SQLite scratch với adapter Unicode N-prefix, literal ngày và làm tròn output AVG. Đây không phải T-SQL live.
 - HTML tĩnh: mỗi bài **6 mục**; card/panel lần lượt **3/5/6**; bảng Result **5/7/7**; khớp ô và tiêu đề literal, đủ ba trang bài tập mỗi bài. Không chứng nhận visual/click/bàn phím.
 - Không sửa UI/API/bộ chấm/schema/dữ liệu mẫu hoặc bài ngoài 3.1–3.3. Không push, merge main hay deploy. Giữ cả ba workspace/branch để người làm khóa học xem và quyết định bước ngoài repo sau.
+
+## Review hoàn thiện và đưa vào main — 23/10/2026
+
+Yêu cầu tiếp theo của người làm khóa học: “review và hoàn thiện các bài từ 3.1 - 3.3 trên nhánh riêng, sau đó đưa vào main nhé”. Yêu cầu này cho phép nhập và push main sau kiểm tra, thay giới hạn chỉ bàn giao local của giai đoạn soạn bài ở trên. Nhánh `codex/review-lessons-3-1-3-3` được tạo từ `origin/main` tại `0f1963a`, gom ba nhánh tác giả nối tiếp `8018d7d` → `7e43b58` → `335540d` bằng merge riêng. Không đổi quy ước, template, component, API, bộ chấm hoặc dữ liệu mẫu.
+
+Ba agent Codex mới review học thử từng bài và một agent mới kiểm tích hợp, đều kế thừa model phiên, không chỉ định model khác. Người thực hiện đọc hết report trước khi sửa và kiểm lại các nhận xét bằng SQL Server thật, nguồn mẫu và Microsoft Learn. [Báo cáo đầy đủ cùng quyết định và bằng chứng](../../reviews/2026-10-23-level-3-completion/README.md).
+
+**Đã sửa:** 3.1 nói rõ FROM trích 10/20 đơn còn WHERE hiện đủ chín đơn; 3.2 bổ sung quy tắc một cột khóa có NULL được gom thành một nhóm, đồng thời rút vế lặp; 3.3 cắt một vế nhắc lại sau đối chiếu WHERE/HAVING. Sửa helper test chuẩn hóa CRLF thành LF như literal MDX/JavaScript trên Windows, giữ toàn bộ assertion và SQL. Lỗi baseline 266/267 là khác xuống dòng; sau sửa ba file liên quan đạt 9/9 và toàn suite đạt 267/267.
+
+**Không làm theo:** không tăng số bài tập hay đổi seed để phân biệt mọi câu cho cùng kết quả. Tập rỗng không phân biệt được đảo SUM/AVG/MIN/MAX khi đều NULL; các nhóm không hòa chỉ tiêu không kiểm được mọi lỗi sắp xếp phụ. Giữ ba bài tập đại diện, bộ chấm theo kết quả và các giới hạn đã nêu trong bài. Không biến audit tĩnh UI thành việc sửa component ngoài phạm vi.
+
+**Kiểm xác nhận bổ sung:** web 267/267 test, check 0 lỗi/0 warning và ba hint nền, build 99 trang, check:dist 1.651 link; API build 45 bài tập và typecheck đạt. Đã chạy đủ 45 đáp án qua SQL Server và runner luôn hoàn tác, sau đó check:data báo không bảng nào lệch. Bộ kiểm riêng đối chiếu 23 SELECT khác nhau, năm khối SQL, năm Result, đủ 14 bước RunFlow và 46 ô của ba hình Excel; 18 bài làm sai tiêu biểu đều bị core API bác. Các truy vấn kiểm riêng chỉ đọc. Kết quả này bổ sung cho lịch sử kiểm SQLite/thiếu cấu hình ở trên, không sửa lại lịch sử đó thành đã kiểm live.
+
+**Browser:** bản build được xem ở 1280px và 1440px; hình, bảng, mục lục và highlight đọc được, không tràn trang. Đủ 14 drawer mở bằng Enter, đóng bằng Escape và trả focus; sáu câu tự kiểm dùng Enter/Space được. Trang bài tập kiểm link, Tab thụt dòng và sơ đồ database bằng bàn phím; không nộp bài qua browser. Audit strict Frontend Design Premium trả exit 1 với hai finding trên component có sẵn ngoài diff: thiếu noValidate trên form mã truy cập và cảnh báo textarea không nhận ra CSS resize:none. Browser xác nhận resize:none; giữ riêng hai finding này trong báo cáo, không ghi audit đạt. Chưa thực hiện audit toàn bộ trạng thái mạng/đăng nhập/mobile/zoom của sản phẩm.
+
+Nhật ký evidence local: `temp/verification/2026-10-23-level-3-review/`. Git và kết quả CI/publish được cập nhật trong plan và báo cáo bàn giao sau khi thực hiện, không suy từ kiểm local thành đã triển khai.
