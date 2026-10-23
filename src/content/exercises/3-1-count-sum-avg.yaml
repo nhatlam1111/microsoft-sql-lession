@@ -1,0 +1,55 @@
+lesson: 3-1-count-sum-avg
+exercises:
+  - id: 3-1-1
+    title: Hồ sơ đang làm và email đã có
+    summary: Phân biệt số dòng với số giá trị email khác NULL trong cùng phạm vi.
+    prompt: >-
+      Trong NhanVien, chỉ tính các hồ sơ có TrangThai bằng chuỗi Unicode “Đang làm”.
+      Trả về đúng một dòng, hai cột theo thứ tự: SoHoSo là số hồ sơ đạt điều kiện;
+      SoEmail là số hồ sơ trong phạm vi đó có Email khác NULL. Không loại hồ sơ
+      thiếu email trước khi tính hai con số. Tên cột không được chấm; không yêu cầu sắp xếp.
+    columns: [SoHoSo, SoEmail]
+    ordered: false
+    kind: query
+    answer: |
+      SELECT COUNT(*) AS [SoHoSo], COUNT(Email) AS [SoEmail]
+      FROM NhanVien
+      WHERE TrangThai = N'Đang làm';
+  - id: 3-1-2
+    title: Năm chỉ tiêu của đơn bắt đầu tháng 8
+    summary: Tổng hợp số đơn và số ngày trên các đơn đã duyệt theo tháng bắt đầu.
+    prompt: >-
+      Trong DonNghiPhep, chỉ tính các đơn có TrangThai bằng chuỗi Unicode “Đã duyệt”,
+      TuNgay từ 2026-08-01 đến trước 2026-09-01. Cộng toàn bộ SoNgay của các đơn
+      đạt điều kiện, kể cả đơn kết thúc sang tháng sau; không phân bổ theo ngày thực nghỉ.
+      Trả về đúng một dòng, năm cột theo thứ tự: SoDon (đếm đơn), TongNgay (tổng SoNgay),
+      BinhQuan (trung bình SoNgay mỗi đơn), ItNhat (SoNgay nhỏ nhất), NhieuNhat
+      (SoNgay lớn nhất). Dùng các hàm tổng hợp đã học; không cần đổi hoặc làm tròn
+      giá trị trung bình. Tên cột không được chấm; không yêu cầu sắp xếp.
+    columns: [SoDon, TongNgay, BinhQuan, ItNhat, NhieuNhat]
+    ordered: false
+    kind: query
+    answer: |
+      SELECT COUNT(*) AS [SoDon], SUM(SoNgay) AS [TongNgay],
+      AVG(SoNgay) AS [BinhQuan], MIN(SoNgay) AS [ItNhat], MAX(SoNgay) AS [NhieuNhat]
+      FROM DonNghiPhep
+      WHERE TrangThai = N'Đã duyệt'
+      AND TuNgay >= '20260801' AND TuNgay < '20260901';
+  - id: 3-1-3
+    title: Khi tháng cần tổng hợp chưa có đơn
+    summary: Nhận đúng kết quả của hàm tổng hợp khi phạm vi không có dòng.
+    prompt: >-
+      Trong DonNghiPhep, tính trên mọi trạng thái, chỉ giữ các đơn có TuNgay từ
+      2026-11-01 đến trước 2026-12-01. Trả về đúng một dòng với năm cột theo thứ tự:
+      SoDon dùng COUNT(*), TongNgay dùng SUM(SoNgay), BinhQuan dùng AVG(SoNgay),
+      ItNhat dùng MIN(SoNgay), NhieuNhat dùng MAX(SoNgay). Giữ nguyên kết quả
+      của các hàm, không thay NULL bằng số 0 hoặc chuỗi chữ “NULL”, không dùng GROUP BY.
+      Tên cột không được chấm; không yêu cầu sắp xếp.
+    columns: [SoDon, TongNgay, BinhQuan, ItNhat, NhieuNhat]
+    ordered: false
+    kind: query
+    answer: |
+      SELECT COUNT(*) AS [SoDon], SUM(SoNgay) AS [TongNgay],
+      AVG(SoNgay) AS [BinhQuan], MIN(SoNgay) AS [ItNhat], MAX(SoNgay) AS [NhieuNhat]
+      FROM DonNghiPhep
+      WHERE TuNgay >= '20261101' AND TuNgay < '20261201';

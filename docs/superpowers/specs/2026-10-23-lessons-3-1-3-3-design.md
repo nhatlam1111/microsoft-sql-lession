@@ -57,3 +57,21 @@ Trước khi điền kết quả, kiểm câu SQL, tập dòng và từng bướ
 Phiên hiện chưa có công cụ SQL trực tiếp hoặc cấu hình kết nối database, nên chưa thể chứng nhận số liệu bằng SQL Server. Kiểm từ script và tài liệu Microsoft chỉ là căn cứ bổ sung; ghi riêng phần chưa chạy live, không gọi là kiểm chứng trên database thật. Việc kiểm trình duyệt phụ thuộc môi trường khả dụng; phân biệt kiểm HTML với kiểm tương tác. Mật khẩu và mã truy cập không được in hoặc commit.
 
 Sau khi người làm khóa học duyệt tài liệu này, lập kế hoạch triển khai rồi viết lần lượt ba bài. Nếu gặp giới hạn công cụ, hoàn tất phần có thể làm và bàn giao rõ phần còn thiếu; không ghi trạng thái đạt cho bước chưa thực hiện.
+
+## Nhật ký triển khai 3.1
+
+Bản nháp dùng COUNT/SUM/AVG/MIN/MAX, CAST kết quả bình quân sang decimal(10,2) để hiện 1.78, và flow 20 → 9 → 1. Ba bài tập lần lượt kiểm 45/43 hồ sơ/email, 5 đơn tháng 8 tổng 14 ngày, phạm vi tháng 11 không có đơn nhưng phép tổng hợp vẫn trả một dòng. Đây là đối chiếu nguồn script, chưa phải thực thi SQL Server. Các literal decimal giữ số lẻ như SSMS; không thay dữ liệu mẫu.
+
+Tài liệu Microsoft đã đọc ngày 23/10/2026: [Aggregate functions](https://learn.microsoft.com/en-us/sql/t-sql/functions/aggregate-functions-transact-sql?view=sql-server-ver16), [COUNT](https://learn.microsoft.com/en-us/sql/t-sql/functions/count-transact-sql?view=sql-server-ver16), [AVG](https://learn.microsoft.com/en-us/sql/t-sql/functions/avg-transact-sql?view=sql-server-ver16), [CAST/CONVERT](https://learn.microsoft.com/en-us/sql/t-sql/functions/cast-and-convert-transact-sql?view=sql-server-ver16), [GROUP BY](https://learn.microsoft.com/en-us/sql/t-sql/queries/select-group-by-transact-sql?view=sql-server-ver16), [HAVING](https://learn.microsoft.com/en-us/sql/t-sql/queries/select-having-transact-sql?view=sql-server-ver16), [thứ tự SELECT logic](https://learn.microsoft.com/en-us/sql/t-sql/queries/select-transact-sql?view=sql-server-ver16). Tài liệu là căn cứ ngữ nghĩa, không phải chứng cứ đã chạy câu trong bài trên database khóa học.
+
+### Review 3.1 và bản bàn giao local
+
+Review độc lập: [bản đầy đủ](../../reviews/2026-10-23-bai-3-1.md), Codex kế thừa model phiên, agent mới không có ngữ cảnh tác giả. Lượt bị ngắt do capacity được tiếp tục bằng chính agent đó; không đổi model hoặc tạo reviewer thay thế. Tác giả đọc toàn bộ report trước khi sửa.
+
+**Đã sửa:** mục 3–5 làm rõ vùng Excel đã tách, caption đánh dấu và lần đầu nhắc GROUP BY; mục 8 cắt câu nhắc lại đơn/người; mục 14 dùng ngoặc vuông cho mọi định nghĩa alias theo bài 2.1; mục 15 highlight số dẫn chứng trong drawer; mục 16 thống nhất COUNTA đếm mã, các hàm còn lại tính cột số ngày; mục 17 đổi “sẽ” thành “có thể” vì dữ liệu mẫu hiện mỗi người một đơn; mục 22 thay một câu tự kiểm tra bằng ví dụ minh họa 2/NULL/0 để phủ cả COUNT và AVG. Các mục Giữ được được đối chiếu với seed và nguồn Microsoft. Đọc thêm [COUNTA](https://support.microsoft.com/en-us/excel/functions/counta-function) và [SUBTOTAL](https://support.microsoft.com/en-us/excel/functions/subtotal-function) để xác nhận liên hệ Excel.
+
+**Không làm theo:** không có đề xuất sửa nội dung nào trong report bị loại; các đề nghị giữ phạm vi/không dạy sâu hơn được giữ nguyên. Không biến phép cộng nội bộ của reviewer thành xác nhận đã chạy SQL Server.
+
+**Kiểm cuối 3.1:** 261/261 test, 36 file; Astro check 0 lỗi/0 warning, 3 hint nền; build 93 trang; check-dist OK 93 trang/1.591 link; API build 39 bài tập, typecheck đạt. Kiểm nguồn độc lập 88 ô và ba answer qua SQLite có chuyển N-prefix, literal ngày, CAST kết quả AVG sang ROUND; chỉ là kiểm fixture, không phải T-SQL live. HTML tĩnh khớp sáu mục, ba card/panel, năm bảng Result và ba trang bài tập.
+
+**Còn thiếu:** check:exercises thoát trước khi kết nối với lỗi `SQL_SERVER, SQL_DATABASE, SQL_USER and SQL_PASSWORD must be set.` Không có browser binary để kiểm hình thức, click và bàn phím. Không thay đổi dữ liệu hoặc push/deploy. Trong lúc chờ review đã chuẩn bị test 3.2 (đã thấy RED) và bản nháp trong temp; không đưa chúng vào commit/branch 3.1.
