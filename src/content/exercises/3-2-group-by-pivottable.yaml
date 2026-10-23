@@ -1,0 +1,55 @@
+lesson: 3-2-group-by-pivottable
+exercises:
+  - id: 3-2-1
+    title: Hồ sơ đang làm theo chức danh
+    summary: Đổi khóa nhóm từ phòng ban sang chức danh và sắp xếp số lượng.
+    prompt: >-
+      Trong NhanVien, chỉ tính các hồ sơ có TrangThai bằng chuỗi Unicode “Đang làm”.
+      Trả về một dòng cho mỗi MaCD có hồ sơ đạt điều kiện, đúng hai cột theo thứ tự:
+      MaCD, SoHoSo (số hồ sơ của nhóm). Sắp SoHoSo giảm dần, bằng số lượng thì MaCD
+      tăng dần. Không thêm dòng tổng cộng. Thứ tự dòng được chấm, tên cột không được chấm.
+    columns: [MaCD, SoHoSo]
+    ordered: true
+    kind: query
+    answer: |
+      SELECT MaCD, COUNT(*) AS [SoHoSo]
+      FROM NhanVien
+      WHERE TrangThai = N'Đang làm'
+      GROUP BY MaCD
+      ORDER BY [SoHoSo] DESC, MaCD ASC;
+  - id: 3-2-2
+    title: Mỗi cặp phòng và trạng thái một dòng
+    summary: Nhóm toàn bộ hồ sơ theo hai cột, không bỏ người đã nghỉ.
+    prompt: >-
+      Trong NhanVien, lấy toàn bộ hồ sơ ở mọi phòng và mọi trạng thái, kể cả đã nghỉ.
+      Trả về một dòng cho mỗi cặp MaPB và TrangThai xuất hiện trong bảng, đúng ba cột
+      theo thứ tự: MaPB, TrangThai, SoHoSo (số hồ sơ của cặp đó). Sắp MaPB tăng dần;
+      trong cùng mã phòng, sắp SoHoSo giảm dần. Không thêm dòng cho cặp không có
+      hồ sơ hoặc dòng tổng cộng. Thứ tự dòng được chấm, tên cột không được chấm.
+    columns: [MaPB, TrangThai, SoHoSo]
+    ordered: true
+    kind: query
+    answer: |
+      SELECT MaPB, TrangThai, COUNT(*) AS [SoHoSo]
+      FROM NhanVien
+      GROUP BY MaPB, TrangThai
+      ORDER BY MaPB ASC, [SoHoSo] DESC;
+  - id: 3-2-3
+    title: Số đơn và tổng ngày theo loại nghỉ
+    summary: Tính hai chỉ tiêu trong từng nhóm trên các đơn đã duyệt.
+    prompt: >-
+      Trong DonNghiPhep, chỉ lấy đơn có TrangThai bằng chuỗi Unicode “Đã duyệt”
+      ở mọi ngày bắt đầu, không giới hạn tháng. Trả về một dòng cho mỗi LoaiNghi
+      xuất hiện trong phạm vi đó, đúng ba cột theo thứ tự: LoaiNghi, SoDon (số đơn),
+      TongNgay (tổng SoNgay). Cộng toàn bộ SoNgay của mỗi đơn, không phân bổ theo tháng.
+      Sắp LoaiNghi tăng dần, không thêm dòng tổng cộng. Thứ tự dòng được chấm,
+      tên cột không được chấm.
+    columns: [LoaiNghi, SoDon, TongNgay]
+    ordered: true
+    kind: query
+    answer: |
+      SELECT LoaiNghi, COUNT(*) AS [SoDon], SUM(SoNgay) AS [TongNgay]
+      FROM DonNghiPhep
+      WHERE TrangThai = N'Đã duyệt'
+      GROUP BY LoaiNghi
+      ORDER BY LoaiNghi ASC;

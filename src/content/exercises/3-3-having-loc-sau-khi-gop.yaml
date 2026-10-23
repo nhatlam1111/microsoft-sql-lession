@@ -1,0 +1,62 @@
+lesson: 3-3-having-loc-sau-khi-gop
+exercises:
+  - id: 3-3-1
+    title: Phòng có trên 5 đến tối đa 10 hồ sơ đang làm
+    summary: Lọc các nhóm theo hai biên số lượng sau khi chọn trạng thái.
+    prompt: >-
+      Trong NhanVien, chỉ tính hồ sơ có TrangThai bằng chuỗi Unicode “Đang làm”,
+      nhóm theo MaPB hiện lưu. Chỉ giữ các phòng có số hồ sơ lớn hơn 5 và nhỏ hơn
+      hoặc bằng 10. Trả đúng hai cột theo thứ tự: MaPB, SoHoSo (số hồ sơ đang làm
+      của phòng). Sắp SoHoSo giảm dần, bằng số lượng thì MaPB tăng dần. Không thêm
+      dòng tổng cộng. Thứ tự dòng được chấm, tên cột không được chấm.
+    columns: [MaPB, SoHoSo]
+    ordered: true
+    kind: query
+    answer: |
+      SELECT MaPB, COUNT(*) AS [SoHoSo]
+      FROM NhanVien
+      WHERE TrangThai = N'Đang làm'
+      GROUP BY MaPB
+      HAVING COUNT(*) > 5 AND COUNT(*) <= 10
+      ORDER BY [SoHoSo] DESC, MaPB ASC;
+  - id: 3-3-2
+    title: Loại nghỉ có tổng từ 5 ngày
+    summary: Lọc nhóm bằng tổng số ngày thay vì số đơn.
+    prompt: >-
+      Trong DonNghiPhep, chỉ lấy đơn có TrangThai bằng chuỗi Unicode “Đã duyệt”,
+      TuNgay từ 2026-09-01 đến trước 2026-10-01. Cộng toàn bộ SoNgay trên các đơn
+      đạt điều kiện, không phân bổ ngày thực nghỉ theo tháng. Nhóm theo LoaiNghi,
+      chỉ giữ nhóm có tổng SoNgay lớn hơn hoặc bằng 5. Trả đúng ba cột theo thứ tự:
+      LoaiNghi, SoDon (số đơn của nhóm), TongNgay (tổng SoNgay của nhóm).
+      Sắp TongNgay giảm dần, bằng tổng thì LoaiNghi tăng dần; không thêm dòng tổng cộng.
+      Thứ tự dòng được chấm, tên cột không được chấm.
+    columns: [LoaiNghi, SoDon, TongNgay]
+    ordered: true
+    kind: query
+    answer: |
+      SELECT LoaiNghi, COUNT(*) AS [SoDon], SUM(SoNgay) AS [TongNgay]
+      FROM DonNghiPhep
+      WHERE TrangThai = N'Đã duyệt'
+      AND TuNgay >= '20260901' AND TuNgay < '20261001'
+      GROUP BY LoaiNghi
+      HAVING SUM(SoNgay) >= 5
+      ORDER BY [TongNgay] DESC, LoaiNghi ASC;
+  - id: 3-3-3
+    title: Cặp phòng và chức danh có từ ba hồ sơ
+    summary: Giữ đúng độ chi tiết hai khóa nhóm khi áp dụng ngưỡng số lượng.
+    prompt: >-
+      Trong NhanVien, chỉ tính hồ sơ có TrangThai bằng chuỗi Unicode “Đang làm”.
+      Nhóm theo cặp MaPB và MaCD hiện lưu, chỉ giữ các cặp có từ 3 hồ sơ trở lên
+      (gồm đúng 3). Trả đúng ba cột theo thứ tự: MaPB, MaCD, SoHoSo (số hồ sơ của cặp).
+      Sắp MaPB tăng dần, trong cùng phòng sắp MaCD tăng dần. Không thêm các cặp
+      không có hồ sơ hoặc dòng tổng cộng. Thứ tự dòng được chấm, tên cột không được chấm.
+    columns: [MaPB, MaCD, SoHoSo]
+    ordered: true
+    kind: query
+    answer: |
+      SELECT MaPB, MaCD, COUNT(*) AS [SoHoSo]
+      FROM NhanVien
+      WHERE TrangThai = N'Đang làm'
+      GROUP BY MaPB, MaCD
+      HAVING COUNT(*) >= 3
+      ORDER BY MaPB ASC, MaCD ASC;
