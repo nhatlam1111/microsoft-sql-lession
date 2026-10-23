@@ -95,7 +95,7 @@ Các nhân vật là giả định, không phải hồ sơ trong bộ mẫu (bà
 
 | Nhân vật | Là ai | Xuất hiện |
 |---|---|---|
-| Chị Hạnh · Phòng Nhân sự | Người đưa yêu cầu trong mọi bài đầy đủ; xưng "chị", gọi người học là "em" | 1.1–1.6, 2.1–2.9, 3.1–3.2, 3.5 |
+| Chị Hạnh · Phòng Nhân sự | Người đưa yêu cầu trong mọi bài đầy đủ; xưng "chị", gọi người học là "em" | 1.1–1.6, 2.1–2.9, 3.1–3.3, 3.5 |
 | Người học ("em", "bạn") | Người đọc và lấy dữ liệu từ hệ thống nhân sự cho chị Hạnh; có tài khoản vào database qua SSMS | mọi bài |
 | Chị Thảo · Kế toán | Giữ một bản file nhân sự riêng | 1.1 |
 | Quân | Nhân viên chuyển sang IT, nhưng file của Kế toán còn ghi phòng cũ | 1.1 |
@@ -138,5 +138,6 @@ Các lỗi này có chủ ý, dành cho bài 4.6 và 4.7; bài khác không đư
 | 2.9 | Tại mốc cố định 21/10/2026, chị Hạnh chia các hồ sơ đang làm, đã vào làm tới ngày đó, theo ngày kỷ niệm đủ năm. Theo script có 45 hồ sơ: 4 dưới một năm, 8 từ một đến dưới ba năm, 33 từ ba năm trở lên. CASE chỉ tạo nhãn kết quả, không sửa trạng thái hoặc dữ liệu nguồn. |
 | 3.1 | Chị Hạnh cần tổng hợp đơn đã duyệt có TuNgay từ 01/09 đến trước 01/10/2026, cộng toàn bộ SoNgay của đơn. Theo script: 9 đơn, tổng 16.0 ngày, bình quân làm tròn hai số lẻ 1.78, ít nhất 1.0 và nhiều nhất 3.0 ngày. Đây không phải số ngày thực nghỉ trong tháng; DP018 bắt đầu tháng 8 bị loại dù kéo sang tháng 9. |
 | 3.2 | Chị Hạnh đếm hồ sơ đang làm theo MaPB hiện lưu, xếp số lượng giảm dần rồi mã tăng dần. Theo script có 45 hồ sơ thành 6 nhóm: KD 13, IT 10, VH 8, KT 7, NS 5, BGD 2; không phải phòng tại thời điểm quá khứ. Ví dụ phụ tách toàn bộ KD theo trạng thái thành 13 đang làm và 1 đã nghỉ. |
+| 3.3 | Từ cùng phạm vi đang làm của 3.2, chị Hạnh chỉ giữ nhóm phòng có trên 10 hồ sơ. Theo script, HAVING COUNT(*) > 10 giữ KD 13; IT đúng 10 bị loại. WHERE lọc hồ sơ trước, HAVING lọc nhóm sau; kết quả không tự kết luận phòng thiếu người. |
 | 3.5 | Chị Hạnh phải báo cáo sếp vào thứ Hai về những người mới vào chưa có hợp đồng trên hệ thống. |
 | 6.5 | Một chiều thứ Sáu, câu `UPDATE` phụ cấp của NV012 kỳ 2026-09 bị bôi đen thiếu, chạy cho cả bảng lương. |

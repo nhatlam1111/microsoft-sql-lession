@@ -1,7 +1,7 @@
 # Bài 3.1–3.3: từ tổng hợp đến lọc nhóm
 
 - Ngày: 23/10/2026.
-- Trạng thái: người làm khóa học đã duyệt trong hội thoại ngày 23/10/2026; đang triển khai.
+- Trạng thái: người làm khóa học duyệt ngày 23/10/2026; đã soạn, review và chốt local cả ba bài. Kiểm SQL Server live và tương tác trình duyệt còn chờ môi trường.
 - Yêu cầu: tiếp tục bài 3.1–3.3 theo quy ước hiện hành; giữ cách tách mỗi bài một branch của lượt trước.
 - Gốc: `main` tại `0f1963af2248ffe11728fffea89776ef314cdaed`, đã gồm các sửa sau review phần 2.
 - Tài liệu chi phối: [quy ước](../../quy-uoc.md), [khung bài](../../lesson-template.md), [hồ sơ công ty](../../ho-so-cong-ty.md), bài 1.1 đã duyệt và spec bài đầy đủ đợt 2. Quy ước mới hơn thay các chỉ dẫn bố cục cũ.
@@ -89,3 +89,34 @@ Review độc lập: [report 3.2](../../reviews/2026-10-23-bai-3-2.md), agent m�
 **Kiểm cuối 3.2:** 264/264 test, 37 file; Astro check 0 lỗi/0 warning, 3 hint nền; build 96 trang; check-dist OK 96 trang/1.621 link; API build 42 bài tập và typecheck đạt. Kiểm fixture độc lập qua SQLite cho cả 3.1–3.2: 202 ô Result/RunFlow, sáu answer và kiểm không có query minh họa giải đúng nguyên vẹn bài tập mới. HTML tĩnh khớp sáu mục, năm card/panel, bảy bảng Result và ba trang bài tập của 3.2.
 
 **Còn thiếu:** check:exercises vẫn bị chặn trước kết nối do thiếu SQL_SERVER/DATABASE/USER/PASSWORD; không có xác nhận SQL Server hay kiểm trình duyệt. Không ghi database, không push/deploy. Test 3.3 đã thấy 2 FAIL trên bài/YAML còn thiếu, 1 PASS trên fixture ngưỡng; giữ test và nháp 3.3 trong temp khi chốt branch 3.2.
+
+## Nhật ký triển khai 3.3 và kết quả toàn lượt
+
+Branch `codex/lesson-3-3-full` nối từ commit 3.2 `eaad473`. Bài giữ WHERE và khóa nhóm của 3.2, thêm HAVING COUNT(*) > 10; flow 48 → 45 → 6 → 1 → 1 → 1. Alias SELECT không dùng ở HAVING cùng câu; các câu kiểm trong từng bước là truy vấn SELECT riêng, không mô tả thứ tự vật lý. Ba đề lần lượt kiểm khoảng >5 và <=10, tổng ngày đã duyệt bắt đầu tháng 9 >=5, cặp phòng/chức danh đang làm >=3.
+
+Review học thử độc lập: [report 3.3](../../reviews/2026-10-23-bai-3-3.md), Codex/model kế thừa phiên, không mang ngữ cảnh tác giả, không đọc seed/test/review cũ. Đã đọc toàn bộ report trước khi sửa.
+
+**Đã sửa:** mục 2 chỉ rõ trường Count of MaNV khi lọc Value Filters; mục 4 thêm điều kiện “Nếu không lọc trước theo SoNgay” để ví dụ HAVING không khiến người học tưởng lấy lại các đơn đã bị WHERE loại; mục 10 nói chắc KD vẫn qua ngưỡng với 14 hồ sơ khi bỏ WHERE; mục 13 rút tiêu đề đề hai thành “Loại nghỉ có tổng từ 5 ngày”. Không đổi query, kết quả hay dữ liệu nguồn sau review. README bỏ giới hạn sơ đồ chỉ ở bài 3.5, khớp các sơ đồ mới.
+
+**Không làm theo:** không có đề xuất sửa trong review học thử bị loại; không thêm trường hợp HAVING không GROUP BY hoặc nội dung SQL sâu hơn để làm nặng bài.
+
+### Review kỹ thuật toàn nhánh
+
+[Report tích hợp](../../reviews/2026-10-23-integration-3-1-3-3.md) do một agent mới thực hiện, Codex kế thừa model phiên, độc lập với ba reviewer học thử. Phạm vi từ main 0f1963a qua các commit 3.1/3.2 và toàn bộ working tree 3.3, kể cả YAML/test mới. Không có finding Critical/Important/Minor. Reviewer kiểm thêm 19 câu minh họa của cả ba bài với cả 9 đáp án, 171 cặp trên fixture SQLite có adapter, không có câu minh họa nộp nguyên vẹn nào cho kết quả đúng. Kết luận này không phải kiểm SQL Server live hoặc lệnh cho phép merge/push.
+
+Các mục reviewer chưa phán đoán được tác giả xử lý như sau:
+
+- **SQL live:** giữ trạng thái chưa xác minh driver/metadata/collation và thực thi API; cần môi trường kết nối để chạy trước khi coi đây là kiểm chứng SQL Server. Cái giá nếu fixture lệch engine/database thật là số liệu hoặc chấm bài chưa được phát hiện bằng kiểm nguồn.
+- **Browser:** giữ trạng thái chưa kiểm hình thức/click/copy/focus/bàn phím/F5/nộp bài; HTML chỉ xác nhận cấu trúc. Cái giá là lỗi tương tác hoặc bố cục có thể chưa được quan sát, dù không sửa component.
+- **Helper fixture:** giữ phạm vi literal INSERT cố định và block MDX đang dùng, không xây parser hay engine tổng quát. Nếu định dạng seed/MDX đổi, helper/test có thể cần cập nhật; không ảnh hưởng logic sản phẩm đang chạy.
+- **Bộ chấm:** giữ contract so kết quả, chấp nhận câu tương đương, không thêm kiểm cú pháp hoặc chống mọi đáp án viết cứng. Vì vậy chấm đúng không chứng minh người học đã dùng HAVING; phần Bài tập đã yêu cầu tự đối chiếu.
+- **Biên tập/quy trình:** lượt kỹ thuật không thay review học thử. Ba report học thử, phần sửa theo review, tài liệu và commit riêng đều được hoàn tất bởi tác giả trước khi bàn giao; không dùng lời kết luận kỹ thuật để đánh dấu giả các bước còn thiếu môi trường.
+
+### Kiểm bản cuối
+
+- Vitest: **267/267 test, 38 file**. Astro check: **0 lỗi, 0 warning, 3 hint nền**.
+- Web: **99 trang**; `check-dist: OK` với **1.651 link**, đủ 9 trang bài tập mới, không có câu answer/check trong HTML/JS/JSON public.
+- API: build **45 bài tập** (thêm 9), typecheck đạt. `check:exercises` thoát 1 trước khi kết nối vì thiếu SQL_SERVER, SQL_DATABASE, SQL_USER, SQL_PASSWORD; không có câu nào đã chạy trên database trong phiên.
+- Kiểm nguồn độc lập: **282 ô Result/RunFlow**, chín answer, qua SQLite scratch với adapter Unicode N-prefix, literal ngày và làm tròn output AVG. Đây không phải T-SQL live.
+- HTML tĩnh: mỗi bài **6 mục**; card/panel lần lượt **3/5/6**; bảng Result **5/7/7**; khớp ô và tiêu đề literal, đủ ba trang bài tập mỗi bài. Không chứng nhận visual/click/bàn phím.
+- Không sửa UI/API/bộ chấm/schema/dữ liệu mẫu hoặc bài ngoài 3.1–3.3. Không push, merge main hay deploy. Giữ cả ba workspace/branch để người làm khóa học xem và quyết định bước ngoài repo sau.
