@@ -26,3 +26,9 @@ Evidence local: `temp/verification/2026-10-23-sql-indentation/` gồm before/exp
 Audit Frontend Design Premium strict trả **exit 1**, hai finding nền: form mã truy cập thiếu noValidate; scanner không thấy resize:none trong JSX dù CSS đã có và browser xác nhận computed none. Giữ nguyên form/logic editor, ghi đúng kết quả audit thay vì gọi toàn bộ UI audit đạt. Report độc lập mô tả file/dòng cụ thể. Công cụ lint DESIGN.md chuyên dụng không có trong runtime/plugin; giữ nguyên frontmatter và token cũ, chỉ bổ sung quy tắc và mapping đã kiểm computed style.
 
 Không thay luồng mạng/đăng nhập/chạy SQL, không làm audit mobile/200% hoặc mọi trạng thái sản phẩm. Không định dạng lại database script hay đáp án API vì chúng không phải nơi hiển thị SQL và token đang giữ nguyên. Các quy ước cũ về nội dung/review/an toàn dữ liệu vẫn áp dụng.
+
+## Git và xuất bản
+
+Nhánh review push tại `d6fd028`; main trước nhập vẫn `921730e`. Merge `8f3de6418097c4062215817b3424badabcee74d3` không xung đột, 269 test đạt trên cây đã nhập; push và kiểm SHA remote trùng. [Workflow web của đúng SHA](https://github.com/nhatlam1111/microsoft-sql-lession/actions/runs/39988144178) đã success; không có workflow API mới vì source/YAML API không thay đổi.
+
+Browser đã mở [bài 3.1 công khai](https://nhatlam1111.github.io/microsoft-sql-lession/bai/3-1-count-sum-avg/#câu-lệnh-cho-tình-huống): câu chính chứa tab thật trước SUM/CAST/MIN/AND, computed tab-size 4 ở Sql và query highlight, không tràn trang. Lưu `published-sql-indentation.png` và `published-evidence.json` trong evidence local. Commit hồ sơ sau đó chỉ ghi kết quả này, không đổi sản phẩm so với bản đã triển khai.
