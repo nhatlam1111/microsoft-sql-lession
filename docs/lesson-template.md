@@ -1,6 +1,6 @@
 # Khung một bài học
 
-Chuẩn hiện hành từ 20/10/2026, sau khi người làm khóa học duyệt [`bài 1.1`](../src/content/lessons/1-1-database-la-gi.mdx). Dùng bài này để đối chiếu mạch kể, độ sâu, chữ đậm và giá trị được highlight. [`Bài 3.5`](../src/content/lessons/3-5-left-join.mdx) chỉ tham khảo kỹ thuật `RunFlow`, không lấy bố cục cũ làm khuôn.
+Chuẩn hiện hành từ 20/10/2026, sau khi người làm khóa học duyệt [`bài 1.1`](../src/content/lessons/1-1-database-la-gi.mdx). Dùng bài này để đối chiếu mạch kể, độ sâu, chữ đậm và giá trị được highlight. [`Bài 3.5`](../src/content/lessons/3-5-left-join.mdx) là ví dụ kỹ thuật `RunFlow`, đã chuyển sang khung gộp từ 24/10/2026.
 
 File này hướng dẫn dựng bài và dùng các khối. Quy tắc viết, định dạng, số liệu, review và an toàn database nằm ở [`quy-uoc.md`](quy-uoc.md); bối cảnh, nhân vật và dữ liệu mẫu ở [`ho-so-cong-ty.md`](ho-so-cong-ty.md). Các spec/plan/mockup cũ ghi hai phần Excel/SQL là lịch sử thiết kế; khi viết tiếp dùng hai tài liệu hiện hành này.
 

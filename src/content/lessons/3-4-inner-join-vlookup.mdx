@@ -4,31 +4,487 @@ title: "INNER JOIN: VLOOKUP bằng SQL"
 shortTitle: INNER JOIN
 level: 3
 area: A4
-kind: summary
-minutes: 12
+kind: full
+minutes: 20
 prerequisites:
-  - "1.4"
-  - "2.1"
-goal: bạn lấy được thông tin từ bảng khác theo cột mã
+  - "1.5"
+  - "3.3"
+goal: bạn lấy tên từ danh mục bằng INNER JOIN và giải thích được dòng nào được giữ
 excel: VLOOKUP, XLOOKUP
-summary: Lấy tên phòng ban cho danh sách nhân viên và đặt bí danh cho bảng.
+summary: Kết mã phòng của hồ sơ với danh mục, đặt bí danh bảng và kiểm số dòng khớp.
 ---
 
-## Nội dung chính
+## Tình huống
 
-- `INNER JOIN PhongBan AS pb ON pb.MaPB = nv.MaPB` lấy tên phòng ban cho từng nhân viên.
-- `INNER JOIN` chỉ giữ những dòng khớp ở cả hai bảng; dòng không khớp bị bỏ khỏi kết quả.
-- Đặt bí danh ngắn cho bảng (`nv`, `pb`) và ghi rõ cột thuộc bảng nào khi hai bảng có cột trùng tên.
-- Kết theo đúng cặp khóa chính, khóa ngoại trên sơ đồ ERD (bài 1.5).
+Chị Hạnh chuẩn bị danh sách nhân sự tháng 10/2026:
 
-## Liên hệ Excel
+<Chat who="Chị Hạnh · Phòng Nhân sự" time="09:10" initial="H">
+Em lấy tất cả hồ sơ nhân viên, thêm tên phòng ban đầy đủ bên cạnh mã phòng giúp chị. Chị cần mã nhân viên, họ tên, mã phòng và tên phòng; xếp mã nhân viên tăng dần nhé.
+</Chat>
 
-Giống VLOOKUP hoặc XLOOKUP mã phòng ban sang sheet danh mục để lấy tên phòng. Khác ở chỗ dòng dò không ra không hiện #N/A mà bị bỏ hẳn; muốn giữ lại thì dùng `LEFT JOIN` ở bài 3.5.
+Giả định: lấy mọi hồ sơ trong `NhanVien`, gồm cả người đã nghỉ. Tên phòng lấy theo `MaPB` hiện lưu, không phải phòng tại thời điểm vào làm hay một kỳ lương cũ.
 
-## Tình huống ví dụ
+<Key>Mã phòng nằm ở hồ sơ, còn tên phòng nằm trong danh mục; cần tìm đúng cặp dòng theo mã.</Key>
 
-Danh sách nhân viên gửi ra ngoài cần tên phòng ban đầy đủ thay cho các mã KD, KT.
+## Lấy tên phòng qua mã đang lưu
+
+### Từ cột dò trong Excel đến điều kiện ON
+
+Trong Excel, bạn xuất hồ sơ và danh mục sang hai sheet, rồi dùng **VLOOKUP dò chính xác** hoặc **XLOOKUP** theo mã phòng. Hình trích ba hồ sơ; ô `C2` là mã `KT`, ô `D2` là tên `Kế toán` lấy từ danh mục. Sheet `PhongBan` trong công thức có mã ở cột đầu, tên ở cột thứ hai.
+
+<Excel sheets="NhanVien · PhongBan" cell="D2" formula="=VLOOKUP(C2,PhongBan!A:B,2,FALSE)" selected="D2" mark={['C2','D2']} rows={[
+  ['MaNV','HoTen','MaPB','TenPB'],
+  ['NV001','Trần Thị Mai','KT','Kế toán'],
+  ['NV002','Lê Văn Hùng','KD','Kinh doanh'],
+  ['NV004','Hoàng Minh Tuấn','BGD','Ban Giám đốc'],
+]} />
+
+**Kết bảng** là tạo kết quả từ những dòng có quan hệ giữa các bảng. **`INNER JOIN`** giữ các cặp dòng thỏa điều kiện **`ON`**. Ở đây, điều kiện là mã phòng của hồ sơ bằng mã của dòng danh mục: `PhongBan.MaPB = NhanVien.MaPB`. SQL lấy tên từ dòng đã khớp; không cần chép tên phòng vào từng hồ sơ nguồn.
+
+Sơ đồ đánh dấu đường từ `NhanVien.MaPB` đến `PhongBan.MaPB`. Chọn cột kết theo quan hệ dữ liệu, không chỉ vì hai cột tình cờ cùng tên hoặc cùng chứa chữ.
+
+<Erd path={['NhanVien','PhongBan']} caption="Đường lấy tên phòng: mã phòng trên hồ sơ trỏ tới mã duy nhất của danh mục." />
+
+### Bí danh giúp nhận ra cột thuộc bảng nào
+
+**Bí danh bảng** là tên ngắn dùng trong câu lệnh: `NhanVien AS nv`, `PhongBan AS pb`. `nv.HoTen` đọc cột `HoTen` của bảng mang bí danh `nv`; `pb.TenPB` đọc cột `TenPB` của bảng mang bí danh `pb`. Dấu chấm ngăn bí danh bảng với tên cột. Hai bảng đều có `MaPB`, nên viết rõ `nv.MaPB` và `pb.MaPB` để tránh mơ hồ. Đây là bí danh bảng, khác tiêu đề cột đặt bằng `AS` ở bài 2.1; không đổi tên bảng thật.
+
+Không có cặp khớp thì `INNER JOIN` bỏ dòng khỏi kết quả, còn công thức VLOOKUP trong hình giữ dòng ở sheet và trả `#N/A`. Trong bộ mẫu, `NhanVien.MaPB` có `NOT NULL`, khóa ngoại tới danh mục và `PhongBan.MaPB` là khóa chính: mỗi hồ sơ có đúng một dòng phòng khớp, nên `48` hồ sơ vẫn thành `48` dòng. Đây là hệ quả của cấu trúc hiện có, không phải mọi `JOIN` đều giữ số dòng.
+
+Nếu phía được dò có nhiều dòng cùng khớp, SQL trả từng cặp, trong khi VLOOKUP thông thường lấy dòng khớp đầu tiên. Khóa danh mục duy nhất làm hai cách cùng lấy được một tên trong tình huống này. Ở bài này chỉ cần kết hai bảng theo mã; giữ dòng không khớp học ở bài 3.5, kiểm dòng nhân lên ở bài 3.6.
+
+### Câu lệnh cho tình huống
+
+Lấy bốn cột, kết bằng mã và xếp theo mã nhân viên:
+
+<Sql code={`SELECT nv.MaNV, nv.HoTen, nv.MaPB,
+\tpb.TenPB
+FROM NhanVien AS nv
+INNER JOIN PhongBan AS pb ON pb.MaPB = nv.MaPB
+ORDER BY nv.MaNV ASC;`} />
+
+<Result columns={["MaNV","HoTen","MaPB","TenPB"]} rows={[
+  [
+    "NV001",
+    "Trần Thị Mai",
+    "KT",
+    "Kế toán"
+  ],
+  [
+    "NV002",
+    "Lê Văn Hùng",
+    "KD",
+    "Kinh doanh"
+  ],
+  [
+    "NV003",
+    "Nguyễn Thu Hà",
+    "KD",
+    "Kinh doanh"
+  ],
+  [
+    "NV004",
+    "Hoàng Minh Tuấn",
+    "BGD",
+    "Ban Giám đốc"
+  ],
+  [
+    "NV005",
+    "Vũ Thị Lan",
+    "KT",
+    "Kế toán"
+  ],
+  [
+    "NV006",
+    "Đặng Quốc Bảo",
+    "KD",
+    "Kinh doanh"
+  ],
+  [
+    "NV007",
+    "Bùi Thanh Sơn",
+    "IT",
+    "IT"
+  ],
+  [
+    "NV008",
+    "Phan Văn Lợi",
+    "VH",
+    "Vận hành"
+  ],
+  [
+    "NV009",
+    "Ngô Thị Thu Trang",
+    "BGD",
+    "Ban Giám đốc"
+  ],
+  [
+    "NV010",
+    "Đỗ Thị Hồng",
+    "NS",
+    "Nhân sự"
+  ]
+]} total={48} mark={[1]} />
+
+Dòng `NV001` được đánh dấu: mã `KT` đi cùng tên `Kế toán`. Chị Hạnh có đủ tên phòng cho mọi hồ sơ trong phạm vi đã chốt, gồm cả người đã nghỉ; câu lệnh chỉ đọc dữ liệu.
+
+### SQL Server chạy câu này thế nào
+
+Sơ đồ là **thứ tự xử lý logic**: lấy hồ sơ, tìm cặp phòng khớp, chọn cột rồi sắp xếp. Mỗi bước dùng một câu `SELECT` riêng để nhìn dữ liệu, không mô tả các lệnh SQL Server chạy nối tiếp hay thứ tự đọc vật lý. Trước `ORDER BY`, thứ tự dòng có thể khác hình; các bảng chi tiết trích tối đa `10` dòng.
+
+<RunFlow query={`SELECT nv.MaNV, nv.HoTen, nv.MaPB,
+\tpb.TenPB
+FROM NhanVien AS nv
+INNER JOIN PhongBan AS pb ON pb.MaPB = nv.MaPB
+ORDER BY nv.MaNV ASC;`} steps={[
+  {
+    clause: "FROM",
+    title: "Lấy hồ sơ đang lưu.",
+    focus: "FROM NhanVien AS nv",
+    meaning: "`FROM` lấy `NhanVien` với bí danh `nv`; chưa tìm tên phòng.",
+    detail: "`FROM` có `48` hồ sơ; bảng chi tiết trích mã, họ tên và mã phòng để đối chiếu.",
+    sql: `SELECT nv.MaNV, nv.HoTen, nv.MaPB
+FROM NhanVien AS nv;`,
+    columns: ["MaNV","HoTen","MaPB"],
+    rows: [
+  [
+    "NV001",
+    "Trần Thị Mai",
+    "KT"
+  ],
+  [
+    "NV002",
+    "Lê Văn Hùng",
+    "KD"
+  ],
+  [
+    "NV003",
+    "Nguyễn Thu Hà",
+    "KD"
+  ],
+  [
+    "NV004",
+    "Hoàng Minh Tuấn",
+    "BGD"
+  ],
+  [
+    "NV005",
+    "Vũ Thị Lan",
+    "KT"
+  ],
+  [
+    "NV006",
+    "Đặng Quốc Bảo",
+    "KD"
+  ],
+  [
+    "NV007",
+    "Bùi Thanh Sơn",
+    "IT"
+  ],
+  [
+    "NV008",
+    "Phan Văn Lợi",
+    "VH"
+  ],
+  [
+    "NV009",
+    "Ngô Thị Thu Trang",
+    "BGD"
+  ],
+  [
+    "NV010",
+    "Đỗ Thị Hồng",
+    "NS"
+  ]
+],
+    total: 48,
+  },
+  {
+    clause: "INNER JOIN",
+    title: "Tìm dòng phòng khớp mã.",
+    focus: "INNER JOIN PhongBan AS pb ON pb.MaPB = nv.MaPB",
+    meaning: "`INNER JOIN` tạo các cặp thỏa điều kiện mã phòng bằng nhau.",
+    detail: "`INNER JOIN` vẫn có `48` dòng: mỗi mã phòng của hồ sơ khớp đúng một mã duy nhất trong danh mục.",
+    sql: `SELECT nv.MaNV, nv.HoTen, nv.MaPB,
+\tpb.TenPB
+FROM NhanVien AS nv
+INNER JOIN PhongBan AS pb ON pb.MaPB = nv.MaPB;`,
+    preview: ["MaNV","MaPB","TenPB"],
+    columns: ["MaNV","HoTen","MaPB","TenPB"],
+    rows: [
+  [
+    "NV001",
+    "Trần Thị Mai",
+    "KT",
+    "Kế toán"
+  ],
+  [
+    "NV002",
+    "Lê Văn Hùng",
+    "KD",
+    "Kinh doanh"
+  ],
+  [
+    "NV003",
+    "Nguyễn Thu Hà",
+    "KD",
+    "Kinh doanh"
+  ],
+  [
+    "NV004",
+    "Hoàng Minh Tuấn",
+    "BGD",
+    "Ban Giám đốc"
+  ],
+  [
+    "NV005",
+    "Vũ Thị Lan",
+    "KT",
+    "Kế toán"
+  ],
+  [
+    "NV006",
+    "Đặng Quốc Bảo",
+    "KD",
+    "Kinh doanh"
+  ],
+  [
+    "NV007",
+    "Bùi Thanh Sơn",
+    "IT",
+    "IT"
+  ],
+  [
+    "NV008",
+    "Phan Văn Lợi",
+    "VH",
+    "Vận hành"
+  ],
+  [
+    "NV009",
+    "Ngô Thị Thu Trang",
+    "BGD",
+    "Ban Giám đốc"
+  ],
+  [
+    "NV010",
+    "Đỗ Thị Hồng",
+    "NS",
+    "Nhân sự"
+  ]
+],
+    total: 48,
+  },
+  {
+    clause: "SELECT",
+    title: "Đưa bốn cột ra báo cáo.",
+    focus: "SELECT nv.MaNV, nv.HoTen, nv.MaPB,\n\tpb.TenPB",
+    meaning: "`SELECT` chọn mã, họ tên, mã phòng và tên lấy từ dòng danh mục.",
+    detail: "`SELECT` giữ `48` dòng và `4` cột; `NV001` có `MaPB` là `KT`, `TenPB` là `Kế toán`.",
+    sql: `SELECT nv.MaNV, nv.HoTen, nv.MaPB,
+\tpb.TenPB
+FROM NhanVien AS nv
+INNER JOIN PhongBan AS pb ON pb.MaPB = nv.MaPB;`,
+    preview: ["MaNV","MaPB","TenPB"],
+    columns: ["MaNV","HoTen","MaPB","TenPB"],
+    rows: [
+  [
+    "NV001",
+    "Trần Thị Mai",
+    "KT",
+    "Kế toán"
+  ],
+  [
+    "NV002",
+    "Lê Văn Hùng",
+    "KD",
+    "Kinh doanh"
+  ],
+  [
+    "NV003",
+    "Nguyễn Thu Hà",
+    "KD",
+    "Kinh doanh"
+  ],
+  [
+    "NV004",
+    "Hoàng Minh Tuấn",
+    "BGD",
+    "Ban Giám đốc"
+  ],
+  [
+    "NV005",
+    "Vũ Thị Lan",
+    "KT",
+    "Kế toán"
+  ],
+  [
+    "NV006",
+    "Đặng Quốc Bảo",
+    "KD",
+    "Kinh doanh"
+  ],
+  [
+    "NV007",
+    "Bùi Thanh Sơn",
+    "IT",
+    "IT"
+  ],
+  [
+    "NV008",
+    "Phan Văn Lợi",
+    "VH",
+    "Vận hành"
+  ],
+  [
+    "NV009",
+    "Ngô Thị Thu Trang",
+    "BGD",
+    "Ban Giám đốc"
+  ],
+  [
+    "NV010",
+    "Đỗ Thị Hồng",
+    "NS",
+    "Nhân sự"
+  ]
+],
+    total: 48,
+  },
+  {
+    clause: "ORDER BY",
+    title: "Xếp mã nhân viên tăng dần.",
+    focus: "ORDER BY nv.MaNV ASC",
+    meaning: "`ORDER BY` quy định thứ tự trả dòng.",
+    detail: "`ORDER BY` giữ `48` dòng; hình hiện `10` dòng đầu theo mã, bắt đầu bằng `NV001`.",
+    sql: `SELECT nv.MaNV, nv.HoTen, nv.MaPB,
+\tpb.TenPB
+FROM NhanVien AS nv
+INNER JOIN PhongBan AS pb ON pb.MaPB = nv.MaPB
+ORDER BY nv.MaNV ASC;`,
+    preview: ["MaNV","MaPB","TenPB"],
+    columns: ["MaNV","HoTen","MaPB","TenPB"],
+    rows: [
+  [
+    "NV001",
+    "Trần Thị Mai",
+    "KT",
+    "Kế toán"
+  ],
+  [
+    "NV002",
+    "Lê Văn Hùng",
+    "KD",
+    "Kinh doanh"
+  ],
+  [
+    "NV003",
+    "Nguyễn Thu Hà",
+    "KD",
+    "Kinh doanh"
+  ],
+  [
+    "NV004",
+    "Hoàng Minh Tuấn",
+    "BGD",
+    "Ban Giám đốc"
+  ],
+  [
+    "NV005",
+    "Vũ Thị Lan",
+    "KT",
+    "Kế toán"
+  ],
+  [
+    "NV006",
+    "Đặng Quốc Bảo",
+    "KD",
+    "Kinh doanh"
+  ],
+  [
+    "NV007",
+    "Bùi Thanh Sơn",
+    "IT",
+    "IT"
+  ],
+  [
+    "NV008",
+    "Phan Văn Lợi",
+    "VH",
+    "Vận hành"
+  ],
+  [
+    "NV009",
+    "Ngô Thị Thu Trang",
+    "BGD",
+    "Ban Giám đốc"
+  ],
+  [
+    "NV010",
+    "Đỗ Thị Hồng",
+    "NS",
+    "Nhân sự"
+  ]
+],
+    total: 48,
+  },
+]} />
+
+## Hay nhầm ở đâu
+
+<Mistakes>
+
+1. **Kết sai quan hệ.** `MaPB` và `MaCD` đều là mã nhưng chỉ phòng ban mới dò sang `PhongBan`; sai quan hệ có thể ra rỗng hoặc dữ liệu không đúng nghĩa.
+2. **Coi `INNER JOIN` luôn giữ mọi hồ sơ.** Dòng không khớp bị loại; muốn giữ nó phải chọn cách kết phù hợp như bài 3.5.
+3. **Viết riêng `MaPB` khi cả hai bảng đều có.** SQL không biết bạn muốn cột nào; thêm tiền tố bí danh cho rõ nguồn.
+
+</Mistakes>
+
+## Ứng dụng
+
+<Apply>
+
+- **Đổi mã thành tên trong báo cáo:** lấy tên phòng hoặc chức danh từ danh mục, theo mã đang lưu trên hồ sơ.
+- **Tổng hợp theo phòng có tên dễ đọc:** kết danh mục rồi nhóm theo mã và tên bằng `GROUP BY`, dùng `COUNT` trên phạm vi trạng thái cần đếm.
+- **Đối chiếu dữ liệu có cặp khớp:** lấy các dòng tồn tại ở cả hai nguồn theo khóa đã xác định, đồng thời kiểm số dòng để hiểu phạm vi kết quả.
+
+</Apply>
+
+## Ghi nhớ
+
+<Memo rows={[
+  ['Dò mã sang sheet danh mục','INNER JOIN … ON tìm các cặp dòng khớp'],
+  ['Mã duy nhất trong danh mục','Một dòng danh mục khớp cho mỗi mã hợp lệ'],
+  ['Phân biệt cột giữa các sheet','nv.MaPB và pb.MaPB chỉ rõ nguồn cột'],
+  ['VLOOKUP lấy dòng khớp đầu tiên','JOIN trả mọi cặp khớp; kiểm quan hệ trước khi đếm'],
+]} />
 
 ## Bài tập
 
+Bộ chấm so giá trị, thứ tự cột và thứ tự dòng theo đề; không so alias hay bắt buộc một cách viết. Tên phòng cần lấy từ danh mục, không tự gõ tên thay cho phép kết.
+
 <Exercises />
+
+**Tự kiểm tra:**
+
+<details>
+<summary>Vì sao <code>48</code> hồ sơ vẫn ra <code>48</code> dòng ở câu này?</summary>
+
+Mỗi mã phòng trên hồ sơ có đúng một dòng danh mục khớp nhờ các ràng buộc đã khai báo. Không thể suy số dòng này cho mọi phép kết.
+
+</details>
+
+<details>
+<summary>Một mã không có trong danh mục có còn trong kết quả <code>INNER JOIN</code> không?</summary>
+
+Không. `INNER JOIN` chỉ giữ cặp dòng thỏa `ON`; bài 3.5 dùng `LEFT JOIN` để giữ phía cần đối chiếu.
+
+</details>
+
+<details>
+<summary><code>AS nv</code> có đổi tên bảng <code>NhanVien</code> trong database không?</summary>
+
+Không. Đó là bí danh dùng trong câu lệnh; `nv.MaPB` vẫn đọc cột `MaPB` của `NhanVien`.
+
+</details>

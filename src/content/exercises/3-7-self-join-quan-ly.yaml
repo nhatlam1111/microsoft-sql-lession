@@ -1,0 +1,62 @@
+lesson: 3-7-self-join-quan-ly
+exercises:
+  - id: 3-7-1
+    title: Nhóm do NV007 quản lý trực tiếp
+    summary: Dò tên quản lý trong chính bảng nhân viên.
+    prompt: Lấy mọi hồ sơ có MaQuanLy bằng NV007, không lọc trạng thái. Kết về NhanVien để lấy tên quản
+      lý trực tiếp. Trả MaNV, HoTen của người được quản lý, rồi HoTenQuanLy. Xếp mã người được quản
+      lý tăng dần. Không lấy những người chỉ thuộc cấp gián tiếp.
+    columns:
+      - MaNV
+      - HoTen
+      - HoTenQuanLy
+    answer: |-
+      SELECT nv.MaNV, nv.HoTen, ql.HoTen AS [HoTenQuanLy]
+      FROM NhanVien AS nv
+      LEFT JOIN NhanVien AS ql ON ql.MaNV = nv.MaQuanLy
+      WHERE nv.MaQuanLy = 'NV007'
+      ORDER BY nv.MaNV ASC;
+    ordered: true
+    kind: query
+  - id: 3-7-2
+    title: Phòng của quản lý hồ sơ Nhân sự
+    summary: Phân biệt cột của hai vai trò.
+    prompt: Lấy tất cả hồ sơ hiện mang MaPB bằng NS, mọi trạng thái. Giữ hồ sơ cả khi MaQuanLy là NULL.
+      Trả MaNV, HoTen của nhân viên; mã nhân viên của chính người quản lý đặt tên MaQuanLy;
+      mã phòng MaPB của người đó đặt tên MaPhongQuanLy. Giá trị không có để SQL NULL,
+      không đổi thành chữ. Xếp mã nhân viên tăng dần.
+    columns:
+      - MaNV
+      - HoTen
+      - MaQuanLy
+      - MaPhongQuanLy
+    answer: |-
+      SELECT nv.MaNV, nv.HoTen, ql.MaNV AS [MaQuanLy],
+          ql.MaPB AS [MaPhongQuanLy]
+      FROM NhanVien AS nv
+      LEFT JOIN NhanVien AS ql ON ql.MaNV = nv.MaQuanLy
+      WHERE nv.MaPB = 'NS'
+      ORDER BY nv.MaNV ASC;
+    ordered: true
+    kind: query
+  - id: 3-7-3
+    title: Số cấp dưới đang làm của từng hồ sơ đang làm
+    summary: Giữ cả người không có cấp dưới.
+    prompt: Mỗi hồ sơ TrangThai bằng chuỗi Unicode Đang làm là một dòng báo cáo, dù chưa quản lý ai. Đếm
+      hồ sơ cấp dưới trực tiếp cũng đang làm theo MaQuanLy. Trả MaNV, HoTen của người được thống kê
+      và SoCapDuoi; người không có cấp dưới phù hợp nhận số 0. Xếp MaNV tăng dần. Trạng thái phải
+      xét riêng cho hai vai trò; không đếm dòng NULL do LEFT JOIN giữ lại.
+    columns:
+      - MaNV
+      - HoTen
+      - SoCapDuoi
+    answer: |-
+      SELECT ql.MaNV, ql.HoTen, COUNT(nv.MaNV) AS [SoCapDuoi]
+      FROM NhanVien AS ql
+      LEFT JOIN NhanVien AS nv ON nv.MaQuanLy = ql.MaNV
+          AND nv.TrangThai = N'Đang làm'
+      WHERE ql.TrangThai = N'Đang làm'
+      GROUP BY ql.MaNV, ql.HoTen
+      ORDER BY ql.MaNV ASC;
+    ordered: true
+    kind: query

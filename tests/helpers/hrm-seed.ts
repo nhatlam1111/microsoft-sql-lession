@@ -4,7 +4,7 @@ export type SeedCell = string | number | null;
 export type SeedRow = Record<string, SeedCell>;
 
 /** Read literal INSERT rows only. This is a source fixture, not a T-SQL engine. */
-export function seedRows(table: 'NhanVien' | 'DonNghiPhep'): SeedRow[] {
+export function seedRows(table: 'NhanVien' | 'DonNghiPhep' | 'PhongBan' | 'ChucDanh' | 'HopDong'): SeedRow[] {
   const seed = readFileSync('database/HRM_Demo.sql', 'utf8');
   const insert = seed.match(new RegExp(`INSERT INTO dbo\\.${table} \\(([^)]+)\\) VALUES\\s*([\\s\\S]*?);`));
   if (!insert) throw new Error(`Missing literal seed for ${table}`);
