@@ -1,0 +1,57 @@
+lesson: 3-4-inner-join-vlookup
+exercises:
+  - id: 3-4-1
+    title: Tên phòng của hồ sơ Kinh doanh
+    summary: Lấy tên phòng theo mã đang lưu.
+    prompt: Lấy mọi hồ sơ hiện mang MaPB bằng KD, gồm mọi trạng thái. Trả ba cột MaNV, HoTen, TenPB theo
+      thứ tự này; tên phòng lấy từ PhongBan theo mã phòng của hồ sơ. Xếp MaNV tăng dần.
+    columns:
+      - MaNV
+      - HoTen
+      - TenPB
+    answer: |-
+      SELECT nv.MaNV, nv.HoTen, pb.TenPB
+      FROM NhanVien AS nv
+      INNER JOIN PhongBan AS pb ON pb.MaPB = nv.MaPB
+      WHERE nv.MaPB = 'KD'
+      ORDER BY nv.MaNV ASC;
+    ordered: true
+    kind: query
+  - id: 3-4-2
+    title: Vận hành đang làm
+    summary: Kết danh mục sau khi chốt phạm vi trạng thái.
+    prompt: Lấy hồ sơ có MaPB bằng VH và TrangThai bằng chuỗi Unicode Đang làm. Trả MaNV, HoTen, TenPB;
+      tên phòng lấy từ PhongBan. Xếp MaNV tăng dần. Không lấy người đã nghỉ.
+    columns:
+      - MaNV
+      - HoTen
+      - TenPB
+    answer: |-
+      SELECT nv.MaNV, nv.HoTen, pb.TenPB
+      FROM NhanVien AS nv
+      INNER JOIN PhongBan AS pb ON pb.MaPB = nv.MaPB
+      WHERE nv.MaPB = 'VH'
+          AND nv.TrangThai = N'Đang làm'
+      ORDER BY nv.MaNV ASC;
+    ordered: true
+    kind: query
+  - id: 3-4-3
+    title: Phòng có trên năm hồ sơ đang làm
+    summary: Gắn tên danh mục vào báo cáo nhóm.
+    prompt: Nhóm hồ sơ TrangThai bằng chuỗi Unicode Đang làm theo phòng hiện lưu, lấy tên từ PhongBan.
+      Chỉ giữ phòng có trên 5 hồ sơ. Trả MaPB, TenPB, SoHoSo theo thứ tự này; xếp SoHoSo giảm dần,
+      cùng số thì MaPB tăng dần. Đếm hồ sơ, không đếm phòng.
+    columns:
+      - MaPB
+      - TenPB
+      - SoHoSo
+    answer: |-
+      SELECT pb.MaPB, pb.TenPB, COUNT(*) AS [SoHoSo]
+      FROM NhanVien AS nv
+      INNER JOIN PhongBan AS pb ON pb.MaPB = nv.MaPB
+      WHERE nv.TrangThai = N'Đang làm'
+      GROUP BY pb.MaPB, pb.TenPB
+      HAVING COUNT(*) > 5
+      ORDER BY [SoHoSo] DESC, pb.MaPB ASC;
+    ordered: true
+    kind: query

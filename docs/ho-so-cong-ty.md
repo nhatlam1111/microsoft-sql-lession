@@ -95,13 +95,12 @@ Các nhân vật là giả định, không phải hồ sơ trong bộ mẫu (bà
 
 | Nhân vật | Là ai | Xuất hiện |
 |---|---|---|
-| Chị Hạnh · Phòng Nhân sự | Người đưa yêu cầu trong mọi bài đầy đủ; xưng "chị", gọi người học là "em" | 1.1–1.6, 2.1–2.9, 3.1–3.3, 3.5 |
+| Chị Hạnh · Phòng Nhân sự | Người đưa yêu cầu trong mọi bài đầy đủ; xưng "chị", gọi người học là "em" | 1.1–1.6, 2.1–2.9, 3.1–3.7 |
 | Người học ("em", "bạn") | Người đọc và lấy dữ liệu từ hệ thống nhân sự cho chị Hạnh; có tài khoản vào database qua SSMS | mọi bài |
 | Chị Thảo · Kế toán | Giữ một bản file nhân sự riêng | 1.1 |
 | Quân | Nhân viên chuyển sang IT, nhưng file của Kế toán còn ghi phòng cũ | 1.1 |
 | Bên IT | Quản trị hệ thống, cấp tên máy chủ và tài khoản, nhập file vào hệ thống, xóa dữ liệu theo yêu cầu | 1.2, 1.3, 1.4 |
 | Kế toán | Người nhận các danh sách và bảng lương | 1.5, 2.1 |
-| "Sếp" của chị Hạnh | Người nhận báo cáo vào thứ Hai | 3.5 |
 
 Ba nhân vật trùng tên với hồ sơ trong bộ mẫu: chị Hạnh với NV020 Kiều Thị Hạnh (KD, đã nghỉ), chị Thảo với NV036 Doãn Thị Thảo (KD), Quân với NV048 Đỗ Minh Quân (vào IT tháng 10/2026, không phải chuyển phòng). Khi bài nhắc tới các hồ sơ này thì luôn gọi bằng mã. Nhân vật mới không được trùng tên với 48 hồ sơ ở mục 3.
 
@@ -139,5 +138,8 @@ Các lỗi này có chủ ý, dành cho bài 4.6 và 4.7; bài khác không đư
 | 3.1 | Chị Hạnh cần tổng hợp đơn đã duyệt có TuNgay từ 01/09 đến trước 01/10/2026, cộng toàn bộ SoNgay của đơn. Theo script: 9 đơn, tổng 16.0 ngày, bình quân làm tròn hai số lẻ 1.78, ít nhất 1.0 và nhiều nhất 3.0 ngày. Đây không phải số ngày thực nghỉ trong tháng; DP018 bắt đầu tháng 8 bị loại dù kéo sang tháng 9. |
 | 3.2 | Chị Hạnh đếm hồ sơ đang làm theo MaPB hiện lưu, xếp số lượng giảm dần rồi mã tăng dần. Theo script có 45 hồ sơ thành 6 nhóm: KD 13, IT 10, VH 8, KT 7, NS 5, BGD 2; không phải phòng tại thời điểm quá khứ. Ví dụ phụ tách toàn bộ KD theo trạng thái thành 13 đang làm và 1 đã nghỉ. |
 | 3.3 | Từ cùng phạm vi đang làm của 3.2, chị Hạnh chỉ giữ nhóm phòng có trên 10 hồ sơ. Theo script, HAVING COUNT(*) > 10 giữ KD 13; IT đúng 10 bị loại. WHERE lọc hồ sơ trước, HAVING lọc nhóm sau; kết quả không tự kết luận phòng thiếu người. |
-| 3.5 | Chị Hạnh phải báo cáo sếp vào thứ Hai về những người mới vào chưa có hợp đồng trên hệ thống. |
+| 3.4 | Chị Hạnh lấy mọi hồ sơ kèm tên phòng theo mã hiện lưu, xếp mã nhân viên tăng dần. Danh mục có khóa duy nhất và mã hồ sơ hợp lệ nên 48 hồ sơ vẫn cho 48 dòng; không dựng phòng lịch sử. |
+| 3.5 | Chị Hạnh đối chiếu mọi hồ sơ chưa có bất kỳ dòng hợp đồng nào, không lọc riêng người mới hoặc trạng thái. NV047, NV048 chưa có hợp đồng; 55 hợp đồng và hai hồ sơ không khớp tạo 57 dòng khi LEFT JOIN trước lọc. Ví dụ phụ đối chiếu hợp đồng thử việc của NV021/NV047, không kiểm hiệu lực hiện tại. |
+| 3.6 | Chị Hạnh lấy lương kỳ 2026-09 kèm hợp đồng ứng viên tại 30/09 theo ngày bắt đầu/kết thúc đã lưu. Có 45 ứng viên, mỗi mã hiện chỉ một; 43 mã có dòng lương kỳ đó. NV021 có thực lĩnh 16.457.000, kết cả ba hợp đồng cũ sẽ lặp khoản tiền ba lần. Quy tắc ngày chỉ phục vụ đối chiếu, không chứng nhận pháp lý hoặc tính lại lương cả tháng. |
+| 3.7 | Chị Hạnh lấy mọi hồ sơ kèm quản lý trực tiếp hiện lưu: LEFT JOIN giữ đủ 48 dòng, NV004 có quản lý NULL; INNER JOIN chỉ còn 47. NV001 trỏ NV005, NV005 trỏ NV004; không coi NV004 là quản lý trực tiếp của NV001. NV004/NV005 mỗi người có sáu hồ sơ trực tiếp ở mọi trạng thái; NV048 chưa có cấp dưới. |
 | 6.5 | Một chiều thứ Sáu, câu `UPDATE` phụ cấp của NV012 kỳ 2026-09 bị bôi đen thiếu, chạy cho cả bảng lương. |

@@ -4,8 +4,9 @@ exercises:
     title: IT chưa có hợp đồng
     summary: Tìm nhân viên phòng IT chưa có hợp đồng nào.
     prompt: >-
-      Phòng IT cần danh sách nhân viên chưa có hợp đồng nào để làm hợp đồng bổ sung.
-      Lấy mã, họ tên và ngày vào làm; người vào làm trước xếp trước.
+      Xét mọi hồ sơ hiện mang MaPB bằng IT, không lọc trạng thái hay ngày vào làm.
+      Tìm hồ sơ không có bất kỳ dòng HopDong nào theo MaNV.
+      Trả MaNV, HoTen, NgayVaoLam theo thứ tự này; ngày vào làm tăng dần.
     columns: [MaNV, HoTen, NgayVaoLam]
     ordered: true
     kind: query
@@ -16,11 +17,12 @@ exercises:
       WHERE hd.MaHD IS NULL AND nv.MaPB = 'IT'
       ORDER BY nv.NgayVaoLam;
   - id: 3-5-2
-    title: Chưa có bảng lương tháng 9
+    title: Chưa có dòng lương tháng 9
     summary: Tìm nhân viên không có dòng lương kỳ 2026-09.
     prompt: >-
-      Kế toán hỏi ai không có dòng lương trong kỳ 2026-09.
-      Lấy mã và họ tên, xếp theo mã nhân viên.
+      Xét mọi hồ sơ NhanVien, không lọc trạng thái hay ngày.
+      Tìm hồ sơ không có dòng BangLuong trong kỳ 2026-09, dù có thể có lương ở kỳ khác.
+      Trả MaNV, HoTen; xếp MaNV tăng dần.
     columns: [MaNV, HoTen]
     ordered: true
     kind: query
@@ -34,9 +36,10 @@ exercises:
     title: Nhân viên và hợp đồng, kể cả người chưa có
     summary: Liệt kê mọi nhân viên kèm từng hợp đồng của họ.
     prompt: >-
-      Lấy mã và họ tên của mọi nhân viên, kèm mã từng hợp đồng của họ.
-      Ai chưa có hợp đồng vẫn phải có mặt, cột mã hợp đồng để trống.
-      Xếp theo mã nhân viên, rồi theo mã hợp đồng.
+      Lấy mọi hồ sơ NhanVien ở mọi trạng thái, kèm mã từng hợp đồng đang lưu của họ,
+      không lọc ngày hay loại hợp đồng. Trả MaNV, HoTen, MaHD theo thứ tự này.
+      Hồ sơ chưa có hợp đồng vẫn có mặt, cột MaHD là SQL NULL, không phải chữ NULL.
+      Xếp MaNV tăng dần, rồi MaHD tăng dần.
     columns: [MaNV, HoTen, MaHD]
     ordered: true
     kind: query

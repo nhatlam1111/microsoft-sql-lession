@@ -4,30 +4,656 @@ title: "Kết nhiều bảng: NV → HĐ → Lương"
 shortTitle: Kết nhiều bảng
 level: 3
 area: A4
-kind: summary
-minutes: 14
+kind: full
+minutes: 25
 prerequisites:
   - "3.5"
-goal: bạn kết được ba, bốn bảng mà không bị nhân đôi dòng
+goal: bạn kết ba bảng theo đúng phạm vi và kiểm được một dòng kết quả đại diện cho gì
 excel: VLOOKUP qua nhiều sheet
-summary: Kết 3–4 bảng và xử lý dòng bị nhân lên khi quan hệ là một-nhiều.
+summary: Chốt kỳ lương, chọn hợp đồng ứng viên theo mốc ngày và phát hiện tiền bị lặp khi kết.
 ---
 
-## Nội dung chính
+## Tình huống
 
-- Kết lần lượt: `NhanVien` với `HopDong`, rồi với `BangLuong`; mỗi lần là một `JOIN` với điều kiện `ON` riêng.
-- Quan hệ một-nhiều làm dòng nhân lên: người có ba hợp đồng hiện ba lần, cộng lương theo kết quả đó sẽ ra số sai.
-- Cách xử lý: chọn đúng một hợp đồng cho mỗi người (hợp đồng còn hiệu lực, hoặc mới nhất ở bài 4.2) rồi mới kết.
-- Đếm số dòng trước và sau mỗi lần kết để phát hiện dòng bị nhân lên.
+Chị Hạnh đối chiếu bảng lương gần nhất trong tháng 10/2026:
 
-## Liên hệ Excel
+<Chat who="Chị Hạnh · Phòng Nhân sự" time="10:30" initial="H">
+Em lấy các dòng lương kỳ 2026-09, thêm họ tên, mã và loại hợp đồng phù hợp tại ngày 30/09 giúp chị. Chị cần kiểm từng người, nên đừng để một khoản thực lĩnh xuất hiện nhiều lần vì lấy cả hợp đồng cũ nhé.
+</Chat>
 
-Giống VLOOKUP qua nhiều sheet liên tiếp. Có một khác biệt dễ gây sai số: VLOOKUP chỉ lấy dòng khớp đầu tiên, còn SQL lấy hết mọi dòng khớp.
+Quy tắc báo cáo: hợp đồng **ứng viên tại mốc** thỏa `NgayBatDau <= '20260930'` và (`NgayKetThuc IS NULL` hoặc `NgayKetThuc >= '20260930'`); hai phép so sánh ngày đều nhận trường hợp bằng mốc. Không lọc trạng thái hiện tại. Quy tắc này dùng các ngày đã lưu để đối chiếu, không chứng nhận hiệu lực pháp lý hoặc tính lại lương của cả tháng.
 
-## Tình huống ví dụ
+<Key>Một dòng lương được nhận diện bằng cặp kỳ lương và mã nhân viên; kết thêm hợp đồng phải kiểm số dòng khớp.</Key>
 
-Báo cáo lương tháng 9 cần kèm loại hợp đồng của từng người.
+## Kết đúng quan hệ và kiểm độ chi tiết của dòng
+
+### Mỗi bảng thêm một loại thông tin
+
+**Độ chi tiết của dòng** là ý nghĩa của một dòng: `NhanVien` có một dòng mỗi `MaNV`; `HopDong` có một dòng mỗi `MaHD`; `BangLuong` có một dòng mỗi cặp `KyLuong`, `MaNV`. Chỉ cùng `MaNV` chưa làm ba bảng có cùng độ chi tiết. Mỗi `JOIN` cần `ON` riêng để nói cặp dòng nào được kết.
+
+Trong Excel, bạn có thể lấy tên từ sheet nhân viên và dò hợp đồng từ một sheet đã lọc theo mốc ngày. Hình minh họa một dòng lương của `NV021`; `B2` đánh dấu hợp đồng ứng viên `HD2024-005`. Sheet `HopDongMoc` chứa `MaNV`, `MaHD` ở hai cột đầu và đã kiểm mỗi mã chỉ còn một ứng viên trước khi dùng VLOOKUP.
+
+<Excel sheets="Luong_2026_09 · HopDongMoc" cell="B2" formula="=VLOOKUP(A2,HopDongMoc!A:B,2,FALSE)" selected="B2" mark={['B2','C2']} rows={[
+  ['MaNV','MaHD','ThucLinh'],
+  ['NV021','HD2024-005',16457000],
+]} />
+
+Ô `C2` là `16457000`, lấy từ dòng lương kỳ `2026-09`, không tính từ công thức dò hợp đồng. Trong SQL, bảng trung tâm kết hai phía qua `NhanVien.MaNV`: hợp đồng trỏ tới hồ sơ, dòng lương cũng trỏ tới hồ sơ. Sơ đồ đánh dấu hai quan hệ đó; `BangLuong` không lưu `MaHD` để trỏ trực tiếp tới một hợp đồng.
+
+<Erd path={['HopDong','NhanVien','BangLuong']} caption="Hai quan hệ cùng qua MaNV; khóa của bảng lương còn có KyLuong." />
+
+### Một khoản lương có thể bị lặp qua nhiều hợp đồng
+
+Nếu chỉ kết bằng `MaNV`, hồ sơ `NV021` có `3` hợp đồng đang lưu. Câu đọc dưới đây cố ý lấy cả lịch sử để nhìn chỗ lặp:
+
+<Sql code={`SELECT bl.MaNV, hd.MaHD, bl.ThucLinh
+FROM NhanVien AS nv
+INNER JOIN HopDong AS hd ON hd.MaNV = nv.MaNV
+INNER JOIN BangLuong AS bl ON bl.MaNV = nv.MaNV
+WHERE bl.KyLuong = '2026-09'
+\tAND nv.MaNV = 'NV021'
+ORDER BY hd.MaHD ASC;`} />
+
+<Result columns={["MaNV","MaHD","ThucLinh"]} rows={[
+  [
+    "NV021",
+    "HD2021-001",
+    "16457000"
+  ],
+  [
+    "NV021",
+    "HD2021-002",
+    "16457000"
+  ],
+  [
+    "NV021",
+    "HD2024-005",
+    "16457000"
+  ]
+]} total={3} mark={[1,2,3]} />
+
+Khoản `16457000` xuất hiện ở cả `3` dòng vì cùng dòng lương khớp ba hợp đồng. Cộng cột đó sẽ thành `49371000`, không phải thực lĩnh mới của nhân viên. Dùng `DISTINCT` không sửa quan hệ: còn `MaHD` thì ba dòng vẫn khác nhau; bỏ mã để giấu dòng lại làm mất căn cứ đối chiếu.
+
+Thêm hai điều kiện ngày để chọn ứng viên, rồi **kiểm một mã có nhiều ứng viên hay không**. Câu sau trả các mã cần xử lý tiếp; hiện bộ mẫu trả `0` dòng:
+
+<Sql code={`SELECT hd.MaNV, COUNT(*) AS [SoHD]
+FROM HopDong AS hd
+WHERE hd.NgayBatDau <= '20260930'
+\tAND (hd.NgayKetThuc IS NULL OR hd.NgayKetThuc >= '20260930')
+GROUP BY hd.MaNV
+HAVING COUNT(*) > 1;`} />
+
+Điều kiện ngày không phải ràng buộc duy nhất: hai hợp đồng chồng ngày vẫn có thể cùng đạt. Nếu câu kiểm trả mã, cần thống nhất quy tắc chọn với người phụ trách; không tự lấy hợp đồng đầu tiên hoặc mới nhất. Với bộ mẫu hiện tại, có `45` mã có ứng viên, mỗi mã đúng một hợp đồng; trong đó `43` mã có dòng lương kỳ `2026-09`.
+
+Kiểm trùng trả `0` chỉ xác nhận **tối đa một** ứng viên mỗi mã, chưa kiểm báo cáo có bỏ dòng lương. Đếm riêng số dòng lương của kỳ để đối chiếu với kết quả cuối:
+
+<Sql code={`SELECT COUNT(*) AS [SoDongLuong]
+FROM BangLuong
+WHERE KyLuong = '2026-09';`} />
+
+Câu đếm trả `43`. Sau khi đã kiểm tối đa một ứng viên và khóa lương duy nhất trong kỳ, kết quả cuối cũng phải có `43` dòng; nếu ít hơn, dùng cách tìm không khớp ở bài 3.5 để đối chiếu.
+
+Ở bài này chỉ cần kết ba bảng và kiểm độ chi tiết. Chọn dòng mới nhất bằng xếp hạng học ở bài 4.2; đối chiếu và kiểm dữ liệu bất thường học ở bài 4.6–4.7. Không lấy lương cơ bản hiện tại trong hợp đồng để tự thay số tiền đã lưu của kỳ lương.
+
+### Câu lệnh cho tình huống
+
+Sau kiểm ứng viên, kết đúng kỳ lương và lấy số tiền từ `BangLuong`. Điều kiện ngày thuộc phần hợp đồng được khớp; điều kiện kỳ thuộc phần lương được khớp:
+
+<Sql code={`SELECT bl.MaNV, nv.HoTen, hd.MaHD,
+\thd.LoaiHD, bl.ThucLinh
+FROM NhanVien AS nv
+INNER JOIN HopDong AS hd ON hd.MaNV = nv.MaNV
+\tAND hd.NgayBatDau <= '20260930'
+\tAND (hd.NgayKetThuc IS NULL OR hd.NgayKetThuc >= '20260930')
+INNER JOIN BangLuong AS bl ON bl.MaNV = nv.MaNV
+\tAND bl.KyLuong = '2026-09'
+ORDER BY bl.MaNV ASC, hd.MaHD ASC;`} />
+
+<Result columns={["MaNV","HoTen","MaHD","LoaiHD","ThucLinh"]} rows={[
+  [
+    "NV001",
+    "Trần Thị Mai",
+    "HD2024-018",
+    "Xác định thời hạn",
+    "13285000"
+  ],
+  [
+    "NV002",
+    "Lê Văn Hùng",
+    "HD2024-021",
+    "Không xác định thời hạn",
+    "21631000"
+  ],
+  [
+    "NV003",
+    "Nguyễn Thu Hà",
+    "HD2023-104",
+    "Không xác định thời hạn",
+    "14088000"
+  ],
+  [
+    "NV004",
+    "Hoàng Minh Tuấn",
+    "HD2015-001",
+    "Không xác định thời hạn",
+    "50025000"
+  ],
+  [
+    "NV005",
+    "Vũ Thị Lan",
+    "HD2016-001",
+    "Không xác định thời hạn",
+    "29297000"
+  ],
+  [
+    "NV006",
+    "Đặng Quốc Bảo",
+    "HD2016-003",
+    "Không xác định thời hạn",
+    "31310000"
+  ],
+  [
+    "NV007",
+    "Bùi Thanh Sơn",
+    "HD2017-001",
+    "Không xác định thời hạn",
+    "29910000"
+  ],
+  [
+    "NV008",
+    "Phan Văn Lợi",
+    "HD2015-002",
+    "Không xác định thời hạn",
+    "27882000"
+  ],
+  [
+    "NV009",
+    "Ngô Thị Thu Trang",
+    "HD2025-007",
+    "Xác định thời hạn",
+    "12482000"
+  ],
+  [
+    "NV010",
+    "Đỗ Thị Hồng",
+    "HD2016-002",
+    "Không xác định thời hạn",
+    "31116000"
+  ]
+]} total={43} />
+
+Chị Hạnh nhận đủ `43` dòng lương kỳ `2026-09`, mỗi mã một lần sau kiểm trùng và đối chiếu số dòng gốc. Báo cáo thêm họ tên và hợp đồng ứng viên tại mốc đã chốt, không tính lại số thực lĩnh.
+
+### SQL Server chạy câu này thế nào
+
+Theo **thứ tự logic**, bắt đầu từ hồ sơ rồi xét hai phép kết, chọn cột và sắp xếp. Bảng chi tiết mỗi bước trích tối đa `10` dòng; từng câu `SELECT` chỉ dùng để quan sát mốc đó. Hai phép kết ở đây là `INNER JOIN`, nên dòng không có cặp phù hợp bị loại. Đây không phải thứ tự thực thi vật lý; trước `ORDER BY`, thứ tự có thể khác hình.
+
+<RunFlow query={`SELECT bl.MaNV, nv.HoTen, hd.MaHD,
+\thd.LoaiHD, bl.ThucLinh
+FROM NhanVien AS nv
+INNER JOIN HopDong AS hd ON hd.MaNV = nv.MaNV
+\tAND hd.NgayBatDau <= '20260930'
+\tAND (hd.NgayKetThuc IS NULL OR hd.NgayKetThuc >= '20260930')
+INNER JOIN BangLuong AS bl ON bl.MaNV = nv.MaNV
+\tAND bl.KyLuong = '2026-09'
+ORDER BY bl.MaNV ASC, hd.MaHD ASC;`} steps={[
+  {
+    clause: "FROM",
+    title: "Lấy hồ sơ để kết hai phía.",
+    focus: "FROM NhanVien AS nv",
+    meaning: "`FROM` lấy hồ sơ nhân viên; chưa chọn hợp đồng hoặc kỳ lương.",
+    detail: "`FROM` có `48` hồ sơ; bảng chi tiết trích `10` mã và họ tên.",
+    sql: `SELECT nv.MaNV, nv.HoTen
+FROM NhanVien AS nv;`,
+    columns: ["MaNV","HoTen"],
+    rows: [
+  [
+    "NV001",
+    "Trần Thị Mai"
+  ],
+  [
+    "NV002",
+    "Lê Văn Hùng"
+  ],
+  [
+    "NV003",
+    "Nguyễn Thu Hà"
+  ],
+  [
+    "NV004",
+    "Hoàng Minh Tuấn"
+  ],
+  [
+    "NV005",
+    "Vũ Thị Lan"
+  ],
+  [
+    "NV006",
+    "Đặng Quốc Bảo"
+  ],
+  [
+    "NV007",
+    "Bùi Thanh Sơn"
+  ],
+  [
+    "NV008",
+    "Phan Văn Lợi"
+  ],
+  [
+    "NV009",
+    "Ngô Thị Thu Trang"
+  ],
+  [
+    "NV010",
+    "Đỗ Thị Hồng"
+  ]
+],
+    total: 48,
+  },
+  {
+    clause: "INNER JOIN",
+    title: "Chọn hợp đồng ứng viên theo mốc.",
+    focus: "INNER JOIN HopDong AS hd ON hd.MaNV = nv.MaNV\n\tAND hd.NgayBatDau <= '20260930'\n\tAND (hd.NgayKetThuc IS NULL OR hd.NgayKetThuc >= '20260930')",
+    meaning: "`INNER JOIN` với `HopDong` chỉ nhận cặp cùng `MaNV` và thỏa cả điều kiện ngày bắt đầu, kết thúc.",
+    detail: "`INNER JOIN` giữ `45` cặp từ `48` hồ sơ, loại hồ sơ không có hợp đồng ứng viên tại mốc. Bộ mẫu hiện mỗi mã khớp một ứng viên sau kiểm mã trùng; chưa giới hạn dòng lương.",
+    sql: `SELECT nv.MaNV, nv.HoTen, hd.MaHD, hd.LoaiHD
+FROM NhanVien AS nv
+INNER JOIN HopDong AS hd ON hd.MaNV = nv.MaNV
+\tAND hd.NgayBatDau <= '20260930'
+\tAND (hd.NgayKetThuc IS NULL OR hd.NgayKetThuc >= '20260930');`,
+    columns: ["MaNV","HoTen","MaHD","LoaiHD"],
+    rows: [
+  [
+    "NV004",
+    "Hoàng Minh Tuấn",
+    "HD2015-001",
+    "Không xác định thời hạn"
+  ],
+  [
+    "NV008",
+    "Phan Văn Lợi",
+    "HD2015-002",
+    "Không xác định thời hạn"
+  ],
+  [
+    "NV005",
+    "Vũ Thị Lan",
+    "HD2016-001",
+    "Không xác định thời hạn"
+  ],
+  [
+    "NV010",
+    "Đỗ Thị Hồng",
+    "HD2016-002",
+    "Không xác định thời hạn"
+  ],
+  [
+    "NV006",
+    "Đặng Quốc Bảo",
+    "HD2016-003",
+    "Không xác định thời hạn"
+  ],
+  [
+    "NV007",
+    "Bùi Thanh Sơn",
+    "HD2017-001",
+    "Không xác định thời hạn"
+  ],
+  [
+    "NV037",
+    "Giang Văn Bình",
+    "HD2017-002",
+    "Không xác định thời hạn"
+  ],
+  [
+    "NV014",
+    "Hồ Thị Bích",
+    "HD2017-003",
+    "Không xác định thời hạn"
+  ],
+  [
+    "NV019",
+    "Châu Văn Phúc",
+    "HD2018-001",
+    "Không xác định thời hạn"
+  ],
+  [
+    "NV011",
+    "Lý Minh Khoa",
+    "HD2018-002",
+    "Không xác định thời hạn"
+  ]
+],
+    total: 45,
+  },
+  {
+    clause: "INNER JOIN",
+    title: "Chỉ khớp lương kỳ 2026-09.",
+    focus: "INNER JOIN BangLuong AS bl ON bl.MaNV = nv.MaNV\n\tAND bl.KyLuong = '2026-09'",
+    meaning: "`INNER JOIN` với `BangLuong` nhận cặp cùng `MaNV` và đúng `KyLuong`.",
+    detail: "`INNER JOIN` từ `45` ứng viên giữ `43` dòng có lương kỳ `2026-09`. Không lấy lương tháng `2026-08`.",
+    sql: `SELECT bl.MaNV, nv.HoTen, hd.MaHD,
+\thd.LoaiHD, bl.ThucLinh
+FROM NhanVien AS nv
+INNER JOIN HopDong AS hd ON hd.MaNV = nv.MaNV
+\tAND hd.NgayBatDau <= '20260930'
+\tAND (hd.NgayKetThuc IS NULL OR hd.NgayKetThuc >= '20260930')
+INNER JOIN BangLuong AS bl ON bl.MaNV = nv.MaNV
+\tAND bl.KyLuong = '2026-09';`,
+    preview: ["MaNV","MaHD","ThucLinh"],
+    columns: ["MaNV","HoTen","MaHD","LoaiHD","ThucLinh"],
+    rows: [
+  [
+    "NV004",
+    "Hoàng Minh Tuấn",
+    "HD2015-001",
+    "Không xác định thời hạn",
+    "50025000"
+  ],
+  [
+    "NV008",
+    "Phan Văn Lợi",
+    "HD2015-002",
+    "Không xác định thời hạn",
+    "27882000"
+  ],
+  [
+    "NV005",
+    "Vũ Thị Lan",
+    "HD2016-001",
+    "Không xác định thời hạn",
+    "29297000"
+  ],
+  [
+    "NV010",
+    "Đỗ Thị Hồng",
+    "HD2016-002",
+    "Không xác định thời hạn",
+    "31116000"
+  ],
+  [
+    "NV006",
+    "Đặng Quốc Bảo",
+    "HD2016-003",
+    "Không xác định thời hạn",
+    "31310000"
+  ],
+  [
+    "NV007",
+    "Bùi Thanh Sơn",
+    "HD2017-001",
+    "Không xác định thời hạn",
+    "29910000"
+  ],
+  [
+    "NV037",
+    "Giang Văn Bình",
+    "HD2017-002",
+    "Không xác định thời hạn",
+    "10575000"
+  ],
+  [
+    "NV014",
+    "Hồ Thị Bích",
+    "HD2017-003",
+    "Không xác định thời hạn",
+    "22694000"
+  ],
+  [
+    "NV019",
+    "Châu Văn Phúc",
+    "HD2018-001",
+    "Không xác định thời hạn",
+    "9680000"
+  ],
+  [
+    "NV011",
+    "Lý Minh Khoa",
+    "HD2018-002",
+    "Không xác định thời hạn",
+    "22350000"
+  ]
+],
+    total: 43,
+  },
+  {
+    clause: "SELECT",
+    title: "Lấy thông tin và số tiền đã lưu.",
+    focus: "SELECT bl.MaNV, nv.HoTen, hd.MaHD,\n\thd.LoaiHD, bl.ThucLinh",
+    meaning: "`SELECT` lấy mã, họ tên, mã/loại hợp đồng và `ThucLinh` của kỳ lương.",
+    detail: "`SELECT` giữ `43` dòng và `5` cột; khoản tiền được đọc từ `BangLuong`, không cộng lại theo hợp đồng.",
+    sql: `SELECT bl.MaNV, nv.HoTen, hd.MaHD,
+\thd.LoaiHD, bl.ThucLinh
+FROM NhanVien AS nv
+INNER JOIN HopDong AS hd ON hd.MaNV = nv.MaNV
+\tAND hd.NgayBatDau <= '20260930'
+\tAND (hd.NgayKetThuc IS NULL OR hd.NgayKetThuc >= '20260930')
+INNER JOIN BangLuong AS bl ON bl.MaNV = nv.MaNV
+\tAND bl.KyLuong = '2026-09';`,
+    preview: ["MaNV","MaHD","ThucLinh"],
+    columns: ["MaNV","HoTen","MaHD","LoaiHD","ThucLinh"],
+    rows: [
+  [
+    "NV004",
+    "Hoàng Minh Tuấn",
+    "HD2015-001",
+    "Không xác định thời hạn",
+    "50025000"
+  ],
+  [
+    "NV008",
+    "Phan Văn Lợi",
+    "HD2015-002",
+    "Không xác định thời hạn",
+    "27882000"
+  ],
+  [
+    "NV005",
+    "Vũ Thị Lan",
+    "HD2016-001",
+    "Không xác định thời hạn",
+    "29297000"
+  ],
+  [
+    "NV010",
+    "Đỗ Thị Hồng",
+    "HD2016-002",
+    "Không xác định thời hạn",
+    "31116000"
+  ],
+  [
+    "NV006",
+    "Đặng Quốc Bảo",
+    "HD2016-003",
+    "Không xác định thời hạn",
+    "31310000"
+  ],
+  [
+    "NV007",
+    "Bùi Thanh Sơn",
+    "HD2017-001",
+    "Không xác định thời hạn",
+    "29910000"
+  ],
+  [
+    "NV037",
+    "Giang Văn Bình",
+    "HD2017-002",
+    "Không xác định thời hạn",
+    "10575000"
+  ],
+  [
+    "NV014",
+    "Hồ Thị Bích",
+    "HD2017-003",
+    "Không xác định thời hạn",
+    "22694000"
+  ],
+  [
+    "NV019",
+    "Châu Văn Phúc",
+    "HD2018-001",
+    "Không xác định thời hạn",
+    "9680000"
+  ],
+  [
+    "NV011",
+    "Lý Minh Khoa",
+    "HD2018-002",
+    "Không xác định thời hạn",
+    "22350000"
+  ]
+],
+    total: 43,
+  },
+  {
+    clause: "ORDER BY",
+    title: "Xếp mã nhân viên và hợp đồng.",
+    focus: "ORDER BY bl.MaNV ASC, hd.MaHD ASC",
+    meaning: "`ORDER BY` làm thứ tự báo cáo xác định theo hai mã.",
+    detail: "`ORDER BY` giữ `43` dòng; hình trích `10` dòng đầu. Số dòng bằng `43` dòng lương gốc của kỳ đã đếm riêng.",
+    sql: `SELECT bl.MaNV, nv.HoTen, hd.MaHD,
+\thd.LoaiHD, bl.ThucLinh
+FROM NhanVien AS nv
+INNER JOIN HopDong AS hd ON hd.MaNV = nv.MaNV
+\tAND hd.NgayBatDau <= '20260930'
+\tAND (hd.NgayKetThuc IS NULL OR hd.NgayKetThuc >= '20260930')
+INNER JOIN BangLuong AS bl ON bl.MaNV = nv.MaNV
+\tAND bl.KyLuong = '2026-09'
+ORDER BY bl.MaNV ASC, hd.MaHD ASC;`,
+    preview: ["MaNV","MaHD","ThucLinh"],
+    columns: ["MaNV","HoTen","MaHD","LoaiHD","ThucLinh"],
+    rows: [
+  [
+    "NV001",
+    "Trần Thị Mai",
+    "HD2024-018",
+    "Xác định thời hạn",
+    "13285000"
+  ],
+  [
+    "NV002",
+    "Lê Văn Hùng",
+    "HD2024-021",
+    "Không xác định thời hạn",
+    "21631000"
+  ],
+  [
+    "NV003",
+    "Nguyễn Thu Hà",
+    "HD2023-104",
+    "Không xác định thời hạn",
+    "14088000"
+  ],
+  [
+    "NV004",
+    "Hoàng Minh Tuấn",
+    "HD2015-001",
+    "Không xác định thời hạn",
+    "50025000"
+  ],
+  [
+    "NV005",
+    "Vũ Thị Lan",
+    "HD2016-001",
+    "Không xác định thời hạn",
+    "29297000"
+  ],
+  [
+    "NV006",
+    "Đặng Quốc Bảo",
+    "HD2016-003",
+    "Không xác định thời hạn",
+    "31310000"
+  ],
+  [
+    "NV007",
+    "Bùi Thanh Sơn",
+    "HD2017-001",
+    "Không xác định thời hạn",
+    "29910000"
+  ],
+  [
+    "NV008",
+    "Phan Văn Lợi",
+    "HD2015-002",
+    "Không xác định thời hạn",
+    "27882000"
+  ],
+  [
+    "NV009",
+    "Ngô Thị Thu Trang",
+    "HD2025-007",
+    "Xác định thời hạn",
+    "12482000"
+  ],
+  [
+    "NV010",
+    "Đỗ Thị Hồng",
+    "HD2016-002",
+    "Không xác định thời hạn",
+    "31116000"
+  ]
+],
+    total: 43,
+  },
+]} />
+
+## Hay nhầm ở đâu
+
+<Mistakes>
+
+1. **Kết lương chỉ bằng mã nhưng quên kỳ.** Một hồ sơ có thể có lương ở nhiều kỳ; số dòng tăng và tiền của kỳ khác lọt vào báo cáo.
+2. **Chỉ kiểm ngày kết thúc hợp đồng.** Hợp đồng chưa bắt đầu nhưng có ngày kết thúc `NULL` cũng lọt qua; cần cả điều kiện ngày bắt đầu.
+3. **Coi điều kiện ngày bảo đảm một hợp đồng mỗi người.** Dữ liệu chồng ngày vẫn tạo nhiều cặp.
+4. **Cộng tiền trên kết quả bị nhân dòng.** Khoản lương gốc đã bị lặp qua từng hợp đồng.
+
+</Mistakes>
+
+## Ứng dụng
+
+<Apply>
+
+- **Bổ sung thông tin cho bảng lương:** kết hồ sơ và danh mục để thêm tên phòng/chức danh hiện lưu, đồng thời giữ đúng kỳ và một dòng mỗi cặp khóa lương.
+- **Đối chiếu hợp đồng tại mốc báo cáo:** chốt mốc đối chiếu và cách hiểu `NgayKetThuc IS NULL`, rồi kiểm số hợp đồng ứng viên từng người.
+- **Phát hiện báo cáo đếm hoặc cộng dư:** so số dòng, mã bị lặp và số tiền trước/sau từng phép kết để tìm phía tạo nhiều cặp.
+
+</Apply>
+
+## Ghi nhớ
+
+<Memo rows={[
+  ['Mỗi sheet có một loại dòng','Xác định khóa và độ chi tiết trước khi JOIN'],
+  ['Dò qua nhiều sheet','Mỗi JOIN có ON cho đúng quan hệ'],
+  ['Một mã có nhiều dòng được dò','JOIN có thể lặp khoản tiền trên từng cặp'],
+  ['Lọc trước khi dò và kiểm mã trùng','Điều kiện ngày/kỳ phải đi cùng kiểm số ứng viên'],
+]} />
 
 ## Bài tập
 
+Các đề đổi đường kết hoặc dùng lịch sử hợp đồng để kiểm dòng lặp. Xác định một dòng cần đại diện cho gì trước khi viết; bộ chấm so kết quả, không kiểm alias hoặc bắt buộc dùng một cú pháp.
+
 <Exercises />
+
+**Tự kiểm tra:**
+
+<details>
+<summary>Vì sao khoản lương của <code>NV021</code> xuất hiện ba lần khi kết mọi hợp đồng?</summary>
+
+Một dòng lương kỳ `2026-09` cùng mã khớp ba hợp đồng. Ba cặp không phải ba khoản lương khác nhau.
+
+</details>
+
+<details>
+<summary>Lọc ngày bắt đầu và kết thúc có luôn chọn đúng một hợp đồng không?</summary>
+
+Không. Dữ liệu có thể chồng ngày; cần kiểm số ứng viên theo mã và thống nhất cách chọn nếu có nhiều dòng.
+
+</details>
+
+<details>
+<summary>Khóa của <code>BangLuong</code> là <code>MaNV</code> hay cặp <code>KyLuong</code>, <code>MaNV</code>?</summary>
+
+Là cặp `KyLuong`, `MaNV`. Cùng một người có thể có dòng lương ở nhiều kỳ; báo cáo một kỳ phải giới hạn kỳ đó.
+
+</details>

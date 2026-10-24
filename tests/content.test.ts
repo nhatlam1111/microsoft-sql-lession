@@ -6,11 +6,12 @@ import { lessonSchema, SECTION_HEADINGS, BANNED_PHRASES, sectionHeadings } from 
 import { validateCatalog } from '../src/lib/catalog';
 import { findUnprefixedUnicodeStrings } from '../src/lib/tsql-lexer';
 import { EXPECTED } from './helpers/expected';
+import { lessonBlocks } from './helpers/lesson-blocks';
 import { readLessonFiles, readCatalog, lessonMainSection, sqlSubheadings, proseParagraphs } from './helpers/lessons';
 
 // Frozen migration list: existing lessons may keep their old layout until edited; new full lessons use the narrative format.
 const LEGACY_LAYOUT_SLUGS = new Set([
-  '3-5-left-join', '6-5-update-quen-where',
+  '6-5-update-quen-where',
 ]);
 
 describe('lesson files', () => {
@@ -344,8 +345,11 @@ describe('fixes from the final review', () => {
     expect(page).not.toContain('mở database bạn được cấp rồi chạy cả file script');
     expect(page).toContain('đừng chạy script');
   });
-  it('3.5 shows the full "still valid" condition, open-ended contracts included', () => {
-    expect(body('3-5-left-join')).toContain('hd.NgayKetThuc IS NULL OR hd.NgayKetThuc >=');
+  it('3.6 checks both contract date bounds and permits an open-ended end date', () => {
+    const query=lessonBlocks('3-6-ket-nhieu-bang').query;
+    expect(query).toMatch(/hd\.NgayBatDau <= '20260930'/);
+    expect(query).toMatch(/hd\.NgayKetThuc IS NULL OR hd\.NgayKetThuc >= '20260930'/);
+    expect(query).not.toContain('GETDATE');
   });
   it('6.5 says to check @@TRANCOUNT in the same query window and not to commit on close', () => {
     expect(body('6-5-update-quen-where')).toContain('cùng cửa sổ');
@@ -362,14 +366,18 @@ describe('fixes from the final review', () => {
   });
   it('3.5 run-order text gets the row arithmetic and the general rules right', () => {
     const b = body('3-5-left-join');
-    expect(b).toContain('Ai có nhiều hợp đồng thì có nhiều dòng');
+    const join=lessonBlocks('3-5-left-join').steps[1];
+    expect(join.total).toBe(57);
+    expect(join.rows.filter(r=>r[0]==='NV021')).toHaveLength(3);
+    expect(join.rows.filter(r=>r[2]===null).map(r=>r[0])).toEqual(['NV047','NV048']);
     expect(b).not.toContain('Tôn Thất Long có ba hợp đồng nên có ba dòng, vì vậy');
     expect(b).not.toContain('là bước cuối cùng');
     expect(b).not.toContain('ở dòng thứ hai');
   });
   it('3.5 run-order text says "kết bảng" for JOIN, like the rest of the course', () => {
     expect(body('3-5-left-join')).not.toMatch(/ghép/i);
-    expect(body('3-5-left-join')).toContain("title: 'Kết bảng nhân viên với bảng hợp đồng");
+    expect(lessonBlocks('3-5-left-join').steps[1].clause).toBe('LEFT JOIN');
+    expect(body('3-5-left-join')).toMatch(/\*\*kết bảng\*\*/i);
   });
   it('3.5 shows the run order of its final query', () => {
     expect(body('3-5-left-join')).toContain('### SQL Server chạy câu này thế nào');

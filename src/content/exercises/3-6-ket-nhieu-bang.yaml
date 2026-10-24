@@ -1,0 +1,66 @@
+lesson: 3-6-ket-nhieu-bang
+exercises:
+  - id: 3-6-1
+    title: Lương tháng 8 của IT kèm tên phòng
+    summary: Kết lương, nhân viên và phòng ban.
+    prompt: Lấy các dòng BangLuong có KyLuong bằng 2026-08, chỉ hồ sơ hiện mang MaPB bằng IT. Kết
+      NhanVien và PhongBan theo mã để trả MaNV, HoTen, TenPB, ThucLinh theo thứ tự này. Xếp MaNV
+      tăng dần. Phòng là phòng hiện lưu; không lọc trạng thái và không lấy hợp đồng.
+    columns:
+      - MaNV
+      - HoTen
+      - TenPB
+      - ThucLinh
+    answer: |-
+      SELECT bl.MaNV, nv.HoTen, pb.TenPB, bl.ThucLinh
+      FROM BangLuong AS bl
+      INNER JOIN NhanVien AS nv ON nv.MaNV = bl.MaNV
+      INNER JOIN PhongBan AS pb ON pb.MaPB = nv.MaPB
+      WHERE bl.KyLuong = '2026-08'
+          AND nv.MaPB = 'IT'
+      ORDER BY bl.MaNV ASC;
+    ordered: true
+    kind: query
+  - id: 3-6-2
+    title: Trưởng phòng có lương tháng 9
+    summary: Đổi danh mục phòng sang chức danh.
+    prompt: Lấy dòng lương kỳ 2026-09 của những hồ sơ hiện có MaCD bằng TP, không thêm điều kiện trạng
+      thái. Kết NhanVien và ChucDanh để trả MaNV, HoTen, TenCD, ThucLinh. Xếp MaNV tăng dần. Chức
+      danh là dữ liệu hiện lưu, không phải chức danh lịch sử tại kỳ lương.
+    columns:
+      - MaNV
+      - HoTen
+      - TenCD
+      - ThucLinh
+    answer: |-
+      SELECT bl.MaNV, nv.HoTen, cd.TenCD, bl.ThucLinh
+      FROM BangLuong AS bl
+      INNER JOIN NhanVien AS nv ON nv.MaNV = bl.MaNV
+      INNER JOIN ChucDanh AS cd ON cd.MaCD = nv.MaCD
+      WHERE bl.KyLuong = '2026-09'
+          AND nv.MaCD = 'TP'
+      ORDER BY bl.MaNV ASC;
+    ordered: true
+    kind: query
+  - id: 3-6-3
+    title: Phát hiện lương bị lặp qua lịch sử hợp đồng
+    summary: Đếm hợp đồng trước khi dùng báo cáo.
+    prompt: Chỉ xét người có dòng BangLuong kỳ 2026-09. Kết NhanVien với toàn bộ HopDong đang lưu theo
+      MaNV, không lọc ngày hay loại hợp đồng. Đếm số hợp đồng từng người, chỉ giữ người có trên 1
+      hợp đồng. Trả MaNV, HoTen, SoHD; xếp MaNV tăng dần. Đây là kiểm lịch sử hợp đồng làm lặp một
+      dòng lương, không đếm hợp đồng ứng viên tại một ngày.
+    columns:
+      - MaNV
+      - HoTen
+      - SoHD
+    answer: |-
+      SELECT nv.MaNV, nv.HoTen, COUNT(hd.MaHD) AS [SoHD]
+      FROM BangLuong AS bl
+      INNER JOIN NhanVien AS nv ON nv.MaNV = bl.MaNV
+      INNER JOIN HopDong AS hd ON hd.MaNV = nv.MaNV
+      WHERE bl.KyLuong = '2026-09'
+      GROUP BY nv.MaNV, nv.HoTen
+      HAVING COUNT(hd.MaHD) > 1
+      ORDER BY nv.MaNV ASC;
+    ordered: true
+    kind: query
