@@ -136,6 +136,8 @@ Keep locally hosted font assets. Be Vietnam Pro carries interface labels and hea
 
 SQL indentation uses four columns per level (`--sql-tab-size: 4` in `src/styles/tokens.css`). Lesson SQL, RunFlow queries, LineMap/Memo code and both editor layers consume this token. Main clauses align left; continued columns/conditions indent one level, CASE branches another. MDX literals encode indentation with `\t` escapes so compilation preserves it; copy actions retain the same whitespace. The editor keeps learner input unchanged and Tab inserts four spaces. Authoring examples and verification live in docs/quy-uoc.md and docs/lesson-template.md.
 
+Fresh exercise editors contain no SQL and show an input placeholder in `--ink-3`; the instruction is never executable text. Restore every saved draft verbatim, including empty and comment-only drafts. Practice guidance stays outside the editor and links to lesson 1.2; web execution still requires a code, while a private SQL Server copy is the alternative. Shared owners are ExerciseWorkspace, SqlEditor and exercise.css; no API or storage-key change.
+
 ## Layout
 
 Retain the three-column lesson grid (272px sidebar, flexible article, 248px rail), the two-column exercise workspace, and the existing popup/drawer placement. Use the established 4/8px rhythm for spacing. Keep the main reading surface white and the rail cool grey. Tables and code own horizontal overflow; the document should not acquire a horizontal scrollbar at supported widths.

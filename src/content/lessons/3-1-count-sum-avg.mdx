@@ -96,7 +96,7 @@ Chị Hạnh có `9` đơn đạt điều kiện, tổng `16.0` ngày, bình qu�
 
 ### SQL Server chạy câu này thế nào
 
-Theo thứ tự logic, câu này lấy bảng, lọc đơn, rồi tổng hợp ra một dòng. Trong bảng chi tiết, `FROM` trích `10` trong `20` đơn; `WHERE` hiện đủ `9` đơn. Câu chưa có `ORDER BY` thì thứ tự dòng có thể khác hình. Sơ đồ không mô tả thứ tự đọc dữ liệu vật lý của SQL Server.
+Theo thứ tự logic, câu này lấy bảng, lọc đơn, rồi tổng hợp ra một dòng. Thẻ `FROM` hiện `3` đơn và ghi `+17 dòng`: tổng vẫn là `20`. Mở thẻ, bảng chi tiết trích `10` trong `20` đơn; bảng ở bước `WHERE` hiện đủ `9` đơn. Câu chưa có `ORDER BY` thì thứ tự dòng có thể khác hình. Sơ đồ không mô tả thứ tự đọc dữ liệu vật lý của SQL Server.
 
 <RunFlow query={`SELECT COUNT(*) AS [SoDon],
 \tSUM(SoNgay) AS [TongNgay],
@@ -205,12 +205,6 @@ WHERE TrangThai = N'Đã duyệt'
   ['Tính trên vùng không có dữ liệu', 'Không GROUP BY: một dòng, COUNT = 0, bốn hàm còn lại = NULL'],
 ]} />
 
-## Bài tập
-
-Bộ chấm so giá trị và thứ tự cột, không kiểm tên alias hay bắt buộc cách viết. Tự đối chiếu hàm đã dùng với mục tiêu từng đề; các bài dưới chỉ có một dòng nên không yêu cầu sắp xếp.
-
-<Exercises />
-
 **Tự kiểm tra:**
 
 <details>
@@ -226,3 +220,9 @@ Bộ chấm so giá trị và thứ tự cột, không kiểm tên alias hay b�
 `SUM(SoNgay)` trả `NULL`. Trong câu tổng hợp không `GROUP BY`, kết quả vẫn có một dòng và `COUNT(*)` bằng `0`.
 
 </details>
+
+## Bài tập
+
+Bộ chấm so giá trị và thứ tự cột, không kiểm tên alias hay bắt buộc cách viết. Tự đối chiếu hàm đã dùng với mục tiêu từng đề; các bài dưới chỉ có một dòng nên không yêu cầu sắp xếp.
+
+<Exercises />

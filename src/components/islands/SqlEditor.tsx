@@ -53,6 +53,7 @@ export default function SqlEditor({ value, onChange, onRun }: Props) {
       <textarea
         className="ed-input"
         value={value}
+        placeholder="Viết câu lệnh SQL của bạn ở đây"
         onChange={e => onChange(e.target.value)}
         onKeyDown={onKeyDown}
         onScroll={syncScroll}

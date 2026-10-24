@@ -30,7 +30,7 @@ Giả định: xét mọi hồ sơ trong `NhanVien`, không lọc trạng thái 
 
 ### Từ ô dò không ra đến LEFT JOIN và IS NULL
 
-Với Excel, bạn dò mã nhân viên sang bản xuất đầy đủ hai cột `MaNV`, `MaHD` của sheet hợp đồng. Hình trích ba hồ sơ; `D3` và `D4` được đánh dấu vì VLOOKUP không tìm thấy mã. Công thức dùng dò chính xác và hai danh sách đã được kiểm mã. Ngoài giả định này, `#N/A` còn có thể do công thức hoặc mã dò sai, nên không tự chứng minh hệ thống chưa lưu hợp đồng.
+Với Excel, dùng VLOOKUP dò chính xác trên bản xuất đầy đủ hai cột `MaNV`, `MaHD`, sau khi kiểm đúng mã ở hai danh sách. Hình trích ba hồ sơ, đánh dấu `D3`, `D4` vì không tìm thấy mã. Nếu công thức hoặc mã dò sai, `#N/A` chưa chứng minh hệ thống thiếu hợp đồng.
 
 <Excel sheets="NhanVien · HopDong" cell="D3" formula="=VLOOKUP(A3,HopDong!A:B,2,FALSE)" selected="D3" mark={['D3','D4']} rows={[
   ['MaNV','HoTen','MaPB','MaHD (dò)'],
@@ -381,12 +381,6 @@ ORDER BY nv.MaNV ASC;`,
   ['Chọn phạm vi được dò trước khi giữ danh sách','Điều kiện khớp ở ON; WHERE lọc kết quả sau kết'],
 ]} />
 
-## Bài tập
-
-Đọc rõ “chưa có bất kỳ hợp đồng nào” hay “chưa có dòng của một kỳ”. Mỗi đề chốt phạm vi và thứ tự; bộ chấm so kết quả, không kiểm bạn có viết đúng một khuôn cú pháp hay không.
-
-<Exercises />
-
 **Tự kiểm tra:**
 
 <details>
@@ -409,3 +403,9 @@ Không. Mỗi hợp đồng khớp tạo một cặp; chỉ dòng nhân viên kh
 Đặt `hd.LoaiHD = N'Thử việc'` trong `ON`, rồi dùng `WHERE hd.MaHD IS NULL` để chỉ giữ hồ sơ không có cặp phù hợp.
 
 </details>
+
+## Bài tập
+
+Đọc rõ “chưa có bất kỳ hợp đồng nào” hay “chưa có dòng của một kỳ”. Mỗi đề chốt phạm vi và thứ tự; bộ chấm so kết quả, không kiểm bạn có viết đúng một khuôn cú pháp hay không.
+
+<Exercises />

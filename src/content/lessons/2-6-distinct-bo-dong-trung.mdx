@@ -105,7 +105,7 @@ ORDER BY MaPB ASC;`} />
 
 Bạn có thể trả lời chị Hạnh: toàn bộ `48` hồ sơ đang lưu, gồm cả đang làm và đã nghỉ, có `6` mã phòng xuất hiện là `BGD`, `IT`, `KD`, `KT`, `NS`, `VH`. Danh sách đã xếp mã tăng dần và mỗi mã xuất hiện đúng một lần. Kết quả này không cho biết mỗi phòng có bao nhiêu người.
 
-`DISTINCT` không bảo đảm thứ tự; `ORDER BY MaPB ASC` mới yêu cầu sắp tăng dần. Với `SELECT DISTINCT`, cột dùng trong `ORDER BY` phải có trong danh sách cột được chọn: một mã phòng sau bỏ trùng có thể đại diện cho nhiều hồ sơ có ngày vào làm khác nhau, nên không có một ngày duy nhất để sắp theo.
+`DISTINCT` không bảo đảm thứ tự; `ORDER BY MaPB ASC` mới yêu cầu sắp tăng dần.
 
 ### SQL Server chạy câu này thế nào
 
@@ -179,7 +179,8 @@ ORDER BY MaPB ASC;`,
 
 1. **Thêm mã nhân viên cho dễ đối chiếu rồi vẫn mong mỗi phòng một dòng.** Mã nhân viên khác nhau giữ các dòng riêng, nên danh sách không còn đúng mức chi tiết chị Hạnh yêu cầu.
 2. **Thấy mã phòng lặp thì cho rằng hồ sơ bị nhập trùng.** Nhiều người cùng phòng là hợp lệ; xóa hồ sơ chỉ vì trùng mã phòng sẽ làm mất người trong danh sách.
-3. **Dùng `DISTINCT` để che lỗi dữ liệu.** Nếu bỏ mã và các cột còn lại giống nhau, kết quả có thể chỉ hiện một dòng dù nguồn vẫn có hai hồ sơ; cần xác minh nguyên nhân trước khi báo cáo.
+3. **Dùng `DISTINCT` để che hồ sơ trùng.** Chỉ chọn họ tên thì hai hồ sơ trùng tên có thể hiện thành một dòng, dù bảng nguồn vẫn còn cả hai. Cần xác minh mã hồ sơ trước khi kết luận đã xử lý trùng.
+4. **Sắp theo cột không chọn trong `SELECT DISTINCT`.** Cột dùng trong `ORDER BY` phải có trong danh sách đã chọn. Một mã phòng sau bỏ trùng đại diện nhiều hồ sơ có ngày vào làm khác nhau, nên không có một ngày duy nhất để sắp theo.
 
 </Mistakes>
 

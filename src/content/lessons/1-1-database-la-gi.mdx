@@ -29,7 +29,7 @@ Giả định: hai file đều là danh sách phòng ban hiện tại, và việ
 
 ### Mỗi người cập nhật một bản
 
-Công ty dùng một **workbook** nhân sự nhiều **sheet** và mỗi tháng gửi bản sao qua email. Chị Hạnh đã sửa phòng của Quân sang IT, còn chị Thảo vẫn giữ thông tin cũ. Mỗi thay đổi phải được cập nhật trên từng bản; sót một bản là lệch. Excel cũng hỗ trợ cùng sửa một workbook, nhưng ở tình huống này mỗi người đang giữ một bản riêng.
+Công ty dùng một **workbook** (file Excel) nhân sự nhiều **sheet** (trang tính) và mỗi tháng gửi bản sao qua email. Chị Hạnh đã sửa phòng của Quân sang IT, còn chị Thảo vẫn giữ thông tin cũ. Mỗi thay đổi phải được cập nhật trên từng bản; sót một bản là lệch. Excel cũng hỗ trợ cùng sửa một workbook, nhưng ở tình huống này mỗi người đang giữ một bản riêng.
 
 Để giảm sai lệch, công ty cần thống nhất một **nguồn chính thức** và người chịu trách nhiệm cập nhật. Một **database** (cơ sở dữ liệu) là tập dữ liệu có cấu trúc, được phần mềm quản lý để người dùng truy cập theo quyền. Trong khóa học, dữ liệu nằm trong các **bảng** có **dòng** và **cột**; **SQL Server** là phần mềm của Microsoft quản lý việc lưu trữ, đọc và cập nhật database đó.
 
@@ -53,7 +53,7 @@ Ngoài chuyện hai bản lệch nhau, ngay trong một file cũng có thể có
 - **Trùng mã nhân viên.** Hai dòng mang cùng mã `NV005` có thể làm báo cáo đếm thừa một hồ sơ. Khi cột `MaNV` (mã nhân viên) được khai báo là **khóa chính**, SQL Server không cho lưu hai dòng trùng mã và không nhận `NULL` (giá trị chưa có hoặc chưa biết). Luật này chỉ chặn trùng mã; một người mang hai mã khác nhau vẫn có thể được lưu hai lần.
 - **Một phòng có hai cách viết.** `Kế toán` và `Ke toan` trong file có thể bị tách nhóm khi làm báo cáo. Với thông tin phòng ban, bảng `NhanVien` chỉ lưu `MaPB` (mã phòng ban); tên phòng nằm ở bảng danh mục `PhongBan`: mã `KT` là `Kế toán`. Khi `MaPB` được khai báo là **khóa ngoại** trỏ tới danh mục này, mã không có trong danh mục sẽ bị từ chối. Khóa ngoại là luật của dữ liệu, không phải ô chọn trên màn hình.
 
-Khóa chính và khóa ngoại là các **ràng buộc (constraint)** do người thiết kế khai báo. Khi ràng buộc đang bật, SQL Server kiểm các câu ghi dữ liệu thông thường và từ chối câu vi phạm. Khi nhập file, hỏi bên IT những ràng buộc nào được kiểm tra (bài 5.5).
+Khóa chính và khóa ngoại là các **ràng buộc (constraint)** do người thiết kế khai báo. Khi ràng buộc đang bật, SQL Server kiểm các **câu ghi** — lệnh thêm, sửa hoặc xóa dữ liệu — và từ chối câu vi phạm. Khi nhập file, hỏi bên IT những ràng buộc nào được kiểm tra (bài 5.5).
 
 Tách tên phòng ra danh mục giúp đổi tên phòng ở một chỗ, thay vì sửa tên trên từng hồ sơ. Đổi lại, muốn xem tên phòng của một nhân viên thì phải lấy dữ liệu qua hai bảng; bài 1.5 chỉ cách đọc đường liên kết đó.
 
@@ -80,7 +80,7 @@ Với giả định đầu bài, ở dòng của Quân, bản của chị Hạnh
 1. **Nghĩ database chỉ là Excel to hơn.** Chỉ tăng dung lượng file không giải quyết việc mỗi người sửa một bản. Excel có Data Validation để giới hạn dữ liệu nhập, nhưng cần thiết lập, và dán hoặc kéo điền vẫn có thể đưa dữ liệu không hợp lệ vào (bài 5.2).
 2. **Thấy lưu được thì bỏ bước đối chiếu hồ sơ.** Mã phòng gán nhầm vẫn có thể đi vào báo cáo và làm số liệu theo phòng sai.
 3. **Sửa file xuất rồi coi như đã sửa hệ thống.** Nếu chưa có bước cập nhật lại nguồn, thay đổi chỉ nằm trong file đó; dùng file để phân tích riêng thì không sao.
-4. **Sửa dữ liệu dùng chung khi chưa nắm cách làm.** Trong **SSMS** (công cụ kết nối tới SQL Server, học ở bài 1.2), mặc định câu sửa dữ liệu thành công là ghi hẳn ngay, không có Ctrl+Z. Tự hoàn tác chỉ có trên trang bài tập của khóa học; cách hủy thay đổi trước khi ghi hẳn có ở bài 5.4. Ở giai đoạn đầu, bạn chỉ đọc database khóa học vì mọi học viên dùng chung dữ liệu, dù tài khoản có thể vẫn ghi được.
+4. **Tự sửa dữ liệu mẫu dùng chung.** Mọi học viên dùng cùng nguồn, nên ở giai đoạn đầu bạn chỉ đọc dữ liệu; sửa một dòng có thể làm kết quả học của người khác thay đổi. Bài 1.2 chỉ nơi thực hành và cách dùng công cụ an toàn.
 
 </Mistakes>
 
@@ -128,8 +128,8 @@ Database là tập dữ liệu có cấu trúc; SQL Server là phần mềm qu�
 </details>
 
 <details>
-<summary>Bảng có khóa chính <code>MaNV</code> thì còn chuyện một người hai dòng không?</summary>
+<summary>Nguồn chung giúp giảm lệch giữa Nhân sự và Kế toán như thế nào?</summary>
 
-Còn, nếu dòng thừa mang một mã khác. Khóa chính chỉ chặn trùng mã, không biết hai mã có phải cùng một người.
+Người có quyền cập nhật tại một nguồn chính thức, các bên cùng lấy danh sách từ đó, giảm việc sót sửa trên các bản riêng. Nguồn vẫn phải được cập nhật đúng hồ sơ.
 
 </details>

@@ -16,9 +16,11 @@ Mọi quy ước khi viết bài, review bài và làm việc với database c�
 
 - Tình huống, nhân vật, con số khớp [`ho-so-cong-ty.md`](ho-so-cong-ty.md): cùng công ty, cùng thời điểm (tháng 10/2026), cùng người hỏi (chị Hạnh, Phòng Nhân sự). Nhân vật mới không trùng tên với hồ sơ trong bộ mẫu; nhắc tới hồ sơ thì gọi bằng mã. Bài kể thêm điều mới về công ty thì ghi vào mục 7 của file đó.
 - Xưng "bạn", câu ngắn. Giải thích thuật ngữ ngay lần đầu xuất hiện.
+- Định nghĩa lần đầu bằng việc hoặc giá trị người học thấy trong tình huống; không mặc định biết VLOOKUP/PivotTable hay thuật ngữ công cụ. Thuật ngữ đã giải thích ở bài trước chỉ nhắc đủ để nối ý, không giảng lại. Một tham chiếu bài sau không thay cho lời giải cần có để làm bài hiện tại.
 - Không nhắc vai trò hay xuất thân của người đọc ("BA", "developer", "hồi làm tư vấn"); tình huống là yêu cầu công việc trung tính. Mục dùng bài vào việc thật tên là "Ứng dụng".
 - Dùng "kết bảng" cho `JOIN`, không dùng "nối bảng" hay "ghép". Không dùng các cụm trong `BANNED_PHRASES` (`src/lib/lesson-schema.ts`), không dùng emoji.
 - Phần giảng tự trả lời "vì sao, để làm gì, cái giá là gì" bằng lời dẫn liền mạch; câu hỏi nằm ở tình huống và phần tự kiểm tra. Cơ chế SQL Server tự làm thì gọi đúng tên (chuyển kiểu ngầm) và nói gặp lại ở bài nào.
+- Mẫu tin nhắn cần gửi IT có thể trích câu hỏi trong ngoặc kép để người học dùng khi mắc lỗi; đó là hướng dẫn thao tác, không dùng nó làm câu hỏi dẫn lý thuyết.
 - Mỗi dòng `LineMap` có "Ví dụ:" với giá trị cụ thể: giá trị nào qua, bị từ chối hay bị đổi.
 - Cuối lý thuyết có đoạn "Ở bài này chỉ cần…" kể các bài đi sâu hơn ("bài 5.2").
 - Giải thích trong drawer của `RunFlow` bắt đầu từ từ khóa của bước: nó làm gì với các dòng, kèm số dòng thật.
@@ -32,7 +34,7 @@ Mọi quy ước khi viết bài, review bài và làm việc với database c�
 
 ### 2.1 Khung bài và độ sâu
 
-- Thứ tự bài đầy đủ: **Tình huống → phần chính có tiêu đề theo chủ đề → Hay nhầm ở đâu → Ứng dụng → Ghi nhớ → Bài tập**. Bài `noExercises: true` bỏ mục Bài tập và có các câu tự kiểm tra ngay sau Ghi nhớ. Bản tóm tắt giữ khung riêng ở `lesson-template.md`.
+- Thứ tự bài đầy đủ: **Tình huống → phần chính có tiêu đề theo chủ đề → Hay nhầm ở đâu → Ứng dụng → Ghi nhớ → tự kiểm tra (nếu có) → Bài tập**. Tự kiểm tra luôn đặt ngay sau Ghi nhớ, trước Bài tập. Bài `noExercises: true` bỏ mục Bài tập và có ít nhất ba câu tự kiểm tra. Bản tóm tắt giữ khung riêng ở `lesson-template.md`.
 - Phần chính đi từ vấn đề trong tình huống, qua khái niệm cần biết và cách Excel/SQL xử lý, tới câu trả lời. Dùng khoảng 2–4 tiểu mục theo ý nghĩa; không bắt buộc chép đúng ba tiểu mục của bài 1.1. Mỗi lần chuyển từ Excel sang database/SQL phải có lời dẫn rõ.
 - Khái niệm và ví dụ đứng cạnh nhau. Dùng hình, câu lệnh, kết quả, `LineMap` hay `RunFlow` khi chúng giúp hiểu ý đang nói; không bắt buộc có đủ mọi khối hoặc một bảng so sánh dài. Không giải thích trong lời văn rồi chép nguyên ý vào bảng.
 - Bài khái niệm chưa cần thực hành thì không chèn preview SQL cho đủ khuôn; dẫn sang bài thực hành tương ứng. Bài truy vấn có câu lệnh giải đúng tình huống và kết quả đã kiểm. Nếu có `RunFlow`, hai tiểu mục cuối phần chính là "Câu lệnh cho tình huống" rồi "SQL Server chạy câu này thế nào"; lời giải tình huống nằm cạnh kết quả trước sơ đồ.
@@ -42,7 +44,7 @@ Mọi quy ước khi viết bài, review bài và làm việc với database c�
 ### 2.2 In đậm khái niệm, highlight dẫn chứng
 
 - **Khái niệm trọng tâm in đậm có chọn lọc** ở chỗ định nghĩa và đối chiếu: `**database**`, `**workbook**`, `**sheet**`, `**bảng**`, `**dòng**`, `**cột**`, `**kiểu dữ liệu**`, `**khóa chính**`… Không bôi đậm mọi lần xuất hiện hoặc cả đoạn.
-- **Dẫn chứng dữ liệu dùng code có nền** trong lời giải thích: mã, tên, ngày, số cụ thể được lấy từ dữ liệu; ví dụ viết `` `NV005` ``, `` `KT` ``, `` `KD` ``, `` `Kế toán` ``, `` `Ke toan` ``. Tên bảng/cột, kiểu SQL, từ khóa, `NULL` và địa chỉ ô cũng dùng code: `` `NhanVien` ``, `` `MaPB` ``, `` `date` ``, `` `C4` ``. Trong `<summary>`, có thể dùng `<code>MaNV</code>`.
+- **Dẫn chứng dữ liệu dùng code có nền** trong lời giải thích: mã, tên, ngày, số cụ thể được lấy từ dữ liệu; ví dụ viết `` `NV005` ``, `` `KT` ``, `` `KD` ``, `` `Kế toán` ``, `` `Ke toan` ``. Tên bảng/cột, kiểu SQL, từ khóa, `NULL` và địa chỉ ô cũng dùng code: `` `NhanVien` ``, `` `MaPB` ``, `` `date` ``, `` `C4` ``. Trong `<summary>`, có thể dùng `<code>MaNV</code>`; chuỗi có dấu nháy phải dùng biểu thức JSX như `<code>{"MaPB = 'IT'"}</code>` để MDX không đổi thành nháy cong. Kiểm ký tự trên bản build bằng `check:dist`.
 - Giữ nguyên giá trị, dấu tiếng Việt và cách viết của dẫn chứng; phần chữ giải thích giá trị nào thì highlight đúng giá trị đó. Nhân vật giả định, vai phòng ban trong câu chuyện, số bài và mốc tháng của tình huống vẫn là lời văn thường, không tự biến thành giá trị truy xuất.
 - Khối Excel/SSMS/Results giữ cách hiển thị của công cụ. Dùng `mark`, `numeric`, `rowNumbers`, `path` đúng dữ liệu đang chỉ; không chèn dấu backtick vào chuỗi ô hay sửa component chung chỉ để định dạng một dẫn chứng. Hình giả lập phải nói rõ là minh họa nếu không phải kết quả thật của database.
 - Markdown nội dòng áp dụng ở lời văn MDX. Chuỗi thuộc tính của component chỉ dùng định dạng mà component hỗ trợ; kiểm bản render để không để lộ dấu backtick như ký tự thường.
@@ -67,6 +69,7 @@ Mọi quy ước khi viết bài, review bài và làm việc với database c�
 
 - Mọi câu lệnh và con số đưa vào bài, kể cả giá trị ví dụ và nguyên văn lỗi, được chạy trên database khóa học trước khi viết (mục 5).
 - Con số nói rõ đếm gì và trên phạm vi nào ("10 hồ sơ còn trỏ tới VH, gồm 2 người đã nghỉ"): hồ sơ khác người, toàn bộ dữ liệu mẫu khác một kỳ. Phân biệt "tối đa một" với "đúng một", quy ước của bộ mẫu (NULL ở `NgayNghiViec` là chưa nghỉ) với điều SQL Server bảo đảm.
+- Nói rõ đang nhìn thẻ tóm tắt, bảng trích trong drawer hay toàn bộ kết quả. Dữ liệu thật đã kiểm không gọi là giả lập vì chỉ hiện một phần; bảng/hình tự dựng phải nói rõ là minh họa. Không đưa thêm câu lệnh trước kiến thức cần thiết chỉ để chứng minh mọi con số cho người mới.
 - Trước bài 3.1, câu minh họa cho xem dữ liệu (liệt kê 10 hồ sơ), không tóm tắt bằng `COUNT`, `SUM`, `AVG`, `MIN`, `MAX`, `GROUP BY`; test chặn điều này ở Level 1.
 - Hình đánh dấu đúng chỗ phần chữ nói: `mark` của `Ssms`, `Result`, `Excel`, `path` của `Erd`; chú thích hình nói phần nào được đánh dấu. Hình mô phỏng giữ những chi tiết mang nghĩa (ví dụ số dòng nhảy cóc sau khi lọc, dùng `rowNumbers` của `Excel`).
 - Đáp án bài tập không được xuất hiện nguyên văn ở bất kỳ trang nào (`check:dist` kiểm); câu ví dụ trong bài cũng không được nộp đúng cho bài tập.

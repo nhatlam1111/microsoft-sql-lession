@@ -25,11 +25,14 @@
 .ed-highlight { color: #000; pointer-events: none; overflow: hidden; }
 .ed-highlight code { font: inherit; letter-spacing: inherit; }
 .ed-input { resize: none; background: transparent; color: transparent; caret-color: #000; outline: none; }
+.ed-input::placeholder { color: var(--ink-3); opacity: 1; }
 .ed-input::selection { background: rgba(31, 79, 209, 0.22); color: transparent; }
 .ed:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--focus-ring); }
 
 /* Workspace */
 .ws { padding: 20px; background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius-l); box-shadow: var(--shadow-s); }
+.ws-help { margin: 0 0 16px; color: var(--ink-2); font-size: 13.5px; line-height: 1.6; }
+.ws-help a { color: var(--accent); text-underline-offset: 3px; }
 .ws-code { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; margin-bottom: 16px; padding: 14px; background: var(--accent-soft); border: 1px solid var(--accent-line); border-radius: var(--radius-m); font-size: 14px; }
 .ws-code label { font-weight: 600; }
 .ws-code input { flex: 1; min-width: 160px; min-height: 40px; padding: 8px 12px; border: 1px solid var(--control-line); border-radius: var(--radius-s); background: var(--surface); color: var(--ink); font: inherit; transition: border-color var(--motion-fast) var(--ease-ui), box-shadow var(--motion-fast) var(--ease-ui); }

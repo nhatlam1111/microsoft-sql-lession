@@ -1,8 +1,15 @@
 import { it, expect } from 'vitest';
-import { findLinkProblems, findAnswerLeaks, missingExerciseLinks } from '../scripts/check-dist.mjs';
+import { findLinkProblems, findAnswerLeaks, missingExerciseLinks, findCodeTypographyProblems } from '../scripts/check-dist.mjs';
 
 const BASE = '/microsoft-sql-lession';
 const exists = (p: string) => p === 'bai/1-1-x/index.html' || p === 'HRM_Demo.sql';
+
+it('rejects typographic SQL quotes in self-check code, while allowing prose quotes', () => {
+  expect(findCodeTypographyProblems('<summary>Tìm “Hà” bằng <code>LIKE N’%Hà%’</code>?</summary>'))
+    .toEqual(['LIKE N’%Hà%’']);
+  expect(findCodeTypographyProblems("<summary>Tìm “Hà” bằng <code>LIKE N&#39;%Hà%&#39;</code>?</summary>"))
+    .toEqual([]);
+});
 
 it('flags root links without the base', () => {
   expect(findLinkProblems('<a href="/bai/1-1-x/">x</a>', exists, BASE)).toEqual(['thiếu base: /bai/1-1-x/']);

@@ -84,7 +84,7 @@ Câu trả `4` hồ sơ vào làm từ `01/01/2026` trở đi, không phải ch�
 
 Dạng `yyyymmdd` tránh nhầm ngày với tháng của chuỗi như `'01/03/2024'`. Các ví dụ trên dùng cột `date`, không có giờ; với cột có giờ, mốc cuối ngày cần cách viết khác (bài 2.8).
 
-`WHERE` chỉ giữ dòng khi điều kiện **đúng (`TRUE`)**. So sánh thông thường với `NULL` cho kết quả không xác định (`UNKNOWN`), nên không giữ dòng đó, giống điều kiện sai (`FALSE`). Chẳng hạn `Email <> 'mai.tt@hrmdemo.vn'` không lấy `NV044`, `NV045` có email `NULL`; lọc giá trị thiếu học ở bài 2.5.
+`WHERE` chỉ giữ dòng khi điều kiện **đúng**. Giá trị thiếu `NULL` cần cách kiểm riêng, học ở bài 2.5.
 
 Ở bài này chỉ cần một điều kiện trên một cột. Kết hợp điều kiện bằng `AND`, `OR`, chọn nhiều giá trị bằng `IN` hay khoảng bằng `BETWEEN` ở bài 2.3; sắp xếp ở bài 2.4; lọc `NULL` bằng `IS NULL` ở bài 2.5.
 
@@ -112,7 +112,7 @@ Nếu yêu cầu đổi thành chỉ người đang làm, cần thêm điều ki
 
 ### SQL Server chạy câu này thế nào
 
-Sơ đồ thể hiện **thứ tự xử lý logic**, không phải cách đọc dữ liệu vật lý. Bấm từng bước để xem từ nguồn 48 hồ sơ còn 14 hồ sơ, rồi chọn bốn cột:
+Sơ đồ thể hiện **thứ tự xử lý logic**, không phải cách đọc dữ liệu vật lý. Bấm từng bước để xem từ nguồn `48` hồ sơ còn `14` hồ sơ, rồi chọn bốn cột:
 
 <RunFlow query={`SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
 \tMaPB AS [Mã phòng], TrangThai AS [Trạng thái]
@@ -178,10 +178,10 @@ WHERE MaPB = 'KD';`,
 <Mistakes>
 
 1. **Dùng tên hiển thị để lọc.** `WHERE [Mã phòng] = 'KD'` báo `Invalid column name 'Mã phòng'.` Alias được đặt ở bước `SELECT`, sau `WHERE` theo thứ tự logic; điều kiện vẫn dùng tên nguồn `MaPB`.
-2. **Nhầm cột hoặc mã với chuỗi chữ.** `WHERE 'MaPB' = 'KD'` so hai chuỗi cố định; `WHERE MaPB = 'Kinh doanh'` so mã với tên. Cả hai trả 0 dòng trong bộ mẫu, dù câu lệnh chạy được. Không có dòng phù hợp khác với lỗi chạy câu lệnh.
-3. **Quên `N` trước chữ có dấu.** `TrangThai = 'Đã nghỉ'` trả 0 dòng trên database khóa học do chuỗi không giữ đúng dấu; `TrangThai = N'Đã nghỉ'` trả ba hồ sơ. Kết quả 0 dòng chưa đủ để kết luận thiếu dữ liệu.
+2. **Nhầm cột hoặc mã với chuỗi chữ.** `WHERE 'MaPB' = 'KD'` so hai chuỗi cố định; `WHERE MaPB = 'Kinh doanh'` so mã với tên. Cả hai chạy thành công nhưng trả `0` dòng trong bộ mẫu, không báo lỗi. Không có dòng phù hợp chưa có nghĩa là câu lệnh bị lỗi.
+3. **Quên `N` trước chữ có dấu.** `TrangThai = 'Đã nghỉ'` trả `0` dòng trên database khóa học do chuỗi không giữ đúng dấu; `TrangThai = N'Đã nghỉ'` trả ba hồ sơ. Kết quả `0` dòng chưa đủ để kết luận thiếu dữ liệu.
 4. **Bỏ dấu bằng ở mốc cần lấy.** “Từ ngày `01/03/2024`, gồm ngày đó” dùng `>= '20240301'`; dùng `>` sẽ bỏ hồ sơ `NV001` vào đúng ngày mốc.
-5. **Tưởng thêm cột là thêm điều kiện.** Chỉ thêm `TrangThai` vào `SELECT` vẫn trả cả hồ sơ đã nghỉ. Trong câu sửa/xóa, `WHERE` còn quyết định dòng bị tác động, nên học kỹ ở bài 5.3 và 6.5 trước khi dùng.
+5. **Tưởng thêm cột là thêm điều kiện.** Chỉ thêm `TrangThai` vào `SELECT` vẫn trả cả hồ sơ đã nghỉ.
 
 </Mistakes>
 

@@ -39,7 +39,7 @@ Trong Excel, bạn mở sheet, nhìn tiêu đề cột rồi xem vài dòng. Hì
   ['NV003', 'Nguyễn Thu Hà', 'Nữ', '25/01/1995', 'KD'],
 ]} />
 
-Với database, bạn gửi **câu truy vấn (query)** để lấy dữ liệu. Câu `SELECT * FROM PhongBan;` đã chạy ở bài 1.2 gồm **`SELECT`** chọn cột, dấu **`*`** lấy mọi cột, **`FROM`** chỉ bảng nguồn. Database có nhiều bảng, nên không có một “sheet đang mở” để SQL Server tự đoán.
+Với database, bạn gửi **câu truy vấn (query)** để lấy dữ liệu. Câu `SELECT * FROM PhongBan;` đã thấy ở bài 1.2 gồm **`SELECT`** chọn cột, dấu **`*`** lấy mọi cột, **`FROM`** chỉ bảng nguồn. Database có nhiều bảng, nên không có một “sheet đang mở” để SQL Server tự đoán.
 
 Thêm **`TOP (n)`** sau `SELECT` để lấy tối đa `n` dòng. Với bảng `NhanVien` có 48 hồ sơ, `TOP (10)` trả 10 dòng; nếu bảng chỉ có sáu dòng thì vẫn chỉ trả sáu. Cách này giúp xem mẫu mà không đưa cả bảng lớn lên màn hình.
 
@@ -49,7 +49,7 @@ Dấu `*` tiện khi xem cấu trúc nhưng lấy cả cột không cần và d�
 
 ### Chạy trong SSMS và đọc hai tab kết quả
 
-Mở **New Query**, kiểm database đang chọn là `free-sql-db-8797714`, nhập câu ở mục dưới rồi dùng **F5** hoặc **Execute**. SSMS chỉ chạy đoạn đang bôi đen; không bôi đen thì chạy cả cửa sổ. Vì vậy phải kiểm cả những câu còn lại trước khi chạy.
+Mở **New Query**, kiểm database đang chọn là `free-sql-db-8797714` (bản riêng: `HRM_Demo`), nhập câu ở mục dưới rồi dùng **F5** hoặc **Execute**. SSMS chỉ chạy đoạn đang bôi đen; không bôi đen thì chạy cả cửa sổ. Vì vậy phải kiểm cả những câu còn lại trước khi chạy.
 
 <Ssms view="toolbar" caption="Ô có viền xanh là database sẽ nhận câu lệnh. Nút ✓ (Parse) chỉ kiểm cú pháp, không chạy câu lệnh." />
 
@@ -94,7 +94,7 @@ Nếu gửi vài dòng làm mẫu trên hệ thống thật, chỉ chọn các c
 
 ### SQL Server chạy câu này thế nào
 
-Sơ đồ thể hiện **thứ tự xử lý logic**, không phải cách SQL Server đọc dữ liệu vật lý. Bấm từng bước để xem dữ liệu tương ứng:
+Sơ đồ thể hiện **thứ tự xử lý logic**: cách lần theo ý nghĩa của câu từ bảng nguồn tới kết quả, không phải cách SQL Server đọc dữ liệu vật lý. Mỗi thẻ chỉ hiện tối đa ba dòng; `+n dòng` là số dòng chưa hiện trên thẻ. Bấm thẻ để mở bảng chi tiết và câu lệnh kiểm bước đó:
 
 <RunFlow query={`SELECT TOP (10) *
 FROM NhanVien;`} steps={[
@@ -202,8 +202,8 @@ FROM NhanVien;`,
 
 ## Bài tập
 
-Không nhớ tên bảng thì xem Object Explorer hoặc nút **Sơ đồ database**. Trang bài tập chạy cả khung soạn, mỗi lần chỉ nhận một câu; bôi đen không chọn riêng đoạn như SSMS. Dòng `-- Viết câu lệnh của bạn ở đây` là ghi chú, được SQL Server bỏ qua tới hết dòng.
+Không nhớ tên bảng thì xem Object Explorer hoặc nút **Sơ đồ database**. Trang bài tập chạy cả khung soạn, mỗi lần chỉ nhận một câu; bôi đen không chọn riêng đoạn như SSMS. Chữ nhắc trong ô mới là placeholder: nó biến mất khi bạn gõ và không thuộc câu SQL. Nếu bản nháp cũ có dòng bắt đầu bằng `--`, đó là ghi chú; viết câu lệnh ở dòng dưới hoặc xóa ghi chú trước khi gõ.
 
-Không có SSMS thì thử câu mẫu bằng **Chạy (F5)** trước, rồi làm ba bài dưới đây. Việc luôn hoàn tác trên trang bài tập đã được giới thiệu ở bài 1.2.
+Nếu dùng web, bấm **Làm bài** ở bài tập 1, nhập câu mẫu rồi bấm **Chạy (F5)** để thử. Sau đó thay câu mẫu bằng câu theo đề và làm lần lượt ba bài. Việc luôn hoàn tác trên trang bài tập đã được giới thiệu ở bài 1.2.
 
 <Exercises />

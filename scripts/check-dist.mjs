@@ -74,6 +74,13 @@ export function missingExerciseLinks(html, lesson, count, base) {
     .filter(href => !html.includes(`href="${href}"`));
 }
 
+/** SQL in a self-check must keep literal quotes after MDX typography runs. */
+export function findCodeTypographyProblems(html) {
+  return [...html.matchAll(/<summary\b[^>]*>([\s\S]*?)<\/summary>/g)]
+    .flatMap(summary => [...summary[1].matchAll(/<code\b[^>]*>([\s\S]*?)<\/code>/g)].map(code => code[1]))
+    .filter(code => /[‘’“”]/.test(code));
+}
+
 function walk(dir) {
   return readdirSync(dir, { withFileTypes: true }).flatMap(e => {
     const p = join(dir, e.name);
@@ -99,6 +106,7 @@ function main() {
     const html = readFileSync(page, 'utf8');
     links += [...html.matchAll(ATTR)].length;
     for (const p of findLinkProblems(html, isFile, BASE)) errors.push(`${relative(dist, page).split(sep).join('/')}: ${p}`);
+    for (const code of findCodeTypographyProblems(html)) errors.push(`${relative(dist, page).split(sep).join('/')}: dấu nháy cong trong code tự kiểm tra: ${code}`);
   }
   const lessonDir = join('src', 'content', 'lessons');
   const lessons = existsSync(lessonDir) ? readdirSync(lessonDir).filter(f => f.endsWith('.mdx')).length : 0;

@@ -27,7 +27,7 @@ describe('fixes from the independent reviews of 2026-10-20', () => {
   it('2.2 preserves date boundaries, Unicode, NULL and the actual scope and figures of the filtered results', () => check('2-2-where-loc-nhu-autofilter',
     ['Đặt tiêu đề tiếng Việt', "Invalid column name 'Mã phòng'", 'yyyymmdd', 'date', 'chuyển kiểu ngầm', 'không phân biệt hoa thường', 'phân biệt dấu',
       'Date Filters', 'IN', 'BETWEEN', 'IS NULL', 'năm–tháng–ngày', 'bài 2.7', 'rowNumbers={[1, 3, 4, 21]}', "preview: ['MaNV', 'MaPB', 'TrangThai']", '13 hồ sơ',
-      'Đang làm`, `Đã nghỉ', '6.5', 'UNKNOWN', 'NV044', 'NV045', '14 hồ sơ', 'không phải chỉ trong năm 2026', 'chỉ giữ dòng khi điều kiện',
+      'Đang làm`, `Đã nghỉ', 'NULL', 'bài 2.5', '14 hồ sơ', 'không phải chỉ trong năm 2026', 'chỉ giữ dòng khi điều kiện',
       "= '20240301'", "<> '20240301'", "> '20240301'", "< '20240301'", ">= '20240301'", "<= '20240301'"],
     ['sau khi lọc MaPB = KD"', "WHERE MaPB = N'Kinh doanh'", 'SQL không tự suy ra yêu cầu đó từ tên phòng', 'WHERE giữ TRUE; FALSE',
       'Số dòng nhảy cóc vì', 'tương ứng mục **(Blanks)**']));

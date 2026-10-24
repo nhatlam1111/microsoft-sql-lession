@@ -10,7 +10,7 @@ prerequisites:
   - "1.5"
   - "3.3"
 goal: bạn lấy tên từ danh mục bằng INNER JOIN và giải thích được dòng nào được giữ
-excel: VLOOKUP, XLOOKUP
+excel: VLOOKUP
 summary: Kết mã phòng của hồ sơ với danh mục, đặt bí danh bảng và kiểm số dòng khớp.
 ---
 
@@ -30,7 +30,7 @@ Giả định: lấy mọi hồ sơ trong `NhanVien`, gồm cả người đã n
 
 ### Từ cột dò trong Excel đến điều kiện ON
 
-Trong Excel, bạn xuất hồ sơ và danh mục sang hai sheet, rồi dùng **VLOOKUP dò chính xác** hoặc **XLOOKUP** theo mã phòng. Hình trích ba hồ sơ; ô `C2` là mã `KT`, ô `D2` là tên `Kế toán` lấy từ danh mục. Sheet `PhongBan` trong công thức có mã ở cột đầu, tên ở cột thứ hai.
+Trong Excel, bạn xuất hồ sơ và danh mục sang hai sheet, rồi dùng **VLOOKUP dò chính xác** theo mã phòng. Hình trích ba hồ sơ; ô `C2` là mã `KT`, ô `D2` là tên `Kế toán` lấy từ danh mục. Sheet `PhongBan` trong công thức có mã ở cột đầu, tên ở cột thứ hai.
 
 <Excel sheets="NhanVien · PhongBan" cell="D2" formula="=VLOOKUP(C2,PhongBan!A:B,2,FALSE)" selected="D2" mark={['C2','D2']} rows={[
   ['MaNV','HoTen','MaPB','TenPB'],
@@ -41,9 +41,11 @@ Trong Excel, bạn xuất hồ sơ và danh mục sang hai sheet, rồi dùng **
 
 **Kết bảng** là tạo kết quả từ những dòng có quan hệ giữa các bảng. **`INNER JOIN`** giữ các cặp dòng thỏa điều kiện **`ON`**. Ở đây, điều kiện là mã phòng của hồ sơ bằng mã của dòng danh mục: `PhongBan.MaPB = NhanVien.MaPB`. SQL lấy tên từ dòng đã khớp; không cần chép tên phòng vào từng hồ sơ nguồn.
 
-Sơ đồ đánh dấu đường từ `NhanVien.MaPB` đến `PhongBan.MaPB`. Chọn cột kết theo quan hệ dữ liệu, không chỉ vì hai cột tình cờ cùng tên hoặc cùng chứa chữ.
+Đường liên kết đã đọc ở [bài 1.5](/microsoft-sql-lession/bai/1-5-doc-so-do-erd/) giúp chọn đúng cặp cột; hai cột cùng tên chưa đủ chứng minh quan hệ:
 
-<Erd path={['NhanVien','PhongBan']} caption="Đường lấy tên phòng: mã phòng trên hồ sơ trỏ tới mã duy nhất của danh mục." />
+| Cột trên hồ sơ | Cột danh mục cần khớp | Giá trị đối chiếu |
+|---|---|---|
+| `NhanVien.MaPB` | `PhongBan.MaPB` | Mã `KT` khớp dòng có tên `Kế toán` |
 
 ### Bí danh giúp nhận ra cột thuộc bảng nào
 
@@ -55,7 +57,7 @@ Nếu phía được dò có nhiều dòng cùng khớp, SQL trả từng cặp,
 
 ### Câu lệnh cho tình huống
 
-Lấy bốn cột, kết bằng mã và xếp theo mã nhân viên:
+Phần `INNER JOIN … ON` đứng sau `FROM`, trước `WHERE`, `GROUP BY` và `HAVING` nếu dùng thêm các mệnh đề đã học. Câu dưới lấy bốn cột, kết bằng mã và xếp theo mã nhân viên:
 
 <Sql code={`SELECT nv.MaNV, nv.HoTen, nv.MaPB,
 \tpb.TenPB
@@ -435,7 +437,7 @@ ORDER BY nv.MaNV ASC;`,
 
 <Mistakes>
 
-1. **Kết sai quan hệ.** `MaPB` và `MaCD` đều là mã nhưng chỉ phòng ban mới dò sang `PhongBan`; sai quan hệ có thể ra rỗng hoặc dữ liệu không đúng nghĩa.
+1. **Kết sai quan hệ.** `MaPB` và `MaCD` đều là mã nhưng chỉ phòng ban mới dò sang `PhongBan`; sai quan hệ có thể không trả dòng nào hoặc trả dữ liệu không đúng nghĩa.
 2. **Coi `INNER JOIN` luôn giữ mọi hồ sơ.** Dòng không khớp bị loại; muốn giữ nó phải chọn cách kết phù hợp như bài 3.5.
 3. **Viết riêng `MaPB` khi cả hai bảng đều có.** SQL không biết bạn muốn cột nào; thêm tiền tố bí danh cho rõ nguồn.
 
@@ -460,12 +462,6 @@ ORDER BY nv.MaNV ASC;`,
   ['VLOOKUP lấy dòng khớp đầu tiên','JOIN trả mọi cặp khớp; kiểm quan hệ trước khi đếm'],
 ]} />
 
-## Bài tập
-
-Bộ chấm so giá trị, thứ tự cột và thứ tự dòng theo đề; không so alias hay bắt buộc một cách viết. Tên phòng cần lấy từ danh mục, không tự gõ tên thay cho phép kết.
-
-<Exercises />
-
 **Tự kiểm tra:**
 
 <details>
@@ -488,3 +484,9 @@ Không. `INNER JOIN` chỉ giữ cặp dòng thỏa `ON`; bài 3.5 dùng `LEFT J
 Không. Đó là bí danh dùng trong câu lệnh; `nv.MaPB` vẫn đọc cột `MaPB` của `NhanVien`.
 
 </details>
+
+## Bài tập
+
+Bộ chấm so giá trị, thứ tự cột và thứ tự dòng theo đề; không so alias hay bắt buộc một cách viết. Tên phòng cần lấy từ danh mục, không tự gõ tên thay cho phép kết.
+
+<Exercises />

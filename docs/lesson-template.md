@@ -118,6 +118,8 @@ Gợi ý dưới nút "Đã học xong" là "Bấm khi bạn trả lời đượ
 
 Giữ lý thuyết, Excel và ví dụ trong phần chính theo chủ đề. Cuối phần đó dùng `### Câu lệnh cho tình huống`, đặt câu SQL đầy đủ và kết quả đã kiểm chứng, rồi trả lời người hỏi ngay cạnh kết quả. Nếu có `RunFlow`, tiểu mục cuối cùng là `### SQL Server chạy câu này thế nào`. Không chép thêm một phần giải SQL độc lập hay "Trả lời chị Hạnh" ở sau.
 
+Nếu có câu tự kiểm tra, đặt ngay sau `Memo` và trước `## Bài tập`, dùng `<details>` với đáp án đã được giải thích trong bài. Không đặt sau danh sách bài tập. Trong `<summary>`, dùng `<code>` cho tên cột hoặc giá trị thay vì backtick; chuỗi có nháy dùng biểu thức JSX, ví dụ `<code>{"MaPB = 'IT'"}</code>`, để giữ nháy thẳng sau build. Các bài 2.3, 2.7, 2.8 có ít nhất ba câu để ôn từng nhịp học; không dùng câu hỏi làm chỗ bổ sung lý thuyết còn thiếu.
+
 Sơ đồ đặt khối dưới đây là **mã minh họa thuộc tính**, không dán nguyên các tên biến vào bài. Thay `sqlDaKiemChung`, `cacCot`, `cacDong`, `tongSoDong`, `cacBuocDaKiemChung` bằng các giá trị literal đã chạy và kiểm trước khi viết.
 
 ````mdx
