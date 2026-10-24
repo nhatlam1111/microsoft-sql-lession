@@ -35,4 +35,8 @@ Không đổi component/CSS/API/grader/schema/seed hoặc quy ước bài. Chỉ
 
 ## Git và bàn giao
 
-Bản local đã kiểm trên nhánh riêng. Trạng thái nhập main/xuất bản được cập nhật sau khi hoàn tất thao tác thực tế; chưa coi việc build local là deploy.
+Nhánh review được commit/push ở `4c0b37e`; main trước nhập vẫn `37093db`. Merge `d387743fd877e180847ee4b0260e6110ed3dd662` không xung đột, cây nội dung trùng nhánh đã kiểm, 277 test đạt trên cây đã nhập. Push main và xác nhận SHA remote trùng.
+
+[Workflow web đúng SHA](https://github.com/nhatlam1111/microsoft-sql-lession/actions/runs/40059560850) và [workflow API đúng SHA](https://github.com/nhatlam1111/microsoft-sql-lession/actions/runs/40059560861) đều **success**, gồm bước ping API không có mã trả 401. Browser xác nhận bốn bài công khai đều có sáu mục, ba bài tập, ba câu tự kiểm và đủ 4/5/5/4 bước Flow; không tràn trang tại 1440px. [Bắt đầu review bài 3.4](https://nhatlam1111.github.io/microsoft-sql-lession/bai/3-4-inner-join-vlookup/).
+
+Commit ghi hồ sơ xuất bản sau đó chỉ sửa tài liệu, không đổi sản phẩm đã kiểm. Không tạo PR, không xóa nhánh review hoặc worktree khác; workspace chính giữ trên main.
