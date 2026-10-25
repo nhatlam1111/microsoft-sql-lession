@@ -4,30 +4,384 @@ title: "Subquery: câu lệnh lồng nhau"
 shortTitle: Subquery
 level: 3
 area: A4
-kind: summary
-minutes: 12
+kind: full
+minutes: 25
 prerequisites:
-  - "3.4"
-goal: bạn dùng được kết quả của một câu lệnh làm điều kiện cho câu lệnh khác
-excel: Cột phụ, sheet trung gian
-summary: IN (SELECT …), EXISTS và khi nào nên dùng thay cho JOIN.
+  - "2.3"
+  - "2.5"
+  - "3.5"
+goal: bạn lọc hồ sơ bằng IN với câu SELECT con, EXISTS và NOT EXISTS
+excel: Danh sách mã trung gian, kiểm tra có mã liên quan
+summary: Dùng kết quả SELECT bên trong để lọc hồ sơ mà không nhân dòng theo bảng liên quan.
 ---
 
-## Nội dung chính
+## Tình huống
 
-- Subquery là một câu `SELECT` nằm bên trong câu khác, đặt trong ngoặc.
-- `WHERE MaNV IN (SELECT MaNV FROM DonNghiPhep …)` lọc theo một danh sách lấy từ bảng khác.
-- `EXISTS` kiểm tra có tồn tại dòng nào thỏa điều kiện hay không; `NOT EXISTS` là một cách khác để tìm người chưa có hợp đồng.
-- Khi chỉ cần lọc mà không cần lấy cột của bảng kia, subquery thường dễ đọc hơn `JOIN`.
+<Chat who="Chị Hạnh · Phòng Nhân sự" time="09:35" initial="H">
+Trong các mã vừa rà ở nhóm đơn nghỉ, chị cần mã, họ tên và mã phòng của người có ít nhất một đơn đã duyệt bắt đầu trong tháng 9. Mỗi hồ sơ nhân viên chỉ một dòng, không cần chi tiết từng đơn.
+</Chat>
 
-## Liên hệ Excel
+Giữ phạm vi đơn của bài 3.1: `TrangThai` là `Đã duyệt`, `TuNgay` từ 01/09 đến trước 01/10/2026. Lấy thông tin hiện lưu của nhân viên, không lọc trạng thái làm việc và không suy ra phòng tại thời điểm xin nghỉ.
 
-Giống tạo một cột phụ hoặc một sheet trung gian chứa danh sách mã, rồi lọc sheet chính theo danh sách đó.
+<Key>Giữ hồ sơ nhân viên khi có ít nhất một đơn phù hợp, không lấy thêm dòng theo từng đơn.</Key>
 
-## Tình huống ví dụ
+## Lọc hồ sơ bằng danh sách và sự tồn tại
 
-Cần danh sách nhân viên đã có ít nhất một đơn nghỉ phép được duyệt.
+### Dùng một danh sách mã lấy từ câu khác
+
+Trong Excel, bạn có thể lọc danh sách đơn trước, chép mã sang một sheet trung gian rồi giữ các dòng nhân viên có mã nằm trong đó. **Subquery**, hay **câu truy vấn con**, là câu `SELECT` đặt trong ngoặc bên trong câu khác. Nhờ vậy danh sách trung gian được lấy trực tiếp từ dữ liệu, không phải chép các mã vào điều kiện bằng tay.
+
+Trước hết, xem các mã của đơn thỏa điều kiện:
+
+<Sql code={`SELECT MaNV
+FROM DonNghiPhep
+WHERE TrangThai = N'Đã duyệt'
+\tAND TuNgay >= '20260901' AND TuNgay < '20261001'
+ORDER BY MaNV;`} />
+
+<Result columns={["MaNV"]} rows={[["NV005"],["NV012"],["NV013"],["NV016"],["NV022"],["NV024"],["NV027"],["NV032"],["NV037"]]} total={9} />
+
+Bài 2.3 đã dùng `IN` để kiểm giá trị thuộc một danh sách viết sẵn. Ở đây, thay danh sách viết sẵn bằng kết quả `SELECT dp.MaNV ...`. Câu con sau `IN` phải trả **một cột** để so với `nv.MaNV`; có thể trả nhiều dòng. Câu bên ngoài lấy thông tin từ `NhanVien`, câu bên trong chọn mã từ `DonNghiPhep`.
+
+`nv` và `dp` là bí danh bảng như các bài kết bảng: `nv.MaNV` là mã của hồ sơ đang xét, `dp.MaNV` là mã ghi trên đơn. Câu con này tự lọc được danh sách mã mà không cần tham chiếu ra ngoài. Khi đặt trong `IN`, bỏ `ORDER BY` của câu xem riêng ở trên vì chỉ cần các giá trị để so, không cần thứ tự của danh sách con.
+
+### Kiểm có dòng liên quan bằng EXISTS
+
+Khi muốn diễn đạt “có ít nhất một đơn phù hợp của đúng người này”, dùng **`EXISTS`**. Nó đúng khi câu con trả được ít nhất một dòng:
+
+<Sql code={`SELECT nv.MaNV, nv.HoTen, nv.MaPB
+FROM NhanVien AS nv
+WHERE EXISTS (
+\tSELECT 1
+\tFROM DonNghiPhep AS dp
+\tWHERE dp.MaNV = nv.MaNV
+\t\tAND dp.TrangThai = N'Đã duyệt'
+\t\tAND dp.TuNgay >= '20260901' AND dp.TuNgay < '20261001'
+)
+ORDER BY nv.MaNV;`} />
+
+Điều kiện **liên hệ** `dp.MaNV = nv.MaNV` nối đơn với hồ sơ nhân viên đang xét. Câu con tham chiếu bí danh `nv` của câu ngoài nên gọi là **câu con tương quan**. Nếu bỏ điều kiện này, chỉ cần có một đơn phù hợp của bất kỳ ai là mọi hồ sơ ngoài đều qua điều kiện `EXISTS`.
+
+`SELECT 1` chọn một hằng số; giá trị `1` không phải số đơn, cũng không có nghĩa chỉ lấy dòng đầu. `EXISTS` chỉ quan tâm có dòng hay không, không dùng giá trị được chọn để lập cột kết quả ngoài. Bí danh `dp` chỉ có hiệu lực trong câu con, không dùng `dp.LoaiNghi` ở danh sách cột của câu ngoài.
+
+Cả cách `IN` và `EXISTS` này đều giữ mỗi dòng `NhanVien` tối đa một lần, dù một người có nhiều đơn phù hợp. `JOIN` có thể cho nhiều dòng khi một mã khớp nhiều đơn, như hiện tượng đã học ở bài 3.6. Ở đây không cần cột của đơn nên cách lọc này diễn đạt yêu cầu rõ; không phải cam kết subquery luôn nhanh hơn `JOIN`.
+
+### Tìm hồ sơ chưa có dòng liên quan
+
+**`NOT EXISTS`** giữ dòng ngoài khi không có dòng nào trong câu con thỏa điều kiện liên hệ. Ví dụ tìm hồ sơ chưa có bất kỳ hợp đồng nào, cùng yêu cầu đã làm bằng `LEFT JOIN` ở bài 3.5:
+
+<Sql code={`SELECT nv.MaNV, nv.HoTen
+FROM NhanVien AS nv
+WHERE NOT EXISTS (
+\tSELECT 1
+\tFROM HopDong AS hd
+\tWHERE hd.MaNV = nv.MaNV
+)
+ORDER BY nv.MaNV;`} />
+
+<Result columns={["MaNV","HoTen"]} rows={[["NV047","Phạm Ngọc Ánh"],["NV048","Đỗ Minh Quân"]]} total={2} />
+
+Kết quả gồm `NV047` và `NV048`. Nếu thêm điều kiện ngày hoặc loại hợp đồng vào câu con, ý nghĩa chuyển thành “chưa có hợp đồng thỏa điều kiện đó”, không còn là chưa có bất kỳ hợp đồng nào.
+
+Không thay máy móc bằng `NOT IN`: nếu danh sách con chứa `NULL`, các mã không khớp có thể nhận kết quả chưa xác định và bị `WHERE` loại, như logic `UNKNOWN` ở bài 2.5. `NOT EXISTS` với điều kiện liên hệ rõ ràng tránh bẫy này. Đây là giới hạn cần biết; không có nghĩa cột `HopDong.MaNV` của bộ mẫu hiện chứa `NULL`.
+
+Ở bài này chỉ cần dùng câu con để lọc theo danh sách hoặc kiểm sự tồn tại. Các cách đặt câu con trong phép tính và tổ chức câu lệnh dài chưa thuộc mục tiêu bài.
+
+### Câu lệnh cho tình huống
+
+Chọn cách `IN` vì danh sách mã của các đơn đã có sẵn ở đầu bài:
+
+<Sql code={`SELECT nv.MaNV, nv.HoTen, nv.MaPB
+FROM NhanVien AS nv
+WHERE nv.MaNV IN (
+\tSELECT dp.MaNV
+\tFROM DonNghiPhep AS dp
+\tWHERE dp.TrangThai = N'Đã duyệt'
+\t\tAND dp.TuNgay >= '20260901' AND dp.TuNgay < '20261001'
+)
+ORDER BY nv.MaNV;`} />
+
+<Result columns={["MaNV","HoTen","MaPB"]} rows={[["NV005","Vũ Thị Lan","KT"],["NV012","Trịnh Thị Ngọc","NS"],["NV013","Mai Đức Anh","KD"],["NV016","Lâm Thị Kim","KD"],["NV022","Quách Thị Nga","NS"],["NV024","Võ Thị Thanh","VH"],["NV027","Đinh Công Hậu","VH"],["NV032","Từ Thị Hương","KD"],["NV037","Giang Văn Bình","VH"]]} total={9} />
+
+Gửi chị Hạnh `9` hồ sơ kèm họ tên và mã phòng hiện lưu. Điều kiện kiểm đơn, không kiểm nhân viên hiện còn làm hay số ngày thực nghỉ trong tháng. Câu `EXISTS` phía trên trả cùng kết quả trên dữ liệu đã kiểm.
+
+### SQL Server chạy câu này thế nào
+
+Sơ đồ diễn giải logic lọc của câu ngoài; không mô tả thứ tự đọc vật lý hoặc khẳng định câu con luôn chạy lại từng dòng. Mỗi thẻ chỉ xem nhanh ba dòng; drawer chứa bảng trích tối đa mười dòng và câu kiểm tương ứng. Bước đầu chỉ hiển thị mã để dễ theo dõi.
+
+<RunFlow query={`SELECT nv.MaNV, nv.HoTen, nv.MaPB
+FROM NhanVien AS nv
+WHERE nv.MaNV IN (
+\tSELECT dp.MaNV
+\tFROM DonNghiPhep AS dp
+\tWHERE dp.TrangThai = N'Đã duyệt'
+\t\tAND dp.TuNgay >= '20260901' AND dp.TuNgay < '20261001'
+)
+ORDER BY nv.MaNV;`} steps={[
+  {
+    "clause": "FROM",
+    "title": "Đọc 48 hồ sơ nhân viên",
+    "focus": "FROM NhanVien AS nv",
+    "meaning": "`FROM` xác định bảng nguồn.",
+    "detail": "Có `48` hồ sơ ở mọi trạng thái; bảng trích chỉ hiển thị `MaNV` để theo dõi mã.",
+    "sql": "SELECT nv.MaNV FROM NhanVien AS nv ORDER BY nv.MaNV;",
+    "columns": [
+      "MaNV"
+    ],
+    "rows": [
+      [
+        "NV001"
+      ],
+      [
+        "NV002"
+      ],
+      [
+        "NV003"
+      ],
+      [
+        "NV004"
+      ],
+      [
+        "NV005"
+      ],
+      [
+        "NV006"
+      ],
+      [
+        "NV007"
+      ],
+      [
+        "NV008"
+      ],
+      [
+        "NV009"
+      ],
+      [
+        "NV010"
+      ]
+    ],
+    "total": 48
+  },
+  {
+    "clause": "WHERE",
+    "title": "Giữ mã có đơn phù hợp",
+    "focus": "WHERE nv.MaNV IN (\n\tSELECT dp.MaNV\n\tFROM DonNghiPhep AS dp\n\tWHERE dp.TrangThai = N'Đã duyệt'\n\t\tAND dp.TuNgay >= '20260901' AND dp.TuNgay < '20261001'\n)",
+    "meaning": "`WHERE` giữ hồ sơ có mã nằm trong kết quả câu con.",
+    "detail": "Câu con lấy mã từ đơn đã duyệt có `TuNgay` trong tháng 9. Giữ `9` hồ sơ; không tạo thêm dòng ngoài theo số đơn.",
+    "sql": "SELECT nv.MaNV\nFROM NhanVien AS nv\nWHERE nv.MaNV IN (\n\tSELECT MaNV\n\tFROM DonNghiPhep\n\tWHERE TrangThai = N'Đã duyệt'\n\t\tAND TuNgay >= '20260901' AND TuNgay < '20261001'\n)\nORDER BY nv.MaNV;",
+    "columns": [
+      "MaNV"
+    ],
+    "rows": [
+      [
+        "NV005"
+      ],
+      [
+        "NV012"
+      ],
+      [
+        "NV013"
+      ],
+      [
+        "NV016"
+      ],
+      [
+        "NV022"
+      ],
+      [
+        "NV024"
+      ],
+      [
+        "NV027"
+      ],
+      [
+        "NV032"
+      ],
+      [
+        "NV037"
+      ]
+    ],
+    "total": 9
+  },
+  {
+    "clause": "SELECT",
+    "title": "Lấy thông tin cần gửi",
+    "focus": "SELECT nv.MaNV, nv.HoTen, nv.MaPB",
+    "meaning": "`SELECT` chọn các cột của hồ sơ đã giữ.",
+    "detail": "Lấy `MaNV`, `HoTen`, `MaPB` hiện lưu cho `9` hồ sơ.",
+    "sql": "SELECT nv.MaNV, nv.HoTen, nv.MaPB\nFROM NhanVien AS nv\nWHERE nv.MaNV IN (\n\tSELECT dp.MaNV\n\tFROM DonNghiPhep AS dp\n\tWHERE dp.TrangThai = N'Đã duyệt'\n\t\tAND dp.TuNgay >= '20260901' AND dp.TuNgay < '20261001'\n)\nORDER BY nv.MaNV;",
+    "columns": [
+      "MaNV",
+      "HoTen",
+      "MaPB"
+    ],
+    "rows": [
+      [
+        "NV005",
+        "Vũ Thị Lan",
+        "KT"
+      ],
+      [
+        "NV012",
+        "Trịnh Thị Ngọc",
+        "NS"
+      ],
+      [
+        "NV013",
+        "Mai Đức Anh",
+        "KD"
+      ],
+      [
+        "NV016",
+        "Lâm Thị Kim",
+        "KD"
+      ],
+      [
+        "NV022",
+        "Quách Thị Nga",
+        "NS"
+      ],
+      [
+        "NV024",
+        "Võ Thị Thanh",
+        "VH"
+      ],
+      [
+        "NV027",
+        "Đinh Công Hậu",
+        "VH"
+      ],
+      [
+        "NV032",
+        "Từ Thị Hương",
+        "KD"
+      ],
+      [
+        "NV037",
+        "Giang Văn Bình",
+        "VH"
+      ]
+    ],
+    "total": 9
+  },
+  {
+    "clause": "ORDER BY",
+    "title": "Xếp mã tăng dần",
+    "focus": "ORDER BY nv.MaNV",
+    "meaning": "`ORDER BY` quyết định thứ tự kết quả.",
+    "detail": "Xếp `9` dòng theo mã tăng dần. Câu kiểm của các bước trước cũng xếp mã để dễ đối chiếu, không có nghĩa bước lọc tự sắp xếp.",
+    "sql": "SELECT nv.MaNV, nv.HoTen, nv.MaPB\nFROM NhanVien AS nv\nWHERE nv.MaNV IN (\n\tSELECT dp.MaNV\n\tFROM DonNghiPhep AS dp\n\tWHERE dp.TrangThai = N'Đã duyệt'\n\t\tAND dp.TuNgay >= '20260901' AND dp.TuNgay < '20261001'\n)\nORDER BY nv.MaNV;",
+    "columns": [
+      "MaNV",
+      "HoTen",
+      "MaPB"
+    ],
+    "rows": [
+      [
+        "NV005",
+        "Vũ Thị Lan",
+        "KT"
+      ],
+      [
+        "NV012",
+        "Trịnh Thị Ngọc",
+        "NS"
+      ],
+      [
+        "NV013",
+        "Mai Đức Anh",
+        "KD"
+      ],
+      [
+        "NV016",
+        "Lâm Thị Kim",
+        "KD"
+      ],
+      [
+        "NV022",
+        "Quách Thị Nga",
+        "NS"
+      ],
+      [
+        "NV024",
+        "Võ Thị Thanh",
+        "VH"
+      ],
+      [
+        "NV027",
+        "Đinh Công Hậu",
+        "VH"
+      ],
+      [
+        "NV032",
+        "Từ Thị Hương",
+        "KD"
+      ],
+      [
+        "NV037",
+        "Giang Văn Bình",
+        "VH"
+      ]
+    ],
+    "total": 9
+  }
+]} />
+
+## Hay nhầm ở đâu
+
+<Mistakes>
+
+1. **Lấy cả mã và tên trong câu con sau `IN`.** Giá trị một cột ở câu ngoài không so được với hai cột của danh sách con.
+2. **Quên điều kiện liên hệ trong `EXISTS`.** Một đơn của người khác có thể làm mọi hồ sơ nhân viên đều được giữ.
+3. **Hiểu `NOT EXISTS` là chưa có dữ liệu ở mọi thời điểm.** Nó chỉ kiểm các dòng hiện có và các điều kiện đã đặt trong câu con.
+4. **Đổi sang `JOIN` mà không kiểm số dòng.** Nhiều dòng liên quan có thể làm một hồ sơ xuất hiện nhiều lần.
+
+</Mistakes>
+
+## Ứng dụng
+
+<Apply>
+
+- **Lập danh sách có phát sinh:** lọc nhân viên có ít nhất một đơn phù hợp mà không đưa chi tiết từng đơn vào báo cáo.
+- **Tìm hồ sơ còn thiếu:** dùng `NOT EXISTS` để lấy nhân viên chưa có hợp đồng hoặc chưa có dòng lương trong kỳ cần đối chiếu.
+- **Lọc theo danh sách động:** dùng `IN (SELECT ...)` để danh sách mã được lấy lại từ nguồn mỗi lần chạy, tránh chép mã thủ công.
+
+</Apply>
+
+## Ghi nhớ
+
+<Memo rows={[
+  ['Danh sách mã trên sheet trung gian', 'IN (SELECT một cột ...) kiểm giá trị thuộc kết quả câu con'],
+  ['Có ít nhất một dòng của đúng mã', 'EXISTS cần điều kiện liên hệ với hồ sơ đang xét'],
+  ['Không có dòng phù hợp', 'NOT EXISTS giữ dòng khi câu con không trả dòng nào'],
+  ['Chỉ đánh dấu có hay không', 'Không nhân dòng ngoài theo số dòng liên quan'],
+]} />
+
+**Tự kiểm tra:**
+
+<details>
+<summary>Câu con sau <code>nv.MaNV IN (...)</code> được trả mấy cột? Có được nhiều dòng không?</summary>
+
+Một cột để so với `nv.MaNV`; được nhiều dòng. `IN` kiểm mã có nằm trong các giá trị đó không, không ghép thêm cột.
+
+</details>
+
+<details>
+<summary>Nếu bỏ <code>dp.MaNV = nv.MaNV</code> trong ví dụ <code>EXISTS</code>, điều gì xảy ra?</summary>
+
+Nếu có bất kỳ đơn nào thỏa phần điều kiện còn lại, mọi hồ sơ nhân viên đều được giữ. Câu không còn kiểm đơn của đúng người đang xét.
+
+</details>
+
+<details>
+<summary><code>SELECT 1</code> trong <code>NOT EXISTS</code> có đếm hợp đồng không?</summary>
+
+Không. `1` là hằng số; điều kiện chỉ kiểm câu con có dòng khớp không. `NOT EXISTS` giữ hồ sơ khi không có dòng khớp.
+
+</details>
 
 ## Bài tập
+
+Đọc rõ phạm vi đặt ở câu ngoài và câu con. Mục tiêu là luyện cách lọc bằng câu con; bộ chấm so kết quả, không bắt buộc bí danh hay một cú pháp duy nhất.
 
 <Exercises />

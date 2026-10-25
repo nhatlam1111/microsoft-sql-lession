@@ -4,31 +4,463 @@ title: Đếm có điều kiện kiểu COUNTIFS
 shortTitle: Đếm có điều kiện
 level: 3
 area: A5
-kind: summary
-minutes: 10
+kind: full
+minutes: 25
 prerequisites:
   - "2.9"
+  - "3.1"
   - "3.2"
-goal: bạn đếm và cộng theo nhiều điều kiện trên cùng một dòng báo cáo
+goal: bạn đếm và cộng theo các điều kiện riêng trên cùng một dòng báo cáo
 excel: COUNTIFS, SUMIFS
-summary: SUM(CASE WHEN …) để làm báo cáo nam/nữ theo phòng ban trên một dòng.
+summary: Dùng CASE trong SUM hoặc COUNT để tạo nhiều cột chỉ tiêu cho từng nhóm mà không lọc mất dòng cần tính.
 ---
 
-## Nội dung chính
+## Tình huống
 
-- `SUM(CASE WHEN GioiTinh = N'Nữ' THEN 1 ELSE 0 END)` đếm số nữ trong mỗi nhóm.
-- Viết nhiều cột đếm có điều kiện trên cùng một dòng để ra báo cáo dạng bảng: nam, nữ, tổng.
-- `COUNT(CASE WHEN … THEN 1 END)` cũng đếm được, vì `COUNT` bỏ qua `NULL`.
-- Kết hợp với `GROUP BY MaPB` để ra một dòng cho mỗi phòng ban.
+<Chat who="Chị Hạnh · Phòng Nhân sự" time="10:05" initial="H">
+Chị cần bảng cơ cấu nhân sự đang làm: mỗi phòng một dòng, có số nam, số nữ và tổng hồ sơ. Em để ba số cạnh nhau để chị đối chiếu, đừng tách thành ba danh sách nhé.
+</Chat>
 
-## Liên hệ Excel
+Chỉ lấy hồ sơ có `TrangThai = N'Đang làm'`, nhóm theo `MaPB` hiện lưu. Đây là cơ cấu theo dữ liệu hiện tại; không dựng lại phòng hoặc trạng thái tại một thời điểm quá khứ.
 
-Giống COUNTIFS và SUMIFS: mỗi cột báo cáo là một công thức với điều kiện riêng.
+<Key>Lọc phạm vi chung một lần, rồi tính các chỉ tiêu có điều kiện riêng trong từng nhóm phòng.</Key>
 
-## Tình huống ví dụ
+## Từ cờ của từng dòng đến nhiều chỉ tiêu mỗi phòng
 
-Báo cáo cơ cấu giới tính cần một dòng cho mỗi phòng, với số nam, số nữ và tổng.
+### Đếm bằng cách cộng các cờ 1 và 0
+
+Trong Excel, **COUNTIFS** đếm những dòng cùng thỏa các cặp vùng–điều kiện. Ví dụ `=COUNTIFS(B2:B5,"KD",C2:C5,"Nữ")` đếm dòng có cột phòng là `KD` và cột giới tính là `Nữ`. Hình minh họa dưới chỉ dùng bốn hồ sơ thật được chọn từ phòng Kinh doanh, không phải toàn bộ hồ sơ của phòng.
+
+<Excel sheets="Minh họa bốn hồ sơ KD · Cờ đếm" selected="D6" cell="D6" formula={`=COUNTIFS(B2:B5,"KD",C2:C5,"Nữ")`} rows={[
+  ['MaNV','MaPB','GioiTinh','Cờ nữ'],
+  ['NV002','KD','Nam',0],
+  ['NV003','KD','Nữ',1],
+  ['NV006','KD','Nam',0],
+  ['NV016','KD','Nữ',1],
+  ['','','Số nữ',2],
+]} mark={['D2','D3','D4','D5','D6']} />
+
+Cột được đánh dấu biến điều kiện thành **cờ**: dòng nữ nhận `1`, dòng khác nhận `0`; cộng cờ của bốn dòng được `2`. Trong SQL, `CASE WHEN GioiTinh = N'Nữ' THEN 1 ELSE 0 END` tạo cờ tương tự, chỉ trong kết quả tính toán. `SUM(...)` cộng những cờ này để đếm dòng thỏa điều kiện.
+
+Để có cả số nam và số nữ, viết hai biểu thức `SUM(CASE ...)`, mỗi biểu thức có điều kiện riêng. `COUNT(*)` vẫn đếm tất cả hồ sơ trong nhóm. **`WHERE`** chọn phạm vi chung là người đang làm; **`CASE`** quyết định dòng đó đóng góp bao nhiêu cho từng chỉ tiêu. Nếu đưa `GioiTinh = N'Nữ'` vào `WHERE`, dòng nam bị loại trước và không còn để tính cột số nam hoặc tổng.
+
+`GROUP BY MaPB` gom các hồ sơ đang làm theo mã phòng trước khi tính. Không thêm `GioiTinh` vào `GROUP BY` của báo cáo này: làm vậy sẽ tách thành các dòng phòng–giới tính, thay vì một dòng mỗi phòng.
+
+### COUNT bỏ NULL, nhưng vẫn đếm số 0
+
+Bạn cũng có thể đếm nữ bằng `COUNT(CASE WHEN GioiTinh = N'Nữ' THEN 1 END)`. Khi không khớp mà không viết `ELSE`, `CASE` trả `NULL`; `COUNT` bỏ các giá trị đó. Nếu thêm `ELSE 0`, `COUNT` đếm cả số `0`, vì `0` vẫn là một giá trị khác `NULL`.
+
+Đối chiếu hai cách trên toàn bộ hồ sơ đang làm:
+
+<Sql code={`SELECT COUNT(CASE WHEN GioiTinh = N'Nữ' THEN 1 END) AS [SoNu],
+\tCOUNT(CASE WHEN GioiTinh = N'Nữ' THEN 1 ELSE 0 END) AS [DemCaSoKhong]
+FROM NhanVien
+WHERE TrangThai = N'Đang làm';`} />
+
+<Result columns={["SoNu","DemCaSoKhong"]} rows={[[23,45]]} total={1} />
+
+Số nữ là `23`; biểu thức có `ELSE 0` lại đếm cả `45` hồ sơ. Tên `DemCaSoKhong` nhắc rằng đây là ví dụ chỉ ra lỗi đếm, không phải cách tính số nữ. Với `SUM`, dùng `ELSE 0` giúp nhóm có hồ sơ nhưng không có người thỏa điều kiện nhận `0`, như số nam của phòng `KT` ở kết quả cuối bài.
+
+### Cộng giá trị có điều kiện thay vì cộng cờ
+
+**SUMIFS** trong Excel cộng số ở một vùng khi các điều kiện trên dòng tương ứng cùng thỏa. Trong SQL, đổi `THEN 1` thành cột số cần cộng. Ví dụ dưới vẫn lấy các đơn đã duyệt có `TuNgay` trong tháng 9 như bài 3.1, nhưng tách tổng ngày của hai loại nghỉ thành hai cột:
+
+<Sql code={`SELECT SUM(CASE WHEN LoaiNghi = N'Phép năm' THEN SoNgay ELSE 0 END) AS [NgayPhepNam],
+\tSUM(CASE WHEN LoaiNghi = N'Nghỉ ốm' THEN SoNgay ELSE 0 END) AS [NgayNghiOm],
+\tSUM(SoNgay) AS [TongSoNgay]
+FROM DonNghiPhep
+WHERE TrangThai = N'Đã duyệt'
+\tAND TuNgay >= '20260901' AND TuNgay < '20261001';`} />
+
+<Result columns={["NgayPhepNam","NgayNghiOm","TongSoNgay"]} rows={[[9,5,16]]} total={1} />
+
+`9.0` ngày phép năm và `5.0` ngày nghỉ ốm chưa bằng tổng `16.0` ngày, vì còn loại `Việc riêng` với `2.0` ngày. Mỗi chỉ tiêu chỉ cộng các dòng khớp điều kiện của nó; không mặc định tổng các cột có điều kiện luôn bằng tổng chung.
+
+`ELSE 0` không tự tạo nhóm phòng không có hồ sơ. Nếu phạm vi hoàn toàn không có dòng, câu tổng hợp không `GROUP BY` trả `NULL` cho `SUM`; câu có `GROUP BY` không tạo dòng nhóm nào. Ở bài này chỉ cần phân biệt cộng cờ để đếm và cộng giá trị để tính tổng; cách giữ cả danh mục phòng khi không có hồ sơ dựa trên `LEFT JOIN` ở bài 3.5.
+
+### Câu lệnh cho tình huống
+
+<Sql code={`SELECT MaPB,
+\tSUM(CASE WHEN GioiTinh = N'Nam' THEN 1 ELSE 0 END) AS [SoNam],
+\tSUM(CASE WHEN GioiTinh = N'Nữ' THEN 1 ELSE 0 END) AS [SoNu],
+\tCOUNT(*) AS [TongSo]
+FROM NhanVien
+WHERE TrangThai = N'Đang làm'
+GROUP BY MaPB
+ORDER BY MaPB;`} />
+
+<Result columns={["MaPB","SoNam","SoNu","TongSo"]} rows={[["BGD",1,1,2],["IT",9,1,10],["KD",6,7,13],["KT",0,7,7],["NS",0,5,5],["VH",6,2,8]]} total={6} />
+
+Gửi chị Hạnh `6` dòng phòng, tổng `45` hồ sơ đang làm. Phòng `KT` có `0` nam và `7` nữ; dòng phòng vẫn tồn tại vì nhóm có hồ sơ. Trong bộ mẫu này, hồ sơ đang làm đều mang `Nam` hoặc `Nữ`, nên hai cột cộng bằng tổng. Nếu nguồn có nhãn khác hoặc thiếu giới tính, phải chốt cách báo cáo chúng thay vì tự ép vào một trong hai cột.
+
+### SQL Server chạy câu này thế nào
+
+Sơ đồ cho thấy phạm vi dòng trước, nhóm phòng sau và các chỉ tiêu được tính trên từng nhóm. Đây là thứ tự logic để hiểu câu lệnh, không phải kế hoạch đọc vật lý. Mỗi thẻ xem nhanh ba dòng; drawer có bảng trích tối đa mười dòng và câu kiểm.
+
+<RunFlow query={`SELECT MaPB,
+\tSUM(CASE WHEN GioiTinh = N'Nam' THEN 1 ELSE 0 END) AS [SoNam],
+\tSUM(CASE WHEN GioiTinh = N'Nữ' THEN 1 ELSE 0 END) AS [SoNu],
+\tCOUNT(*) AS [TongSo]
+FROM NhanVien
+WHERE TrangThai = N'Đang làm'
+GROUP BY MaPB
+ORDER BY MaPB;`} steps={[
+  {
+    "clause": "FROM",
+    "title": "Đọc 48 hồ sơ",
+    "focus": "FROM NhanVien",
+    "meaning": "`FROM` xác định nguồn hồ sơ.",
+    "detail": "Có `48` hồ sơ; bảng trích hiển thị mã, phòng, giới tính và trạng thái để theo dõi điều kiện.",
+    "sql": "SELECT MaNV, MaPB, GioiTinh, TrangThai FROM NhanVien ORDER BY MaNV;",
+    "columns": [
+      "MaNV",
+      "MaPB",
+      "GioiTinh",
+      "TrangThai"
+    ],
+    "rows": [
+      [
+        "NV001",
+        "KT",
+        "Nữ",
+        "Đang làm"
+      ],
+      [
+        "NV002",
+        "KD",
+        "Nam",
+        "Đang làm"
+      ],
+      [
+        "NV003",
+        "KD",
+        "Nữ",
+        "Đang làm"
+      ],
+      [
+        "NV004",
+        "BGD",
+        "Nam",
+        "Đang làm"
+      ],
+      [
+        "NV005",
+        "KT",
+        "Nữ",
+        "Đang làm"
+      ],
+      [
+        "NV006",
+        "KD",
+        "Nam",
+        "Đang làm"
+      ],
+      [
+        "NV007",
+        "IT",
+        "Nam",
+        "Đang làm"
+      ],
+      [
+        "NV008",
+        "VH",
+        "Nam",
+        "Đang làm"
+      ],
+      [
+        "NV009",
+        "BGD",
+        "Nữ",
+        "Đang làm"
+      ],
+      [
+        "NV010",
+        "NS",
+        "Nữ",
+        "Đang làm"
+      ]
+    ],
+    "total": 48
+  },
+  {
+    "clause": "WHERE",
+    "title": "Giữ 45 hồ sơ đang làm",
+    "focus": "WHERE TrangThai = N'Đang làm'",
+    "meaning": "`WHERE` chọn phạm vi chung trước khi chia nhóm.",
+    "detail": "Giữ `45` hồ sơ đang làm, gồm cả nam và nữ. Ba hồ sơ đã nghỉ bị loại.",
+    "sql": "SELECT MaNV, MaPB, GioiTinh, TrangThai FROM NhanVien WHERE TrangThai = N'Đang làm' ORDER BY MaNV;",
+    "columns": [
+      "MaNV",
+      "MaPB",
+      "GioiTinh",
+      "TrangThai"
+    ],
+    "rows": [
+      [
+        "NV001",
+        "KT",
+        "Nữ",
+        "Đang làm"
+      ],
+      [
+        "NV002",
+        "KD",
+        "Nam",
+        "Đang làm"
+      ],
+      [
+        "NV003",
+        "KD",
+        "Nữ",
+        "Đang làm"
+      ],
+      [
+        "NV004",
+        "BGD",
+        "Nam",
+        "Đang làm"
+      ],
+      [
+        "NV005",
+        "KT",
+        "Nữ",
+        "Đang làm"
+      ],
+      [
+        "NV006",
+        "KD",
+        "Nam",
+        "Đang làm"
+      ],
+      [
+        "NV007",
+        "IT",
+        "Nam",
+        "Đang làm"
+      ],
+      [
+        "NV008",
+        "VH",
+        "Nam",
+        "Đang làm"
+      ],
+      [
+        "NV009",
+        "BGD",
+        "Nữ",
+        "Đang làm"
+      ],
+      [
+        "NV010",
+        "NS",
+        "Nữ",
+        "Đang làm"
+      ]
+    ],
+    "total": 45
+  },
+  {
+    "clause": "GROUP BY",
+    "title": "Gom thành sáu nhóm phòng",
+    "focus": "GROUP BY MaPB",
+    "meaning": "`GROUP BY` gom các dòng có cùng mã phòng.",
+    "detail": "Có `6` nhóm từ các hồ sơ còn lại; `SoHoSo` trong câu kiểm là số dòng mỗi nhóm, chưa tách điều kiện giới tính.",
+    "sql": "SELECT MaPB, COUNT(*) AS [SoHoSo] FROM NhanVien WHERE TrangThai = N'Đang làm' GROUP BY MaPB ORDER BY MaPB;",
+    "columns": [
+      "MaPB",
+      "SoHoSo"
+    ],
+    "rows": [
+      [
+        "BGD",
+        2
+      ],
+      [
+        "IT",
+        10
+      ],
+      [
+        "KD",
+        13
+      ],
+      [
+        "KT",
+        7
+      ],
+      [
+        "NS",
+        5
+      ],
+      [
+        "VH",
+        8
+      ]
+    ],
+    "total": 6
+  },
+  {
+    "clause": "SELECT",
+    "title": "Tính ba chỉ tiêu trên mỗi nhóm",
+    "focus": "SELECT MaPB,\n\tSUM(CASE WHEN GioiTinh = N'Nam' THEN 1 ELSE 0 END) AS [SoNam],\n\tSUM(CASE WHEN GioiTinh = N'Nữ' THEN 1 ELSE 0 END) AS [SoNu],\n\tCOUNT(*) AS [TongSo]",
+    "meaning": "`SELECT` tính và đặt tên các cột báo cáo.",
+    "detail": "Mỗi `CASE` tạo cờ theo giới tính; `SUM` cộng cờ. `COUNT(*)` đếm mọi dòng trong nhóm. Nhóm `KT` có `0` nam nhưng vẫn có `7` hồ sơ.",
+    "sql": "SELECT MaPB,\n\tSUM(CASE WHEN GioiTinh = N'Nam' THEN 1 ELSE 0 END) AS [SoNam],\n\tSUM(CASE WHEN GioiTinh = N'Nữ' THEN 1 ELSE 0 END) AS [SoNu],\n\tCOUNT(*) AS [TongSo]\nFROM NhanVien\nWHERE TrangThai = N'Đang làm'\nGROUP BY MaPB\nORDER BY MaPB;",
+    "columns": [
+      "MaPB",
+      "SoNam",
+      "SoNu",
+      "TongSo"
+    ],
+    "rows": [
+      [
+        "BGD",
+        1,
+        1,
+        2
+      ],
+      [
+        "IT",
+        9,
+        1,
+        10
+      ],
+      [
+        "KD",
+        6,
+        7,
+        13
+      ],
+      [
+        "KT",
+        0,
+        7,
+        7
+      ],
+      [
+        "NS",
+        0,
+        5,
+        5
+      ],
+      [
+        "VH",
+        6,
+        2,
+        8
+      ]
+    ],
+    "total": 6
+  },
+  {
+    "clause": "ORDER BY",
+    "title": "Xếp sáu dòng theo mã phòng",
+    "focus": "ORDER BY MaPB",
+    "meaning": "`ORDER BY` sắp xếp các dòng báo cáo đã tính.",
+    "detail": "Xếp `6` dòng theo mã phòng. Các câu kiểm trước cũng xếp mã để bảng trích dễ đọc, không phải `WHERE` hoặc `GROUP BY` tự sắp xếp.",
+    "sql": "SELECT MaPB,\n\tSUM(CASE WHEN GioiTinh = N'Nam' THEN 1 ELSE 0 END) AS [SoNam],\n\tSUM(CASE WHEN GioiTinh = N'Nữ' THEN 1 ELSE 0 END) AS [SoNu],\n\tCOUNT(*) AS [TongSo]\nFROM NhanVien\nWHERE TrangThai = N'Đang làm'\nGROUP BY MaPB\nORDER BY MaPB;",
+    "columns": [
+      "MaPB",
+      "SoNam",
+      "SoNu",
+      "TongSo"
+    ],
+    "rows": [
+      [
+        "BGD",
+        1,
+        1,
+        2
+      ],
+      [
+        "IT",
+        9,
+        1,
+        10
+      ],
+      [
+        "KD",
+        6,
+        7,
+        13
+      ],
+      [
+        "KT",
+        0,
+        7,
+        7
+      ],
+      [
+        "NS",
+        0,
+        5,
+        5
+      ],
+      [
+        "VH",
+        6,
+        2,
+        8
+      ]
+    ],
+    "total": 6
+  }
+]} />
+
+## Hay nhầm ở đâu
+
+<Mistakes>
+
+1. **Lọc giới tính ở `WHERE` rồi muốn tính cả hai giới.** Các dòng của giới còn lại đã bị loại trước khi tính.
+2. **Dùng `COUNT(CASE ... ELSE 0 END)` để đếm điều kiện.** `COUNT` đếm cả giá trị `0`, làm chỉ tiêu thành số dòng toàn nhóm.
+3. **Dùng `COUNT(*)` sau một phép kết làm lặp hồ sơ.** Đang đếm dòng kết quả kết bảng; phải chốt một dòng đại diện cho gì như bài 3.6.
+4. **Coi `ELSE 0` là cách bổ sung phòng không có hồ sơ.** Không có dòng nguồn thì `GROUP BY` không tự tạo nhóm đó.
+
+</Mistakes>
+
+## Ứng dụng
+
+<Apply>
+
+- **Lập bảng nhiều chỉ tiêu:** đặt các số lượng theo giới tính hoặc trạng thái cạnh nhau, mỗi phòng một dòng.
+- **Tổng hợp số tiền hoặc số ngày theo điều kiện:** cộng cột giá trị trong `THEN` để đối chiếu các khoản trên cùng báo cáo.
+- **Kiểm độ đầy đủ của nhóm:** đặt số có thông tin, số thiếu và tổng cạnh nhau để tìm chênh lệch theo quy tắc đã chốt.
+
+</Apply>
+
+## Ghi nhớ
+
+<Memo rows={[
+  ['COUNTIFS đếm dòng cùng thỏa điều kiện', 'SUM(CASE ... THEN 1 ELSE 0 END) cộng các cờ 1/0'],
+  ['Chỉ đếm dòng được đánh dấu', 'COUNT(CASE ... THEN 1 END) bỏ các NULL ở dòng không khớp'],
+  ['SUMIFS cộng số trên dòng phù hợp', 'SUM(CASE ... THEN cột_số ELSE 0 END) cộng giá trị có điều kiện'],
+  ['Một dòng mỗi phòng, nhiều cột chỉ tiêu', 'WHERE chọn phạm vi chung; GROUP BY chia nhóm; mỗi CASE có điều kiện riêng'],
+]} />
+
+**Tự kiểm tra:**
+
+<details>
+<summary>Vì sao <code>COUNT(CASE ... THEN 1 ELSE 0 END)</code> không đếm riêng dòng thỏa điều kiện?</summary>
+
+Vì `COUNT` bỏ `NULL` nhưng vẫn đếm `0`. Bỏ `ELSE` để dòng không khớp trả `NULL`, hoặc dùng `SUM` với cờ `1/0`.
+
+</details>
+
+<details>
+<summary>Muốn tính số nam và số nữ trong người đang làm, điều kiện nào đặt ở <code>WHERE</code>?</summary>
+
+Đặt trạng thái đang làm ở `WHERE` để chọn phạm vi chung; đặt từng điều kiện giới tính trong `CASE` của chỉ tiêu tương ứng.
+
+</details>
+
+<details>
+<summary>Muốn cộng số ngày nghỉ ốm thay vì đếm đơn nghỉ ốm, đổi phần nào? Có tự tạo phòng không có hồ sơ không?</summary>
+
+Trong `SUM(CASE ...)`, đổi `THEN 1` thành `THEN SoNgay`. `ELSE 0` chỉ góp số không cho dòng không khớp, không tạo dòng nhóm khi không có hồ sơ.
+
+</details>
 
 ## Bài tập
+
+Viết rõ phạm vi chung trước, rồi điều kiện của từng chỉ tiêu. Các bài dưới chuyển cách đếm và cộng sang trạng thái, tiền lương và email; bộ chấm so kết quả, không bắt buộc một biểu thức duy nhất.
 
 <Exercises />

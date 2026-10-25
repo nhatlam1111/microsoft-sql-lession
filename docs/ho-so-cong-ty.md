@@ -95,7 +95,7 @@ Các nhân vật là giả định, không phải hồ sơ trong bộ mẫu (bà
 
 | Nhân vật | Là ai | Xuất hiện |
 |---|---|---|
-| Chị Hạnh · Phòng Nhân sự | Người đưa yêu cầu trong mọi bài đầy đủ; xưng "chị", gọi người học là "em" | 1.1–1.6, 2.1–2.9, 3.1–3.7 |
+| Chị Hạnh · Phòng Nhân sự | Người đưa yêu cầu trong mọi bài đầy đủ; xưng "chị", gọi người học là "em" | 1.1–1.6, 2.1–2.9, 3.1–3.10 |
 | Người học ("em", "bạn") | Người đọc và lấy dữ liệu từ hệ thống nhân sự cho chị Hạnh; có tài khoản vào database qua SSMS | mọi bài |
 | Chị Thảo · Kế toán | Giữ một bản file nhân sự riêng | 1.1 |
 | Quân | Nhân viên chuyển sang IT, nhưng file của Kế toán còn ghi phòng cũ | 1.1 |
@@ -142,4 +142,7 @@ Các lỗi này có chủ ý, dành cho bài 4.6 và 4.7; bài khác không đư
 | 3.5 | Chị Hạnh đối chiếu mọi hồ sơ chưa có bất kỳ dòng hợp đồng nào, không lọc riêng người mới hoặc trạng thái. NV047, NV048 chưa có hợp đồng; 55 hợp đồng và hai hồ sơ không khớp tạo 57 dòng khi LEFT JOIN trước lọc. Ví dụ phụ đối chiếu hợp đồng thử việc của NV021/NV047, không kiểm hiệu lực hiện tại. |
 | 3.6 | Chị Hạnh lấy lương kỳ 2026-09 kèm hợp đồng ứng viên tại 30/09 theo ngày bắt đầu/kết thúc đã lưu. Có 45 ứng viên, mỗi mã hiện chỉ một; 43 mã có dòng lương kỳ đó. NV021 có thực lĩnh 16.457.000, kết cả ba hợp đồng cũ sẽ lặp khoản tiền ba lần. Quy tắc ngày chỉ phục vụ đối chiếu, không chứng nhận pháp lý hoặc tính lại lương cả tháng. |
 | 3.7 | Chị Hạnh lấy mọi hồ sơ kèm quản lý trực tiếp hiện lưu: LEFT JOIN giữ đủ 48 dòng, NV004 có quản lý NULL; INNER JOIN chỉ còn 47. NV001 trỏ NV005, NV005 trỏ NV004; không coi NV004 là quản lý trực tiếp của NV001. NV004/NV005 mỗi người có sáu hồ sơ trực tiếp ở mọi trạng thái; NV048 chưa có cấp dưới. |
+| 3.8 | Chị Hạnh gộp mã từ đơn đã duyệt có TuNgay trong tháng 9/2026 (9 dòng) với chấm công tháng 9 có GioVao sau 08:00 (76 dòng). UNION một cột MaNV trả 41 mã; UNION ALL giữ 85 lần xuất hiện. Thêm nhãn nguồn rồi UNION có 49 cặp mã–nguồn. 08:00 là giả định rà soát, không kết luận đi muộn/vi phạm; không xét ca làm và lý do. |
+| 3.9 | Chị Hạnh lấy mã, tên, phòng hiện lưu của hồ sơ có ít nhất một đơn cùng phạm vi tháng 9 đã duyệt như 3.1: 9 hồ sơ, không lọc trạng thái nhân viên. IN và EXISTS cùng kết quả; ví dụ NOT EXISTS chưa có bất kỳ hợp đồng giữ NV047/NV048 như 3.5. |
+| 3.10 | Chị Hạnh cần số nam/nữ/tổng của hồ sơ đang làm theo MaPB hiện lưu. Có 45 hồ sơ: BGD 1/1/2; IT 9/1/10; KD 6/7/13; KT 0/7/7; NS 0/5/5; VH 6/2/8. Toàn bộ đang làm có 23 nữ. Tổng ngày của đơn đã duyệt bắt đầu tháng 9: phép năm 9.0, nghỉ ốm 5.0, việc riêng 2.0, tổng 16.0; không phải số ngày thực nghỉ trong tháng. |
 | 6.5 | Một chiều thứ Sáu, câu `UPDATE` phụ cấp của NV012 kỳ 2026-09 bị bôi đen thiếu, chạy cho cả bảng lương. |
