@@ -1,0 +1,62 @@
+lesson: 3-8-union-gop-danh-sach
+exercises:
+  - id: 3-8-1
+    title: Một danh sách mã có lương trong hai kỳ
+    summary: Bỏ dòng mã lặp giữa các kỳ.
+    prompt: Lấy mã nhân viên có dòng BangLuong kỳ 2026-08 hoặc 2026-09. Mỗi mã chỉ xuất hiện một lần dù
+      có ở cả hai kỳ. Trả duy nhất MaNV, xếp mã tăng dần.
+    columns:
+      - MaNV
+    answer: |-
+      SELECT MaNV
+      FROM BangLuong
+      WHERE KyLuong = '2026-08'
+      UNION
+      SELECT MaNV
+      FROM BangLuong
+      WHERE KyLuong = '2026-09'
+      ORDER BY MaNV ASC;
+    ordered: true
+    kind: query
+  - id: 3-8-2
+    title: Giữ từng lần mã xuất hiện trong hai kỳ
+    summary: Không bỏ dòng trùng khi chồng hai kỳ.
+    prompt: "Chồng các mã của dòng BangLuong kỳ 2026-08 với kỳ 2026-09. Giữ mọi lần xuất hiện: mã có ở
+      cả hai kỳ phải có hai dòng. Chỉ trả MaNV, không thêm kỳ lương hoặc cột khác; xếp mã tăng dần.
+      Các dòng cùng mã không cần phân biệt thứ tự."
+    columns:
+      - MaNV
+    answer: |-
+      SELECT MaNV
+      FROM BangLuong
+      WHERE KyLuong = '2026-08'
+      UNION ALL
+      SELECT MaNV
+      FROM BangLuong
+      WHERE KyLuong = '2026-09'
+      ORDER BY MaNV ASC;
+    ordered: true
+    kind: query
+  - id: 3-8-3
+    title: Một dòng cho mỗi mã và nguồn
+    summary: Phân biệt trùng mã với trùng toàn bộ dòng.
+    prompt: "Gộp hai nguồn: mọi đơn DonNghiPhep có TrangThai là chuỗi Unicode Đã duyệt, không giới hạn
+      ngày; và ChamCong có Ngay từ 01/09 đến trước 01/10/2026, GioVao sau 08:00. Trả MaNV, Nguon;
+      nguồn đơn mang nhãn Unicode Đơn nghỉ, nguồn chấm công mang nhãn Unicode Giờ vào. Mỗi cặp
+      mã–nguồn chỉ một dòng; cùng mã nhưng khác nguồn giữ cả hai. Xếp MaNV rồi Nguon tăng dần. Mốc
+      giờ chỉ để lọc đối chiếu."
+    columns:
+      - MaNV
+      - Nguon
+    answer: |-
+      SELECT MaNV, N'Đơn nghỉ' AS [Nguon]
+      FROM DonNghiPhep
+      WHERE TrangThai = N'Đã duyệt'
+      UNION
+      SELECT MaNV, N'Giờ vào'
+      FROM ChamCong
+      WHERE Ngay >= '20260901' AND Ngay < '20261001'
+          AND GioVao > '08:00'
+      ORDER BY MaNV ASC, Nguon ASC;
+    ordered: true
+    kind: query

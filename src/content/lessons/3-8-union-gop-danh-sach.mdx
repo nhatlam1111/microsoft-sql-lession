@@ -4,30 +4,144 @@ title: "UNION: gộp hai danh sách"
 shortTitle: UNION
 level: 3
 area: A4
-kind: summary
-minutes: 8
+kind: full
+minutes: 22
 prerequisites:
-  - "2.1"
-goal: bạn gộp được hai danh sách cùng cấu trúc thành một
-excel: Dán chồng hai danh sách, Append
-summary: UNION khác UNION ALL ở chỗ nào và khi nào dùng cái nào.
+  - "2.3"
+  - "2.4"
+  - "2.6"
+goal: bạn gộp được hai danh sách cùng cấu trúc và chọn giữ hay bỏ dòng trùng
+excel: Dán chồng danh sách, Remove Duplicates
+summary: Chồng hai danh sách bằng UNION hoặc UNION ALL, kiểm dòng trùng và sắp xếp kết quả chung.
 ---
 
-## Nội dung chính
+## Tình huống
 
-- `UNION` chồng kết quả của hai câu `SELECT` lên nhau thành một danh sách.
-- Hai câu phải có cùng số cột, kiểu dữ liệu tương ứng; tên cột lấy theo câu đầu tiên.
-- `UNION` bỏ dòng trùng, `UNION ALL` giữ nguyên mọi dòng và chạy nhanh hơn.
-- Muốn sắp xếp cả danh sách thì chỉ viết một `ORDER BY` ở cuối cùng.
+<Chat who="Chị Hạnh · Phòng Nhân sự" time="09:10" initial="H">
+Chị có hai nhóm cần rà lại trong tháng 9: người có đơn nghỉ được duyệt và người có giờ vào sau 8 giờ. Em gộp mã nhân viên thành một danh sách, mỗi mã chỉ xuất hiện một lần để chị gửi phiếu đối chiếu nhé.
+</Chat>
 
-## Liên hệ Excel
+Với đơn nghỉ, lấy đơn đã duyệt có ngày bắt đầu từ 01/09 đến trước 01/10/2026, như bài 3.1. Với chấm công, lấy ngày trong tháng 9 có giờ vào sau 08:00. Mốc giờ này chỉ là giả định chọn hồ sơ để rà soát; chưa đủ kết luận đi muộn hay vi phạm vì chưa xét ca làm và lý do.
 
-Giống dán danh sách thứ hai xuống ngay dưới danh sách thứ nhất, hoặc Append trong Power Query.
+<Key>Cần các mã thuộc ít nhất một trong hai nhóm, mỗi mã một dòng.</Key>
 
-## Tình huống ví dụ
+## Từ hai danh sách đến một danh sách chung
 
-Cần một danh sách chung gồm người có đơn nghỉ phép tháng 9 và người có ngày đi muộn trong tháng.
+### Chồng dòng và kết bảng
+
+Trong Excel, bạn có thể chép cột mã của danh sách thứ hai xuống dưới danh sách thứ nhất, rồi dùng **Remove Duplicates** để bỏ các dòng trùng trong vùng đã chọn. Trong SQL, **`UNION`** làm việc tương tự: chồng kết quả của các câu `SELECT` thành một danh sách, rồi bỏ dòng trùng. `JOIN` ở các bài trước lại kết các dòng theo điều kiện để lấy thêm cột liên quan.
+
+Mỗi câu `SELECT` ở hai phía gọi là một **nhánh**. Nhánh đơn nghỉ trả `9` dòng mã; nhánh chấm công trả `76` dòng, mỗi dòng là mã của một lần có giờ vào sau mốc. Một mã có thể lặp lại ở nhiều ngày hoặc xuất hiện ở cả hai nhánh.
+
+Hai bảng dưới trích vài mã đầu của hai kết quả đã kiểm; đây chưa phải danh sách đã gộp. Bảng đơn nghỉ có `9` dòng, bảng chấm công có `76` dòng. Dòng đánh dấu ở mỗi bảng cùng mang mã `NV005`.
+
+<Result columns={["MaNV"]} rows={[["NV005"],["NV012"],["NV013"],["NV016"],["NV022"]]} total={9} mark={[1]} />
+
+<Result columns={["MaNV"]} rows={[["NV001"],["NV002"],["NV003"],["NV004"],["NV005"],["NV006"],["NV007"],["NV008"]]} total={76} mark={[5]} />
+
+Nếu chỉ nối hai cột mã này mà chưa bỏ trùng, bạn có `85` dòng, không phải `85` mã khác nhau. **`UNION ALL`** giữ mọi lần xuất hiện, kể cả các lần lặp ngay trong một nhánh; `UNION` bỏ trùng trên kết quả chung. Không cần thêm `DISTINCT` ở từng nhánh chỉ để đạt yêu cầu mỗi mã một dòng của chị Hạnh.
+
+### Cột phải cùng vị trí và dòng trùng phải giống toàn bộ
+
+Hai nhánh phải trả **cùng số cột**, các vị trí tương ứng có **kiểu dữ liệu tương thích** — SQL Server đọc hoặc chuyển được chúng về kiểu chung. Với bài này, cả hai đều trả một cột `MaNV` kiểu `varchar`, nên có thể chồng lên nhau. Nếu một nhánh thêm `Ngay` còn nhánh kia chỉ có `MaNV`, câu gộp sẽ không hợp lệ.
+
+SQL gộp theo **vị trí cột**, không dò theo tên. Nếu lấy hai cột, vị trí thứ nhất của cả hai nhánh phải cùng mang nghĩa mã nhân viên; vị trí thứ hai cùng mang nghĩa nguồn. Đảo mã và nguồn ở một nhánh có thể tạo kết quả sai nghĩa ngay cả khi kiểu vẫn tương thích. Tên cột kết quả lấy từ nhánh đầu.
+
+Khi cần biết mã đến từ đâu, thêm một chuỗi cố định làm nhãn nguồn ở mỗi nhánh. Câu dưới vẫn dùng `UNION`, nhưng xét trùng theo cả cặp `MaNV` và `Nguon`:
+
+<Sql code={`SELECT MaNV, N'Đơn nghỉ' AS [Nguon]
+FROM DonNghiPhep
+WHERE TrangThai = N'Đã duyệt'
+\tAND TuNgay >= '20260901' AND TuNgay < '20261001'
+UNION
+SELECT MaNV, N'Giờ vào'
+FROM ChamCong
+WHERE Ngay >= '20260901' AND Ngay < '20261001'
+\tAND GioVao > '08:00'
+ORDER BY MaNV, Nguon;`} />
+
+<Result columns={["MaNV","Nguon"]} rows={[["NV001","Giờ vào"],["NV002","Giờ vào"],["NV003","Giờ vào"],["NV004","Giờ vào"],["NV005","Đơn nghỉ"],["NV005","Giờ vào"],["NV006","Giờ vào"],["NV007","Giờ vào"],["NV008","Giờ vào"],["NV009","Giờ vào"]]} total={49} mark={[5,6]} />
+
+Hai dòng đánh dấu, `NV005` với nguồn `Đơn nghỉ` và `NV005` với nguồn `Giờ vào`, khác nhau nên đều được giữ. Các lần cùng mã và cùng nguồn bị gộp lại. Vì vậy thêm nhãn nguồn giúp đối chiếu, nhưng không còn đáp ứng yêu cầu mỗi mã chỉ một dòng của tình huống đầu bài.
+
+Ở bài này chỉ cần nắm cách chồng các cột có cùng ý nghĩa và chọn đúng mức bỏ trùng. Không dựa vào việc SQL tự chuyển kiểu để bỏ qua kiểm cấu trúc.
+
+### Câu lệnh cho tình huống
+
+Mỗi nhánh tự lọc bảng của mình. Một `ORDER BY` ở cuối sắp xếp **toàn bộ kết quả sau khi gộp**; không có nó thì không có thứ tự dòng được bảo đảm, dù lần chạy trước nhìn như đã tăng dần.
+
+<Sql code={`SELECT MaNV
+FROM DonNghiPhep
+WHERE TrangThai = N'Đã duyệt'
+\tAND TuNgay >= '20260901' AND TuNgay < '20261001'
+UNION
+SELECT MaNV
+FROM ChamCong
+WHERE Ngay >= '20260901' AND Ngay < '20261001'
+\tAND GioVao > '08:00'
+ORDER BY MaNV;`} />
+
+<Result columns={["MaNV"]} rows={[["NV001"],["NV002"],["NV003"],["NV004"],["NV005"],["NV006"],["NV007"],["NV008"],["NV009"],["NV010"]]} total={41} />
+
+Gửi chị Hạnh danh sách `41` mã khác nhau; bảng trên trích `10` dòng đầu. Mã thuộc một nhóm hay cả hai nhóm đều chỉ xuất hiện một lần. Đây là danh sách để đối chiếu theo các điều kiện đã chọn, không phải kết luận người nào nghỉ không phép hoặc đi muộn.
+
+Nếu đổi duy nhất `UNION` thành `UNION ALL`, hai nhánh vẫn được lọc như cũ nhưng kết quả có `85` dòng. Chọn cách này khi cần giữ từng lần xuất hiện để xử lý tiếp; nếu cần ngày của mỗi lần chấm công, phải đưa thêm `Ngay` và một cột tương ứng có ý nghĩa ở nhánh còn lại. `UNION ALL` không làm bước bỏ trùng; thời gian chạy thực tế còn tùy dữ liệu và cách thực thi.
+
+## Hay nhầm ở đâu
+
+<Mistakes>
+
+1. **Gộp khác cấu trúc hoặc đảo vị trí cột.** Câu có thể báo lỗi kiểu dữ liệu, hoặc chạy được nhưng mã và nguồn nằm sai cột.
+2. **Thêm nhãn nguồn rồi mong mỗi mã còn một dòng.** `UNION` xét toàn bộ các cột được chọn; khác nhãn thì hai dòng vẫn khác nhau.
+3. **Dùng `UNION ALL` để làm danh sách gửi một lần cho mỗi mã.** Các lần xuất hiện lặp khiến một mã nhận nhiều dòng.
+4. **Bỏ trùng rồi coi dữ liệu nguồn đã sạch.** `UNION` chỉ thay kết quả truy vấn, không xóa hay sửa các dòng trong bảng nguồn.
+
+</Mistakes>
+
+## Ứng dụng
+
+<Apply>
+
+- **Lập một danh sách liên hệ:** gộp các mã thuộc nhiều điều kiện và bỏ trùng để mỗi mã nhận một phiếu.
+- **Gom dữ liệu cùng cấu trúc:** dùng `UNION ALL` để giữ mọi dòng từ các kỳ, rồi phân tích tiếp theo mục tiêu báo cáo.
+- **Đối chiếu nguồn phát sinh:** thêm nhãn nguồn để thấy một mã xuất hiện từ đâu, chấp nhận kết quả có nhiều dòng cho cùng mã.
+
+</Apply>
+
+## Ghi nhớ
+
+<Memo rows={[
+  ['Chép danh sách thứ hai xuống dưới', 'UNION chồng các cột cùng vị trí, cùng số lượng, kiểu tương thích'],
+  ['Bỏ dòng trùng trong vùng chọn', 'UNION xét trùng theo toàn bộ các cột được chọn'],
+  ['Giữ mọi lần xuất hiện', 'UNION ALL giữ dòng lặp trong và giữa các nhánh'],
+  ['Sắp xếp bảng vừa gộp', 'Một ORDER BY ở cuối áp dụng cho kết quả chung'],
+]} />
+
+**Tự kiểm tra:**
+
+<details>
+<summary>Hai nhánh chỉ lấy <code>MaNV</code>, một mã xuất hiện ba lần ở nhánh đầu và hai lần ở nhánh sau. Hai cách gộp giữ bao nhiêu dòng cho mã đó?</summary>
+
+`UNION` giữ `1` dòng; `UNION ALL` giữ cả `5` dòng. Việc lặp trong cùng nhánh cũng được xét.
+
+</details>
+
+<details>
+<summary>Vì sao thêm <code>Nguon</code> có thể làm một mã còn nhiều dòng dù dùng <code>UNION</code>?</summary>
+
+Vì hai dòng cùng `MaNV` nhưng khác `Nguon` không trùng toàn bộ các cột được chọn.
+
+</details>
+
+<details>
+<summary>Cần kiểm gì trước khi gộp hai nhánh có hai cột và muốn sắp xếp danh sách chung?</summary>
+
+Kiểm cùng số cột, các vị trí mang cùng ý nghĩa và kiểu tương thích. Đặt `ORDER BY` ở cuối câu, dùng tên cột từ nhánh đầu.
+
+</details>
 
 ## Bài tập
+
+Chốt trước đơn vị của một dòng: một mã khác nhau, một lần xuất hiện hay một cặp mã–nguồn. Bộ chấm so kết quả, không bắt buộc một cách viết duy nhất.
 
 <Exercises />

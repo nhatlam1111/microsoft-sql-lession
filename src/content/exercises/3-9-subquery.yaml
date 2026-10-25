@@ -1,0 +1,65 @@
+lesson: 3-9-subquery
+exercises:
+  - id: 3-9-1
+    title: Người có đơn đang chờ
+    summary: Lọc nhân viên theo danh sách mã từ đơn.
+    prompt: Lấy MaNV, HoTen của hồ sơ NhanVien có ít nhất một đơn DonNghiPhep mang TrangThai là chuỗi
+      Unicode Chờ duyệt. Không giới hạn ngày đơn và không lọc trạng thái nhân viên. Mỗi hồ sơ nhân
+      viên một dòng, xếp MaNV tăng dần. Luyện cách dùng IN với câu SELECT con.
+    columns:
+      - MaNV
+      - HoTen
+    answer: |-
+      SELECT nv.MaNV, nv.HoTen
+      FROM NhanVien AS nv
+      WHERE nv.MaNV IN (
+          SELECT dp.MaNV
+          FROM DonNghiPhep AS dp
+          WHERE dp.TrangThai = N'Chờ duyệt'
+      )
+      ORDER BY nv.MaNV ASC;
+    ordered: true
+    kind: query
+  - id: 3-9-2
+    title: Hồ sơ IT đã có hợp đồng
+    summary: Kiểm tồn tại hợp đồng của đúng nhân viên.
+    prompt: Lấy MaNV, HoTen của mọi hồ sơ NhanVien hiện có MaPB bằng IT và có ít nhất một dòng HopDong.
+      Không lọc trạng thái nhân viên, ngày hoặc loại hợp đồng. Mỗi hồ sơ một dòng, xếp MaNV tăng
+      dần. Luyện EXISTS với điều kiện liên hệ mã.
+    columns:
+      - MaNV
+      - HoTen
+    answer: |-
+      SELECT nv.MaNV, nv.HoTen
+      FROM NhanVien AS nv
+      WHERE nv.MaPB = 'IT'
+          AND EXISTS (
+              SELECT 1
+              FROM HopDong AS hd
+              WHERE hd.MaNV = nv.MaNV
+          )
+      ORDER BY nv.MaNV ASC;
+    ordered: true
+    kind: query
+  - id: 3-9-3
+    title: Hồ sơ chưa có lương tháng 9
+    summary: Kiểm không tồn tại trong một kỳ cụ thể.
+    prompt: Lấy mọi hồ sơ NhanVien chưa có dòng BangLuong với KyLuong bằng 2026-09; không loại người đã
+      nghỉ hoặc người mới. Trả MaNV, HoTen, TrangThai của nhân viên, xếp MaNV tăng dần. Chưa có
+      lương trong kỳ này không đồng nghĩa chưa từng có lương. Luyện NOT EXISTS.
+    columns:
+      - MaNV
+      - HoTen
+      - TrangThai
+    answer: |-
+      SELECT nv.MaNV, nv.HoTen, nv.TrangThai
+      FROM NhanVien AS nv
+      WHERE NOT EXISTS (
+          SELECT 1
+          FROM BangLuong AS bl
+          WHERE bl.MaNV = nv.MaNV
+              AND bl.KyLuong = '2026-09'
+      )
+      ORDER BY nv.MaNV ASC;
+    ordered: true
+    kind: query

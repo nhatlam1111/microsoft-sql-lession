@@ -1,0 +1,66 @@
+lesson: 3-10-dem-co-dieu-kien
+exercises:
+  - id: 3-10-1
+    title: Hai trạng thái cạnh nhau theo phòng
+    summary: Đếm có điều kiện trên toàn bộ hồ sơ.
+    prompt: Dùng mọi hồ sơ NhanVien, nhóm theo MaPB hiện lưu. Mỗi phòng một dòng, trả MaPB, DangLam
+      (TrangThai là chuỗi Unicode Đang làm), DaNghi (TrangThai là chuỗi Unicode Đã nghỉ), TongSo
+      (mọi hồ sơ của nhóm). Nhóm không có trạng thái tương ứng nhận số 0. Xếp MaPB tăng dần.
+    columns:
+      - MaPB
+      - DangLam
+      - DaNghi
+      - TongSo
+    answer: |-
+      SELECT MaPB,
+          SUM(CASE WHEN TrangThai = N'Đang làm' THEN 1 ELSE 0 END) AS [DangLam],
+          SUM(CASE WHEN TrangThai = N'Đã nghỉ' THEN 1 ELSE 0 END) AS [DaNghi],
+          COUNT(*) AS [TongSo]
+      FROM NhanVien
+      GROUP BY MaPB
+      ORDER BY MaPB ASC;
+    ordered: true
+    kind: query
+  - id: 3-10-2
+    title: Tổng tiền của các dòng từ 15 triệu
+    summary: Cộng giá trị có điều kiện trong mỗi kỳ.
+    prompt: Từ BangLuong, chỉ xét KyLuong 2026-08 và 2026-09. Mỗi kỳ một dòng, trả KyLuong, SoDongLuong
+      (mọi dòng của kỳ), TongTu15Trieu (cộng ThucLinh của các dòng ThucLinh lớn hơn hoặc bằng
+      15000000). Dòng không đạt ngưỡng góp 0 vào tổng tiền, vẫn được đếm vào SoDongLuong. Xếp
+      KyLuong tăng dần.
+    columns:
+      - KyLuong
+      - SoDongLuong
+      - TongTu15Trieu
+    answer: |-
+      SELECT KyLuong, COUNT(*) AS [SoDongLuong],
+          SUM(CASE WHEN ThucLinh >= 15000000 THEN ThucLinh ELSE 0 END) AS [TongTu15Trieu]
+      FROM BangLuong
+      WHERE KyLuong IN ('2026-08', '2026-09')
+      GROUP BY KyLuong
+      ORDER BY KyLuong ASC;
+    ordered: true
+    kind: query
+  - id: 3-10-3
+    title: Email có và thiếu theo phòng
+    summary: COUNT chỉ đếm biểu thức khác NULL.
+    prompt: Dùng mọi hồ sơ NhanVien hiện có MaPB thuộc KD, VH hoặc NS, không lọc trạng thái. Mỗi phòng
+      một dòng, trả MaPB, CoEmail (Email IS NOT NULL), ThieuEmail (Email IS NULL), TongSo. Chỉ xét
+      NULL, không coi chuỗi rỗng là NULL. Chỉ tiêu không có hồ sơ phù hợp nhận 0; xếp MaPB tăng dần.
+      Luyện COUNT với CASE không có ELSE.
+    columns:
+      - MaPB
+      - CoEmail
+      - ThieuEmail
+      - TongSo
+    answer: |-
+      SELECT MaPB,
+          COUNT(CASE WHEN Email IS NOT NULL THEN 1 END) AS [CoEmail],
+          COUNT(CASE WHEN Email IS NULL THEN 1 END) AS [ThieuEmail],
+          COUNT(*) AS [TongSo]
+      FROM NhanVien
+      WHERE MaPB IN ('KD', 'VH', 'NS')
+      GROUP BY MaPB
+      ORDER BY MaPB ASC;
+    ordered: true
+    kind: query
