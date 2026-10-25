@@ -32,7 +32,7 @@ const RANKS: [RegExp, number][] = [
   [/^GROUP BY$/, 4],
   [/^HAVING$/, 5],
   [/^(SELECT|SET|DELETE)$/, 6],
-  [/^DISTINCT$/, 7],
+  [/^(DISTINCT|UNION(?: ALL)?)$/, 7],
   [/^ORDER BY$/, 8],
   [/^(TOP|OFFSET)$/, 9],
   [/^Messages$/, 10],

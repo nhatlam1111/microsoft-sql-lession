@@ -176,6 +176,8 @@ Color/border/shadow feedback uses 140ms; overlay entrances use 200ms and `cubic-
 
 ### Content and data visualization
 
+RunFlow owns lesson execution diagrams and their shared drawers. A four-card sequence of two SELECT inputs, UNION (or UNION ALL), and ORDER BY uses two independent input cards feeding the set operator, then the final sort. Never draw an input-to-input arrow or describe the second input as rows remaining from the first. Other lesson flows keep their established sequential layout and keyboard behavior. These diagrams explain logical dependencies, not physical execution order.
+
 Lesson content follows docs/quy-uoc.md and docs/lesson-template.md. The approved reference is lesson 1.1: one teaching section combines Excel and SQL in a narrative, with examples next to their explanation and the situation answered there. Use bold selectively for key concepts and the existing inline-code background for cited data values, identifiers and cell references in MDX prose. Keep authentic Excel/SSMS/Results rendering and their existing teaching marks. Content changes do not imply token or component changes.
 
 For style-only changes, preserve copy, links, SQL, data, level order and progress meanings. Diagrams communicate existing relationships; their coordinates and teaching highlights are not decoration.

@@ -14,9 +14,24 @@ import Ssms from '../src/components/lesson/Ssms.astro';
 import { LEVELS } from '../src/data/curriculum';
 import { fakeCatalog } from './helpers/expected';
 import { sampleFlow, sampleQuery } from './helpers/flows';
+import { unionFlow, unionQuery } from './helpers/union-flow';
 
 let c: AstroContainer;
 beforeAll(async () => { c = await AstroContainer.create(); });
+
+it('RunFlow gives UNION two independent inputs instead of an arrow from one input to the other', async () => {
+  const html = await c.renderToString(RunFlow, { props: { query: unionQuery, steps: unionFlow(), note: 'Hai nhánh độc lập.' } });
+  expect(html).toContain('data-layout="union"');
+  const cells = [...html.matchAll(/<li class="rf-cell"([^>]+)>/g)].map(m => m[1]);
+  expect(cells).toHaveLength(4);
+  expect(cells[0]).not.toContain('data-arrow');
+  expect(cells[1]).not.toContain('data-arrow');
+  expect(html).toContain('class="rf-union-links"');
+  expect([...html.matchAll(/class="rf-count"[^>]*>(có|còn) /g)].map(m => m[1])).toEqual(['có', 'có', 'còn', 'còn']);
+  expect(html).toContain('grid-row: 1; grid-column: 1;');
+  expect(html).toContain('grid-row: 1; grid-column: 2;');
+  expect(html.match(/class="rf-panel"/g)).toHaveLength(4);
+});
 
 it('Result shows NULL cells in the SSMS style and says how many rows were trimmed', async () => {
   const html = await c.renderToString(Result, { props: { columns: ['MaNV', 'MaHD'], rows: [['NV001', 'HD2024-018'], ['NV047', null]], total: 52 } });

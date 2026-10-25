@@ -33,7 +33,7 @@ Trong Excel, bạn có thể chép cột mã của danh sách thứ hai xuống 
 
 Mỗi câu `SELECT` ở hai phía gọi là một **nhánh**. Nhánh đơn nghỉ trả `9` dòng mã; nhánh chấm công trả `76` dòng, mỗi dòng là mã của một lần có giờ vào sau mốc. Một mã có thể lặp lại ở nhiều ngày hoặc xuất hiện ở cả hai nhánh.
 
-Hai bảng dưới trích vài mã đầu của hai kết quả đã kiểm; đây chưa phải danh sách đã gộp. Bảng đơn nghỉ có `9` dòng, bảng chấm công có `76` dòng. Dòng đánh dấu ở mỗi bảng cùng mang mã `NV005`.
+Hai bảng dưới trích một số dòng của hai kết quả đã kiểm; đây chưa phải danh sách đã gộp. Dòng đánh dấu ở mỗi bảng cùng mang mã `NV005`; thứ tự dòng chưa được bảo đảm vì chưa có `ORDER BY`.
 
 <Result columns={["MaNV"]} rows={[["NV005"],["NV012"],["NV013"],["NV016"],["NV022"]]} total={9} mark={[1]} />
 
@@ -43,7 +43,7 @@ Nếu chỉ nối hai cột mã này mà chưa bỏ trùng, bạn có `85` dòng
 
 ### Cột phải cùng vị trí và dòng trùng phải giống toàn bộ
 
-Hai nhánh phải trả **cùng số cột**, các vị trí tương ứng có **kiểu dữ liệu tương thích** — SQL Server đọc hoặc chuyển được chúng về kiểu chung. Với bài này, cả hai đều trả một cột `MaNV` kiểu `varchar`, nên có thể chồng lên nhau. Nếu một nhánh thêm `Ngay` còn nhánh kia chỉ có `MaNV`, câu gộp sẽ không hợp lệ.
+Hai nhánh phải trả **cùng số cột**, các vị trí tương ứng có **kiểu dữ liệu tương thích** — dùng cùng kiểu hoặc có thể **chuyển kiểu ngầm** về kiểu chung (bài 1.3). Với bài này, cả hai đều trả một cột `MaNV` kiểu `varchar`, nên có thể chồng lên nhau. Nếu một nhánh thêm `Ngay` còn nhánh kia chỉ có `MaNV`, câu gộp sẽ không hợp lệ.
 
 SQL gộp theo **vị trí cột**, không dò theo tên. Nếu lấy hai cột, vị trí thứ nhất của cả hai nhánh phải cùng mang nghĩa mã nhân viên; vị trí thứ hai cùng mang nghĩa nguồn. Đảo mã và nguồn ở một nhánh có thể tạo kết quả sai nghĩa ngay cả khi kiểu vẫn tương thích. Tên cột kết quả lấy từ nhánh đầu.
 
@@ -64,7 +64,7 @@ ORDER BY MaNV, Nguon;`} />
 
 Hai dòng đánh dấu, `NV005` với nguồn `Đơn nghỉ` và `NV005` với nguồn `Giờ vào`, khác nhau nên đều được giữ. Các lần cùng mã và cùng nguồn bị gộp lại. Vì vậy thêm nhãn nguồn giúp đối chiếu, nhưng không còn đáp ứng yêu cầu mỗi mã chỉ một dòng của tình huống đầu bài.
 
-Ở bài này chỉ cần nắm cách chồng các cột có cùng ý nghĩa và chọn đúng mức bỏ trùng. Không dựa vào việc SQL tự chuyển kiểu để bỏ qua kiểm cấu trúc.
+Ở bài này chỉ cần nắm cách chồng các cột có cùng ý nghĩa và chọn đúng mức bỏ trùng. Không dựa vào chuyển kiểu ngầm để bỏ qua kiểm cấu trúc.
 
 ### Câu lệnh cho tình huống
 
@@ -86,6 +86,89 @@ ORDER BY MaNV;`} />
 Gửi chị Hạnh danh sách `41` mã khác nhau; bảng trên trích `10` dòng đầu. Mã thuộc một nhóm hay cả hai nhóm đều chỉ xuất hiện một lần. Đây là danh sách để đối chiếu theo các điều kiện đã chọn, không phải kết luận người nào nghỉ không phép hoặc đi muộn.
 
 Nếu đổi duy nhất `UNION` thành `UNION ALL`, hai nhánh vẫn được lọc như cũ nhưng kết quả có `85` dòng. Chọn cách này khi cần giữ từng lần xuất hiện để xử lý tiếp; nếu cần ngày của mỗi lần chấm công, phải đưa thêm `Ngay` và một cột tương ứng có ý nghĩa ở nhánh còn lại. `UNION ALL` không làm bước bỏ trùng; thời gian chạy thực tế còn tùy dữ liệu và cách thực thi.
+
+### SQL Server chạy câu này thế nào
+
+Về logic, trong mỗi nhánh, `FROM` xác định nguồn, `WHERE` lọc dòng rồi `SELECT` chọn cột `MaNV`. **Hai nhánh độc lập**: `UNION` gộp kết quả và bỏ dòng trùng, sau đó `ORDER BY` sắp danh sách chung. Đây là mô hình logic, không phải thứ tự thực thi vật lý hoặc yêu cầu SQL Server phải chạy xong nhánh trên rồi mới chạy nhánh dưới.
+
+<RunFlow query={`SELECT MaNV
+FROM DonNghiPhep
+WHERE TrangThai = N'Đã duyệt'
+\tAND TuNgay >= '20260901' AND TuNgay < '20261001'
+UNION
+SELECT MaNV
+FROM ChamCong
+WHERE Ngay >= '20260901' AND Ngay < '20261001'
+\tAND GioVao > '08:00'
+ORDER BY MaNV;`} steps={[
+  {
+    clause: "SELECT",
+    title: "Nhánh đơn nghỉ: lấy mã sau lọc.",
+    focus: "SELECT MaNV\nFROM DonNghiPhep\nWHERE TrangThai = N'Đã duyệt'\n\tAND TuNgay >= '20260901' AND TuNgay < '20261001'",
+    meaning: "`SELECT` trả cột `MaNV` sau khi `FROM` chọn nguồn và `WHERE` lọc đơn của nhánh này.",
+    detail: "`SELECT` ở nhánh `DonNghiPhep` trả `9` dòng mã của đơn đã duyệt có `TuNgay` trong tháng 9/2026. `NV005` xuất hiện một lần; bảng dưới có đủ `9` dòng.",
+    sql: `SELECT MaNV
+FROM DonNghiPhep
+WHERE TrangThai = N'Đã duyệt'
+\tAND TuNgay >= '20260901' AND TuNgay < '20261001';`,
+    columns: ["MaNV"],
+    rows: [["NV013"],["NV016"],["NV022"],["NV005"],["NV024"],["NV037"],["NV012"],["NV027"],["NV032"]],
+    total: 9,
+  },
+  {
+    clause: "SELECT",
+    title: "Nhánh chấm công: lấy mã sau lọc.",
+    focus: "SELECT MaNV\nFROM ChamCong\nWHERE Ngay >= '20260901' AND Ngay < '20261001'\n\tAND GioVao > '08:00'",
+    meaning: "`SELECT` của nhánh chấm công chọn cột mã từ nguồn riêng; không lấy kết quả nhánh đơn nghỉ làm đầu vào.",
+    detail: "`SELECT` ở nhánh `ChamCong` trả `76` lần mã xuất hiện, sau khi lọc `Ngay` trong tháng 9/2026 và `GioVao` sau `08:00`. Cùng mã có thể lặp ở nhiều ngày. Hình trích `10` dòng; có `NV005` như ở nhánh đơn nghỉ.",
+    sql: `SELECT MaNV
+FROM ChamCong
+WHERE Ngay >= '20260901' AND Ngay < '20261001'
+\tAND GioVao > '08:00';`,
+    columns: ["MaNV"],
+    rows: [["NV001"],["NV002"],["NV003"],["NV004"],["NV005"],["NV006"],["NV007"],["NV008"],["NV009"],["NV010"]],
+    total: 76,
+  },
+  {
+    clause: "UNION",
+    title: "Gộp và bỏ dòng mã trùng.",
+    focus: "UNION",
+    meaning: "`UNION` kết hợp hai kết quả và chỉ giữ một dòng cho mỗi giá trị `MaNV`, vì mỗi nhánh chọn đúng một cột.",
+    detail: "`UNION` nhận `9` dòng từ đơn nghỉ và `76` dòng từ chấm công, trả `41` mã khác nhau. Hai lần `NV005` ở hai nhánh chỉ còn một dòng. Chưa có `ORDER BY` nên không dựa vào thứ tự trong hình.",
+    sql: `SELECT MaNV
+FROM DonNghiPhep
+WHERE TrangThai = N'Đã duyệt'
+\tAND TuNgay >= '20260901' AND TuNgay < '20261001'
+UNION
+SELECT MaNV
+FROM ChamCong
+WHERE Ngay >= '20260901' AND Ngay < '20261001'
+\tAND GioVao > '08:00';`,
+    columns: ["MaNV"],
+    rows: [["NV001"],["NV002"],["NV003"],["NV004"],["NV005"],["NV006"],["NV007"],["NV008"],["NV009"],["NV010"]],
+    total: 41,
+  },
+  {
+    clause: "ORDER BY",
+    title: "Sắp toàn bộ danh sách chung.",
+    focus: "ORDER BY MaNV",
+    meaning: "`ORDER BY` ở cuối sắp xếp kết quả chung theo mã tăng dần, không sắp riêng từng nhánh.",
+    detail: "`ORDER BY` giữ nguyên `41` mã sau `UNION`, chỉ đổi thứ tự hiển thị. Hình trích `10` dòng đầu; đây là danh sách gửi chị Hạnh.",
+    sql: `SELECT MaNV
+FROM DonNghiPhep
+WHERE TrangThai = N'Đã duyệt'
+\tAND TuNgay >= '20260901' AND TuNgay < '20261001'
+UNION
+SELECT MaNV
+FROM ChamCong
+WHERE Ngay >= '20260901' AND Ngay < '20261001'
+\tAND GioVao > '08:00'
+ORDER BY MaNV;`,
+    columns: ["MaNV"],
+    rows: [["NV001"],["NV002"],["NV003"],["NV004"],["NV005"],["NV006"],["NV007"],["NV008"],["NV009"],["NV010"]],
+    total: 41,
+  }
+]} note="Hai thẻ SELECT là hai đầu vào độc lập. Các mũi tên cùng đi vào UNION; chỉ ORDER BY cuối câu bảo đảm thứ tự kết quả." />
 
 ## Hay nhầm ở đâu
 

@@ -8,7 +8,7 @@ export function lessonBlocks(slug: string) {
   if (!lesson) throw new Error(`Missing lesson: ${slug}`);
   // MDX/JavaScript normalize literal line endings; compare captured source the same way on Windows.
   const body = lesson.body.replace(/\r\n?/g, '\n');
-  const flow = body.match(/<RunFlow query=\{`([\s\S]*?)`\} steps=\{([\s\S]*?)\} \/>/);
+  const flow = body.match(/<RunFlow query=\{`([\s\S]*?)`\} steps=\{([\s\S]*?)\}(?: note="[^"]*")? \/>/);
   const results = [...body.matchAll(/<Result columns=\{(\[[\s\S]*?\])\} rows=\{(\[[\s\S]*?\])\}([^>]*?)\/>/g)]
     .map(m => ({ columns: literal<string[]>(m[1]), rows: literal<FlowCell[][]>(m[2]),
       total: Number(m[3].match(/total=\{(\d+)\}/)?.[1] ?? literal<FlowCell[][]>(m[2]).length) }));

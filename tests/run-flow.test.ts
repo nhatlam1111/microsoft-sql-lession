@@ -1,6 +1,16 @@
 import { it, expect } from 'vitest';
 import { clauseRank, checkFlow, snakeLayout, previewOf, splitFocus, inlineCode, arrowMove } from '../src/lib/run-flow';
 import { sampleFlow, sampleQuery } from './helpers/flows';
+import { unionFlow, unionQuery } from './helpers/union-flow';
+
+it('combines two independent SELECT results before sorting a UNION result', () => {
+  expect(clauseRank('UNION')).toBe(7);
+  expect(clauseRank('UNION ALL')).toBe(7);
+  const steps = unionFlow();
+  expect(checkFlow(steps, unionQuery)).toEqual([]);
+  expect(checkFlow([steps[0], steps[1], steps[3], steps[2]], unionQuery)).toContain('bước 4: "UNION" không thể chạy sau "ORDER BY"');
+  expect(checkFlow([steps[0], steps[2], steps[1], steps[3]], unionQuery)).toContain('bước 3: "SELECT" không thể chạy sau "UNION"');
+});
 
 it('ranks clauses in SQL Server run order', () => {
   expect(['FROM', 'LEFT JOIN', 'INNER JOIN', 'WHERE', 'GROUP BY', 'HAVING', 'SELECT', 'SET', 'DELETE', 'DISTINCT', 'ORDER BY', 'TOP', 'OFFSET', 'Messages', 'FOO'].map(clauseRank))

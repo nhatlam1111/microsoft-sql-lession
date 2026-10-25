@@ -4,6 +4,7 @@ import { parse } from 'yaml';
 import { lessonBlocks } from './helpers/lesson-blocks';
 import { seedRows } from './helpers/hrm-seed';
 import { checkFlow } from '../src/lib/run-flow';
+import { runInNewContext } from 'node:vm';
 
 const slugs = ['3-8-union-gop-danh-sach', '3-9-subquery', '3-10-dem-co-dieu-kien'];
 describe('lessons 3.8–3.10: full lessons and supported practice', () => {
@@ -26,6 +27,31 @@ describe('lessons 3.8–3.10: full lessons and supported practice', () => {
     expect(body).toMatch(/total=\{9\} mark=\{\[1\]\}/);
     expect(body).toMatch(/total=\{76\} mark=\{\[5\]\}/);
     expect(body).toMatch(/total=\{49\} mark=\{\[5,6\]\}/);
+  });
+  it('3.8 walks the exact situation query through two independent branches, UNION and shared ordering', () => {
+    const { body, query, steps } = lessonBlocks(slugs[0]);
+    expect(body).toContain('### SQL Server chạy câu này thế nào');
+    expect(steps.map(s => [s.clause, s.total])).toEqual([['SELECT', 9], ['SELECT', 76], ['UNION', 41], ['ORDER BY', 41]]);
+    expect(checkFlow(steps, query)).toEqual([]);
+    expect(steps[0].focus).toContain('FROM DonNghiPhep');
+    expect(steps[1].focus).toContain('FROM ChamCong');
+    expect(steps[0].sql).toContain("TrangThai = N'Đã duyệt'");
+    expect(steps[0].sql).toContain("TuNgay >= '20260901' AND TuNgay < '20261001'");
+    expect(steps[1].sql).toContain("Ngay >= '20260901' AND Ngay < '20261001'");
+    expect(steps[1].sql).toContain("GioVao > '08:00'");
+    expect(steps[2].sql).toContain('\nUNION\n');
+    expect(steps[2].sql).not.toContain('ORDER BY');
+    expect(steps[3].sql).toBe(query);
+    const example = body.split('### Câu lệnh cho tình huống')[1].split('### SQL Server chạy câu này thế nào')[0];
+    const sql = example.match(/<Sql code=\{`([\s\S]*?)`\} \/>/)!;
+    expect(runInNewContext('`' + sql[1] + '`')).toBe(query);
+    const actualLeave = seedRows('DonNghiPhep').filter(r => r.TrangThai === 'Đã duyệt' && String(r.TuNgay).startsWith('2026-09')).map(r => [r.MaNV]);
+    expect(steps[0].rows.map(row => JSON.stringify(row)).sort()).toEqual(actualLeave.map(row => JSON.stringify(row)).sort());
+    expect(steps[0].rows).toContainEqual(['NV005']);
+    expect(steps[1].rows).toContainEqual(['NV005']);
+    expect(steps[2].rows.filter(r => r[0] === 'NV005')).toHaveLength(1);
+    expect(body).toMatch(/nhánh độc lập/);
+    expect(body).toMatch(/không (?:phải|mô tả)[^.]*thực thi vật lý/);
   });
   it('3.9 shows a correlated existence test and its inverse without multiplying employee rows', () => {
     const { body, results, steps } = lessonBlocks(slugs[1]);
