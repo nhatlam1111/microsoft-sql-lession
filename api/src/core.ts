@@ -1,7 +1,8 @@
 /** The API's request handling, free of Azure and of the database driver so it can be tested with fakes. */
 import { guardExercise, normalizeSql } from '../../src/lib/sql-guard';
 import { compareChanges, compareResults, type Shape } from '../../src/lib/grade';
-import type { ApiFailure, Exercise, FailureKind, GradeResponse, RunResponse } from '../../src/lib/exercise-types';
+import type { ApiFailure, Exercise, FailureKind, GradeResponse, RunResponse, TablePreviewResponse } from '../../src/lib/exercise-types';
+import { prepareTablePreview, PREVIEW_PAGE_SIZE } from './table-preview';
 
 export interface RunOutcome {
   shape: Shape | null;
@@ -33,11 +34,17 @@ const STATUS: Record<FailureKind, number> = {
 const fail = (kind: FailureKind, reason?: string): { status: number; body: ApiFailure } =>
   ({ status: STATUS[kind], body: reason === undefined ? { ok: false, kind } : { ok: false, kind, reason } });
 
+function authorize(code: string | null, deps: Pick<Deps, 'codes' | 'allow'>): { status: number; body: ApiFailure } | null {
+  if (!code || !deps.codes.includes(code)) return fail('bad-code');
+  if (!deps.allow(code)) return fail('rate');
+  return null;
+}
+
 function prepare(body: unknown, code: string | null, deps: Deps): { exercise: Exercise; sql: string } | { status: number; body: ApiFailure } {
   const b = body as { exercise?: unknown; sql?: unknown } | null;
   if (!b || typeof b !== 'object' || typeof b.exercise !== 'string' || typeof b.sql !== 'string') return fail('bad-request');
-  if (!code || !deps.codes.includes(code)) return fail('bad-code');
-  if (!deps.allow(code)) return fail('rate');
+  const denied = authorize(code, deps);
+  if (denied) return denied;
   const exercise = deps.exercises[b.exercise];
   if (!exercise) return fail('unknown-exercise');
   const guard = guardExercise(b.sql);
@@ -84,6 +91,31 @@ export async function handleRun(body: unknown, code: string | null, deps: Deps):
   if ('status' in p) return p;
   const outcome = await deps.run(p.sql);
   return outcomeFailure(outcome) ?? { status: 200, body: toRun(outcome) };
+}
+
+/** Fixed read-only SELECT through the normal runner, including its timeout, cell conversion and finally rollback. */
+export async function handleTablePreview(query: URLSearchParams, code: string | null, deps: Deps): Promise<Reply<TablePreviewResponse>> {
+  const denied = authorize(code, deps);
+  if (denied) return denied;
+  const prepared = prepareTablePreview(query);
+  if (!prepared) return fail('bad-request');
+  try {
+    const outcome = await deps.run(prepared.sql);
+    if (outcome.errorKind) return fail(outcome.errorKind);
+    if (outcome.error || !outcome.shape || outcome.affected.length > 1) return fail('unavailable');
+    return {
+      status: 200,
+      body: {
+        ok: true, table: prepared.table,
+        columns: outcome.shape.columns.map(column => column.name),
+        rows: outcome.shape.rows.slice(0, PREVIEW_PAGE_SIZE),
+        page: prepared.page, pageSize: PREVIEW_PAGE_SIZE,
+        hasMore: outcome.shape.rows.length > PREVIEW_PAGE_SIZE, ms: outcome.ms,
+      },
+    };
+  } catch {
+    return fail('unavailable');
+  }
 }
 
 export async function handleGrade(body: unknown, code: string | null, deps: Deps): Promise<Reply<GradeResponse>> {

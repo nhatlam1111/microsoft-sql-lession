@@ -1,0 +1,73 @@
+.sql-editor {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  background: var(--surface);
+}
+
+.sql-editor-surface {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--surface);
+}
+
+.sql-editor-surface:focus-within { box-shadow: inset 0 0 0 2px var(--accent-line); }
+.sql-editor-cm, .sql-editor-cm .cm-editor { height: 100%; min-height: 0; }
+.sql-editor-cm[hidden] { display: none; }
+.sql-editor-cm .cm-editor { background: var(--surface); color: var(--ink); font: 13px/1.7 var(--font-code); }
+.sql-editor-cm .cm-editor.cm-focused { outline: none; }
+.sql-editor-cm .cm-scroller { overflow: auto; font: inherit; tab-size: var(--sql-tab-size); }
+.sql-editor-cm .cm-content { padding: 12px 0; caret-color: var(--ink); }
+.sql-editor-cm .cm-line { padding: 0 12px; }
+.sql-editor-cm .cm-cursor { border-left-color: var(--ink); }
+.sql-editor-cm .cm-activeLine { background: var(--surface-subtle); }
+.sql-editor-cm .cm-placeholder { color: var(--ink-3); }
+.sql-editor-cm .cm-gutters { background: var(--surface-subtle); color: var(--ink-3); border-right: 1px solid var(--rule); }
+.sql-editor-cm .cm-lineNumbers .cm-gutterElement { min-width: 38px; padding: 0 8px; }
+.sql-editor-cm .cm-activeLineGutter { background: var(--accent-soft); color: var(--ink); }
+.sql-editor-cm .cm-selectionBackground,
+.sql-editor-cm .cm-editor.cm-focused .cm-selectionBackground { background: var(--accent-line); }
+.sql-editor-cm .cm-content ::selection { background: var(--accent-line); }
+.sql-editor-cm .cm-selectionMatch { background: var(--accent-soft); }
+.sql-editor-cm .cm-matchingBracket { background: var(--accent-line); outline: 1px solid var(--accent); }
+
+.sql-editor-cm .cm-tooltip { border: 1px solid var(--rule-strong); background: var(--surface); color: var(--ink); box-shadow: var(--shadow-m); }
+.sql-editor-cm .cm-tooltip-autocomplete > ul { max-height: min(240px, 30vh); font: 12px/1.6 var(--font-code); }
+.sql-editor-cm .cm-tooltip-autocomplete > ul > li { padding: 3px 8px; cursor: pointer; }
+.sql-editor-cm .cm-tooltip-autocomplete > ul > li[aria-selected] { background: var(--accent-soft); color: var(--ink); }
+.sql-editor-cm .cm-completionDetail { color: var(--ink-2); font-style: normal; }
+.sql-editor-cm .cm-completionMatchedText { text-decoration: underline; text-underline-offset: 2px; }
+.sql-editor-cm .cm-completionIcon { color: var(--ink-2); opacity: 1; }
+
+.sql-editor-fallback {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 120px;
+  margin: 0;
+  padding: 12px 16px;
+  border: 0;
+  border-radius: 0;
+  overflow: auto;
+  outline: none;
+  background: transparent;
+  color: var(--ink);
+  font: 13px/1.7 var(--font-code);
+  tab-size: var(--sql-tab-size);
+}
+
+.sql-editor-resize-none { resize: none; }
+.sql-editor-fallback::placeholder { color: var(--ink-3); opacity: 1; }
+.sql-editor-hint { flex: none; margin: 0; padding: 4px 10px; border-top: 1px solid var(--rule); background: var(--surface-subtle); color: var(--ink-2); font: 11px/1.6 var(--font-ui); }
+
+@media (forced-colors: active) {
+  .sql-editor-surface:focus-within { outline: 2px solid Highlight; outline-offset: -2px; }
+  .sql-editor-cm .cm-cursor { border-left-color: CanvasText; }
+  .sql-editor-cm .cm-selectionBackground,
+  .sql-editor-cm .cm-editor.cm-focused .cm-selectionBackground { background: Highlight; }
+  .sql-editor-cm .cm-tooltip { border-color: CanvasText; }
+}

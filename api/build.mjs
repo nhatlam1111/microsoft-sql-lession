@@ -6,6 +6,7 @@ import { parse } from 'yaml';
 await build({
   entryPoints: ['src/index.ts', 'src/dev-server.ts', 'src/check-exercises.ts', 'src/check-data.ts'],
   bundle: true, platform: 'node', format: 'esm', target: 'node20', outdir: 'dist', packages: 'external', logLevel: 'warning',
+  loader: { '.sql': 'text' },
 });
 
 const dir = new URL('../src/content/exercises/', import.meta.url);

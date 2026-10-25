@@ -36,3 +36,25 @@ it('still opens a blank editor when browser storage is unavailable', () => {
   vi.stubGlobal('localStorage', { getItem() { throw new Error('Storage blocked'); } });
   expect(inputOf(render())[2]).toBe('');
 });
+
+it('renders a docked workspace with keyboard tabs, a splitter and an initially unavailable submit', () => {
+  const html = render();
+  const submit = html.match(/<button\b[^>]*disabled=""[^>]*>Nộp bài<\/button>/);
+  expect(submit).not.toBeNull();
+  expect(html.match(/role="tab"/g)).toHaveLength(4);
+  expect(html).toContain('role="separator"');
+  expect(html).toContain('aria-orientation="horizontal"');
+  expect(html).toContain('Object Explorer');
+  expect(html).toContain('1-6-1.sql');
+});
+
+it('renders schema and explicit preview actions without needing an access code', () => {
+  const html = renderToStaticMarkup(createElement(ExerciseWorkspace, {
+    exercise, apiBase: '', nums: ['1.6'], tables: [{ name: 'PhongBan', primaryKey: ['MaPB'], foreignKeys: [], columns: [{ name: 'MaPB', type: 'varchar(10)', nullable: false }] }],
+  }));
+  expect(html).toContain('<summary>');
+  expect(html).toContain('dbo.PhongBan');
+  expect(html).toContain('Xem dữ liệu');
+  expect(html).toContain('Xem cấu trúc');
+  expect(html).toContain('MaPB (PK, varchar(10), not null)');
+});

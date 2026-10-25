@@ -5,7 +5,22 @@
 
 const MAX_LENGTH = 4000;
 const STARTS = ['select', 'with', 'insert', 'update', 'delete'];
-const BLOCKED = /\b(commit|rollback|save|begin\s+tran(?:saction)?|exec|execute|use|go|create|alter|drop|truncate|merge|grant|revoke|deny|backup|restore|dbcc|waitfor|openrowset|openquery|opendatasource|bulk|kill|shutdown|reconfigure)\b/i;
+const BLOCKED = new Set([
+  'begin', 'commit', 'rollback', 'save', 'exec', 'execute', 'use', 'go',
+  'create', 'alter', 'drop', 'truncate', 'merge', 'grant', 'revoke', 'deny',
+  'backup', 'restore', 'dbcc', 'waitfor', 'openrowset', 'openquery', 'opendatasource',
+  'bulk', 'kill', 'shutdown', 'reconfigure',
+]);
+const TRANSACTION_COMMANDS = new Set(['begin', 'commit', 'rollback', 'save']);
+
+/** Completion hides the same unconditional commands as the server guard; SET and INTO remain context-dependent. */
+export function isBlockedCompletionKeyword(word: string): boolean {
+  return BLOCKED.has(word.toLowerCase());
+}
+
+// Recognize complete binary/decimal literals before identifiers: 0x1ROLLBACK is 0x1 then ROLLBACK,
+// just as 1COMMIT is 1 then COMMIT. A name such as Ma1COMMIT remains one identifier.
+const TOKENS = /0x[0-9a-f]*|\d+(?:\.\d*)?(?:e[+-]?\d+)?|\.\d+(?:e[+-]?\d+)?|[\p{L}_@#][\p{L}\p{N}\p{M}_@#$]*|[^\s]/giu;
 
 /**
  * T-SQL with its strings, quoted names and comments taken out, read the way SQL Server reads it:
@@ -68,24 +83,25 @@ export function guardExercise(text: string): GuardResult {
   if (text.length > MAX_LENGTH) return refuse('Câu lệnh dài quá 4.000 ký tự.');
   let stripped: string;
   try {
-    // SQL Server ends a number at the first letter, so "1=1COMMIT" is "1=1 COMMIT": split them before matching words.
-    stripped = sanitize(normalizeSql(text)).trim().replace(/;+\s*$/, '').replace(/(\d)([a-z_@#$])/gi, '$1 $2');
+    stripped = sanitize(normalizeSql(text)).trim().replace(/;+\s*$/, '');
   } catch {
     return refuse('Có chuỗi hoặc chú thích chưa đóng.');
   }
   if (!stripped) return refuse('Chưa có câu lệnh nào.');
   if (stripped.includes(';')) return refuse('Mỗi lần chỉ chạy một câu lệnh.');
-  const first = (stripped.match(/^[a-z]+/i)?.[0] ?? '').toLowerCase();
-  if (!STARTS.includes(first)) return refuse('Bài tập chỉ nhận câu bắt đầu bằng SELECT, WITH, INSERT, UPDATE hoặc DELETE.');
-  const hit = stripped.match(BLOCKED);
-  if (hit) {
-    const word = /^begin/i.test(hit[1]) ? 'BEGIN TRAN' : hit[1].toUpperCase();
-    return refuse(`Lệnh ${word} không dùng được trong bài tập.`);
+  const tokens = (stripped.match(TOKENS) ?? []).map(token => token.toLowerCase());
+  const blockedAt = tokens.findIndex(isBlockedCompletionKeyword);
+  if (blockedAt !== -1) {
+    const command = tokens[blockedAt];
+    const word = command === 'begin' && /^tran(?:saction)?$/.test(tokens[blockedAt + 1] ?? '') ? 'BEGIN TRAN' : command.toUpperCase();
+    const explanation = TRANSACTION_COMMANDS.has(command) ? '; hệ thống tự mở và hoàn tác giao dịch cho mỗi lần chạy.' : '.';
+    return refuse(`Lệnh ${word} không dùng được trong bài tập${explanation}`);
   }
+  if (!STARTS.includes(tokens[0] ?? '')) return refuse('Bài tập chỉ nhận câu bắt đầu bằng SELECT, WITH, INSERT, UPDATE hoặc DELETE.');
   // A SET of its own (SET ROWCOUNT, SET NOCOUNT…) would change the pooled connection for later runs.
-  const count = (re: RegExp) => stripped.match(re)?.length ?? 0;
-  if (count(/\bset\b/gi) > count(/\bupdate\b/gi)) return refuse('Lệnh SET không dùng được trong bài tập.');
-  if (/\binto\b/i.test(stripped.replace(/\binsert\s+into\b/gi, ' '))) {
+  const count = (word: string) => tokens.filter(token => token === word).length;
+  if (count('set') > count('update')) return refuse('Lệnh SET không dùng được trong bài tập.');
+  if (tokens.some((token, i) => token === 'into' && tokens[i - 1] !== 'insert')) {
     return refuse('SELECT … INTO tạo bảng mới nên không dùng được trong bài tập.');
   }
   return { ok: true };

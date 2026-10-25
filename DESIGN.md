@@ -134,15 +134,15 @@ Blue is navigation, selection and primary action; green is completed learning; a
 
 Keep locally hosted font assets. Be Vietnam Pro carries interface labels and headings; Literata remains the long-reading face at 17px/1.72; JetBrains Mono carries SQL. Tool simulations retain Segoe UI and their established metrics. Headings use restrained negative tracking and adequate line height for Vietnamese diacritics. The article measure stays at a maximum of 720px.
 
-SQL indentation uses four columns per level (`--sql-tab-size: 4` in `src/styles/tokens.css`). Lesson SQL, RunFlow queries, LineMap/Memo code and both editor layers consume this token. Main clauses align left; continued columns/conditions indent one level, CASE branches another. MDX literals encode indentation with `\t` escapes so compilation preserves it; copy actions retain the same whitespace. The editor keeps learner input unchanged and Tab inserts four spaces. Authoring examples and verification live in docs/quy-uoc.md and docs/lesson-template.md.
+SQL indentation uses four columns per level (`--sql-tab-size: 4` in `src/styles/tokens.css`). Lesson SQL, RunFlow queries, LineMap/Memo code and the exercise editor consume this token. Main clauses align left; continued columns/conditions indent one level, CASE branches another. MDX literals encode indentation with `\t` escapes so compilation preserves it; copy actions retain the same whitespace. The editor keeps learner input unchanged and Tab inserts four spaces. Authoring examples and verification live in docs/quy-uoc.md and docs/lesson-template.md.
 
-Fresh exercise editors contain no SQL and show an input placeholder in `--ink-3`; the instruction is never executable text. Restore every saved draft verbatim, including empty and comment-only drafts. Practice guidance stays outside the editor and links to lesson 1.2; web execution still requires a code, while a private SQL Server copy is the alternative. Shared owners are ExerciseWorkspace, SqlEditor and exercise.css; no API or storage-key change.
+Fresh exercise editors contain no SQL and show an input placeholder in `--ink-3`; the instruction is never executable text. Restore every saved draft verbatim, including empty and comment-only drafts. Practice guidance stays outside the editor and links to lesson 1.2; web execution still requires a code, while a private SQL Server copy is the alternative. Shared owners are ExerciseWorkspace, SqlEditor and their scoped styles. Draft storage keys stay unchanged. The approved 25/10/2026 workspace change adds an authenticated table-preview API and replaces the textarea overlay with CodeMirror; the plain input remains a recovery fallback.
 
 ## Layout
 
-Retain the three-column lesson grid (272px sidebar, flexible article, 248px rail), the two-column exercise workspace, and the existing popup/drawer placement. Use the established 4/8px rhythm for spacing. Keep the main reading surface white and the rail cool grey. Tables and code own horizontal overflow; the document should not acquire a horizontal scrollbar at supported widths.
+Retain the three-column lesson grid (272px sidebar, flexible article, 248px rail) and existing popup/drawer placement. Exercise pages use a separate full-width workbench approved 25/10/2026: brief left at 280–340px, flexible editor/results in the middle, Object Explorer at 260px on the right, 24px outer padding and 16px gaps. Keep the main reading surface white and the rail cool grey. Tables and code own horizontal overflow; the document should not acquire a horizontal scrollbar at supported widths.
 
-Mindmap dimensions remain root 190×58, area 214×52, lesson 236×30. ERD retains its fixed canvas, node positions and row heights. These compact diagram elements are deliberate geometry exceptions to general control sizing. Never apply a global button minimum height to them. SQL editor textarea/highlight share all text metrics and padding. Do not add global scrollbar gutters that separate their content boxes.
+Mindmap dimensions remain root 190×58, area 214×52, lesson 236×30. ERD retains its fixed canvas, node positions and row heights. These compact diagram elements are deliberate geometry exceptions to general control sizing. Never apply a global button minimum height to them. CodeMirror owns editor scrolling and text geometry; do not apply global scrollbar gutters that desynchronize its gutter, text or recovery input.
 
 ## Elevation & Depth
 
@@ -166,6 +166,14 @@ Primary action uses blue with white text; completion uses green; secondary contr
 
 Style existing form/input owners; preserve validation, API and storage behavior. Dialogs have a pale header, white body, clear boundary and stable footer. Drawers retain their current scrolling and keyboard model. Search retains its existing result navigation and gains a visible focused-input treatment.
 
+### Exercise workbench
+
+The workbench borrows SSMS's docked query-and-results hierarchy, rather than rendering each tool as a floating card. Use existing white/grey surfaces, blue action/focus tokens and authentic SQL colors. CodeMirror is the canonical exercise input and completion owner; exercise results and table previews share one React grid treatment. No decorative toolbar controls, fake connection indicators, AI completions or answer snippets.
+
+The editor/results split starts at 58/42 and supports pointer and keyboard resizing. Results, Messages, Table Data and Table Structure share a bounded lower frame; only the active panel scrolls. Keep the toolbar, tabs and paging reachable on short screens. Brief and Explorer each have a named scroll region. A 560px minimum workbench may use document scrolling on a short display; do not clip the page with a global overflow lock.
+
+Execution, grading, preview, authentication and recovery follow `UX-CONTRACT.md`. Live table data requires the same access code as queries. Schema and the diagram stay available offline. Submit becomes available only after the current document revision executes without a SQL error; all server transactions still roll back.
+
 ### Iconography
 
 Reuse the existing SVGs, status glyphs and app-owned marks. Do not replace instructional tool icons or add decorative icon sets.
@@ -185,7 +193,7 @@ HRM_Demo relationship lines show `1` beside the referenced primary key and `∞`
 ## Do's and Don'ts
 
 - Do derive shared visual decisions from the canonical CSS tokens and verify a sibling screen.
-- Do check 1280px and 1440px, long content, overlays, focus and reduced motion.
-- Do preserve the original Excel/SSMS replicas and editor layering.
+- Do check 1280px and 1440px, plus 1920px for the exercise workbench, long content, overlays, focus and reduced motion.
+- Do preserve the original lesson Excel/SSMS replicas; use CodeMirror and its fallback for exercise editing.
 - Don't introduce new workflows, visible wording, dependencies or a theme switch in a style refresh.
 - Don't hide scrollbars, use faint ink for readable labels, or resize fixed diagram children independently of their geometry.

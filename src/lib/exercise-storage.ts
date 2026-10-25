@@ -20,11 +20,13 @@ function read(key: string, given?: Storage): string | null {
   }
 }
 
-function write(key: string, value: string | null, given?: Storage): void {
+function write(key: string, value: string | null, given?: Storage): boolean {
   try {
     const s = storageOrNull(given);
-    if (value === null) s?.removeItem(key); else s?.setItem(key, value);
-  } catch { /* blocked storage: forget quietly */ }
+    if (!s) return false;
+    if (value === null) s.removeItem(key); else s.setItem(key, value);
+    return true;
+  } catch { return false; }
 }
 
 export const loadDraft = (id: string, storage?: Storage) => read(draftKey(id), storage);

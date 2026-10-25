@@ -37,3 +37,14 @@ export interface RunResponse {
 }
 
 export interface GradeResponse extends RunResponse { correct: boolean; reason: string | null }
+
+export interface TablePreviewResponse {
+  ok: true;
+  table: string;
+  columns: string[];
+  rows: Cell[][];
+  page: number;
+  pageSize: 50;
+  hasMore: boolean;
+  ms: number;
+}

@@ -79,3 +79,37 @@ it('pings with the access code, and does not ping without one', async () => {
   const [url, init] = fetchImpl.mock.calls[0] as unknown as [string, RequestInit];
   expect([url, new Headers(init.headers).get('x-access-code')]).toEqual(['https://x/api/ping', 'abc']);
 });
+
+it('requests an encoded read-only preview page without posting SQL', async () => {
+  const fetchImpl = vi.fn(async () => new Response(JSON.stringify({ ok: true, table: 'NhanVien', columns: [], rows: [], page: 2, pageSize: 50, hasMore: false, ms: 1 })));
+  const client = createExerciseClient('https://x/api/', fetchImpl as unknown as typeof fetch);
+  expect(await client.preview('NhanVien', 2, 'test-code')).toMatchObject({ ok: true, page: 2 });
+  const [url, init] = fetchImpl.mock.calls[0] as unknown as [string, RequestInit];
+  expect(url).toBe('https://x/api/table-preview?table=NhanVien&page=2');
+  expect(init.method).toBe('GET');
+  expect(init.body).toBeUndefined();
+  expect(new Headers(init.headers).get('x-access-code')).toBe('test-code');
+});
+
+it('honors caller cancellation and clears the slow callback', async () => {
+  vi.useFakeTimers();
+  const caller = new AbortController();
+  const onSlow = vi.fn();
+  const fetchImpl = vi.fn(async (_: unknown, init: RequestInit) => new Promise<Response>((_resolve, reject) => {
+    init.signal?.addEventListener('abort', () => reject(new DOMException('aborted', 'AbortError')));
+  }));
+  const promise = createExerciseClient('https://x/api', fetchImpl as unknown as typeof fetch).run('1-6-1', 'SELECT 1', 'test-code', onSlow, caller.signal);
+  caller.abort();
+  expect(await promise).toEqual({ ok: false, kind: 'network' });
+  await vi.advanceTimersByTimeAsync(4000);
+  expect(onSlow).not.toHaveBeenCalled();
+});
+
+it('reports failed draft persistence while preserving exact drafts when storage works', () => {
+  const broken = { setItem() { throw new Error('full'); } } as unknown as Storage;
+  expect(saveDraft('1-6-1', '-- comment\n', broken)).toBe(false);
+  const values = new Map<string, string>();
+  const storage = { setItem: (k: string, v: string) => values.set(k, v), getItem: (k: string) => values.get(k) ?? null } as unknown as Storage;
+  expect(saveDraft('1-6-1', '', storage)).toBe(true);
+  expect(loadDraft('1-6-1', storage)).toBe('');
+});

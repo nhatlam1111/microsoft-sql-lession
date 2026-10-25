@@ -33,7 +33,7 @@ const apiBase = import.meta.env.PUBLIC_EXERCISE_API ?? '';
     <nav class="ex-crumbs" aria-label="Đường dẫn">
       <a href={lessonUrl(lesson.slug)}>Bài {lesson.num} {lesson.shortTitle}</a>
       <span aria-hidden="true">›</span>
-      <span>Bài tập {exercise.n}/{total}</span>
+      <span aria-current="page">Bài tập {exercise.n}/{total}</span>
       <span class="ex-spacer"></span>
       {exercise.n > 1 && <a class="ex-step" href={exerciseUrl(lesson.slug, exercise.n - 1)}>Bài tập trước</a>}
       {exercise.n < total && <a class="ex-step" href={exerciseUrl(lesson.slug, exercise.n + 1)}>Bài tập sau</a>}
@@ -52,10 +52,35 @@ const apiBase = import.meta.env.PUBLIC_EXERCISE_API ?? '';
             <dt>Được chấm theo</dt><dd>số dòng bị ảnh hưởng và dữ liệu của bảng sau khi sửa</dd>
           </dl>
         )}
-        <p class="ex-note">Mỗi lần chạy đều được hoàn tác ngay, dữ liệu mẫu không bị đổi.</p>
+        <p class="ex-note">Trên trang này, mỗi lần chạy đều được hoàn tác ngay, dữ liệu mẫu không bị đổi. SSMS chạy câu lệnh thật trên database bạn kết nối.</p>
       </section>
       <section class="ex-work" aria-label="Khung làm bài">
-        <ExerciseWorkspace client:only="react" exercise={exercise} apiBase={apiBase} tables={tables} nums={nums} />
+        <ExerciseWorkspace client:only="react" exercise={exercise} apiBase={apiBase} tables={tables} nums={nums}>
+          <div slot="fallback" class="ws ws-static" aria-busy="true" aria-describedby="ws-static-loading">
+            <div class="ws-frame">
+              <div class="ws-bar" aria-label="Khung làm bài đang tải">
+                <button type="button" class="ws-btn is-primary ws-run" disabled>Chạy thử (F5)</button>
+                <button type="button" class="ws-btn ws-submit" disabled>Nộp bài</button>
+                <span class="ws-spacer"></span>
+                <button type="button" class="ws-btn is-ghost ws-diagram" disabled>Sơ đồ database</button>
+              </div>
+              <div class="ws-guidance">
+                <p class="ws-help" id="ws-static-loading" role="status">Đang tải khung làm bài. Bạn có thể nhập SQL khi khung tải xong. Nếu chờ lâu, <a href={Astro.url.pathname}>tải lại trang</a> hoặc thực hành trong database riêng theo <a href={lessonUrl('1-2-sql-server-ssms-hrm-demo')}>bài 1.2</a>.</p>
+                <noscript><p class="ws-field-error">Trình duyệt đang tắt JavaScript nên khung làm bài và chấm trên web không hoạt động. Bạn có thể <a href={lessonUrl('1-2-sql-server-ssms-hrm-demo')}>tạo database riêng ở bài 1.2</a> để thực hành trong SSMS; bản riêng không có chấm tự động.</p></noscript>
+              </div>
+              <div class="ws-file-tab"><span>{exercise.id}.sql</span></div>
+              <div class="ws-static-editor">
+                <label class="ws-sr-only" for="ws-static-sql">Ô nhập SQL đang tải</label>
+                <textarea id="ws-static-sql" class="ws-static-input" aria-label="Ô nhập SQL đang tải" aria-describedby="ws-static-loading" placeholder="Đang tải ô nhập SQL…" disabled></textarea>
+              </div>
+              <div class="ws-status"><span>Đang tải khung làm bài</span></div>
+            </div>
+            <aside class="ws-explorer" aria-label="Object Explorer đang tải">
+              <h2>Object Explorer</h2>
+              <p class="ws-empty">Danh sách bảng và cấu trúc sẽ hiện khi khung làm bài tải xong.</p>
+            </aside>
+          </div>
+        </ExerciseWorkspace>
       </section>
     </div>
   </main>

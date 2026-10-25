@@ -29,7 +29,7 @@ it('refuses a missing body, a wrong code, an unknown exercise and a blocked stat
   expect((await handleRun({ exercise: 'q1', sql: 'SELECT 1' }, 'nope', deps)).body).toEqual({ ok: false, kind: 'bad-code' });
   expect((await handleRun({ exercise: 'zz', sql: 'SELECT 1' }, 'abc', deps)).status).toBe(404);
   expect((await handleRun({ exercise: 'q1', sql: 'DROP TABLE NhanVien' }, 'abc', deps)).body)
-    .toEqual({ ok: false, kind: 'blocked', reason: 'Bài tập chỉ nhận câu bắt đầu bằng SELECT, WITH, INSERT, UPDATE hoặc DELETE.' });
+    .toEqual({ ok: false, kind: 'blocked', reason: 'Lệnh DROP không dùng được trong bài tập.' });
 });
 
 it('caps shown rows at 200 and reports several statements as one error', async () => {
@@ -72,6 +72,33 @@ it('sends the database the same line breaks the guard read', async () => {
   const run = vi.fn(async () => outcome());
   await handleRun({ exercise: 'q1', sql: 'SELECT a\r\nFROM T\rWHERE 1 = 1' }, 'abc', { ...deps, run });
   expect(run).toHaveBeenCalledWith('SELECT a\nFROM T\nWHERE 1 = 1');
+});
+
+it('never calls the database for transaction escapes or several statements in run or grade', async () => {
+  const run = vi.fn(async () => outcome());
+  for (const handler of [handleRun, handleGrade]) {
+    for (const sql of ['COMMIT', 'rollback tran', 'BEGIN TRAN', 'SAVE TRAN x', 'SELECT 1COMMIT', 'SELECT 1 --x\rROLLBACK', 'SELECT 1; SELECT 2']) {
+      expect(await handler({ exercise: 'q1', sql }, 'abc', { ...deps, run }), sql).toMatchObject({ status: 422, body: { ok: false, kind: 'blocked' } });
+    }
+  }
+  expect(run).not.toHaveBeenCalled();
+});
+
+it.each([['run', handleRun], ['grade', handleGrade]] as const)('blocks binary-literal transaction escapes before %s can reach the database', async (_name, handler) => {
+  for (const sql of [
+    'SELECT 0x1ROLLBACK UPDATE BangLuong SET PhuCap = PhuCap + 1',
+    'SELECT 0XAb12rOlLbAcK TRAN UPDATE BangLuong SET PhuCap = PhuCap + 1',
+    'SELECT 0xROLLBACK UPDATE BangLuong SET PhuCap = PhuCap + 1',
+    'SELECT 0x01SAVE TRAN checkpoint',
+    'SELECT 0x1/* boundary */BEGIN TRAN',
+    'SELECT 0x1 -- boundary\rBEGIN TRANSACTION',
+  ]) {
+    const run = vi.fn(async () => outcome());
+    const response = await handler({ exercise: 'q1', sql }, 'abc', { ...deps, run });
+    expect({ response, databaseCalls: run.mock.calls.length }, sql).toMatchObject({
+      response: { status: 422, body: { ok: false, kind: 'blocked' } }, databaseCalls: 0,
+    });
+  }
 });
 
 it('reads a FOR JSON result, which the driver hands back as one object row', () => {

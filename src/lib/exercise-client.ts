@@ -1,5 +1,5 @@
 /** Calls the exercise API from the browser. Every failure comes back as an ApiFailure, never as a thrown error. */
-import type { ApiFailure, GradeResponse, RunResponse } from './exercise-types';
+import type { ApiFailure, GradeResponse, RunResponse, TablePreviewResponse } from './exercise-types';
 
 const NETWORK: ApiFailure = { ok: false, kind: 'network' };
 const UNAVAILABLE: ApiFailure = { ok: false, kind: 'unavailable' };
@@ -16,16 +16,20 @@ export function createExerciseClient(
   fetchImpl: typeof fetch = (input, init) => fetch(input, init),
   opts = { slowMs: 3000, timeoutMs: 120_000 },
 ) {
-  async function call<T>(path: string, body: unknown, code: string | null, onSlow?: () => void): Promise<T | ApiFailure> {
+  async function call<T>(path: string, body: unknown, code: string | null, onSlow?: () => void, signal?: AbortSignal): Promise<T | ApiFailure> {
     if (!base) return NETWORK;
     const controller = new AbortController();
+    const abort = () => controller.abort();
+    signal?.addEventListener('abort', abort, { once: true });
+    if (signal?.aborted) controller.abort();
     // A sleeping database can take about a minute to wake; say so instead of looking stuck.
     const slow = onSlow ? setTimeout(onSlow, opts.slowMs) : undefined;
     const timeout = setTimeout(() => controller.abort(), opts.timeoutMs);
     try {
       const headers: Record<string, string> = { 'content-type': 'application/json' };
       if (code) headers['x-access-code'] = code;
-      const res = await fetchImpl(`${base}/${path}`, {
+      if (controller.signal.aborted) return NETWORK;
+      const res = await fetchImpl(`${base.replace(/\/+$/, '')}/${path}`, {
         method: body === undefined ? 'GET' : 'POST',
         headers,
         body: body === undefined ? undefined : JSON.stringify(body),
@@ -38,6 +42,7 @@ export function createExerciseClient(
     } finally {
       clearTimeout(slow);
       clearTimeout(timeout);
+      signal?.removeEventListener('abort', abort);
     }
   }
 
@@ -48,9 +53,11 @@ export function createExerciseClient(
       const r = await call<{ ok: true }>('ping', undefined, code);
       return r.ok === true;
     },
-    run: (id: string, sql: string, code: string, onSlow?: () => void) =>
-      call<RunResponse>('run', { exercise: id, sql }, code, onSlow),
-    grade: (id: string, sql: string, code: string, onSlow?: () => void) =>
-      call<GradeResponse>('grade', { exercise: id, sql }, code, onSlow),
+    run: (id: string, sql: string, code: string, onSlow?: () => void, signal?: AbortSignal) =>
+      call<RunResponse>('run', { exercise: id, sql }, code, onSlow, signal),
+    grade: (id: string, sql: string, code: string, onSlow?: () => void, signal?: AbortSignal) =>
+      call<GradeResponse>('grade', { exercise: id, sql }, code, onSlow, signal),
+    preview: (table: string, page: number, code: string, onSlow?: () => void, signal?: AbortSignal) =>
+      call<TablePreviewResponse>(`table-preview?table=${encodeURIComponent(table)}&page=${page}`, undefined, code, onSlow, signal),
   };
 }
