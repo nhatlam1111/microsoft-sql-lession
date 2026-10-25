@@ -42,3 +42,9 @@ Base main19170bc; branch initially clean. Logs: temp/verification/2026-10-25-ssm
 - Browser kiểm 1280/1440/1920, màn thấp, bàn phím/completion/undo/draft, auth, bảng rộng/phân trang, modal và input dự phòng khi chunk lỗi/chậm. OS IME và lỗi storage/hạ tầng thật chưa được xác minh; fake tests bảo vệ các nhánh này.
 - Tất cả finding có căn cứ đã được xử lý. UI-02 làm một phần: static disabled route fallback trước React, usable textarea sau React nếu CM lỗi; giữ client-only để tránh ghi đè draft/auth. Quyết định đầy đủ trong spec/UX-CONTRACT.
 - Không đổi main, không push/deploy; frontend local 4330 và API local 7073 cùng source/build để người dùng review.
+
+## Báo lỗi sau bàn giao và yêu cầu tiếp theo
+
+Người dùng gặp lỗi kết nối khi mở dev frontend tại `localhost:4321`. [Hồ sơ lỗi đang mở](../../reviews/2026-10-25-ssms-workspace/api-local-issue.md) ghi URL thực tế, cấu hình API 7071 không có listener và API review 7073 có origin riêng. Chưa sửa hoặc kiểm lại đường đi lỗi; kết quả QA 4330/7073 phía trên không xác nhận môi trường 4321.
+
+Theo yêu cầu mới: ghi nhận, commit và push nhánh `codex/ssms-exercise-workspace`, không merge vào `main`, sau đó chuyển checkout về `main`. Yêu cầu này cho phép push nhánh tính năng, thay cho giới hạn local-only của lần bàn giao trước; không cấp quyền merge/deploy production.

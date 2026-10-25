@@ -2,6 +2,8 @@
 
 Ngày 25/10/2026, nhánh `codex/ssms-exercise-workspace`, base `19170bc`. Phạm vi: công cụ dùng chung của 63 trang bài tập. Không đổi bài, URL, đề, đáp án, seed, cách chấm hoặc khóa lưu nháp. Chờ người làm khóa học duyệt local trước khi merge/push.
 
+**Cập nhật sau review local:** người dùng báo lỗi kết nối trên dev frontend `localhost:4321`; xem [hồ sơ lỗi chưa xử lý](api-local-issue.md). Người dùng yêu cầu ghi nhận, commit/push nhánh tính năng rồi chuyển về `main`, không merge. Các kết quả phía dưới là kiểm trước báo lỗi trên cặp 4330/7073, không xác nhận môi trường 4321 đã hoạt động.
+
 ## Phiên bản và cách mở
 
 - Frontend production build được reviewer đối chiếu lúc **22:21:13 +07**; bản bàn giao rebuild lúc **22:39:49 +07**, 117 trang. Lượt rebuild sau khi bỏ một dòng trắng EOF và hoàn thiện hồ sơ, không đổi logic; tên/hash chunk workspace và editor giống bản đã QA. `build-handoff.log` và `dist-handoff.log` ghi lại lượt cuối. API build/typecheck hoàn tất lúc 22:21; API local đã khởi động lại sau build này.
