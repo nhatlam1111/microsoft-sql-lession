@@ -7,7 +7,7 @@ Nhánh local: `codex/student-review-1-1-3-7`, từ main `df7e810`. Triển khai 
 - [Ma trận 80 nhận xét, quyết định và căn cứ](verification.md).
 - [Báo cáo học viên gốc](source-student-report.md) và [prompt gốc](source-review-prompt.txt): bản sao nguyên byte, không sửa nội dung nhận xét.
 - [Spec](../../superpowers/specs/2026-10-24-student-review-1-1-3-7-design.md), [plan và tiến độ](../../superpowers/plans/2026-10-24-student-review-1-1-3-7.md).
-- Review tích hợp: đang chờ sau khi hoàn tất vòng từng bài. Các kết quả dưới đây là bằng chứng của tác giả và review từng bài; chưa gọi là nghiệm thu tích hợp.
+- [Review tích hợp độc lập](review-integration.md): **Ready** cho bàn giao local, không có finding Critical/Important/Minor. Reviewer tự chạy lại test/check/check:dist; phân biệt rõ phần SQL/browser của tác giả với phần tự kiểm của mình. Commit nội dung được review: `5e988b1`.
 
 ## Thay đổi chính
 
@@ -48,6 +48,17 @@ Mỗi bài có một agent mới, không mang ngữ cảnh tác giả, kế th�
 
 Bài 2.7 từng bị giới hạn sử dụng ở lượt đầu; đã tiếp tục đúng reviewer đó sau khi khả dụng, không tạo agent khác hoặc đổi model để thay thế.
 
+Reviewer tích hợp cũng bị ngắt bởi hạn mức sau khi đã ghi đủ report; đã tiếp tục đúng agent đó để xác nhận không còn phần thiếu. Không thay reviewer hoặc model.
+
+### Những phần reviewer tích hợp để tác giả kết luận
+
+- **Vị trí luật DISTINCT/ORDER BY ở 2.6:** giữ theo chỉ dẫn cụ thể đã duyệt, thay cho focus khái quát không dạy bù ở Hay nhầm. Cả ba đề chỉ sắp theo cột trả về, phần chính đã đủ cách viết; không thiếu tiền đề làm đề. Nếu vị trí này vẫn khiến học viên vấp, đó là lựa chọn bố cục cần review lại, không phải lý do chép quy tắc hai nơi ngay trong lượt này.
+- **SQL live:** chấp nhận giới hạn của reviewer và dùng 79 SELECT cùng kiểm runner/check:data của tác giả làm bằng chứng. Không đổi số liệu chỉ vì reviewer không chạy DB; không suy rằng kiểm nguồn thay cho thực thi.
+- **SSR so với tương tác:** SSR chỉ kiểm khởi tạo/markup. Các thao tác browser, clipboard, undo, F5 và storage bị chặn có evidence riêng; không gán độ bao phủ tương tác cho unit test.
+- **Audit resize:** giữ kết quả strict exit 1 cùng bằng chứng computed style resize:none; không nới scanner hoặc sửa CSS trùng chỉ để báo xanh. Scanner vẫn có giới hạn nhận diện class/CSS.
+- **SSMS native và học bấm giờ:** chưa kiểm thực tế, giữ giới hạn được công bố; tài liệu Microsoft/hình mô phỏng không được coi là đã thử cài SSMS trên máy mới.
+- **Auth/API/answer YAML:** giữ nguyên phạm vi được duyệt. Đã kiểm 54 đáp án luôn hoàn tác và dữ liệu không lệch; không tuyên bố đã audit lại toàn bộ backend chỉ vì diff không đổi.
+
 ## Kiểm bằng máy
 
 Evidence local: `temp/verification/2026-10-24-student-review/`. Log không chứa cấu hình kết nối hoặc secret.
@@ -58,10 +69,10 @@ Evidence local: `temp/verification/2026-10-24-student-review/`. Log không chứ
 | Editor mới | RED 2 fail/4 pass → GREEN 6/6 bằng component React thật; nháp rỗng/comment/nhiều dòng và storage bị chặn. |
 | Vị trí tự kiểm | RED 7 fail/4 pass → GREEN 11/11. |
 | Nháy summary sau build | Test helper RED → GREEN; check:dist tái hiện 5 code span lỗi ở 2.3/2.7 → không còn sau JSX literal. |
-| `npm test` | 295/295, 41 file; `tests-author-final.log`. |
-| `npm run check` | 0 errors, 0 warnings, 3 hints deprecated đã có: FormEvent (2 vị trí), document.execCommand; `astro-check-final.log`. |
-| `npm run build` | 108 trang; `build-author-final.log`. |
-| `npm run check:dist` | 108 trang, 1.742 link; không lộ đáp án. |
+| `npm test` | 295/295, 41 file; kiểm lại trước bàn giao lúc 11:32 ngày 25/10, `tests-handoff.log`. |
+| `npm run check` | 0 errors, 0 warnings, 3 hints deprecated đã có: FormEvent (2 vị trí), document.execCommand; `check-handoff.log`. |
+| `npm run build` | 108 trang; `build-handoff.log`. |
+| `npm run check:dist` | 108 trang, 1.742 link; không lộ đáp án; `dist-handoff.log`. |
 | API build / typecheck | Đạt; build giữ đủ 54 bài tập. |
 | `check:exercises` | 54/54 đáp án đạt qua runner luôn hoàn tác; `exercises.log`. |
 | `check:data` | Không bảng nào lệch, cả sau runner và sau kiểm UI; `data-check.log`, `check-data-after-ui.log`. |
@@ -86,7 +97,7 @@ Verifier SQL ban đầu bị lỗi parser khi Result có thuộc tính mark; đ�
 ## Giới hạn và quyết định triển khai
 
 - Chưa kiểm cài đặt/kết nối bằng ứng dụng SSMS thực tế trên máy mới. Hướng dẫn đã đối chiếu Microsoft; browser chỉ kiểm hình mô phỏng. Chưa đo thời gian học thật với nhóm học viên.
-- API local và server QA đã dừng sau kiểm để đóng kết nối; preview bản production local cổng 4322 được giữ cho review. Không deploy/push.
+- API local và server QA đã dừng sau kiểm để đóng kết nối. Preview được khởi động lại ẩn, chỉ nghe loopback cổng 4322, sau lượt tiếp tục ngày 25/10; [mở bản local](http://127.0.0.1:4322/microsoft-sql-lession/gioi-thieu/) trả HTTP 200 và đã mở trong app. Không deploy/push.
 - Giữ checkout sạch ban đầu trên nhánh riêng theo lựa chọn người dùng, không tạo worktree khác. Nếu cần cách ly thư mục sau này thì có thể tạo worktree từ commit của nhánh, không phải chỉnh lại nội dung.
 - Dùng ledger/PowerShell tương đương vì bash không có trên PATH; các kiểm bắt buộc vẫn chạy bằng lệnh thực tế. Nếu môi trường khác cần script bash của skill thì log hiện tại vẫn giữ đủ kết quả để đối chiếu.
 - Yêu cầu mỗi bài một reviewer mới, giữ model và xử lý cả nhận xét nhỏ của người dùng/AGENTS thay mặc định một reviewer cuối và bỏ qua minor của skill. Chi phí là nhiều lượt review, không đổi tiêu chí kiến thức hay dữ liệu.

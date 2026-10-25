@@ -43,9 +43,9 @@
 
 - [x] Hoàn thiện ma trận từng nhận xét với quyết định, dẫn chứng, Đã sửa/Không làm theo.
 - [x] npm test, check, build, check:dist; API build, typecheck, check:exercises, check:data.
-- [ ] Browser 1280/1440, highlight/whitespace/drawer/selfcheck và editor (fresh/saved/storageblocked/Tab/undo/paste/F5/auth).
-- [ ] Review tích hợp, xử lý nhận xét, chạy lại kiểm bị ảnh hưởng.
-- [ ] Ghi đúng kết quả/giới hạn; commit local và bàn giao link review, ảnh, đường dẫn bản local; không push.
+- [x] Browser 1280/1440, highlight/whitespace/drawer/selfcheck và editor (fresh/saved/storageblocked/Tab/undo/paste/F5/auth).
+- [x] Review tích hợp, xử lý nhận xét, chạy lại kiểm bị ảnh hưởng.
+- [x] Ghi đúng kết quả/giới hạn; commit local và bàn giao link review, ảnh, đường dẫn bản local; không push.
 
 ## Evidence và tiến độ
 
@@ -61,3 +61,6 @@
 - Vòng cuối tác giả: 295/295 test; build108/check:dist1742 PASS; Astro check161 file, 0 errors/0 warnings/3 hints deprecated đã có. 79 SELECT xác nhận SQL/Result/RunFlow, gồm UPPER(NULL)/LOWER(NULL); check:data sau UI vẫn không bảng nào lệch.
 - UI đã đo 22 bài ở đúng1280×900 và1440×900; kiểm hình/quan hệ/tự kiểm/drawer, editor fresh/saved/empty/comment/Tab/undo/copy-paste/F5/mã sai và mã local. Storage bị từ chối thật trong iframe sandbox vẫn gõ được, reload không lưu đúng giới hạn. Đang chốt spot-check bản cuối và review tích hợp.
 - Premium audit strict còn1 finding resize do scanner không đọc CSS class; browser xác nhận resize:none/tab-size:4. Không báo audit PASS. Bản build QA tạm được giữ ngoài workspace sau khi lệnh xóa bị policy từ chối; chưa push/merge.
+- Review tích hợp `df7e810..5e988b1`: Ready, không findings. Reviewer tự chạy 295/295, check0errors/0warnings/3hints, check:dist108/1742; giữ audit strict exit1 với giới hạn scanner. Tác giả đã đọc toàn report và kết luận đủ sáu mục Declined to judge trong README. Chỉ dẫn riêng về2.6 được giữ theo plan đã duyệt, không thiếu tiền đề ba đề. Agent được tiếp tục đúng lượt sau khi bị quota ngắt ở bước kết.
+- Spot-check build cuối xác nhận alias2.8 và câu ôn sắp xếp3.2; drawer1280 copy giữ tab thật sau khi nút báo Đã chép. Lần đọc clipboard quá sớm trả chuỗi cũ không được coi là lỗi sản phẩm; kiểm lại theo xác nhận UI đã đạt.
+- Bàn giao25/10 lúc11:33: kiểm lại295/295,check0errors0warnings3hints,build108,check:dist1742; preview loopback4322 trảHTTP200 và mở trong app. Commit nội dung5e988b1, commit hồ sơ bàn giao ghi sau. Giữ nhánh local, không push/merge; working tree được kiểm sạch sau commit.
