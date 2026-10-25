@@ -8,9 +8,9 @@ kind: full
 minutes: 20
 prerequisites:
   - "1.1"
-goal: bạn phân biệt được SQL Server, database và SSMS, kết nối đúng database và xem được danh mục phòng ban
+goal: bạn phân biệt được SQL Server, database và SSMS, chọn nơi thực hành; nếu dùng SSMS thì kết nối đúng database và xem được danh mục phòng ban
 excel: Mở file so với kết nối máy chủ
-summary: Từ tên máy chủ và tài khoản được cấp, kết nối bằng SSMS, tìm bảng PhongBan và xem danh mục phòng ban cho chị Hạnh.
+summary: Chọn thực hành trên web hoặc SQL Server riêng; với SSMS, dùng thông tin kết nối để tìm bảng PhongBan và xem danh mục phòng ban.
 noExercises: true
 ---
 
@@ -34,7 +34,7 @@ Với Excel, bạn mở một **workbook** rồi chọn **sheet** cần xem. Wor
 
 Nhắc lại bài 1.1: **database** là tập dữ liệu có cấu trúc; **SQL Server** là phần mềm quản lý database. **SSMS** (SQL Server Management Studio) là công cụ cài trên máy bạn để kết nối, tìm bảng, gửi câu lệnh và xem kết quả. Đóng SSMS không làm mất dữ liệu trên máy chủ.
 
-Khóa học dùng **Azure SQL Database**, dịch vụ database trên Azure của Microsoft, cùng họ với SQL Server và dùng T-SQL. Database đã có sẵn, nên bạn không cần tự cài SQL Server. **HRM_Demo** là tên bộ dữ liệu nhân sự giả lập gồm bảy bảng; trên máy chủ khóa học, nó nằm trong database `free-sql-db-8797714`.
+Khóa học dùng **Azure SQL Database**, dịch vụ Microsoft quản lý trên nền bộ máy dữ liệu SQL Server. Những câu truy vấn T-SQL trong khóa học cũng dùng được với SQL Server; phần cài đặt và quản trị hai môi trường có khác nhau. Database chung đã có sẵn, nên dùng nguồn này thì không cần tự cài SQL Server. **HRM_Demo** là tên bộ dữ liệu nhân sự giả lập gồm bảy bảng; trên máy chủ khóa học, nó nằm trong database `free-sql-db-8797714`.
 
 Đường đi tới bảng phòng ban là **máy chủ → database → bảng**:
 
@@ -44,35 +44,42 @@ Khóa học dùng **Azure SQL Database**, dịch vụ database trên Azure của
 
 Để đi được đường đó, bạn cần bốn thông tin: **tên máy chủ**, **cách đăng nhập**, **tài khoản và mật khẩu**, **tên database**. Khóa học dùng **SQL Server Authentication**, tức tên đăng nhập và mật khẩu riêng được cấp; không lấy tài khoản Windows điền thay.
 
-### Chuẩn bị công cụ và nơi thực hành
+### Chọn nơi thực hành trước khi kết nối
 
-SSMS chỉ chạy trên Windows. Cài theo [hướng dẫn của Microsoft](https://learn.microsoft.com/en-us/ssms/install/install), hoặc nhờ IT cài trên máy công ty. Chuẩn bị tài khoản được cấp và mạng cho phép kết nối ra cổng `1433`. Thời lượng bài không tính thời gian cài phần mềm.
+**Thực hành trên web:** từ bài 1.6, bấm **Làm bài** để viết SQL trên trình duyệt, không cần Windows hay SSMS. **Mã truy cập** nhận từ người phụ trách hoặc người đã gửi bạn khóa học, khác tài khoản SSMS. Chưa có mã thì dùng bản riêng theo hướng dẫn dưới đây; bản riêng không có chấm tự động.
 
-**Thực hành trên web:** không có máy Windows thì bạn vẫn đọc được bài. Từ bài 1.6, bài đã có bài tập sẽ có nút **Làm bài**, mở khung viết SQL ngay trên trình duyệt. Trang dùng cùng database khóa học; **mã truy cập** do người phụ trách cấp, khác tài khoản SSMS, và được trình duyệt nhớ lại.
+Nếu chỉ dùng web, ở bài 1.2 bạn cần phân biệt công cụ, hiểu đường **máy chủ → database → bảng** và chọn nơi thực hành. Bạn đọc các hình kết nối để nhận biết, chưa cần tự kết nối SSMS; việc viết và chạy SQL trên web bắt đầu từ bài 1.6.
 
-Trên trang bài tập, **Chạy (F5)** hiện kết quả; **Nộp bài** còn đối chiếu với yêu cầu. Trang nhận mỗi lần một câu lệnh, giới hạn thời gian thực thi câu lệnh ở 10 giây; bước kết nối lần đầu có thể chờ lâu hơn để database thức dậy. Nút **Sơ đồ database** giúp tra bảng và cột.
+Trên trang bài tập, **Chạy (F5)** hiện kết quả; **Nộp bài** còn đối chiếu yêu cầu. Trang nhận mỗi lần một câu lệnh, luôn **hoàn tác** thay đổi sau khi chạy. Cơ chế này chỉ có trên trang bài tập; trong SSMS, mặc định câu sửa thành công là ghi hẳn ngay, không có Ctrl+Z. Trên database dùng chung, ở Level 1 chỉ chạy các câu đọc có trong bài; cách hoàn tác học ở bài 5.4.
 
-Mỗi lần chạy trên trang nằm trong một **giao dịch (transaction)**, luôn **hoàn tác (rollback)** sau đó; trang chặn các câu có thể thoát giao dịch như `COMMIT`. Cơ chế này chỉ có trên trang bài tập. Trong SSMS, câu lệnh chạy thật, nên trên database khóa học dùng chung, ở Level 1 bạn chỉ chạy các câu chỉ đọc có trong bài. Giao dịch học ở bài 5.4.
+**Thực hành bằng SSMS:** công cụ này chỉ chạy trên Windows. Cài theo [hướng dẫn Microsoft](https://learn.microsoft.com/en-us/ssms/install/install), hoặc nhờ IT cài. Với nguồn dùng chung, nếu mạng chặn kết nối, gửi IT: “Máy em có được kết nối tới `sql-lession.database.windows.net` qua cổng `1433` không?”; cổng là đường kết nối mạng cần được cho phép. Thời lượng bài không tính thời gian cài phần mềm.
 
-**Bản riêng trên máy — tùy chọn:** bỏ qua đoạn này nếu dùng database khóa học. Muốn có dữ liệu riêng để thử:
+Khi dùng SSMS, chọn thông tin theo nơi đặt dữ liệu; đừng lấy tên database của môi trường này điền cho môi trường kia:
 
-1. Cài [SQL Server Express hoặc Developer](https://www.microsoft.com/en-us/sql-server/sql-server-downloads) và SSMS. Hai bản đều miễn phí; Developer chỉ dành cho học, phát triển và thử nghiệm, không dùng cho hệ thống chạy thật.
-2. Kết nối tới `localhost` nếu lúc cài chọn **Default instance** (bản SQL Server không đặt tên riêng), hoặc `localhost\SQLEXPRESS` nếu Express giữ tên mặc định; chọn **Windows Authentication**. Trên máy riêng, nếu dùng chứng chỉ tự ký thì chọn **Encrypt: Mandatory** và **Trust Server Certificate**; không áp dụng cách bỏ kiểm chứng chỉ này cho máy chủ khóa học.
+| Nơi thực hành | Server Name | Database | Authentication |
+|---|---|---|---|
+| Nguồn khóa học dùng chung | `sql-lession.database.windows.net` | `free-sql-db-8797714` | SQL Server Authentication; tài khoản được cấp |
+| Bản SQL Server riêng | `localhost` hoặc `localhost\SQLEXPRESS` theo lúc cài | `HRM_Demo`, do bạn tạo | Windows Authentication |
+
+**Bản riêng trên máy — tùy chọn:** bỏ qua nếu đã dùng web hoặc có tài khoản database khóa học. Muốn có dữ liệu riêng để thử:
+
+1. Cài [SQL Server Express hoặc Developer](https://www.microsoft.com/en-us/sql-server/sql-server-downloads) phiên bản 2019 trở lên và SSMS. Hai bản đều miễn phí; Developer chỉ dành cho học, phát triển và thử nghiệm, không dùng cho hệ thống chạy thật.
+2. Kết nối tới `localhost` nếu chọn **Default instance** (bản SQL Server không đặt tên riêng), hoặc `localhost\SQLEXPRESS` nếu Express giữ tên mặc định; chọn **Windows Authentication**. Trên máy riêng, nếu dùng chứng chỉ tự ký thì chọn **Encrypt: Mandatory** và **Trust Server Certificate**; không dùng cách bỏ kiểm chứng chỉ này cho máy chủ khóa học.
 3. Trong **Object Explorer**, khung cây bên trái SSMS, bấm chuột phải **Databases → New Database…**, tạo database `HRM_Demo`.
-4. Tải [HRM_Demo.sql](/microsoft-sql-lession/HRM_Demo.sql) ở [trang Giới thiệu](/microsoft-sql-lession/gioi-thieu/), mở bằng SSMS, chọn database riêng vừa tạo rồi bấm **Execute**. Kết quả báo `HRM_Demo đã sẵn sàng`; bấm chuột phải **Tables → Refresh** để thấy bảy bảng.
+4. Tải [HRM_Demo.sql](/microsoft-sql-lession/HRM_Demo.sql), mở bằng SSMS, chọn database riêng vừa tạo rồi bấm **Execute**. Kết quả báo `HRM_Demo đã sẵn sàng`; bấm chuột phải **Tables → Refresh** để thấy bảy bảng.
 
 Script chỉ dùng trên database riêng: nó **xóa và tạo lại bảy bảng mẫu**, làm mất thay đổi bạn đã thực hiện trên các bảng đó. Nếu gặp bảng trùng tên không do script tạo hoặc bảng khác trỏ vào bảng mẫu, script dừng lại. Không chạy script trên database khóa học dùng chung.
 
 ### Kết nối và tìm bảng phòng ban
 
-Phần còn lại dùng database khóa học. Mở SSMS; nếu hộp **Connect to Server** chưa hiện, chọn **Connect → Database Engine** trong Object Explorer bên trái. Với hộp kết nối kiểu mới, điền:
+Hướng dẫn dưới dùng thông tin của database khóa học; nếu đã tạo bản riêng, thay thông tin kết nối bằng dòng tương ứng trong bảng trên. Mở SSMS; nếu hộp **Connect to Server** chưa hiện, chọn **Connect → Database Engine** trong Object Explorer bên trái. Các ô dưới minh họa nguồn dùng chung; bản riêng giữ thiết lập đăng nhập và chứng chỉ ở bước cài đặt trên. Với hộp kết nối kiểu mới, điền:
 
 - **Server Name**: `sql-lession.database.windows.net`.
 - **Authentication**: SQL Server Authentication.
 - **User Name** và **Password**: tài khoản và mật khẩu được cấp.
 - **Database Name**: `free-sql-db-8797714`.
 - **Encrypt**: chọn **Strict** (tên đầy đủ có thể kèm SQL Server 2022 và Azure SQL).
-- **Trust Server Certificate**: để trống, để kết nối kiểm chứng chỉ máy chủ.
+- **Trust Server Certificate**: không bật; với Strict, ô này có thể bị vô hiệu hóa vì kết nối kiểm chứng chỉ máy chủ.
 
 <Ssms view="connect" caption="Hộp kết nối kiểu mới. Ô Database Name có viền xanh: phải chỉ rõ database khóa học." />
 
@@ -88,7 +95,9 @@ Trong **Object Explorer**, mở **Databases → `free-sql-db-8797714` → Tables
 
 ### Câu lệnh cho tình huống
 
-Bấm **New Query**. Ô chọn database bên cạnh nút **Execute** phải là `free-sql-db-8797714`; kết nối đúng máy chủ nhưng chọn nhầm database vẫn không tìm thấy bảng cần xem.
+Nếu chỉ dùng web, bạn đọc câu và kết quả để hiểu việc công cụ thực hiện; tự chạy ở phần thực hành từ bài 1.6. Nếu dùng SSMS, làm tiếp:
+
+Bấm **New Query**. Ô chọn database bên cạnh nút **Execute** phải là `free-sql-db-8797714` (bản riêng là `HRM_Demo`); kết nối đúng máy chủ nhưng chọn nhầm database vẫn không tìm thấy bảng cần xem.
 
 <Ssms view="toolbar" caption="Kiểm ô chọn database có viền xanh trước khi chạy câu lệnh." />
 
@@ -142,6 +151,8 @@ Học xong, bấm chuột phải máy chủ trong Object Explorer → **Disconne
 
 **Tự kiểm tra trước khi bấm "Đã học xong":**
 
+Nếu dùng SSMS, hãy kết nối và xem được danh mục `PhongBan` trước khi đánh dấu. Nếu chỉ dùng web, trả lời các câu dưới và chọn được nơi thực hành là đủ ở bài này.
+
 <details>
 <summary>SQL Server, database và SSMS giữ vai trò gì?</summary>
 
@@ -150,9 +161,9 @@ Database là tập dữ liệu có cấu trúc; SQL Server là phần mềm qu�
 </details>
 
 <details>
-<summary>Cần đủ những thông tin nào để kết nối database khóa học?</summary>
+<summary>Hai lối thực hành cần chuẩn bị gì?</summary>
 
-Tên máy chủ, cách đăng nhập, tài khoản và mật khẩu, tên database. Khóa học dùng SQL Server Authentication và database `free-sql-db-8797714`.
+Web cần mã truy cập từ người phụ trách, bắt đầu viết SQL ở bài 1.6. SSMS cần Windows, tên máy chủ, cách đăng nhập, tài khoản và mật khẩu nếu dùng SQL Server Authentication, cùng tên database. Chưa có mã thì tạo bản riêng `HRM_Demo`; bản riêng không có chấm tự động.
 
 </details>
 

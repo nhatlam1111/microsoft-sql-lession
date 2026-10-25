@@ -22,7 +22,7 @@ Tháng 10/2026, chị Hạnh gửi bạn một vướng mắc khi nhập file nh
 File danh sách nhân viên chị gửi bên IT để đưa vào hệ thống, cột ngày vào làm có người gõ 01/02/2024, có người gõ 2024.02.01, có ô ghi "chưa rõ"; cột lương có ô ghi 9.610.000, có ô ghi "9,61 triệu". Bên IT bảo database sẽ không nhận hết đâu. Em xem giúp chị là sao nhé.
 </Chat>
 
-Giả định của tình huống: IT lấy đúng chữ đang hiển thị trong từng ô, ghi ngày vào cột `NhanVien.NgayVaoLam`, lương vào `HopDong.LuongCoBan`; các thông tin bắt buộc khác đã có. Kết quả dưới đây dùng thiết lập phiên mặc định của tài khoản khóa học, chỉ xét hai cột này.
+Giả định của tình huống: IT lấy đúng chữ đang hiển thị trong từng ô, ghi ngày vào cột `NhanVien.NgayVaoLam`, lương vào `HopDong.LuongCoBan`; các thông tin bắt buộc khác đã có. Kết quả dưới đây dùng thiết lập mặc định của **phiên SQL** (lần kết nối đang làm việc) bằng tài khoản khóa học, chỉ xét hai cột này.
 
 <Key>Vì sao có giá trị bị từ chối, còn giá trị khác lưu được nhưng có thể khác ý người nhập?</Key>
 
@@ -57,9 +57,9 @@ Các kiểu dưới đây đều có trong bảy bảng của HRM_Demo. Bạn c�
 
 | Kiểu dữ liệu | Cột và giá trị trong bộ mẫu | Ý nghĩa cần nhớ |
 |---|---|---|
-| `varchar(n)` | `NhanVien.MaNV`: `NV001`, kiểu `varchar(10)` | Chuỗi tối đa `n` byte; với mã chỉ có chữ không dấu và số, mỗi ký tự chiếm một byte |
+| `varchar(n)` | `NhanVien.MaNV`: `NV001`, kiểu `varchar(10)` | Chuỗi tối đa `n` byte (đơn vị lưu trữ); với mã chỉ có chữ không dấu và số, mỗi ký tự chiếm một byte |
 | `nvarchar(n)` | `NhanVien.HoTen`: `Trần Thị Mai`, kiểu `nvarchar(100)` | Chuỗi Unicode giữ dấu tiếng Việt; `nvarchar(100)` chứa tối đa `100` ký tự tiếng Việt thông thường, chi tiết độ dài ở bài 2.7 |
-| `char(n)` | `BangLuong.KyLuong`: `2026-09`, kiểu `char(7)` | Chuỗi có độ dài cố định; chuỗi ngắn hơn được đệm khoảng trắng, không tự kiểm đúng dạng kỳ lương |
+| `char(n)` | `BangLuong.KyLuong`: `2026-09`, kiểu `char(7)` | Chuỗi có độ dài cố định; chuỗi ngắn hơn được thêm dấu cách ở cuối cho đủ độ dài, không tự kiểm đúng dạng kỳ lương |
 | `date` | `NhanVien.NgayVaoLam`: `2024-03-01` | Lưu ngày có thật, không kèm giờ; dạng hiển thị do công cụ quyết định |
 | `time(0)` | `ChamCong.GioVao`: `08:00:00` | Lưu giờ, phút, giây; không có phần lẻ của giây |
 | `decimal(p,s)` | `HopDong.LuongCoBan`: `60000000`, kiểu `decimal(18,0)`; `DonNghiPhep.SoNgay`: `2.0`, kiểu `decimal(4,1)` | Có tối đa `p` chữ số, trong đó `s` chữ số sau dấu thập phân |
@@ -72,7 +72,7 @@ Ngược lại, `SoCCCD` dùng `varchar(12)` dù chỉ gồm chữ số: mã đ�
 
 Khi chuyển kiểu, có ba khả năng: **giữ đúng giá trị mong muốn**, **đổi khác ý người nhập** hoặc **bị từ chối**. Chẳng hạn, chữ `9610000` đổi sang số vẫn giữ nguyên số tiền, còn một chuỗi ngày có thể bị hiểu khác đi.
 
-Phiên mặc định của tài khoản khóa học dùng ngôn ngữ `us_english`, **`DATEFORMAT`** là `mdy` (tháng/ngày/năm); chuỗi `01/02/2024` vì vậy được đọc thành ngày 2 tháng 1. Với giả định lấy chữ hiển thị ở đầu bài, từng ô được xử lý như sau:
+**`DATEFORMAT`** là thiết lập của phiên SQL quyết định cách đọc thứ tự ngày, tháng, năm trong chuỗi. Tác giả đã kiểm kết quả dưới đây với phiên tài khoản khóa học dùng `us_english` và `mdy` (tháng/ngày/năm): chữ `01/02/2024` thành ngày 2 tháng 1. Phiên khác có thể đọc khác; vì vậy phải xác nhận ý người nhập trước khi chuẩn hóa, không suy từ việc lưu thành công.
 
 | Ô trong file | Database làm gì | Cần làm gì trước khi nhập |
 |---|---|---|
@@ -98,7 +98,7 @@ Cần thống nhất cách báo dòng lỗi với IT; công cụ nhập có th�
 <Mistakes>
 
 1. **Nghĩ cột số giữ nguyên mọi chữ số.** `9610000.6` vào `decimal(18,0)` thành `9610001`; `21.25` vào `decimal(4,1)` thành `21.3`. Phần lẻ bị làm tròn mà không báo lỗi, còn `1000.0` vượt ba chữ số phần nguyên của `decimal(4,1)` thì bị từ chối vì tràn số.
-2. **Hiểu `NOT NULL` là đã nhập đầy đủ.** Chuỗi rỗng (không có ký tự nào) hoặc chuỗi toàn dấu cách vẫn có thể vào cột chữ `NOT NULL` nếu không có luật khác. Chuỗi rỗng đưa vào cột `date` còn có thể thành `1900-01-01`, không báo lỗi. Ô trống trong file thành `NULL` hay chuỗi rỗng tùy cách import; cần thống nhất trước với IT.
+2. **Hiểu `NOT NULL` là đã nhập đầy đủ.** Chuỗi rỗng (không có ký tự nào) hoặc chuỗi toàn dấu cách vẫn có thể vào cột chữ `NOT NULL` nếu không có luật khác. Ô trống trong file thành `NULL` hay chuỗi rỗng tùy cách import; cần thống nhất trước với IT.
 3. **Có cột Unicode rồi thì chuỗi nào cũng giữ dấu.** Khi viết SQL trên database khóa học, dùng `N'Trần Thị Mai'`: chữ `N` đánh dấu chuỗi Unicode. Bỏ `N` có thể làm mất dấu ngay ở chuỗi đầu vào, trước khi lưu vào cột `nvarchar`; chi tiết ở bài 2.7.
 
 </Mistakes>
@@ -139,9 +139,9 @@ Không. Nó chỉ đổi cách hiển thị. Giá trị này cũng không chuy�
 </details>
 
 <details>
-<summary>Cả <code>01/02/2024</code> và <code>chưa rõ</code> đều bị từ chối khi ghi vào cột ngày?</summary>
+<summary>Theo giả định của bài, <code>C2</code>, <code>C4</code> và <code>D4</code> thuộc ba khả năng chuyển kiểu nào?</summary>
 
-Không. Với giả định trong bài, `01/02/2024` thành `2024-01-02` mà không báo lỗi; chỉ `chưa rõ` bị từ chối. Ngày đổi được vẫn cần xác nhận đúng ý người nhập.
+`C2` đổi thành `2024-01-02`, có thể khác ý người nhập nên phải xác nhận; `C4` là `chưa rõ`, bị từ chối vì không đổi được thành ngày; `D4` giữ giá trị số tiền `9610000`. Lưu thành công vẫn cần đúng số tiền và đơn vị.
 
 </details>
 

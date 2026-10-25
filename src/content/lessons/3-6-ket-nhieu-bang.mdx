@@ -31,16 +31,21 @@ Quy tắc báo cáo: hợp đồng **ứng viên tại mốc** thỏa `NgayBatDa
 
 **Độ chi tiết của dòng** là ý nghĩa của một dòng: `NhanVien` có một dòng mỗi `MaNV`; `HopDong` có một dòng mỗi `MaHD`; `BangLuong` có một dòng mỗi cặp `KyLuong`, `MaNV`. Chỉ cùng `MaNV` chưa làm ba bảng có cùng độ chi tiết. Mỗi `JOIN` cần `ON` riêng để nói cặp dòng nào được kết.
 
-Trong Excel, bạn có thể lấy tên từ sheet nhân viên và dò hợp đồng từ một sheet đã lọc theo mốc ngày. Hình minh họa một dòng lương của `NV021`; `B2` đánh dấu hợp đồng ứng viên `HD2024-005`. Sheet `HopDongMoc` chứa `MaNV`, `MaHD` ở hai cột đầu và đã kiểm mỗi mã chỉ còn một ứng viên trước khi dùng VLOOKUP.
+Trong Excel, bạn có thể lấy tên từ sheet nhân viên và dò hợp đồng từ một sheet đã lọc theo mốc ngày. Hình minh họa một dòng lương của `NV021`; `B2` đánh dấu hợp đồng ứng viên `HD2024-005`. Để tạo sheet `HopDongMoc`, lọc hợp đồng theo hai điều kiện ngày đầu bài, rồi dùng PivotTable đếm theo `MaNV` như bài 3.2 để kiểm mỗi mã chỉ còn một ứng viên. Đặt `MaNV`, `MaHD` ở hai cột đầu trước khi dò; có mã nhiều ứng viên thì chưa chọn VLOOKUP lấy một dòng.
 
 <Excel sheets="Luong_2026_09 · HopDongMoc" cell="B2" formula="=VLOOKUP(A2,HopDongMoc!A:B,2,FALSE)" selected="B2" mark={['B2','C2']} rows={[
   ['MaNV','MaHD','ThucLinh'],
   ['NV021','HD2024-005',16457000],
 ]} />
 
-Ô `C2` là `16457000`, lấy từ dòng lương kỳ `2026-09`, không tính từ công thức dò hợp đồng. Trong SQL, bảng trung tâm kết hai phía qua `NhanVien.MaNV`: hợp đồng trỏ tới hồ sơ, dòng lương cũng trỏ tới hồ sơ. Sơ đồ đánh dấu hai quan hệ đó; `BangLuong` không lưu `MaHD` để trỏ trực tiếp tới một hợp đồng.
+Ô `C2` là `16457000`, lấy từ dòng lương kỳ `2026-09`, không tính từ công thức dò hợp đồng. Trong SQL, bảng trung tâm kết hai phía qua `NhanVien.MaNV`: hợp đồng trỏ tới hồ sơ, dòng lương cũng trỏ tới hồ sơ. Bảng dưới chỉ hai cặp cột; `BangLuong` không lưu `MaHD` để trỏ trực tiếp tới một hợp đồng.
 
-<Erd path={['HopDong','NhanVien','BangLuong']} caption="Hai quan hệ cùng qua MaNV; khóa của bảng lương còn có KyLuong." />
+| Cột ở bảng cần kết | Cột hồ sơ được tham chiếu | Điều kiện phạm vi còn phải chốt |
+|---|---|---|
+| `HopDong.MaNV` | `NhanVien.MaNV` | Ngày bắt đầu/kết thúc của hợp đồng |
+| `BangLuong.MaNV` | `NhanVien.MaNV` | `KyLuong` của dòng lương |
+
+Đây là hai quan hệ đã đọc ở [bài 1.5](/microsoft-sql-lession/bai/1-5-doc-so-do-erd/); cùng mã nhân viên chưa thay được điều kiện ngày và kỳ.
 
 ### Một khoản lương có thể bị lặp qua nhiều hợp đồng
 
@@ -83,7 +88,7 @@ WHERE hd.NgayBatDau <= '20260930'
 GROUP BY hd.MaNV
 HAVING COUNT(*) > 1;`} />
 
-Điều kiện ngày không phải ràng buộc duy nhất: hai hợp đồng chồng ngày vẫn có thể cùng đạt. Nếu câu kiểm trả mã, cần thống nhất quy tắc chọn với người phụ trách; không tự lấy hợp đồng đầu tiên hoặc mới nhất. Với bộ mẫu hiện tại, có `45` mã có ứng viên, mỗi mã đúng một hợp đồng; trong đó `43` mã có dòng lương kỳ `2026-09`.
+Điều kiện ngày không bảo đảm mỗi mã chỉ có một ứng viên: hai hợp đồng chồng ngày vẫn có thể cùng đạt. Nếu câu kiểm trả mã, cần thống nhất quy tắc chọn với người phụ trách; không tự lấy hợp đồng đầu tiên hoặc mới nhất.
 
 Kiểm trùng trả `0` chỉ xác nhận **tối đa một** ứng viên mỗi mã, chưa kiểm báo cáo có bỏ dòng lương. Đếm riêng số dòng lương của kỳ để đối chiếu với kết quả cuối:
 
@@ -629,12 +634,6 @@ ORDER BY bl.MaNV ASC, hd.MaHD ASC;`,
   ['Lọc trước khi dò và kiểm mã trùng','Điều kiện ngày/kỳ phải đi cùng kiểm số ứng viên'],
 ]} />
 
-## Bài tập
-
-Các đề đổi đường kết hoặc dùng lịch sử hợp đồng để kiểm dòng lặp. Xác định một dòng cần đại diện cho gì trước khi viết; bộ chấm so kết quả, không kiểm alias hoặc bắt buộc dùng một cú pháp.
-
-<Exercises />
-
 **Tự kiểm tra:**
 
 <details>
@@ -657,3 +656,9 @@ Không. Dữ liệu có thể chồng ngày; cần kiểm số ứng viên theo 
 Là cặp `KyLuong`, `MaNV`. Cùng một người có thể có dòng lương ở nhiều kỳ; báo cáo một kỳ phải giới hạn kỳ đó.
 
 </details>
+
+## Bài tập
+
+Các đề đổi đường kết hoặc dùng lịch sử hợp đồng để kiểm dòng lặp. Xác định một dòng cần đại diện cho gì trước khi viết; bộ chấm so kết quả, không kiểm alias hoặc bắt buộc dùng một cú pháp.
+
+<Exercises />

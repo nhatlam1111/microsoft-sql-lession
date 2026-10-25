@@ -83,13 +83,13 @@ Chuỗi chữ `'NULL'` cũng là văn bản, không phải `NULL`. Cột chữ c
 
 <Sql copy={false} title="Điều kiện đọc riêng, đặt sau WHERE" code={`Email IS NOT NULL`} />
 
-So sánh `Email = NULL` hoặc `Email <> NULL` cho kết quả **`UNKNOWN`** (không xác định), không phải đúng hay sai. `WHERE` chỉ giữ dòng có điều kiện đúng, nên cả hai cách đều không lấy được nhóm bạn định tìm. Muốn giữ cả email khác một địa chỉ cụ thể lẫn email thiếu, kết hợp phép so sánh với `OR Email IS NULL` như cách dùng `OR` ở bài 2.3.
+So sánh `Email = NULL` hoặc `Email <> NULL` cho kết quả **`UNKNOWN`**: không đủ thông tin để kết luận đúng hay sai. `WHERE` chỉ giữ dòng có điều kiện đúng, nên cả hai cách đều không lấy được nhóm bạn định tìm. Muốn giữ cả email khác một địa chỉ cụ thể lẫn email thiếu, kết hợp phép so sánh với `OR Email IS NULL` như cách dùng `OR` ở bài 2.3.
 
 Lọc và hiển thị là hai việc khác nhau. Trong Excel, bạn có thể tạo cột phụ bằng `IF` để ghi nhãn cho ô trống. Trong SQL, **`COALESCE`** nhận các giá trị ứng viên và trả giá trị đầu tiên khác `NULL`, xét từ trái sang phải; nếu tất cả là `NULL` thì kết quả vẫn là `NULL`.
 
 Trong `COALESCE(Email, N'(chưa có)')`, hồ sơ có email giữ email, còn email `NULL` nhận nhãn `(chưa có)`. Chuỗi rỗng hoặc dấu cách không phải `NULL`, nên hàm không thay chúng. Dùng hàm trong `SELECT` chỉ tạo giá trị trả về; nó không cập nhật cột `Email` ở nguồn.
 
-**`ISNULL`** nhận hai giá trị: giá trị cần kiểm và giá trị thay khi nó là `NULL`. Hai hàm khác nhau về kiểu kết quả: khi đầu vào đầu tiên là một cột, `ISNULL` giữ kiểu và độ dài của cột đó; giá trị thay có thể bị cắt hoặc mất ký tự khi chuyển kiểu. Cột `Email` là `varchar(100)`; `COALESCE` ở câu tình huống ưu tiên kiểu `nvarchar` của nhãn `N'…'` khi chuyển kiểu ngầm, nên giữ được nhãn Unicode.
+**`ISNULL`** nhận giá trị cần kiểm và giá trị thay khi gặp `NULL`; nếu đầu vào đầu tiên là một cột, hàm giữ kiểu và độ dài của cột đó, nên nhãn thay có thể bị cắt hoặc mất dấu. Bài này dùng `COALESCE(Email, N'(chưa có)')`: cột `Email` là `varchar(100)`, nhưng nhãn Unicode khiến kết quả dùng `nvarchar` để giữ tiếng Việt. Đây là **chuyển kiểu ngầm** như bài 1.3.
 
 Với phép cộng số, `10 + NULL` cho `NULL`, còn `10 + 0` cho `10`. Câu `SELECT` dưới đây kiểm hai phép tính trực tiếp, không đọc bảng; cột thứ hai dùng `ISNULL` thay phần thiếu bằng số `0` trước khi cộng:
 

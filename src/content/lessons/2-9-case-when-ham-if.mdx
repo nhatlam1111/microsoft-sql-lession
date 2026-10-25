@@ -21,7 +21,7 @@ Chị Hạnh chuẩn bị danh sách nhân sự tháng 10/2026:
 Em lấy giúp chị các hồ sơ đang làm, thêm nhóm thâm niên tính đến ngày 21/10/2026: dưới 1 năm, từ 1 đến dưới 3 năm, từ 3 năm trở lên. Chị cần mã nhân viên, họ tên, ngày vào làm và nhóm; xếp mã tăng dần nhé.
 </Chat>
 
-Coi dữ liệu đang mở là bản chốt ngày `2026-10-21`: chỉ lấy `TrangThai = N'Đang làm'` và `NgayVaoLam` không sau ngày đó. Bảng chỉ giữ trạng thái hiện tại; đổi mốc ngày trong câu lệnh không tự dựng lại danh sách đang làm ở quá khứ, muốn vậy cần bản chốt hoặc lịch sử như bài 6.6.
+Giả định dữ liệu đang mở là **bản chốt**, tức bản được lưu tại ngày `2026-10-21` để đối chiếu về sau: chỉ lấy `TrangThai = N'Đang làm'` và `NgayVaoLam` không sau ngày đó. Bảng chỉ giữ trạng thái hiện tại; đổi mốc ngày trong câu lệnh không tự dựng lại danh sách đang làm ở quá khứ, muốn vậy cần bản chốt hoặc lịch sử như bài 6.6.
 
 <Key>Mỗi hồ sơ trong phạm vi cần một nhãn dựa trên số năm làm việc đã tròn.</Key>
 
@@ -40,7 +40,7 @@ Trong Excel, bạn có thể thêm cột nhóm bằng **IF lồng nhau** hoặc 
 
 Trong SQL Server, **`CASE` là một biểu thức**: một đoạn tính toán trả về một giá trị. Dạng **`CASE WHEN`** thử điều kiện ở từng nhánh `WHEN`, trả giá trị sau `THEN` của nhánh phù hợp và kết thúc bằng `END`. Đặt nó trong `SELECT` tạo một cột kết quả cho mỗi dòng; `AS` đặt tên cột đó.
 
-`CASE` làm công việc chọn giá trị giống IF trong công thức Excel, nhưng không phải lệnh `IF` điều khiển việc chạy cả câu lệnh T-SQL. Nó cũng không thay `WHERE`: tạo nhãn trong `SELECT` không loại hồ sơ và không ghi nhãn vào bảng nguồn.
+`CASE` chọn giá trị giống IF trong công thức Excel. Nó cũng không thay `WHERE`: tạo nhãn trong `SELECT` không loại hồ sơ và không ghi nhãn vào bảng nguồn.
 
 Một ví dụ nhỏ đổi mã chức danh thành nhãn: kiểm `MaCD` bằng `TP`, rồi trả chữ tương ứng.
 

@@ -38,7 +38,7 @@ Một bảng có tối đa một khóa chính, nhưng khóa đó có thể gồm
 
 ### Khóa ngoại giữ mã tham chiếu có thật
 
-Trong file minh họa, cột mã phòng dùng **Data Validation dạng List**, tức dropdown lấy từ sheet danh mục. Dù vậy, dán hoặc kéo điền vẫn có thể đưa chữ `Van hanh` vào ô; hình đánh dấu `C4` để chỉ lỗi này:
+Trong file minh họa, cột mã phòng dùng **Data Validation dạng List**, tức danh sách chọn lấy từ sheet danh mục. Dù vậy, dán hoặc kéo điền vẫn có thể đưa chữ `Van hanh` vào ô; hình đánh dấu `C4` để chỉ lỗi này:
 
 <Excel sheets="NhanVien · DanhMucPB" cell="C4" formula="Van hanh" selected="C4" mark={['C4']} rows={[
   ['Mã NV', 'Họ tên', 'Mã PB'],
@@ -59,7 +59,7 @@ Trong Object Explorer → **Tables → `dbo.NhanVien` → Columns**, nhãn **`PK
 
 ### Đọc lỗi xóa phòng và các hồ sơ đang trỏ tới
 
-Câu dưới minh họa thao tác IT đã thử, **chỉ để đọc, không chạy trong SSMS trên database khóa học**. Một câu ghi được chỉnh cho hợp lệ sẽ thay đổi dữ liệu dùng chung; SSMS không tự hoàn tác như trang bài tập.
+Đây là **câu xóa IT đã thử**: yêu cầu xóa phòng `VH` khỏi danh mục. Câu này **chỉ để đọc, không chạy trong SSMS trên database khóa học**. Một câu ghi được chỉnh cho hợp lệ sẽ thay đổi dữ liệu dùng chung; SSMS không tự hoàn tác như trang bài tập.
 
 <Sql copy={false} code={`DELETE FROM PhongBan WHERE MaPB = 'VH';`} />
 

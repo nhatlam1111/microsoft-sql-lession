@@ -30,7 +30,7 @@ Giả định: lấy các dòng lương kỳ `2026-09`, kèm **phòng ban đang 
 
 ### Hai lần dò Excel cho thấy hai bước liên kết
 
-Trong Excel, bạn dò mã nhân viên sang sheet nhân viên để lấy mã phòng, rồi dò mã phòng sang danh mục để lấy tên. Với `NV001`, lần đầu được `KT`, lần sau được `Kế toán`. Ô `D2` được tô vì nó là kết quả lần dò đầu và đầu vào của công thức tại `E2`:
+Trong Excel, **VLOOKUP dò chính xác** tìm mã ở cột đầu của một vùng rồi trả giá trị ở cột bạn chọn trên dòng khớp đầu tiên. Bạn dò mã nhân viên sang sheet nhân viên để lấy mã phòng, rồi dò mã phòng sang danh mục để lấy tên. Với `NV001`, lần đầu được `KT`, lần sau được `Kế toán`. Hình dưới minh họa ba dòng lương kỳ `2026-09` sau hai lần dò; ô `D2` được tô vì là đầu vào của công thức tại `E2`:
 
 <Excel sheets="BangLuong · NhanVien · PhongBan" cell="E2" formula="=VLOOKUP(D2,PhongBan!A:B,2,FALSE)" selected="E2" mark={['D2']} rows={[
   ['Mã NV', 'Kỳ lương', 'Thực lĩnh', 'Mã PB (dò lần 1)', 'Tên phòng (dò lần 2)'],
@@ -39,7 +39,7 @@ Trong Excel, bạn dò mã nhân viên sang sheet nhân viên để lấy mã ph
   ['NV003', '2026-09', 14088000, 'KD', 'Kinh doanh'],
 ]} />
 
-Trong database cũng có hai bước như vậy: `BangLuong` lưu tiền lương từng kỳ, `NhanVien` lưu mã phòng, `PhongBan` lưu tên phòng. Tách bảng giúp quản lý từng loại thông tin; đổi lại, muốn trả lời câu hỏi này bạn phải biết chúng liên quan qua cột nào.
+Trong công thức trên, `D2` là mã cần tìm; `PhongBan!A:B` là vùng gồm cột mã và tên; `2` lấy cột tên, `FALSE` yêu cầu dò chính xác. Trong database cũng có hai bước như vậy: `BangLuong` lưu tiền lương từng kỳ, `NhanVien` lưu mã phòng, `PhongBan` lưu tên phòng. Tách bảng giúp quản lý từng loại thông tin; đổi lại, muốn trả lời câu hỏi này bạn phải biết chúng liên quan qua cột nào.
 
 **ERD** (Entity–Relationship Diagram) là **sơ đồ thực thể–quan hệ**; thực thể là loại đối tượng cần lưu, như nhân viên hoặc phòng ban. Sơ đồ trong bài vẽ ở mức database: mỗi hộp là một **bảng**, trong hộp có các **cột**, còn đường nối thể hiện **khóa ngoại** đã khai báo. Nó là bản đồ để tìm dữ liệu trước khi viết câu lệnh.
 
@@ -48,6 +48,11 @@ Trong database cũng có hai bước như vậy: `BangLuong` lưu tiền lương
 Phần tô xanh dưới đây là đường cần đi cho yêu cầu của chị Hạnh. Sơ đồ rộng nên có thể cuộn ngang để xem hết:
 
 <Erd path={['BangLuong', 'NhanVien', 'PhongBan']} caption="Tô xanh: BangLuong → NhanVien → PhongBan, qua MaNV rồi MaPB. 1 là phía một, ∞ là phía nhiều." />
+
+| Đường liên kết cần đọc | Cặp cột | Thông tin tìm được |
+|---|---|---|
+| Lương → hồ sơ | `BangLuong.MaNV` → `NhanVien.MaNV` | Mã phòng `MaPB` của hồ sơ |
+| Hồ sơ → phòng ban | `NhanVien.MaPB` → `PhongBan.MaPB` | Tên phòng `TenPB` |
 
 Trong hình, **`PK`** là khóa chính, **`FK`** là khóa ngoại như ở bài 1.4. Đầu có chấm tròn nằm ở cột khóa ngoại, đầu kia tới cột khóa chính được tham chiếu; riêng `MaQuanLy` là đường vòng về chính bảng `NhanVien`.
 
@@ -64,12 +69,6 @@ Sơ đồ này không ghi cột nào nhận `NULL`; xem **Object Explorer → Co
 
 ### Đi từ dòng lương tới tên phòng
 
-Áp dụng vào câu hỏi của chị Hạnh, đọc đường tô xanh theo thứ tự:
-
-1. Bắt đầu ở `BangLuong`, nơi có `MaNV`, `KyLuong` và `ThucLinh`.
-2. Đi qua cặp **`BangLuong.MaNV` → `NhanVien.MaNV`** để tìm hồ sơ nhân viên. Với `NV001`, hồ sơ giữ `MaPB` là `KT`.
-3. Đi tiếp qua cặp **`NhanVien.MaPB` → `PhongBan.MaPB`** để lấy `TenPB`: mã `KT` có tên `Kế toán`.
-
 Bạn có thể trả lời chị Hạnh: lấy tên phòng qua **`BangLuong` → `NhanVien` → `PhongBan`**, đúng hai lần dò trong Excel. Mỗi dòng lương khớp một hồ sơ và một phòng trong bộ mẫu, vì cả hai bước đều đi về phía khóa chính và các mã bắt buộc đã có khóa ngoại.
 
 Đường liên kết không tự chọn kỳ lương; khi lấy dữ liệu còn phải chỉ rõ `KyLuong` là `2026-09`. Nếu Kế toán cần phòng tại kỳ lương, hỏi Nhân sự về việc chuyển phòng và nguồn chốt theo kỳ hoặc lịch sử, thay vì suy ra từ `MaPB` hiện tại.
@@ -82,7 +81,7 @@ Bạn có thể trả lời chị Hạnh: lấy tên phòng qua **`BangLuong` �
 
 1. **Dò sang phía nhiều rồi chỉ lấy một dòng.** Với cách dò chính xác trong hình, VLOOKUP chỉ lấy dòng đầu tiên khi nhiều dòng cùng khớp mã. `NV021` có ba hợp đồng; lấy dữ liệu qua `HopDong` có thể làm hồ sơ này hiện ba dòng. Phải xác định mỗi dòng kết quả là một người hay một hợp đồng, không coi mọi dòng lặp mã là lỗi.
 2. **Coi sơ đồ là toàn bộ luật nghiệp vụ.** Hình vẽ từ database chỉ thể hiện quan hệ đã khai báo bằng khóa ngoại; không có đường nối chưa chắc các bảng không liên quan. Excel cũng có **Data Model** để khai báo quan hệ; file chỉ dùng sheet và VLOOKUP thì không có sẵn bản đồ này.
-3. **Mở Database Diagrams như một chế độ xem thuần túy.** SSMS có thể đề nghị cài phần hỗ trợ, tạo `sysdiagrams` và cần quyền `db_owner`; trình vẽ còn sửa được thiết kế. Với database khóa học, dùng sơ đồ trong bài hoặc nút **Sơ đồ database** ở trang bài tập, không tự cài/lưu sơ đồ vào database chung.
+3. **Tự cài hoặc lưu Database Diagrams lên nguồn chung.** Trình vẽ của SSMS có thể tạo đối tượng hoặc sửa thiết kế. Dùng sơ đồ trong bài hoặc nút **Sơ đồ database** ở trang bài tập; không tự cài/lưu sơ đồ vào database khóa học.
 
 </Mistakes>
 

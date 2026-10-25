@@ -29,7 +29,9 @@ Giả định: đọc `NhanVien` đang lưu, chỉ lấy `TrangThai = N'Đang l�
 
 ### Từ Rows và Values của PivotTable đến GROUP BY
 
-Với Excel, bạn tạo PivotTable từ danh sách hồ sơ, đưa trạng thái vào Filters (bộ lọc của PivotTable) và chọn `Đang làm`, kéo mã phòng vào **Rows** (nhãn dòng) và mã nhân viên vào **Values** (giá trị tổng hợp), chọn **Count**. Hình dưới minh họa phần kết quả sau khi sắp số lượng giảm dần. Các ô được đánh dấu là mã `KD` ở `A2`, số hồ sơ của phòng ở `B2` và tổng cộng ở `B8`; tổng cộng không phải một phòng.
+Trong Excel, **PivotTable** tạo bảng tổng hợp từ danh sách. Đưa trạng thái vào Filters (bộ lọc) và chọn `Đang làm`, kéo mã phòng vào **Rows** (nhãn dòng), mã nhân viên vào **Values** (giá trị tổng hợp), rồi chọn **Count**. Count của PivotTable đếm ô có dữ liệu, khác hàm `COUNT` trên sheet ở bài 3.1.
+
+Hình dưới minh họa phần kết quả sau khi sắp số lượng giảm dần. Các ô được đánh dấu là mã `KD` ở `A2`, số hồ sơ của phòng ở `B2` và tổng cộng ở `B8`; tổng cộng không phải một phòng.
 
 <Excel sheets="PivotTable · Hồ sơ đang làm" cell="B2" formula="13" selected="B2" mark={['A2', 'B2', 'B8']} rows={[
   ['Mã phòng', 'Count of MaNV'],
@@ -44,9 +46,15 @@ Với Excel, bạn tạo PivotTable từ danh sách hồ sơ, đưa trạng thá
 
 Trong SQL, **`GROUP BY`** chia các dòng đã qua `WHERE` thành các nhóm theo cột bạn chọn. `GROUP BY MaPB` gom những hồ sơ cùng mã phòng; `COUNT(*)` đếm trong từng nhóm. `MaPB` là **khóa nhóm**: giá trị dùng để xác định hồ sơ nào thuộc cùng một nhóm. Nếu nhóm theo một cột có `NULL`, các dòng mang `NULL` được gom thành một nhóm.
 
-Bạn viết `GROUP BY` sau `WHERE` và trước `ORDER BY`. Cột nằm sau `GROUP BY` giống trường đặt vào Rows; các hàm như `COUNT`, `SUM`, `AVG` giống phép tính chọn trong Values. Với cột mã dạng chữ trong PivotTable, chọn Count; cộng mã bằng Sum không có ý nghĩa.
+Bạn viết `GROUP BY` sau `WHERE` và trước `ORDER BY`. Cột nằm sau `GROUP BY` giống trường đặt vào Rows; các hàm như `COUNT`, `SUM`, `AVG` giống phép tính chọn trong Values.
 
-`GROUP BY MaPB` chỉ trả các mã có hồ sơ trong phạm vi đã lọc; nó không tự tạo một dòng số `0` cho phòng không có hồ sơ phù hợp. PivotTable có thể bật tổng cộng như `B8`; câu `GROUP BY` thông thường dưới đây chỉ có các dòng phòng, không tự thêm dòng tổng cộng. Muốn kiểm tổng chung, dùng câu tổng hợp của bài 3.1 trên cùng phạm vi.
+`GROUP BY MaPB` chỉ trả các mã có hồ sơ trong phạm vi đã lọc; nó không tự tạo một dòng số `0` cho phòng không có hồ sơ phù hợp. PivotTable có thể bật tổng cộng như `B8`; câu `GROUP BY` thông thường dưới đây chỉ có các dòng phòng, không tự thêm dòng tổng cộng. Để kiểm tổng chung, áp dụng `COUNT(*)` đã học trên đúng phạm vi đang làm:
+
+<Sql code={`SELECT COUNT(*) AS [SoHoSoDangLam]
+FROM NhanVien
+WHERE TrangThai = N'Đang làm';`} />
+
+<Result columns={['SoHoSoDangLam']} rows={[[45]]} />
 
 ### Mỗi tổ hợp khóa là một dòng kết quả
 
@@ -226,12 +234,6 @@ ORDER BY [SoHoSo] DESC, MaPB ASC;`,
   ['Sắp số liệu trong PivotTable', 'GROUP BY không bảo đảm thứ tự; dùng ORDER BY'],
 ]} />
 
-## Bài tập
-
-Bộ chấm so giá trị, thứ tự cột và thứ tự dòng theo đề, không so alias hay bắt buộc một cú pháp. Trước khi viết, xác định một dòng kết quả cần đại diện cho nhóm nào.
-
-<Exercises />
-
 **Tự kiểm tra:**
 
 <details>
@@ -247,3 +249,16 @@ Khóa nhóm đổi từ mã phòng sang cặp mã phòng và trạng thái. `KD`
 Không. `GROUP BY MaPB` chỉ tạo nhóm từ những dòng còn lại. Muốn giữ cả phòng không có hồ sơ cần lấy thêm danh mục phòng, học khi kết bảng.
 
 </details>
+
+<details>
+<summary>Muốn phòng đông nhất trước, bằng nhau thì mã tăng dần, cần phần nào của câu lệnh?</summary>
+
+`ORDER BY [SoHoSo] DESC, MaPB ASC`. `GROUP BY` không tự sắp kết quả; tiêu chí mã tăng dần quyết định thứ tự khi số hồ sơ bằng nhau.
+
+</details>
+
+## Bài tập
+
+Bộ chấm so giá trị, thứ tự cột và thứ tự dòng theo đề, không so alias hay bắt buộc một cú pháp. Trước khi viết, xác định một dòng kết quả cần đại diện cho nhóm nào.
+
+<Exercises />

@@ -65,9 +65,9 @@ Câu dưới là **ví dụ giá trị trực tiếp**, không đọc bảng và
 
 `CONCAT` coi đầu vào `NULL` là chuỗi rỗng; tất cả đầu vào đều `NULL` thì trả chuỗi rỗng. Vì vậy, ghép được nhãn chưa chứng minh các thành phần đều đầy đủ. Cần đánh dấu phần thiếu thì dùng `COALESCE` đã học ở bài 2.5 trước khi ghép.
 
-**`TRIM`** ở dạng `TRIM(chuỗi)` bỏ dấu cách thông thường, mã `32`, ở hai đầu; không gộp dấu cách giữa các từ và không tự bỏ tab hay dấu cách không ngắt dòng. Excel `TRIM` còn gộp nhiều dấu cách mã `32` bên trong thành một.
+**`TRIM`** ở dạng `TRIM(chuỗi)` bỏ dấu cách thông thường ở hai đầu; không gộp dấu cách giữa các từ hoặc tự xử lý mọi loại khoảng trắng. Excel `TRIM` còn gộp nhiều dấu cách thông thường bên trong thành một.
 
-**`UPPER`** đổi chữ thường thành hoa, **`LOWER`** đổi chữ hoa thành thường; chúng không bỏ dấu tiếng Việt. `LOWER` nhận `NULL` thì vẫn trả `NULL`. Ví dụ trực tiếp dưới đây dùng chuỗi tự viết có hai dấu cách giữa `Kế` và `toán`, cột độ dài sau `TRIM` cho kết quả `8`, thay vì `7` nếu chỉ có một dấu cách:
+**`UPPER`** đổi chữ thường thành hoa, **`LOWER`** đổi chữ hoa thành thường; chúng không bỏ dấu tiếng Việt. `UPPER` và `LOWER` nhận `NULL` thì vẫn trả `NULL`. Ví dụ trực tiếp dưới đây giữ hai dấu cách giữa các từ. Để nhìn rõ, quy ước `␠` biểu diễn một dấu cách: sau `TRIM` là `Kế␠␠toán`, dài `8` ký tự; một dấu cách ở giữa thì chỉ dài `7`. Ký hiệu `␠` chỉ dùng trong chú giải, không phải ký tự của kết quả:
 
 <Sql code={`SELECT TRIM(N'  Kế  toán  ') AS BoHaiDau,
 \tLEN(TRIM(N'  Kế  toán  ')) AS DoDaiSauTRIM,
@@ -85,7 +85,7 @@ Câu dưới là **ví dụ giá trị trực tiếp**, không đọc bảng và
 
 **Unicode** là chuẩn biểu diễn ký tự, bao gồm chữ tiếng Việt. Cột `HoTen` dùng `nvarchar(100)` để lưu Unicode. Khi tự viết chuỗi tiếng Việt trong SQL, đặt chữ **`N`** ngay trước dấu nháy đơn, như `N'Kế toán'`; khi đọc cột `HoTen`, bạn không thêm `N` trước tên cột.
 
-Thiếu `N`, chuỗi đi qua bảng mã của database trước khi được dùng. Database khóa học dùng `SQL_Latin1_General_CP1_CI_AS`, không phải bảng mã UTF-8 cho `varchar`, nên ký tự tiếng Việt không biểu diễn được có thể mất dấu hoặc thành `?`. Không phải mọi ký tự đều thành dấu hỏi; thêm `N` sau khi chữ đã hỏng cũng không phục hồi nội dung gốc.
+Trên database khóa học, chuỗi tiếng Việt tự viết thiếu `N` có thể mất dấu hoặc thành `?` trước khi được dùng, dù cột đích là `nvarchar`. Viết `N` từ đầu để giữ ký tự; thêm sau khi chữ đã hỏng không khôi phục được nội dung gốc.
 
 **Collation** là bộ quy tắc so sánh và sắp xếp chữ. Với thiết lập của khóa học, `CI` nghĩa là không phân biệt chữ hoa/thường, còn `AS` là phân biệt dấu. Vì vậy, tìm bằng `N'NGUYỄN%'` vẫn nhận họ `Nguyễn`, còn bỏ dấu thành `N'nguyen%'` không tương đương. `N` giữ ký tự bạn viết; nó không quyết định so sánh có phân biệt dấu hay không.
 
@@ -101,8 +101,6 @@ ORDER BY MaNV ASC;`} />
 ]} />
 
 Kết quả vẫn giữ `Nguyễn Thu Hà` có dấu. `COLLATE` ở đây chỉ áp dụng luật cho phép so sánh trong câu này; không đổi collation của database hay sửa họ tên. Tìm rộng hơn có thể nhận nhiều cách viết, nên dùng mã để xác nhận hồ sơ trước khi xử lý công việc.
-
-Muốn tìm chính dấu `%` hoặc `_` trong dữ liệu, đặt nó trong ngoặc vuông: `LIKE N'%[%]%'` tìm chuỗi chứa dấu phần trăm, `LIKE N'%[_]%'` tìm chuỗi chứa dấu gạch dưới. Hai dấu `%` ngoài ngoặc vẫn đại diện phần chuỗi trước và sau ký tự cần tìm.
 
 Ở bài này chỉ cần chọn hàm theo phần chuỗi cần lấy, giữ Unicode khi viết chữ và phân biệt luật so sánh với nội dung lưu. Kiểu dữ liệu và chuyển kiểu xem lại bài 1.3; xử lý giá trị thiếu ở bài 2.5, kiểm chất lượng dữ liệu ở bài 4.6. Đặc tả cách tìm kiếm và collation cho cả hệ thống cần thống nhất với bên IT.
 
@@ -444,28 +442,35 @@ ORDER BY MaNV ASC;`,
   ['LEFT, RIGHT, MID lấy một phần chữ', 'LEFT, RIGHT, SUBSTRING; SUBSTRING bắt đầu từ vị trí 1'],
   ['LEN đếm cả dấu cách cuối', 'LEN của SQL bỏ dấu cách cuối'],
   ['CONCAT tạo cột nhãn', 'CONCAT ghép đầu vào; NULL được coi là chuỗi rỗng'],
-  ['TRIM còn gộp dấu cách mã 32 bên trong', 'TRIM(chuỗi) chỉ bỏ dấu cách mã 32 ở hai đầu'],
+  ['TRIM còn gộp dấu cách thông thường bên trong', 'TRIM(chuỗi) chỉ bỏ dấu cách thông thường ở hai đầu'],
   ['UPPER, LOWER đổi hoa thường', 'UPPER, LOWER giữ dấu; N giữ Unicode trong chuỗi tự viết'],
   ['Cách tìm chữ cần theo yêu cầu', 'CI: không phân biệt hoa/thường; AS: phân biệt dấu; AI: không phân biệt dấu'],
 ]} />
 
-## Bài tập
-
 **Tự kiểm tra trước khi viết truy vấn:**
 
 <details>
-<summary>TRIM có gộp hai dấu cách giữa các từ trong chuỗi `N'  Kế  toán  '` không?</summary>
+<summary>TRIM có gộp hai dấu cách giữa các từ trong chuỗi <code>{"N'  Kế  toán  '"}</code> không?</summary>
 
-Không. `TRIM` chỉ bỏ dấu cách mã `32` ở hai đầu; hai dấu cách giữa từ vẫn còn, nên `LEN` của kết quả là `8`.
+Không. `TRIM` chỉ bỏ dấu cách thông thường ở hai đầu; hai dấu cách giữa từ vẫn còn, nên `LEN` của kết quả là `8`.
 
 </details>
 
 <details>
-<summary>Tiền tố `N` và `COLLATE Vietnamese_CI_AI` giải quyết hai việc gì khác nhau?</summary>
+<summary>Tiền tố <code>N</code> và <code>COLLATE Vietnamese_CI_AI</code> giải quyết hai việc gì khác nhau?</summary>
 
 `N` giữ ký tự Unicode trong chuỗi tự viết, như `N'Nguyễn'`. `COLLATE Vietnamese_CI_AI` chọn luật so sánh không phân biệt hoa thường và dấu; nó không khôi phục ký tự đã mất vì chuyển kiểu.
 
 </details>
+
+<details>
+<summary>Ghép nhãn <code>{"CONCAT(N'[', NULL, N']')"}</code> có chứng minh đầu vào đầy đủ không?</summary>
+
+Không. `CONCAT` coi `NULL` là chuỗi rỗng nên trả `[]`; ghép được nhãn không có nghĩa thành phần nguồn đã có giá trị.
+
+</details>
+
+## Bài tập
 
 Ba bài đều chấm vị trí cột và **thứ tự dòng**, không so tên cột. Giữ đúng phạm vi từng đề; chú ý phân biệt email `NULL` ở nguồn với nhãn do hàm tạo.
 

@@ -9,6 +9,7 @@ import { actions } from '../../lib/progress-store';
 import { useProgress } from './use-progress';
 import SqlEditor from './SqlEditor';
 import { COURSE_SERVER } from '../../lib/course-server';
+import { lessonUrl } from '../../lib/paths';
 import { DbDiagramDialog } from './DbDiagram';
 
 interface Props {
@@ -19,13 +20,12 @@ interface Props {
 }
 
 type Action = 'run' | 'grade';
-const START = '-- Viết câu lệnh của bạn ở đây\n';
 const SHOWN_ROWS = 200;
 
 export default function ExerciseWorkspace({ exercise, apiBase, tables, nums }: Props) {
   useProgress(nums);
   const client = useMemo(() => createExerciseClient(apiBase), [apiBase]);
-  const [sql, setSql] = useState(() => loadDraft(exercise.id) ?? START);
+  const [sql, setSql] = useState(() => loadDraft(exercise.id) ?? '');
   const [code, setCode] = useState<string | null>(() => loadAccessCode());
   const [askCode, setAskCode] = useState(false);
   const [codeInput, setCodeInput] = useState('');
@@ -87,10 +87,14 @@ export default function ExerciseWorkspace({ exercise, apiBase, tables, nums }: P
 
   return (
     <div className="ws" onKeyDown={onKeyDown}>
+      <p className="ws-help" id="ws-practice-help">
+        Chạy và nộp bài trên web cần mã truy cập từ người phụ trách hoặc người đã gửi bạn khóa học.
+        {' '}Chưa có mã: làm theo hướng dẫn <a href={lessonUrl('1-2-sql-server-ssms-hrm-demo')}>tạo database riêng ở bài 1.2</a> để thực hành trong SSMS; bản riêng không có chấm tự động.
+      </p>
       {askCode && (
-        <form className="ws-code" onSubmit={submitCode}>
+        <form className="ws-code" onSubmit={submitCode} noValidate>
           <label htmlFor="ws-code-input">{ASK_CODE}</label>
-          <input id="ws-code-input" ref={codeField} value={codeInput} onChange={e => setCodeInput(e.target.value)} autoComplete="off" spellCheck={false} />
+          <input id="ws-code-input" ref={codeField} value={codeInput} onChange={e => setCodeInput(e.target.value)} aria-describedby="ws-practice-help" autoComplete="off" spellCheck={false} />
           <button type="submit" className="ws-btn">Lưu mã</button>
         </form>
       )}

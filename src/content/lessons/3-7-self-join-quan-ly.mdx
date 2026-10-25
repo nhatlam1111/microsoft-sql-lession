@@ -484,12 +484,6 @@ ORDER BY nv.MaNV ASC;`,
   ['Đếm các mã cấp dưới dò được','COUNT(nv.MaNV) bỏ NULL; COUNT(*) đếm cả dòng giữ lại'],
 ]} />
 
-## Bài tập
-
-Gọi tên hai vai trò trước khi viết điều kiện. Bộ chấm so giá trị, vị trí cột và thứ tự dòng; không bắt buộc bí danh `nv`, `ql` hoặc một cú pháp duy nhất.
-
-<Exercises />
-
 **Tự kiểm tra:**
 
 <details>
@@ -512,3 +506,9 @@ Lấy `MaQuanLy` của `NV001` là `NV005` để dò vào `MaNV` của vai trò 
 `LEFT JOIN` vẫn giữ một dòng cho `NV048` dù không có cấp dưới. `COUNT(*)` đếm dòng đó; `COUNT(nv.MaNV)` chỉ đếm khóa khác `NULL` và trả `0`.
 
 </details>
+
+## Bài tập
+
+Gọi tên hai vai trò trước khi viết điều kiện. Bộ chấm so giá trị, vị trí cột và thứ tự dòng; không bắt buộc bí danh `nv`, `ql` hoặc một cú pháp duy nhất.
+
+<Exercises />

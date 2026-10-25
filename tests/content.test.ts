@@ -104,13 +104,13 @@ describe('lesson files', () => {
       expect(findUnprefixedUnicodeStrings(m[1]), f.slug).toEqual([]);
     }
   });
-  it('the intro page follows the writing rules and has its five sections', () => {
+  it('the intro page includes practice access alongside its existing sections', () => {
     const page = readFileSync('src/pages/gioi-thieu.astro', 'utf8');
     const text = page.toLowerCase();
     for (const p of BANNED_PHRASES) expect(text.includes(p), p).toBe(false);
     expect(/\p{Extended_Pictographic}/u.test(page)).toBe(false);
     const h2 = [...page.matchAll(/<h2[^>]*>([^<]+)<\/h2>/g)].map(m => m[1].trim());
-    expect(h2).toEqual(['Khóa học này dạy gì', 'Cách dùng trang', '6 level', 'Database mẫu HRM_Demo', 'Tiến độ của bạn được lưu ở đâu']);
+    expect(h2).toEqual(['Khóa học này dạy gì', 'Chọn nơi thực hành', 'Cách dùng trang', '6 level', 'Database mẫu HRM_Demo', 'Tiến độ của bạn được lưu ở đâu']);
   });
   it('lesson SQL uses escaped tabs instead of literal leading whitespace that MDX strips', () => {
     for (const f of files) for (const m of f.body.matchAll(/<Sql[^>]*code=\{`([\s\S]*?)`\}/g)) {
@@ -168,7 +168,7 @@ describe('fixes from the review of lessons 1.2 to 1.6 (2026-10-19)', () => {
     ['Azure SQL Database', 'chỉ có trên trang bài tập', 'gửi nguyên văn lỗi', 'thứ tự dòng'],
     ['không bao giờ bị đổi', 'thường chỉ gửi ba', 'Lỗi này nghĩa là database đang thức dậy', 'Câu lệnh luôn chạy', 'Database thì không có file nào']));
   it('1.3 separates a rejected value from a converted one that changed meaning', () => check('1-3-bang-cot-kieu-du-lieu',
-    ['DATEFORMAT', 'đệm khoảng trắng', 'Lưu được chưa chắc đã đúng ý'],
+    ['DATEFORMAT', 'byte (đơn vị lưu trữ)', 'dấu cách ở cuối', 'Lưu được chưa chắc đã đúng ý'],
     ['dữ liệu sai loại sẽ bị từ chối', 'Chữ không dấu, tối đa n ký tự', 'nhận bất cứ thứ gì', 'như ô bắt buộc nhập', 'nghĩa là người đó đang làm', 'không còn bị lệch kiểu', 'cần đổi định dạng gì']));
   it('1.4 does not turn a way past the foreign key into the business answer', () => check('1-4-khoa-chinh-khoa-ngoai',
     ['2 người đã nghỉ', 'không nhận NULL', 'chính bảng đó', 'UNIQUE', 'không phải ô chọn trên màn hình'],
@@ -221,7 +221,7 @@ describe('lessons explain why, show data before totals and mark what they point 
     for (const f of level1()) {
       const main = lessonMainSection(f.body);
       const legacy = main.split(/\r?\n/, 1)[0] === 'Làm bằng SQL';
-      const t = (legacy ? theory(f.body) : main).replace(/`[^`]*`/g, '');
+      const t = (legacy ? theory(f.body) : main).replace(/`[^`]*`/g, '').replace(/gửi IT: “[^”]+”/g, 'mẫu tin nhắn IT');
       expect(t, f.slug).not.toContain('?');
       expect(t, f.slug).toMatch(/bài [2-6]\.\d+/);
     }
@@ -262,8 +262,8 @@ describe('fixes from the independent reviews of 2026-10-19', () => {
     for (const s of absent) expect(text, `${slug} still says: ${s}`).not.toContain(s);
     for (const s of present) expect(text, `${slug} lacks: ${s}`).toContain(s);
   };
-  it('1.1 scopes when constraints are checked, says SSMS commits at once, and what a key or a date type cannot catch', () => check('1-1-database-la-gi',
-    ['Khi ràng buộc đang bật', 'ghi hẳn ngay', 'mỗi mã tối đa một dòng', 'một ngày hợp lệ vẫn có thể sai hồ sơ', 'T-SQL', 'constraint', 'thống nhất chưa chắc đã đúng'],
+  it('1.1 scopes constraints and shared-data safety without teaching SSMS early', () => check('1-1-database-la-gi',
+    ['Khi ràng buộc đang bật', 'chỉ đọc dữ liệu', 'thêm, sửa hoặc xóa dữ liệu', 'mỗi mã tối đa một dòng', 'một ngày hợp lệ vẫn có thể sai hồ sơ', 'T-SQL', 'constraint', 'thống nhất chưa chắc đã đúng'],
     ['Mỗi khi có thao tác ghi dữ liệu', 'mỗi người một mã', '(ba dòng, lấy từ bộ dữ liệu mẫu)', 'kiểm quan hệ dữ liệu mỗi khi ghi', 'file xuất tĩnh', 'cột chưa chuẩn hóa']));
   it('1.2 preserves the connection workflow and safe practice on the shared and local databases', () => check('1-2-sql-server-ssms-hrm-demo',
     ['chỉ chạy trên Windows', '1433', 'Disconnect', '**User Name**', '**Encrypt**', 'Connection Properties', 'Connect to database',
@@ -271,7 +271,7 @@ describe('fixes from the independent reviews of 2026-10-19', () => {
       'không có cột trạng thái', '`Ban Giám đốc`', '`Vận hành`'],
     ['như địa chỉ một căn phòng', 'giá trị trống (NULL)', 'Từ bài 1.6, cuối mỗi bài có mục', '- **Server type**', 'Developer đủ tính năng']));
   it('1.3 keeps the import assumption, the cell outcomes and the limits of type validation', () => check('1-3-bang-cot-kieu-du-lieu',
-    ['Giả định của tình huống', '1900-01-01', 'Database làm gì', 'numeric={', 'không dùng để cộng trừ',
+    ['Giả định của tình huống', 'Chuỗi rỗng', 'Database làm gì', 'numeric={', 'không dùng để cộng trừ',
       '`C2`', '`C3`', '`C4`', '`D2`', '`D3`', '`D4`', '`2024-01-02`', '`2024-02-01`', '`9610000`', '`9610001`', '`21.3`',
       '`NOT NULL`', '`nvarchar', 'Format Cells'],
     ['có người gõ 2024-02-01', 'giá trị trống, chưa có', 'mọi phép so sánh thành so sánh chữ', 'Bên IT nói đúng một nửa', 'một việc riêng của người quản trị', 'không lẻ giây', 'hàm ngày và `CAST` ở bài 2.8']));
@@ -283,7 +283,7 @@ describe('fixes from the independent reviews of 2026-10-19', () => {
   it('1.5 preserves the relation direction, composite-key cardinality and diagram limits without a JOIN preview', () => check('1-5-doc-so-do-erd',
     ['chỉ lấy dòng đầu tiên', 'Data Model', 'thực thể', 'chấm tròn', 'một-một', 'cả cặp', 'Từ bảng `PhongBan`', 'Từ bảng `NhanVien`', 'thuộc đúng một phòng ban', 'không ghi cột nào nhận `NULL`',
       '`BangLuong.MaNV` → `NhanVien.MaNV`', '`NhanVien.MaPB` → `PhongBan.MaPB`', '`KyLuong` là `2026-09`',
-      'sysdiagrams', 'db_owner', 'bài 5.1', 'không có đường nối', 'bài 6.6'],
+      'không tự cài/lưu sơ đồ', 'bài 5.1', 'không có đường nối', 'bài 6.6'],
     ['vì câu bắt đầu từ bảng lương', 'Azure SQL Database không có', 'cũng là cả khóa chính', 'nên phải xem thêm', '21 người là Chuyên viên', 'Đây là sơ đồ, cũng là sơ đồ',
       'mỗi thông tin chỉ nằm ở một chỗ', 'được khai báo đủ', 'cặp NV001 và ngày 2026-09-01', 'bài 3.4 và 3.5 sẽ học']));
   it('1.6 counts records not people, keeps the run advice safe, answers the small whys and closes the scenario without personal data', () => check('1-6-cau-select-dau-tien',
@@ -385,7 +385,7 @@ describe('fixes from the final review', () => {
   });
   it('summaries state the corrected facts', () => {
     expect(body('1-5-doc-so-do-erd')).toContain('`NhanVien.MaPB` → `PhongBan.MaPB`');
-    expect(body('1-5-doc-so-do-erd')).toContain('không tự cài/lưu sơ đồ vào database chung');
+    expect(body('1-5-doc-so-do-erd')).toMatch(/không tự cài\/lưu sơ đồ vào database (?:chung|khóa học)/);
     expect(body('1-5-doc-so-do-erd')).not.toMatch(/<(Sql|Result|RunFlow)\b/);
     expect(body('5-2-rang-buoc-du-lieu')).toContain('BULK INSERT');
     expect(body('6-6-temporal-table')).toContain('UTC');
