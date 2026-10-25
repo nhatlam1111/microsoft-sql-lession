@@ -1,6 +1,6 @@
 # Cải thiện bài 1.1–3.7 theo kiểm thử học viên
 
-Nhánh local: `codex/student-review-1-1-3-7`, từ main `df7e810`. Triển khai 24–25/10/2026; chưa push hoặc nhập main. Giữ 51 bài/URL, schema frontmatter, 54 bài tập/đáp án, seed, API và xác thực. Bài 2.1 giữ nguyên; 21 bài còn lại có sửa, trong đó 3.3/3.7 chỉ chuyển tự kiểm tra lên trước bài tập.
+Nhánh triển khai: `codex/student-review-1-1-3-7`, từ main `df7e810`. Ở mốc bàn giao local `60faba9` ngày 25/10/2026, chưa push hoặc nhập main. Sau đó người dùng đã yêu cầu cập nhật hướng dẫn review, merge vào main và push; yêu cầu này thay giới hạn local của lượt trước. Giữ 51 bài/URL, schema frontmatter, 54 bài tập/đáp án, seed, API và xác thực. Bài 2.1 giữ nguyên; 21 bài còn lại có sửa, trong đó 3.3/3.7 chỉ chuyển tự kiểm tra lên trước bài tập.
 
 ## Hồ sơ
 
@@ -8,6 +8,7 @@ Nhánh local: `codex/student-review-1-1-3-7`, từ main `df7e810`. Triển khai 
 - [Báo cáo học viên gốc](source-student-report.md) và [prompt gốc](source-review-prompt.txt): bản sao nguyên byte, không sửa nội dung nhận xét.
 - [Spec](../../superpowers/specs/2026-10-24-student-review-1-1-3-7-design.md), [plan và tiến độ](../../superpowers/plans/2026-10-24-student-review-1-1-3-7.md).
 - [Review tích hợp độc lập](review-integration.md): **Ready** cho bàn giao local, không có finding Critical/Important/Minor. Reviewer tự chạy lại test/check/check:dist; phân biệt rõ phần SQL/browser của tác giả với phần tự kiểm của mình. Commit nội dung được review: `5e988b1`.
+- [Review hướng dẫn agent ngày 25/10](review-guidance-2026-10-25.md): **Ready** cho diff `60faba9..f906640`, không finding. Chỉ kiểm hướng dẫn, không thay cho kiểm main hoặc workflow phát hành.
 
 ## Thay đổi chính
 

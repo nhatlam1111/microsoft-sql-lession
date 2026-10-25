@@ -70,3 +70,5 @@
 Người dùng đã yêu cầu cập nhật phần review cho agent, merge vào main và push. Giới hạn local phía trên là lịch sử của mốc `60faba9`, không còn chặn yêu cầu xuất bản này.
 
 Trình tự: cập nhật mục 4.5–4.6/AGENTS/CLAUDE → review độc lập diff hướng dẫn → fetch và cập nhật main không làm mất thay đổi remote → merge nhánh đã duyệt → chạy test/check/build/check:dist trên main → push main bình thường, không force → kiểm remote SHA và workflow GitHub Pages. Không sửa lại bài/đáp án/API/dữ liệu hoặc chạy lại SQL chỉ vì thay lời dặn reviewer. Kết quả bước phát hành ghi trong hồ sơ và bàn giao, không dùng Ready thay cho kiểm main hoặc quyền push.
+
+Đã xong phần hướng dẫn tại `f906640`: 295/295 test; agent mới kế thừa model review diff và kết luận Ready, không finding. Đã đọc report đầy đủ, giữ report gốc và bản sao trong hồ sơ. Main local/remote cùng `df7e810` tại lần fetch trước hợp nhất; cần kiểm lại kết quả hợp nhất và phát hành, không suy từ trạng thái trước merge.
