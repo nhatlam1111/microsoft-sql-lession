@@ -43,3 +43,9 @@ Mỗi bài có sửa: agent mới fork không ngữ cảnh tác giả, kế th�
 - Xác minh cuối tác giả25/10: 295/295 test; build108 trang/check:dist1742 link; check không errors/warnings,3 hints deprecated đã có. API build/typecheck,54 đáp án luôn hoàn tác, check:data trước và sau UI đạt. SQL79 SELECT/36Result/68bước đã đối chiếu; chưa kiểm SSMS native hoặc thời gian học thật. Browser22trang ở1280/1440, editor và storageblocked có evidence riêng.
 - Review tích hợp đã hoàn tất: Ready cho bàn giao local, không finding cần sửa. Tác giả đã xác minh các phần reviewer để lại theo bằng chứng riêng, ghi đầy đủ tại README. Quyết định cụ thể đặt luật DISTINCT/ORDER BY trong Hay nhầm2.6 được giữ theo kế hoạch đã duyệt; ba đề không thiếu tiền đề. Không đổi số liệu/SQL/đáp án sau vòng tích hợp.
 - Ruling: bàn giao giữ nhánh local như người dùng đã chọn, thay menu hỏi lại của finishing-a-development-branch; không merge/push. Chi phí: người dùng cần quyết định đưa lên main ở lượt tiếp theo.
+
+## Yêu cầu tiếp theo ngày 25/10/2026
+
+Sau khi nhận bản local, người dùng yêu cầu cập nhật hướng dẫn review cho agent, rồi merge vào main và push. Đây là quyền xuất bản rõ ràng, thay giới hạn chỉ bàn giao local của lượt trước; không cần hỏi lại menu merge/push.
+
+Phần cập nhật chỉ ở mục 4.5–4.6 của quy ước và hai file chỉ dẫn AGENTS/CLAUDE: gói giao việc có phiên bản source/build, nền tảng người mới chỉ biết Excel cơ bản, tiền đề từng đề, phạm vi xác minh, bảo toàn report và review tích hợp. Giữ quy định model, nối lại chính reviewer nếu bị hạn mức, không thay đổi nội dung bài/đáp án/API/seed đã kiểm. Review độc lập phần hướng dẫn mới trước khi hợp nhất; kiểm lại bản main sau merge và xác nhận remote cùng workflow xuất bản sau push.

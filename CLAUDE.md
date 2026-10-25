@@ -13,3 +13,5 @@ mục đích của project là tạo các bài giảng để giảng dạy cho 1
 Từ 20/10/2026, viết tiếp theo khung gộp Excel/SQL trong một phần chính; spec/plan/mockup cũ ghi khung tách hai phần là lịch sử. Quy tắc cụ thể giữ ở các tài liệu hiện hành phía trên, không suy ra lại từ bài cũ chưa chuyển khung.
 
 Review bằng Claude dùng Sonnet, effort high; review bằng Codex giữ model đang dùng của phiên. Theo mục 4.5 của quy ước, không áp yêu cầu Sonnet sang Codex.
+
+Dùng gói giao việc và lời dặn hiện hành ở mục 4.5, kiểm tiền đề từng đề theo nền tảng người mới và phân biệt đọc nguồn/HTML với kiểm thực tế. Không đọc review cũ để hình thành nhận xét; nhiều bài hoặc sửa công cụ cần review tích hợp. Xử lý và ghi quyết định từng nhận xét theo mục 4.6 trước khi bàn giao.

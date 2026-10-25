@@ -64,3 +64,9 @@
 - Review tích hợp `df7e810..5e988b1`: Ready, không findings. Reviewer tự chạy 295/295, check0errors/0warnings/3hints, check:dist108/1742; giữ audit strict exit1 với giới hạn scanner. Tác giả đã đọc toàn report và kết luận đủ sáu mục Declined to judge trong README. Chỉ dẫn riêng về2.6 được giữ theo plan đã duyệt, không thiếu tiền đề ba đề. Agent được tiếp tục đúng lượt sau khi bị quota ngắt ở bước kết.
 - Spot-check build cuối xác nhận alias2.8 và câu ôn sắp xếp3.2; drawer1280 copy giữ tab thật sau khi nút báo Đã chép. Lần đọc clipboard quá sớm trả chuỗi cũ không được coi là lỗi sản phẩm; kiểm lại theo xác nhận UI đã đạt.
 - Bàn giao25/10 lúc11:33: kiểm lại295/295,check0errors0warnings3hints,build108,check:dist1742; preview loopback4322 trảHTTP200 và mở trong app. Commit nội dung5e988b1, commit hồ sơ bàn giao ghi sau. Giữ nhánh local, không push/merge; working tree được kiểm sạch sau commit.
+
+## Yêu cầu tiếp theo ngày 25/10: hướng dẫn review và xuất bản
+
+Người dùng đã yêu cầu cập nhật phần review cho agent, merge vào main và push. Giới hạn local phía trên là lịch sử của mốc `60faba9`, không còn chặn yêu cầu xuất bản này.
+
+Trình tự: cập nhật mục 4.5–4.6/AGENTS/CLAUDE → review độc lập diff hướng dẫn → fetch và cập nhật main không làm mất thay đổi remote → merge nhánh đã duyệt → chạy test/check/build/check:dist trên main → push main bình thường, không force → kiểm remote SHA và workflow GitHub Pages. Không sửa lại bài/đáp án/API/dữ liệu hoặc chạy lại SQL chỉ vì thay lời dặn reviewer. Kết quả bước phát hành ghi trong hồ sơ và bàn giao, không dùng Ready thay cho kiểm main hoặc quyền push.
