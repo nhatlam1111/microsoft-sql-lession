@@ -51,3 +51,5 @@ Sau khi nhận bản local, người dùng yêu cầu cập nhật hướng dẫ
 Phần cập nhật chỉ ở mục 4.5–4.6 của quy ước và hai file chỉ dẫn AGENTS/CLAUDE: gói giao việc có phiên bản source/build, nền tảng người mới chỉ biết Excel cơ bản, tiền đề từng đề, phạm vi xác minh, bảo toàn report và review tích hợp. Giữ quy định model, nối lại chính reviewer nếu bị hạn mức, không thay đổi nội dung bài/đáp án/API/seed đã kiểm. Review độc lập phần hướng dẫn mới trước khi hợp nhất; kiểm lại bản main sau merge và xác nhận remote cùng workflow xuất bản sau push.
 
 Review độc lập diff `60faba9..f906640`: Ready, không finding. Tác giả đã đọc toàn report; giữ giới hạn không suy hướng dẫn rõ ràng thành bảo đảm chất lượng học thật và không nhận Ready là kết quả kiểm main/remote. Test trước merge 295/295; trạng thái phát hành được kiểm riêng theo trình tự đã ghi trong plan.
+
+Main đã hợp nhất local tại `76ad587`, kiểm lại 295/295 và check/build/check:dist đạt, còn 3 hints deprecated đã có. Mốc chuẩn bị push được ghi tại hồ sơ publication ngày 25/10; không đổi bài hoặc dữ liệu sau review để đưa quy trình lên main.

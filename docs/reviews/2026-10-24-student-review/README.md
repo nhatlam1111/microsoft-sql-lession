@@ -9,6 +9,7 @@ Nhánh triển khai: `codex/student-review-1-1-3-7`, từ main `df7e810`. Ở m�
 - [Spec](../../superpowers/specs/2026-10-24-student-review-1-1-3-7-design.md), [plan và tiến độ](../../superpowers/plans/2026-10-24-student-review-1-1-3-7.md).
 - [Review tích hợp độc lập](review-integration.md): **Ready** cho bàn giao local, không có finding Critical/Important/Minor. Reviewer tự chạy lại test/check/check:dist; phân biệt rõ phần SQL/browser của tác giả với phần tự kiểm của mình. Commit nội dung được review: `5e988b1`.
 - [Review hướng dẫn agent ngày 25/10](review-guidance-2026-10-25.md): **Ready** cho diff `60faba9..f906640`, không finding. Chỉ kiểm hướng dẫn, không thay cho kiểm main hoặc workflow phát hành.
+- [Kiểm main trước xuất bản ngày 25/10](publication-2026-10-25.md): merge `76ad587`, 295 test và check/build/check:dist đạt sau hợp nhất; ghi riêng mốc trước push với trạng thái workflow sau push.
 
 ## Thay đổi chính
 
