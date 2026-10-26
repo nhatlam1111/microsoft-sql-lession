@@ -84,3 +84,7 @@ Theo script có1 nhóm CCCD lặp, gồm NV015/NV038; thiếu email là NV044/NV
 4.6 đã soạn và review hai giai đoạn; chỉ sửa haiSELECT sang code. Ba đề đủ tiền đề trướcanswer, kiểm biên giữ0/NULL và nhiều cờ.322tests, API78, build132/dist1994; SQLServerlive/UIvẫn chưa nghiệm thu, không đổi seed/guard/API/UI.
 
 Review tích hợp mới không Critical/Important; một Minor về copy hoàn thành trong giới thiệu/README đã sửa đúng branch4.5 rồi chuyển4.6. Report gốc/ma trận15DJ/verification/handoff nằm tại docs/reviews/2026-10-26-lessons-4-4-4-6-*.md. Giữ ba branch local, không push, merge main hoặc deploy.
+
+## Lượt kiểm để xuất bản 26/10/2026
+
+Người dùng sau đó yêu cầu kiểm cả 4.1–4.6 rồi đưa main. Nhánh tổng hợp từ `dd67309` có reviewer mới từng bài; giữ đủ tiền đề và quyết định noExercises của 4.5. Chỉ sửa ba dòng code cho tên hàm/từ khóa 4.4 theo finding biên tập, reviewer kiểm lại source/HTML mới. PIVOT và ba Result 4.6 đã đối chiếu bằng SELECT trên SQL Server; fixture/HTML cũ không được đổi nhãn thành kiểm live. 78 đáp án qua runner hoàn tác, `check:data` không lệch. Không tạo view hoặc chạy mẫu SELECT phụ thuộc view chưa có. [Hồ sơ xuất bản mới](../../reviews/2026-10-26-publication-4-1-4-6/verification.md) ghi rõ UI/live/giới hạn và trạng thái review tích hợp; [kế hoạch](../plans/2026-10-26-review-publication-4-1-4-6.md) theo dõi merge/push theo quyền mới. Không ghép nhánh workspace SSMS.

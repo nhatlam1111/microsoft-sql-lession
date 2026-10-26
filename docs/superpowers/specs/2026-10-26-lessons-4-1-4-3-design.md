@@ -95,3 +95,7 @@ Các liên kết Microsoft là căn cứ ngữ nghĩa, không xác nhận câu c
 ## Trạng thái bàn giao cuối
 
 Đã có3bài full/9đề trên3branch riêng, review từng bài và tích hợp mới. Đã xử lý mọi nhận xét và7 mục chưa phán định, gồm lựa chọn rút CTE chưa cần khỏi câu kiểm4.1; không kết luận bản cũ chắc chắn lỗi. [Hồ sơ bàn giao](../../reviews/2026-10-26-lessons-4-1-4-3-handoff.md) ghi checks thật, các quyết định và giới hạn còn mở. Không push/merge main/deploy.
+
+## Lượt kiểm để xuất bản 26/10/2026
+
+Người dùng sau đó yêu cầu kiểm cả 4.1–4.6 và đưa lên main, thay phạm vi bàn giao local của lượt soạn. Nhánh tổng hợp `codex/review-lessons-4-1-4-6` từ `dd67309`, không ghép workspace SSMS. Ba bài có thêm reviewer mới ngữ cảnh mới, khóa tiền đề trước khi xem YAML; không phát hiện finding nội dung mới. Tác giả đã kiểm SELECT live: bảy Result và 11 trạng thái RunFlow của 4.1–4.3 khớp, đồng thời kiểm drawer/bàn phím/copy trên build mới. Các kết luận kiểm source cũ vẫn là lịch sử, không sửa thành SQL/UI live. [Hồ sơ mới](../../reviews/2026-10-26-publication-4-1-4-6/verification.md) ghi bằng chứng và giới hạn; [kế hoạch xuất bản](../plans/2026-10-26-review-publication-4-1-4-6.md) theo dõi review tích hợp/merge/push.

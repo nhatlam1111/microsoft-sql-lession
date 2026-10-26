@@ -67,7 +67,7 @@ Muốn các tháng nằm ngang thay cho loại nghỉ, đổi nguồn thành `Lo
 
 ### Viết cùng bảng bằng CASE đã học
 
-Ở 3.10, mỗi biểu thức tổng có một điều kiện riêng. Với cùng `Nguon`, nhóm theo `Thang` và viết ba biểu thức `SUM(CASE...)` cũng tạo được ba cột ngày. Bỏ `ELSE` để dòng không khớp góp `NULL`; khi cả nhóm không có loại ấy, ô tổng vẫn là `NULL`, khớp cách SUM trong PIVOT xử lý ở đây.
+Ở 3.10, mỗi biểu thức tổng có một điều kiện riêng. Với cùng `Nguon`, nhóm theo `Thang` và viết ba biểu thức `SUM(CASE...)` cũng tạo được ba cột ngày. Bỏ `ELSE` để dòng không khớp góp `NULL`; khi cả nhóm không có loại ấy, ô tổng vẫn là `NULL`, khớp cách `SUM` trong `PIVOT` xử lý ở đây.
 
 <Sql code={`WITH Nguon AS (
 \tSELECT EOMONTH(TuNgay) AS [Thang], LoaiNghi, SoNgay
@@ -84,7 +84,7 @@ ORDER BY Thang ASC;`} />
 
 <Result columns={["Thang","NgayPhepNam","NgayNghiOm","NgayViecRieng"]} rows={[["2026-08-31",12,2,null],["2026-09-30",12,5,3],["2026-10-31",10,null,1]]} total={3} />
 
-Nếu thêm `ELSE 0`, những ô thiếu ở báo cáo này thành `0`; lúc ấy không còn cùng cách biểu diễn thiếu với câu PIVOT bên dưới. Chọn cách viết theo báo cáo cần đọc và bảo trì, không mặc định một cách luôn nhanh hơn. Ở bài này chỉ cần ba vai trò và cách tính mỗi ô; đánh giá truy vấn chậm và kế hoạch thực thi học ở 5.6–5.7.
+Nếu thêm `ELSE 0`, những ô thiếu ở báo cáo này thành `0`; lúc ấy không còn cùng cách biểu diễn thiếu với câu `PIVOT` bên dưới. Chọn cách viết theo báo cáo cần đọc và bảo trì, không mặc định một cách luôn nhanh hơn. Ở bài này chỉ cần ba vai trò và cách tính mỗi ô; đánh giá truy vấn chậm và kế hoạch thực thi học ở 5.6–5.7.
 
 ### Câu lệnh cho tình huống
 
@@ -146,7 +146,7 @@ Vì cột còn lại ấy cũng tham gia chia nhóm khi xoay. Giữ nó sẽ tá
 <details>
 <summary>Ô thiếu của <code>SUM</code> và <code>COUNT(MaDon)</code> có cùng là <code>NULL</code> không?</summary>
 
-Không. Với các nguồn và phép tính vừa học, SUM không có giá trị để cộng trả `NULL`, còn COUNT đếm khóa nhận `0`. Không tự đổi hai ý nghĩa thành một.
+Không. Với các nguồn và phép tính vừa học, `SUM` không có giá trị để cộng trả `NULL`, còn `COUNT` đếm khóa nhận `0`. Không tự đổi hai ý nghĩa thành một.
 
 </details>
 
