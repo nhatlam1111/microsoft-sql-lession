@@ -80,3 +80,5 @@ Theo script có1 nhóm CCCD lặp, gồm NV015/NV038; thiếu email là NV044/NV
 4.4 đã soạn, learner review hai giai đoạn; sửa “refresh” và thay một câu ôn bằng chọn ba vai trò. Mô hình fixture chỉ chứng minh số học nguồn, không chứng nhận PIVOT trên SQL Server. Chi tiết ở report/ma trận bài4.4; live/UI vẫn pending.
 
 4.5 đã soạn/noExercises và fresh learner review; sửa câu3 để đọc bốn cột/bảng nguồn, giữ năm câu. Hai mẫu chỉ đọc, không có Result, nút copy hoặc đối tượng mới trong database.
+
+4.6 đã soạn và review hai giai đoạn; chỉ sửa haiSELECT sang code. Ba đề đủ tiền đề trướcanswer, kiểm biên giữ0/NULL và nhiều cờ.322tests, API78, build132/dist1994; SQLServerlive/UIvẫn chưa nghiệm thu, không đổi seed/guard/API/UI.
