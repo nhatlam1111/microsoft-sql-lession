@@ -171,7 +171,7 @@ Cấu hình cần có (giá trị do người phụ trách tự điền, không 
 | 2. Sơ đồ thứ tự chạy, bài tập, bài đầy đủ | [phase 2 design](docs/superpowers/specs/2026-10-18-step-flow-exercises-full-lessons-design.md) | [plan phần A và chạy thử](docs/superpowers/plans/2026-10-18-run-flow-and-runner-spike.md) |
 | 2B. Bài tập chạy SQL trên web | [spec B](docs/superpowers/specs/2026-10-18-exercise-runner-design.md) (mục 12: hiện trạng) | [plan](docs/superpowers/plans/2026-10-18-exercise-runner.md) |
 
-Phần C đã có đầy đủ Level 1 và bài 2.1–2.9; tiếp tục viết bài theo từng level. Bài có câu lệnh có bài tập, còn bài khái niệm 1.1–1.5 có câu tự kiểm tra.
+Các bài đầy đủ được liệt kê ở đầu README; tiếp tục viết các bài tóm tắt theo từng level. Bài luyện truy vấn có bài tập; bài đọc hiểu không có mục Bài tập dùng câu tự kiểm tra.
 
 Review độc lập bài 2.1: [bản review](docs/reviews/2026-10-20-bai-2-1.md). Các mục đã sửa, quyết định giữ nguyên và giới hạn kiểm live database được ghi trong spec đợt 2, mục 11.
 
