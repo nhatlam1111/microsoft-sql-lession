@@ -18,7 +18,7 @@ Không sửa UI, API, bộ chấm, schema nội dung hoặc dữ liệu mẫu; k
 
 | Bài | Tình huống đề xuất | Kiến thức cần giảng trước phần ôn |
 |---|---|---|
-| **4.1 — CTE: giải bài toán từng bước** | Chị Hạnh muốn đọc và kiểm một báo cáo qua các kết quả trung gian: lấy đơn đã duyệt bắt đầu tháng 9/2026, cộng SoNgay theo loại, rồi giữ loại có tổng từ 5 ngày. Kết quả chính chỉ gồm LoaiNghi và TongNgay. | Giải thích CTE là tên của kết quả truy vấn dùng trong một câu lệnh; bắt đầu bằng WITH, định nghĩa AS (...), rồi SELECT đọc tên đó. Hai CTE cách nhau bằng dấu phẩy, bước sau tham chiếu bước trước. Kiểm một bước bằng cách thay SELECT cuối trong cả câu WITH, không chạy SELECT thứ hai sau khi phạm vi CTE đã hết. CTE không lưu thành bảng/sheet và không bảo đảm vật chất hóa hay chạy từng bước một lần. |
+| **4.1 — CTE: giải bài toán từng bước** | Chị Hạnh muốn đọc và kiểm một báo cáo qua các kết quả trung gian: lấy đơn đã duyệt bắt đầu tháng 9/2026, cộng SoNgay theo loại, rồi giữ loại có tổng từ 5 ngày. Kết quả chính chỉ gồm LoaiNghi và TongNgay. | Giải thích CTE là tên của kết quả truy vấn dùng trong một câu lệnh; bắt đầu bằng WITH, định nghĩa AS (...), rồi SELECT đọc tên đó. Hai CTE cách nhau bằng dấu phẩy, bước sau tham chiếu bước trước. Kiểm một bước bằng khối WITH có đủ định nghĩa CTE cần dùng và SELECT cuối đọc bước đó; không chạy SELECT thứ hai sau khi phạm vi CTE đã hết. CTE không lưu thành bảng/sheet và không bảo đảm vật chất hóa hay chạy từng bước một lần. |
 | **4.2 — Xếp hạng với ROW_NUMBER, RANK** | Chị Hạnh cần một hợp đồng có ngày bắt đầu gần nhất, không sau mốc 21/10/2026, cho mỗi mã nhân viên có hợp đồng. Khi cùng ngày, dùng MaHD giảm dần để chọn nhất quán. | Định nghĩa hàm cửa sổ, OVER, PARTITION BY và ORDER BY trong OVER bằng việc đánh số các dòng còn nguyên. ROW_NUMBER cho số thứ tự riêng trong từng nhóm; dùng CTE để lọc số 1 ở câu ngoài. ORDER BY ngoài cùng vẫn cần để sắp bảng trả về. So sánh ROW_NUMBER, RANK, DENSE_RANK bằng các đơn nghỉ có SoNgay bằng nhau; đồng hạng dựa trên chỉ tiêu, không thêm mã duy nhất vào khóa xếp hạng nếu muốn giữ đồng hạng. Lấy tối đa n dòng khác giữ các hạng đến n. |
 | **4.3 — Lũy kế và so với tháng trước** | Chị Hạnh muốn tổng số ngày ghi trên đơn theo tháng bắt đầu trong phạm vi tháng 8–10/2026, cộng dồn và chênh lệch so với dòng tháng trước. Lấy mọi trạng thái đơn, gồm cả chờ duyệt và từ chối. | Dùng EOMONTH đã học ở 2.8 làm khóa tháng, tổng hợp thành một dòng mỗi tháng trước khi tính cửa sổ. SUM(...) OVER với ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW cộng từ dòng đầu tới dòng hiện tại. LAG lấy giá trị ở dòng trước theo thứ tự đã chọn, dòng đầu trả NULL. Dùng CTE đặt tên kết quả LAG rồi mới trừ; PARTITION BY tính riêng từng loại nghỉ. LAG không tự tạo tháng thiếu; muốn chỉ hiện tháng cuối mà giữ kỳ trước/lũy kế, lọc sau bước tính cửa sổ. |
 
@@ -72,6 +72,10 @@ Tác giả đọc toàn bộ report trước khi sửa, kiểm kỹ thuật bằ
 
 Chạy các kiểm web/API theo mục 4.4. Ở phiên lập khung chưa có công cụ SQL trực tiếp và bốn biến SQL_SERVER/DATABASE/USER/PASSWORD đều chưa đặt; kiểm live còn phụ thuộc kết nối khả dụng khi triển khai. Kiểm nguồn, HTML, UI, SQL live và lỗi nền phải ghi riêng; phần chưa kiểm không đánh dấu đạt. Không in/commit secret hoặc đổi dữ liệu dùng chung. Sau khi thiết kế được duyệt, lập kế hoạch rồi triển khai trực tiếp, không cần hỏi lại phương thức đã nêu ở đây.
 
+## Điều chỉnh nhỏ sau review tích hợp
+
+Mẫu kiểm đầu 4.1 chỉ giữ định nghĩa chọn đơn và SELECT đọc nó; kiểm tổng mới cần cả hai định nghĩa. Câu chính hai CTE không đổi. Đây là lựa chọn giảm phần khai báo không dùng trong một ví dụ dạy kiểm từng bước, không phải kết luận compiler đã từ chối bản cũ. SQL live/UI vẫn còn mở.
+
 ## Nguồn kỹ thuật dùng để chốt giới hạn
 
 - [CTE](https://learn.microsoft.com/en-us/sql/t-sql/queries/with-common-table-expression-transact-sql?view=sql-server-ver17).
@@ -82,6 +86,6 @@ Các liên kết Microsoft là căn cứ ngữ nghĩa, không xác nhận câu c
 
 ## Theo dõi triển khai
 
-4.1 đã viết MDX và ba đề, review mới có bảng tiền đề; xử lý tại [ma trận 4.1](../../reviews/2026-10-26-bai-4-1-disposition.md). Sửa hai câu biên tập, giữ mẫu kiểm CTE theo thiết kế; chưa có SQL live để đóng nghi vấn compiler với CTE không được tham chiếu ở câu cuối. Fixture/HTML/build riêng không thay phép kiểm đó. UI tương tác cũng chưa kiểm do browser chưa khả dụng.
+Ở lượt soạn/review 4.1 ban đầu, đã có MDX và ba đề, review mới có bảng tiền đề; xử lý tại [ma trận 4.1](../../reviews/2026-10-26-bai-4-1-disposition.md). Sửa hai câu biên tập, giữ mẫu kiểm CTE theo thiết kế; chưa có SQL live để đóng nghi vấn compiler với CTE không được tham chiếu ở câu cuối. Fixture/HTML/build riêng không thay phép kiểm đó. UI tương tác cũng chưa kiểm do browser chưa khả dụng.
 
 4.2 đã viết và review mới, ba đề đủ tiền đề; sửa cụm SoNgay cho rõ. [Ma trận 4.2](../../reviews/2026-10-26-bai-4-2-disposition.md) ghi từng nhóm nhận xét và các kiểm fixture/HTML; chưa có SQL live/UI.
