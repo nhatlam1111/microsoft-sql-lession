@@ -61,4 +61,10 @@ Evidence thô và ảnh nằm tại `temp/verification/2026-10-26-review-4-1-4-6
 
 ## Giới hạn
 
-Không tạo view để kiểm batch/quyền bằng DDL; không kiểm SSMS thật, công nghệ hỗ trợ đọc màn hình hoặc đo thời gian học với người thật. Không nộp SQL từ browser bằng mã truy cập; bằng chứng bộ chấm là 78 đáp án qua runner local trên database cấu hình sẵn, khác kiểm API production sau triển khai. Không dùng khung SSMS chưa merge làm bằng chứng cho màn main. Chỉ đưa main sau review tích hợp và kiểm nhánh main; trạng thái deploy ghi sau push.
+Không tạo view để kiểm batch/quyền bằng DDL; không kiểm SSMS thật, công nghệ hỗ trợ đọc màn hình hoặc đo thời gian học với người thật. Không nộp SQL từ browser bằng mã truy cập; bằng chứng bộ chấm là 78 đáp án qua runner local trên database cấu hình sẵn, khác kiểm API production sau triển khai. Không dùng khung SSMS chưa merge làm bằng chứng cho màn main.
+
+## Kiểm main trước push
+
+Commit hoàn thiện `3e9890f` được ghép vào main bằng merge `74e1b30433aad2a083ac8f58de921523e1f305b6`. Cây sau merge bằng nhánh đã review; không xung đột. Main không đổi API/components/lib; nhánh SSMS tại `6f69452` vẫn riêng.
+
+Kiểm main lúc 19:31 ngày 26/10: 322/322 tests, 48 file; Astro 0 lỗi/0 cảnh báo/3 hint nền; build 132 trang, check:dist 1994 liên kết, toàn bộ exit 0. Log `main-tests.log`, `main-check.log`, `main-build.log`, `main-dist.log` ở thư mục evidence. Commit tài liệu tiếp theo chỉ ghi kết quả này, không đổi source hay bộ đề; người dùng đã cho phép push/main. Trạng thái Pages/API theo dõi sau push, không suy từ kiểm local.
