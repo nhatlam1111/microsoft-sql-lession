@@ -1,7 +1,7 @@
 # Bài 4.4–4.6: xoay báo cáo, dùng view và rà dữ liệu
 
 - Ngày: 26/10/2026.
-- Trạng thái: người làm khóa học đã duyệt ngày26/10/2026; đang triển khai native theo kế hoạch.
+- Trạng thái: người làm khóa học đã duyệt ngày26/10/2026; đã soạn, review và kiểm local theo kế hoạch; SQL Server live/UI vẫn chưa nghiệm thu.
 - Yêu cầu: tiếp tục 4.4–4.6 theo quy ước, mỗi bài một branch riêng.
 - Gốc đề xuất: `codex/lesson-4-3-full` đã push tại `106701b7a53c3ad738987f4076418822792d7a44`. Main hiện đọc được là `0081807`; các bài 4.1–4.3 đang ở branch riêng nên lấy 4.3 làm gốc để giữ đủ tiền đề. Không merge vào main.
 - Tài liệu chi phối: [quy ước](../../quy-uoc.md), [khung bài](../../lesson-template.md), [hồ sơ công ty](../../ho-so-cong-ty.md), mẫu 1.1 và các bài trước liên quan. Quy ước/template/AGENTS ở main và gốc 4.3 có cùng blob; hồ sơ công ty của 4.3 có thêm tình huống đã soạn.
@@ -82,3 +82,5 @@ Theo script có1 nhóm CCCD lặp, gồm NV015/NV038; thiếu email là NV044/NV
 4.5 đã soạn/noExercises và fresh learner review; sửa câu3 để đọc bốn cột/bảng nguồn, giữ năm câu. Hai mẫu chỉ đọc, không có Result, nút copy hoặc đối tượng mới trong database.
 
 4.6 đã soạn và review hai giai đoạn; chỉ sửa haiSELECT sang code. Ba đề đủ tiền đề trướcanswer, kiểm biên giữ0/NULL và nhiều cờ.322tests, API78, build132/dist1994; SQLServerlive/UIvẫn chưa nghiệm thu, không đổi seed/guard/API/UI.
+
+Review tích hợp mới không Critical/Important; một Minor về copy hoàn thành trong giới thiệu/README đã sửa đúng branch4.5 rồi chuyển4.6. Report gốc/ma trận15DJ/verification/handoff nằm tại docs/reviews/2026-10-26-lessons-4-4-4-6-*.md. Giữ ba branch local, không push, merge main hoặc deploy.
