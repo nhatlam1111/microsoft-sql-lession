@@ -1,7 +1,7 @@
 # Bài 4.1–4.3: tổ chức truy vấn và tính trên từng dòng
 
 - Ngày: 26/10/2026.
-- Trạng thái: thiết kế ngắn, chờ người làm khóa học duyệt trước khi viết bài.
+- Trạng thái: người làm khóa học đã duyệt ngày 26/10/2026; đang triển khai trực tiếp theo kế hoạch.
 - Yêu cầu: tiếp tục ba bài 4.1–4.3; giữ quy ước mỗi bài một branch và quy trình review độc lập của các lượt trước.
 - Gốc: `main` tại `0081807f739ce60263fba799de05677b17017931`.
 - Tài liệu chi phối: [quy ước](../../quy-uoc.md), [khung bài](../../lesson-template.md), [hồ sơ công ty](../../ho-so-cong-ty.md), mẫu bài 1.1. Dùng bản hiện hành, gồm cập nhật thụt lề SQL, vị trí tự kiểm tra và quy trình review; không dùng bố cục cũ trong spec lịch sử.
@@ -10,7 +10,7 @@
 
 Chuyển đúng ba bản tóm tắt hiện có thành bài đầy đủ. Người học đi từ đặt tên cho kết quả truy vấn trung gian bằng CTE, sang đánh số/xếp hạng trong từng nhóm, rồi cộng dồn và so sánh với dòng trước. Đây là phần tiếp nối nội dung trên sản phẩm hiện có; mục tiêu là người chỉ biết Excel văn phòng cơ bản, đã học các bài tiên quyết, hiểu và tự viết được câu SQL.
 
-**Cách được đề xuất:** tiếp tục MDX/YAML và các khối hiện có, triển khai trực tiếp trong phiên, mỗi bài ba bài tập. Cách này giữ mạch và giao diện đã duyệt. Không giữ nguyên bản tóm tắt vì chưa đáp ứng việc viết đầy đủ; không dựng thêm công cụ mô phỏng hoặc thay giao diện vì ba chủ đề đều diễn giải được bằng câu lệnh, bảng kết quả và RunFlow hiện có. Các lựa chọn tình huống dưới đây là đề xuất của tác giả, chưa ghi là người làm khóa học đã chọn.
+**Cách được đề xuất:** tiếp tục MDX/YAML và các khối hiện có, triển khai trực tiếp trong phiên, mỗi bài ba bài tập. Cách này giữ mạch và giao diện đã duyệt. Không giữ nguyên bản tóm tắt vì chưa đáp ứng việc viết đầy đủ; không dựng thêm công cụ mô phỏng hoặc thay giao diện vì ba chủ đề đều diễn giải được bằng câu lệnh, bảng kết quả và RunFlow hiện có. Người làm khóa học đã duyệt phạm vi và các tình huống dưới đây ngày 26/10/2026.
 
 Không sửa UI, API, bộ chấm, schema nội dung hoặc dữ liệu mẫu; không chuyển hàng loạt bài ngoài 4.1–4.3. Không mở sang CTE đệ quy, bảng tạm, tối ưu kế hoạch thực thi, phân trang, lịch tháng đầy đủ hay các hàm cửa sổ khác. Không coi viết CTE là cam kết chạy nhanh hơn.
 
