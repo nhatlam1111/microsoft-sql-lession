@@ -4,30 +4,463 @@ title: Xếp hạng với ROW_NUMBER, RANK
 shortTitle: ROW_NUMBER, RANK
 level: 4
 area: A5
-kind: summary
-minutes: 14
+kind: full
+minutes: 35
 prerequisites:
   - "4.1"
-goal: bạn xếp hạng được và lấy được dòng mới nhất trong từng nhóm
-excel: RANK.EQ
-summary: Hợp đồng mới nhất của mỗi người và top 3 lương mỗi phòng.
+goal: bạn chọn được một dòng gần nhất trong mỗi nhóm và phân biệt đánh số với đồng hạng
+excel: Sắp xếp rồi đánh số từng nhóm
+summary: ROW_NUMBER đánh số riêng từng dòng; RANK và DENSE_RANK giữ đồng hạng theo chỉ tiêu.
 ---
 
-## Nội dung chính
+## Tình huống
 
-- `ROW_NUMBER() OVER (PARTITION BY MaNV ORDER BY NgayBatDau DESC)` đánh số hợp đồng của từng người, mới nhất là số 1.
-- Lọc những dòng mang số 1 (qua một CTE) là ra hợp đồng mới nhất của mỗi người.
-- `RANK` cho các giá trị bằng nhau cùng hạng rồi bỏ qua hạng kế tiếp; `DENSE_RANK` thì không bỏ.
-- `PARTITION BY MaPB ORDER BY ThucLinh DESC` để lấy top 3 thực lĩnh của mỗi phòng.
+<Chat who="Chị Hạnh · Phòng Nhân sự" time="09:35" initial="H">
+Mỗi mã nhân viên có hợp đồng, em lấy cho chị một hợp đồng có ngày bắt đầu gần nhất nhưng không sau ngày 21/10/2026. Chị cần mã nhân viên, mã hợp đồng và ngày bắt đầu để tra hồ sơ.
+</Chat>
 
-## Liên hệ Excel
+Đọc `HopDong`, lấy `NgayBatDau <= '20261021'`, không lọc trạng thái nhân viên. Nếu một mã có nhiều hợp đồng cùng ngày bắt đầu, chọn `MaHD` lớn hơn theo thứ tự sắp giảm dần. Đây là quy tắc chọn **mới nhất theo ngày bắt đầu đã lưu**, không xác nhận hợp đồng còn hiệu lực hay hợp lệ pháp lý.
 
-Giống RANK.EQ, hoặc sắp xếp rồi đánh số thứ tự trong từng nhóm, nhưng không phải sắp lại dữ liệu gốc.
+<Key>Chia dòng theo mã nhân viên, đánh số mới nhất trước, rồi lấy dòng số 1 ở mỗi nhóm.</Key>
 
-## Tình huống ví dụ
+## Giữ dòng chi tiết khi đánh số và xếp hạng
 
-Cần hợp đồng mới nhất của mỗi nhân viên để kiểm tra ai sắp hết hạn.
+### Đánh số lại từ 1 cho từng mã nhân viên
+
+Trong Excel, bạn có thể sắp mã nhân viên cạnh nhau, trong mỗi mã sắp ngày bắt đầu từ mới đến cũ rồi ghi số thứ tự. Mỗi khi đổi mã, bắt đầu lại từ `1`. SQL làm việc này bằng **hàm cửa sổ**: tính một giá trị cho từng dòng dựa trên một tập dòng liên quan, vẫn giữ các dòng chi tiết. Khác với `GROUP BY`, nó không gộp cả nhóm thành một dòng.
+
+**`ROW_NUMBER()`** cho mỗi dòng một số thứ tự riêng. Phần **`OVER (...)`** quy định tập dòng và thứ tự dùng để đánh số. `PARTITION BY MaNV` chia thành các nhóm tính riêng, mỗi mã bắt đầu lại từ `1`; `ORDER BY NgayBatDau DESC, MaHD DESC` trong `OVER` đặt ngày mới trước và dùng mã hợp đồng để phân định khi cùng ngày.
+
+`MaHD` là khóa duy nhất nên cặp ngày–mã xác định được thứ tự trong nhóm. Nếu chỉ sắp ngày mà hai dòng có cùng ngày, không biết chắc dòng nào nhận số `1` qua các lần chạy. Khóa phụ chọn nhất quán theo yêu cầu, không có nghĩa mã lớn hơn chứng minh hồ sơ đúng hơn.
+
+CTE `XepHopDong` ở câu dưới tính cột `SoThuTu`. Câu ngoài mới dùng `WHERE SoThuTu = 1`: không lọc bí danh hoặc kết quả hàm cửa sổ trong `WHERE` cùng cấp `SELECT` tính nó. Đây là cách đặt tên kết quả rồi lọc đã học ở 4.1. Trước hết kiểm riêng một mã có ba hợp đồng:
+
+<Sql code={`WITH XepHopDong AS (
+\tSELECT MaNV, MaHD, NgayBatDau,
+\t\tROW_NUMBER() OVER (
+\t\t\tPARTITION BY MaNV
+\t\t\tORDER BY NgayBatDau DESC, MaHD DESC
+\t\t) AS [SoThuTu]
+\tFROM HopDong
+\tWHERE NgayBatDau <= '20261021'
+)
+SELECT MaNV, MaHD, NgayBatDau, SoThuTu
+FROM XepHopDong
+WHERE MaNV = 'NV021'
+ORDER BY SoThuTu ASC;`} />
+
+<Result columns={["MaNV","MaHD","NgayBatDau","SoThuTu"]} rows={[["NV021","HD2024-005","2024-09-01",1],["NV021","HD2021-002","2021-09-01",2],["NV021","HD2021-001","2021-07-01",3]]} total={3} />
+
+Cả ba dòng của `NV021` vẫn có mặt ở bước đánh số; chỉ câu ngoài lọc `SoThuTu = 1` mới giữ hợp đồng `HD2024-005`. Điều kiện ngày nằm trước bước đánh số, để hợp đồng bắt đầu sau mốc không chiếm số `1`. Khi đổi sang mã khác, số lại bắt đầu từ `1`.
+
+### Đồng hạng và lấy tối đa một số dòng
+
+Đánh số riêng từng dòng khác xếp hạng theo cùng chỉ tiêu. Xem `9` đơn đã duyệt bắt đầu tháng 9, xếp số ngày giảm dần. **`RANK()`** cho các dòng cùng `SoNgay` cùng hạng, hạng tiếp theo có thể bị nhảy; **`DENSE_RANK()`** giữ đồng hạng nhưng hạng tiếp theo không có khoảng trống. Không viết `PARTITION BY` thì cả tập dòng sau lọc được tính chung.
+
+<Sql code={`SELECT MaDon, SoNgay,
+\tROW_NUMBER() OVER (ORDER BY SoNgay DESC, MaDon ASC) AS [SoThuTu],
+\tRANK() OVER (ORDER BY SoNgay DESC) AS [Hang],
+\tDENSE_RANK() OVER (ORDER BY SoNgay DESC) AS [HangLienTuc]
+FROM DonNghiPhep
+WHERE TrangThai = N'Đã duyệt'
+\tAND TuNgay >= '20260901' AND TuNgay < '20261001'
+ORDER BY SoNgay DESC, MaDon ASC;`} />
+
+<Result columns={["MaDon","SoNgay","SoThuTu","Hang","HangLienTuc"]} rows={[["DP003",3,1,1,1],["DP013",3,2,1,1],["DP001",2,3,3,2],["DP011",2,4,3,2],["DP017",2,5,3,2],["DP002",1,6,6,3],["DP004",1,7,6,3],["DP016",1,8,6,3],["DP019",1,9,6,3]]} total={9} />
+
+Hai đơn `3.0` ngày cùng hạng `1`. Với `RANK`, ba đơn `2.0` ngày đứng sau hai dòng nên nhận hạng `3`; với `DENSE_RANK`, đây chỉ là mức ngày thứ hai nên nhận hạng `2`. `ROW_NUMBER` vẫn cấp các số riêng `1` đến `9`.
+
+`ROW_NUMBER` dùng thêm `MaDon` trong `OVER` để các đơn có cùng `SoNgay` có thứ tự riêng nhất quán. Hai hàm giữ đồng hạng chỉ sắp theo `SoNgay`: thêm mã đơn duy nhất vào khóa xếp hạng sẽ làm mất đồng hạng. `ORDER BY SoNgay DESC, MaDon ASC` ngoài cùng chỉ sắp bảng trả về, không đổi cách tính hạng.
+
+Để giữ tối đa `n` dòng mỗi nhóm, tính `ROW_NUMBER` trong CTE rồi lọc `SoThuTu <= n` ở câu ngoài, tương tự giữ số `1`. Chẳng hạn muốn tối đa hai đơn **mỗi loại**, phần đánh số dùng biểu thức sau trong `SELECT` của CTE; câu ngoài lọc `SoThuTu <= 2`. Đoạn dưới chỉ là biểu thức, không phải cả câu để chạy:
+
+<Sql copy={false} code={`ROW_NUMBER() OVER (
+\tPARTITION BY LoaiNghi
+\tORDER BY SoNgay DESC, MaDon ASC
+) AS [SoThuTu]`} />
+
+Nếu giữ hạng đến `n` bằng `RANK` hoặc `DENSE_RANK`, số dòng có thể vượt `n` do đồng hạng. Ngay trong bảng chín đơn trên, lọc số thứ tự đến `3` giữ `3` dòng; lọc `Hang <= 3` giữ `5` dòng; lọc `HangLienTuc <= 3` giữ cả `9` dòng. Chốt yêu cầu là tối đa số dòng hay giữ đồng hạng trước khi chọn hàm.
+
+Ở bài này chỉ cần đánh số, giữ đồng hạng và lọc dòng trong từng nhóm; cộng dồn và lấy giá trị dòng trước học ở bài 4.3.
+
+### Câu lệnh cho tình huống
+
+<Sql code={`WITH XepHopDong AS (
+\tSELECT MaNV, MaHD, NgayBatDau,
+\t\tROW_NUMBER() OVER (
+\t\t\tPARTITION BY MaNV
+\t\t\tORDER BY NgayBatDau DESC, MaHD DESC
+\t\t) AS [SoThuTu]
+\tFROM HopDong
+\tWHERE NgayBatDau <= '20261021'
+)
+SELECT xh.MaNV, xh.MaHD, xh.NgayBatDau
+FROM XepHopDong AS xh
+WHERE xh.SoThuTu = 1
+ORDER BY xh.MaNV ASC;`} />
+
+<Result columns={["MaNV","MaHD","NgayBatDau"]} rows={[["NV001","HD2024-018","2024-03-01"],["NV002","HD2024-021","2024-04-01"],["NV003","HD2023-104","2023-06-01"],["NV004","HD2015-001","2015-01-05"],["NV005","HD2016-001","2016-03-14"],["NV006","HD2016-003","2016-08-01"],["NV007","HD2017-001","2017-02-13"],["NV008","HD2015-002","2015-09-01"],["NV009","HD2025-007","2025-05-06"],["NV010","HD2016-002","2016-06-01"]]} total={46} />
+
+Gửi chị Hạnh `46` dòng, mỗi mã có hợp đồng trong phạm vi một dòng; bảng trên trích mười dòng đầu. Có `55` hợp đồng đạt mốc ngày trước khi lọc số thứ tự. `NV047` và `NV048` chưa có hợp đồng nên không có dòng để đánh số, không tự xuất hiện trong kết quả. Muốn kiểm hiệu lực phải có điều kiện nghiệp vụ riêng; câu này chỉ thực hiện quy tắc chọn đã nêu.
+
+### SQL Server chạy câu này thế nào
+
+CTE tính số thứ tự trước khi câu ngoài đọc kết quả đó. Sơ đồ chỉ diễn giải **SELECT ngoài**: đọc nguồn đã đánh số → lọc số `1` → chọn cột → sắp mã. Đây là thứ tự logic, không mô tả kế hoạch thực thi vật lý hoặc bảng trung gian được lưu. Thẻ xem nhanh ba dòng; drawer trích tối đa mười dòng và ghi tổng thật.
+
+<RunFlow query={`WITH XepHopDong AS (
+\tSELECT MaNV, MaHD, NgayBatDau,
+\t\tROW_NUMBER() OVER (
+\t\t\tPARTITION BY MaNV
+\t\t\tORDER BY NgayBatDau DESC, MaHD DESC
+\t\t) AS [SoThuTu]
+\tFROM HopDong
+\tWHERE NgayBatDau <= '20261021'
+)
+SELECT xh.MaNV, xh.MaHD, xh.NgayBatDau
+FROM XepHopDong AS xh
+WHERE xh.SoThuTu = 1
+ORDER BY xh.MaNV ASC;`} steps={[
+  {
+    "clause": "FROM",
+    "title": "Đọc 55 hợp đồng đã đánh số",
+    "focus": "FROM XepHopDong AS xh",
+    "meaning": "`FROM` dùng kết quả CTE làm nguồn câu ngoài.",
+    "detail": "Bảng trích chỉ hiện mười dòng đầu, sắp theo mã rồi số thứ tự để đối chiếu. Có `55` hợp đồng thuộc `46` mã nhân viên.",
+    "sql": "WITH XepHopDong AS (\n\tSELECT MaNV, MaHD, NgayBatDau,\n\t\tROW_NUMBER() OVER (\n\t\t\tPARTITION BY MaNV\n\t\t\tORDER BY NgayBatDau DESC, MaHD DESC\n\t\t) AS [SoThuTu]\n\tFROM HopDong\n\tWHERE NgayBatDau <= '20261021'\n)\nSELECT xh.MaNV, xh.MaHD, xh.NgayBatDau, xh.SoThuTu\nFROM XepHopDong AS xh\nORDER BY xh.MaNV ASC, xh.SoThuTu ASC;",
+    "columns": [
+      "MaNV",
+      "MaHD",
+      "NgayBatDau",
+      "SoThuTu"
+    ],
+    "rows": [
+      [
+        "NV001",
+        "HD2024-018",
+        "2024-03-01",
+        1
+      ],
+      [
+        "NV002",
+        "HD2024-021",
+        "2024-04-01",
+        1
+      ],
+      [
+        "NV003",
+        "HD2023-104",
+        "2023-06-01",
+        1
+      ],
+      [
+        "NV004",
+        "HD2015-001",
+        "2015-01-05",
+        1
+      ],
+      [
+        "NV005",
+        "HD2016-001",
+        "2016-03-14",
+        1
+      ],
+      [
+        "NV006",
+        "HD2016-003",
+        "2016-08-01",
+        1
+      ],
+      [
+        "NV007",
+        "HD2017-001",
+        "2017-02-13",
+        1
+      ],
+      [
+        "NV008",
+        "HD2015-002",
+        "2015-09-01",
+        1
+      ],
+      [
+        "NV009",
+        "HD2025-007",
+        "2025-05-06",
+        1
+      ],
+      [
+        "NV010",
+        "HD2016-002",
+        "2016-06-01",
+        1
+      ]
+    ],
+    "total": 55
+  },
+  {
+    "clause": "WHERE",
+    "title": "Giữ số thứ tự 1",
+    "focus": "WHERE xh.SoThuTu = 1",
+    "meaning": "`WHERE` ngoài lọc cột số thứ tự đã được CTE tính.",
+    "detail": "Mỗi mã có hợp đồng trong phạm vi giữ một dòng: `46` dòng. Câu kiểm vẫn hiện số thứ tự để kiểm điều kiện.",
+    "sql": "WITH XepHopDong AS (\n\tSELECT MaNV, MaHD, NgayBatDau,\n\t\tROW_NUMBER() OVER (\n\t\t\tPARTITION BY MaNV\n\t\t\tORDER BY NgayBatDau DESC, MaHD DESC\n\t\t) AS [SoThuTu]\n\tFROM HopDong\n\tWHERE NgayBatDau <= '20261021'\n)\nSELECT xh.MaNV, xh.MaHD, xh.NgayBatDau, xh.SoThuTu\nFROM XepHopDong AS xh\nWHERE xh.SoThuTu = 1\nORDER BY xh.MaNV ASC;",
+    "columns": [
+      "MaNV",
+      "MaHD",
+      "NgayBatDau",
+      "SoThuTu"
+    ],
+    "rows": [
+      [
+        "NV001",
+        "HD2024-018",
+        "2024-03-01",
+        1
+      ],
+      [
+        "NV002",
+        "HD2024-021",
+        "2024-04-01",
+        1
+      ],
+      [
+        "NV003",
+        "HD2023-104",
+        "2023-06-01",
+        1
+      ],
+      [
+        "NV004",
+        "HD2015-001",
+        "2015-01-05",
+        1
+      ],
+      [
+        "NV005",
+        "HD2016-001",
+        "2016-03-14",
+        1
+      ],
+      [
+        "NV006",
+        "HD2016-003",
+        "2016-08-01",
+        1
+      ],
+      [
+        "NV007",
+        "HD2017-001",
+        "2017-02-13",
+        1
+      ],
+      [
+        "NV008",
+        "HD2015-002",
+        "2015-09-01",
+        1
+      ],
+      [
+        "NV009",
+        "HD2025-007",
+        "2025-05-06",
+        1
+      ],
+      [
+        "NV010",
+        "HD2016-002",
+        "2016-06-01",
+        1
+      ]
+    ],
+    "total": 46
+  },
+  {
+    "clause": "SELECT",
+    "title": "Lấy mã và ngày bắt đầu",
+    "focus": "SELECT xh.MaNV, xh.MaHD, xh.NgayBatDau",
+    "meaning": "`SELECT` chọn ba cột cần báo cáo.",
+    "detail": "Số thứ tự được dùng để lọc, không cần gửi trong ba cột cuối.",
+    "sql": "WITH XepHopDong AS (\n\tSELECT MaNV, MaHD, NgayBatDau,\n\t\tROW_NUMBER() OVER (\n\t\t\tPARTITION BY MaNV\n\t\t\tORDER BY NgayBatDau DESC, MaHD DESC\n\t\t) AS [SoThuTu]\n\tFROM HopDong\n\tWHERE NgayBatDau <= '20261021'\n)\nSELECT xh.MaNV, xh.MaHD, xh.NgayBatDau\nFROM XepHopDong AS xh\nWHERE xh.SoThuTu = 1\nORDER BY xh.MaNV ASC;",
+    "columns": [
+      "MaNV",
+      "MaHD",
+      "NgayBatDau"
+    ],
+    "rows": [
+      [
+        "NV001",
+        "HD2024-018",
+        "2024-03-01"
+      ],
+      [
+        "NV002",
+        "HD2024-021",
+        "2024-04-01"
+      ],
+      [
+        "NV003",
+        "HD2023-104",
+        "2023-06-01"
+      ],
+      [
+        "NV004",
+        "HD2015-001",
+        "2015-01-05"
+      ],
+      [
+        "NV005",
+        "HD2016-001",
+        "2016-03-14"
+      ],
+      [
+        "NV006",
+        "HD2016-003",
+        "2016-08-01"
+      ],
+      [
+        "NV007",
+        "HD2017-001",
+        "2017-02-13"
+      ],
+      [
+        "NV008",
+        "HD2015-002",
+        "2015-09-01"
+      ],
+      [
+        "NV009",
+        "HD2025-007",
+        "2025-05-06"
+      ],
+      [
+        "NV010",
+        "HD2016-002",
+        "2016-06-01"
+      ]
+    ],
+    "total": 46
+  },
+  {
+    "clause": "ORDER BY",
+    "title": "Sắp mã nhân viên tăng dần",
+    "focus": "ORDER BY xh.MaNV ASC",
+    "meaning": "`ORDER BY` ngoài sắp bảng kết quả.",
+    "detail": "Thứ tự trong `OVER` dùng để đánh số, không thay thế việc sắp bảng cuối.",
+    "sql": "WITH XepHopDong AS (\n\tSELECT MaNV, MaHD, NgayBatDau,\n\t\tROW_NUMBER() OVER (\n\t\t\tPARTITION BY MaNV\n\t\t\tORDER BY NgayBatDau DESC, MaHD DESC\n\t\t) AS [SoThuTu]\n\tFROM HopDong\n\tWHERE NgayBatDau <= '20261021'\n)\nSELECT xh.MaNV, xh.MaHD, xh.NgayBatDau\nFROM XepHopDong AS xh\nWHERE xh.SoThuTu = 1\nORDER BY xh.MaNV ASC;",
+    "columns": [
+      "MaNV",
+      "MaHD",
+      "NgayBatDau"
+    ],
+    "rows": [
+      [
+        "NV001",
+        "HD2024-018",
+        "2024-03-01"
+      ],
+      [
+        "NV002",
+        "HD2024-021",
+        "2024-04-01"
+      ],
+      [
+        "NV003",
+        "HD2023-104",
+        "2023-06-01"
+      ],
+      [
+        "NV004",
+        "HD2015-001",
+        "2015-01-05"
+      ],
+      [
+        "NV005",
+        "HD2016-001",
+        "2016-03-14"
+      ],
+      [
+        "NV006",
+        "HD2016-003",
+        "2016-08-01"
+      ],
+      [
+        "NV007",
+        "HD2017-001",
+        "2017-02-13"
+      ],
+      [
+        "NV008",
+        "HD2015-002",
+        "2015-09-01"
+      ],
+      [
+        "NV009",
+        "HD2025-007",
+        "2025-05-06"
+      ],
+      [
+        "NV010",
+        "HD2016-002",
+        "2016-06-01"
+      ]
+    ],
+    "total": 46
+  }
+]} />
+
+## Hay nhầm ở đâu
+
+<Mistakes>
+
+1. **Dùng GROUP BY để lấy cả dòng mới nhất.** Tổng hợp `MAX(NgayBatDau)` chỉ cho ngày lớn nhất, chưa chọn được các cột còn lại của cùng một hợp đồng. Đánh số giữ dòng chi tiết rồi lọc mới chọn cả dòng theo thứ tự đã chốt.
+2. **Thấy số thứ tự rồi bỏ ORDER BY cuối.** Thứ tự trong `OVER` phục vụ phép tính; bảng trả về vẫn cần `ORDER BY` riêng để bảo đảm cách trình bày.
+3. **Gọi dòng mới nhất là hợp đồng còn hiệu lực.** Dòng được chọn có thể đã hết hạn hoặc có dữ liệu ngày sai. Đánh số không kiểm giúp ý nghĩa hay tính đúng của hồ sơ.
+
+</Mistakes>
+
+## Ứng dụng
+
+<Apply>
+
+- **Chọn hồ sơ gần nhất từng mã:** đặt phạm vi ngày, chọn khóa phân định rồi giữ số `1` để lấy đúng một dòng theo quy tắc.
+- **Giới hạn số dòng từng nhóm:** dùng `PARTITION BY` và số thứ tự để lấy tối đa một số đơn mỗi loại, thay vì `TOP` chung cho cả bảng.
+- **Giữ người đồng hạng:** xếp hạng theo chỉ tiêu chung và chốt cách xử lý điểm cắt trước khi lọc.
+
+</Apply>
+
+## Ghi nhớ
+
+<Memo rows={[
+  ['Đánh số riêng từng dòng trong nhóm','ROW_NUMBER() OVER (PARTITION BY MaNV ORDER BY NgayBatDau DESC, MaHD DESC)'],
+  ['Đồng hạng, hạng sau có thể nhảy','RANK() OVER (ORDER BY SoNgay DESC)'],
+  ['Đồng hạng, hạng sau liền nhau','DENSE_RANK() OVER (ORDER BY SoNgay DESC)'],
+]} />
+
+**Tự kiểm tra trước khi bấm "Đã học xong":**
+
+<details>
+<summary>Vì sao cần cả <code>PARTITION BY MaNV</code> và mã hợp đồng trong thứ tự đánh số?</summary>
+
+Phần thứ nhất bắt đầu lại từ `1` cho mỗi nhân viên. `MaHD` duy nhất phân định hai hợp đồng cùng ngày, giúp chọn một dòng nhất quán theo quy tắc.
+
+</details>
+
+<details>
+<summary>Hai dòng cùng hạng <code>1</code> thì hạng tiếp theo của <code>RANK</code> và <code>DENSE_RANK</code> là bao nhiêu?</summary>
+
+`RANK` tiếp theo là `3`, còn `DENSE_RANK` là `2`, như hai đơn `3.0` ngày và nhóm `2.0` ngày trong bảng minh họa.
+
+</details>
+
+<details>
+<summary>Giữ hạng đến <code>3</code> có bảo đảm tối đa ba dòng mỗi nhóm không?</summary>
+
+Không nếu dùng `RANK` hoặc `DENSE_RANK`, vì có đồng hạng. Muốn tối đa ba dòng, dùng `ROW_NUMBER` với thứ tự phân định rõ rồi lọc số thứ tự đến `3` ở câu ngoài.
+
+</details>
 
 ## Bài tập
+
+Ba đề luyện đánh số theo nhóm, giữ đồng hạng và giới hạn số dòng. Bộ chấm kiểm kết quả và thứ tự theo đề, không bắt buộc hàm đã dùng hoặc kiểm bí danh cột; hãy tự đối chiếu kỹ thuật đang luyện. Không dùng mã duy nhất làm khóa hạng khi đề yêu cầu đồng hạng theo số ngày.
 
 <Exercises />

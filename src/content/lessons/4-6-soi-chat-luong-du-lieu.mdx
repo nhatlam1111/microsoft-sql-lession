@@ -4,31 +4,165 @@ title: "Soi chất lượng dữ liệu: trùng, thiếu, sai"
 shortTitle: Soi chất lượng dữ liệu
 level: 4
 area: A6
-kind: summary
-minutes: 14
+kind: full
+minutes: 40
 prerequisites:
   - "3.3"
   - "3.5"
-goal: bạn tìm ra dữ liệu trùng, thiếu hoặc vô lý trước khi làm báo cáo
-excel: Conditional Formatting, Data Validation
-summary: Tìm số CCCD trùng, nhân viên thiếu email, hợp đồng có ngày kết thúc trước ngày bắt đầu.
+  - "4.1"
+  - "3.8"
+  - "3.10"
+goal: bạn viết được câu SELECT tìm dấu hiệu trùng, thiếu, sai theo luật đã chốt và phân biệt số nhóm với số dòng cần rà soát
+excel: Tô giá trị trùng, lọc ô trống và kiểm thứ tự ngày
+summary: Rà CCCD lặp, email thiếu và ngày hợp đồng đảo thứ tự; kết quả là dấu hiệu cần xác minh, chưa phải quyết định sửa hoặc xóa hồ sơ.
 ---
 
-## Nội dung chính
+## Tình huống
 
-- Tìm mã trùng: `GROUP BY SoCCCD HAVING COUNT(*) > 1`.
-- Tìm thông tin bắt buộc bị thiếu: `WHERE Email IS NULL`.
-- Tìm dữ liệu vô lý: hợp đồng có `NgayKetThuc < NgayBatDau`, ngày sinh nằm trong tương lai, lương âm.
-- HRM_Demo có sẵn vài lỗi cài cố ý để tập: hai người trùng số CCCD, hai người thiếu email, một hợp đồng có ngày kết thúc trước ngày bắt đầu.
+<Chat who="Chị Hạnh · Phòng Nhân sự" time="10:05" initial="H">
+Trước khi dùng dữ liệu nhân sự làm báo cáo, chị muốn xem chỗ nào cần rà lại: CCCD bị lặp giữa các hồ sơ, email còn thiếu cho danh sách liên hệ, và hợp đồng có ngày kết thúc trước ngày bắt đầu. Em tách rõ từng loại giúp chị nhé.
+</Chat>
 
-## Liên hệ Excel
+Rà toàn bộ `NhanVien` và `HopDong` ở mọi trạng thái, không chỉ hồ sơ đang làm. Ba điều kiện trên là **luật rà soát** được thống nhất cho tình huống; email thiếu không có nghĩa hệ thống đã khai báo nó là cột bắt buộc. Bộ mẫu giữ sẵn các dấu hiệu này để học, bạn không sửa dữ liệu dùng chung.
 
-Giống Conditional Formatting tô màu giá trị trùng, hoặc Data Validation với Circle Invalid Data. Khác ở chỗ câu lệnh soát cả bảng mỗi lần chạy và lưu lại được để chạy định kỳ.
+<Key>Dùng `SELECT` trả ra các dòng cần xác minh theo từng luật, rồi nói rõ đang đếm nhóm trùng hay hồ sơ/hợp đồng.</Key>
 
-## Tình huống ví dụ
+## Từ dấu hiệu trong dữ liệu đến danh sách cần rà
 
-Trước khi chốt báo cáo nhân sự quý, cần biết dữ liệu có chỗ nào trùng, thiếu hay sai.
+### Chốt luật trước khi lọc
+
+Trong Excel, **Conditional Formatting** là định dạng ô theo điều kiện; quy tắc tô giá trị trùng giúp bạn thấy một số CCCD xuất hiện nhiều lần. Lọc ô trống giúp rà thông tin còn thiếu, còn so hai cột ngày giúp tìm thứ tự bất thường. Các thao tác này chỉ chỉ ra dòng khớp điều kiện; chúng chưa xác nhận nguyên nhân hay cách sửa.
+
+Trong SQL, **kiểm chất lượng dữ liệu** ở bài này là dùng `SELECT` để tìm dấu hiệu vi phạm ba luật đã chốt. Luật phải nói rõ cột, phạm vi và cách coi giá trị là thiếu hoặc sai. Cùng một email chưa có có thể không cản lưu hồ sơ nhưng vẫn không đủ cho danh sách liên hệ chị Hạnh cần.
+
+### Nhóm trùng khác các hồ sơ mang giá trị trùng
+
+`GROUP BY SoCCCD` gom các dòng có cùng số CCCD; `HAVING COUNT(*) > 1` chỉ giữ nhóm nhiều hơn một hồ sơ, như bài 3.3. Mỗi dòng kết quả là **một nhóm số CCCD**, không phải một hồ sơ. Số hồ sơ của nhóm nằm ở `COUNT(*)`.
+
+Muốn xem từng hồ sơ, có thể đặt kết quả nhóm trùng vào CTE `SoTrung`, gồm `SoCCCD` và số lượng. Sau đó dùng `NhanVien AS nv` kết bảng `INNER JOIN SoTrung AS t ON nv.SoCCCD = t.SoCCCD` để lấy các dòng mang số thuộc nhóm ấy. Mỗi số chỉ có một dòng trong CTE nên bước kết này không nhân thêm hồ sơ; cách đặt CTE và kết bảng đã học ở bài 4.1 và 3.4.
+
+Hai hồ sơ cùng số CCCD là dấu hiệu cần đối chiếu giấy tờ: có thể nhập nhầm số hoặc tạo nhiều hồ sơ cho cùng người. Chỉ từ điều kiện trùng chưa thể kết luận đó là cùng một người, càng chưa đủ căn cứ tự xóa một mã nhân viên.
+
+### Quy ước thiếu, sai ngày và cách đếm theo luật
+
+Với danh sách liên hệ này, **email thiếu** gồm `Email IS NULL`, chuỗi rỗng và chuỗi chỉ có dấu cách thông thường. `TRIM(Email) = ''` nhận hai trường hợp chuỗi cuối bằng cách bỏ dấu cách ở hai đầu (bài 2.7); cần `OR Email IS NULL` vì so sánh chuỗi không nhận giá trị `NULL`. Điều kiện này chưa kiểm định dạng hay khả năng nhận thư của email có chữ.
+
+**Ngày hợp đồng sai thứ tự** ở đây là `NgayKetThuc < NgayBatDau`. Dấu `<` chỉ bắt ngày kết thúc đứng trước ngày bắt đầu. Ngày bằng nhau không khớp luật này; `NgayKetThuc` là `NULL` cũng không làm phép so sánh thành đúng. Không mở rộng kết luận thành mọi hợp đồng có ngày bằng nhau hoặc chưa có ngày kết thúc đều hợp lệ theo nghiệp vụ.
+
+Để đếm email thiếu mà vẫn giữ phòng có `0`, đọc mọi dòng `NhanVien`, nhóm theo `MaPB`, rồi cộng `SUM(CASE WHEN Email IS NULL OR TRIM(Email) = '' THEN 1 ELSE 0 END)`. Dòng thiếu góp `1`, dòng khác góp `0`; lọc thiếu ở `WHERE` trước sẽ làm mất phòng không có dòng thiếu. Cách này bao phủ mọi mã phòng đang có hồ sơ, chưa tự tạo dòng cho phòng không có hồ sơ nào.
+
+Để gom số lượng của ba luật, mỗi nhánh trả hai cột cùng vị trí: mã luật cố định dạng chữ và `COUNT(*)` số dòng cần rà; dùng `UNION ALL` như bài 3.8, rồi `ORDER BY` mã ở cuối. Nhánh đếm không có `GROUP BY` vẫn trả một dòng với `0` nếu không có dòng khớp. Nhánh CCCD đếm trên danh sách hồ sơ sau bước kết với `SoTrung`, không đếm số nhóm. Nhánh email đọc các hồ sơ khớp luật thiếu; nhánh ngày đọc các hợp đồng khớp luật ngày.
+
+Một hồ sơ có thể vừa mang CCCD trùng vừa thiếu email. Vì vậy, tổng các số theo luật không phải số người riêng biệt; nhánh ngày còn đếm hợp đồng, khác đơn vị hồ sơ. Muốn thống nhất tên cột kết quả `UNION ALL`, đặt bí danh ở `SELECT` nhánh đầu; mỗi mã luật là chuỗi hằng đi cùng số đếm của nhánh đó.
+
+### Câu lệnh cho tình huống
+
+Trước tiên, xem các nhóm số CCCD xuất hiện trên nhiều hồ sơ:
+
+<Sql code={`SELECT SoCCCD, COUNT(*) AS [SoHoSo]
+FROM NhanVien
+GROUP BY SoCCCD
+HAVING COUNT(*) > 1
+ORDER BY SoCCCD ASC;`} />
+
+<Result columns={["SoCCCD","SoHoSo"]} rows={[["000092242242",2]]} total={1} />
+
+Chị Hạnh nhận `1` nhóm CCCD, số `000092242242`, có `2` hồ sơ cần đối chiếu. Đây là số nhóm và số hồ sơ trong nhóm, chưa phải kết luận trùng người.
+
+Tiếp theo, lấy hồ sơ chưa có email theo đúng quy ước vừa chốt:
+
+<Sql code={`SELECT MaNV, MaPB, Email
+FROM NhanVien
+WHERE Email IS NULL OR TRIM(Email) = ''
+ORDER BY MaNV ASC;`} />
+
+<Result columns={["MaNV","MaPB","Email"]} rows={[["NV044","VH",null],["NV045","KD",null]]} total={2} />
+
+Có `2` hồ sơ cần bổ sung hoặc xác minh email: `NV044` thuộc `VH`, `NV045` thuộc `KD`. Trong bộ mẫu, cả hai đang là `NULL`; điều kiện vẫn bao gồm chuỗi rỗng và chỉ có dấu cách nếu nguồn có những giá trị ấy.
+
+Cuối cùng, lấy hợp đồng có ngày kết thúc trước ngày bắt đầu:
+
+<Sql code={`SELECT MaHD, MaNV, NgayBatDau, NgayKetThuc
+FROM HopDong
+WHERE NgayKetThuc < NgayBatDau
+ORDER BY MaHD ASC;`} />
+
+<Result columns={["MaHD","MaNV","NgayBatDau","NgayKetThuc"]} rows={[["HD2025-003","NV029","2025-03-01","2025-02-28"]]} total={1} />
+
+Hợp đồng `HD2025-003` của `NV029` kết thúc `28/02/2025`, trước ngày bắt đầu `01/03/2025`. Chị Hạnh có `1` hợp đồng để đối chiếu bản gốc; câu lệnh chưa cho biết ngày nào phải sửa.
+
+Ba danh sách khép lại yêu cầu: `1` nhóm CCCD gồm `2` hồ sơ, `2` hồ sơ thiếu email và `1` hợp đồng đảo thứ tự ngày. Chuyển từng danh sách cho người phụ trách xác minh, không cộng các số thành số người có lỗi. Ở bài này chỉ cần tìm và mô tả dấu hiệu; ngăn dữ liệu sai khi ghi học ở bài 5.2, đối chiếu hai nguồn học ở bài 4.7.
+
+## Hay nhầm ở đâu
+
+<Mistakes>
+
+1. **Thấy một nhóm trùng thì báo một hồ sơ có vấn đề.** Một dòng nhóm có thể đại diện cho nhiều hồ sơ; muốn rà từng hồ sơ cần trở lại danh sách chi tiết.
+2. **Chỉ dùng so sánh chuỗi để tìm email thiếu.** `NULL` sẽ bị bỏ sót nếu thiếu nhánh `IS NULL`; email có chữ cũng chưa chắc dùng liên hệ được.
+3. **Gọi mọi dòng khớp luật là lỗi đã xác nhận.** Cần đối chiếu nguồn và người chịu trách nhiệm trước khi quyết định sửa; không tự xóa hồ sơ hoặc sửa ngày theo suy đoán.
+4. **Chạy `SELECT` rồi nghĩ dữ liệu sai sẽ bị chặn từ nay.** Câu đọc chỉ phát hiện dấu hiệu trên dữ liệu nó thấy; việc chặn khi ghi cần luật được khai báo và kiểm phù hợp.
+
+</Mistakes>
+
+## Ứng dụng
+
+<Apply>
+
+- **Lập danh sách đối chiếu giấy tờ:** lấy hồ sơ mang CCCD lặp để người phụ trách xác minh từng trường hợp.
+- **Chuẩn bị danh sách liên hệ:** rà email còn thiếu và đếm theo phòng để giao việc bổ sung đúng nơi.
+- **Rà thứ tự ngày hợp đồng:** đưa mã cùng hai ngày bất thường cho người giữ bản gốc đối chiếu.
+- **Tổng hợp theo luật kiểm:** đặt mã luật và giữ đơn vị đếm để so số lượng cần rà giữa các lần lấy dữ liệu cùng phạm vi.
+
+</Apply>
+
+## Ghi nhớ
+
+<Memo rows={[
+  ['Tô giá trị trùng trong Excel', 'GROUP BY + HAVING trả nhóm; kết lại danh sách để xem hồ sơ'],
+  ['Lọc ô chưa có thông tin liên hệ', 'IS NULL hoặc TRIM bằng chuỗi rỗng theo quy ước email thiếu'],
+  ['So hai cột ngày', 'Ngày kết thúc < ngày bắt đầu chỉ bắt thứ tự đảo'],
+  ['Đếm dấu hiệu theo từng luật', 'Giữ đơn vị hồ sơ/hợp đồng; không cộng thành số người riêng biệt'],
+]} />
+
+**Tự kiểm tra trước khi làm bài tập:**
+
+<details>
+<summary>Một dòng CCCD trùng với <code>SoHoSo = 2</code> có nghĩa gì?</summary>
+
+Một nhóm số CCCD xuất hiện trên hai hồ sơ. Muốn biết từng hồ sơ thì kết danh sách `NhanVien` với kết quả nhóm trùng theo `SoCCCD`; chưa thể kết luận cùng một người.
+
+</details>
+
+<details>
+<summary>Vì sao cần cả <code>IS NULL</code> và <code>TRIM</code> khi rà email?</summary>
+
+Nhánh `IS NULL` nhận giá trị chưa có; so `TRIM(Email)` với chuỗi rỗng nhận chuỗi rỗng hoặc chỉ có dấu cách thông thường. Có chữ chưa bảo đảm địa chỉ nhận thư được.
+
+</details>
+
+<details>
+<summary>Ngày kết thúc bằng ngày bắt đầu hoặc là <code>NULL</code> có xuất hiện ở kiểm ngày không?</summary>
+
+Không. Luật này dùng dấu `<`, chỉ giữ ngày kết thúc trước ngày bắt đầu; so với `NULL` không cho kết quả đúng. Các trường hợp khác vẫn cần luật nghiệp vụ riêng.
+
+</details>
+
+<details>
+<summary>Vì sao đếm email thiếu theo phòng cần giữ mọi hồ sơ trước khi cộng có điều kiện?</summary>
+
+Để phòng có hồ sơ nhưng không ai thiếu vẫn xuất hiện với `0`. Nếu lọc thiếu trước khi nhóm, phòng ấy sẽ không còn dòng để tạo nhóm.
+
+</details>
+
+<details>
+<summary>Cộng ba số lượng theo luật có được số người cần sửa dữ liệu không?</summary>
+
+Không. Một hồ sơ có thể khớp nhiều luật; nhánh ngày còn đếm hợp đồng. Kết quả là dấu hiệu để xác minh, chưa xác nhận cần sửa hay xóa gì.
+
+</details>
 
 ## Bài tập
+
+Các đề dùng mọi trạng thái hồ sơ/hợp đồng và giữ nguyên ba luật của bài. Có thể ôn CTE ở bài 4.1, kết bảng ở bài 3.4, cộng có điều kiện ở bài 3.10 và `UNION ALL` ở bài 3.8. Bộ chấm so giá trị và thứ tự, chưa kiểm kiểu cú pháp hoặc tên alias; bạn tự đối chiếu tiêu đề cột với đề.
 
 <Exercises />

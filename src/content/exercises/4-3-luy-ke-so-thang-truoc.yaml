@@ -1,0 +1,73 @@
+lesson: 4-3-luy-ke-so-thang-truoc
+exercises:
+  - id: 4-3-1
+    title: Lũy kế ngày trên các đơn Phép năm
+    summary: Tổng tháng rồi cộng từ đầu phạm vi.
+    prompt: Từ DonNghiPhep, lấy mọi trạng thái có LoaiNghi là chuỗi Unicode Phép năm và TuNgay từ 01/08/2026 đến hết 31/10/2026. Cộng nguyên SoNgay theo tháng bắt đầu. Trả Thang (ngày cuối tháng do EOMONTH tạo), TongNgay, LuyKe (từ tháng đầu trong phạm vi đến tháng hiện tại). Mỗi tháng có dữ liệu một dòng, xếp Thang tăng dần; không tạo tháng thiếu.
+    columns: [Thang, TongNgay, LuyKe]
+    answer: |-
+      WITH TongPhepNam AS (
+          SELECT EOMONTH(TuNgay) AS [Thang], SUM(SoNgay) AS [TongNgay]
+          FROM DonNghiPhep
+          WHERE LoaiNghi = N'Phép năm'
+              AND TuNgay >= '20260801' AND TuNgay < '20261101'
+          GROUP BY EOMONTH(TuNgay)
+      )
+      SELECT Thang, TongNgay,
+          SUM(TongNgay) OVER (
+              ORDER BY Thang
+              ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+          ) AS [LuyKe]
+      FROM TongPhepNam
+      ORDER BY Thang ASC;
+    ordered: true
+    kind: query
+  - id: 4-3-2
+    title: Lũy kế bắt đầu lại theo từng loại nghỉ
+    summary: Một dòng cho mỗi cặp loại và tháng có dữ liệu.
+    prompt: Lấy mọi DonNghiPhep có TuNgay từ 01/08/2026 đến hết 31/10/2026, mọi trạng thái. Trả LoaiNghi, Thang (ngày cuối tháng), TongNgay (cộng nguyên SoNgay theo loại và tháng bắt đầu), LuyKeLoai (cộng dồn riêng loại từ dòng tháng đầu có dữ liệu trong phạm vi). Chỉ các cặp loại–tháng có dữ liệu, không thêm tháng hoặc gán số 0. Xếp LoaiNghi tăng dần rồi Thang tăng dần; luyện PARTITION BY.
+    columns: [LoaiNghi, Thang, TongNgay, LuyKeLoai]
+    answer: |-
+      WITH TongLoaiThang AS (
+          SELECT LoaiNghi, EOMONTH(TuNgay) AS [Thang], SUM(SoNgay) AS [TongNgay]
+          FROM DonNghiPhep
+          WHERE TuNgay >= '20260801' AND TuNgay < '20261101'
+          GROUP BY LoaiNghi, EOMONTH(TuNgay)
+      )
+      SELECT LoaiNghi, Thang, TongNgay,
+          SUM(TongNgay) OVER (
+              PARTITION BY LoaiNghi
+              ORDER BY Thang
+              ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+          ) AS [LuyKeLoai]
+      FROM TongLoaiThang
+      ORDER BY LoaiNghi ASC, Thang ASC;
+    ordered: true
+    kind: query
+  - id: 4-3-3
+    title: Chỉ gửi tháng 10 sau khi tính trên ba tháng
+    summary: Giữ lịch sử tính, lọc riêng phần hiển thị.
+    prompt: Dùng mọi trạng thái DonNghiPhep có TuNgay từ 01/08/2026 đến hết 31/10/2026. Cộng nguyên SoNgay theo tháng bắt đầu, tính LuyKe từ tháng 8, KyTruoc bằng LAG của TongNgay theo thứ tự tháng, ChenhLech bằng TongNgay trừ KyTruoc. Chỉ trả dòng tháng 10 sau bước tính cửa sổ, với các cột Thang (ngày cuối tháng), TongNgay, LuyKe, KyTruoc, ChenhLech; xếp Thang tăng dần. Không tự đổi NULL thành 0.
+    columns: [Thang, TongNgay, LuyKe, KyTruoc, ChenhLech]
+    answer: |-
+      WITH TongThang AS (
+          SELECT EOMONTH(TuNgay) AS [Thang], SUM(SoNgay) AS [TongNgay]
+          FROM DonNghiPhep
+          WHERE TuNgay >= '20260801' AND TuNgay < '20261101'
+          GROUP BY EOMONTH(TuNgay)
+      ), CuaSo AS (
+          SELECT Thang, TongNgay,
+              SUM(TongNgay) OVER (
+                  ORDER BY Thang
+                  ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+              ) AS [LuyKe],
+              LAG(TongNgay) OVER (ORDER BY Thang) AS [KyTruoc]
+          FROM TongThang
+      )
+      SELECT Thang, TongNgay, LuyKe, KyTruoc,
+          TongNgay - KyTruoc AS [ChenhLech]
+      FROM CuaSo
+      WHERE Thang = '20261031'
+      ORDER BY Thang ASC;
+    ordered: true
+    kind: query

@@ -1,0 +1,52 @@
+lesson: 4-2-xep-hang-row-number-rank
+exercises:
+  - id: 4-2-1
+    title: Đánh số đơn chờ duyệt theo từng loại
+    summary: Mỗi loại bắt đầu lại từ một.
+    prompt: Từ DonNghiPhep, chỉ lấy TrangThai là chuỗi Unicode Chờ duyệt. Trả MaDon, LoaiNghi, SoNgay, SoThuTu. Đánh số ROW_NUMBER bắt đầu lại ở mỗi LoaiNghi, theo SoNgay giảm dần rồi MaDon tăng dần. Giữ mọi dòng trong phạm vi; xếp LoaiNghi tăng dần rồi SoThuTu tăng dần.
+    columns: [MaDon, LoaiNghi, SoNgay, SoThuTu]
+    answer: |-
+      SELECT MaDon, LoaiNghi, SoNgay,
+          ROW_NUMBER() OVER (
+              PARTITION BY LoaiNghi
+              ORDER BY SoNgay DESC, MaDon ASC
+          ) AS [SoThuTu]
+      FROM DonNghiPhep
+      WHERE TrangThai = N'Chờ duyệt'
+      ORDER BY LoaiNghi ASC, SoThuTu ASC;
+    ordered: true
+    kind: query
+  - id: 4-2-2
+    title: Hai cách giữ đồng hạng cho đơn Phép năm
+    summary: Chỉ tiêu xếp hạng chỉ là số ngày.
+    prompt: Lấy mọi đơn có LoaiNghi là chuỗi Unicode Phép năm, không lọc trạng thái hay ngày. Trả MaDon, SoNgay, Hang (RANK), HangLienTuc (DENSE_RANK). Hai hàm đều tính chung toàn bộ tập sau lọc, theo SoNgay giảm dần; các đơn bằng SoNgay phải đồng hạng. Xếp bảng cuối theo SoNgay giảm dần rồi MaDon tăng dần; không giới hạn số dòng.
+    columns: [MaDon, SoNgay, Hang, HangLienTuc]
+    answer: |-
+      SELECT MaDon, SoNgay,
+          RANK() OVER (ORDER BY SoNgay DESC) AS [Hang],
+          DENSE_RANK() OVER (ORDER BY SoNgay DESC) AS [HangLienTuc]
+      FROM DonNghiPhep
+      WHERE LoaiNghi = N'Phép năm'
+      ORDER BY SoNgay DESC, MaDon ASC;
+    ordered: true
+    kind: query
+  - id: 4-2-3
+    title: Tối đa ba đơn của mỗi loại
+    summary: Lọc số thứ tự ở câu ngoài CTE.
+    prompt: Dùng mọi DonNghiPhep, mọi trạng thái và ngày. Đánh số ROW_NUMBER riêng từng LoaiNghi theo SoNgay giảm dần rồi MaDon tăng dần; dùng CTE để chỉ lấy SoThuTu nhỏ hơn hoặc bằng 3. Trả MaDon, LoaiNghi, SoNgay, SoThuTu; mỗi loại tối đa ba dòng. Xếp LoaiNghi tăng dần, SoThuTu tăng dần rồi MaDon tăng dần.
+    columns: [MaDon, LoaiNghi, SoNgay, SoThuTu]
+    answer: |-
+      WITH XepDon AS (
+          SELECT MaDon, LoaiNghi, SoNgay,
+              ROW_NUMBER() OVER (
+                  PARTITION BY LoaiNghi
+                  ORDER BY SoNgay DESC, MaDon ASC
+              ) AS [SoThuTu]
+          FROM DonNghiPhep
+      )
+      SELECT MaDon, LoaiNghi, SoNgay, SoThuTu
+      FROM XepDon
+      WHERE SoThuTu <= 3
+      ORDER BY LoaiNghi ASC, SoThuTu ASC, MaDon ASC;
+    ordered: true
+    kind: query

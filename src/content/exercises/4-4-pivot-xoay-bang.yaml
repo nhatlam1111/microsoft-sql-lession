@@ -1,0 +1,64 @@
+lesson: 4-4-pivot-xoay-bang
+exercises:
+  - id: 4-4-1
+    title: Ma trận ngày trên đơn đã duyệt
+    summary: Đổi phạm vi trước khi xoay.
+    prompt: Từ DonNghiPhep, chỉ lấy TrangThai là chuỗi Unicode Đã duyệt và TuNgay từ 01/08/2026 đến hết 31/10/2026. Cộng nguyên SoNgay theo tháng bắt đầu. Trả Thang (ngày cuối tháng), NgayPhepNam, NgayNghiOm, NgayViecRieng tương ứng ba loại Phép năm, Nghỉ ốm, Việc riêng. Mỗi tháng có dữ liệu một dòng, giữ NULL ở ô không có giá trị; không tạo tháng thiếu. Xếp Thang tăng dần, luyện PIVOT.
+    columns: [Thang, NgayPhepNam, NgayNghiOm, NgayViecRieng]
+    answer: |-
+      WITH Nguon AS (
+          SELECT EOMONTH(TuNgay) AS [Thang], LoaiNghi, SoNgay
+          FROM DonNghiPhep
+          WHERE TrangThai = N'Đã duyệt'
+              AND TuNgay >= '20260801' AND TuNgay < '20261101'
+      )
+      SELECT p.Thang, p.[Phép năm] AS [NgayPhepNam],
+          p.[Nghỉ ốm] AS [NgayNghiOm], p.[Việc riêng] AS [NgayViecRieng]
+      FROM Nguon
+      PIVOT (
+          SUM(SoNgay)
+          FOR LoaiNghi IN ([Phép năm], [Nghỉ ốm], [Việc riêng])
+      ) AS p
+      ORDER BY p.Thang ASC;
+    ordered: true
+    kind: query
+  - id: 4-4-2
+    title: Số đơn của từng loại ở ba trạng thái
+    summary: COUNT khóa đơn, mỗi loại một dòng.
+    prompt: Dùng toàn bộ DonNghiPhep, không lọc ngày hoặc trạng thái. Mỗi LoaiNghi một dòng; trả LoaiNghi, DaDuyet, ChoDuyet, TuChoi là số đơn của ba trạng thái Đã duyệt, Chờ duyệt, Từ chối. Luyện PIVOT với COUNT(MaDon); tổ hợp không có đơn nhận 0. Xếp LoaiNghi tăng dần.
+    columns: [LoaiNghi, DaDuyet, ChoDuyet, TuChoi]
+    answer: |-
+      WITH Nguon AS (
+          SELECT LoaiNghi, TrangThai, MaDon
+          FROM DonNghiPhep
+      )
+      SELECT p.LoaiNghi, p.[Đã duyệt] AS [DaDuyet],
+          p.[Chờ duyệt] AS [ChoDuyet], p.[Từ chối] AS [TuChoi]
+      FROM Nguon
+      PIVOT (
+          COUNT(MaDon)
+          FOR TrangThai IN ([Đã duyệt], [Chờ duyệt], [Từ chối])
+      ) AS p
+      ORDER BY p.LoaiNghi ASC;
+    ordered: true
+    kind: query
+  - id: 4-4-3
+    title: Hai tháng nằm ngang theo từng loại nghỉ
+    summary: Đổi tháng thành cột nhưng vẫn giữ đúng năm.
+    prompt: Từ DonNghiPhep, lấy TuNgay từ 01/08/2026 đến hết 30/09/2026, mọi trạng thái. Nguồn gồm LoaiNghi, ThangSo bằng MONTH(TuNgay), SoNgay; xoay ThangSo thành hai cột tháng 8 và 9, cộng nguyên ngày theo tháng bắt đầu. Trả LoaiNghi, NgayThang8, NgayThang9; giữ NULL ở tổ hợp không có giá trị, không thêm loại không có dòng nguồn. Xếp LoaiNghi tăng dần, luyện PIVOT.
+    columns: [LoaiNghi, NgayThang8, NgayThang9]
+    answer: |-
+      WITH Nguon AS (
+          SELECT LoaiNghi, MONTH(TuNgay) AS [ThangSo], SoNgay
+          FROM DonNghiPhep
+          WHERE TuNgay >= '20260801' AND TuNgay < '20261001'
+      )
+      SELECT p.LoaiNghi, p.[8] AS [NgayThang8], p.[9] AS [NgayThang9]
+      FROM Nguon
+      PIVOT (
+          SUM(SoNgay)
+          FOR ThangSo IN ([8], [9])
+      ) AS p
+      ORDER BY p.LoaiNghi ASC;
+    ordered: true
+    kind: query

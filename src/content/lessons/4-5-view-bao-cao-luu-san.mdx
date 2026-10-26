@@ -4,30 +4,137 @@ title: "View: báo cáo lưu sẵn"
 shortTitle: View
 level: 4
 area: A5
-kind: summary
-minutes: 10
+kind: full
+minutes: 25
 prerequisites:
   - "4.1"
-goal: bạn lưu được một câu lệnh báo cáo để dùng lại như một bảng
-excel: Sheet báo cáo, query đã lưu
-summary: CREATE VIEW và dùng view như một bảng bình thường.
+goal: bạn đọc được định nghĩa view, giải thích nó lưu gì và nêu được điều kiện để dùng lại báo cáo qua view
+excel: Cùng một quy tắc chọn dòng và cột cho nhiều báo cáo
+summary: View thông thường lưu định nghĩa truy vấn trong database để dùng lại; không lưu bản chốt dữ liệu hay tự bảo đảm nguồn đã đúng.
+noExercises: true
 ---
 
-## Nội dung chính
+## Tình huống
 
-- `CREATE VIEW vw_NhanVienDangLam AS SELECT …` lưu một câu lệnh thành một "bảng ảo".
-- Dùng view như một bảng: `SELECT * FROM vw_NhanVienDangLam`.
-- View không giữ dữ liệu riêng; mỗi lần đọc là chạy lại câu lệnh gốc nên luôn ra số mới nhất.
-- Đặt phần lọc và kết bảng phức tạp vào view để mọi báo cáo dùng chung một định nghĩa.
+<Chat who="Chị Hạnh · Phòng Nhân sự" time="09:25" initial="H">
+Báo cáo nào cũng cần danh sách hồ sơ đang làm, nhưng mỗi người lại viết điều kiện một kiểu. Em đề xuất cách để mọi người dùng chung một định nghĩa nhé. Trước mắt chị chỉ cần mã, họ tên, mã phòng và mã chức danh.
+</Chat>
 
-## Liên hệ Excel
+Chị Hạnh chốt **hồ sơ đang làm** là dòng trong `NhanVien` có `TrangThai = N'Đang làm'`. Đây là trạng thái đang lưu trong bộ mẫu, không phải danh sách tại một ngày quá khứ. Bốn cột cần dùng là `MaNV`, `HoTen`, `MaPB`, `MaCD`.
 
-Giống một sheet báo cáo hay một query Power Query đã lưu: mở ra là thấy số mới nhất mà không phải làm lại.
+<Key>Lưu định nghĩa chọn hồ sơ để nhiều báo cáo cùng dùng; phân biệt định nghĩa đó với một bản dữ liệu đã chốt.</Key>
 
-## Tình huống ví dụ
+## Dùng chung định nghĩa bằng view
 
-Nhiều báo cáo cùng cần "danh sách nhân viên đang làm kèm hợp đồng còn hiệu lực", và mỗi người đang viết một kiểu.
+### Từ quy tắc Excel đến một đối tượng có tên
 
-## Bài tập
+Trong Excel, bạn có thể ghi lại quy tắc: lọc cột trạng thái bằng `Đang làm`, rồi giữ bốn cột cần báo cáo. Nếu mỗi người tự làm lại, một người có thể bỏ điều kiện hoặc chọn thêm cột. Một sheet đã sao chép kết quả chỉ giữ dữ liệu lúc lấy, không tự đọc lại nguồn.
 
-<Exercises />
+**View** là một đối tượng có tên trong database, được định nghĩa bằng truy vấn. Với **view thông thường** trong bài này, SQL Server lưu định nghĩa chọn dữ liệu; khi đọc view, câu lệnh lấy dữ liệu từ các bảng bên dưới theo định nghĩa ấy. Bạn có thể dùng tên view trong `FROM` như một nguồn bảng.
+
+View không lưu một bản chốt dữ liệu riêng. Câu đọc thấy dữ liệu theo điều kiện truy cập và thời điểm thực thi của nó; nguồn chưa nhập đủ hoặc nhập sai thì kết quả vẫn có thể thiếu hoặc sai. Vì vậy, dùng chung view giúp thống nhất quy tắc, chưa chứng minh báo cáo đã đủ và đúng.
+
+### Đọc định nghĩa đề xuất
+
+Tên đề xuất là `dbo.vw_HoSoDangLam`. **Schema** là nhóm có tên để tổ chức các đối tượng trong một database; `dbo` là schema được dùng ở đây. Trong tên hai phần này, phần trước dấu chấm là schema, phần sau là tên view. Tương tự, `dbo.NhanVien` chỉ rõ bảng `NhanVien` trong schema `dbo`; `vw_` chỉ là quy ước đặt tên để dễ nhận ra view.
+
+**Hai khối SQL trong bài chỉ để đọc hiểu.** View này chưa được tạo trong database khóa học. Web hiện chặn `CREATE` và không có bài nộp SQL cho view; không dán hai mẫu vào ô chạy bài tập. Mục tiêu là giải thích định nghĩa và điều kiện sử dụng, chưa phải tạo được view trên môi trường chung.
+
+<Sql copy={false} code={`CREATE VIEW dbo.vw_HoSoDangLam AS
+SELECT MaNV, HoTen, MaPB, MaCD
+FROM dbo.NhanVien
+WHERE TrangThai = N'Đang làm';`} />
+
+`CREATE VIEW` tạo đối tượng view, tên đứng sau cho biết lưu định nghĩa dưới tên nào. `AS` mở phần truy vấn định nghĩa. `SELECT` liệt kê đúng bốn cột chị Hạnh cần; `WHERE` chỉ giữ trạng thái đã chốt. Từ sau khi được tạo, tên view sẽ đại diện cho phạm vi đó khi báo cáo đọc nó.
+
+So với **CTE** ở bài 4.1: tên CTE chỉ dùng trong một câu lệnh ngay sau phần `WITH`; muốn dùng ở câu khác phải khai báo lại. Định nghĩa view được lưu trong database và dùng lại qua nhiều câu lệnh hoặc phiên kết nối có quyền phù hợp. View cũng không tự bảo đảm chạy nhanh hơn; việc đo hiệu năng học ở bài 5.6–5.7.
+
+### Đọc từ view, lọc thêm và sắp kết quả
+
+Giả sử người có quyền đã tạo view đúng định nghĩa trên và cấp quyền đọc phù hợp. Một báo cáo chỉ cần hồ sơ của phòng `IT` có thể đọc như sau. Đây vẫn là mẫu đọc hiểu, không phải câu đã chạy thành công trên database khóa học.
+
+<Sql copy={false} code={`SELECT MaNV, HoTen, MaPB, MaCD
+FROM dbo.vw_HoSoDangLam
+WHERE MaPB = 'IT'
+ORDER BY MaNV ASC;`} />
+
+`FROM` lấy các dòng mà định nghĩa view cho phép thấy; `WHERE` ngoài lọc thêm phòng `IT`. Nó không lấy lại hồ sơ đã bị điều kiện trạng thái bên trong loại. `ORDER BY MaNV ASC` ở câu đọc chốt thứ tự kết quả; chỉ dùng view không bảo đảm thứ tự dòng.
+
+Báo cáo cũng chỉ gọi được các cột view cung cấp. Chẳng hạn, `TrangThai` được dùng để lọc bên trong nhưng không nằm trong bốn cột xuất ra, nên câu đọc trên không thể chọn cột ấy từ view. Muốn đổi tập cột hay quy tắc, cần thống nhất lại định nghĩa với người phụ trách.
+
+### Điều kiện triển khai và câu trả lời cho chị Hạnh
+
+Quyền **tạo view** khác quyền **đọc view**. Khi triển khai trên database được phép thay đổi, người thực hiện cần quyền tạo view và quyền phù hợp với schema, nguồn được tham chiếu. `CREATE VIEW` phải là câu đầu trong một **batch** — nhóm câu lệnh được công cụ gửi cùng một lần tới SQL Server. Đây là điều kiện để đọc kế hoạch triển khai; bài này không yêu cầu tự gửi lệnh tạo đối tượng.
+
+Người dùng báo cáo cần view đã tồn tại trong đúng database/schema và quyền đọc phù hợp. Tạo view không tự thu hồi quyền đọc bảng gốc đã có, cũng không tự bảo đảm thông tin được che kín. Việc cấp và kiểm quyền cụ thể học ở bài 6.1.
+
+Trả lời chị Hạnh: thống nhất định nghĩa **bốn cột trên các hồ sơ đang làm**, rồi nhờ người phụ trách database triển khai view và quyền sử dụng. Khi view đã có, mỗi báo cáo đọc cùng tên đó, lọc thêm phạm vi riêng và đặt `ORDER BY` cần thiết. Đây là đề xuất dùng chung định nghĩa, chưa phải thông báo đã tạo xong báo cáo.
+
+Ở bài này chỉ cần đọc định nghĩa, chỉ ra điều kiện lọc/cột trả về và trả lời năm câu tự kiểm tra cuối bài trên web khóa học. Không cần kết nối SQL Server riêng để hoàn thành bài đọc hiểu này. Khi có môi trường riêng được phép thay đổi, việc triển khai cần người có quyền xác nhận database và quyền trước.
+
+## Hay nhầm ở đâu
+
+<Mistakes>
+
+1. **Coi view là file dữ liệu đã chốt.** View thông thường lưu định nghĩa; cần bản chốt thì phải có quy trình lưu dữ liệu theo mốc riêng, không chỉ đặt tên view.
+2. **Dùng view rồi coi nguồn luôn đầy đủ.** Điều kiện chọn thống nhất không thay cho việc cập nhật và đối chiếu hồ sơ; dữ liệu câu đọc nhìn thấy vẫn phụ thuộc nguồn và thời điểm chạy.
+3. **Đọc được bảng thì chắc tạo được view.** Hai quyền khác nhau; tên view cũng phải tồn tại trong đúng database/schema trước khi đọc.
+4. **Coi view tự là hàng rào bảo mật.** Cần kiểm quyền thực tế, gồm quyền trên bảng gốc; bài này không thực hiện cấp hoặc thu hồi quyền.
+
+</Mistakes>
+
+## Ứng dụng
+
+<Apply>
+
+- **Thống nhất phạm vi báo cáo:** ghi rõ trạng thái và cột trong định nghĩa chung để các bên không tự chọn khác nhau.
+- **Đọc báo cáo theo nhu cầu riêng:** lọc phòng và sắp ở câu đọc mà vẫn giữ quy tắc hồ sơ của view.
+- **Bàn giao yêu cầu triển khai:** nêu tên, định nghĩa và quyền cần kiểm để người phụ trách biết phải tạo và cho ai sử dụng.
+
+</Apply>
+
+## Ghi nhớ
+
+<Memo rows={[
+  ['Quy tắc chọn dòng/cột dùng chung', 'View thông thường lưu định nghĩa truy vấn trong database'],
+  ['Tên vùng trung gian trong một câu', 'CTE chỉ có phạm vi một câu lệnh; view dùng lại khi đã tồn tại và có quyền'],
+  ['Bản Excel đã xuất', 'Dữ liệu tại lúc lấy; khác định nghĩa view đọc nguồn khi truy vấn'],
+  ['Lọc và sắp báo cáo riêng', 'WHERE ngoài lọc thêm; ORDER BY ở câu đọc chốt thứ tự'],
+]} />
+
+**Tự kiểm tra trước khi bấm "Đã học xong":**
+
+<details>
+<summary>View thông thường lưu định nghĩa hay một bản dữ liệu đã chốt?</summary>
+
+Lưu định nghĩa truy vấn. Khi đọc, câu lệnh lấy dữ liệu nguồn mà nó thấy được lúc chạy; view không tự làm nguồn đầy đủ hoặc đúng.
+
+</details>
+
+<details>
+<summary>Vì sao không dùng tên CTE của câu trước như dùng tên view?</summary>
+
+CTE chỉ có phạm vi một câu lệnh ngay sau phần khai báo. Định nghĩa view được lưu trong database để câu khác dùng lại, khi view đã tồn tại và người đọc có quyền phù hợp.
+
+</details>
+
+<details>
+<summary>View này lấy bốn cột nào từ bảng nào? Câu đọc lọc phòng <code>IT</code> có lấy lại hồ sơ đã nghỉ hoặc tự bảo đảm thứ tự không?</summary>
+
+Định nghĩa lấy `MaNV`, `HoTen`, `MaPB`, `MaCD` từ `dbo.NhanVien`, chỉ giữ hồ sơ đang làm. `WHERE` ngoài lọc thêm phòng `IT`, không lấy lại dòng đã bị loại; `ORDER BY` ở câu đọc quyết định thứ tự trả về.
+
+</details>
+
+<details>
+<summary>Có quyền đọc <code>NhanVien</code> thì chắc tạo hoặc đọc được <code>dbo.vw_HoSoDangLam</code> không?</summary>
+
+Không. Quyền tạo và đọc khác nhau; view còn phải tồn tại trong đúng database/schema. Người phụ trách phải kiểm quyền phù hợp với việc được giao; tạo view không tự thu hồi quyền bảng gốc.
+
+</details>
+
+<details>
+<summary>Học trên web khóa học thì làm gì để hoàn thành bài này?</summary>
+
+Đọc hai mẫu chỉ để hiểu định nghĩa và cách đọc view, rồi tự trả lời năm câu hỏi. Web chặn `CREATE`, view minh họa chưa được tạo nên không dán hai mẫu vào ô chạy SQL. Không cần tự kết nối SSMS cho bài đọc hiểu này.
+
+</details>

@@ -1,0 +1,56 @@
+lesson: 4-1-cte-tung-buoc
+exercises:
+  - id: 4-1-1
+    title: Tổng ngày đơn đã duyệt bắt đầu tháng 8
+    summary: Dùng CTE đặt tên tổng theo loại rồi lọc tổng.
+    prompt: Từ DonNghiPhep, chỉ lấy đơn có TrangThai là chuỗi Unicode Đã duyệt và TuNgay từ 01/08/2026 đến hết 31/08/2026. Cộng nguyên SoNgay theo LoaiNghi; chỉ giữ tổng lớn hơn hoặc bằng 2. Trả LoaiNghi, TongNgay; xếp TongNgay giảm dần rồi LoaiNghi tăng dần. Luyện CTE và lọc cột tổng ở câu ngoài.
+    columns: [LoaiNghi, TongNgay]
+    answer: |-
+      WITH TongThang8 AS (
+          SELECT LoaiNghi, SUM(SoNgay) AS [TongNgay]
+          FROM DonNghiPhep
+          WHERE TrangThai = N'Đã duyệt'
+              AND TuNgay >= '20260801' AND TuNgay < '20260901'
+          GROUP BY LoaiNghi
+      )
+      SELECT LoaiNghi, TongNgay
+      FROM TongThang8
+      WHERE TongNgay >= 2
+      ORDER BY TongNgay DESC, LoaiNghi ASC;
+    ordered: true
+    kind: query
+  - id: 4-1-2
+    title: Phòng có từ tám hồ sơ đang làm
+    summary: CTE đếm hồ sơ theo mã phòng hiện lưu.
+    prompt: Dùng NhanVien, lấy TrangThai là chuỗi Unicode Đang làm, đếm hồ sơ theo MaPB hiện lưu. Dùng CTE để giữ nhóm có từ 8 hồ sơ trở lên. Trả MaPB, SoHoSo; xếp MaPB tăng dần. Không dựng lại phòng hoặc trạng thái quá khứ.
+    columns: [MaPB, SoHoSo]
+    answer: |-
+      WITH HoSoTheoPhong AS (
+          SELECT MaPB, COUNT(*) AS [SoHoSo]
+          FROM NhanVien
+          WHERE TrangThai = N'Đang làm'
+          GROUP BY MaPB
+      )
+      SELECT MaPB, SoHoSo
+      FROM HoSoTheoPhong
+      WHERE SoHoSo >= 8
+      ORDER BY MaPB ASC;
+    ordered: true
+    kind: query
+  - id: 4-1-3
+    title: Mã nhân viên có nhiều hợp đồng được lưu
+    summary: Đếm hợp đồng, không suy ra hiệu lực.
+    prompt: Dùng toàn bộ HopDong, không lọc ngày hoặc loại hợp đồng. Đếm theo MaNV, đặt kết quả vào CTE rồi giữ những mã có ít nhất 2 hợp đồng. Trả MaNV, SoHopDong; xếp MaNV tăng dần. Đây là số dòng đang lưu, không phải số hợp đồng còn hiệu lực.
+    columns: [MaNV, SoHopDong]
+    answer: |-
+      WITH DemHopDong AS (
+          SELECT MaNV, COUNT(*) AS [SoHopDong]
+          FROM HopDong
+          GROUP BY MaNV
+      )
+      SELECT MaNV, SoHopDong
+      FROM DemHopDong
+      WHERE SoHopDong >= 2
+      ORDER BY MaNV ASC;
+    ordered: true
+    kind: query

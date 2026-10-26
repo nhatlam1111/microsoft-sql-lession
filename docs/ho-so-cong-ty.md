@@ -95,7 +95,7 @@ Các nhân vật là giả định, không phải hồ sơ trong bộ mẫu (bà
 
 | Nhân vật | Là ai | Xuất hiện |
 |---|---|---|
-| Chị Hạnh · Phòng Nhân sự | Người đưa yêu cầu trong mọi bài đầy đủ; xưng "chị", gọi người học là "em" | 1.1–1.6, 2.1–2.9, 3.1–3.10 |
+| Chị Hạnh · Phòng Nhân sự | Người đưa yêu cầu trong mọi bài đầy đủ; xưng "chị", gọi người học là "em" | 1.1–1.6, 2.1–2.9, 3.1–3.10, 4.1–4.6 |
 | Người học ("em", "bạn") | Người đọc và lấy dữ liệu từ hệ thống nhân sự cho chị Hạnh; có tài khoản vào database qua SSMS | mọi bài |
 | Chị Thảo · Kế toán | Giữ một bản file nhân sự riêng | 1.1 |
 | Quân | Nhân viên chuyển sang IT, nhưng file của Kế toán còn ghi phòng cũ | 1.1 |
@@ -145,4 +145,10 @@ Các lỗi này có chủ ý, dành cho bài 4.6 và 4.7; bài khác không đư
 | 3.8 | Chị Hạnh gộp mã từ đơn đã duyệt có TuNgay trong tháng 9/2026 (9 dòng) với chấm công tháng 9 có GioVao sau 08:00 (76 dòng). UNION một cột MaNV trả 41 mã; UNION ALL giữ 85 lần xuất hiện. Thêm nhãn nguồn rồi UNION có 49 cặp mã–nguồn. 08:00 là giả định rà soát, không kết luận đi muộn/vi phạm; không xét ca làm và lý do. |
 | 3.9 | Chị Hạnh lấy mã, tên, phòng hiện lưu của hồ sơ có ít nhất một đơn cùng phạm vi tháng 9 đã duyệt như 3.1: 9 hồ sơ, không lọc trạng thái nhân viên. IN và EXISTS cùng kết quả; ví dụ NOT EXISTS chưa có bất kỳ hợp đồng giữ NV047/NV048 như 3.5. |
 | 3.10 | Chị Hạnh cần số nam/nữ/tổng của hồ sơ đang làm theo MaPB hiện lưu. Có 45 hồ sơ: BGD 1/1/2; IT 9/1/10; KD 6/7/13; KT 0/7/7; NS 0/5/5; VH 6/2/8. Toàn bộ đang làm có 23 nữ. Tổng ngày của đơn đã duyệt bắt đầu tháng 9: phép năm 9.0, nghỉ ốm 5.0, việc riêng 2.0, tổng 16.0; không phải số ngày thực nghỉ trong tháng. |
+| 4.1 | Chị Hạnh kiểm đơn đã duyệt bắt đầu tháng 9 qua CTE: 9 đơn, 3 loại; tổng Phép năm 9.0, Nghỉ ốm 5.0, Việc riêng 2.0. Lọc từ 5 ngày giữ 2 loại, cột LoaiNghi/TongNgay. CTE có phạm vi một câu, không lưu bảng hoặc cam kết nhanh hơn. |
+| 4.2 | Chị Hạnh lấy một hợp đồng có NgayBatDau gần nhất không sau 21/10/2026 cho mỗi MaNV có hợp đồng; cùng ngày chọn MaHD giảm dần. Có 55 dòng đầu vào, 46 mã; NV047/NV048 không có hợp đồng. Đây không phải xác nhận hiệu lực. Chín đơn đã duyệt bắt đầu tháng 9 minh họa đồng hạng số ngày: ROW_NUMBER đến 3 có 3 dòng, RANK đến 3 có 5, DENSE_RANK đến 3 có 9. |
+| 4.3 | Chị Hạnh xem ngày trên mọi trạng thái đơn theo tháng TuNgay từ tháng 8 đến 10/2026: tổng 14/20/11, lũy kế 14/34/45, kỳ trước NULL/14/20, chênh lệch NULL/6/-9. Khóa Thang là EOMONTH; không chia ngày qua tháng, không suy ra thực nghỉ hoặc dữ liệu đủ kỳ. LAG lấy dòng có sẵn trước, không tự tạo tháng thiếu; lọc tháng hiển thị sau cửa sổ. |
+| 4.4 | Chị Hạnh xoay tổng ngày trên mọi trạng thái đơn bắt đầu tháng8–10/2026: mỗi tháng một dòng, cột Phép năm/Nghỉ ốm/Việc riêng. Tổng lần lượt12/2/NULL,12/5/3,10/NULL/1. PIVOT chỉ có ba cột nguồn cần thiết; SUM giữ ô thiếu NULL, COUNT khóa đơn cho0. Không phân bổ đơn qua tháng hoặc kết luận thực nghỉ. |
+| 4.5 | Chị Hạnh thống nhất định nghĩa hồ sơ đang làm: MaNV/HoTen/MaPB/MaCD từ NhanVien, TrangThai Đang làm. Đề xuất view thường dbo.vw_HoSoDangLam; chưa tạo trong DB khóa học. Bài đọc hiểu, hai mẫu copy=false, không giả Result và không có YAML; năm câu ôn thay thực hành tạo đối tượng. |
+| 4.6 | Chị Hạnh rà mọi trạng thái theo ba luật: CCCD lặp (1nhóm/2hồ sơ NV015,NV038), email thiếu (NV044/VH và NV045/KD, đềuNULL), hợp đồng đảo thứ tự ngày (HD2025-003/NV029). Kết quả chỉ là dấu hiệu để đối chiếu, không tự sửa/xóa. Ba đề đi từ nhóm ra hồ sơ, giữ phòng có0 và tổng theo mã luật2/2/1; không cộng thành người riêng biệt. |
 | 6.5 | Một chiều thứ Sáu, câu `UPDATE` phụ cấp của NV012 kỳ 2026-09 bị bôi đen thiếu, chạy cho cả bảng lương. |

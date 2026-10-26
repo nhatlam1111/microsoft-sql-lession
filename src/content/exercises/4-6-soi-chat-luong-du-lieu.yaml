@@ -1,0 +1,59 @@
+lesson: 4-6-soi-chat-luong-du-lieu
+exercises:
+  - id: 4-6-1
+    title: Hồ sơ mang số CCCD trùng
+    summary: Từ nhóm trùng trở lại từng hồ sơ.
+    prompt: Dùng mọi dòng NhanVien. Tìm các nhóm SoCCCD có COUNT(*) lớn hơn 1, rồi lấy từng hồ sơ mang số thuộc các nhóm ấy. Trả MaNV, MaPB; mỗi hồ sơ một dòng, xếp MaNV tăng dần. Luyện CTE và INNER JOIN, không kết luận các mã cùng số là cùng một người.
+    columns: [MaNV, MaPB]
+    answer: |-
+      WITH SoTrung AS (
+          SELECT SoCCCD
+          FROM NhanVien
+          GROUP BY SoCCCD
+          HAVING COUNT(*) > 1
+      )
+      SELECT nv.MaNV, nv.MaPB
+      FROM NhanVien AS nv
+      INNER JOIN SoTrung AS t ON nv.SoCCCD = t.SoCCCD
+      ORDER BY nv.MaNV ASC;
+    ordered: true
+    kind: query
+  - id: 4-6-2
+    title: Email thiếu theo từng phòng có hồ sơ
+    summary: Giữ cả phòng có số thiếu bằng 0.
+    prompt: Dùng mọi dòng NhanVien, mọi trạng thái. Mỗi MaPB đang có hồ sơ một dòng; trả MaPB, SoHoSoThieuEmail. Email được coi là thiếu nếu NULL, chuỗi rỗng hoặc chỉ có dấu cách thông thường (TRIM bằng chuỗi rỗng). Đếm có điều kiện và giữ phòng có 0 hồ sơ thiếu; không yêu cầu tạo dòng cho phòng không có hồ sơ nào. Xếp MaPB tăng dần.
+    columns: [MaPB, SoHoSoThieuEmail]
+    answer: |-
+      SELECT MaPB,
+          SUM(CASE WHEN Email IS NULL OR TRIM(Email) = '' THEN 1 ELSE 0 END) AS [SoHoSoThieuEmail]
+      FROM NhanVien
+      GROUP BY MaPB
+      ORDER BY MaPB ASC;
+    ordered: true
+    kind: query
+  - id: 4-6-3
+    title: Số dòng cần rà của ba luật
+    summary: Giữ riêng số hồ sơ và số hợp đồng.
+    prompt: Dùng mọi trạng thái NhanVien và HopDong. Trả ba dòng có MaKiemTra, SoDongCanRaSoat bằng UNION ALL. Mã CCCD_TRUNG đếm hồ sơ NhanVien mang SoCCCD thuộc nhóm xuất hiện nhiều hơn một lần (đếm hồ sơ, không đếm nhóm). Mã EMAIL_THIEU đếm hồ sơ có Email NULL hoặc TRIM bằng chuỗi rỗng. Mã NGAY_HD đếm dòng HopDong có NgayKetThuc < NgayBatDau. Mỗi luật vẫn trả một dòng nếu số đếm là 0; xếp MaKiemTra tăng dần. Không cộng các số thành số người riêng biệt.
+    columns: [MaKiemTra, SoDongCanRaSoat]
+    answer: |-
+      WITH SoTrung AS (
+          SELECT SoCCCD
+          FROM NhanVien
+          GROUP BY SoCCCD
+          HAVING COUNT(*) > 1
+      )
+      SELECT 'CCCD_TRUNG' AS [MaKiemTra], COUNT(*) AS [SoDongCanRaSoat]
+      FROM NhanVien AS nv
+      INNER JOIN SoTrung AS t ON nv.SoCCCD = t.SoCCCD
+      UNION ALL
+      SELECT 'EMAIL_THIEU', COUNT(*)
+      FROM NhanVien
+      WHERE Email IS NULL OR TRIM(Email) = ''
+      UNION ALL
+      SELECT 'NGAY_HD', COUNT(*)
+      FROM HopDong
+      WHERE NgayKetThuc < NgayBatDau
+      ORDER BY MaKiemTra ASC;
+    ordered: true
+    kind: query

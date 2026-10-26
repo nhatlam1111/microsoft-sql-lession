@@ -4,30 +4,289 @@ title: Lũy kế và so với tháng trước
 shortTitle: Lũy kế, LAG
 level: 4
 area: A5
-kind: summary
-minutes: 12
+kind: full
+minutes: 35
 prerequisites:
   - "4.2"
-goal: bạn tính được cộng dồn và chênh lệch so với kỳ trước
-excel: Công thức cộng dồn, =B3-B2
-summary: SUM() OVER, LAG và biến động quỹ lương theo tháng.
+  - "2.8"
+goal: bạn tính được tổng lũy kế và chênh lệch so với dòng kỳ trước, có xét tháng thiếu và thời điểm lọc
+excel: Cộng dồn và trừ dòng phía trên
+summary: Tổng hợp một dòng mỗi tháng trước khi dùng SUM OVER và LAG; lọc tháng hiển thị sau phép tính cửa sổ.
 ---
 
-## Nội dung chính
+## Tình huống
 
-- `SUM(ThucLinh) OVER (ORDER BY KyLuong)` cộng dồn quỹ lương qua từng kỳ.
-- `LAG(TongQuy) OVER (ORDER BY KyLuong)` lấy giá trị của kỳ trước để tính chênh lệch.
-- Thêm `PARTITION BY` để tính riêng cho từng phòng ban hoặc từng người.
-- Kỳ đầu tiên không có kỳ trước nên `LAG` trả về `NULL`.
+<Chat who="Chị Hạnh · Phòng Nhân sự" time="10:15" initial="H">
+Chị muốn xem số ngày trên các đơn bắt đầu từng tháng 8, 9, 10: tổng mỗi tháng, cộng dồn từ tháng 8 và tăng giảm so với tháng trước. Lần này lấy mọi trạng thái để chị xem toàn bộ đơn đang lưu nhé.
+</Chat>
 
-## Liên hệ Excel
+Dùng `DonNghiPhep` có `TuNgay` từ `01/08/2026` đến hết `31/10/2026`, cộng nguyên `SoNgay` theo tháng bắt đầu. Có cả đơn chờ duyệt và từ chối, cả đơn có ngày bắt đầu sau mốc `21/10` đã dùng ở bài trước. Báo cáo này không phải ngày nghỉ đã duyệt hay thực nghỉ trong tháng, cũng không chứng nhận dữ liệu đã đầy đủ cho cả kỳ.
 
-Giống công thức cộng dồn =SUM($B$2:B2) kéo xuống, và công thức so với dòng ngay trên như =B3-B2.
+<Key>Mỗi tháng một dòng trước, rồi mới cộng từ đầu đến dòng hiện tại và lấy giá trị của dòng trước.</Key>
 
-## Tình huống ví dụ
+## Từ bảng tổng tháng đến phép tính giữa các dòng
 
-Ban giám đốc muốn xem quỹ lương tháng 9 tăng hay giảm bao nhiêu so với tháng 8.
+### Cộng dồn sau khi tổng hợp tháng
+
+Trong Excel, đặt tổng ngày tháng vào cột `B`, từ dòng `2`. Công thức `=SUM($B$2:B2)` ở cột lũy kế cộng từ ô đầu cố định tới dòng đang đứng; kéo xuống dòng `3` thành `=SUM($B$2:B3)`. Với ba tổng `14.0`, `20.0`, `11.0`, lũy kế lần lượt là `14.0`, `34.0`, `45.0`.
+
+Trong SQL, dùng **`EOMONTH(TuNgay)`** đã học ở 2.8 để mọi ngày cùng tháng có chung một khóa: ngày cuối tháng. `GROUP BY EOMONTH(TuNgay)` tạo một dòng mỗi tháng, `SUM(SoNgay)` là tổng trên dòng đó. Cột `Thang` mang ngày cuối tháng chỉ để đại diện tháng, không nói rằng các đơn đều bắt đầu hôm ấy. Chốt bảng đầu vào cửa sổ trước:
+
+<Sql code={`WITH TongTheoThang AS (
+\tSELECT EOMONTH(TuNgay) AS [Thang], SUM(SoNgay) AS [TongNgay]
+\tFROM DonNghiPhep
+\tWHERE TuNgay >= '20260801' AND TuNgay < '20261101'
+\tGROUP BY EOMONTH(TuNgay)
+)
+SELECT Thang, TongNgay
+FROM TongTheoThang
+ORDER BY Thang ASC;`} />
+
+<Result columns={["Thang","TongNgay"]} rows={[["2026-08-31",14],["2026-09-30",20],["2026-10-31",11]]} total={3} />
+
+Tháng 8 nhận cả `3.0` ngày của `DP018`, dù đơn kéo sang tháng 9, vì `TuNgay` là `31/08`. Phạm vi này không có điều kiện trạng thái; khác các ví dụ đơn đã duyệt ở bài 4.1. Ba tổng trên là đầu vào của các phép tính tiếp theo.
+
+**`SUM(TongNgay) OVER (...)`** cộng trên các dòng tổng tháng, giữ nguyên mỗi tháng một dòng như các hàm cửa sổ ở 4.2. `ORDER BY Thang` trong `OVER` đặt tháng cũ trước. Phần **`ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW`** chọn khung từ dòng đầu của nhóm tính đến dòng hiện tại: `UNBOUNDED PRECEDING` là về tận đầu, `CURRENT ROW` là dòng đang tính.
+
+Ở đây mỗi dòng tương ứng một tháng duy nhất, nên khung `ROWS` lấy các dòng tháng từ tháng 8 đến dòng hiện tại để cộng `TongNgay`. Không viết `PARTITION BY` thì cả ba dòng là một nhóm tính. Đừng tính trực tiếp trên các đơn rồi mong tự có một dòng mỗi tháng: cửa sổ không thay bước `GROUP BY`.
+
+### Lấy dòng trước, chia nhóm và chọn tháng hiển thị
+
+Trong Excel, sau khi sắp tháng tăng dần, dòng tháng 9 lấy tổng ở ô `B2` của tháng 8 rồi trừ: `=B3-B2`. Dòng đầu chưa có kỳ trước nên chưa tính chênh lệch. Trong SQL, **`LAG(TongNgay) OVER (ORDER BY Thang)`** lấy `TongNgay` ở dòng trước trong thứ tự đó; nếu không có dòng trước, mặc định trả `NULL`.
+
+CTE `SoSanh` bên dưới tính `LuyKe` và `KyTruoc`, rồi câu ngoài mới lấy `TongNgay - KyTruoc`. Cách này cho phép dùng cột `KyTruoc` đã có từ nguồn, không lặp lại biểu thức `LAG` hoặc dùng bí danh vừa tạo ở `SELECT` cùng cấp. Trừ một giá trị với `NULL` vẫn là `NULL`, không tự hiểu kỳ chưa có là `0`.
+
+**Dòng trước chưa chắc là tháng lịch liền trước.** Giả sử nguồn chỉ có tháng 8 và 10 với tổng tương ứng `14.0` và `11.0`, `LAG` ở tháng 10 sẽ lấy `14.0` của tháng 8. Lũy kế lúc ấy là `25.0`; SQL không tự thêm tháng 9 hoặc kết luận tháng 9 bằng `0`. Chỉ gọi chênh lệch với tháng liền trước khi đã kiểm các tháng đầu vào liên tiếp; ví dụ chính có đủ ba tháng 8–10.
+
+Muốn cộng dồn **riêng từng loại nghỉ**, trước hết nhóm theo cả `LoaiNghi` và `EOMONTH(TuNgay)` để mỗi cặp loại–tháng một dòng. Trong `OVER` của `SUM(TongNgay)`, thêm `PARTITION BY LoaiNghi` trước `ORDER BY Thang`; giữ nguyên khung `ROWS`. Khi đổi loại, tổng bắt đầu lại từ dòng tháng đầu có dữ liệu của loại đó. Tháng thiếu của từng loại vẫn không tự sinh; nếu dùng `LAG` theo loại, cũng thêm cùng `PARTITION BY` để không lấy dòng của loại khác.
+
+Nếu chỉ muốn **hiện tháng 10** mà vẫn cần lũy kế từ tháng 8 và kỳ trước tháng 9, giữ cả ba tháng trong `TongTheoThang` và `SoSanh`. Thêm điều kiện `WHERE ss.Thang = '20261031'` ở câu ngoài đọc `SoSanh`, trước `ORDER BY` cuối. Nếu lọc tháng 10 trước khi tính cửa sổ, chỉ còn một dòng: lũy kế là `11.0`, kỳ trước là `NULL`, không đáp ứng yêu cầu.
+
+Ở bài này chỉ cần tính trên các kỳ có sẵn; đối chiếu chỉ tiêu giữa các nguồn để tìm lệch số liệu học ở bài 4.7.
+
+### Câu lệnh cho tình huống
+
+<Sql code={`WITH TongTheoThang AS (
+\tSELECT EOMONTH(TuNgay) AS [Thang], SUM(SoNgay) AS [TongNgay]
+\tFROM DonNghiPhep
+\tWHERE TuNgay >= '20260801' AND TuNgay < '20261101'
+\tGROUP BY EOMONTH(TuNgay)
+), SoSanh AS (
+\tSELECT Thang, TongNgay,
+\t\tSUM(TongNgay) OVER (
+\t\t\tORDER BY Thang
+\t\t\tROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+\t\t) AS [LuyKe],
+\t\tLAG(TongNgay) OVER (ORDER BY Thang) AS [KyTruoc]
+\tFROM TongTheoThang
+)
+SELECT ss.Thang, ss.TongNgay, ss.LuyKe, ss.KyTruoc,
+\tss.TongNgay - ss.KyTruoc AS [ChenhLech]
+FROM SoSanh AS ss
+ORDER BY ss.Thang ASC;`} />
+
+<Result columns={["Thang","TongNgay","LuyKe","KyTruoc","ChenhLech"]} rows={[["2026-08-31",14,14,null,null],["2026-09-30",20,34,14,6],["2026-10-31",11,45,20,-9]]} total={3} />
+
+Chị Hạnh thấy tổng trên đơn của ba tháng là `14.0`, `20.0`, `11.0` ngày; cộng dồn đến tháng 10 là `45.0`. Tháng 9 tăng `6.0` ngày, tháng 10 giảm `9.0` ngày so với dòng tháng trước. Tháng 8 giữ `NULL` ở hai cột so sánh vì nằm đầu phạm vi; chưa có dữ liệu tháng 7 trong phép tính này để kết luận tăng hay giảm.
+
+### SQL Server chạy câu này thế nào
+
+`TongTheoThang` gom tháng, `SoSanh` tính cửa sổ trên các dòng tháng đó; sơ đồ chỉ diễn giải **SELECT ngoài** đọc `SoSanh`, thêm phép trừ rồi sắp bảng. Đây là thứ tự logic để hiểu nguồn và cột, không phải cam kết CTE được lưu hay thực thi tuần tự. Mỗi câu kiểm có đủ phần `WITH`; thẻ xem nhanh ba dòng và drawer có tổng thật.
+
+<RunFlow query={`WITH TongTheoThang AS (
+\tSELECT EOMONTH(TuNgay) AS [Thang], SUM(SoNgay) AS [TongNgay]
+\tFROM DonNghiPhep
+\tWHERE TuNgay >= '20260801' AND TuNgay < '20261101'
+\tGROUP BY EOMONTH(TuNgay)
+), SoSanh AS (
+\tSELECT Thang, TongNgay,
+\t\tSUM(TongNgay) OVER (
+\t\t\tORDER BY Thang
+\t\t\tROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+\t\t) AS [LuyKe],
+\t\tLAG(TongNgay) OVER (ORDER BY Thang) AS [KyTruoc]
+\tFROM TongTheoThang
+)
+SELECT ss.Thang, ss.TongNgay, ss.LuyKe, ss.KyTruoc,
+\tss.TongNgay - ss.KyTruoc AS [ChenhLech]
+FROM SoSanh AS ss
+ORDER BY ss.Thang ASC;`} steps={[
+  {
+    "clause": "FROM",
+    "title": "Đọc ba tháng đã tính cửa sổ",
+    "focus": "FROM SoSanh AS ss",
+    "meaning": "`FROM` lấy kết quả CTE làm nguồn câu ngoài.",
+    "detail": "CTE có tổng, lũy kế và giá trị dòng trước cho mỗi tháng. Dòng đầu có `KyTruoc` là `NULL`.",
+    "sql": "WITH TongTheoThang AS (\n\tSELECT EOMONTH(TuNgay) AS [Thang], SUM(SoNgay) AS [TongNgay]\n\tFROM DonNghiPhep\n\tWHERE TuNgay >= '20260801' AND TuNgay < '20261101'\n\tGROUP BY EOMONTH(TuNgay)\n), SoSanh AS (\n\tSELECT Thang, TongNgay,\n\t\tSUM(TongNgay) OVER (\n\t\t\tORDER BY Thang\n\t\t\tROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW\n\t\t) AS [LuyKe],\n\t\tLAG(TongNgay) OVER (ORDER BY Thang) AS [KyTruoc]\n\tFROM TongTheoThang\n)\nSELECT ss.Thang, ss.TongNgay, ss.LuyKe, ss.KyTruoc\nFROM SoSanh AS ss\nORDER BY ss.Thang ASC;",
+    "columns": [
+      "Thang",
+      "TongNgay",
+      "LuyKe",
+      "KyTruoc"
+    ],
+    "rows": [
+      [
+        "2026-08-31",
+        14,
+        14,
+        null
+      ],
+      [
+        "2026-09-30",
+        20,
+        34,
+        14
+      ],
+      [
+        "2026-10-31",
+        11,
+        45,
+        20
+      ]
+    ],
+    "total": 3
+  },
+  {
+    "clause": "SELECT",
+    "title": "Tính chênh lệch từ hai cột",
+    "focus": "SELECT ss.Thang, ss.TongNgay, ss.LuyKe, ss.KyTruoc,\n\tss.TongNgay - ss.KyTruoc AS [ChenhLech]",
+    "meaning": "`SELECT` lấy bốn cột từ nguồn và tính cột chênh lệch.",
+    "detail": "Tháng 9 tăng `6.0`, tháng 10 giảm `9.0` ngày trên đơn so với dòng trước. Trừ với `NULL` vẫn là `NULL`.",
+    "sql": "WITH TongTheoThang AS (\n\tSELECT EOMONTH(TuNgay) AS [Thang], SUM(SoNgay) AS [TongNgay]\n\tFROM DonNghiPhep\n\tWHERE TuNgay >= '20260801' AND TuNgay < '20261101'\n\tGROUP BY EOMONTH(TuNgay)\n), SoSanh AS (\n\tSELECT Thang, TongNgay,\n\t\tSUM(TongNgay) OVER (\n\t\t\tORDER BY Thang\n\t\t\tROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW\n\t\t) AS [LuyKe],\n\t\tLAG(TongNgay) OVER (ORDER BY Thang) AS [KyTruoc]\n\tFROM TongTheoThang\n)\nSELECT ss.Thang, ss.TongNgay, ss.LuyKe, ss.KyTruoc,\n\tss.TongNgay - ss.KyTruoc AS [ChenhLech]\nFROM SoSanh AS ss\nORDER BY ss.Thang ASC;",
+    "columns": [
+      "Thang",
+      "TongNgay",
+      "LuyKe",
+      "KyTruoc",
+      "ChenhLech"
+    ],
+    "rows": [
+      [
+        "2026-08-31",
+        14,
+        14,
+        null,
+        null
+      ],
+      [
+        "2026-09-30",
+        20,
+        34,
+        14,
+        6
+      ],
+      [
+        "2026-10-31",
+        11,
+        45,
+        20,
+        -9
+      ]
+    ],
+    "total": 3
+  },
+  {
+    "clause": "ORDER BY",
+    "title": "Sắp tháng tăng dần",
+    "focus": "ORDER BY ss.Thang ASC",
+    "meaning": "`ORDER BY` ngoài sắp bảng trả về.",
+    "detail": "Các tháng trong nguồn là liên tiếp ở ví dụ chính; phép `LAG` không tự bảo đảm điều đó cho nguồn khác.",
+    "sql": "WITH TongTheoThang AS (\n\tSELECT EOMONTH(TuNgay) AS [Thang], SUM(SoNgay) AS [TongNgay]\n\tFROM DonNghiPhep\n\tWHERE TuNgay >= '20260801' AND TuNgay < '20261101'\n\tGROUP BY EOMONTH(TuNgay)\n), SoSanh AS (\n\tSELECT Thang, TongNgay,\n\t\tSUM(TongNgay) OVER (\n\t\t\tORDER BY Thang\n\t\t\tROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW\n\t\t) AS [LuyKe],\n\t\tLAG(TongNgay) OVER (ORDER BY Thang) AS [KyTruoc]\n\tFROM TongTheoThang\n)\nSELECT ss.Thang, ss.TongNgay, ss.LuyKe, ss.KyTruoc,\n\tss.TongNgay - ss.KyTruoc AS [ChenhLech]\nFROM SoSanh AS ss\nORDER BY ss.Thang ASC;",
+    "columns": [
+      "Thang",
+      "TongNgay",
+      "LuyKe",
+      "KyTruoc",
+      "ChenhLech"
+    ],
+    "rows": [
+      [
+        "2026-08-31",
+        14,
+        14,
+        null,
+        null
+      ],
+      [
+        "2026-09-30",
+        20,
+        34,
+        14,
+        6
+      ],
+      [
+        "2026-10-31",
+        11,
+        45,
+        20,
+        -9
+      ]
+    ],
+    "total": 3
+  }
+]} />
+
+## Hay nhầm ở đâu
+
+<Mistakes>
+
+1. **Cộng dồn từ đầu năm trong khi nguồn chỉ lấy tháng 8.** Khung bắt đầu từ dòng đầu của phạm vi sau lọc; nó không tự tìm thêm các tháng trước.
+2. **Đổi NULL đầu tiên thành 0 rồi gọi là mức tăng.** Điều đó thêm giả định kỳ trước bằng không. Báo cáo này giữ thiếu thông tin bằng `NULL`.
+3. **Đọc số âm là số ngày trên đơn bị âm.** `-9.0` là chênh lệch `11.0 - 20.0`, không phải giá trị `SoNgay` âm của một đơn.
+
+</Mistakes>
+
+## Ứng dụng
+
+<Apply>
+
+- **Theo dõi mức cộng dồn:** tổng hợp đúng đơn vị kỳ rồi chọn khung từ đầu phạm vi để biết số ngày trên đơn đã cộng qua các tháng.
+- **Đối chiếu kỳ trước có dữ liệu:** dùng `LAG`, kiểm tháng có liên tiếp không rồi mới diễn giải tăng giảm theo tháng.
+- **Gửi một kỳ mà giữ ngữ cảnh tính:** tính cửa sổ trên đủ phạm vi rồi lọc bảng hiển thị ở câu ngoài.
+- **Theo dõi riêng từng nhóm:** thêm khóa nhóm vào tổng hợp và `PARTITION BY` để lũy kế không chạy lẫn giữa các loại nghỉ.
+
+</Apply>
+
+## Ghi nhớ
+
+<Memo rows={[
+  ['Gom các ngày cùng tháng','GROUP BY EOMONTH(TuNgay)'],
+  ['Cộng từ dòng đầu đến dòng hiện tại','SUM(TongNgay) OVER (ORDER BY Thang ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)'],
+  ['Lấy tổng ở dòng trước theo thứ tự tháng','LAG(TongNgay) OVER (ORDER BY Thang)'],
+]} />
+
+**Tự kiểm tra trước khi bấm "Đã học xong":**
+
+<details>
+<summary>Vì sao cần một dòng mỗi tháng trước khi tính cửa sổ?</summary>
+
+Vì cửa sổ vẫn giữ các dòng đầu vào. Tổng hợp trước giúp mỗi bước cộng dồn hoặc lấy dòng trước tương ứng một tháng, thay vì từng đơn.
+
+</details>
+
+<details>
+<summary>Nếu thiếu tháng <code>9</code>, <code>LAG</code> ở tháng <code>10</code> có tự trả <code>0</code> cho tháng <code>9</code> không?</summary>
+
+Không. Nó lấy dòng có sẵn trước đó theo thứ tự, có thể là tháng 8. Nếu không có dòng nào trước thì trả `NULL`; muốn đủ tháng phải chuẩn bị nguồn đủ tháng riêng.
+
+</details>
+
+<details>
+<summary>Muốn chỉ hiện tháng <code>10</code> nhưng giữ lũy kế <code>45</code> và kỳ trước <code>20</code>, lọc ở đâu?</summary>
+
+Ở câu ngoài đọc `SoSanh`, sau khi cửa sổ đã được tính trên cả tháng 8–10. Lọc trong nguồn trước cửa sổ sẽ làm mất hai tháng dùng để tính.
+
+</details>
+
+<details>
+<summary>Thêm <code>PARTITION BY</code> loại nghỉ có tự tạo tháng chưa có đơn cho từng loại không?</summary>
+
+Không. Nó chỉ chia các dòng có sẵn thành nhóm tính riêng; mỗi loại bắt đầu lũy kế ở dòng đầu hiện có trong phạm vi.
+
+</details>
 
 ## Bài tập
+
+Ba đề đều lấy mọi trạng thái đơn, cộng nguyên `SoNgay` theo tháng `TuNgay`, không chia ngày qua tháng. Bộ chấm đối chiếu kết quả và thứ tự theo đề, không kiểm bí danh hay buộc một cú pháp; hãy tự kiểm cách đặt khung, nhóm tính và thời điểm lọc của mình.
 
 <Exercises />
