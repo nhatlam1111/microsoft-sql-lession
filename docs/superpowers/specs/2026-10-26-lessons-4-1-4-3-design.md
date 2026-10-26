@@ -79,3 +79,7 @@ Chạy các kiểm web/API theo mục 4.4. Ở phiên lập khung chưa có côn
 - [OVER và khung ROWS](https://learn.microsoft.com/en-us/sql/t-sql/queries/select-over-clause-transact-sql?view=sql-server-ver16), [LAG](https://learn.microsoft.com/en-us/sql/t-sql/functions/lag-transact-sql?view=sql-server-ver16).
 
 Các liên kết Microsoft là căn cứ ngữ nghĩa, không xác nhận câu của khóa học đã chạy đúng trên database thật.
+
+## Theo dõi triển khai
+
+4.1 đã viết MDX và ba đề, review mới có bảng tiền đề; xử lý tại [ma trận 4.1](../../reviews/2026-10-26-bai-4-1-disposition.md). Sửa hai câu biên tập, giữ mẫu kiểm CTE theo thiết kế; chưa có SQL live để đóng nghi vấn compiler với CTE không được tham chiếu ở câu cuối. Fixture/HTML/build riêng không thay phép kiểm đó. UI tương tác cũng chưa kiểm do browser chưa khả dụng.
