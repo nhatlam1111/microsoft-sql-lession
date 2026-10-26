@@ -37,7 +37,7 @@ Ba đề dự kiến, đều có cột/thứ tự/phạm vi rõ và chấm kết
 - View thông thường lưu định nghĩa truy vấn, không giữ snapshot hay tự làm dữ liệu nguồn đầy đủ/đúng. Đọc dữ liệu mà câu lệnh thấy được khi chạy; không nói luôn có số mới nhất ở mọi thời điểm. Khác CTE có phạm vi một câu, định nghĩa view được lưu trong database để dùng lại.
 - WHERE ngoài lọc thêm trên phạm vi view; ORDER BY ở câu đọc mới chốt thứ tự trả về. CREATE VIEW phải ở đầu một batch khi triển khai; không dạy thêm GO/USE thành câu đem nộp trên web. Quyền tạo và quyền đọc khác nhau; tạo view không tự thu hồi quyền bảng gốc hoặc bảo đảm che dữ liệu.
 - Giới hạn: view thông thường, không indexed view/materialized view, WITH CHECK OPTION, sửa dữ liệu qua view hoặc cấp quyền thực tế. Dẫn phần quyền sang 6.1, hiệu năng sang 5.6/5.7 nếu cần, không giảng thêm để thay phần lõi.
-- Bài này bỏ mục Bài tập, thay bằng ít nhất năm câu tự kiểm tra sau Memo: lưu định nghĩa hay dữ liệu; khác CTE; lọc/sắp ở câu đọc; quyền/tính tồn tại; đường thực hành phù hợp với web hiện tại. Mọi đáp án đã được dạy. Cập nhật chú thích danh sách bài noExercises trong template nếu cần cho đúng hiện trạng; không đổi schema/quy tắc để lách kiểm.
+- Bài này bỏ mục Bài tập, thay bằng ít nhất năm câu tự kiểm tra sau Memo: lưu định nghĩa hay dữ liệu; khác CTE; lọc/sắp ở câu đọc; quyền/tính tồn tại; đường thực hành phù hợp với web hiện tại. Mọi đáp án đã được dạy. Cập nhật chú thích danh sách bài noExercises trong template nếu cần cho đúng hiện trạng; không đổi schema/quy tắc để lách kiểm. Sau review tích hợp, copy hướng dẫn hoàn thành trong trang giới thiệu/README dùng điều kiện “bài không có mục Bài tập” để bao phủ4.5, không đổi UI/component.
 
 ## 4.6 — Soi chất lượng dữ liệu: trùng, thiếu, sai
 
