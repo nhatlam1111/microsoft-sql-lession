@@ -68,3 +68,13 @@ Không tạo view để kiểm batch/quyền bằng DDL; không kiểm SSMS th�
 Commit hoàn thiện `3e9890f` được ghép vào main bằng merge `74e1b30433aad2a083ac8f58de921523e1f305b6`. Cây sau merge bằng nhánh đã review; không xung đột. Main không đổi API/components/lib; nhánh SSMS tại `6f69452` vẫn riêng.
 
 Kiểm main lúc 19:31 ngày 26/10: 322/322 tests, 48 file; Astro 0 lỗi/0 cảnh báo/3 hint nền; build 132 trang, check:dist 1994 liên kết, toàn bộ exit 0. Log `main-tests.log`, `main-check.log`, `main-build.log`, `main-dist.log` ở thư mục evidence. Commit tài liệu tiếp theo chỉ ghi kết quả này, không đổi source hay bộ đề; người dùng đã cho phép push/main. Trạng thái Pages/API theo dõi sau push, không suy từ kiểm local.
+
+## Xuất bản
+
+Đã push `ae6d79490ffdfcad67ddc29300c6e9c158d3d8e5` lên origin/main, cây làm việc sạch, main đang được chọn.
+
+- [Pages run 40323355746](https://github.com/nhatlam1111/microsoft-sql-lession/actions/runs/40323355746): success, cùng SHA; hoàn tất 19:33:54 +07.
+- [API run 40323355749](https://github.com/nhatlam1111/microsoft-sql-lession/actions/runs/40323355749): success, cùng SHA; hoàn tất 19:34:07 +07. Job `121573653742` ghi build API với **78 exercises** và **ping without a code: 401**; không dùng kết quả này thay kiểm truy vấn có xác thực/chấm bài production.
+- Đã mở lại sáu URL trên `https://nhatlam1111.github.io/microsoft-sql-lession/` bằng browser: đúng bài full, 24 tự kiểm tra, 11 thẻ flow, 15 liên kết đề; 4.5 không có copy hoặc mục Bài tập rỗng. Evidence `production-pages.json` giữ tại temp. Không đánh dấu học xong hoặc nộp SQL bằng mã truy cập.
+
+Commit ghi nhận kết quả triển khai sau đó chỉ đổi hai tài liệu này, không thay source bài, đề, API hoặc assets. Các URL run ở trên chứng minh phiên bản nội dung/API đã phát hành; lần Pages do commit tài liệu phát sinh được theo dõi riêng khi bàn giao.

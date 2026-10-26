@@ -13,7 +13,7 @@ Quy ước/template hiện hành, hồ sơ công ty và mẫu 1.1 chi phối n�
 - [x] API build/typecheck, 78 đáp án qua runner luôn hoàn tác và check:data; npm test/check/build/check:dist. Kiểm bản build ở 1280/1440, hình/bảng/drawer/highlight, copy/paste và tự kiểm tra bằng bàn phím.
 - [x] Review tích hợp mới sau sáu bài, đọc hết report rồi xử lý cả mục nhỏ/chưa kết luận; cập nhật hồ sơ nghiệm thu và giới hạn.
 - [x] Commit, merge vào main và kiểm main sau merge. Không lấy review thay cho bằng chứng kiểm.
-- [ ] Push main theo yêu cầu đã cho và theo dõi triển khai Pages/API.
+- [x] Push main theo yêu cầu đã cho và theo dõi triển khai Pages/API.
 
 ## Quyết định thực hiện
 
@@ -24,3 +24,5 @@ Evidence mới: `temp/verification/2026-10-26-review-4-1-4-6/`; review mới: `t
 Sáu review mới hoàn tất, 15 đề đủ tiền đề trước answer; 4.5 đủ năm tự kiểm tra. Một finding biên tập 4.4 đã làm theo, reviewer kiểm lại source/HTML; không đổi SQL/Result/YAML. 13 Result/11 trạng thái flow khớp SELECT live; 78 đáp án rollback/check:data không lệch. 322 tests; check không lỗi/cảnh báo, ba hint nền; build mới sau biên tập 132 trang/dist 1994 liên kết. Giao diện sáu bài kiểm 1280/1440, 24 tự kiểm tra, 11 drawer, copy/paste/Tab/undo. Hồ sơ và ma trận tại [verification](../../reviews/2026-10-26-publication-4-1-4-6/verification.md). Reviewer tích hợp mới đã hoàn tất, không finding nội dung; đủ bốn DJ đã có ruling, gồm giới hạn vô tình thấy ma trận nên không gọi là blind audit. Quyền main/push đã có trong yêu cầu, không xin lại.
 
 Đã commit `3e9890f`, merge main `74e1b30` không xung đột/cây khớp nhánh review. Main kiểm lại cùng 322 tests/0 lỗi/0 cảnh báo/3 hint/132 trang/1994 link (19:31). Chỉ ghi thêm tài liệu kiểm trước push; không đổi source so với bản đã kiểm. Nhánh SSMS vẫn nguyên ngoài lần merge.
+
+Đã push `ae6d794` lên origin/main. Pages run `40323355746` và API run `40323355749` cùng SHA đều success; API build 78 bài, ping không mã trả 401 trong log CI. Tác giả mở website công khai kiểm đủ sáu bài, 24 tự kiểm tra/11 thẻ flow, 15 liên kết đề và bài 4.5 không copy/Bài tập rỗng. [Verification](../../reviews/2026-10-26-publication-4-1-4-6/verification.md) ghi URL Actions và giới hạn. Commit ghi nhận sau triển khai chỉ đổi tài liệu, không đổi nội dung/bộ đề/API.
