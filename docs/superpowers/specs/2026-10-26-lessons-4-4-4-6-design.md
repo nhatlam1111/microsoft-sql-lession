@@ -74,3 +74,7 @@ Theo script có1 nhóm CCCD lặp, gồm NV015/NV038; thiếu email là NV044/NV
 - [Microsoft: PIVOT và UNPIVOT](https://learn.microsoft.com/en-us/sql/t-sql/queries/from-using-pivot-and-unpivot?view=sql-server-ver17).
 - [Microsoft: CREATE VIEW](https://learn.microsoft.com/en-us/sql/t-sql/statements/create-view-transact-sql?view=sql-server-ver17).
 - Nguồn repo: bộ chặn SQL hiện có, scriptHRM_Demo, các bài2.5/2.7/2.8/3.2/3.3/3.8/3.10/4.1–4.3. Liên kết tài liệu hoặc phép tính từ script không chứng nhận câu lệnh đã chạy trên database thật.
+
+## Tiến độ thực hiện
+
+4.4 đã soạn, learner review hai giai đoạn; sửa “refresh” và thay một câu ôn bằng chọn ba vai trò. Mô hình fixture chỉ chứng minh số học nguồn, không chứng nhận PIVOT trên SQL Server. Chi tiết ở report/ma trận bài4.4; live/UI vẫn pending.

@@ -5,7 +5,7 @@ import { lessonBlocks } from './lesson-blocks';
 
 // Source-fixture arithmetic only, NOT a SQL Server syntax/type/collation or live check.
 // SQLite shares the SELECT/CTE/window subset used here. Adapt Unicode/date literals,
-// and implement the one-argument EOMONTH used by 4.3. No other T-SQL is emulated.
+// and implement one-argument EOMONTH/MONTH used by 4.3/4.4. Other dialect syntax is not emulated.
 export function fixtureQuery(sql: string, overrides: Partial<Record<'NhanVien' | 'DonNghiPhep' | 'HopDong', SeedRow[]>> = {}) {
   const db = new DatabaseSync(':memory:');
   try {
@@ -15,6 +15,7 @@ export function fixtureQuery(sql: string, overrides: Partial<Record<'NhanVien' |
       const insert = db.prepare(`INSERT INTO ${table} VALUES (${columns.map(() => '?').join(',')})`);
       for (const row of rows) insert.run(...columns.map(c => row[c]));
     }
+    db.function('MONTH', value => Number(String(value).split('-')[1]));
     db.function('EOMONTH', value => {
       const [y, m] = String(value).split('-').map(Number);
       return new Date(Date.UTC(y, m, 0)).toISOString().slice(0, 10);

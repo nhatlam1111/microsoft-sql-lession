@@ -4,30 +4,168 @@ title: "PIVOT: xoay bảng như Excel"
 shortTitle: PIVOT
 level: 4
 area: A5
-kind: summary
-minutes: 10
+kind: full
+minutes: 35
 prerequisites:
   - "3.10"
-goal: bạn biến dòng thành cột cho báo cáo dạng ma trận
-excel: PivotTable (Columns)
-summary: PIVOT và cách viết tương đương bằng SUM(CASE …).
+  - "4.1"
+  - "2.8"
+goal: bạn chọn đúng hàng, cột và phép tổng hợp để xoay dữ liệu thành báo cáo ma trận
+excel: PivotTable với vùng Columns
+summary: PIVOT tạo các cột đã chọn từ giá trị nguồn; SUM hoặc COUNT quyết định ý nghĩa từng ô.
 ---
 
-## Nội dung chính
+## Tình huống
 
-- `PIVOT` biến các giá trị của một cột thành nhiều cột, ví dụ mỗi kỳ lương một cột.
-- Danh sách cột phải ghi rõ trong câu lệnh, như `[2026-08], [2026-09]`.
-- Cách viết bằng `SUM(CASE WHEN KyLuong = '2026-08' THEN ThucLinh END)` dễ đọc hơn và linh hoạt hơn.
-- Báo cáo dạng ma trận, phòng ban theo hàng, kỳ lương theo cột, là chỗ dùng điển hình.
+<Chat who="Chị Hạnh · Phòng Nhân sự" time="10:35" initial="H">
+Bảng tháng vừa rồi chị muốn đổi cách nhìn: mỗi tháng một dòng, phép năm, nghỉ ốm và việc riêng nằm ở ba cột cạnh nhau. Em cộng ngày trên tất cả đơn bắt đầu từ tháng 8 đến tháng 10 để chị so từng loại nhé.
+</Chat>
 
-## Liên hệ Excel
+Dùng mọi trạng thái `DonNghiPhep`, có `TuNgay` từ `01/08/2026` đến hết `31/10/2026`. Mỗi đơn đóng góp nguyên `SoNgay` vào tháng bắt đầu, kể cả đơn kéo sang tháng sau. Như bài 4.3, đây là số ngày **trên đơn đang lưu**, không phải ngày thực nghỉ hay chỉ ngày đã duyệt; dữ liệu chưa chứng nhận đầy đủ cho cả kỳ.
 
-Giống PivotTable kéo Kỳ lương vào Columns. Khác ở chỗ PivotTable tự thêm cột khi có kỳ mới, còn câu lệnh SQL phải ghi thêm cột.
+<Key>Chọn tháng làm hàng, loại nghỉ làm cột, còn số ngày trong mỗi ô là tổng của đúng tổ hợp tháng–loại.</Key>
 
-## Tình huống ví dụ
+## Từ danh sách đơn đến bảng tháng và loại nghỉ
 
-Cần báo cáo quỹ lương mỗi phòng theo từng tháng, các tháng nằm ngang như bảng Excel quen thuộc.
+### Chọn hàng, cột và giá trị cần cộng
+
+**PivotTable** là bảng tổng hợp trong Excel. Trong vùng cấu hình, **Rows** chọn nội dung chia hàng, **Columns** chọn giá trị trải ngang, **Values** chọn số cần cộng hoặc đếm. Với yêu cầu này, đặt tháng vào Rows, loại nghỉ vào Columns, số ngày vào Values và chọn phép cộng. Khi dữ liệu nguồn đổi, cần cập nhật nguồn và làm mới PivotTable phù hợp; không mặc nhiên mở file là bảng đã cập nhật.
+
+SQL dùng **`PIVOT`** để biến các giá trị được chọn của một cột nguồn thành các cột kết quả, đồng thời tổng hợp giá trị từng ô. Trước khi xoay, CTE `Nguon` chỉ lấy ba vai trò cần thiết: `Thang`, `LoaiNghi`, `SoNgay`. `EOMONTH(TuNgay)` đã học ở 2.8 tạo ngày cuối tháng làm khóa chung, không đổi ngày bắt đầu thật của đơn.
+
+<Sql code={`WITH Nguon AS (
+\tSELECT EOMONTH(TuNgay) AS [Thang], LoaiNghi, SoNgay
+\tFROM DonNghiPhep
+\tWHERE TuNgay >= '20260801' AND TuNgay < '20261101'
+)
+SELECT Thang, LoaiNghi, SoNgay
+FROM Nguon
+ORDER BY Thang ASC, LoaiNghi ASC, SoNgay DESC;`} />
+
+<Result columns={["Thang","LoaiNghi","SoNgay"]} rows={[["2026-08-31","Nghỉ ốm",2],["2026-08-31","Phép năm",5],["2026-08-31","Phép năm",3],["2026-08-31","Phép năm",2],["2026-08-31","Phép năm",2],["2026-09-30","Nghỉ ốm",2],["2026-09-30","Nghỉ ốm",2],["2026-09-30","Nghỉ ốm",1],["2026-09-30","Phép năm",3],["2026-09-30","Phép năm",3]]} total={20} />
+
+Bảng trích mười dòng đầu của `20` dòng nguồn, sắp để kiểm. Tháng 8 có nhiều dòng `Phép năm`; chúng phải được cộng vào một ô. **Độ chi tiết đầu ra** là một dòng mỗi tháng, khác một dòng mỗi đơn ở nguồn.
+
+### Các cột được xoay và ô không có dữ liệu
+
+Trong câu chính cuối phần này, `SUM(SoNgay)` là phép cộng cho từng ô; `FOR LoaiNghi` chọn cột chứa các giá trị cần trải ngang; `IN ([Phép năm], [Nghỉ ốm], [Việc riêng])` ghi rõ ba cột sẽ có. Dấu ngoặc vuông ở đây bao tên cột kết quả có dấu hoặc khoảng trắng, không phải dấu nháy của một chuỗi. `AS p` đặt bí danh cho nguồn sau xoay để câu ngoài đọc `p.[Phép năm]`.
+
+Các cột nguồn còn lại ngoài cột xoay và cột được tổng hợp là khóa nhóm hàng. Ở đây chỉ còn `Thang`, nên mỗi tháng một dòng. Nếu giữ thêm `MaDon` trong `Nguon`, nó cũng tham gia chia nhóm và báo cáo bị tách theo từng mã đơn; bỏ cột ấy khỏi `SELECT` ngoài không sửa được bước chia nhóm trước đó.
+
+Danh sách `IN` là cố định: nguồn có loại mới không tự thêm cột mới. Đồng thời, danh sách cột không tạo hàng cho tháng không có dòng nguồn. Muốn đủ các tháng hoặc đổi danh sách loại phải chuẩn bị nguồn và yêu cầu báo cáo riêng; bài này chỉ lấy các tháng đang có trong phạm vi.
+
+Với `SUM`, tổ hợp không có giá trị để cộng cho `NULL`: tháng 8 chưa có dòng `Việc riêng`, tháng 10 chưa có dòng `Nghỉ ốm`. Không tự hiểu thiếu dòng là đã xác nhận số ngày bằng `0`. Nếu báo cáo quy ước ô thiếu hiển thị `0`, có thể dùng `COALESCE` ở cột kết quả như bài 2.5; đó là lựa chọn hiển thị cần nói rõ.
+
+Nếu mục tiêu là **đếm đơn theo trạng thái**, đổi ba vai trò: `LoaiNghi` làm hàng, `TrangThai` làm cột, `MaDon` làm giá trị đếm. `MaDon` là khóa chính không `NULL`, nên `COUNT(MaDon)` đếm số đơn; tổ hợp vắng nhận `0`, khác `SUM` ở trên. Mảnh cú pháp dưới chỉ để đọc, phải đặt trong câu đầy đủ với nguồn ba cột tương ứng:
+
+<Sql copy={false} code={`PIVOT (
+\tCOUNT(MaDon)
+\tFOR TrangThai IN ([Đã duyệt], [Chờ duyệt], [Từ chối])
+) AS p`} />
+
+Muốn các tháng nằm ngang thay cho loại nghỉ, đổi nguồn thành `LoaiNghi`, `ThangSo = MONTH(TuNgay)` và `SoNgay`; phần xoay dùng `SUM(SoNgay) FOR ThangSo IN ([8], [9])`. Cột còn lại là `LoaiNghi`, nên mỗi loại một dòng. Khi chỉ dùng số tháng, phải lọc đúng năm và khoảng tháng ở nguồn để không cộng lẫn tháng của nhiều năm.
+
+### Viết cùng bảng bằng CASE đã học
+
+Ở 3.10, mỗi biểu thức tổng có một điều kiện riêng. Với cùng `Nguon`, nhóm theo `Thang` và viết ba biểu thức `SUM(CASE...)` cũng tạo được ba cột ngày. Bỏ `ELSE` để dòng không khớp góp `NULL`; khi cả nhóm không có loại ấy, ô tổng vẫn là `NULL`, khớp cách SUM trong PIVOT xử lý ở đây.
+
+<Sql code={`WITH Nguon AS (
+\tSELECT EOMONTH(TuNgay) AS [Thang], LoaiNghi, SoNgay
+\tFROM DonNghiPhep
+\tWHERE TuNgay >= '20260801' AND TuNgay < '20261101'
+)
+SELECT Thang,
+\tSUM(CASE WHEN LoaiNghi = N'Phép năm' THEN SoNgay END) AS [NgayPhepNam],
+\tSUM(CASE WHEN LoaiNghi = N'Nghỉ ốm' THEN SoNgay END) AS [NgayNghiOm],
+\tSUM(CASE WHEN LoaiNghi = N'Việc riêng' THEN SoNgay END) AS [NgayViecRieng]
+FROM Nguon
+GROUP BY Thang
+ORDER BY Thang ASC;`} />
+
+<Result columns={["Thang","NgayPhepNam","NgayNghiOm","NgayViecRieng"]} rows={[["2026-08-31",12,2,null],["2026-09-30",12,5,3],["2026-10-31",10,null,1]]} total={3} />
+
+Nếu thêm `ELSE 0`, những ô thiếu ở báo cáo này thành `0`; lúc ấy không còn cùng cách biểu diễn thiếu với câu PIVOT bên dưới. Chọn cách viết theo báo cáo cần đọc và bảo trì, không mặc định một cách luôn nhanh hơn. Ở bài này chỉ cần ba vai trò và cách tính mỗi ô; đánh giá truy vấn chậm và kế hoạch thực thi học ở 5.6–5.7.
+
+### Câu lệnh cho tình huống
+
+<Sql code={`WITH Nguon AS (
+\tSELECT EOMONTH(TuNgay) AS [Thang], LoaiNghi, SoNgay
+\tFROM DonNghiPhep
+\tWHERE TuNgay >= '20260801' AND TuNgay < '20261101'
+)
+SELECT p.Thang, p.[Phép năm] AS [NgayPhepNam],
+\tp.[Nghỉ ốm] AS [NgayNghiOm], p.[Việc riêng] AS [NgayViecRieng]
+FROM Nguon
+PIVOT (
+\tSUM(SoNgay)
+\tFOR LoaiNghi IN ([Phép năm], [Nghỉ ốm], [Việc riêng])
+) AS p
+ORDER BY p.Thang ASC;`} />
+
+<Result columns={["Thang","NgayPhepNam","NgayNghiOm","NgayViecRieng"]} rows={[["2026-08-31",12,2,null],["2026-09-30",12,5,3],["2026-10-31",10,null,1]]} total={3} mark={[1,3]} />
+
+Chị Hạnh nhận `3` dòng tháng. Tháng 9 có `12.0` ngày phép năm, `5.0` ngày nghỉ ốm và `3.0` ngày việc riêng; tổng là `20.0` ngày trên đơn. Hai dòng được đánh dấu cho thấy ô `NULL` ở tổ hợp thiếu. Câu ngoài đặt tên cột và sắp tháng tăng dần; thứ tự các cột do danh sách `SELECT` quyết định.
+
+## Hay nhầm ở đâu
+
+<Mistakes>
+
+1. **Mang mọi cột nguồn vào PIVOT.** Mã đơn hoặc cột chi tiết còn lại có thể chia thêm nhóm; báo cáo không còn một dòng mỗi tháng.
+2. **Đổi SUM thành COUNT mà vẫn gọi kết quả là ngày.** `COUNT(MaDon)` đếm đơn, không cộng `SoNgay`; hai phép cũng khác ở tổ hợp không có giá trị.
+3. **Ghi hai tháng bằng số nhưng không chốt năm.** Các đơn cùng số tháng ở nhiều năm có thể bị cộng chung, dù tên cột chỉ hiện một tháng.
+
+</Mistakes>
+
+## Ứng dụng
+
+<Apply>
+
+- **Đặt chỉ tiêu cạnh nhau:** trải các loại thành cột để đối chiếu trên cùng một dòng tháng.
+- **Đổi góc nhìn của báo cáo:** chọn lại vai trò hàng và cột, giữ đúng phép cộng hoặc đếm cho từng ô.
+- **Kiểm bảng ma trận:** quay về nguồn ba vai trò để biết vì sao có thêm hàng, thiếu cột hoặc ô chưa có dữ liệu.
+
+</Apply>
+
+## Ghi nhớ
+
+<Memo rows={[
+  ['Hàng, cột và giá trị tổng hợp','PIVOT (SUM(SoNgay) FOR LoaiNghi IN ([Phép năm], [Nghỉ ốm], [Việc riêng])) AS p'],
+  ['Mỗi biểu thức là một chỉ tiêu riêng','SUM(CASE WHEN LoaiNghi = N\'Phép năm\' THEN SoNgay END)'],
+  ['Đếm đơn bằng khóa không NULL','COUNT(MaDon)'],
+]} />
+
+**Tự kiểm tra trước khi bấm "Đã học xong":**
+
+<details>
+<summary>Vì sao nguồn của bảng tháng không giữ <code>MaDon</code>?</summary>
+
+Vì cột còn lại ấy cũng tham gia chia nhóm khi xoay. Giữ nó sẽ tách theo mã đơn, dù câu ngoài không chọn hiển thị mã.
+
+</details>
+
+<details>
+<summary>Ô thiếu của <code>SUM</code> và <code>COUNT(MaDon)</code> có cùng là <code>NULL</code> không?</summary>
+
+Không. Với các nguồn và phép tính vừa học, SUM không có giá trị để cộng trả `NULL`, còn COUNT đếm khóa nhận `0`. Không tự đổi hai ý nghĩa thành một.
+
+</details>
+
+<details>
+<summary>Muốn đếm đơn từng loại theo trạng thái thì chọn hàng, cột và phép tổng hợp thế nào?</summary>
+
+Chọn `LoaiNghi` làm hàng, `TrangThai` làm cột và `COUNT(MaDon)` đếm số đơn trong mỗi ô. Nguồn chỉ cần ba cột tương ứng để không chia thêm nhóm.
+
+</details>
+
+<details>
+<summary>Dùng <code>MONTH(TuNgay)</code> làm cột tháng thì cần giữ điều kiện nào?</summary>
+
+Phải lọc đúng năm và khoảng tháng muốn báo cáo trước khi xoay. Cùng số tháng ở nhiều năm không tự trở thành các cột riêng.
+
+</details>
 
 ## Bài tập
+
+Ba đề đổi phạm vi, phép tính và vai trò hàng/cột. Bộ chấm so kết quả, vị trí cột và thứ tự theo đề, không kiểm bí danh hoặc buộc dùng PIVOT; hãy tự đối chiếu kỹ thuật đang luyện.
 
 <Exercises />
