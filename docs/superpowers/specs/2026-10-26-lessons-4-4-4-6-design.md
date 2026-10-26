@@ -1,7 +1,7 @@
 # Bài 4.4–4.6: xoay báo cáo, dùng view và rà dữ liệu
 
 - Ngày: 26/10/2026.
-- Trạng thái: đề xuất ngắn, chờ duyệt trước khi viết nội dung sản phẩm.
+- Trạng thái: người làm khóa học đã duyệt ngày26/10/2026; đang triển khai native theo kế hoạch.
 - Yêu cầu: tiếp tục 4.4–4.6 theo quy ước, mỗi bài một branch riêng.
 - Gốc đề xuất: `codex/lesson-4-3-full` đã push tại `106701b7a53c3ad738987f4076418822792d7a44`. Main hiện đọc được là `0081807`; các bài 4.1–4.3 đang ở branch riêng nên lấy 4.3 làm gốc để giữ đủ tiền đề. Không merge vào main.
 - Tài liệu chi phối: [quy ước](../../quy-uoc.md), [khung bài](../../lesson-template.md), [hồ sơ công ty](../../ho-so-cong-ty.md), mẫu 1.1 và các bài trước liên quan. Quy ước/template/AGENTS ở main và gốc 4.3 có cùng blob; hồ sơ công ty của 4.3 có thêm tình huống đã soạn.
@@ -10,7 +10,7 @@
 
 Chuyển đúng ba bản tóm tắt thành bài đầy đủ cho người chỉ biết Excel văn phòng cơ bản, đã học các bài tiên quyết. Giữ MDX/YAML, component, schema và cơ chế chấm hiện có; người hỏi vẫn là chị Hạnh, bối cảnh tháng 10/2026. Ví dụ mới dùng đơn nghỉ, hồ sơ và ngày hợp đồng. Không sửa dữ liệu mẫu, UI, API hoặc bộ chặn SQL.
 
-**Approaches:** trong phạm vi viết tiếp trên công cụ hiện có, đề xuất dùng bài truy vấn cho 4.4/4.6 và bài đọc hiểu có tự kiểm tra cho 4.5. Bộ chặn hiện từ chối CREATE; script chưa tạo view nào. Thêm view vào database dùng chung hoặc mở runner cho DDL đều cần công việc và quyền ngoài phạm vi ba bài này. Do đó không thiết kế bài chấm SQL yêu cầu đối tượng chưa tồn tại, hoặc giả dùng CTE thay cho việc tạo view. Đây là lựa chọn của tác giả đang xin duyệt, chưa ghi là người làm khóa học đã chọn.
+**Approaches:** trong phạm vi viết tiếp trên công cụ hiện có, đề xuất dùng bài truy vấn cho 4.4/4.6 và bài đọc hiểu có tự kiểm tra cho 4.5. Bộ chặn hiện từ chối CREATE; script chưa tạo view nào. Thêm view vào database dùng chung hoặc mở runner cho DDL đều cần công việc và quyền ngoài phạm vi ba bài này. Do đó không thiết kế bài chấm SQL yêu cầu đối tượng chưa tồn tại, hoặc giả dùng CTE thay cho việc tạo view. Người làm khóa học đã duyệt lựa chọn này ngày26/10/2026, gồm4.5 đọc hiểu/tự kiểm tra.
 
 Sau duyệt, lập plan rồi triển khai trực tiếp trong phiên, không hỏi lại phương thức. Mỗi bài có reviewer học thử mới theo mục 4.5, cuối chuỗi có reviewer tích hợp mới. Tác giả xử lý từng nhận xét bằng ma trận, giữ report gốc. Giữ model kế thừa theo AGENTS; không dùng chỉ dẫn generic đổi model hoặc hỏi lại thiết lập máy.
 
