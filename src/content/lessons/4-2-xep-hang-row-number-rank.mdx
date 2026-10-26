@@ -446,14 +446,14 @@ Phần thứ nhất bắt đầu lại từ `1` cho mỗi nhân viên. `MaHD` du
 </details>
 
 <details>
-<summary>Hai dòng cùng hạng 1 thì hạng tiếp theo của RANK và DENSE_RANK là bao nhiêu?</summary>
+<summary>Hai dòng cùng hạng <code>1</code> thì hạng tiếp theo của <code>RANK</code> và <code>DENSE_RANK</code> là bao nhiêu?</summary>
 
 `RANK` tiếp theo là `3`, còn `DENSE_RANK` là `2`, như hai đơn `3.0` ngày và nhóm `2.0` ngày trong bảng minh họa.
 
 </details>
 
 <details>
-<summary>Giữ hạng đến 3 có bảo đảm tối đa ba dòng mỗi nhóm không?</summary>
+<summary>Giữ hạng đến <code>3</code> có bảo đảm tối đa ba dòng mỗi nhóm không?</summary>
 
 Không nếu dùng `RANK` hoặc `DENSE_RANK`, vì có đồng hạng. Muốn tối đa ba dòng, dùng `ROW_NUMBER` với thứ tự phân định rõ rồi lọc số thứ tự đến `3` ở câu ngoài.
 

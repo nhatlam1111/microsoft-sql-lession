@@ -16,3 +16,5 @@
 | Giới hạn SQL/UI | Làm theo | Chưa nghiệm thu live/SSMS/clipboard/nháp/drawer/viewport. Thiếu cấu hình SQL như 4.1; browser không khả dụng. Không đổi UI/API để lách giới hạn. |
 
 Kiểm tác giả trước review: 311 test/44 files; Astro0 errors/0 warnings/3 hints nền; build123 trang, dist1898 link; API69 bài/typecheck. HTML13 payload hai bài khớp source. Sau sửa prose kiểm lại test/check/build/dist/HTML; log tại temp/verification/2026-10-26-4-1-4-3. Chưa có phần kỹ thuật reviewer từ chối phán định nào ngoài giới hạn live/UI đã ghi.
+
+Rà tác giả trước tích hợp: Làm theo quy ước đánh dấu code cho RANK/DENSE_RANK và giá trị 1/3 trong summary tự kiểm tra. Chỉ định dạng HTML, không đổi đề/SQL hoặc kết luận review gốc. Kiểm lại suite/build/dist/HTML trước commit sửa.
