@@ -38,17 +38,13 @@ Trong `TongTheoLoai`, chưa thể dùng bí danh vừa đặt ở `SELECT` để
 
 ### Kiểm một CTE bằng cách thay SELECT cuối
 
-CTE chỉ có phạm vi trong **một câu lệnh** sử dụng nó ngay sau phần `WITH`. Muốn kiểm danh sách đơn, giữ nguyên các định nghĩa và thay câu `SELECT` cuối bằng câu đọc `DonDaDuyetThang9`. Chạy trọn khối dưới; đừng chạy riêng câu cuối hoặc nối thêm một câu thứ hai gọi lại tên CTE.
+CTE chỉ có phạm vi trong **một câu lệnh** sử dụng nó ngay sau phần `WITH`. Muốn kiểm danh sách đơn, giữ định nghĩa `DonDaDuyetThang9` và dùng câu `SELECT` cuối đọc tên đó, như khối dưới. Chưa cần khai báo `TongTheoLoai` vì bước kiểm này chưa dùng tổng. Chạy trọn khối dưới; đừng chạy riêng câu cuối hoặc nối thêm một câu thứ hai gọi lại tên CTE.
 
 <Sql code={`WITH DonDaDuyetThang9 AS (
 \tSELECT MaDon, LoaiNghi, SoNgay
 \tFROM DonNghiPhep
 \tWHERE TrangThai = N'Đã duyệt'
 \t\tAND TuNgay >= '20260901' AND TuNgay < '20261001'
-), TongTheoLoai AS (
-\tSELECT LoaiNghi, SUM(SoNgay) AS [TongNgay]
-\tFROM DonDaDuyetThang9
-\tGROUP BY LoaiNghi
 )
 SELECT MaDon, LoaiNghi, SoNgay
 FROM DonDaDuyetThang9
@@ -56,7 +52,7 @@ ORDER BY MaDon ASC;`} />
 
 <Result columns={["MaDon","LoaiNghi","SoNgay"]} rows={[["DP001","Phép năm",2],["DP002","Nghỉ ốm",1],["DP003","Phép năm",3],["DP004","Việc riêng",1],["DP011","Nghỉ ốm",2],["DP013","Phép năm",3],["DP016","Phép năm",1],["DP017","Nghỉ ốm",2],["DP019","Việc riêng",1]]} total={9} />
 
-Có `9` đơn đã duyệt bắt đầu trong tháng 9. Để kiểm tổng trung gian, vẫn giữ cả phần `WITH`, thay phần từ `SELECT` cuối đến dấu chấm phẩy bằng `SELECT LoaiNghi, TongNgay FROM TongTheoLoai ORDER BY TongNgay DESC, LoaiNghi ASC;`. Bạn sẽ thấy ba tổng: `Phép năm` là `9.0`, `Nghỉ ốm` là `5.0`, `Việc riêng` là `2.0`.
+Có `9` đơn đã duyệt bắt đầu trong tháng 9. Để kiểm tổng trung gian, dùng cả hai định nghĩa CTE trong câu chính bên dưới, rồi thay phần từ `SELECT` cuối đến dấu chấm phẩy bằng `SELECT LoaiNghi, TongNgay FROM TongTheoLoai ORDER BY TongNgay DESC, LoaiNghi ASC;`. Bạn sẽ thấy ba tổng: `Phép năm` là `9.0`, `Nghỉ ốm` là `5.0`, `Việc riêng` là `2.0`.
 
 Tên CTE chỉ giúp tổ chức cách viết và kiểm; kết quả không được bảo đảm lưu sẵn rồi chạy tuần tự mỗi phần đúng một lần. SQL Server chọn cách thực thi. Viết lại bằng CTE không tự làm câu nhanh hơn. Ở bài này chỉ cần đặt tên và kiểm kết quả trong một câu; cách lưu định nghĩa truy vấn để dùng lại học ở bài 4.5.
 
@@ -239,7 +235,7 @@ Vì `TongNgay` đã là cột do `TongTheoLoai` cung cấp. Đây không phải 
 <details>
 <summary>Muốn xem chín đơn đầu vào, phải giữ phần nào khi chạy?</summary>
 
-Giữ phần `WITH` khai báo CTE và thay `SELECT` cuối thành câu đọc `DonDaDuyetThang9`, như khối kiểm đã có. Không chạy riêng tên CTE ở một câu thứ hai.
+Giữ phần `WITH` định nghĩa `DonDaDuyetThang9` và câu `SELECT` cuối đọc tên đó, như khối kiểm đã có. Khi kiểm bước sau, phải có thêm các định nghĩa mà bước ấy cần. Không chạy riêng tên CTE ở một câu thứ hai.
 
 </details>
 
