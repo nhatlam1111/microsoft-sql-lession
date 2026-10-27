@@ -7,8 +7,8 @@ Phạm vi so với `origin/main` tại `75278be2e779e3f86d98397e468d626100157129
 | Mức kiểm | Lệnh / cách kiểm | Kết quả và giới hạn |
 |---|---|---|
 | Baseline | `npm test` trước triển khai | 322 tests / 48 files đạt, không dùng thay kết quả sau sửa. |
-| Bộ kiểm cuối | `npm test` trên Node 24.22.1 | 331 tests / 50 files đạt. 6 kiểm mới cho 4.7, 3 cho 4.8. |
-| Runtime CI | Vitest bằng Node 22.23.4 | 331 tests / 50 files đạt, gồm `node:sqlite` và `setReturnArrays`. |
+| Bộ kiểm cuối | `npm test` trên Node 24.22.1 | 332 tests / 50 files đạt. 6 kiểm mới cho 4.7, 3 cho 4.8 và 1 regression kiểm lề CASE trong BEGIN. |
+| Runtime CI | Vitest bằng Node 22.23.4 | 332 tests / 50 files đạt, gồm `node:sqlite` và `setReturnArrays`. |
 | Astro | `npm run check` | 0 errors, 0 warnings, 3 hints nền; không phát sinh hint mới. |
 | Build | `npm run build` | 135 trang. Bản cuối sau góp ý SSMS là `lesson478-4-8-postreview-build.log`; suite/HTML/dist cũng chạy lại trên source này. |
 | Link | `npm run check:dist` | 135 trang, 2028 link, đạt. |
@@ -26,11 +26,11 @@ Phạm vi so với `origin/main` tại `75278be2e779e3f86d98397e468d626100157129
 - Trước kết đã tổng hợp một dòng mỗi mã và lọc kỳ. Bỏ một bên vẫn giữ mã, phía vắng và chênh lệch là NULL; số 0 có mặt khác nguồn vắng. Thêm kỳ khác không nhân dòng.
 - EXCEPT trả đúng giá trị phía trái ở cả hai chiều, xét cả cặp, bỏ trùng và xử lý NULL theo hợp đồng mẫu. Mọi minh họa được so với cả ba đáp án theo giá trị/vị trí/thứ tự; không minh họa nào nộp nguyên là đúng.
 - 4.8: câu chi tiết chọn 18 dòng NV043, bảng chỉ trích 10; COUNT trả 18. SELECT lấy từ thân mẫu, thay đủ ba tham số; đổi sang NV013 trả 17. Thêm dòng trước đầu dưới, tại đầu trên hoặc mã khác không lọt.
-- Adapter test chỉ đổi literal Unicode/ngày, schema `dbo` của ba bảng và đúng CTE lịch VALUES đã cung cấp. Không nhận là trình biên dịch T-SQL; cú pháp ngoài phạm vi phải báo lỗi.
+- Adapter test chỉ đổi literal Unicode/ngày, schema `dbo` của ba bảng và đúng CTE lịch VALUES đã cung cấp. Không nhận là trình biên dịch T-SQL; CAST/derived VALUES còn lại bị báo lỗi, các khác biệt dialect khác chưa được bảo chứng.
 
 ## Trace và nguồn
 
-Log gốc, checker HTML, source-analysis và ledger ở `temp/verification/2026-10-27-4-7-4-8/` (ignored). Giữ cả RED và các lượt chưa đạt: lần đầu tab thật vi phạm quy ước; lần tiếp theo test đọc body chưa decode escape và test chung nhầm END block với CASE. Đã sửa cách đọc/nhận diện block, không bỏ kiểm whitespace hoặc nới dữ liệu kỳ vọng. Hai suite cuối ở Node 24/22 đều đạt.
+Log gốc, checker HTML, source-analysis và ledger ở `temp/verification/2026-10-27-4-7-4-8/` (ignored). Giữ cả RED và các lượt chưa đạt: lần đầu tab thật vi phạm quy ước; lần tiếp theo test đọc body chưa decode escape và test chung nhầm END block với CASE. Sau review tích hợp, đã thu hẹp nhận diện END block để bảo vệ CASE bên trong và thêm regression RED→GREEN; mở rộng biên đầu dưới cho cả ba SELECT, ba mutation >=→> đều bị bắt. Không bỏ kiểm whitespace hoặc nới dữ liệu kỳ vọng. Hai suite cuối ở Node 24/22 đều đạt 332 tests.
 
 Đã đối chiếu tài liệu Microsoft ngày 27/10/2026:
 
@@ -39,3 +39,5 @@ Log gốc, checker HTML, source-analysis và ledger ở `temp/verification/2026-
 - [View definition](https://learn.microsoft.com/en-us/sql/relational-databases/stored-procedures/view-the-definition-of-a-stored-procedure): Script Stored Procedure as → Create To → New Query Editor Window.
 
 Tài liệu không thay phép chạy live. Review độc lập có report và ma trận riêng; số liệu ở bảng trên là kiểm của tác giả, không gán cho reviewer.
+
+Phiên bản nội dung được integration review là `070fd5a`; sau review chỉ hai tệp test và hồ sơ thay đổi, MDX/YAML/HTML không đổi. Log cuối: `lesson478-final-suite.log`, `lesson478-final-node22.log`, `lesson478-integration-final-check.log`, `...-dist.log`, `...-html.log`. Report tích hợp tính thuần từ public seed và tự so HTML; tác giả đã disposition hai findings và đủ chín mục chưa kết luận.

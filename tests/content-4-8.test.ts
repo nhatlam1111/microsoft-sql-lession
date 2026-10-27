@@ -25,8 +25,21 @@ it('the displayed procedure body binds the employee and both dates rather than r
   expect(attendanceQuery(modelBody()).rows).toEqual([['NV043',18]]);
   expect(attendanceQuery(modelBody('NV013')).rows).toEqual([['NV013',17]]);
 });
-it('the same body excludes the previous day, upper boundary and another employee',()=>{
+it('the body and independent SELECTs include the lower boundary and exclude outside dates or another employee',()=>{
   const f=attendanceFixture(),row=f.ChamCong.find(r=>r.MaNV==='NV043')!;
   const extra=[{...row,Ngay:'2026-08-31'},{...row,Ngay:'2026-10-01'},{...row,MaNV:'NV013',Ngay:'2026-09-20'}];
-  expect(attendanceQuery(modelBody(),{ChamCong:[...f.ChamCong,...extra]}).rows).toEqual([['NV043',18]]);
+  // Synthetic filter probe: the public seed has no attendance on this holiday.
+  const atStart={...row,Ngay:'2026-09-01'};
+  for (const sql of [modelBody(),...lessonExamples(slug).pairs.map(p=>p.sql)]) {
+    const outside=attendanceQuery(sql,{ChamCong:[...f.ChamCong,...extra]});
+    const inclusive=attendanceQuery(sql,{ChamCong:[...f.ChamCong,...extra,atStart]});
+    if (outside.columns.includes('Ngay')) {
+      expect(outside.rows).toHaveLength(18);
+      expect(inclusive.rows).toHaveLength(19);
+      expect(inclusive.rows).toContainEqual(['NV043','2026-09-01']);
+    } else {
+      expect(outside.rows).toEqual([['NV043',18]]);
+      expect(inclusive.rows).toEqual([['NV043',19]]);
+    }
+  }
 });

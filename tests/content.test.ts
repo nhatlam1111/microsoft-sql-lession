@@ -9,6 +9,20 @@ import { EXPECTED } from './helpers/expected';
 import { lessonBlocks } from './helpers/lesson-blocks';
 import { readLessonFiles, readCatalog, lessonMainSection, sqlSubheadings, proseParagraphs } from './helpers/lessons';
 
+// MDX SQL stores indentation as escaped tabs, not literal leading whitespace.
+function sqlIndentationIssues(code: string): string[] {
+  const lines = code.split(/\r?\n/);
+  return lines.filter((line, i) => {
+    if (/^\s+\S/.test(line)) return true;
+    // Only the final closure of a procedure body may align with BEGIN.
+    const procedureEnd = line === 'END;' && i === lines.length - 1
+      && /^CREATE PROCEDURE\b/.test(lines[0]) && lines.includes('BEGIN');
+    if (procedureEnd) return false;
+    const continuation = i > 0 && (lines[i - 1].trimEnd().endsWith(',') || /^(?:\\t)*(?:AND|OR|WHEN|ELSE|END)\b/.test(line));
+    return continuation && !line.startsWith('\\t');
+  });
+}
+
 // Frozen migration list: existing lessons may keep their old layout until edited; new full lessons use the narrative format.
 const LEGACY_LAYOUT_SLUGS = new Set([
   '6-5-update-quen-where',
@@ -114,16 +128,14 @@ describe('lesson files', () => {
   });
   it('lesson SQL uses escaped tabs instead of literal leading whitespace that MDX strips', () => {
     for (const f of files) for (const m of f.body.matchAll(/<Sql[^>]*code=\{`([\s\S]*?)`\}/g)) {
-      const lines = m[1].split(/\r?\n/);
-      expect(lines.filter(l => /^\s+\S/.test(l)), f.slug).toEqual([]);
-      for (const [i, line] of lines.entries()) {
-        // A statement block closes at its BEGIN level; CASE continuations stay indented.
-        if (line === 'END;' && lines.includes('BEGIN')) continue;
-        if (i > 0 && (lines[i - 1].trimEnd().endsWith(',') || /^(?:\\t)*(?:AND|OR|WHEN|ELSE|END)\b/.test(line))) {
-          expect(line.startsWith('\\t'), `${f.slug}: ${line}`).toBe(true);
-        }
-      }
+      expect(sqlIndentationIssues(m[1]), f.slug).toEqual([]);
     }
+  });
+  it('requires CASE indentation inside BEGIN while allowing the final procedure END', () => {
+    const lines = ['CREATE PROCEDURE dbo.usp_Check', 'AS', 'BEGIN', '\\tSELECT CASE', '\\t\\tWHEN 1 = 1 THEN 1', 'END;', 'END;'];
+    expect(sqlIndentationIssues(lines.join('\n'))).toEqual(['END;']);
+    lines[5] = '\\tEND;';
+    expect(sqlIndentationIssues(lines.join('\n'))).toEqual([]);
   });
   it('SQL inside run-flow steps keeps the N prefix and MDX-safe indentation', () => {
     for (const f of files) for (const m of f.body.matchAll(/(?:\bsql:\s*|\bquery=\{)`([\s\S]*?)`/g)) {
