@@ -51,7 +51,8 @@ export function attendanceQuery(sql: string, overrides: Partial<AttendanceTables
       const insert=db.prepare(`INSERT INTO ${table} VALUES (${cols.map(()=>'?').join(',')})`);
       for (const row of overrides[table]??source[table]) insert.run(...cols.map(c=>row[c]));
     }
-    let adapted=sql.replace(/\bN'/g,"'").replace(/'(\d{4})(\d{2})(\d{2})'/g,"'$1-$2-$3'");
+    let adapted=sql.replace(/\bN'/g,"'").replace(/'(\d{4})(\d{2})(\d{2})'/g,"'$1-$2-$3'")
+      .replace(/\bdbo\.(ChamCong|BangLuong|DonNghiPhep)\b/g,'$1');
     // ONLY the provided literal date-list CTE: SQLite lacks SQL Server's derived VALUES column alias.
     const calendar=/LichLam AS \(\s*SELECT CAST\(l\.Ngay AS date\) AS \[Ngay\]\s*FROM \(VALUES\s*((?:\('\d{4}-\d{2}-\d{2}'\)\s*,?\s*)+)\) AS l\(Ngay\)\s*\)/;
     adapted=adapted.replace(calendar,(_all,values:string)=>`LichLam(Ngay) AS (VALUES ${values})`);

@@ -4,30 +4,161 @@ title: Đọc hiểu stored procedure
 shortTitle: Stored procedure
 level: 4
 area: A6
-kind: summary
-minutes: 14
+kind: full
+minutes: 25
 prerequisites:
   - "4.1"
-goal: bạn đọc được một thủ tục có sẵn và lần ra cách nó tính một con số
-excel: Macro VBA có tham số
-summary: Đọc thủ tục, tham số, EXEC và lần theo cách tính một con số.
+  - "4.5"
+  - "4.7"
+goal: bạn nhận ra đầu vào, nguồn và cách tính của một thủ tục, rồi tự kiểm được một con số bằng SELECT
+excel: Phiếu đầu vào cho một nhóm thao tác được lưu
+summary: Đọc tham số và thân thủ tục trước, thay đầu vào bằng giá trị cụ thể rồi xem dòng dữ liệu và số đếm.
+noExercises: true
 ---
 
-## Nội dung chính
+## Tình huống
 
-- Stored procedure là một khối câu lệnh lưu sẵn trong database, gọi bằng `EXEC TenThuTuc @ThamSo = …`.
-- Đọc thủ tục từ trên xuống: tham số đầu vào, các bảng tạm, các bước tính, kết quả trả ra.
-- Xem nội dung thủ tục trong SSMS: chuột phải vào thủ tục, chọn Modify hoặc Script Procedure as.
-- Lần theo cách tính một con số cụ thể bằng cách chạy riêng từng đoạn `SELECT` bên trong.
+<Chat who="Chị Hạnh · Phòng Nhân sự" time="10:35" initial="H">
+Chị được gửi đoạn thủ tục và phiếu đầu vào của báo cáo công. Báo cáo cho NV043 có 18 ngày trong tháng 9, nhưng bảng lương ghi 20. Em đọc giúp chị xem thủ tục đếm gì và chỉ chị cách kiểm con số ấy nhé.
+</Chat>
 
-## Liên hệ Excel
+Đây là tình huống đọc một **thủ tục mẫu** được cung cấp trong bài. Giữ mã `NV043`, từ `01/09/2026` đến trước `01/10/2026`, cùng dữ liệu tháng 9 đã đối soát ở bài 4.7. Cần lần ra ý nghĩa số `18`, chưa yêu cầu sửa cách tính hoặc triển khai thủ tục.
 
-Giống một macro VBA có tham số: bấm chạy là làm cả chuỗi bước, muốn hiểu thì phải mở code ra đọc.
+<Key>Đọc đầu vào và câu lệnh tạo kết quả, rồi kiểm lại bằng những dòng dữ liệu cụ thể.</Key>
 
-## Tình huống ví dụ
+## Từ phiếu đầu vào đến con số thủ tục trả ra
 
-Bảng lương của một người khác với cách tính tay, cần biết thủ tục tính lương đã tính như thế nào.
+### Đầu vào thay đổi, định nghĩa được dùng lại
 
-## Bài tập
+Trong Excel, **macro** là nhóm thao tác được lưu để thực hiện lại; nhóm thao tác có thể nhận đầu vào để xử lý phạm vi khác. Bạn không cần biết VBA để đọc phiếu minh họa dưới: mã nhân viên nằm ở `B2`, ngày đầu ở `B3`, mốc dừng ở `B4`. Ba ô được đánh dấu chính là những giá trị cần đưa vào lần tính này.
 
-<Exercises />
+<Excel sheets="Phiếu đầu vào báo cáo công" cell="B2" selected="B2" mark={['B2','B3','B4']} numeric={['B3','B4']} rows={[
+  ['Đầu vào','Giá trị'],
+  ['Mã nhân viên','NV043'],
+  ['Từ ngày, có lấy','2026-09-01'],
+  ['Đến trước ngày, không lấy','2026-10-01'],
+]} />
+
+Trong SQL Server, **stored procedure** (thủ tục lưu trữ) là đối tượng có tên trong database chứa các câu lệnh. **Tham số** là đầu vào có tên của thủ tục: ở mẫu này, `@MaNV`, `@TuNgay`, `@DenNgay` nhận ba ô trên. Có thể gọi lại cùng định nghĩa với mã hoặc khoảng ngày khác; không phải viết thủ tục mới cho từng hồ sơ.
+
+Hai mẫu định nghĩa và lời gọi dưới chỉ để đọc: nguồn khóa học không cung cấp thủ tục này để gọi, và web chặn `CREATE`/`EXEC`. Các câu `SELECT` kiểm dữ liệu ở phần sau chạy độc lập, không cần tạo thủ tục mẫu.
+
+<Sql copy={false} code={`CREATE PROCEDURE dbo.usp_XemCong
+\t@MaNV varchar(10), @TuNgay date, @DenNgay date
+AS
+BEGIN
+\tSELECT MaNV, COUNT(*) AS [SoNgayChamCong]
+\tFROM dbo.ChamCong
+\tWHERE MaNV = @MaNV
+\t\tAND Ngay >= @TuNgay AND Ngay < @DenNgay
+\tGROUP BY MaNV;
+END;`} />
+
+`CREATE PROCEDURE` đặt tên cho định nghĩa; `dbo` là schema đã gặp ở bài 4.5. Dòng tham số ghi cả tên và kiểu: mã nhận `varchar(10)`, hai ngày nhận `date` như bài 1.3. `AS` mở phần thân, `BEGIN` và `END` bao nhóm câu lệnh bên trong.
+
+Để đọc một lời gọi, nhìn giá trị được gán sau từng tên tham số. **`EXEC`** gọi thủ tục theo tên; nó khác cách dùng view trong `FROM` ở bài 4.5. Với phiếu trên, lời gọi có dạng:
+
+<Sql copy={false} code={`EXEC dbo.usp_XemCong
+\t@MaNV = 'NV043',
+\t@TuNgay = '20260901',
+\t@DenNgay = '20261001';`} />
+
+### Đọc thân rồi nhìn những dòng được chọn
+
+Trong thân mẫu, `FROM dbo.ChamCong` chỉ ra nguồn. `WHERE MaNV = @MaNV` so cột mã với tham số mã; dấu `@` giúp nhận ra phần đầu vào, khác tên cột. Hai điều kiện ngày giữ đầu dưới và bỏ đầu trên: `01/09` được lấy, `01/10` không được lấy.
+
+`GROUP BY MaNV` gom các dòng theo mã, `COUNT(*)` đếm số dòng của nhóm như bài 3.1–3.2. Trước khi tin số đếm, thay ba tham số bằng giá trị trên phiếu và chọn cột mã/ngày để xem dòng nào được giữ. Câu kiểm dưới dùng tên bảng trực tiếp và các hằng cụ thể, nên có thể chạy riêng trên web:
+
+<Sql code={`SELECT MaNV, Ngay
+FROM ChamCong
+WHERE MaNV = 'NV043'
+\tAND Ngay >= '20260901' AND Ngay < '20261001'
+ORDER BY Ngay ASC;`} />
+
+<Result columns={["MaNV","Ngay"]} rows={[["NV043","2026-09-07"],["NV043","2026-09-08"],["NV043","2026-09-09"],["NV043","2026-09-10"],["NV043","2026-09-11"],["NV043","2026-09-14"],["NV043","2026-09-15"],["NV043","2026-09-16"],["NV043","2026-09-17"],["NV043","2026-09-18"]]} total={18} />
+
+Bảng trích mười trong `18` dòng, sắp theo ngày; tất cả mang mã `NV043`. Không có dòng `03/09`, `04/09` vì đó là hai ngày phép của hồ sơ này đã thấy ở bài 4.7. Câu lệnh đang đọc các dòng chấm công, chưa đọc `DonNghiPhep` để cộng phần phép.
+
+### Câu lệnh cho tình huống
+
+Giữ nguyên mã và hai biên ngày, thay cột ngày bằng phép đếm và nhóm như thân thủ tục:
+
+<Sql code={`SELECT MaNV, COUNT(*) AS [SoNgayChamCong]
+FROM ChamCong
+WHERE MaNV = 'NV043'
+\tAND Ngay >= '20260901' AND Ngay < '20261001'
+GROUP BY MaNV;`} />
+
+<Result columns={["MaNV","SoNgayChamCong"]} rows={[["NV043",18]]} total={1} mark={[1]} />
+
+Chị Hạnh có thể lần ra `18` từ đúng `18` dòng chấm công vừa kiểm. Thân mẫu chỉ đếm `ChamCong`, nên số này chưa gồm `2` ngày phép năm. Bài 4.7 đã cho thấy `18 + 2 = 20`; hai con số ở đây khác phạm vi tính, chưa phải bằng chứng thủ tục hoặc bảng lương sai.
+
+Khi được phép xem định nghĩa trong SSMS, mở database cần xem → **Programmability → Stored Procedures**, chọn thủ tục cần đọc rồi nhấp phải → **Script Stored Procedure as → CREATE To → New Query Editor Window**. Đây là mở script để đọc; không bấm F5 để tạo hoặc sửa. Không xem được thì nhờ người phụ trách cung cấp định nghĩa.
+
+Ở bài này chỉ cần nhận ra đầu vào, nguồn, bộ lọc và phép tính rồi kiểm một giá trị cụ thể. Với thủ tục khác, phải đọc toàn bộ thân và các lời gọi tiếp: tên thủ tục không bảo đảm nó chỉ đọc dữ liệu. Quyền xem/chạy và việc triển khai học tiếp ở bài 6.1.
+
+## Hay nhầm ở đâu
+
+<Mistakes>
+
+1. **Đọc tên thủ tục rồi đoán cách tính.** Tên báo cáo không cho biết nó đã tính phép, lọc trạng thái hay dùng nguồn nào; cần nhìn câu lệnh bên trong.
+2. **Dán riêng câu còn tham số vào ô chạy SQL.** Câu đứng riêng chưa có các đầu vào được truyền như khi gọi thủ tục, nên chưa phải câu kiểm với giá trị cụ thể.
+3. **Thấy số chấm công khác ngày công là kết luận sai.** Hai số có thể gồm những phần khác nhau; phải chỉ rõ nguồn và phép tính trước khi đối soát.
+
+</Mistakes>
+
+## Ứng dụng
+
+<Apply>
+
+- **Lần ra một chỉ tiêu báo cáo:** nhận diện nguồn, điều kiện và phép tính để giải thích con số bằng dữ liệu được chọn.
+- **Kiểm yêu cầu theo đầu vào:** đối chiếu mã và hai mốc ngày trong lời gọi với phạm vi người hỏi muốn xem.
+- **Trao đổi đúng chỗ cần làm rõ:** chỉ ra thủ tục đang đếm chấm công hay đã cộng phép để người phụ trách xác nhận cách tính cần dùng.
+
+</Apply>
+
+## Ghi nhớ
+
+<Memo rows={[
+  ['Phiếu đầu vào cho nhóm thao tác','Tham số có tên/kiểu; lời gọi truyền giá trị cho lần thực hiện'],
+  ['Đọc các bước trước khi tin kết quả','Tìm nguồn, điều kiện, cách nhóm và phép tính trong thân thủ tục'],
+  ['Xem dòng chi tiết rồi đếm','Thay đầu vào bằng hằng trong SELECT độc lập để tự kiểm'],
+  ['Cùng nói số ngày nhưng có thể khác phần được tính','COUNT trên ChamCong chưa tự cộng ngày phép'],
+]} />
+
+**Tự kiểm tra trước khi bấm "Đã học xong":**
+
+<details>
+<summary>Ba tham số nhận giá trị nào từ phiếu đầu vào, ngày <code>01/10/2026</code> có được lấy không?</summary>
+
+`@MaNV` nhận `NV043`, `@TuNgay` nhận `2026-09-01`, `@DenNgay` nhận `2026-10-01`. Điều kiện `< @DenNgay` bỏ ngày `01/10`; đầu dưới `>= @TuNgay` giữ ngày `01/09` nếu có dòng thỏa mã.
+
+</details>
+
+<details>
+<summary>Trong mẫu, tìm nguồn và điều kiện của con số ở đâu?</summary>
+
+Đọc `FROM dbo.ChamCong`, rồi `WHERE` lọc mã và khoảng ngày. `GROUP BY MaNV` gom theo mã, `COUNT(*)` đếm các dòng của nhóm; tên thủ tục không thay cho việc đọc phần thân.
+
+</details>
+
+<details>
+<summary>Vì sao kết quả <code>18</code> chưa gồm hai ngày phép của <code>NV043</code>?</summary>
+
+Thân mẫu chỉ đọc và đếm dòng trong `ChamCong`, không đọc đơn nghỉ để cộng phép. Hai ngày phép ở bài 4.7 làm số ngày đối chiếu thành `20`, khác phạm vi số chấm công `18`.
+
+</details>
+
+<details>
+<summary>Muốn tự kiểm mà không tạo hoặc gọi thủ tục thì làm gì?</summary>
+
+Thay `@MaNV`, `@TuNgay`, `@DenNgay` bằng các giá trị cụ thể trong câu `SELECT` độc lập; xem các dòng được chọn trước rồi chạy câu đếm với cùng điều kiện. Không dán riêng đoạn còn tham số chưa có giá trị vào web.
+
+</details>
+
+<details>
+<summary>Đọc định nghĩa thủ tục khác ở đâu, và trước khi chạy cần kiểm gì?</summary>
+
+Khi có quyền phù hợp, trong database cần xem, mở Programmability → Stored Procedures, chọn thủ tục rồi nhấp phải → Script Stored Procedure as → CREATE To → New Query Editor Window; hoặc nhờ người phụ trách cung cấp định nghĩa. Đọc toàn bộ thân và lời gọi tiếp để biết phạm vi/thao tác; tên không chứng minh thủ tục chỉ đọc. Việc mở script để xem không yêu cầu bấm F5 để tạo/sửa.
+
+</details>

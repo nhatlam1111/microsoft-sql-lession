@@ -79,3 +79,5 @@ Builder check ngữ cảnh mới/model kế thừa ngày27/10/2026 trả “noth
 ## Tiến độ thực hiện
 
 4.7đãsoạn với Excel/lịch/nguồn/SQLkếtquả. Learnerfresh hai giaiđoạn không nêu findingcần sửa; đã đọc đủ/disposition mọi giới hạn.328tests/49files,API81,build135/dist2026; không claimSQLlive/UI đã kiểm.
+
+4.8 đã soạn full/noExercises: phiếu ba đầu vào, mẫu định nghĩa/lời gọi chỉ đọc, SELECT xem18dòng rồi COUNT18, nối phần phép2 ở4.7. Learner mới xác nhận đủ căn cứ năm câu ôn và góp ý làm rõ thao tác chọn thủ tục/nhấp phải; đã sửa hai câu, không thêm khối. Giữ report gốc và disposition mọi giới hạn. Đang kiểm tích hợp trước bàn giao local.

@@ -117,6 +117,8 @@ describe('lesson files', () => {
       const lines = m[1].split(/\r?\n/);
       expect(lines.filter(l => /^\s+\S/.test(l)), f.slug).toEqual([]);
       for (const [i, line] of lines.entries()) {
+        // A statement block closes at its BEGIN level; CASE continuations stay indented.
+        if (line === 'END;' && lines.includes('BEGIN')) continue;
         if (i > 0 && (lines[i - 1].trimEnd().endsWith(',') || /^(?:\\t)*(?:AND|OR|WHEN|ELSE|END)\b/.test(line))) {
           expect(line.startsWith('\\t'), `${f.slug}: ${line}`).toBe(true);
         }
