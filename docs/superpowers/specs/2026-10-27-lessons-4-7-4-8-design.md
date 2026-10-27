@@ -1,6 +1,6 @@
 # Bài4.7–4.8: đối soát ngày công và đọc thủ tục
 
-Ngày27/10/2026. **Trạng thái: đề xuất chờ duyệt; chưa viết nội dung bài.** Base main `75278be2e779e3f86d98397e468d626100157129`; branch4.7 `codex/lesson-4-7-full`, branch4.8 tạo từ commit hoàn tất4.7. Giữ từng bài trên branch riêng; không push/merge main/deploy trong lượt soạn.
+Ngày27/10/2026. **Trạng thái: người dùng duyệt27/10/2026, đang triển khai theo plan.** Base main `75278be2e779e3f86d98397e468d626100157129`; branch4.7 `codex/lesson-4-7-full`, branch4.8 tạo từ commit hoàn tất4.7. Giữ từng bài trên branch riêng; không push/merge main/deploy trong lượt soạn.
 
 ## Ý định và mốc chất lượng
 
@@ -14,7 +14,7 @@ Giữ template gộp Excel/SQL,2–4tiểu mục chính, lời giải tình hu�
 2. Tạo stored procedure thật/mở EXEC trong runner cần đổi guard, quyền hoặc database chung. Không phù hợp phạm vi hai bài; không chọn.
 3. Chỉ viết khái niệm/điều kiện bằng văn bản sẽ bỏ mất cách lần ra con số. Không chọn vì trái điều chỉnh người dùng vừa yêu cầu.
 
-Cách1 là lựa chọn của tác giả để người dùng duyệt; chưa ghi như một quyết định đã được người dùng chấp thuận. MDX/YAML/schema/component/runner hiện có được giữ. Các lựa chọn triển khai nhỏ về alias, dòng trích và vị trí đánh dấu giao người viết tự chốt, có kiểm source/render.
+Người dùng đã duyệt cách1 ngày27/10/2026. MDX/YAML/schema/component/runner hiện có được giữ. Các lựa chọn triển khai nhỏ về alias, dòng trích và vị trí đánh dấu giao người viết tự chốt, có kiểm source/render.
 
 ## 4.7 — Đối soát chấm công và bảng lương
 
@@ -45,7 +45,7 @@ Bộ chấm hiện so kết quả/vị trí/thứ tự, không buộc cú pháp 
 
 Dự kiến20–25phút gồm tự kiểm tra. Giữ4.1, bổ sung4.5/4.7 để dùng nghĩa schema và tình huống18+2ngày đã học.
 
-**Mục tiêu:** nhận diện tham số/nguồn/điều kiện/cách tính/kết quả của một thủ tục và tự kiểm một con số. **Đề xuất kind full/noExercises:true**, thay YAML bằng năm câu tự kiểm tra; có các câu SELECT độc lập kiểm được trên web.
+**Mục tiêu:** nhận diện tham số/nguồn/điều kiện/cách tính/kết quả của một thủ tục và tự kiểm một con số. **Đã duyệt kind full/noExercises:true**, thay YAML bằng năm câu tự kiểm tra; có các câu SELECT độc lập kiểm được trên web.
 
 - Chị Hạnh hỏi vì sao một báo cáo lấy từ thủ tục cho18ngày ở NV043 trong tháng9, trong khi cột ngày công trên bảng lương là20. Dùng chính hai ngày phép đã minh họa ở4.7 để khép tình huống, không viết lại cả bài đối soát.
 - Dùng phiếu đầu vào/bảng minh họa MaNV=NV043, TuNgay=01/09/2026, DenNgay=01/10/2026 (đầu cuối không lấy) rồi nối sang ba tham số @MaNV/@TuNgay/@DenNgay, kiểu varchar/date đã học. Giải nghĩa macro bằng nhóm thao tác nhận đầu vào tại chỗ, không yêu cầu biết VBA.
@@ -74,4 +74,4 @@ MDX4.7/4.8; YAML4.7; EXPECTED/README/hồ sơ công ty/chú thích noExercises n
 
 ## Kiểm thiết kế trước duyệt
 
-Builder check ngữ cảnh mới/model kế thừa ngày27/10/2026 trả “nothing important left”; không sửa source/test/DB. Baseline main qua322test/48file (logtemp/verification), không dùng kết quả đó thay kiểm các bài sắp viết. Quyết định noExercises4.8 vẫn là đề xuất cần người dùng duyệt; sau duyệt viết plan và triển khai/review, không hỏi lại phương thức.
+Builder check ngữ cảnh mới/model kế thừa ngày27/10/2026 trả “nothing important left”; không sửa source/test/DB. Baseline main qua322test/48file (logtemp/verification), không dùng kết quả đó thay kiểm các bài sắp viết. Người dùng đã duyệt noExercises4.8; tiếp tục plan/triển khai/review, không hỏi lại phương thức.
