@@ -12,3 +12,7 @@
 | Thời lượng30phút chưa đo thực tế | Không làm theo — giữ ước lượng | Chưa quan sát học viên; không cam kết thời lượng đã đo hoặc mọi học viên tự thao tác được. Điều chỉnh khi có dữ liệu học thực. |
 
 Suite335tests/51files; Astro0errors/0warnings/3hints nền; build135; HTML/source đúng phiên bản. Không thay source sau review, không push/merge main/deploy. Toàn bộ giới hạn được giữ khi bàn giao, không gọi kết luận học thử là quyền xuất bản.
+
+## Đối chiếu thêm sau learner review
+
+Tác giả mở [Microsoft Create/load query](https://support.microsoft.com/en-us/excel/create-load-or-edit-a-query-in-excel-power-query) ngày27/10, đoạn LoadTo có thể mờ khi tạo query đầu. Bổ sung ngay bước5 đường Close&Load → Data/Queries&Connections/Queries → nhấp phải query/LoadTo, vẫn chọn Table/Newworksheet. Đây là sửa hướng dẫn theo tài liệu, không phải finding learner hay phép kiểm Excel thật. SQL/Result/Exceldata không đổi; dùng existing content/data và build/HTML, không viết prose snapshot hoặc gọi learner review lại. Report gốc vẫn áp dụng bản trước sửa, integration sẽ đọc bản sau.
