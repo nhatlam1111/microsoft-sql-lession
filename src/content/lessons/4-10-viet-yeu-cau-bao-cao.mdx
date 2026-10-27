@@ -4,31 +4,155 @@ title: Viết yêu cầu báo cáo rõ ràng
 shortTitle: Yêu cầu báo cáo
 level: 4
 area: A6
-kind: summary
-minutes: 12
+kind: full
+minutes: 25
 prerequisites:
   - "4.6"
-goal: bạn mô tả được một báo cáo đủ rõ để người khác làm đúng ngay lần đầu
-excel: Bảng mẫu báo cáo trong Excel
-summary: Định nghĩa từng cột, điều kiện lọc, mốc thời gian và các trường hợp đặc biệt.
+  - "4.7"
+  - "4.9"
+goal: bạn viết được yêu cầu có định nghĩa mỗi dòng, từng cột, phạm vi ngày và ví dụ để đối chiếu kết quả
+excel: Bảng mẫu, định nghĩa cột, ca giữ và loại
+summary: Từ yêu cầu biến động nhân sự, chốt một danh sách vào mới có nguồn, cột, mốc ngày và tiêu chí chấp nhận rõ ràng.
+noExercises: true
 ---
 
-## Nội dung chính
+## Tình huống
 
-- Định nghĩa từng cột: lấy từ bảng nào, tính thế nào, đơn vị gì.
-- Ghi rõ điều kiện lọc: ai được tính, ai bị loại, ví dụ nhân viên đã nghỉ việc có tính không.
-- Ghi rõ mốc thời gian: theo kỳ lương, theo ngày chạy báo cáo, hay theo khoảng ngày người dùng chọn.
-- Liệt kê các trường hợp đặc biệt: người có nhiều hợp đồng, hợp đồng không xác định thời hạn, đơn nghỉ kéo dài qua hai tháng.
-- Đính kèm một bảng mẫu vài dòng với số liệu mong đợi.
+<Chat who="Chị Hạnh · Phòng Nhân sự" time="10:20" initial="H">
+Em làm cho chị báo cáo biến động nhân sự tháng 10 để gửi buổi họp nhé. Chị muốn nhận một bảng Excel nhìn là đối chiếu được.
+</Chat>
 
-## Liên hệ Excel
+“Biến động” có thể chỉ hồ sơ vào mới, nghỉ việc hoặc chuyển phòng. Tình huống này sẽ chốt một nhu cầu cụ thể với ngày báo cáo cố định `21/10/2026`, không mặc định phải thống kê mọi loại biến động.
 
-Giống làm sẵn một bảng mẫu trong Excel với tiêu đề cột và vài dòng ví dụ, kèm định nghĩa đủ chặt để ai làm cũng ra cùng một con số.
+<Key>Ghi rõ cần lấy dòng nào, cột nào và kiểm thế nào trước khi làm báo cáo.</Key>
 
-## Tình huống ví dụ
+## Từ yêu cầu chung đến báo cáo kiểm được
 
-Phòng nhân sự xin "báo cáo biến động nhân sự theo tháng", và mỗi người hiểu chữ "biến động" một kiểu.
+### Nhìn mẫu để chốt mỗi dòng là gì
 
-## Bài tập
+Chị Hạnh xác nhận cần **danh sách hồ sơ vào làm mới** để đối chiếu hồ sơ vừa tiếp nhận. Tên bản báo cáo được chốt là **Danh sách hồ sơ vào mới 01/10–21/10/2026**. Đây là phần việc cụ thể trong yêu cầu ban đầu, chưa phải toàn bộ biến động của cả tháng 10.
 
-<Exercises />
+Bảng Excel mẫu dưới dùng hai hồ sơ của bộ dữ liệu; ngày được hiển thị ngày/tháng/năm. Các ô `A2`, `A3` chỉ mã cần đối chiếu, `D2`, `D3` chỉ ngày vào làm dùng để chọn hồ sơ.
+
+<Excel sheets="Mẫu danh sách vào mới" mark={['A2','A3','D2','D3']} numeric={['D2','D3']} rows={[
+  ['Mã NV','Họ tên','Mã phòng hiện lưu','Ngày vào làm'],
+  ['NV047','Phạm Ngọc Ánh','NS','01/10/2026'],
+  ['NV048','Đỗ Minh Quân','IT','05/10/2026'],
+]} />
+
+**Định nghĩa một dòng** là nói mỗi dòng đại diện cho gì: ở đây là một mã `MaNV`, lấy từ `NhanVien`. Một báo cáo mỗi dòng là một phòng hoặc một hợp đồng sẽ trả cấu trúc và số dòng khác. Chốt đơn vị này trước giúp tránh đếm số hợp đồng thành số hồ sơ nhân viên.
+
+### Ghi nguồn, cột và phạm vi vào yêu cầu
+
+Bốn cột từ trái sang phải được định nghĩa như bảng dưới. Đặt tiêu đề rõ vẫn cần chỉ đúng cột nguồn; `AS` không kiểm được ý nghĩa báo cáo, như bài 2.1.
+
+| Cột trả về | Nguồn và ý nghĩa |
+|---|---|
+| Mã NV | `NhanVien.MaNV`, mã hồ sơ để đối chiếu |
+| Họ tên | `NhanVien.HoTen`, họ tên đang lưu |
+| Mã phòng hiện lưu | `NhanVien.MaPB` lúc lấy dữ liệu, không chứng minh phòng tại ngày vào làm hoặc tại ngày chốt |
+| Ngày vào làm | `NhanVien.NgayVaoLam`, kiểu `date`; không lấy `HopDong.NgayBatDau` thay vào |
+
+**Phạm vi:** ngày vào làm từ `01/10/2026` đến hết `21/10/2026`, viết thành lấy đầu dưới `>= '20261001'` và bỏ đầu trên `< '20261022'`. Không lọc `TrangThai`: một hồ sơ vào trong khoảng vẫn thuộc danh sách dù sau đó đã nghỉ. Ngày chốt giới hạn khoảng ngày vào mới, không tạo bản lịch sử của các cột còn lại.
+
+**Thứ tự:** ngày vào làm tăng dần; cùng ngày thì mã nhân viên tăng dần. Cột ngày vẫn trả kiểu `date`, Excel có thể đổi cách hiển thị như hình mà không đổi ý nghĩa khoảng lọc.
+
+Các phần tên báo cáo, đơn vị một dòng, định nghĩa cột và phạm vi trên tạo thành bản yêu cầu của tình huống. Khi bàn giao, giữ chúng cùng bảng mẫu; chỉ đưa một hình vài dòng thì chưa nói đủ cách chọn toàn bộ dữ liệu.
+
+### Thêm ca chấp nhận và ghi phần còn thiếu
+
+**Tiêu chí chấp nhận** là điều kiện để đối chiếu báo cáo có đáp ứng yêu cầu đã chốt hay không. Các ngày dưới là ca giả định để thử quy tắc, không phải bốn hồ sơ mới trong bộ mẫu:
+
+| Ngày vào làm giả định | Kết quả cần | Căn cứ |
+|---|---|---|
+| `30/09/2026` | Loại | Trước đầu khoảng |
+| `01/10/2026` | Giữ | Lấy đầu dưới |
+| `21/10/2026` | Giữ | Vẫn trong ngày chốt |
+| `22/10/2026` | Loại | Từ đầu ngày sau ngày chốt |
+
+Còn hai ca về hợp đồng: **chưa có hợp đồng vẫn giữ hồ sơ đủ điều kiện**, và **có nhiều hợp đồng vẫn chỉ một dòng theo mã**. Trong bộ mẫu, `NV047`, `NV048` đều chưa có hợp đồng; lấy `HopDong` làm nguồn chọn người sẽ bỏ mất cả hai. Báo cáo này đọc `NhanVien`, nên không cần kết bảng hợp đồng để chọn hồ sơ.
+
+Nếu yêu cầu chuyển sang “phòng tại ngày vào làm”, cần dữ liệu lịch sử để xác định. Bộ mẫu chỉ giữ `MaPB` hiện tại; phải ghi rõ phần còn thiếu và thống nhất nguồn bổ sung trước khi cam kết trả cột lịch sử. Tương tự, báo cáo ngày phép cần quy tắc thuộc kỳ như bài 4.7, không dùng một tiêu đề chung để thay định nghĩa cách tính.
+
+### Câu lệnh cho tình huống
+
+Đối chiếu bản yêu cầu bằng câu đã dùng các kỹ thuật quen thuộc: chọn cột/đặt tiêu đề, lọc ngày và sắp xếp. Không có điều kiện hợp đồng hoặc trạng thái ngoài phạm vi đã chốt:
+
+<Sql code={`SELECT MaNV AS [Mã NV], HoTen AS [Họ tên],
+\tMaPB AS [Mã phòng hiện lưu], NgayVaoLam AS [Ngày vào làm]
+FROM NhanVien
+WHERE NgayVaoLam >= '20261001'
+\tAND NgayVaoLam < '20261022'
+ORDER BY NgayVaoLam ASC, MaNV ASC;`} />
+
+<Result columns={["Mã NV","Họ tên","Mã phòng hiện lưu","Ngày vào làm"]} rows={[["NV047","Phạm Ngọc Ánh","NS","2026-10-01"],["NV048","Đỗ Minh Quân","IT","2026-10-05"]]} total={2} mark={[1,2]} />
+
+Chị Hạnh nhận `2` hồ sơ theo đúng bốn cột và thứ tự đã chốt; hai ngày trong Results cùng nghĩa với ngày trên mẫu Excel. Đây là danh sách để đối chiếu hồ sơ vào mới tới ngày báo cáo. Việc câu SQL chạy được hoặc khớp hai dòng mẫu chưa thay cho kiểm các ca biên và toàn bộ phạm vi yêu cầu.
+
+Ở bài này chỉ cần viết yêu cầu đủ để đối chiếu dòng, cột và trường hợp giữ/loại. Kiểm chất lượng dữ liệu xem bài 4.6, đối soát ngày công xem bài 4.7; thiết kế lịch sử cần cho báo cáo quá khứ học tiếp ở bài 6.6.
+
+## Hay nhầm ở đâu
+
+<Mistakes>
+
+1. **Chỉ gửi tên báo cáo rồi chờ một cách hiểu duy nhất.** Người làm có thể chọn danh sách vào mới, nghỉ việc hoặc số lượng theo phòng, đều chưa được yêu cầu phân biệt.
+2. **Lấy ngày bắt đầu hợp đồng thay ngày vào làm.** Hồ sơ có thể bị chọn theo đợt ký mới, hoặc bị mất vì chưa có hợp đồng.
+3. **Đặt tiêu đề lịch sử cho dữ liệu hiện tại.** Cột nhìn đúng tên nhưng không chứng minh được phòng của nhân viên ở mốc quá khứ.
+
+</Mistakes>
+
+## Ứng dụng
+
+<Apply>
+
+- **Bàn giao báo cáo có thể đối chiếu:** gửi định nghĩa dòng/cột, phạm vi và mẫu cùng nhau để người nhận biết cần kiểm dữ liệu nào.
+- **Kiểm báo cáo trước khi sử dụng:** dùng các ca đầu/cuối khoảng và thiếu/nhiều hợp đồng để phát hiện bỏ sót hoặc nhân dòng.
+- **Nhận diện yêu cầu còn thiếu nguồn:** chỉ ra dữ liệu lịch sử cần bổ sung khi một cột không thể suy từ giá trị hiện lưu.
+
+</Apply>
+
+## Ghi nhớ
+
+<Memo rows={[
+  ['Một dòng trên bảng mẫu','Chốt một mã nhân viên, hợp đồng hay nhóm; không đổi đơn vị ngầm'],
+  ['Tiêu đề cột dễ đọc','Kèm cột nguồn, ý nghĩa và cách tính nếu có'],
+  ['Khoảng ngày trên yêu cầu','Chốt hai biên, ngày báo cáo và trường hợp giữ/loại'],
+  ['Một bảng mẫu vài dòng','Kèm ca chấp nhận và giới hạn dữ liệu; mẫu không thay quy tắc'],
+]} />
+
+**Tự kiểm tra trước khi bấm "Đã học xong":**
+
+<details>
+<summary>Mỗi dòng của báo cáo này là gì, và lấy nguồn nào để chọn hồ sơ?</summary>
+
+Mỗi dòng là một `MaNV` từ `NhanVien`. Dòng không đại diện một hợp đồng hoặc một phòng; báo cáo không dùng hợp đồng làm điều kiện chọn người.
+
+</details>
+
+<details>
+<summary>Bốn cột theo thứ tự là gì, mã phòng có phải phòng tại ngày vào làm không?</summary>
+
+Mã NV, Họ tên, Mã phòng hiện lưu, Ngày vào làm, lấy lần lượt từ `MaNV`, `HoTen`, `MaPB`, `NgayVaoLam`. `MaPB` phản ánh dữ liệu lúc lấy, không chứng minh phòng tại ngày vào làm hoặc tại `21/10/2026`.
+
+</details>
+
+<details>
+<summary>Hồ sơ vào ngày <code>21/10</code> hoặc <code>22/10</code> có được lấy không, trạng thái đã nghỉ có tự bị loại không?</summary>
+
+Ngày `21/10` được lấy; `22/10` bị loại bởi biên `< '20261022'`, đầu dưới giữ từ `01/10`. Không thêm bộ lọc trạng thái, nên đã nghỉ không tự bị loại nếu ngày vào làm thuộc khoảng.
+
+</details>
+
+<details>
+<summary>Cần thử gì để phát hiện báo cáo làm mất hoặc nhân hồ sơ do hợp đồng?</summary>
+
+Thử hồ sơ chưa có hợp đồng và hồ sơ có nhiều hợp đồng. Kết quả cần giữ hồ sơ đủ điều kiện ở ca đầu và vẫn một dòng/mã ở ca sau; hai hồ sơ mẫu `NV047`, `NV048` thuộc ca chưa có hợp đồng.
+
+</details>
+
+<details>
+<summary>Nếu người nhận cần phòng tại ngày vào làm thì phải ghi gì trước khi nhận làm cột đó?</summary>
+
+Ghi rõ cần nguồn lịch sử; `MaPB` hiện tại của bộ mẫu không đủ chứng minh phòng tại ngày vào làm. Thống nhất nguồn dữ liệu bổ sung hoặc phạm vi có thể trả, không đổi tên cột hiện tại để giả thành lịch sử.
+
+</details>
