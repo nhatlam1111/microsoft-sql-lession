@@ -4,31 +4,281 @@ title: Đối soát chấm công và bảng lương
 shortTitle: Đối soát công và lương
 level: 4
 area: A6
-kind: summary
-minutes: 16
+kind: full
+minutes: 45
 prerequisites:
   - "4.1"
   - "4.6"
-goal: bạn so được hai nguồn dữ liệu và chỉ ra chỗ lệch
-excel: Đối chiếu hai file bằng VLOOKUP hai chiều
-summary: FULL OUTER JOIN, EXCEPT và tìm nhân viên có ngày công trên bảng lương lệch với chấm công.
+  - "3.8"
+  - "2.8"
+goal: bạn đưa hai nguồn về cùng cách tính, giữ được mã thiếu một bên và tìm phần khác bằng FULL OUTER JOIN hoặc EXCEPT
+excel: Đối chiếu hai danh sách theo mã và số ngày
+summary: Từ bảng công có phép năm, chuẩn hóa từng mã trước khi so hai nguồn; đọc đúng bên thiếu và chiều EXCEPT.
 ---
 
-## Nội dung chính
+## Tình huống
 
-- So hai nguồn cùng nói về một việc: ngày công trên bảng lương và số ngày chấm công thực tế.
-- Tổng hợp từng nguồn theo nhân viên trước, rồi kết hai kết quả lại và lọc những dòng lệch.
-- `FULL OUTER JOIN` giữ cả người chỉ có mặt ở một bên; `EXCEPT` lấy những dòng có ở bên này mà không có ở bên kia.
-- Trong HRM_Demo, kỳ 2026-09 có hai người lệch một ngày công, và một người có đơn nghỉ phép kéo dài từ tháng 8 sang tháng 9, rất dễ bị đối soát nhầm.
+<Chat who="Chị Hạnh · Phòng Nhân sự" time="10:15" initial="H">
+Em rà số ngày công kỳ tháng 9 giúp chị. Chị thấy ngày công trên bảng lương có chỗ khác số ngày chấm công. Em chỉ rõ mã nào cần xem lại, nhưng đừng tính nhầm ngày phép năm thành ngày công bị ghi dư nhé.
+</Chat>
 
-## Liên hệ Excel
+Lấy kỳ `2026-09`, mọi trạng thái hồ sơ. Trong bộ mẫu, một dòng `ChamCong` tính một ngày chấm công; số ngày đối chiếu gồm ngày chấm công cộng ngày **phép năm đã duyệt nằm trên lịch làm việc tháng 9**. Chưa đánh giá làm đủ giờ hay quy tắc của một hệ thống nhân sự khác.
 
-Giống đối chiếu hai file bằng VLOOKUP hai chiều: dò từ file A sang file B, rồi từ B sang A, lọc những dòng không khớp.
+<Key>So cùng kỳ, cùng cách tính và một dòng mỗi mã trước khi gọi một con số là lệch.</Key>
 
-## Tình huống ví dụ
+## Đưa hai nguồn về cùng số ngày để so
 
-Kế toán nghi bảng lương tháng 9 tính dư ngày công cho vài người và cần danh sách cụ thể.
+### Nhìn bảng công trước khi kết luận lệch
+
+Trong Excel, bạn có thể đặt các cột của hai nguồn cạnh nhau theo mã rồi thêm cột phép và cột chênh. Bảng minh họa trích hai hồ sơ từ bộ mẫu: `D2 = B2 + C2`, `F2 = E2 - D2`. Hai ô `F2`, `F3` được đánh dấu để phân biệt một dòng lệch và một dòng khớp.
+
+<Excel sheets="Đối chiếu ngày công tháng 9" cell="F2" formula="=E2-D2" selected="F2" mark={['F2', 'F3']} rows={[
+  ['MaNV','Chấm công','Phép tháng 9','Đối chiếu','Bảng lương','Chênh'],
+  ['NV013',17,2,19,20,1],
+  ['NV043',18,2,20,20,0],
+]} />
+
+`NV013` cần rà vì `20 - 19 = 1`. `NV043` có `18` ngày chấm công và `2` ngày phép được tính nên khớp `20`, dù so thẳng hai cột chấm công và bảng lương sẽ thấy khác nhau. **Đối soát** là đưa dữ liệu về cùng phạm vi và cùng ý nghĩa rồi kiểm phần không khớp.
+
+Hai ngày phép của `NV043` đến từ đơn `DP018`, kéo từ `31/08/2026` đến `04/09/2026`, ghi `SoNgay = 3.0`. Lịch công ty trong bộ mẫu nghỉ thứ Bảy, Chủ nhật và hai ngày lễ `01/09`, `02/09`. Hình dưới minh họa đoạn lịch của đơn; các ô `C5`, `C6` là hai ngày đóng góp cho tháng 9.
+
+<Excel sheets="DP018 · Đếm theo lịch, không theo tháng bắt đầu" cell="C5" selected="C5" mark={['A5','C5','A6','C6']} numeric={['A2','A3','A4','A5','A6']} rows={[
+  ['Ngày','Trong lịch của đơn','Phép tính vào tháng 9'],
+  ['2026-08-31','Ngày làm thuộc tháng 8',0],
+  ['2026-09-01','Ngày nghỉ lễ',0],
+  ['2026-09-02','Ngày nghỉ lễ',0],
+  ['2026-09-03','Ngày làm thuộc tháng 9',1],
+  ['2026-09-04','Ngày làm thuộc tháng 9',1],
+]} />
+
+Vì vậy không cộng nguyên `SoNgay` theo `TuNgay` như báo cáo đơn ở bài 4.1–4.4, cũng không chia theo số ngày lịch. Sang SQL, ta cần một lịch đã chốt để biết ngày nào của đơn thuộc phạm vi đang đối soát.
+
+### Chuẩn bị một dòng cho mỗi mã
+
+CTE `LichLam` trong khối dưới liệt kê đủ `20` ngày làm của tháng 9 theo lịch vừa chốt. `VALUES` tạo các dòng giá trị viết sẵn; `AS l(Ngay)` đặt tên nguồn và cột, còn `CAST` chuyển chuỗi ngày sang kiểu `date` như bài 2.8. Lịch này được cung cấp riêng, không suy từ những ngày có người chấm công.
+
+Mỗi nguồn được nhóm theo `MaNV` trước. Nhánh chấm công góp số dòng vào `NgayChamCong`, cột phép nhận `0`; nhánh phép góp số ngày vào `NgayPhepNam`, cột chấm công nhận `0`. Với `NV043`, hai dòng đóng góp minh họa là:
+
+<Excel sheets="CongGop · Hai phần của cùng mã" mark={['C2','D3']} rows={[
+  ['Nguồn','MaNV','NgayChamCong','NgayPhepNam'],
+  ['Chấm công','NV043',18,0],
+  ['Phép năm','NV043',0,2],
+]} />
+
+`UNION ALL` giữ hai phần đóng góp như bài 3.8; CTE `DoiChieu` cộng lại theo mã. Nhánh phép kết đơn với ngày nằm trong `TuNgay`–`DenNgay`, chỉ giữ phép năm đã duyệt; `COUNT(DISTINCT l.Ngay)` đếm mỗi ngày một lần trong từng mã, tránh nhân ngày nếu hai đơn cùng phủ một ngày. Câu kiểm trọn khối dưới chỉ hiển thị ba mã để dễ đối chiếu:
+
+<Sql code={`WITH LichLam AS (
+\tSELECT CAST(l.Ngay AS date) AS [Ngay]
+\tFROM (VALUES
+\t\t('20260903'), ('20260904'), ('20260907'), ('20260908'), ('20260909'),
+\t\t('20260910'), ('20260911'), ('20260914'), ('20260915'), ('20260916'),
+\t\t('20260917'), ('20260918'), ('20260921'), ('20260922'), ('20260923'),
+\t\t('20260924'), ('20260925'), ('20260928'), ('20260929'), ('20260930')
+\t) AS l(Ngay)
+), CongGop AS (
+\tSELECT MaNV, COUNT(*) AS [NgayChamCong], 0 AS [NgayPhepNam]
+\tFROM ChamCong
+\tWHERE Ngay >= '20260901' AND Ngay < '20261001'
+\tGROUP BY MaNV
+\tUNION ALL
+\tSELECT d.MaNV, 0, COUNT(DISTINCT l.Ngay)
+\tFROM DonNghiPhep AS d
+\tINNER JOIN LichLam AS l ON l.Ngay BETWEEN d.TuNgay AND d.DenNgay
+\tWHERE d.TrangThai = N'Đã duyệt' AND d.LoaiNghi = N'Phép năm'
+\tGROUP BY d.MaNV
+), DoiChieu AS (
+\tSELECT MaNV, SUM(NgayChamCong) AS [NgayChamCong],
+\t\tSUM(NgayPhepNam) AS [NgayPhepNam],
+\t\tSUM(NgayChamCong + NgayPhepNam) AS [CongDoiChieu]
+\tFROM CongGop
+\tGROUP BY MaNV
+)
+SELECT MaNV, NgayChamCong, NgayPhepNam, CongDoiChieu
+FROM DoiChieu
+WHERE MaNV IN ('NV013', 'NV032', 'NV043')
+ORDER BY MaNV ASC;`} />
+
+<Result columns={["MaNV","NgayChamCong","NgayPhepNam","CongDoiChieu"]} rows={[["NV013",17,2,19],["NV032",18,0,18],["NV043",18,2,20]]} total={3} mark={[1, 3]} />
+
+`NV043` thành một dòng `18 + 2 = 20`. Việc tổng hợp trước cũng tránh lỗi kết từng dòng chấm công với từng đơn rồi làm số dòng tăng lên. Nguồn còn lại là `BangLuong`, lọc `KyLuong = '2026-09'` trước khi kết; khóa của bảng này là cặp kỳ–mã nên mỗi mã trong kỳ chỉ có một dòng.
+
+### Giữ đủ hai phía và chọn phần khác
+
+Khi dò hai danh sách Excel theo mã, dò từ một phía sẽ bỏ sót mã chỉ nằm ở phía kia. **`FULL OUTER JOIN`** giữ mọi cặp khớp và cả dòng chỉ có ở từng bên; các cột của phía không khớp nhận `NULL`.
+
+Để nhìn rõ phép kết, hai bản trích minh họa dưới cố ý lấy khác mã: `A` giữ `NV013`, `NV043`; `B` giữ `NV013`, `NV046`. Đây không phải kết luận dữ liệu đầy đủ đang thiếu các mã bị lược khỏi bản trích.
+
+<Excel sheets="Bản trích A · Công đối chiếu" mark={['A3']} rows={[
+  ['MaNV','Cong'],['NV013',19],['NV043',20],
+]} />
+
+<Excel sheets="Bản trích B · Công trên bảng lương" mark={['A3']} rows={[
+  ['MaNV','Cong'],['NV013',20],['NV046',12],
+]} />
+
+Trong câu minh họa, hai CTE viết sẵn những dòng trên bằng `SELECT` và `UNION ALL`. Bí danh `a`, `b` giúp phân biệt hai cột cùng tên; `COALESCE` chọn mã ở phía có giá trị để hiển thị cả dòng không khớp.
+
+<Sql code={`WITH A AS (
+\tSELECT 'NV013' AS [MaNV], 19 AS [Cong]
+\tUNION ALL SELECT 'NV043', 20
+), B AS (
+\tSELECT 'NV013' AS [MaNV], 20 AS [Cong]
+\tUNION ALL SELECT 'NV046', 12
+)
+SELECT COALESCE(a.MaNV, b.MaNV) AS [MaNV], a.Cong AS [CongA], b.Cong AS [CongB]
+FROM A AS a
+FULL OUTER JOIN B AS b ON b.MaNV = a.MaNV
+ORDER BY [MaNV] ASC;`} />
+
+<Result columns={["MaNV","CongA","CongB"]} rows={[["NV013",19,20],["NV043",20,null],["NV046",null,12]]} total={3} mark={[2, 3]} />
+
+`NV046` chỉ có số ở `B`, `NV043` chỉ có số ở `A`; hai dòng được đánh dấu cho thấy phía còn thiếu. Kiểm `a.MaNV IS NULL` hoặc `b.MaNV IS NULL` để nhận diện phía vắng vì mã trên từng nguồn không nhận `NULL`. Không thay các số thiếu bằng `0` trước khi kiểm: có một dòng số `0` khác với chưa có dòng nguồn.
+
+**`EXCEPT`** lấy các dòng có ở kết quả bên trái mà không có ở bên phải, đồng thời bỏ dòng trùng. Hai nhánh phải cùng số cột và kiểu tương thích theo vị trí như `UNION`; nó so cả cặp `MaNV, Cong`, không chỉ dò mã. Thử `A` trừ `B` trên đúng hai bản trích:
+
+<Sql code={`WITH A AS (
+\tSELECT 'NV013' AS [MaNV], 19 AS [Cong]
+\tUNION ALL SELECT 'NV043', 20
+), B AS (
+\tSELECT 'NV013' AS [MaNV], 20 AS [Cong]
+\tUNION ALL SELECT 'NV046', 12
+)
+SELECT MaNV, Cong FROM A
+EXCEPT
+SELECT MaNV, Cong FROM B
+ORDER BY MaNV ASC;`} />
+
+<Result columns={["MaNV","Cong"]} rows={[["NV013",19],["NV043",20]]} total={2} />
+
+Đảo lại thành `B` trừ `A`:
+
+<Sql code={`WITH A AS (
+\tSELECT 'NV013' AS [MaNV], 19 AS [Cong]
+\tUNION ALL SELECT 'NV043', 20
+), B AS (
+\tSELECT 'NV013' AS [MaNV], 20 AS [Cong]
+\tUNION ALL SELECT 'NV046', 12
+)
+SELECT MaNV, Cong FROM B
+EXCEPT
+SELECT MaNV, Cong FROM A
+ORDER BY MaNV ASC;`} />
+
+<Result columns={["MaNV","Cong"]} rows={[["NV013",20],["NV046",12]]} total={2} />
+
+`NV013` có ở cả hai kết quả vì cặp mang `19` khác cặp mang `20`. Nếu chỉ chọn cột mã thì nó bị loại khỏi cả hai chiều. Khi xét dòng khác nhau của `EXCEPT`, hai `NULL` ở cùng vị trí được coi là giống nhau; đó là quy tắc phép tập hợp, khác so sánh `= NULL` ở bài 2.5.
+
+Ở bài này chỉ cần chuẩn nguồn và phân biệt kết hai phía với lấy phần khác. Tối ưu câu truy vấn học ở bài 5.6–5.7; đọc cách một thủ tục tạo ra con số học ở bài 4.8.
+
+### Câu lệnh cho tình huống
+
+Giữ nguồn đối chiếu đã kiểm, thêm `CongLuong`, rồi lọc mã thiếu một phía hoặc có hai số khác nhau. `ChenhLech` lấy số trên bảng lương trừ số đối chiếu; nếu thiếu một bên thì phép trừ vẫn là `NULL`, chưa có đủ hai số để tính.
+
+<Sql code={`WITH LichLam AS (
+\tSELECT CAST(l.Ngay AS date) AS [Ngay]
+\tFROM (VALUES
+\t\t('20260903'), ('20260904'), ('20260907'), ('20260908'), ('20260909'),
+\t\t('20260910'), ('20260911'), ('20260914'), ('20260915'), ('20260916'),
+\t\t('20260917'), ('20260918'), ('20260921'), ('20260922'), ('20260923'),
+\t\t('20260924'), ('20260925'), ('20260928'), ('20260929'), ('20260930')
+\t) AS l(Ngay)
+), CongGop AS (
+\tSELECT MaNV, COUNT(*) AS [NgayChamCong], 0 AS [NgayPhepNam]
+\tFROM ChamCong
+\tWHERE Ngay >= '20260901' AND Ngay < '20261001'
+\tGROUP BY MaNV
+\tUNION ALL
+\tSELECT d.MaNV, 0, COUNT(DISTINCT l.Ngay)
+\tFROM DonNghiPhep AS d
+\tINNER JOIN LichLam AS l ON l.Ngay BETWEEN d.TuNgay AND d.DenNgay
+\tWHERE d.TrangThai = N'Đã duyệt' AND d.LoaiNghi = N'Phép năm'
+\tGROUP BY d.MaNV
+), DoiChieu AS (
+\tSELECT MaNV, SUM(NgayChamCong) AS [NgayChamCong],
+\t\tSUM(NgayPhepNam) AS [NgayPhepNam],
+\t\tSUM(NgayChamCong + NgayPhepNam) AS [CongDoiChieu]
+\tFROM CongGop
+\tGROUP BY MaNV
+), CongLuong AS (
+\tSELECT MaNV, NgayCongThucTe AS [CongBangLuong]
+\tFROM BangLuong
+\tWHERE KyLuong = '2026-09'
+)
+SELECT COALESCE(d.MaNV, b.MaNV) AS [MaNV],
+\td.NgayChamCong, d.NgayPhepNam, d.CongDoiChieu, b.CongBangLuong,
+\tb.CongBangLuong - d.CongDoiChieu AS [ChenhLech]
+FROM DoiChieu AS d
+FULL OUTER JOIN CongLuong AS b ON b.MaNV = d.MaNV
+WHERE d.MaNV IS NULL OR b.MaNV IS NULL
+\tOR d.CongDoiChieu <> b.CongBangLuong
+ORDER BY [MaNV] ASC;`} />
+
+<Result columns={["MaNV","NgayChamCong","NgayPhepNam","CongDoiChieu","CongBangLuong","ChenhLech"]} rows={[["NV013",17,2,19,20,1],["NV032",18,0,18,19,1]]} total={2} mark={[1, 2]} />
+
+Chị Hạnh có hai mã cần rà: `NV013` là `20` so với `19`, `NV032` là `19` so với `18`; mỗi mã lệch `1` ngày theo quy ước bộ mẫu. `NV043` đã khớp nên không nằm trong danh sách. Hai nguồn đầy đủ trong kỳ đều có `43` mã và không có mã chỉ ở một bên; ở đây cả hai dòng được giữ vì số ngày khác nhau.
+
+## Hay nhầm ở đâu
+
+<Mistakes>
+
+1. **So thẳng số dòng chấm công với ngày công trên bảng lương.** Bỏ phép năm khiến cả hồ sơ khớp như `NV043` bị báo lệch.
+2. **Kết các dòng chi tiết rồi mới đếm.** Nhiều dòng của cùng mã có thể nhân nhau; cần tổng hợp mỗi nguồn đúng mức một dòng mỗi mã trước.
+3. **Coi nguồn vắng là số không.** Thay `NULL` bằng `0` quá sớm che mất mã chỉ có ở một phía, làm báo cáo trông như đã có đủ căn cứ.
+4. **Đảo `EXCEPT` mà nghĩ vẫn cùng kết quả.** Giá trị trả về thuộc phía đứng trước; chọn thêm cột số cũng làm cách xét dòng khác với chỉ chọn mã.
+
+</Mistakes>
+
+## Ứng dụng
+
+<Apply>
+
+- **Rà ngày công theo kỳ:** đặt ngày chấm công và phép vào cùng cách tính trước khi gửi danh sách lệch cho người phụ trách.
+- **Tìm phần thiếu của hai danh sách:** giữ mã ở cả hai nguồn để thấy phía nào chưa có dòng cần đối chiếu.
+- **So phần khác theo hai chiều:** chọn đúng mã hoặc cặp mã–giá trị bằng `EXCEPT` để biết bên nào đang mang số khác.
+
+</Apply>
+
+## Ghi nhớ
+
+<Memo rows={[
+  ['Đặt hai cột công cạnh nhau trong Excel','Cùng kỳ, cùng cách tính và một dòng mỗi mã trước khi kết'],
+  ['Phép của đơn vắt tháng','Đếm ngày phép thuộc lịch làm việc tháng đang đối chiếu'],
+  ['Dò từ cả hai phía','FULL OUTER JOIN giữ dòng khớp và dòng chỉ có ở từng bên'],
+  ['Lấy phần có ở A mà không có ở B','A EXCEPT B so cả dòng; đảo phía có thể đổi kết quả'],
+]} />
+
+**Tự kiểm tra trước khi làm bài tập:**
+
+<details>
+<summary>Vì sao <code>NV043</code> có <code>18</code> ngày chấm công mà không bị kết luận ghi dư khi bảng lương ghi <code>20</code>?</summary>
+
+Có thêm `2` ngày phép năm đã duyệt thuộc ngày làm việc tháng 9. `18 + 2 = 20`; không cộng nguyên `3.0` ngày của đơn bắt đầu tháng 8.
+
+</details>
+
+<details>
+<summary>Sau <code>FULL JOIN</code>, một bên có <code>0</code> khác bên không có dòng thế nào?</summary>
+
+Nguồn có dòng số `0` vẫn có mã của bên đó. Bên không khớp có mã `NULL`; kiểm mã trước khi quyết định cách hiển thị số còn thiếu.
+
+</details>
+
+<details>
+<summary>Vì sao <code>NV013</code> xuất hiện ở cả hai chiều <code>EXCEPT</code> của bản trích?</summary>
+
+Hai phía có cùng mã nhưng mang số khác: cặp `NV013, 19` chỉ có ở `A`, cặp `NV013, 20` chỉ có ở `B`. EXCEPT đang so hai cột, không chỉ mã.
+
+</details>
+
+<details>
+<summary>Vì sao phải tổng hợp mỗi nguồn theo mã trước khi kết?</summary>
+
+Để mỗi mã chỉ có một dòng ở từng nguồn, tránh các dòng chi tiết tạo nhiều cặp khớp rồi làm số đếm hoặc số cộng bị nhân.
+
+</details>
 
 ## Bài tập
+
+Ba đề dùng lịch và cách tính ngày công vừa học. Bộ chấm so giá trị, vị trí cột và thứ tự, không ép cú pháp FULL JOIN/EXCEPT hoặc tên alias; bạn tự đối chiếu kỹ thuật luyện và tiêu đề với đề.
 
 <Exercises />

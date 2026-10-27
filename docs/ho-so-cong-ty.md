@@ -95,7 +95,7 @@ Các nhân vật là giả định, không phải hồ sơ trong bộ mẫu (bà
 
 | Nhân vật | Là ai | Xuất hiện |
 |---|---|---|
-| Chị Hạnh · Phòng Nhân sự | Người đưa yêu cầu trong mọi bài đầy đủ; xưng "chị", gọi người học là "em" | 1.1–1.6, 2.1–2.9, 3.1–3.10, 4.1–4.6 |
+| Chị Hạnh · Phòng Nhân sự | Người đưa yêu cầu trong mọi bài đầy đủ; xưng "chị", gọi người học là "em" | 1.1–1.6, 2.1–2.9, 3.1–3.10, 4.1–4.7 |
 | Người học ("em", "bạn") | Người đọc và lấy dữ liệu từ hệ thống nhân sự cho chị Hạnh; có tài khoản vào database qua SSMS | mọi bài |
 | Chị Thảo · Kế toán | Giữ một bản file nhân sự riêng | 1.1 |
 | Quân | Nhân viên chuyển sang IT, nhưng file của Kế toán còn ghi phòng cũ | 1.1 |
@@ -151,4 +151,5 @@ Các lỗi này có chủ ý, dành cho bài 4.6 và 4.7; bài khác không đư
 | 4.4 | Chị Hạnh xoay tổng ngày trên mọi trạng thái đơn bắt đầu tháng8–10/2026: mỗi tháng một dòng, cột Phép năm/Nghỉ ốm/Việc riêng. Tổng lần lượt12/2/NULL,12/5/3,10/NULL/1. PIVOT chỉ có ba cột nguồn cần thiết; SUM giữ ô thiếu NULL, COUNT khóa đơn cho0. Không phân bổ đơn qua tháng hoặc kết luận thực nghỉ. |
 | 4.5 | Chị Hạnh thống nhất định nghĩa hồ sơ đang làm: MaNV/HoTen/MaPB/MaCD từ NhanVien, TrangThai Đang làm. Đề xuất view thường dbo.vw_HoSoDangLam; chưa tạo trong DB khóa học. Bài đọc hiểu, hai mẫu copy=false, không giả Result và không có YAML; năm câu ôn thay thực hành tạo đối tượng. |
 | 4.6 | Chị Hạnh rà mọi trạng thái theo ba luật: CCCD lặp (1nhóm/2hồ sơ NV015,NV038), email thiếu (NV044/VH và NV045/KD, đềuNULL), hợp đồng đảo thứ tự ngày (HD2025-003/NV029). Kết quả chỉ là dấu hiệu để đối chiếu, không tự sửa/xóa. Ba đề đi từ nhóm ra hồ sơ, giữ phòng có0 và tổng theo mã luật2/2/1; không cộng thành người riêng biệt. |
+| 4.7 | Chị Hạnh đối soát số ngày kỳ2026-09: chấm công cộng phép năm đã duyệt trên lịch20ngày làm, một dòng mỗiMaNV. NV013=17+2=19 so20, NV032=18+0=18 so19, đều lệch1. DP018 chỉ đóng góp03/09,04/09 cho tháng9; NV043=18+2=20 khớp. Cả hai nguồn có43mã; FULL giữ mã vắng và EXCEPT xét cặp theo chiều. Bản trích minh họa cố ý chọn khác mã, không kết luận nguồn đầy đủ đang thiếu. |
 | 6.5 | Một chiều thứ Sáu, câu `UPDATE` phụ cấp của NV012 kỳ 2026-09 bị bôi đen thiếu, chạy cho cả bảng lương. |

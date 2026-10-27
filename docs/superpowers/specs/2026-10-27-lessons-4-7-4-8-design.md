@@ -75,3 +75,7 @@ MDX4.7/4.8; YAML4.7; EXPECTED/README/hồ sơ công ty/chú thích noExercises n
 ## Kiểm thiết kế trước duyệt
 
 Builder check ngữ cảnh mới/model kế thừa ngày27/10/2026 trả “nothing important left”; không sửa source/test/DB. Baseline main qua322test/48file (logtemp/verification), không dùng kết quả đó thay kiểm các bài sắp viết. Người dùng đã duyệt noExercises4.8; tiếp tục plan/triển khai/review, không hỏi lại phương thức.
+
+## Tiến độ thực hiện
+
+4.7đãsoạn với Excel/lịch/nguồn/SQLkếtquả. Learnerfresh hai giaiđoạn không nêu findingcần sửa; đã đọc đủ/disposition mọi giới hạn.328tests/49files,API81,build135/dist2026; không claimSQLlive/UI đã kiểm.

@@ -1,0 +1,88 @@
+# Review học thử bài 4.7 — BƯỚC 1, chưa đối chiếu answer
+
+## Phạm vi, phiên bản và cách kiểm thực tế
+
+- Vai người học: Business Consultant muốn chuyển sang BA/PM, chỉ dùng kiến thức đã học trong khóa và Excel văn phòng cơ bản. Model: kế thừa model của phiên, không override và không tạo agent khác.
+- Theo gói giao: branch `codex/lesson-4-7-full`, working tree nội dung mới, base main `75278be`; tôi không dùng Git để xác minh hay thay đổi trạng thái này.
+- Đã đọc toàn bộ `src/content/lessons/4-7-doi-soat-cham-cong-luong.mdx`. SHA-256 tự tính của MDX là `5634f2220ec1bf636c3f73144379ebd00a5ec028b55a56ee3f40760f85636fcc`, khớp manifest được giao. Không đọc hoặc tự tính hash nội dung YAML.
+- Đã đọc toàn bộ phần bài học trong `dist/bai/4-7-doi-soat-cham-cong-luong/index.html`, gồm năm khối SQL/kết quả, các bảng Excel, Memo, Apply, bốn câu tự kiểm tra và danh sách đề. Nội dung chữ, số và SQL ở những khối này thống nhất với MDX. Đây là kiểm HTML tĩnh, không phải kiểm giao diện tương tác.
+- Đã đọc AGENTS, quy ước, template, hồ sơ công ty, mẫu 1.1; đối chiếu trực tiếp toàn bộ 2.1/2.5/2.8. Đọc phần cần thiết của 3.4/3.5/3.8/4.1/4.6 và đúng phần Ý định/mốc chất lượng, 4.7/ba đề của spec. Ba prompt lấy duy nhất từ `public-exercises-4-7.json`.
+- Công cụ: shell đọc tệp (`rg`, `cat`, `nl`, `sed`) và Python thư viện chuẩn để băm MDX, đọc nội dung HTML. Không SQL/SQLite, API/distAPI, test, browser, database, nộp bài hoặc tài liệu SQL ngoài khóa; không sửa sản phẩm/Git.
+
+## Những gì giữ được, theo mạch bài
+
+**Không có finding cần sửa/làm rõ đủ căn cứ trong phạm vi BƯỚC 1.** Bài có nhiều SQL hơn phần 2 vì phải tổ chức nguồn rồi mới đối soát; số khối hoặc độ dài riêng lẻ không đủ căn cứ kết luận cách giảng bị lệch. Các điểm dưới là kết quả học thử, không phải xác nhận SQL đã chạy đúng.
+
+### Tình huống, bảng công và lịch phép — dòng 21–54
+
+Giữ được phạm vi kỳ `2026-09`, mọi trạng thái và quy ước một dòng chấm công tính một ngày. Bảng đầu cho thấy ngay điều phải phản biện: `NV013` lệch `1`, còn `NV043` chênh thô `2` nhưng khớp sau cộng phép. Công thức `D2 = B2 + C2`, `F2 = E2 - D2` có cột/giá trị cụ thể; đánh dấu `F2`, `F3` đúng ý lệch/khớp.
+
+Đơn `DP018` được giải ngay bằng đoạn lịch 31/08–04/09: ngày đầu thuộc tháng 8, hai ngày lễ không đóng góp, 03/09 và 04/09 góp hai ngày. `SoNgay = 3.0` không bị gọi là sai và không bị chia tỷ lệ. Các dấu ở ngày/cột đóng góp phù hợp lời giảng. Tôi không thấy mâu thuẫn giữa lịch này, danh sách 20 ngày được viết phía sau và quy ước nghỉ cuối tuần/ngày lễ của công ty.
+
+Đây là nhịp giống mốc 2.5 và 2.8: thấy dữ liệu cụ thể trước, rồi mới chốt ý nghĩa của phép tính và giới hạn. Không mặc định người học biết VLOOKUP/PivotTable.
+
+### Chuẩn bị nguồn — dòng 58–103
+
+`VALUES`, `AS l(Ngay)` được giải nghĩa ngắn cạnh chỗ dùng; `CAST` có điểm nối đúng về 2.8. Lịch được cung cấp riêng, không biến các ngày có chấm công thành lịch làm việc. Không cần thêm bài sinh lịch hoặc recursive CTE vào đây.
+
+Bảng hai phần đóng góp của `NV043` giúp đọc ba cột của `CongGop`: `18, 0` và `0, 2`; sau đó mới đọc `UNION ALL` và phép cộng theo mã. Số `0` ở đây là phần không đóng góp của từng nhánh, còn thiếu cả nguồn đối chiếu được giữ thành `NULL` ở phép FULL phía sau; tôi đọc được hai ý nghĩa khác nhau nhờ bảng và phạm vi từng đoạn, không coi chúng là mâu thuẫn.
+
+`COUNT(DISTINCT l.Ngay)` có giải thích cả việc làm lẫn lý do đếm ngày một lần nếu đơn phủ trùng. Câu kiểm được giới hạn rõ ba mã và Result có đúng ba dòng, không mạo nhận đây là toàn nguồn. `NV032` không có phép nhận `0` trong nguồn gộp; kết quả và công thức cộng thống nhất. Lý do tổng hợp trước khi kết được nói tại dòng 103, nối với nguy cơ nhiều cặp khớp đã học ở 3.4/3.5. Khóa kỳ–mã của bảng lương giải thích vì sao lọc một kỳ thì mỗi mã một dòng.
+
+Đoạn SQL dài hơn ví dụ phần 2, nhưng bảng đóng góp → giải nghĩa các nhánh → SQL trọn khối → ba dòng kết quả vẫn giữ được nhịp giảng đã duyệt. CTE nhiều tầng, alias nguồn, vị trí cột của phép gộp có tiền đề 4.1/3.4/3.8, không phải kiến thức mới bị giấu trong câu lệnh. Việc lặp định nghĩa CTE trong câu chính còn cần để câu đó tự đủ phạm vi; 4.1 đã giải thích không dùng lại CTE ở câu kế tiếp. Chưa có căn cứ yêu cầu cắt lịch hoặc bỏ câu kiểm chỉ để bài nhìn ngắn.
+
+### FULL OUTER JOIN và hai chiều EXCEPT — dòng 107–169
+
+Giữ được hai bảng trích nhỏ có mã chung và mã chỉ ở từng phía. Câu “cố ý lấy khác mã” ở dòng 109 loại rõ suy luận nhầm rằng nguồn đầy đủ thiếu `NV043`/`NV046`. Không lấy ba dòng minh họa làm tổng của dữ liệu tháng.
+
+`FULL OUTER JOIN` có nghĩa ngay tại chỗ; ví dụ SQL và Result cho thấy đúng ba mã và đúng phía `NULL`. `COALESCE` chỉ lấy mã có giá trị, không biến số nguồn thiếu thành `0`. Dòng 135 nêu điều kiện mã nguồn không nhận `NULL` trước khi dùng mã để nhận diện phía vắng; đây là cách nối đúng với 2.5 và 3.5.
+
+Hai chiều `EXCEPT` đứng cạnh cùng hai bảng, có SQL và kết quả riêng. Tôi tự đối chiếu bằng bốn cặp minh họa: `NV013,19` khác `NV013,20`; `NV043,20` chỉ ở A; `NV046,12` chỉ ở B. Vì thế các Result 2 dòng và lời giải `NV013` xuất hiện ở cả hai chiều thống nhất. Số cột, vị trí, kiểu tương thích và bỏ dòng trùng đã được giải thích; quy tắc hai `NULL` khi so dòng của phép tập hợp được tách khỏi `= NULL`, không phủ định bài 2.5.
+
+Đoạn này giữ được mốc dữ liệu → nghĩa SQL → kết quả → ý chính. Không cần chèn thêm RunFlow chỉ để đủ component; hai đầu vào và ba kết quả hiện có đã cho thấy điều cần hiểu.
+
+### Câu chính và các phần ôn — dòng 175–284
+
+Câu chính thêm nguồn lương đã lọc kỳ, giữ hai phía rồi mới dùng `WHERE` chọn mã vắng hoặc hai số khác nhau. `ChenhLech` có chiều cụ thể và thiếu một nguồn vẫn giữ `NULL`. Kết quả `NV013: 20 - 19 = 1`, `NV032: 19 - 18 = 1` khớp số trong bảng/nguồn đối chiếu trước đó. Lời trả lời chị Hạnh nằm ngay cạnh kết quả và nói “cần rà”, không suy ra nguyên nhân hoặc tự sửa lương.
+
+Câu “hai nguồn đầy đủ…43 mã” tách được dữ liệu đầy đủ khỏi các bản trích cố ý khác mã. Tôi chưa chạy kiểm tổng 43 hoặc nguồn dữ liệu thật nên chỉ xác nhận bài nhất quán về cách trình bày, không xác nhận tổng này đã đúng trên database.
+
+Hay nhầm nêu lỗi và hậu quả; Apply nói việc làm được nhờ chuẩn nguồn/FULL/EXCEPT, không hứa tính lương thật. Memo và bốn câu tự kiểm tra ôn đúng các ý đã giảng: phép vắt tháng, nguồn `0`/vắng dòng, EXCEPT theo cặp và tổng hợp trước khi kết. Không thấy dùng đáp án tự kiểm tra để dạy bù kiến thức cốt lõi. Chữ đậm có chọn lọc, giá trị/tên kỹ thuật trong lời văn dùng code; nháy và tab trong năm khối SQL được giữ ở HTML đọc được, không thấy lộ escape/backtick. Chưa kiểm độ rộng tab trên màn hình hoặc clipboard.
+
+## Các câu “tại sao/để làm gì” khi học thử
+
+| Câu tự hỏi | Bài đã trả lời ở đâu / còn thiếu gì |
+|---|---|
+| Vì sao chấm công khác bảng lương chưa chắc là lệch? | Dòng 33–41: thêm phép vào cùng cách tính, đối chiếu một hồ sơ lệch và một hồ sơ khớp. |
+| Vì sao đơn 3 ngày chỉ góp 2 vào tháng 9, không lọc theo tháng bắt đầu? | Dòng 43–54 và bảng lịch: chỉ ngày làm trong tháng; 31/08, 01/09, 02/09 không được cộng. |
+| Lịch 20 ngày lấy ở đâu, vì sao không lấy ngày xuất hiện trong ChamCong? | Dòng 58: lịch được cung cấp riêng, đã chốt theo lịch công ty; người học không phải tự suy lịch từ dữ liệu đi làm. |
+| Vì sao cần hai dòng đóng góp rồi cộng lại? | Dòng 60–68, bảng `CongGop` và dòng 103: giữ hai phần, cộng theo mã để có một dòng trước khi đối soát. |
+| Vì sao đếm DISTINCT ngày phép? | Dòng 68: tránh một ngày bị đếm nhiều lần trong cùng mã khi đơn phủ trùng. |
+| Vì sao tổng hợp trước, không kết chi tiết rồi đếm? | Dòng 103; ôn lại ở 225/274–276: cặp chi tiết có thể nhân nhau; tiền đề 3.4/3.5 đã cho thấy JOIN trả từng cặp. |
+| Vì sao cần FULL và vì sao kiểm mã NULL? | Dòng 107–135: giữ mã chỉ ở từng phía, khóa mã không NULL làm dấu nhận diện phần không khớp. |
+| Vì sao dùng COALESCE cho mã nhưng không thay số thiếu bằng 0? | Dòng 119/135: cần hiển thị mã của phía có dòng, còn số 0 khác với vắng nguồn; 2.5 giải thích nghĩa của NULL. |
+| Vì sao cùng mã lại còn ở cả hai chiều EXCEPT? | Dòng 137–169: so cả cặp mã–số, giá trị trả thuộc phía đứng trước; chỉ lấy mã thì `NV013` bị loại. |
+| Vì sao câu chính có kiểm vắng bên cạnh phép so sánh khác nhau? | Dòng 135/175 và `WHERE` dòng 212–213: vắng mã và có đủ hai số nhưng khác nhau là hai tình huống; 2.5 đã giải thích phép so sánh gặp NULL không thành đúng. |
+
+Không có câu hỏi nào trong bảng trên phải dùng answer hoặc bài sau để tự bù.
+
+## Bảng tiền đề ba đề — tự nghĩ trước khi xem answer
+
+Đây là cách tôi tự suy từ prompt công khai và bài học, chưa kiểm bằng chạy/nộp. Không chép đáp án SQL.
+
+| Đề công khai | Cách tự nghĩ để làm | Kiến thức cần | Nơi đã giảng | Thiếu gì / điểm phải tự giữ đúng |
+|---|---|---|---|---|
+| **4-7-1 — Đủ cả dòng khớp và dòng lệch** | Giữ lịch và ba bước chuẩn nguồn như bài; lọc riêng kỳ bảng lương; kết FULL theo mã. Giữ sáu cột đúng vị trí và phép trừ từ bảng lương. Bỏ bộ lọc ngoài chỉ dành cho dòng cần rà, giữ cả dòng khớp; vẫn giữ các bộ lọc tháng, loại phép và trạng thái duyệt bên trong nguồn. Lấy mã có giá trị rồi sắp tăng dần. | Lịch/ngày phép, COUNT/SUM theo mã, UNION ALL, nhiều CTE, FULL, COALESCE mã, NULL và ORDER BY. | 4.7 dòng 58–103, 107–135, 175–218; 4.1 về phạm vi CTE; 3.8 về các nhánh/vị trí cột; 2.5 về NULL. | Không thấy thiếu tiền đề. Phải phân biệt bỏ `WHERE` ngoài với bỏ điều kiện chuẩn nguồn; prompt đã nói trả cả dòng khớp. Số của bên vắng và chênh lệch phải giữ NULL. |
+| **4-7-2 — Cặp mã–ngày công chỉ có phía bảng lương** | Chuẩn cùng hai nguồn. Tạo kết quả hai cột lấy mã và ngày công bảng lương ở phía trái; phía phải là mã và tổng đối chiếu. Dùng phần khác trái trừ phải theo cặp, đặt tiêu đề `NgayCong` từ nhánh đầu và sắp mã tăng dần. Không chỉ trừ danh sách mã, không lấy số đối chiếu làm giá trị trả về. | Nguồn đã chuẩn, EXCEPT theo cả dòng/cột tương ứng, tính có chiều, tên cột từ nhánh đầu, ORDER BY cuối phép tập hợp. | 4.7 dòng 137–169 và nguồn dòng 175–206; 3.8 mục cột cùng vị trí/tên từ nhánh đầu và sắp kết quả chung; 2.1 alias. | Không thấy thiếu tiền đề. FULL không cần dùng để thực hiện phép tập hợp này; prompt đã chỉ rõ phía bảng lương và xét cả cặp. Chưa xác minh answer có giữ đúng lịch/phạm vi. |
+| **4-7-3 — Đảo chiều để lấy số phía đối chiếu** | Giữ nguyên cách chuẩn nguồn của đề trước, đổi nguồn đối chiếu lên trái và bảng lương sang phải. Trả mã và số ngày đối chiếu của cặp chỉ ở phía này; giữ hai cột đúng vị trí, mỗi cặp một lần, sắp mã tăng dần. | Cùng tiền đề đề 2; hiểu đổi chiều EXCEPT đổi phía cung cấp số. | 4.7 có minh họa A trừ B và B trừ A ở dòng 139–169; tự kiểm tra 267–269 chỉ ôn lại, không phải nơi dạy mới. | Không thấy thiếu tiền đề. Không được đổi lại giá trị bằng cách tra bảng lương sau khi lấy cặp; prompt phân biệt rõ nguồn của `NgayCong`. Chưa đối chiếu answer. |
+
+Tôi có thể lập được đường làm cho cả ba đề chỉ từ phần giảng và các tiền đề đã nêu. Đây là kết luận về độ đủ của lời giảng khi đọc, chưa phải chứng minh câu tự làm chạy đúng hoặc bộ chấm nhận đúng.
+
+## Ưu tiên và giới hạn
+
+- **Ưu tiên nội dung:** giữ mạch hiện tại; chưa có sửa bắt buộc có căn cứ. Không đề xuất tăng số component, giảng sinh lịch hay chuyển lại khung Excel/SQL tách rời. 45 phút gồm ba đề có thể hợp lý với tải CTE/lịch này, nhưng tôi không đo thời gian học thật để xác nhận con số.
+- **Còn phải kiểm sau:** đối chiếu answer theo quy trình hai bước sau khi root khóa snapshot và cấp quyền; SQL live, số liệu toàn nguồn/43 mã, tính đúng trên database và hành vi bộ chấm vẫn chưa được tôi xác minh.
+- **HTML không chứng minh:** copy/paste, clipboard, tab nhìn thực tế, viewport, bàn phím, drawer, SSMS, đăng nhập và nộp thật. Nhãn `Query executed successfully` là nội dung component, không phải bằng chứng tôi đã thực thi.
+- Chỉ ghi report này. Không đọc seed, secret, báo cáo cũ, nhận xét reviewer khác, ma trận/evidence tác giả, YAML exercise/answer hoặc API/distAPI.
+
+**CHƯA XEM ANSWER. DỪNG BƯỚC 1; chờ root khóa snapshot và follow-up trước khi APPEND đối chiếu YAML.**

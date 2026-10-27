@@ -1,0 +1,140 @@
+lesson: 4-7-doi-soat-cham-cong-luong
+exercises:
+  - id: 4-7-1
+    title: Đủ cả dòng khớp và dòng lệch
+    summary: Giữ mọi mã của ít nhất một nguồn.
+    prompt: 'Đối chiếu kỳ 2026-09 trên mọi trạng thái như bài học: mỗi dòng ChamCong trong tháng tính một ngày; cộng ngày phép năm đã duyệt nằm trên lịch 20 ngày làm tháng 9 được cung cấp trong bài. Mỗi MaNV một dòng, giữ cả mã chỉ ở một nguồn. Trả MaNV, NgayChamCong, NgayPhepNam, CongDoiChieu, CongBangLuong, ChenhLech (bảng lương trừ đối chiếu); thiếu bên nào giữ NULL ở số của bên ấy và ChenhLech. Trả cả dòng khớp, không chỉ dòng cần rà. Xếp MaNV tăng dần; luyện FULL OUTER JOIN sau khi chuẩn nguồn.'
+    columns:
+      - MaNV
+      - NgayChamCong
+      - NgayPhepNam
+      - CongDoiChieu
+      - CongBangLuong
+      - ChenhLech
+    answer: |-
+      WITH LichLam AS (
+          SELECT CAST(l.Ngay AS date) AS [Ngay]
+          FROM (VALUES
+              ('20260903'), ('20260904'), ('20260907'), ('20260908'), ('20260909'),
+              ('20260910'), ('20260911'), ('20260914'), ('20260915'), ('20260916'),
+              ('20260917'), ('20260918'), ('20260921'), ('20260922'), ('20260923'),
+              ('20260924'), ('20260925'), ('20260928'), ('20260929'), ('20260930')
+          ) AS l(Ngay)
+      ), CongGop AS (
+          SELECT MaNV, COUNT(*) AS [NgayChamCong], 0 AS [NgayPhepNam]
+          FROM ChamCong
+          WHERE Ngay >= '20260901' AND Ngay < '20261001'
+          GROUP BY MaNV
+          UNION ALL
+          SELECT d.MaNV, 0, COUNT(DISTINCT l.Ngay)
+          FROM DonNghiPhep AS d
+          INNER JOIN LichLam AS l ON l.Ngay BETWEEN d.TuNgay AND d.DenNgay
+          WHERE d.TrangThai = N'Đã duyệt' AND d.LoaiNghi = N'Phép năm'
+          GROUP BY d.MaNV
+      ), DoiChieu AS (
+          SELECT MaNV, SUM(NgayChamCong) AS [NgayChamCong],
+              SUM(NgayPhepNam) AS [NgayPhepNam],
+              SUM(NgayChamCong + NgayPhepNam) AS [CongDoiChieu]
+          FROM CongGop
+          GROUP BY MaNV
+      ), CongLuong AS (
+          SELECT MaNV, NgayCongThucTe AS [CongBangLuong]
+          FROM BangLuong
+          WHERE KyLuong = '2026-09'
+      )
+      SELECT COALESCE(d.MaNV, b.MaNV) AS [MaNV],
+          d.NgayChamCong, d.NgayPhepNam, d.CongDoiChieu, b.CongBangLuong,
+          b.CongBangLuong - d.CongDoiChieu AS [ChenhLech]
+      FROM DoiChieu AS d
+      FULL OUTER JOIN CongLuong AS b ON b.MaNV = d.MaNV
+      ORDER BY [MaNV] ASC;
+    ordered: true
+    kind: query
+  - id: 4-7-2
+    title: Cặp mã–ngày công chỉ có phía bảng lương
+    summary: EXCEPT lấy giá trị từ bên trái.
+    prompt: Chuẩn nguồn kỳ 2026-09 và lịch/ngày phép như bài học, mọi trạng thái. Luyện EXCEPT để trả cặp MaNV, NgayCong có ở BangLuong (NgayCongThucTe) nhưng không có trong nguồn ngày công đối chiếu (chấm công cộng ngày phép năm đã duyệt trên lịch tháng 9). Xét cả cặp mã–số ngày, không chỉ mã; mỗi cặp một lần. Xếp MaNV tăng dần. NgayCong lấy từ phía bảng lương.
+    columns:
+      - MaNV
+      - NgayCong
+    answer: |-
+      WITH LichLam AS (
+          SELECT CAST(l.Ngay AS date) AS [Ngay]
+          FROM (VALUES
+              ('20260903'), ('20260904'), ('20260907'), ('20260908'), ('20260909'),
+              ('20260910'), ('20260911'), ('20260914'), ('20260915'), ('20260916'),
+              ('20260917'), ('20260918'), ('20260921'), ('20260922'), ('20260923'),
+              ('20260924'), ('20260925'), ('20260928'), ('20260929'), ('20260930')
+          ) AS l(Ngay)
+      ), CongGop AS (
+          SELECT MaNV, COUNT(*) AS [NgayChamCong], 0 AS [NgayPhepNam]
+          FROM ChamCong
+          WHERE Ngay >= '20260901' AND Ngay < '20261001'
+          GROUP BY MaNV
+          UNION ALL
+          SELECT d.MaNV, 0, COUNT(DISTINCT l.Ngay)
+          FROM DonNghiPhep AS d
+          INNER JOIN LichLam AS l ON l.Ngay BETWEEN d.TuNgay AND d.DenNgay
+          WHERE d.TrangThai = N'Đã duyệt' AND d.LoaiNghi = N'Phép năm'
+          GROUP BY d.MaNV
+      ), DoiChieu AS (
+          SELECT MaNV, SUM(NgayChamCong) AS [NgayChamCong],
+              SUM(NgayPhepNam) AS [NgayPhepNam],
+              SUM(NgayChamCong + NgayPhepNam) AS [CongDoiChieu]
+          FROM CongGop
+          GROUP BY MaNV
+      ), CongLuong AS (
+          SELECT MaNV, NgayCongThucTe AS [CongBangLuong]
+          FROM BangLuong
+          WHERE KyLuong = '2026-09'
+      )
+      SELECT MaNV, CongBangLuong AS [NgayCong] FROM CongLuong
+      EXCEPT
+      SELECT MaNV, CongDoiChieu FROM DoiChieu
+      ORDER BY MaNV ASC;
+    ordered: true
+    kind: query
+  - id: 4-7-3
+    title: Đảo chiều để lấy số phía đối chiếu
+    summary: Cùng hai nguồn, đổi phía đứng trước EXCEPT.
+    prompt: Với cùng hai nguồn đã chuẩn kỳ 2026-09 và lịch/ngày phép như bài học, mọi trạng thái, luyện EXCEPT theo chiều ngược đề trước. Trả MaNV, NgayCong của nguồn đối chiếu (chấm công cộng ngày phép năm đã duyệt trên lịch tháng 9) mà cặp mã–số ngày ấy không có trong BangLuong. Mỗi cặp một lần; xếp MaNV tăng dần. NgayCong lấy từ phía đối chiếu, không lấy số trên bảng lương.
+    columns:
+      - MaNV
+      - NgayCong
+    answer: |-
+      WITH LichLam AS (
+          SELECT CAST(l.Ngay AS date) AS [Ngay]
+          FROM (VALUES
+              ('20260903'), ('20260904'), ('20260907'), ('20260908'), ('20260909'),
+              ('20260910'), ('20260911'), ('20260914'), ('20260915'), ('20260916'),
+              ('20260917'), ('20260918'), ('20260921'), ('20260922'), ('20260923'),
+              ('20260924'), ('20260925'), ('20260928'), ('20260929'), ('20260930')
+          ) AS l(Ngay)
+      ), CongGop AS (
+          SELECT MaNV, COUNT(*) AS [NgayChamCong], 0 AS [NgayPhepNam]
+          FROM ChamCong
+          WHERE Ngay >= '20260901' AND Ngay < '20261001'
+          GROUP BY MaNV
+          UNION ALL
+          SELECT d.MaNV, 0, COUNT(DISTINCT l.Ngay)
+          FROM DonNghiPhep AS d
+          INNER JOIN LichLam AS l ON l.Ngay BETWEEN d.TuNgay AND d.DenNgay
+          WHERE d.TrangThai = N'Đã duyệt' AND d.LoaiNghi = N'Phép năm'
+          GROUP BY d.MaNV
+      ), DoiChieu AS (
+          SELECT MaNV, SUM(NgayChamCong) AS [NgayChamCong],
+              SUM(NgayPhepNam) AS [NgayPhepNam],
+              SUM(NgayChamCong + NgayPhepNam) AS [CongDoiChieu]
+          FROM CongGop
+          GROUP BY MaNV
+      ), CongLuong AS (
+          SELECT MaNV, NgayCongThucTe AS [CongBangLuong]
+          FROM BangLuong
+          WHERE KyLuong = '2026-09'
+      )
+      SELECT MaNV, CongDoiChieu AS [NgayCong] FROM DoiChieu
+      EXCEPT
+      SELECT MaNV, CongBangLuong FROM CongLuong
+      ORDER BY MaNV ASC;
+    ordered: true
+    kind: query
