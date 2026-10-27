@@ -45,5 +45,5 @@ Tài liệu Microsoft đã mở, chỉ là căn cứ hướng dẫn, không bằ
 - [Create, load or edit a query](https://support.microsoft.com/en-us/excel/create-load-or-edit-a-query-in-excel-power-query).
 - [SQL Server connector](https://learn.microsoft.com/en-us/power-query/connectors/sql-server).
 
-Hai learner report gốc/disposition được lưu riêng; không có findings cần sửa ở hai bản được giao. Kiểm ở bảng trên do tác giả thực hiện, không gán cho reviewer. Review tích hợp sẽ có report/disposition riêng; chưa dùng các giới hạn pending làm pass hoặc quyền push/main/deploy.
+Hai learner report gốc/disposition được lưu riêng; không có findings cần sửa ở hai bản được giao. Kiểm ở bảng trên do tác giả thực hiện, không gán cho reviewer. Review tích hợp tại f2d7b8e không có finding cần sửa; raw report và disposition đủ D1–D11 đã lưu. Reviewer tự kiểm 18hash/publicseed/HTML/Microsoftdocs, không chạy suite hoặc live. Sau review chỉ hồ sơ/spec/plan thay đổi; source/test/metadata/HTML không đổi. Không dùng các giới hạn pending làm pass hoặc quyền push/main/deploy.
 
