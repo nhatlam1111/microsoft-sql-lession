@@ -4,30 +4,157 @@ title: Kéo dữ liệu SQL Server vào Excel bằng Power Query
 shortTitle: Power Query
 level: 4
 area: A6
-kind: summary
-minutes: 12
+kind: full
+minutes: 30
 prerequisites:
+  - "1.2"
+  - "2.2"
   - "4.5"
-goal: bạn đưa được kết quả truy vấn vào Excel và làm mới khi dữ liệu đổi
-excel: Get Data, Refresh
-summary: Kết nối Excel tới SQL Server, dán câu lệnh, làm mới, và khi nào nên dùng view.
+goal: bạn lấy được kết quả truy vấn vào Excel bằng thông tin kết nối được cấp và biết làm mới, kiểm tra bảng đã tải
+excel: Get Data, bảng tải vào sheet, Refresh
+summary: Lưu cách lấy danh sách trong workbook, kết nối SQL Server và tải vào sheet; làm mới đúng nơi rồi kiểm kết quả.
+noExercises: true
 ---
 
-## Nội dung chính
+## Tình huống
 
-- Trong Excel 365: Data, Get Data, From Database, From SQL Server Database, rồi nhập tên máy chủ và database.
-- Có thể dán câu lệnh SQL vào mục Advanced options, hoặc chọn thẳng bảng, view có sẵn.
-- Bấm Refresh để lấy số mới, không phải xuất lại file.
-- Nên trỏ Power Query vào một view (bài 4.5) thay cho câu lệnh dài, để logic nằm một chỗ trong database.
+<Chat who="Chị Hạnh · Phòng Nhân sự" time="09:10" initial="H">
+Trước mỗi buổi họp chị lại nhờ xuất danh sách nhân viên IT đang làm rồi chép vào Excel. Em giúp chị giữ cách lấy dữ liệu trong file, lần sau mở lại để làm mới danh sách nhé. Chị cần mã, họ tên và mã phòng.
+</Chat>
 
-## Liên hệ Excel
+Phạm vi: các hồ sơ hiện có `TrangThai` là `Đang làm` và `MaPB` là `IT`, không lọc ngày vào làm. Hướng dẫn thao tác dùng Excel Microsoft 365 cài trên Windows, giao diện tiếng Anh.
 
-Đây là cầu nối giữa hai bên: dữ liệu vẫn nằm trong SQL Server, Excel chỉ đọc ra để trình bày, vẽ biểu đồ, làm PivotTable.
+<Key>Lưu cách lấy danh sách, rồi tải lại và kiểm bảng Excel mỗi khi cần dữ liệu mới.</Key>
 
-## Tình huống ví dụ
+## Từ câu truy vấn đến bảng Excel có thể làm mới
 
-Phòng nhân sự muốn file báo cáo Excel hằng tháng tự cập nhật số liệu mà không cần ai xuất dữ liệu.
+### Giữ đường lấy dữ liệu cùng workbook
 
-## Bài tập
+Bài 2.1 đã chép kết quả kèm tiêu đề sang Excel. Bản chép chỉ giữ dữ liệu lúc lấy. **Power Query** là bộ công cụ lấy và biến đổi dữ liệu, lưu các bước để thực hiện lại; ở đây bạn lưu câu SQL và cách kết nối thay vì chép lại mỗi lần.
 
-<Exercises />
+Hình dưới minh họa bảng tải vào sheet, trích ba hồ sơ đầu trong danh sách của bộ mẫu. Các ô `A1`–`C1` là ba tiêu đề; ô `C2` cho thấy mã phòng `IT` cần giữ.
+
+<Excel sheets="Danh sách IT" mark={['A1','B1','C1','C2']} rows={[
+  ['Mã NV','Họ tên','Mã phòng'],
+  ['NV007','Bùi Thanh Sơn','IT'],
+  ['NV011','Lý Minh Khoa','IT'],
+  ['NV017','Cao Minh Trí','IT'],
+]} />
+
+Bảng trên sheet là **bản dữ liệu đã tải** vào workbook ở lần lấy gần nhất; nguồn chính thức vẫn là SQL Server. Sửa một ô trong bảng tải không ghi ngược vào `NhanVien`; lần tải lại có thể thay phần sửa đó bằng kết quả truy vấn. File vì vậy chứa dữ liệu đã lấy, không chỉ chứa địa chỉ nguồn.
+
+### Câu lệnh cho tình huống
+
+SQL quyết định danh sách trước khi Power Query tải nó. Hai điều kiện đã học ở bài 2.2–2.3 giữ đúng trạng thái và phòng; `ORDER BY` cho thứ tự mã nhất quán:
+
+<Sql code={`SELECT MaNV AS [Mã NV], HoTen AS [Họ tên], MaPB AS [Mã phòng]
+FROM NhanVien
+WHERE TrangThai = N'Đang làm'
+\tAND MaPB = 'IT'
+ORDER BY MaNV ASC;`} />
+
+<Result columns={["Mã NV","Họ tên","Mã phòng"]} rows={[["NV007","Bùi Thanh Sơn","IT"],["NV011","Lý Minh Khoa","IT"],["NV017","Cao Minh Trí","IT"],["NV021","Tôn Thất Long","IT"],["NV029","Mạc Văn Đông","IT"],["NV035","Thái Minh Hiếu","IT"],["NV039","Âu Văn Kiên","IT"],["NV043","Đàm Văn Khánh","IT"],["NV046","Hứa Thị Phương","IT"],["NV048","Đỗ Minh Quân","IT"]]} total={10} mark={[10]} />
+
+Danh sách có `10` hồ sơ và đúng ba cột chị Hạnh cần. Dòng đánh dấu là `NV048`, người mới vào làm cũng thuộc phạm vi đang lưu. Đây là phòng hiện tại trong `NhanVien`, không phải danh sách phòng tại một ngày quá khứ.
+
+### Kết nối và tải vào đúng sheet
+
+**Kết nối (connection)** ghi nơi Power Query lấy dữ liệu và cách đăng nhập. Thao tác cần Excel cùng tài khoản SQL có quyền đọc, mạng tới máy chủ như bài 1.2; mã chạy bài tập web không dùng làm mật khẩu SQL. Nếu chỉ học trên web, bạn vẫn đọc theo hình và tự trả lời năm câu ôn cuối bài.
+
+Với nguồn khóa học, hai ô kết nối dùng đúng thông tin sau; `HRM_Demo` là tên bộ mẫu, không phải tên database trên máy chủ này:
+
+| Ô trong hộp kết nối | Giá trị |
+|---|---|
+| Server | `sql-lession.database.windows.net` |
+| Database | `free-sql-db-8797714` |
+
+Nếu dùng SQL Server riêng, thay cả hai bằng nơi đã nạp bộ mẫu của bạn. Tài khoản và mật khẩu do người phụ trách cấp hoặc bạn quản lý ở bản riêng; không điền chúng vào câu SQL.
+
+1. Trong Excel, chọn **Data → Get Data → From Database → From SQL Server Database** để mở hộp kết nối.
+2. Điền **Server**, **Database** ở trên. Mở **Advanced options**, dán nguyên câu `SELECT` vào ô **SQL statement**, rồi chọn **OK**.
+3. Với tài khoản SQL của khóa học, chọn **Database** ở hộp đăng nhập, tự điền tên đăng nhập/mật khẩu được cấp rồi **Connect**. Khi có bước xác nhận câu SQL, đọc lại đúng câu của bài trước khi đồng ý chạy.
+4. Trong **Power Query Editor** — cửa sổ xem và chỉnh các bước lấy dữ liệu — kiểm phần **preview** (bản xem trước): ba cột và các mã phải khớp truy vấn. Bản xem trước giúp phát hiện nhầm nguồn hoặc điều kiện trước khi tải.
+5. Chọn **Home → mũi tên cạnh Close & Load → Close & Load To…**. Ở hộp **Import Data**, chọn **Table**, **New worksheet**, rồi **OK** để tải thành bảng trên sheet mới.
+6. Đặt tên sheet dễ nhận ra như **Danh sách IT**, kiểm bảng đã tải rồi lưu workbook. Lần sau mở lại file này để dùng kết nối và truy vấn đã lưu.
+
+Nếu kết nối báo lỗi đăng nhập, mạng hoặc chứng chỉ, gửi nguyên văn lỗi cho người phụ trách theo bài 1.2 để kiểm đúng nguồn và tài khoản.
+
+Khi đơn vị đã có **view** dùng chung và cấp quyền đọc, bạn có thể để trống ô SQL, chọn view trong **Navigator** (danh sách đối tượng của nguồn), rồi tải bảng. View mẫu `dbo.vw_HoSoDangLam` ở bài 4.5 chưa được tạo trong database khóa học, nên ví dụ này dùng câu `SELECT` từ bảng có sẵn.
+
+### Làm mới bảng và kiểm kết quả
+
+Trở lại worksheet, chọn **Data → Refresh All** để làm mới các truy vấn được cấu hình tham gia lệnh này trong workbook. Với một bảng riêng, chọn một ô trong bảng rồi dùng **Query → Refresh**. Chờ tác vụ hoàn tất, kiểm lỗi và đối chiếu cột, mã cùng số dòng với phạm vi đã chọn; bấm nút chưa có nghĩa đã lấy thành công.
+
+**Refresh** chạy lại cách lấy dữ liệu đã lưu. Điều kiện `MaPB = 'IT'` vẫn giữ nguyên; nếu nguồn chưa đổi thì kết quả vẫn có thể là `10` dòng. Câu lệnh có ngày cố định cũng giữ ngày đó, không tự chuyển sang tháng mới khi bấm Refresh.
+
+**Refresh Preview** trong Power Query Editor chỉ cập nhật bản xem trước và dữ liệu đệm dùng cho nó; thao tác đó chưa làm mới bảng trên worksheet. Muốn kiểm file chị Hạnh sẽ dùng, hãy xem bảng đã tải trên sheet sau khi làm mới, không chỉ nhìn cửa sổ Editor.
+
+Chị Hạnh có thể lưu workbook này rồi làm mới trước buổi họp để lấy lại đúng danh sách, không phải nhờ xuất lại cùng cấu trúc. Người nhận file có thể xem dữ liệu còn lưu trong đó; muốn Refresh từ nguồn thì họ cần kết nối và quyền đọc phù hợp của mình. Việc lưu kết nối không tạo một lịch chạy khi file đang đóng.
+
+Ở bài này chỉ cần lấy và tải kết quả, lưu workbook rồi làm mới có kiểm. Định nghĩa dùng chung qua view xem bài 4.5, quyền đọc nguồn xem bài 6.1; lập lịch hay viết ngôn ngữ biến đổi của Power Query nằm ngoài phạm vi này.
+
+## Hay nhầm ở đâu
+
+<Mistakes>
+
+1. **Chỉ Refresh Preview rồi gửi file.** Phần xem trước có thể mới trong khi bảng trên sheet người nhận đọc vẫn cũ.
+2. **Đổi yêu cầu nhưng chỉ bấm Refresh.** Điều kiện cũ vẫn chạy; danh sách IT không tự trở thành danh sách toàn công ty.
+3. **Nguồn đổi tên cột nhưng vẫn giữ truy vấn cũ.** Câu chọn cột đó có thể báo lỗi; cần kiểm thông báo và cập nhật cách lấy dữ liệu.
+
+</Mistakes>
+
+## Ứng dụng
+
+<Apply>
+
+- **Lấy lại danh sách định kỳ:** lưu truy vấn trong workbook để dùng lại cùng ba cột và điều kiện trước mỗi buổi họp.
+- **Dùng chung định nghĩa báo cáo:** chọn một view được cấp khi nhiều file cần cùng quy tắc lọc, giảm sửa logic riêng ở từng file.
+- **Bàn giao file có thể làm mới:** chỉ rõ nguồn, phạm vi và bước Refresh để người nhận biết mình đang xem bản dữ liệu nào.
+
+</Apply>
+
+## Ghi nhớ
+
+<Memo rows={[
+  ['Chép một bảng kết quả','Bản chép giữ dữ liệu lúc lấy; Power Query còn lưu cách lấy lại'],
+  ['Bảng trên sheet','Bản tải trong workbook, không phải nguồn tự đồng bộ liên tục'],
+  ['Refresh bảng trên worksheet','Chạy lại truy vấn đã lưu; kiểm tác vụ và dữ liệu sau khi xong'],
+  ['Gửi workbook cho người khác','Có thể kèm dữ liệu đã tải; làm mới từ nguồn còn cần kết nối/quyền'],
+]} />
+
+**Tự kiểm tra trước khi bấm "Đã học xong":**
+
+<details>
+<summary>Power Query lưu thêm điều gì so với chỉ chép bảng kết quả?</summary>
+
+Power Query lưu cách kết nối và các bước lấy/biến đổi để thực hiện lại. Bảng đã tải vẫn là dữ liệu trong workbook ở lần lấy gần nhất, chưa tự thay khi nguồn đổi.
+
+</details>
+
+<details>
+<summary>Cần điền thông tin nào để Excel đọc nguồn khóa học, mã web có thay mật khẩu SQL được không?</summary>
+
+Điền server `sql-lession.database.windows.net`, database `free-sql-db-8797714`, dùng cách đăng nhập và tài khoản SQL được cấp. Mã web không thay tài khoản/mật khẩu SQL; `HRM_Demo` là tên bộ mẫu.
+
+</details>
+
+<details>
+<summary>Muốn dùng view thay câu SQL thì cần gì, có chọn ngay view mẫu ở bài 4.5 được không?</summary>
+
+Cần view đã có thật trong nguồn và quyền đọc phù hợp, rồi chọn trong Navigator. View mẫu `dbo.vw_HoSoDangLam` chưa được tạo ở database khóa học; bài này dùng câu `SELECT` đầy đủ từ `NhanVien`.
+
+</details>
+
+<details>
+<summary>Refresh Preview có thay cho Refresh bảng trên sheet không, và số dòng giữ nguyên có chứng minh lỗi không?</summary>
+
+Không. Refresh Preview làm mới bản xem trước/cache của Editor; cần làm mới bảng trên worksheet rồi kiểm tác vụ hoàn tất và kết quả. Nguồn chưa đổi có thể vẫn trả `10` dòng; điều kiện đã lưu cũng không tự đổi khi Refresh.
+
+</details>
+
+<details>
+<summary>Sửa một ô rồi gửi workbook có cập nhật SQL Server hoặc cấp quyền làm mới cho người nhận không?</summary>
+
+Sửa ô chỉ thay bản tải, không ghi ngược `NhanVien`, và lần tải lại có thể thay phần sửa đó. Người nhận có thể thấy dữ liệu được lưu trong file; muốn lấy lại từ nguồn vẫn cần kết nối và quyền đọc của họ.
+
+</details>

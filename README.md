@@ -7,7 +7,7 @@ Web: https://nhatlam1111.github.io/microsoft-sql-lession/
 ## Trên web có gì
 
 - **Mindmap** 8 mảng kiến thức làm trang chủ. Bấm vào một bài thì drawer tóm tắt bài mở ra; nút "Menu khóa học" mở danh sách bài.
-- **51 bài, 6 level.** Bài 1.1–1.6, 2.1–2.9, 3.1–3.10, 4.1–4.8 và 6.5 viết đầy đủ, các bài còn lại là bản tóm tắt. Bài đầy đủ có tình huống và đối chiếu Excel; các bài truy vấn có câu lệnh tô màu kiểu SSMS và kết quả từ `HRM_Demo`.
+- **51 bài, 6 level.** Bài 1.1–1.6, 2.1–2.9, 3.1–3.10, 4.1–4.9 và 6.5 viết đầy đủ, các bài còn lại là bản tóm tắt. Bài đầy đủ có tình huống và đối chiếu Excel; các bài truy vấn có câu lệnh tô màu kiểu SSMS và kết quả từ `HRM_Demo`.
 - **Popup "Lộ trình của bạn"** và trạng thái từng bài (chưa học, đã xem, đã học, cần xem lại). Tiến độ lưu trong trình duyệt và xuất/nhập được bằng file JSON.
 - **Sơ đồ thứ tự chạy câu lệnh:** từng bước SQL Server làm, mỗi bước có drawer giải thích và bảng dữ liệu sau bước đó.
 - **Bài tập chạy SQL trên database thật** (bài 1.6, 2.1–2.9, 3.1–3.10, 4.1–4.4, 4.6–4.7 và 6.5): viết câu lệnh, chạy (F5), nộp bài và biết đúng hay chưa. Trang có popup sơ đồ database. Mọi lần chạy đều nằm trong một transaction rồi `ROLLBACK`, nên dữ liệu không đổi. Muốn chạy cần mã truy cập, xin người phụ trách khóa học. Bài tập không có gợi ý và không có nút xem đáp án. Bộ chấm không so tên cột; bài 2.1 nhắc học viên tự đối chiếu tiêu đề alias với đề.
@@ -110,7 +110,7 @@ Mỗi bài là một file `src/content/lessons/<số>-<slug>.mdx`, ví dụ `3-5
 | `kind`, `minutes` | `full` hoặc `summary`; số phút đọc |
 | `prerequisites` | Các bài cần biết trước |
 | `goal`, `excel`, `summary` | Học xong làm được gì, liên hệ Excel, đoạn tóm tắt hiện trong drawer |
-| `noExercises` | `true` khi bài không có mục "Bài tập" (bài 1.1–1.5, 4.5 và 4.8) |
+| `noExercises` | `true` khi bài không có mục "Bài tập" (bài 1.1–1.5, 4.5 và 4.8–4.9) |
 
 - Chuẩn được duyệt ngày 20/10/2026, lấy [bài 1.1](src/content/lessons/1-1-database-la-gi.mdx) làm mẫu: Tình huống → phần chính có tiêu đề theo chủ đề, gộp cách Excel và SQL xử lý → Hay nhầm ở đâu → Ứng dụng → Ghi nhớ → Bài tập. Bài `noExercises: true` bỏ mục Bài tập và có ít nhất ba câu tự kiểm tra theo mục tiêu. Các bài cũ chuyển khung khi được chỉnh tới; bài đầy đủ mới dùng khung này.
 - Trong phần chính, đặt ví dụ cạnh lời giải thích và khép yêu cầu ngay tại đó. Bài khái niệm không cần preview SQL; bài truy vấn có câu lệnh và kết quả đã kiểm chứng, thêm `RunFlow` khi cần. Không thêm mục trả lời riêng. Tiểu mục và cách đặt khối xem [khung bài](docs/lesson-template.md).

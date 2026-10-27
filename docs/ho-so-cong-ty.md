@@ -95,7 +95,7 @@ Các nhân vật là giả định, không phải hồ sơ trong bộ mẫu (bà
 
 | Nhân vật | Là ai | Xuất hiện |
 |---|---|---|
-| Chị Hạnh · Phòng Nhân sự | Người đưa yêu cầu trong mọi bài đầy đủ; xưng "chị", gọi người học là "em" | 1.1–1.6, 2.1–2.9, 3.1–3.10, 4.1–4.8 |
+| Chị Hạnh · Phòng Nhân sự | Người đưa yêu cầu trong mọi bài đầy đủ; xưng "chị", gọi người học là "em" | 1.1–1.6, 2.1–2.9, 3.1–3.10, 4.1–4.9 |
 | Người học ("em", "bạn") | Người đọc và lấy dữ liệu từ hệ thống nhân sự cho chị Hạnh; có tài khoản vào database qua SSMS | mọi bài |
 | Chị Thảo · Kế toán | Giữ một bản file nhân sự riêng | 1.1 |
 | Quân | Nhân viên chuyển sang IT, nhưng file của Kế toán còn ghi phòng cũ | 1.1 |
@@ -153,4 +153,5 @@ Các lỗi này có chủ ý, dành cho bài 4.6 và 4.7; bài khác không đư
 | 4.6 | Chị Hạnh rà mọi trạng thái theo ba luật: CCCD lặp (1nhóm/2hồ sơ NV015,NV038), email thiếu (NV044/VH và NV045/KD, đềuNULL), hợp đồng đảo thứ tự ngày (HD2025-003/NV029). Kết quả chỉ là dấu hiệu để đối chiếu, không tự sửa/xóa. Ba đề đi từ nhóm ra hồ sơ, giữ phòng có0 và tổng theo mã luật2/2/1; không cộng thành người riêng biệt. |
 | 4.7 | Chị Hạnh đối soát số ngày kỳ2026-09: chấm công cộng phép năm đã duyệt trên lịch20ngày làm, một dòng mỗiMaNV. NV013=17+2=19 so20, NV032=18+0=18 so19, đều lệch1. DP018 chỉ đóng góp03/09,04/09 cho tháng9; NV043=18+2=20 khớp. Cả hai nguồn có43mã; FULL giữ mã vắng và EXCEPT xét cặp theo chiều. Bản trích minh họa cố ý chọn khác mã, không kết luận nguồn đầy đủ đang thiếu. |
 | 4.8 | Chị Hạnh đọc thủ tục mẫu dbo.usp_XemCong với NV043, từ01/09 đến trước01/10/2026. Mẫu chỉ đếm18dòng ChamCong, chưa gồm2ngàyphép đã thấy ở4.7. Mẫu không được tạo/gọi trongDBchung; hai SELECT độc lập cho xem dòng và đếm, nămcâuôn thayYAML. Không thayđổi cách tính/dữliệu. |
+| 4.9 | Chị Hạnh lấy danh sách hiện đang làm tại IT vào Excel bằng Power Query:10 mã, ba cột MaNV/HoTen/MaPB. Workbook lưu cách lấy và bản đã tải; Refresh worksheet chạy lại điều kiện, không tự đổi kỳ hoặc ghi ngược SQL. Dùng NhanVien có thật; view4.5 vẫn chưa tạo. Đường thao tác Excel365 desktop Windows, tài khoản SQL khác mã web; năm câu ôn, không YAML. |
 | 6.5 | Một chiều thứ Sáu, câu `UPDATE` phụ cấp của NV012 kỳ 2026-09 bị bôi đen thiếu, chạy cho cả bảng lương. |

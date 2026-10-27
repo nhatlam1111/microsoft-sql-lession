@@ -22,7 +22,7 @@ prerequisites:
 goal: bạn tự lọc được danh sách nhân viên theo một điều kiện
 excel: AutoFilter
 summary: Một câu nói đúng vấn đề và nội dung chính của bài.
-# noExercises: true            # bài khái niệm không có mục Bài tập, hiện là 1.1–1.5, 4.5 và 4.8
+# noExercises: true            # bài khái niệm không có mục Bài tập, hiện là 1.1–1.5, 4.5 và 4.8–4.9
 ---
 ```
 
