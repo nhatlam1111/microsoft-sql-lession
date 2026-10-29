@@ -13,6 +13,14 @@
 .prose ul, .prose ol { padding-left: 1.3em; }
 .prose li + li { margin-top: 0.45em; }
 .prose strong { font-weight: 600; }
+.prose .lesson-illustration { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); align-items: center; overflow: hidden; border: 1px solid var(--rule); border-radius: var(--radius-m); background: var(--surface); }
+.lesson-illustration img { display: block; width: 100%; height: auto; }
+.lesson-illustration figcaption { padding: 12px 16px; color: var(--ink-2); font: 13px/1.6 var(--font-ui); }
+.lesson-illustration figcaption strong { display: block; margin-bottom: 4px; color: var(--ink); font-size: 15px; }
+@media (max-width: 560px) {
+  .prose .lesson-illustration { grid-template-columns: minmax(0, 1fr); }
+  .lesson-illustration img { max-width: 360px; margin-inline: auto; }
+}
 .prose a { color: var(--accent); text-underline-offset: 3px; }
 .prose a:hover { color: var(--accent-hover); }
 .prose code {

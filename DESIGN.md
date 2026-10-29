@@ -154,6 +154,8 @@ Small controls use 6px corners, standard controls 10px, panels/dialogs 16px. Kee
 
 ## Components
 
+Lesson illustrations use native `figure`/`figcaption` and Astro `Image`; the presentation owner is `.lesson-illustration` in `src/styles/lesson.css`. Images scale to the reading column with intrinsic aspect ratio; labels/captions remain HTML with the existing UI font and tokens. Informative alt text and the surrounding lesson carry the meaning if the image cannot load. They are non-interactive and add no tab, modal or new interaction owner. AI artwork is identified as illustration, never used as evidence of SQL output.
+
 ### Foundational visual states
 
 Define hover, visible keyboard focus, pressed, selected, disabled and busy appearances through existing state classes and native attributes. Avoid moving controls during feedback. Preserve the app's existing loading, empty, success and error messages and behavior.

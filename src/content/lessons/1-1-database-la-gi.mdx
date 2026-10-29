@@ -9,9 +9,14 @@ minutes: 12
 prerequisites: []
 goal: bạn phân biệt được database, SQL Server và SQL, giải thích được nguồn dữ liệu chung giúp gì và vì sao vẫn cần kiểm tra dữ liệu
 excel: Workbook, sheet, dòng, cột
-summary: Từ hai bản Excel lệch phòng ban, hiểu cách database dùng chung và các luật dữ liệu giúp giảm sai lệch, cùng những việc vẫn cần xác minh.
+summary: Theo chuyện hai bản nhân sự lệch nhau để hiểu database lưu dữ liệu chung thế nào, luật dữ liệu giúp gì và cách lấy lại danh sách đã đối chiếu.
 noExercises: true
 ---
+
+import { Image } from 'astro:assets';
+import databaseConcept from '../../assets/lessons/1-1-database.png';
+import sqlServerConcept from '../../assets/lessons/1-1-sql-server.png';
+import sqlLanguageConcept from '../../assets/lessons/1-1-sql-language.png';
 
 ## Tình huống
 
@@ -27,19 +32,28 @@ Giả định: hai file đều là danh sách phòng ban hiện tại, và việ
 
 ## Từ hai bản Excel đến một nguồn dữ liệu chung
 
-### Mỗi người cập nhật một bản
+### Một lần chuyển phòng, hai bản khác nhau
 
-Công ty dùng một **workbook** (file Excel) nhân sự nhiều **sheet** (trang tính) và mỗi tháng gửi bản sao qua email. Chị Hạnh đã sửa phòng của Quân sang IT, còn chị Thảo vẫn giữ thông tin cũ. Mỗi thay đổi phải được cập nhật trên từng bản; sót một bản là lệch. Excel cũng hỗ trợ cùng sửa một workbook, nhưng ở tình huống này mỗi người đang giữ một bản riêng.
+Công ty lưu danh sách nhân sự trong một **workbook** (file Excel) có nhiều **sheet** (trang tính), rồi gửi bản sao qua email mỗi tháng. Sau khi Quân chuyển phòng, chị Hạnh sửa thông tin trong bản của mình. Thay đổi đó chưa đến bản chị Thảo đang giữ, nên hai bên nhìn thấy hai thông tin khác nhau về cùng một người.
 
-Để giảm sai lệch, công ty cần thống nhất một **nguồn chính thức** và người chịu trách nhiệm cập nhật. Một **database** (cơ sở dữ liệu) là tập dữ liệu có cấu trúc, được phần mềm quản lý để người dùng truy cập theo quyền. Trong khóa học, dữ liệu nằm trong các **bảng** có **dòng** và **cột**; **SQL Server** là phần mềm của Microsoft quản lý việc lưu trữ, đọc và cập nhật database đó.
+Nếu tiếp tục gửi các bản riêng, mỗi lần thay đổi lại phải sửa đủ các bản đang được sử dụng. Excel cũng hỗ trợ cùng sửa một workbook, nhưng trong tình huống này mỗi người đang giữ một bản riêng. Vì vậy, việc đầu tiên là thống nhất **nguồn chính thức** và người chịu trách nhiệm cập nhật nguồn đó.
 
-Bạn có thể hình dung **workbook** chứa nhiều **sheet** tương tự **database** chứa nhiều **bảng**. Sheet nhân viên tương ứng với bảng `NhanVien`; mỗi **dòng**, còn gọi là **bản ghi**, lưu một hồ sơ nhân viên. Các **cột** có tên và **kiểu dữ liệu** được khai báo trước, thay vì từng ô có thể chứa loại dữ liệu khác nhau như trong sheet.
+### Đưa hồ sơ về một nguồn chung
 
-Dùng database làm nguồn chung thì người có quyền cập nhật dữ liệu qua hệ thống, các bên đọc từ nguồn đó. Nhưng thống nhất chưa chắc đã đúng: nguồn chung chưa được cập nhật thì mọi người vẫn lấy thông tin cũ. Database không tự biết Quân đã chuyển phòng.
+Một cách tổ chức nguồn chung là lưu hồ sơ trong **database** (cơ sở dữ liệu): tập dữ liệu có cấu trúc, được phần mềm quản lý để người dùng truy cập theo quyền. Người phụ trách cập nhật hồ sơ tại nguồn này qua hệ thống; Nhân sự và Kế toán cùng đọc dữ liệu từ đó. Với chuyện của Quân, hai bên không còn phải tự sửa phòng ban trên từng bản danh sách riêng.
 
-### Nguồn chung cần cấu trúc và luật
+<figure class="lesson-illustration">
+  <Image src={databaseConcept} alt="Minh họa database bằng một khối dữ liệu và nhiều bảng có dòng, cột được sắp xếp cùng nhau." width={720} widths={[360, 720]} sizes="(max-width: 560px) 360px, 335px" format="webp" loading="lazy" />
+  <figcaption><strong>Database — dữ liệu được lưu</strong>Hình minh họa các bảng dữ liệu được tổ chức trong một database của khóa học.</figcaption>
+</figure>
 
-Ngoài chuyện hai bản lệch nhau, ngay trong một file cũng có thể có lỗi. Hình dưới minh họa ba lỗi nhập liệu, không phải dữ liệu đang lưu trong database khóa học. Các ô tô vàng là chỗ cần xem: ngày ở `C4`, tên phòng ở `D4` và mã `NV005` lặp ở `A3`, `A5`; ô `D4` đang được chọn.
+Trong database của khóa học, hồ sơ được xếp thành các **bảng**. Bạn có thể hình dung **workbook** chứa nhiều **sheet** tương tự **database** chứa nhiều **bảng**: sheet nhân viên tương ứng với bảng `NhanVien`. Mỗi **dòng**, còn gọi là **bản ghi**, lưu một hồ sơ; mỗi **cột** lưu một loại thông tin như mã nhân viên, họ tên hoặc mã phòng ban.
+
+Nhưng thống nhất chưa chắc đã đúng: nếu người phụ trách chưa cập nhật việc chuyển phòng, cả hai bên vẫn đọc thông tin cũ. Database không tự biết Quân đã chuyển sang IT. Muốn sửa đúng, người có quyền vẫn phải căn cứ vào quyết định chuyển phòng và ngày hiệu lực.
+
+### Giữ dữ liệu nhất quán trong nguồn chung
+
+Cùng đọc một nguồn giúp giảm lệch giữa các bản, nhưng ngay trong nguồn đó vẫn có thể có lỗi nhập liệu. Để thấy việc cần kiểm, nhìn file Excel minh họa dưới đây: ngày ở `C4` đang là chữ, tên phòng ở `D4` viết khác và mã `NV005` lặp ở `A3`, `A5`. Các ô ấy được tô vàng; `D4` đang được chọn. Đây không phải dữ liệu đang lưu trong database khóa học.
 
 <Excel sheets="NhanVien · HopDong · ChamCong" cell="D4" formula="Ke toan" selected="D4" mark={['C4', 'D4', 'A3', 'A5']} numeric={['C2', 'C3', 'C5']} rows={[
   ['Mã NV', 'Họ tên', 'Ngày vào làm', 'Phòng ban'],
@@ -49,23 +63,35 @@ Ngoài chuyện hai bản lệch nhau, ngay trong một file cũng có thể có
   ['NV005', 'Vũ Thị Lan', '14/03/2016', 'Kế toán'],
 ]} />
 
-- **Ngày đang lưu thành chữ.** Trong hình, `C4` là chữ, còn các ô ngày khác là ngày thật, nên lọc hoặc sắp xếp theo ngày có thể cho kết quả sai. Trong database, cột `NgayVaoLam` (ngày vào làm) được khai báo kiểu `date` để lưu ngày; chữ không chuyển được thành ngày sẽ bị từ chối. Tuy vậy, một ngày hợp lệ vẫn có thể sai hồ sơ; cách đọc chuỗi ngày còn phụ thuộc thiết lập (bài 1.3).
-- **Trùng mã nhân viên.** Hai dòng mang cùng mã `NV005` có thể làm báo cáo đếm thừa một hồ sơ. Khi cột `MaNV` (mã nhân viên) được khai báo là **khóa chính**, SQL Server không cho lưu hai dòng trùng mã và không nhận `NULL` (giá trị chưa có hoặc chưa biết). Luật này chỉ chặn trùng mã; một người mang hai mã khác nhau vẫn có thể được lưu hai lần.
-- **Một phòng có hai cách viết.** `Kế toán` và `Ke toan` trong file có thể bị tách nhóm khi làm báo cáo. Với thông tin phòng ban, bảng `NhanVien` chỉ lưu `MaPB` (mã phòng ban); tên phòng nằm ở bảng danh mục `PhongBan`: mã `KT` là `Kế toán`. Khi `MaPB` được khai báo là **khóa ngoại** trỏ tới danh mục này, mã không có trong danh mục sẽ bị từ chối. Khóa ngoại là luật của dữ liệu, không phải ô chọn trên màn hình.
+- **Ngày đang lưu thành chữ.** Trong hình, `C4` là chữ, còn các ô ngày khác là ngày thật, nên lọc hoặc sắp xếp theo ngày có thể sai. Trong database, mỗi cột có **kiểu dữ liệu** được khai báo trước: cột `NgayVaoLam` (ngày vào làm) dùng kiểu `date` để lưu ngày, chữ không chuyển được thành ngày sẽ bị từ chối. Tuy vậy, một ngày hợp lệ vẫn có thể sai hồ sơ; cách đọc chuỗi ngày còn phụ thuộc thiết lập (bài 1.3).
+- **Trùng mã nhân viên.** Hai dòng mang mã `NV005` có thể làm báo cáo đếm thừa một hồ sơ. Khi cột `MaNV` (mã nhân viên) được khai báo là **khóa chính**, hai dòng không được trùng mã và không nhận `NULL` (giá trị chưa có hoặc chưa biết). Luật này chặn trùng mã, không chặn một người bị lưu dưới hai mã khác nhau.
+- **Một phòng có hai cách viết.** Thay vì ghi `Kế toán` hoặc `Ke toan` trên từng hồ sơ, bảng `NhanVien` lưu `MaPB` (mã phòng ban). Tên phòng nằm trong bảng danh mục `PhongBan`, chẳng hạn mã `KT` là `Kế toán`. Khi `MaPB` được khai báo là **khóa ngoại** trỏ tới danh mục này, mã không có trong danh mục sẽ bị từ chối. Đổi tên phòng chỉ cần sửa ở danh mục; cách đọc thông tin qua hai bảng học ở bài 1.5.
 
-Khóa chính và khóa ngoại là các **ràng buộc (constraint)** do người thiết kế khai báo. Khi ràng buộc đang bật, SQL Server kiểm các **câu ghi** — lệnh thêm, sửa hoặc xóa dữ liệu — và từ chối câu vi phạm. Khi nhập file, hỏi bên IT những ràng buộc nào được kiểm tra (bài 5.5).
+Khóa chính và khóa ngoại là các **ràng buộc (constraint)** do người thiết kế khai báo. Khi ràng buộc đang bật, hệ thống kiểm các **câu ghi** — lệnh thêm, sửa hoặc xóa dữ liệu — và từ chối câu vi phạm. Khóa ngoại là luật của dữ liệu, không phải ô chọn trên màn hình; khi nhập file cũng cần biết những luật nào đang được kiểm tra (bài 5.5).
 
-Tách tên phòng ra danh mục giúp đổi tên phòng ở một chỗ, thay vì sửa tên trên từng hồ sơ. Đổi lại, muốn xem tên phòng của một nhân viên thì phải lấy dữ liệu qua hai bảng; bài 1.5 chỉ cách đọc đường liên kết đó.
+Các luật trên giúp dữ liệu có cùng cấu trúc và tuân theo những điều kiện đã đặt ra, nhưng **hợp lệ chưa chắc đã đúng**. `KD` là mã `Kinh doanh` có thật, nên gán nhầm `KD` cho một người thuộc `Kế toán` vẫn lưu được. Với Quân cũng vậy: hệ thống có thể kiểm mã phòng có trong danh mục, nhưng không xác nhận đó là phòng đúng theo quyết định chuyển công tác.
 
-**Hợp lệ chưa chắc đã đúng.** `KD` là mã `Kinh doanh` có thật, nên gán nhầm `KD` cho một người thuộc `Kế toán` vẫn lưu được. Database kiểm những luật đã khai báo; việc đối chiếu với hồ sơ và quyết định nghiệp vụ vẫn cần người chịu trách nhiệm.
+Ở bài này chỉ cần nắm hai việc: cùng dùng một nguồn và kiểm dữ liệu theo luật đã khai báo. Kiểu dữ liệu học kỹ ở bài 1.3, khóa chính và khóa ngoại ở bài 1.4, các loại ràng buộc ở bài 5.2.
 
-Ở bài này chỉ cần phân biệt nguồn chung và luật dữ liệu. Kiểu dữ liệu học kỹ ở bài 1.3, khóa chính và khóa ngoại ở bài 1.4, các loại ràng buộc ở bài 5.2.
+### Lấy lại danh sách cho chị Hạnh
 
-### Lấy danh sách từ nguồn đã thống nhất
+Để đọc được nguồn chung, bạn cần biết phần mềm quản lý nó. Trong khóa học, **SQL Server** là phần mềm của Microsoft quản lý việc lưu trữ, đọc và cập nhật database. Cách kết nối học ở bài 1.2.
 
-Với Excel, bạn mở sheet để xem dữ liệu. Với database, **SQL** là ngôn ngữ để hỏi và thao tác với dữ liệu; phiên bản dùng trong SQL Server gọi là **T-SQL (Transact-SQL)**. Bạn sẽ học câu lệnh đọc dữ liệu ở bài 1.6. Kết quả có thể chép hoặc xuất sang Excel để phân tích, nhưng file xuất ra chỉ phản ánh dữ liệu lúc lấy, không tự cập nhật theo nguồn chung.
+<figure class="lesson-illustration">
+  <Image src={sqlServerConcept} alt="Minh họa SQL Server là phần mềm: một khung ứng dụng quản lý các database, có biểu tượng thiết lập và bảng dữ liệu." width={720} widths={[360, 720]} sizes="(max-width: 560px) 360px, 335px" format="webp" loading="lazy" />
+  <figcaption><strong>SQL Server — phần mềm quản lý</strong>Khung phần mềm và biểu tượng thiết lập minh họa việc quản lý các database; đây là hình khái niệm.</figcaption>
+</figure>
 
-Áp dụng vào yêu cầu của chị Hạnh, bạn làm theo thứ tự:
+Muốn yêu cầu danh sách nhân viên từ database, bạn dùng **SQL**: ngôn ngữ để hỏi và thao tác với dữ liệu. SQL Server xử lý yêu cầu đó rồi trả kết quả. Phiên bản SQL dùng trong SQL Server gọi là **T-SQL (Transact-SQL)**. Bạn sẽ học cách viết câu lệnh đọc dữ liệu ở bài 1.6.
+
+<figure class="lesson-illustration">
+  <Image src={sqlLanguageConcept} alt="Minh họa SQL bằng một yêu cầu được gửi tới hệ thống để lấy kết quả dạng bảng từ dữ liệu đang lưu." width={720} widths={[360, 720]} sizes="(max-width: 560px) 360px, 335px" format="webp" loading="lazy" />
+  <figcaption><strong>SQL — ngôn ngữ gửi yêu cầu</strong>Hình minh họa việc diễn đạt yêu cầu lấy dữ liệu; bảng bên phải tượng trưng cho kết quả được trả về.</figcaption>
+</figure>
+
+Danh sách lấy được có thể chép hoặc xuất sang Excel để phân tích. File xuất chỉ phản ánh dữ liệu lúc lấy, không tự cập nhật theo nguồn chung. Nếu sau đó Quân chuyển phòng lần nữa, bản Excel đã xuất vẫn giữ thông tin cũ cho tới khi bạn lấy lại dữ liệu hoặc có quy trình cập nhật riêng.
+
+Vì vậy, để trả lời yêu cầu đầu bài, bạn làm theo thứ tự:
 
 1. Xác minh quyết định chuyển phòng của Quân và ngày hiệu lực. Bảng `NhanVien` của bộ mẫu chỉ giữ phòng hiện tại, không lưu lịch sử chuyển phòng; muốn xem lại một thời điểm đã qua thì cần bản chốt hoặc thiết kế lưu lịch sử (bài 6.6).
 2. Thống nhất nguồn chính thức và người chịu trách nhiệm cập nhật thông tin phòng ban; thường là Phòng Nhân sự. Nếu nguồn còn cũ, người có quyền cập nhật sửa phòng của Quân theo quyết định đã xác minh.
@@ -107,20 +133,6 @@ Với giả định đầu bài, ở dòng của Quân, bản của chị Hạnh
 **Tự kiểm tra trước khi bấm "Đã học xong":**
 
 <details>
-<summary>Có database rồi thì còn nhập sai phòng ban được không?</summary>
-
-Có. Mã phòng có thật nhưng gán nhầm người vẫn có thể lưu được; nguồn chung chưa được cập nhật cũng có thể còn thông tin cũ.
-
-</details>
-
-<details>
-<summary>Hai file nhân sự khác nhau thì chắc chắn có một file sai?</summary>
-
-Chưa chắc. So nguồn, thời điểm dữ liệu và điều kiện lọc trước. Báo cáo chốt trước ngày chuyển phòng có thể khác danh sách hiện tại mà vẫn đúng theo mốc thời gian của nó.
-
-</details>
-
-<details>
 <summary>Database, SQL Server và SQL khác nhau thế nào?</summary>
 
 Database là tập dữ liệu có cấu trúc; SQL Server là phần mềm quản lý database; SQL là ngôn ngữ để hỏi và thao tác với dữ liệu.
@@ -131,5 +143,19 @@ Database là tập dữ liệu có cấu trúc; SQL Server là phần mềm qu�
 <summary>Nguồn chung giúp giảm lệch giữa Nhân sự và Kế toán như thế nào?</summary>
 
 Người có quyền cập nhật tại một nguồn chính thức, các bên cùng lấy danh sách từ đó, giảm việc sót sửa trên các bản riêng. Nguồn vẫn phải được cập nhật đúng hồ sơ.
+
+</details>
+
+<details>
+<summary>Có database rồi thì còn nhập sai phòng ban được không?</summary>
+
+Có. Mã phòng có thật nhưng gán nhầm người vẫn có thể lưu được; nguồn chung chưa được cập nhật cũng có thể còn thông tin cũ.
+
+</details>
+
+<details>
+<summary>Hai file nhân sự khác nhau thì chắc chắn có một file sai?</summary>
+
+Chưa chắc. So nguồn, thời điểm dữ liệu và điều kiện lọc trước. Báo cáo chốt trước ngày chuyển phòng có thể khác danh sách hiện tại mà vẫn đúng theo mốc thời gian của nó.
 
 </details>

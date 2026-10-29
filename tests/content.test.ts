@@ -329,7 +329,8 @@ describe('fixes from the final review', () => {
   it('1.1 makes no promise the database cannot keep, and separates valid from correct (review of 2026-10-19)', () => {
     const b = body('1-1-database-la-gi');
     for (const s of ['một bản duy nhất', 'không thể có chuyện', 'Excel để bạn gõ gì cũng được', 'từ chối ngay lúc nhập', 'luật cho từng cột']) expect(b, s).not.toContain(s);
-    for (const s of ['Hợp lệ chưa chắc đã đúng', 'Data Validation', 'không phải ô chọn trên màn hình']) expect(b, s).toContain(s);
+    expect(b).toMatch(/hợp lệ chưa chắc đã đúng/i);
+    for (const s of ['Data Validation', 'không phải ô chọn trên màn hình']) expect(b, s).toContain(s);
   });
   it('1.4 says a foreign key is a rule checked on write, not a dropdown', () => {
     expect(body('1-4-khoa-chinh-khoa-ngoai')).toContain('không phải ô chọn trên màn hình');
