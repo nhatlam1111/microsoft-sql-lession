@@ -24,8 +24,8 @@ it('reports every rule violation', () => {
 });
 it('accepts the expected catalog shape', () => expect(validateCatalog(fakeCatalog())).toEqual([]));
 it('finds neighbours across levels', () => {
-  const n = neighbors(fakeCatalog(), '1.6');
-  expect([n.prev?.num, n.next?.num]).toEqual(['1.5', '2.1']);
+  const n = neighbors(fakeCatalog(), '1.5');
+  expect([n.prev?.num, n.next?.num]).toEqual(['1.4', '2.1']);
   expect(neighbors(fakeCatalog(), '1.1').prev).toBeUndefined();
 });
 

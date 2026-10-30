@@ -95,8 +95,8 @@ Các nhân vật là giả định, không phải hồ sơ trong bộ mẫu.
 
 | Nhân vật | Là ai | Xuất hiện |
 |---|---|---|
-| Chị Hạnh · Phòng Nhân sự | Người đưa yêu cầu trong mọi bài có tình huống; xưng "chị", gọi người học là "em" | 1.6, 2.1–2.9, 3.1–3.10, 4.1–4.6 |
-| Người học ("em", "bạn") | Người đọc và lấy dữ liệu từ hệ thống nhân sự cho chị Hạnh; có mã truy cập web hoặc tài khoản SSMS | từ bài 1.6 |
+| Chị Hạnh · Phòng Nhân sự | Người đưa yêu cầu trong mọi bài có tình huống; xưng "chị", gọi người học là "em" | 2.1–2.9, 3.1–3.10, 4.1–4.6 |
+| Người học ("em", "bạn") | Người đọc và lấy dữ liệu từ hệ thống nhân sự cho chị Hạnh; có mã truy cập web hoặc tài khoản SSMS | từ bài 2.1 |
 | Bên IT | Quản trị hệ thống, cấp tên máy chủ và tài khoản, nhập file vào hệ thống, xóa dữ liệu theo yêu cầu | nhắc tới khi cần |
 | Kế toán | Người nhận các danh sách và bảng lương | 2.1 |
 
@@ -118,7 +118,6 @@ Các lỗi này có chủ ý, dành cho bài 4.6 và 4.7; bài khác không đư
 
 | Bài | Sự việc |
 |---|---|
-| 1.6 | Chị Hạnh làm mẫu hồ sơ nhân viên mới, cần biết bảng nhân viên lưu những gì. |
 | 2.1 | Kế toán cần danh sách toàn bộ 48 hồ sơ, ba cột có tiêu đề tiếng Việt. |
 | 2.2 | Chị Hạnh đối chiếu 14 hồ sơ mang mã phòng KD, kể cả người đã nghỉ. |
 | 2.3 | Chị Hạnh lấy hồ sơ hiện mang mã phòng KD hoặc IT, vào làm từ 01/01/2023 đến hết 30/06/2023, không loại người đã nghỉ nếu có. Theo script mẫu, NV003 và NV043 đạt điều kiện; đây không phải phòng tại thời điểm vào làm. |

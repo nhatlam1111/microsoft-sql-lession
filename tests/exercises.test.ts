@@ -23,11 +23,12 @@ it('ships 3 exercises for 3.5 and 2 data-change exercises for 6.5', () => {
   expect(byLesson['6-5-update-quen-where'].map(e => [e.id, e.kind])).toEqual([['6-5-1', 'change'], ['6-5-2', 'change']]);
 });
 
-it('ships 3 SELECT * exercises for 1.6, with no order, filter or TOP', () => {
+it('ships 4 exercises for 2.1, the first a whole table with no order, filter or TOP', () => {
   const byLesson = Object.fromEntries(readExerciseFiles().map(f => [f.lesson, f.exercises]));
-  const l16 = byLesson['1-6-cau-select-dau-tien'];
-  expect(l16.map(e => [e.id, e.kind])).toEqual([['1-6-1', 'query'], ['1-6-2', 'query'], ['1-6-3', 'query']]);
-  for (const e of l16) {
+  const l21 = byLesson['2-1-chon-cot-dat-ten-cot'];
+  expect(l21.map(e => [e.id, e.kind])).toEqual([['2-1-1', 'query'], ['2-1-2', 'query'], ['2-1-3', 'query'], ['2-1-4', 'query']]);
+  expect(l21[0].answer.trim()).toBe('SELECT * FROM HopDong;');
+  for (const e of l21) {
     expect(e.ordered, e.id).toBe(false);
     expect(/\b(TOP|WHERE|ORDER\s+BY)\b/i.test(e.answer), e.id).toBe(false);
   }
@@ -36,7 +37,7 @@ it('ships 3 SELECT * exercises for 1.6, with no order, filter or TOP', () => {
 it('public exercises carry no answer or check query', () => {
   const pub = publicExercises(readExerciseFiles()[0]);
   expect(pub.every(e => !('answer' in e) && !('check' in e))).toBe(true);
-  expect(pub.map(e => e.n)).toEqual([1, 2, 3]);
+  expect(pub.map(e => e.n)).toEqual([1, 2, 3, 4]);
 });
 
 it('reports broken exercise files', () => {

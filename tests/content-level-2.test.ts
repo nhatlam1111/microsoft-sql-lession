@@ -32,13 +32,13 @@ describe('fixes from the independent reviews of 2026-10-20', () => {
     ['sau khi lọc MaPB = KD"', "WHERE MaPB = N'Kinh doanh'", 'SQL không tự suy ra yêu cầu đó từ tên phòng', 'WHERE giữ TRUE; FALSE',
       'Số dòng nhảy cóc vì', 'tương ứng mục **(Blanks)**']));
 
-  it('2.1 exercise 3 cannot be passed by a query printed in the lesson', () => {
+  it('2.1 exercise 4 cannot be passed by a query printed in the lesson', () => {
     const ex = exercises('2-1-chon-cot-dat-ten-cot');
-    const third = ex.find(e => e.id === '2-1-3')!;
-    expect(third.answer).toContain('ChucDanh');
-    expect(third.columns).toEqual(['Chức danh', 'Mã chức danh']);
-    expect(third.prompt).not.toContain('hiện chưa kiểm tra');
-    expect(ex.find(e => e.id === '2-1-1')!.prompt).toContain('thiếu email');
+    const fourth = ex.find(e => e.id === '2-1-4')!;
+    expect(fourth.answer).toContain('ChucDanh');
+    expect(fourth.columns).toEqual(['Chức danh', 'Mã chức danh']);
+    expect(fourth.prompt).not.toContain('hiện chưa kiểm tra');
+    expect(ex.find(e => e.id === '2-1-2')!.prompt).toContain('thiếu email');
     const lesson = readLessonFiles().find(f => f.slug === '2-1-chon-cot-dat-ten-cot')!.body;
     expect(lesson).not.toContain('FROM ChucDanh;');
   });

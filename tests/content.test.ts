@@ -19,13 +19,13 @@ describe('lesson files', () => {
   it('every frontmatter passes the schema', () => {
     for (const f of files) expect(lessonSchema.safeParse(f.data).success, f.slug).toBe(true);
   });
-  it('matches the 51 lessons of the design (num, area, kind)', () => {
+  it('matches the 50 lessons of the design (num, area, kind)', () => {
     expect(readCatalog().map(e => `${e.num} ${e.area}${e.kind === 'full' ? ' full' : ''}`)).toEqual(EXPECTED);
   });
   it('passes the catalog rules', () => expect(validateCatalog(readCatalog())).toEqual([]));
-  it('has 7, 7, 3, 6, 9, 6, 6, 7 lessons in areas A1..A8', () => {
+  it('has 7, 6, 3, 6, 9, 6, 6, 7 lessons in areas A1..A8', () => {
     const count = (a: string) => readCatalog().filter(e => e.area === a).length;
-    expect(['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8'].map(count)).toEqual([7, 7, 3, 6, 9, 6, 6, 7]);
+    expect(['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8'].map(count)).toEqual([7, 6, 3, 6, 9, 6, 6, 7]);
   });
   it('uses exactly the section headings of its kind, in order', () => {
     for (const f of files) {
@@ -163,7 +163,7 @@ describe('foundation lessons have no scenario and stay short (2026-10-30)', () =
   });
   it('1.1 separates the four names and says where practice starts', () => {
     const main = lessonMainSection(readLessonFiles().find(f => f.slug === '1-1-database-la-gi')!.body);
-    for (const s of ['**Database**', '**SQL Server**', '**SQL**', '**SSMS**', '**luật dữ liệu**', 'gioi-thieu/#chon-noi-thuc-hanh', 'bài 1.6']) {
+    for (const s of ['**Database**', '**SQL Server**', '**SQL**', '**SSMS**', '**luật dữ liệu**', 'gioi-thieu/#chon-noi-thuc-hanh', 'bài 2.1']) {
       expect(main, s).toContain(s);
     }
     expect(main).not.toMatch(/<(Sql|Result|RunFlow)\b/);
@@ -177,8 +177,8 @@ describe('foundation lessons have no scenario and stay short (2026-10-30)', () =
     const fromPage = [...page.matchAll(/href="#([a-z-]+)"/g)].map(m => m[1]);
     for (const id of [...fromElsewhere, ...fromPage]) expect(page, id).toContain(`id="${id}"`);
   });
-  it('explains result row numbers in 1.6 without pointing to the removed preview', () => {
-    const next = readLessonFiles().find(f => f.slug === '1-6-cau-select-dau-tien')!.body;
+  it('explains result row numbers in 2.1 without pointing to the removed preview', () => {
+    const next = readLessonFiles().find(f => f.slug === '2-1-chon-cot-dat-ten-cot')!.body;
     expect(next).not.toContain('bên trái (bài 1.1)');
     expect(next).toContain('số thứ tự dòng của kết quả');
   });
@@ -205,13 +205,11 @@ describe('fixes from the review of lessons 1.2 to 1.6 (2026-10-19)', () => {
   it('1.5 explains fan-out and scopes the department to the value stored now', () => check('1-5-doc-so-do-erd',
     ['phòng ban đang lưu', 'không bắt phòng nào cũng phải có người', 'tối đa một dòng lương', '`NV021` có ba hợp đồng'],
     ['Sheet nào cũng tra theo mã NV', 'Bảng chứa cột này là phía "nhiều"', 'Một người có một dòng lương mỗi kỳ', 'gần như tự viết ra', 'khỏi hỏi lại', 'NV001 có 19 ngày công']));
-  it('1.6 calls the run order logical and does not say a SELECT never writes', () => check('1-6-cau-select-dau-tien',
-    ['SELECT INTO', 'tối đa 10 dòng', 'thứ tự logic', 'không phải 10 dòng đã bị sửa', 'được cấp quyền đọc'],
-    ['không bao giờ làm đổi dữ liệu', 'Đây luôn là việc làm đầu tiên', 'vì dữ liệu đang nằm theo thứ tự mã', 'Đó là những thông tin chị Hạnh cần', 'Chỉ nhìn 10 dòng đầu']));
-  it('the 1.6 exercises name the employee code, not a person', () => {
-    const text = readFileSync(join('src', 'content', 'exercises', '1-6-cau-select-dau-tien.yaml'), 'utf8');
-    // The column list sits in the "Kết quả cần" box of the exercise page, so the prompt no longer spells it out.
-    for (const s of ['người ký', 'người nghỉ']) expect(text).not.toContain(s);
+  it('2.1 calls the run order logical and scopes TOP, and the intro page says a SELECT can still write', () => {
+    check('2-1-chon-cot-dat-ten-cot',
+      ['tối đa', 'thứ tự xử lý logic', 'không phải 5 dòng đã bị sửa', 'được cấp quyền đọc'],
+      ['không bao giờ làm đổi dữ liệu', 'Đây luôn là việc làm đầu tiên', 'vì dữ liệu đang nằm theo thứ tự mã', 'Chỉ nhìn 5 dòng đầu']);
+    expect(readFileSync('src/pages/gioi-thieu.astro', 'utf8')).toContain('SELECT INTO');
   });
   it('every concept lesson ends with at least three self-check questions', () => {
     for (const f of readLessonFiles()) {
@@ -259,7 +257,7 @@ describe('lessons explain why, show data before totals and mark what they point 
     for (const f of readLessonFiles()) {
       if ((f.data as { kind: string }).kind !== 'full') continue;
       const legacy = lessonMainSection(f.body).split(/\r?\n/, 1)[0] === 'Làm bằng SQL';
-      const checkedLegacy = ['1.2', '1.3', '1.4', '1.5', '1.6'].includes((f.data as { num: string }).num);
+      const checkedLegacy = ['1.2', '1.3', '1.4', '1.5'].includes((f.data as { num: string }).num);
       if (legacy && !checkedLegacy) continue;
       const rows = lineMapRows(f.body);
       if (legacy) expect(rows.length, f.slug).toBeGreaterThan(0);
@@ -308,22 +306,21 @@ describe('fixes from the independent reviews of 2026-10-19', () => {
       '`BangLuong.MaNV` → `NhanVien.MaNV`', '`NhanVien.MaPB` → `PhongBan.MaPB`', 'không tự cài/lưu sơ đồ', 'không có đường nối'],
     ['vì câu bắt đầu từ bảng lương', 'Azure SQL Database không có', 'cũng là cả khóa chính', 'nên phải xem thêm', '21 người là Chuyên viên', 'Đây là sơ đồ, cũng là sơ đồ',
       'mỗi thông tin chỉ nằm ở một chỗ', 'được khai báo đủ', 'cặp NV001 và ngày 2026-09-01', 'bài 3.4 và 3.5 sẽ học']));
-  it('1.6 counts records not people, keeps the run advice safe, answers the small whys and closes the scenario without personal data', () => check('1-6-cau-select-dau-tien',
-    ['48 dòng, mỗi dòng một hồ sơ', 'Bôi đen lại trọn câu', 'mỗi lần chỉ nhận một câu', 'là ghi chú', 'bài 6.1', 'SoCCCD',
-      'đánh lại mỗi lần chạy', 'Copy with Headers', 'Select Top 1000 Rows',
-      'mã phòng ban, mã chức danh', 'có thể toàn là dòng cũ', 'bài 2.2', 'bài 4.6', 'Ô có viền xanh', 'Parse',
-      // Learner review of 2026-10-20: one place per idea, the Count row fixed, the scenario closed.
-      'câu truy vấn (query)', 'Giả định của tình huống', 'chưa cho thấy một người đã nghỉ', 'Chạy (F5)', 'Sơ đồ database'],
-    ['48 người, mỗi người một dòng', 'Bấm vào chỗ trống trong cửa sổ để bỏ bôi đen rồi chạy lại', 'sẽ học ở các bài sau', 'luật của từng cột xem ở Object Explorer',
-      'Nhìn thanh trạng thái đếm số dòng', 'của 10 người là đủ', 'đó là 10 người nào', 'đếm ô có dữ liệu', 'Bài 2.1 sẽ dạy liệt kê', 'câu bắt đầu bằng WITH',
-      'PhongBanCu', 'dừng đọc ngay khi đã đủ 10 dòng']));
-  it('1.6 exercises ask for the whole table without hinting at a filter', () => {
-    const y = readFileSync('src/content/exercises/1-6-cau-select-dau-tien.yaml', 'utf8');
-    for (const s of ['hợp đồng lao động', 'kể cả những ô đang là NULL (để trống)']) expect(y, s).not.toContain(s);
-    for (const s of ['kể cả hợp đồng thử việc', 'mọi loại nghỉ, mọi trạng thái']) expect(y, s).toContain(s);
+  it('2.1 counts records not people, closes the scenario and keeps the first-run advice', () => {
+    check('2-1-chon-cot-dat-ten-cot',
+      ['48 hồ sơ', 'mỗi lần chỉ nhận một câu', 'là ghi chú', 'bài 6.1', 'SoCCCD', 'đánh lại mỗi lần chạy', 'Copy with Headers',
+        'có thể toàn là dòng cũ', 'bài 2.2', 'câu truy vấn (query)', 'Giả định của tình huống', 'Chạy (F5)', 'Sơ đồ database'],
+      ['48 người, mỗi người một dòng', 'sẽ học ở các bài sau', 'của 10 người là đủ', 'đó là 10 người nào', 'PhongBanCu', 'Select Top 1000 Rows']);
+    const page = readFileSync('src/pages/gioi-thieu.astro', 'utf8');
+    for (const s of ['bôi đen', 'Parse']) expect(page, s).toContain(s);
+  });
+  it('2.1 exercise 1 asks for the whole table without hinting at a filter', () => {
+    const y = readFileSync('src/content/exercises/2-1-chon-cot-dat-ten-cot.yaml', 'utf8');
+    for (const s of ['hợp đồng lao động', 'kể cả những ô đang là NULL (để trống)', 'người ký', 'người nghỉ']) expect(y, s).not.toContain(s);
+    expect(y).toContain('kể cả hợp đồng thử việc');
   });
   it('pictures of Excel put real dates on the right', () => {
-    for (const slug of ['1-6-cau-select-dau-tien']) {
+    for (const slug of ['2-1-chon-cot-dat-ten-cot']) {
       expect(readLessonFiles().find(f => f.slug === slug)!.body, slug).toMatch(/<Excel[^>]*numeric=\{/);
     }
   });
@@ -343,8 +340,20 @@ describe('fixes from the final review', () => {
   it('the intro page says what to do when the sleeping course database refuses the first connection', () => {
     expect(readFileSync('src/pages/gioi-thieu.astro', 'utf8')).toContain('40613');
   });
-  it('1.6 warns that the Edit Top 200 Rows grid writes to the shared table', () => {
-    expect(body('1-6-cau-select-dau-tien')).toContain('Edit Top 200 Rows');
+  it('the first SQL lesson is one story that web and SSMS users can both run', () => {
+    const f = readLessonFiles().find(x => x.slug === '2-1-chon-cot-dat-ten-cot')!;
+    expect((f.data as { minutes: number }).minutes).toBe(22);
+    expect((f.data as { prerequisites: string[] }).prerequisites).toEqual(['1.2', '1.3']);
+    expect(f.body.match(/<Chat\b/g)).toHaveLength(1);
+    expect(f.body.match(/<RunFlow\b/g)).toHaveLength(1);
+    expect(f.body).toContain('SELECT TOP (5) *');
+    for (const s of ['Chạy (F5)', 'gioi-thieu/#ket-noi-ssms', 'gioi-thieu/#chon-noi-thuc-hanh', 'Results', 'Messages', 'số thứ tự dòng của kết quả']) expect(f.body, s).toContain(s);
+    // Exercise 1 asks for this table, so printing the query would hand out the answer.
+    expect(f.body).not.toContain('FROM HopDong');
+  });
+  it('no lesson or page points to the removed lesson 1.6', () => {
+    const sources = [...readLessonFiles().map(f => f.body), readFileSync('src/pages/gioi-thieu.astro', 'utf8'), readFileSync('docs/ho-so-cong-ty.md', 'utf8')];
+    for (const s of sources) expect(s).not.toMatch(/bài 1\.6|1-6-cau-select/);
   });
   it('the intro page never tells learners to run the script on the shared course database', () => {
     const page = readFileSync('src/pages/gioi-thieu.astro', 'utf8');

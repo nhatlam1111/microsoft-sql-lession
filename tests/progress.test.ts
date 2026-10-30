@@ -48,7 +48,7 @@ it('ignores lessons that are no longer in the course and counts them', () => {
 });
 it('the demo state matches the mockup', () => {
   const s = P.demoState(NOW);
-  expect(P.countDone(s, ALL_NUMS)).toBe(18);
+  expect(P.countDone(s, ALL_NUMS)).toBe(17);
   expect([P.iconOf(s, '2.8'), P.statusOf(s, '3.5'), P.statusOf(s, '3.7'), s.lastLessonNum]).toEqual(['flag', 'seen', 'seen', '3.5']);
   expect(s.lastActiveAt).toBe(NOW - 14 * 86_400_000);
 });
