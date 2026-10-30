@@ -34,11 +34,11 @@
 
 **Files:** toàn bộ thay đổi đang có.
 
-- [ ] **Step 1: Commit bản hiện tại**
+- [x] **Step 1: Commit bản hiện tại**
 
 `git add -A`, xác nhận có `src/assets/lessons/1-3-database-table.png` và không có `.superpowers/`, commit trên `chore/add-teach-skills`.
 
-- [ ] **Step 2: Tạo nhánh**
+- [x] **Step 2: Tạo nhánh**
 
 Run: `git switch -c feat/level-1-foundation-lessons`
 Expected: đang ở nhánh mới, working tree sạch.
@@ -53,37 +53,37 @@ Expected: đang ở nhánh mới, working tree sạch.
 **Interfaces:**
 - Produces: `noScenario?: boolean` trong `lessonSchema`; `sectionHeadings(kind, noExercises = false, mainSectionTitle?, noScenario = false): string[]`; `lessonMainSection(body)` trả `sections[0]` khi bài không mở bằng `Tình huống` hoặc `Nội dung chính`.
 
-- [ ] **Step 1: Viết test trước**
+- [x] **Step 1: Viết test trước**
 
 Trong `tests/content.test.ts`, thêm `describe('foundation lessons have no scenario and stay short (2026-10-30)')` chạy trên mọi bài có `noScenario`: không có `## Tình huống`, `<Chat`, `<Key`; tổng `proseParagraphs` không quá 800; ít nhất ba `<details>`; `minutes` là 7. Thêm test bài 1.1 có `noScenario` và nhắc đủ `database`, `SQL Server`, `SQL`, `SSMS`, `luật dữ liệu`, `hợp lệ chưa chắc đã đúng`, link `gioi-thieu/#chon-noi-thuc-hanh`. Thêm test `lessonMainSection` cho bài không tình huống và bài tóm tắt. Test `uses exactly the section headings` đọc `noScenario` để lấy đúng tiêu đề phần chính.
 
-- [ ] **Step 2: Chạy test, xác nhận hỏng**
+- [x] **Step 2: Chạy test, xác nhận hỏng**
 
 Run: `npx vitest run tests/content.test.ts`
 Expected: test mới FAIL vì chưa có bài `noScenario`.
 
-- [ ] **Step 3: Sửa schema và helper**
+- [x] **Step 3: Sửa schema và helper**
 
 Theo Interfaces ở trên.
 
-- [ ] **Step 4: Viết bài 1.1 mới và gắn đích link**
+- [x] **Step 4: Viết bài 1.1 mới và gắn đích link**
 
 Theo mục Khung bài nền và Nội dung từng bài trong spec. `gioi-thieu.astro` thêm `id="chon-noi-thuc-hanh"` cho mục cùng tên.
 
-- [ ] **Step 5: Bỏ test của bản 1.1 cũ, giữ ý còn dùng**
+- [x] **Step 5: Bỏ test của bản 1.1 cũ, giữ ý còn dùng**
 
 Bỏ `lesson 1.1 follows one story…`, phần `answers the opening request…`, kiểm `<Excel` của 1.1. Sửa `1.1 scopes the data rules…` còn `Khi luật đang bật`, `hợp lệ chưa chắc đã đúng`, `T-SQL`. Giữ `1.1 makes no promise…`. Giữ test 1.6 về số thứ tự dòng.
 
-- [ ] **Step 6: Cập nhật tài liệu**
+- [x] **Step 6: Cập nhật tài liệu**
 
 `quy-uoc.md`, `lesson-template.md` thêm dạng bài nền, đổi hai bài mẫu; `AGENTS.md`, `CLAUDE.md` theo đó; `tests/docs.test.ts` kiểm template nhắc cả `1-1-database-la-gi.mdx` và `2-2-where-loc-nhu-autofilter.mdx`; `ho-so-cong-ty.md` bỏ dòng 1.1, Quân, chị Thảo, `NV052`, sửa "Xuất hiện".
 
-- [ ] **Step 7: Chạy lại toàn bộ kiểm tra**
+- [x] **Step 7: Chạy lại toàn bộ kiểm tra**
 
 Run: `npm test`, `npm run check`, `npm run build`, `npm run check:dist`
 Expected: đạt hết.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 Commit trên nhánh mới.
 
@@ -91,9 +91,9 @@ Commit trên nhánh mới.
 
 **Files:** report ở `docs/reviews/2026-10-30-lesson-1-1-bai-nen/`.
 
-- [ ] **Step 1: Xem bản build** ở 1280px và 1024px.
-- [ ] **Step 2: Giao reviewer mới** (Sonnet, effort high) theo mục 4.5; đọc report, xử lý theo mục 4.6, ghi `verification.md`.
-- [ ] **Step 3: Commit, dừng lại** chờ người làm khóa học chốt giọng văn.
+- [x] **Step 1: Xem bản build** ở 1280px và 1024px.
+- [x] **Step 2: Giao reviewer mới** (Sonnet, effort high) theo mục 4.5; đọc report, xử lý theo mục 4.6, ghi `verification.md`.
+- [x] **Step 3: Commit, dừng lại** chờ người làm khóa học chốt giọng văn.
 
 ## Đợt 2
 

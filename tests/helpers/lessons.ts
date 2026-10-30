@@ -64,7 +64,7 @@ export function proseParagraphs(body: string): { text: string; words: number }[]
       if (/^<[A-Z]/.test(line) && !line.endsWith('>')) inComponent = true;
       continue;
     }
-    if (!line || /^(#|\||```|---)/.test(line)) { flush(); continue; }
+    if (!line || /^(#|\||```|---|import\s)/.test(line)) { flush(); continue; }
     if (/^(\d+\.|-)\s/.test(line)) flush();
     cur.push(line);
   }

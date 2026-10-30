@@ -283,7 +283,7 @@ describe('fixes from the independent reviews of 2026-10-19', () => {
     for (const s of present) expect(text, `${slug} lacks: ${s}`).toContain(s);
   };
   it('1.1 scopes the data rules without teaching the names of the keys', () => check('1-1-database-la-gi',
-    ['Khi luật đang bật', 'hợp lệ chưa chắc đã đúng', 'T-SQL'],
+    ['Khi luật đang bật', 'hợp lệ chưa chắc đã đúng', 'máy chủ'],
     ['Mỗi khi có thao tác ghi dữ liệu', 'mỗi người một mã', '(ba dòng, lấy từ bộ dữ liệu mẫu)', 'kiểm quan hệ dữ liệu mỗi khi ghi', 'file xuất tĩnh', 'cột chưa chuẩn hóa']));
   it('1.2 preserves the connection workflow and safe practice on the shared and local databases', () => check('1-2-sql-server-ssms-hrm-demo',
     ['chỉ chạy trên Windows', '1433', 'Disconnect', '**User Name**', '**Encrypt**', 'Connection Properties', 'Connect to database',
@@ -460,5 +460,6 @@ describe('lessons stay short (docs/quy-uoc.md, section 1)', () => {
   it('counts paragraphs outside components only', () => {
     const body = ['Một hai ba.', '', '<LineMap rows={[', "  ['a', 'b c d'],", ']} />', '', '1. **Lỗi.** Bốn năm.', '2. Sáu.', '', '| a | b |'].join('\n');
     expect(proseParagraphs(body).map(p => p.words)).toEqual([3, 3, 1]);
+    expect(proseParagraphs("import a from 'b';\n\nMột hai.").map(p => p.words)).toEqual([2]);
   });
 });

@@ -23,25 +23,23 @@ import sqlLanguageConcept from '../../assets/lessons/1-1-sql-language.png';
 
 Nếu đã quen Excel, bạn biết một **workbook** (file Excel) có nhiều **sheet** (trang tính). Khi mỗi phòng giữ một bản sao, hồ sơ được sửa ở bản này có thể chưa kịp sửa ở bản kia. Vì vậy, dữ liệu dùng cho cả công ty thường được đưa vào một nguồn chung.
 
-### Database lưu dữ liệu
-
-**Database** (cơ sở dữ liệu) là tập dữ liệu có cấu trúc, được phần mềm quản lý để nhiều người dùng theo quyền. Bạn có thể hình dung database giống một workbook, còn mỗi **bảng** trong đó giống một sheet. Điểm khác là các bên cùng đọc một nguồn thay vì mỗi bên giữ một bản riêng, nên thay đổi đã cập nhật vào nguồn thì mọi người đều thấy.
+**Database** (cơ sở dữ liệu) là tập dữ liệu có cấu trúc, được phần mềm quản lý để nhiều người cùng dùng, mỗi người theo quyền được cấp. Có thể hình dung database giống một workbook, mỗi **bảng** giống một sheet. Các bên cùng đọc một nguồn nên thay đổi đã cập nhật thì ai có quyền đọc đều thấy. Một workbook đặt ở nơi dùng chung cũng làm được phần này; database còn cấp quyền tới từng bảng và kiểm dữ liệu theo luật đã khai báo.
 
 <figure class="lesson-illustration">
   <Image src={databaseConcept} alt="Minh họa database bằng một khối dữ liệu và nhiều bảng có dòng, cột được sắp xếp cùng nhau." width={720} widths={[360, 720]} sizes="(max-width: 560px) 360px, 335px" format="webp" loading="lazy" />
   <figcaption><strong>Database — dữ liệu được lưu</strong>Hình khái niệm: một database gồm nhiều bảng dữ liệu.</figcaption>
 </figure>
 
-### SQL Server quản lý, SQL dùng để hỏi dữ liệu
+### SQL Server quản lý, SQL gửi yêu cầu
 
-Database không được mở như mở một file mà đi qua phần mềm quản lý. **SQL Server** là phần mềm của Microsoft quản lý việc lưu trữ, đọc và cập nhật database.
+Người dùng không mở database như mở một file; mọi yêu cầu đi qua phần mềm quản lý để kiểm quyền và xử lý. **SQL Server** là phần mềm của Microsoft quản lý việc lưu trữ, đọc và cập nhật database. Nó thường chạy trên **máy chủ**, hệ thống cung cấp dữ liệu qua mạng do IT quản lý.
 
 <figure class="lesson-illustration">
   <Image src={sqlServerConcept} alt="Minh họa SQL Server là phần mềm: một khung ứng dụng quản lý các database, có biểu tượng thiết lập và bảng dữ liệu." width={720} widths={[360, 720]} sizes="(max-width: 560px) 360px, 335px" format="webp" loading="lazy" />
-  <figcaption><strong>SQL Server — phần mềm quản lý</strong>Khung phần mềm và biểu tượng thiết lập minh họa việc quản lý các database; đây là hình khái niệm, không phải màn hình thật.</figcaption>
+  <figcaption><strong>SQL Server — phần mềm quản lý</strong>SQL Server chạy nền trên máy chủ, không phải cửa sổ bạn mở; khung trong hình chỉ minh họa việc quản lý các database.</figcaption>
 </figure>
 
-Muốn lấy dữ liệu, bạn gửi yêu cầu bằng **SQL**: ngôn ngữ để hỏi và thao tác với dữ liệu. SQL Server xử lý yêu cầu đó rồi trả kết quả. SQL Server dùng **T-SQL (Transact-SQL)**, cách viết SQL của Microsoft.
+Muốn lấy dữ liệu, bạn gửi yêu cầu bằng **SQL**: ngôn ngữ để đọc và thay đổi dữ liệu. SQL Server xử lý yêu cầu đó rồi trả kết quả.
 
 <figure class="lesson-illustration">
   <Image src={sqlLanguageConcept} alt="Minh họa SQL bằng một yêu cầu được gửi tới hệ thống để lấy kết quả dạng bảng từ dữ liệu đang lưu." width={720} widths={[360, 720]} sizes="(max-width: 560px) 360px, 335px" format="webp" loading="lazy" />
@@ -52,22 +50,21 @@ Muốn lấy dữ liệu, bạn gửi yêu cầu bằng **SQL**: ngôn ngữ đ�
 
 **SSMS** (SQL Server Management Studio) là công cụ cài trên máy Windows để kết nối tới SQL Server, xem các bảng, gửi câu lệnh và đọc kết quả. Dữ liệu nằm ở máy chủ, không nằm trong SSMS, nên đóng SSMS không làm mất dữ liệu. Người không viết SQL thường xem dữ liệu qua màn hình hệ thống hoặc báo cáo.
 
-Bạn bắt đầu viết câu lệnh từ bài 1.6, trên web hoặc trong SSMS; chọn nơi thực hành ở [trang Giới thiệu](/microsoft-sql-lession/gioi-thieu/#chon-noi-thuc-hanh).
+Bạn bắt đầu viết câu lệnh từ bài 1.6, trên trang bài tập của khóa học hoặc trong SSMS; chọn nơi thực hành ở [trang Giới thiệu](/microsoft-sql-lession/gioi-thieu/#chon-noi-thuc-hanh).
 
 ### Nguồn chung vẫn cần kiểm tra
 
-Người thiết kế database có thể khai báo **luật dữ liệu**, như cột ngày chỉ nhận ngày, mã nhân viên không được trùng, mã phòng phải có trong danh mục. Khi luật đang bật, SQL Server từ chối dữ liệu vi phạm khi thêm hoặc sửa theo cách thông thường. Excel cũng có Data Validation để giới hạn dữ liệu nhập, nhưng phải thiết lập trong từng file.
+Người thiết kế database có thể khai báo **luật dữ liệu**, như cột ngày chỉ nhận ngày, mã như `NV005` không được trùng, phòng ban phải có trong danh mục phòng. Khi luật đang bật, SQL Server từ chối dữ liệu vi phạm khi thêm hoặc sửa theo cách thông thường. Excel cũng có Data Validation để giới hạn dữ liệu nhập, nhưng phải thiết lập trong từng file.
 
-Luật chỉ kiểm điều đã khai báo, nên **hợp lệ chưa chắc đã đúng**. `Kinh doanh` là phòng có trong danh mục, nên ghi nhầm một nhân viên vào phòng này vẫn lưu được. Database không tự biết ai thuộc phòng nào; người có quyền phải đối chiếu hồ sơ rồi cập nhật.
+Dữ liệu qua được luật là hợp lệ, nhưng **hợp lệ chưa chắc đã đúng**. `Kinh doanh` là phòng có trong danh mục, nên ghi nhầm một nhân viên vào phòng này vẫn lưu được. Database không tự biết ai thuộc phòng nào; người được giao cập nhật phải đối chiếu giấy tờ gốc rồi sửa.
 
-Ở bài này chỉ cần phân biệt database, SQL Server, SQL và SSMS, hiểu nguồn chung giúp gì và giới hạn của luật dữ liệu. Bài sau đi tiếp: bảng, dòng, cột ở bài 1.2, kiểu dữ liệu ở bài 1.3, khóa chính và khóa ngoại ở bài 1.4, các loại ràng buộc khác ở bài 5.2.
+Ở bài này chỉ cần phân biệt bốn tên trên và biết giới hạn của luật dữ liệu. Bài sau đi tiếp: bảng, dòng, cột ở bài 1.2, kiểu dữ liệu ở bài 1.3, khóa chính và khóa ngoại ở bài 1.4, các loại luật khác ở bài 5.2.
 
 ## Hay nhầm ở đâu
 
 <Mistakes>
 
-1. **Nghĩ database chỉ là Excel to hơn.** Chỉ tăng dung lượng file không giải quyết việc mỗi người sửa một bản.
-2. **Sửa file xuất rồi coi như đã sửa nguồn.** Danh sách xuất sang Excel chỉ phản ánh dữ liệu lúc lấy; sửa trong file không đổi dữ liệu ở nguồn.
+1. **Sửa file xuất rồi coi như đã sửa nguồn.** Danh sách xuất sang Excel chỉ phản ánh dữ liệu lúc lấy; sửa trong file không đổi dữ liệu ở nguồn.
 
 </Mistakes>
 
@@ -76,40 +73,38 @@ Luật chỉ kiểm điều đã khai báo, nên **hợp lệ chưa chắc đã 
 <Apply>
 
 - **Nói đúng tên khi trao đổi với IT:** phân biệt database, SQL Server và SSMS khi xin quyền truy cập hoặc báo lỗi kết nối.
-- **Chọn đúng nơi lấy dữ liệu:** lấy số liệu từ nguồn chung thay vì so các file đang gửi qua lại.
+- **Kiểm số liệu đúng nơi:** lấy dữ liệu từ nguồn chung thay vì so các file gửi qua lại; số nào bất thường thì đối chiếu giấy tờ gốc.
 
 </Apply>
 
 ## Ghi nhớ
 
-**Database** lưu dữ liệu; **SQL Server** quản lý database; **SQL** là ngôn ngữ để hỏi dữ liệu; **SSMS** là công cụ để kết nối và gửi câu lệnh.
+**SSMS** gửi câu **SQL** tới **SQL Server**; SQL Server xử lý trên **database** rồi trả kết quả. Luật dữ liệu chặn dữ liệu vi phạm, nhưng **hợp lệ chưa chắc đã đúng**.
 
 <Memo rows={[
   ['Workbook có nhiều sheet', 'Database có nhiều bảng'],
-  ['Mỗi bên giữ một bản', 'Các bên cùng đọc một nguồn'],
+  ['Mỗi phòng giữ một bản sao', 'Các phòng cùng đọc một database'],
 ]} />
-
-**Hợp lệ chưa chắc đã đúng.**
 
 **Tự kiểm tra trước khi bấm "Đã học xong":**
 
 <details>
 <summary>Database, SQL Server, SQL và SSMS khác nhau thế nào?</summary>
 
-Database là tập dữ liệu có cấu trúc; SQL Server là phần mềm quản lý database; SQL là ngôn ngữ để hỏi và thao tác với dữ liệu; SSMS là công cụ để kết nối và gửi câu lệnh.
+Database lưu dữ liệu; SQL Server là phần mềm quản lý database; SQL là ngôn ngữ để đọc và thay đổi dữ liệu; SSMS là công cụ gửi câu SQL tới SQL Server và nhận kết quả.
 
 </details>
 
 <details>
 <summary>Nguồn chung giúp giảm lệch giữa các phòng như thế nào?</summary>
 
-Các bên cùng đọc một nguồn và thay đổi được cập nhật ở một nơi, nên giảm việc sót sửa trên các bản riêng. Nguồn vẫn phải được cập nhật đúng hồ sơ.
+Các bên cùng đọc một nguồn và thay đổi được cập nhật ở một nơi, nên giảm việc sót sửa trên các bản riêng.
 
 </details>
 
 <details>
 <summary>Một nhân viên bị ghi nhầm vào phòng có trong danh mục. Database có tự phát hiện không?</summary>
 
-Không. Giá trị đó hợp lệ nên luật không chặn. Người có quyền phải đối chiếu hồ sơ rồi cập nhật.
+Không, nếu luật chỉ kiểm phòng có trong danh mục. Giá trị đó hợp lệ nên vẫn lưu được.
 
 </details>

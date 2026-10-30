@@ -1,6 +1,6 @@
 # Level 1: chuyển 1.1–1.5 thành năm bài nền ngắn
 
-Trạng thái: thiết kế chờ người làm khóa học duyệt, ngày 30/10/2026. Tài liệu này thay các quyết định về cấu trúc và độ sâu của bài 1.1–1.5 ở mọi spec trước, gồm [bài 1.1 một câu chuyện](2026-10-30-lesson-1-1-one-story-design.md) và [bài 1.3 sắp xếp lại](2026-10-30-lesson-1-3-reorder-design.md).
+Trạng thái: người làm khóa học đã duyệt ngày 30/10/2026; đợt 1 đã xong và đang chờ chốt giọng văn, xem mục Kết quả. Tài liệu này thay các quyết định về cấu trúc và độ sâu của bài 1.1–1.5 ở mọi spec trước, gồm [bài 1.1 một câu chuyện](2026-10-30-lesson-1-1-one-story-design.md) và [bài 1.3 sắp xếp lại](2026-10-30-lesson-1-3-reorder-design.md).
 
 ## Vì sao làm
 
@@ -121,3 +121,7 @@ Dùng lại các component `Ssms`, `Sql`, `Result` bằng import trong trang; CS
 - Thứ tự mục trong trang Giới thiệu.
 - Đổi tên file ảnh `1-3-database-table.png` hay giữ.
 - Hình thức ghi hồ sơ review cho từng đợt, miễn đủ theo mục 4.6.
+
+## Kết quả
+
+**Đợt 1:** mốc `44b2ae6` trên `chore/add-teach-skills`; nhánh `feat/level-1-foundation-lessons` có cờ `noScenario`, bài 1.1 mới dài 698 từ, quy ước và khung bài đã có dạng bài nền. Khác thiết kế ở một điểm: review cho thấy T-SQL không được bài nào khác dùng ngoài bài 1.2 cũ nên đã cắt khỏi 1.1. Bài có một ý Hay nhầm, nằm trong khung 1–2 ý. [Ma trận xử lý review](../../reviews/2026-10-30-lesson-1-1-bai-nen/verification.md).
