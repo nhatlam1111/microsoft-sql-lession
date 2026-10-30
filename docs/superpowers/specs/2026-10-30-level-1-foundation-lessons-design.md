@@ -1,6 +1,6 @@
 # Level 1: chuyển 1.1–1.5 thành năm bài nền ngắn
 
-Trạng thái: người làm khóa học đã duyệt ngày 30/10/2026; đợt 1 đã xong và đang chờ chốt giọng văn, xem mục Kết quả. Tài liệu này thay các quyết định về cấu trúc và độ sâu của bài 1.1–1.5 ở mọi spec trước, gồm [bài 1.1 một câu chuyện](2026-10-30-lesson-1-1-one-story-design.md) và [bài 1.3 sắp xếp lại](2026-10-30-lesson-1-3-reorder-design.md).
+Trạng thái: người làm khóa học đã duyệt ngày 30/10/2026; đã triển khai cả hai đợt trên nhánh, chưa push, xem mục Kết quả. Tài liệu này thay các quyết định về cấu trúc và độ sâu của bài 1.1–1.5 ở mọi spec trước, gồm [bài 1.1 một câu chuyện](2026-10-30-lesson-1-1-one-story-design.md) và [bài 1.3 sắp xếp lại](2026-10-30-lesson-1-3-reorder-design.md).
 
 ## Vì sao làm
 
@@ -54,7 +54,7 @@ Link cũ của bài 1.2 và 1.3 sẽ không còn; người làm khóa học đã
 
 **1.1 Database là gì và SSMS dùng để làm gì.** Từ workbook gửi qua email đến một nguồn chung. **Database** là gì, SQL Server là phần mềm quản lý nó, SQL (T-SQL) là ngôn ngữ để hỏi dữ liệu, **SSMS** là công cụ cài trên máy để kết nối và gửi câu lệnh; đóng SSMS không làm mất dữ liệu. Giữ ba ảnh khái niệm hiện có. Nêu ý chính về luật dữ liệu: người thiết kế khai báo, SQL Server từ chối dữ liệu vi phạm khi thêm hoặc sửa theo cách thông thường, hợp lệ chưa chắc đã đúng. Trỏ sang trang Giới thiệu để chọn nơi thực hành và sang bài 1.6 là nơi bắt đầu viết SQL.
 
-**1.2 Bảng, dòng và cột.** Theo bản B: bảng giống sheet có cột cố định, dòng là một hồ sơ, còn gọi là bản ghi, cột là một loại thông tin; khác sheet ở chỗ không có ô gộp hay dòng tổng xen giữa. Dùng ảnh `1-3-database-table.png`, nhớ nói hình chỉ trích ba trong 12 cột.
+**1.2 Bảng, dòng và cột.** Theo bản B: bảng giống sheet có cột cố định, dòng là một hồ sơ, còn gọi là bản ghi, cột là một loại thông tin; khác sheet ở chỗ không có ô gộp hay dòng tổng xen giữa. Dùng ảnh `1-2-database-table.png`, nhớ nói hình chỉ trích ba cột và ba dòng.
 
 **1.3 Kiểu dữ liệu.** Excel để từng ô tự mang kiểu, database khai báo kiểu cho cả cột, vì vậy so sánh, sắp xếp và tính toán mới đúng. Đọc kiểu và `NULL` ở **Object Explorer → bảng → Columns**, giải nghĩa Object Explorer ngay tại chỗ. Bảng bốn kiểu `varchar`, `nvarchar`, `date`, `decimal(p,s)`. Giữ ở dạng ngắn vì bài sau trỏ về:
 
@@ -125,3 +125,12 @@ Dùng lại các component `Ssms`, `Sql`, `Result` bằng import trong trang; CS
 ## Kết quả
 
 **Đợt 1:** mốc `44b2ae6` trên `chore/add-teach-skills`; nhánh `feat/level-1-foundation-lessons` có cờ `noScenario`, bài 1.1 mới dài 698 từ, quy ước và khung bài đã có dạng bài nền. Khác thiết kế ở một điểm: review cho thấy T-SQL không được bài nào khác dùng ngoài bài 1.2 cũ nên đã cắt khỏi 1.1. Bài có một ý Hay nhầm, nằm trong khung 1–2 ý. [Ma trận xử lý review](../../reviews/2026-10-30-lesson-1-1-bai-nen/verification.md).
+
+**Đợt 2:** người làm khóa học duyệt giọng văn bài 1.1; đã viết 1.2–1.5, chuyển hướng dẫn thực hành sang trang Giới thiệu, sửa lời trỏ, tài liệu và test. Bốn bài dài 561–697 từ. Bản cuối đạt 323/323 test, check 0 lỗi, build 132 trang, `check:dist` 1997 liên kết; các giá trị trong bài đã đối chiếu với database bằng `SELECT`. [Hồ sơ review từng bài](../../reviews/2026-10-30-bai-nen-dot-2/verification.md), [review tích hợp](../../reviews/2026-10-30-bai-nen-tich-hop/verification.md).
+
+Khác thiết kế ở các điểm sau:
+
+- Trang Giới thiệu có ba lối thực hành, thêm lối cho người có tài khoản SSMS; `ExerciseWorkspace.tsx` link tới `#tao-ban-rieng`.
+- `N'…'` đặt ngay sau bảng kiểu ở bài 1.3, không nằm trong Hay nhầm, để giữ 1–2 ý Hay nhầm.
+- Bài 1.3 có ví dụ `01/02/2024` thành `2024-01-02` nhưng không dùng tên `DATEFORMAT`; bài 1.5 bỏ tên thực thể.
+- `README.md` cũng được sửa vì còn mô tả khung cũ; ảnh đổi tên thành `1-2-database-table.png`.

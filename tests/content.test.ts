@@ -155,7 +155,7 @@ describe('foundation lessons have no scenario and stay short (2026-10-30)', () =
   });
   it('have no scenario, enough self-checks and the agreed length', () => {
     for (const f of foundation()) {
-      expect(f.body, f.slug).not.toMatch(/^## Tình huống|<Chat\b|<Key\b/m);
+      expect(f.body, f.slug).not.toMatch(/^## Tình huống|<Chat\b|<Key\b|chị Hạnh|chị Thảo|\bQuân\b/m);
       expect((f.body.match(/<details>/g) ?? []).length, f.slug).toBeGreaterThanOrEqual(3);
       expect((f.data as { minutes: number }).minutes, f.slug).toBe(7);
       expect(proseParagraphs(f.body).reduce((sum, p) => sum + p.words, 0), f.slug).toBeLessThanOrEqual(800);
@@ -167,9 +167,15 @@ describe('foundation lessons have no scenario and stay short (2026-10-30)', () =
       expect(main, s).toContain(s);
     }
     expect(main).not.toMatch(/<(Sql|Result|RunFlow)\b/);
+    expect(main.slice(0, main.indexOf('Ở bài này chỉ cần'))).not.toMatch(/khóa chính|khóa ngoại|ràng buộc|constraint|câu ghi|NULL/i);
   });
-  it('the intro page holds the target of the practice link', () => {
-    expect(readFileSync('src/pages/gioi-thieu.astro', 'utf8')).toContain('id="chon-noi-thuc-hanh"');
+  it('every link to a section of the intro page has its target', () => {
+    const page = readFileSync('src/pages/gioi-thieu.astro', 'utf8');
+    const sources = [...readLessonFiles().map(f => f.body), readFileSync('src/components/islands/ExerciseWorkspace.tsx', 'utf8')];
+    const fromElsewhere = sources.flatMap(s => [...s.matchAll(/gioi-thieu\/#([a-z-]+)/g)].map(m => m[1]));
+    expect(fromElsewhere.length).toBeGreaterThanOrEqual(4);
+    const fromPage = [...page.matchAll(/href="#([a-z-]+)"/g)].map(m => m[1]);
+    for (const id of [...fromElsewhere, ...fromPage]) expect(page, id).toContain(`id="${id}"`);
   });
   it('explains result row numbers in 1.6 without pointing to the removed preview', () => {
     const next = readLessonFiles().find(f => f.slug === '1-6-cau-select-dau-tien')!.body;
@@ -200,7 +206,7 @@ describe('fixes from the review of lessons 1.2 to 1.6 (2026-10-19)', () => {
     ['phòng ban đang lưu', 'không bắt phòng nào cũng phải có người', 'tối đa một dòng lương', '`NV021` có ba hợp đồng'],
     ['Sheet nào cũng tra theo mã NV', 'Bảng chứa cột này là phía "nhiều"', 'Một người có một dòng lương mỗi kỳ', 'gần như tự viết ra', 'khỏi hỏi lại', 'NV001 có 19 ngày công']));
   it('1.6 calls the run order logical and does not say a SELECT never writes', () => check('1-6-cau-select-dau-tien',
-    ['SELECT INTO', 'tối đa 10 dòng', 'thứ tự logic', 'không phải 10 dòng đã bị sửa'],
+    ['SELECT INTO', 'tối đa 10 dòng', 'thứ tự logic', 'không phải 10 dòng đã bị sửa', 'được cấp quyền đọc'],
     ['không bao giờ làm đổi dữ liệu', 'Đây luôn là việc làm đầu tiên', 'vì dữ liệu đang nằm theo thứ tự mã', 'Đó là những thông tin chị Hạnh cần', 'Chỉ nhìn 10 dòng đầu']));
   it('the 1.6 exercises name the employee code, not a person', () => {
     const text = readFileSync(join('src', 'content', 'exercises', '1-6-cau-select-dau-tien.yaml'), 'utf8');
@@ -278,7 +284,7 @@ describe('fixes from the independent reviews of 2026-10-19', () => {
     for (const s of absent) expect(text, `${slug} still says: ${s}`).not.toContain(s);
     for (const s of present) expect(text, `${slug} lacks: ${s}`).toContain(s);
   };
-  it('1.1 scopes the data rules without teaching the names of the keys', () => check('1-1-database-la-gi',
+  it('1.1 scopes the data rules', () => check('1-1-database-la-gi',
     ['Khi luật đang bật', 'hợp lệ chưa chắc đã đúng', 'máy chủ'],
     ['Mỗi khi có thao tác ghi dữ liệu', 'mỗi người một mã', '(ba dòng, lấy từ bộ dữ liệu mẫu)', 'kiểm quan hệ dữ liệu mỗi khi ghi', 'file xuất tĩnh', 'cột chưa chuẩn hóa']));
   it('the intro page preserves the connection workflow and safe practice on the shared and local databases', () => {

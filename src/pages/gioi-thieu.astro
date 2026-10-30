@@ -17,10 +17,11 @@ import { withBase } from '../lib/paths';
       <p>Khóa học tập trung vào truy vấn và phân tích; trang này có hướng dẫn chuẩn bị nơi thực hành, không đi sâu quản trị máy chủ. Phần cấp cứu dữ liệu ở level cuối dừng ở mức hiểu: biết việc gì phải làm ngay, dữ liệu còn cứu được bằng cách nào và cần báo cho ai.</p>
 
       <h2 id="chon-noi-thuc-hanh">Chọn nơi thực hành</h2>
-      <p>Các bài 1.1–1.5 chỉ đọc hiểu, chưa cần công cụ nào. Bạn bắt đầu viết SQL từ bài 1.6, theo một trong hai lối:</p>
+      <p>Các bài 1.1–1.5 chỉ đọc hiểu, chưa cần công cụ nào. Bạn bắt đầu viết SQL từ bài 1.6, theo một trong ba lối:</p>
       <ul>
         <li><strong>Có mã truy cập:</strong> bấm Làm bài để viết, chạy và nộp SQL ngay trên web, không cần Windows hay SSMS. Mã do người phụ trách hoặc người đã gửi bạn khóa học cung cấp, khác tài khoản SSMS.</li>
-        <li><strong>Chưa có mã:</strong> dùng SQL Server riêng với bộ dữ liệu mẫu theo <a href="#tao-ban-rieng">hướng dẫn tạo bản riêng</a>. Bạn chạy SQL trong SSMS và tự đối chiếu yêu cầu; bản riêng không có chấm tự động.</li>
+        <li><strong>Có tài khoản SSMS của khóa học:</strong> làm theo mục <a href="#ket-noi-ssms">Kết nối bằng SSMS</a>. Cách này cần Windows; tài khoản do người phụ trách cấp.</li>
+        <li><strong>Chưa có mã hay tài khoản:</strong> dùng SQL Server riêng với bộ dữ liệu mẫu theo <a href="#tao-ban-rieng">hướng dẫn tạo bản riêng</a>. Bạn chạy SQL trong SSMS và tự đối chiếu yêu cầu; bản riêng không có chấm tự động.</li>
       </ul>
       <p>Trên trang bài tập, <strong>Chạy (F5)</strong> hiện kết quả; <strong>Nộp bài</strong> còn đối chiếu yêu cầu. Trang nhận mỗi lần một câu lệnh, luôn <strong>hoàn tác</strong> thay đổi sau khi chạy. Cơ chế này chỉ có trên trang bài tập; trong SSMS, mặc định câu sửa thành công là ghi hẳn ngay, không có Ctrl+Z. Trên database dùng chung, ở Level 1 chỉ chạy các câu đọc có trong bài; cách hoàn tác học ở bài 5.4.</p>
       <p>Nếu chỉ dùng web, bạn không cần làm theo mục kết nối SSMS bên dưới.</p>
@@ -66,7 +67,7 @@ import { withBase } from '../lib/paths';
           <tr><td>Bản SQL Server riêng</td><td><code>localhost</code> hoặc <code>localhost\SQLEXPRESS</code> theo lúc cài</td><td><code>HRM_Demo</code>, do bạn tạo</td><td>Windows Authentication</td></tr>
         </tbody>
       </table>
-      <p>Mở SSMS; nếu hộp <strong>Connect to Server</strong> chưa hiện, chọn <strong>Connect → Database Engine</strong> trong Object Explorer bên trái. Các ô dưới minh họa nguồn dùng chung. Với hộp kết nối kiểu mới, điền:</p>
+      <p>Mở SSMS; nếu hộp <strong>Connect to Server</strong> chưa hiện, chọn <strong>Connect → Database Engine</strong> trong Object Explorer bên trái. Các ô dưới minh họa nguồn dùng chung; nếu đã tạo bản riêng, thay bằng dòng tương ứng trong bảng trên. Với hộp kết nối kiểu mới, điền:</p>
       <ul>
         <li><strong>Server Name</strong>: <code>sql-lession.database.windows.net</code>.</li>
         <li><strong>Authentication</strong>: SQL Server Authentication.</li>
@@ -77,10 +78,10 @@ import { withBase } from '../lib/paths';
       </ul>
       <Ssms view="connect" caption="Hộp kết nối kiểu mới. Ô Database Name có viền xanh: phải chỉ rõ database khóa học." />
       <p>Nếu dùng hộp kiểu cũ, <strong>Login</strong> thay cho User Name; bấm <strong>Options &gt;&gt; → Connection Properties</strong>, điền <code>free-sql-db-8797714</code> vào <strong>Connect to database</strong>. Thiết lập mã hóa và tên trường đối chiếu theo <a href="https://learn.microsoft.com/sql/ssms/quickstarts/ssms-connect-query-sql-server">hướng dẫn kết nối SSMS của Microsoft</a>.</p>
-      <p>Bấm <strong>Connect</strong>. Sau đó, trong <strong>Object Explorer</strong>, khung cây bên trái SSMS, mở <strong>Databases → <code>free-sql-db-8797714</code> → Tables → <code>dbo.PhongBan</code> → Columns</strong>:</p>
+      <p>Bấm <strong>Connect</strong>. Nếu hiện hộp New Firewall Rule, bấm <strong>Cancel</strong>; gặp lỗi khác thì xem <a href="#loi-ket-noi">Khi không kết nối được</a>. Khi đã vào được, trong <strong>Object Explorer</strong>, khung cây bên trái SSMS, mở <strong>Databases → <code>free-sql-db-8797714</code> → Tables → <code>dbo.PhongBan</code> → Columns</strong>:</p>
       <Ssms view="explorer" table="PhongBan" mark={['MaPB', 'TenPB']} caption="Hai cột của dbo.PhongBan được đánh dấu. Chữ trong ngoặc mô tả khóa, kiểu dữ liệu và khả năng nhận NULL; bài 1.3 và 1.4 giải thích." />
       <p><strong>Columns</strong> cho biết cấu trúc, chưa phải các dòng dữ liệu. Tránh <strong>Edit Top 200 Rows</strong>: đó là lưới sửa dữ liệu dùng chung, không phải chế độ xem an toàn.</p>
-      <p>Để kiểm tra kết nối, bấm <strong>New Query</strong>, xem ô chọn database bên cạnh nút <strong>Execute</strong> là <code>free-sql-db-8797714</code> (bản riêng là <code>HRM_Demo</code>), gõ câu dưới rồi bấm <strong>F5</strong> hoặc <strong>Execute</strong>. Kết nối đúng máy chủ nhưng chọn nhầm database vẫn không tìm thấy bảng cần xem.</p>
+      <p>Để kiểm tra kết nối, bấm <strong>New Query</strong>, xem ô chọn database bên cạnh nút <strong>Execute</strong> là <code>free-sql-db-8797714</code> (bản riêng là <code>HRM_Demo</code>), gõ câu dưới rồi bấm <strong>F5</strong> hoặc <strong>Execute</strong>. Kết nối đúng máy chủ nhưng chọn nhầm database vẫn không tìm thấy bảng cần xem. Câu này chỉ đọc dữ liệu; cú pháp học ở bài 1.6.</p>
       <Ssms view="toolbar" caption="Kiểm ô chọn database có viền xanh trước khi chạy câu lệnh." />
       <Sql code="SELECT * FROM PhongBan;" />
       <Result columns={['MaPB', 'TenPB']} rows={[
@@ -91,7 +92,7 @@ import { withBase } from '../lib/paths';
         ['NS', 'Nhân sự'],
         ['VH', 'Vận hành'],
       ]} />
-      <p>Câu này không có <code>ORDER BY</code>, nên thứ tự dòng trên máy bạn có thể khác hình. Học xong, bấm chuột phải máy chủ trong Object Explorer → <strong>Disconnect</strong>, rồi đóng các cửa sổ truy vấn hoặc đóng SSMS để ngắt hết kết nối. Kết nối còn mở có thể giữ database thức và tiêu hao hạn mức miễn phí chung.</p>
+      <p>Câu này không yêu cầu sắp xếp, nên thứ tự dòng trên máy bạn có thể khác hình. Học xong, bấm chuột phải máy chủ trong Object Explorer → <strong>Disconnect</strong>, rồi đóng các cửa sổ truy vấn hoặc đóng SSMS để ngắt hết kết nối. Kết nối còn mở có thể giữ database thức và tiêu hao hạn mức miễn phí chung.</p>
 
       <h2>Database mẫu HRM_Demo</h2>
       <p>Các câu lệnh trong bài chạy trên bộ dữ liệu nhân sự giả lập tên <code>HRM_Demo</code>, gồm 7 bảng: phòng ban, chức danh, nhân viên, hợp đồng, chấm công, đơn nghỉ phép và bảng lương. Tên người, số CCCD, lương đều là dữ liệu giả.</p>

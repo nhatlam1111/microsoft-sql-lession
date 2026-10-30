@@ -29,7 +29,7 @@ Mã được dùng để xác định hồ sơ vì họ tên có thể trùng ho
 
 **Khóa ngoại (foreign key)** buộc mã khác `NULL` phải trỏ tới một giá trị khóa có thật ở bảng kia. `NhanVien.MaPB` trỏ sang `PhongBan.MaPB`, khóa chính của danh mục phòng: mã `KT` được nhận vì có trong danh mục, `KT01` không có thì bị từ chối. Nhờ vậy hồ sơ nào cũng tìm được phòng của mình. Một mã phòng được nhiều nhân viên dùng là bình thường, vì chỉ `PhongBan` mới bắt mỗi mã một dòng.
 
-Khóa ngoại là luật kiểm khi ghi, **không phải ô chọn trên màn hình**: mã sai bị từ chối dù màn hình có ô chọn hay không. Khi ràng buộc đang bật, thêm, sửa, xóa dữ liệu theo cách thông thường đều bị kiểm. Trong dữ liệu mẫu, phòng còn hồ sơ trỏ tới thì không xóa được khỏi danh mục, vì xóa đi các hồ sơ đó sẽ mất phòng.
+Khóa ngoại là luật kiểm khi ghi, **không phải ô chọn trên màn hình**: mã sai bị từ chối dù màn hình có ô chọn hay không. Khi ràng buộc đang bật, thêm, sửa, xóa dữ liệu theo cách thông thường đều bị kiểm. Trong dữ liệu mẫu, phòng còn hồ sơ trỏ tới thì không xóa được khỏi danh mục, vì xóa phòng đi thì các hồ sơ đó sẽ trỏ tới một phòng không còn.
 
 ### Đọc khóa trong SSMS
 

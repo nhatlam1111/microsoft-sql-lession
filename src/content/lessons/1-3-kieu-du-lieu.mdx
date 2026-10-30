@@ -25,9 +25,9 @@ Nhờ vậy SQL Server so sánh và sắp xếp `NgayVaoLam` theo ngày, tính t
 
 Trong SSMS, **Object Explorer** là khung cây bên trái liệt kê bảng và cột. Mở một bảng rồi mở **Columns**, chữ trong ngoặc sau tên cột cho biết kiểu dữ liệu và cột có nhận **`NULL`** hay không; `PK`, `FK` đánh dấu khóa chính, khóa ngoại, học ở bài 1.4. `NULL` biểu thị giá trị chưa có hoặc chưa biết; `NOT NULL` nghĩa là cột không nhận giá trị này.
 
-<Ssms view="explorer" table="HopDong" mark={['LuongCoBan', 'NgayKetThuc']} caption="Mô phỏng Object Explorer. Hai cột có viền xanh: LuongCoBan là decimal(18,0), không nhận NULL; NgayKetThuc là date, nhận NULL. Với hợp đồng không xác định thời hạn, bộ mẫu để NgayKetThuc là NULL." />
+<Ssms view="explorer" table="HopDong" mark={['LuongCoBan', 'NgayKetThuc']} caption="Mô phỏng Object Explorer. Hai cột có viền xanh: LuongCoBan là decimal(18,0), không nhận NULL; NgayKetThuc là date, nhận NULL. Với hợp đồng không xác định thời hạn, dữ liệu mẫu để NgayKetThuc là NULL." />
 
-Bảng dưới giải thích các kiểu thường gặp, kèm ví dụ từ các bảng; `NhanVien.MaNV` nghĩa là cột `MaNV` của bảng `NhanVien`. Bạn cần nhận ra cột lưu chữ (còn gọi là **chuỗi**), ngày hay số. Gặp kiểu khác thì đọc cùng cách: tên kiểu đứng trước, giới hạn nếu có nằm trong ngoặc:
+Bảng dưới giải thích các kiểu thường gặp; `NhanVien.MaNV` nghĩa là cột `MaNV` của bảng `NhanVien`. Bạn cần nhận ra cột lưu chữ (còn gọi là **chuỗi**), ngày hay số. Gặp kiểu khác thì đọc cùng cách: tên kiểu đứng trước, giới hạn nếu có nằm trong ngoặc:
 
 | Kiểu dữ liệu | Ví dụ | Ý nghĩa cần nhớ |
 |---|---|---|
@@ -44,7 +44,7 @@ Ví dụ, `decimal(4,1)` có tối đa ba chữ số phần nguyên và một ch
 
 ### Khi giá trị không đúng kiểu của cột
 
-Khi nhận chữ để ghi vào cột ngày hoặc số, hay để so sánh với cột đó, SQL Server có thể tự đổi sang kiểu của cột, gọi là **chuyển kiểu ngầm**. Kết quả có ba khả năng:
+Khi hai giá trị khác kiểu gặp nhau, như chữ được ghi vào cột ngày hoặc số, SQL Server có thể tự đổi một bên sang kiểu khác, gọi là **chuyển kiểu ngầm**. Với chữ ghi vào cột, kết quả có ba khả năng:
 
 - **Giữ đúng giá trị:** chữ `9610000` thành số `9610000`.
 - **Đổi khác ý người nhập:** database khóa học đọc tháng trước, ngày sau, nên chữ `01/02/2024` thành `2024-01-02`, tức ngày 2 tháng 1, dù người nhập có thể muốn ngày 1 tháng 2.
@@ -99,7 +99,7 @@ Cột lưu số có tối đa `18` chữ số, không có phần lẻ và không
 <details>
 <summary>Chuyển kiểu ngầm là gì, và có thể dẫn tới những kết quả nào?</summary>
 
-Là việc SQL Server tự đổi chữ sang kiểu của cột. Kết quả có thể giữ đúng giá trị, đổi khác ý người nhập hoặc bị từ chối.
+Là việc SQL Server tự đổi giá trị sang kiểu khác, như chữ sang kiểu của cột. Kết quả có thể giữ đúng giá trị, đổi khác ý người nhập hoặc bị từ chối.
 
 </details>
 

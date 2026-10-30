@@ -36,11 +36,11 @@ Reviewer: agent mới, Claude Sonnet, effort high, đọc commit `7ba5bca` (sha2
 
 - Bản cuối: `npm test` 331/331; `npm run check` 0 lỗi, 0 cảnh báo, 3 hint nền; `npm run build` 132 trang; `npm run check:dist` 132 trang, 1998 liên kết.
 - Bài dài 698 từ theo `proseParagraphs`.
-- Trước khi sửa theo review đã xem build ở 1280×800 và 1024×720: ba ảnh tải đúng, không tràn ngang, không có tài nguyên lỗi, link tới `#chon-noi-thuc-hanh` đúng đích, câu ôn mở bằng Enter. Bản cuối mở lại ở 1280×800, xem mục cuối hồ sơ này nếu có sai khác.
+- Trước khi sửa theo review đã xem build ở 1280×800 và 1024×720: ba ảnh tải đúng, không tràn ngang, không có tài nguyên lỗi, link tới `#chon-noi-thuc-hanh` đúng đích, câu ôn mở bằng Enter. Bản cuối mở lại ở 1280×800, kết quả như trên.
 
 ## Giới hạn
 
-- Không có câu lệnh hay số liệu mới, nên không chạy SQL. Câu "database còn cấp quyền tới từng bảng" dựa trên hiểu biết về `GRANT`, chưa đối chiếu lại tài liệu trong lượt này.
+- Không có câu lệnh hay số liệu mới, nên không chạy SQL. Câu "database còn cấp quyền tới từng bảng" đã đối chiếu tài liệu Microsoft ở lượt review tích hợp.
 - Chưa đo thời lượng 7 phút với người học thật.
 - Dưới 1024px toàn site chưa hỗ trợ.
 - Giữ trên nhánh `feat/level-1-foundation-lessons`, không push.

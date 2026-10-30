@@ -103,14 +103,18 @@ Chỉ bắt đầu sau khi bài 1.1 được duyệt. Kế hoạch chi tiết c�
 
 **Files:** tạo `1-2-bang-dong-cot.mdx`, `1-3-kieu-du-lieu.mdx`; sửa `1-4-…`, `1-5-…`; xóa `1-2-sql-server-ssms-hrm-demo.mdx`, `1-3-bang-cot-kieu-du-lieu.mdx`; `tests/content.test.ts`.
 
-- [ ] Đổi test của từng bài theo mục Thay đổi kỹ thuật trong spec, chạy cho hỏng, viết bài, chạy lại.
+- [x] Đổi test của từng bài theo mục Thay đổi kỹ thuật trong spec, chạy cho hỏng, viết bài, chạy lại.
 
 ### Task 5: Trang Giới thiệu và các lời trỏ
 
 **Files:** `src/pages/gioi-thieu.astro`, `src/components/islands/ExerciseWorkspace.tsx`, `src/content/lessons/1-6-cau-select-dau-tien.mdx`, `src/content/lessons/2-2-where-loc-nhu-autofilter.mdx`, `docs/ho-so-cong-ty.md`, `tests/content.test.ts`.
 
-- [ ] Chuyển test quy trình kết nối sang đọc `gioi-thieu.astro`, chuyển nội dung, sửa lời trỏ, chạy lại.
+- [x] Chuyển test quy trình kết nối sang đọc `gioi-thieu.astro`, chuyển nội dung, sửa lời trỏ, chạy lại.
 
 ### Task 6: Kiểm và review tích hợp
 
-- [ ] Chạy đủ bốn kiểm tra, xem build, review độc lập từng bài, review tích hợp, xử lý theo mục 4.6, ghi hồ sơ, commit trên nhánh; không push.
+- [x] Chạy đủ bốn kiểm tra, xem build, review độc lập từng bài, review tích hợp, xử lý theo mục 4.6, ghi hồ sơ, commit trên nhánh; không push.
+
+## Kết quả
+
+Hoàn tất hai đợt theo Native; người làm khóa học duyệt giọng văn bài 1.1 giữa hai đợt. Năm bài dài 561–698 từ. Mỗi bài có review độc lập, cuối cùng có một review tích hợp. Bản cuối đạt 323/323 test, check 0 lỗi/0 cảnh báo/3 hint nền, build 132 trang, dist 1997 liên kết. [Hồ sơ đợt 2](../../reviews/2026-10-30-bai-nen-dot-2/verification.md), [review tích hợp](../../reviews/2026-10-30-bai-nen-tich-hop/verification.md). Commit trên nhánh `feat/level-1-foundation-lessons`, không push.

@@ -20,7 +20,7 @@ import tableStructure from '../../assets/lessons/1-2-database-table.png';
 
 ## Từ sheet Excel đến bảng trong database
 
-Dữ liệu trong database được xếp thành các bảng. Nếu đã quen Excel, bạn có thể hình dung mỗi bảng như một sheet có các cột cố định. Hình dưới trích ba cột và ba dòng của bảng `NhanVien`; bảng này có 12 cột và 48 dòng.
+Dữ liệu trong database được xếp thành các bảng. Nếu đã quen Excel, bạn có thể hình dung mỗi bảng như một sheet có các cột cố định. Hình dưới trích ba cột và ba dòng của bảng `NhanVien` trong dữ liệu mẫu của khóa học; bảng này có 12 cột và 48 dòng.
 
 <figure class="lesson-illustration" style="display: block">
   <Image src={tableStructure} alt="Minh họa database chứa bảng NhanVien với ba cột MaNV, HoTen và NgayVaoLam. Nhãn Bảng chỉ khung bảng, nhãn Dòng chỉ toàn bộ hồ sơ NV005 tô vàng, nhãn Cột chỉ cột HoTen có khung dọc màu xanh." width={960} widths={[720, 1440]} sizes="(max-width: 1024px) 414px, 720px" format="webp" loading="lazy" style="max-width: 100%;" />
@@ -49,7 +49,7 @@ Các bảng liên quan với nhau qua mã: mỗi dòng `HopDong` ghi `MaNV` củ
 
 <Mistakes>
 
-1. **Muốn thêm dòng tổng cộng vào bảng.** Database không tự chặn việc này, nhưng danh sách sẽ có thêm một "hồ sơ" không phải người nào. Số tổng được tính khi lấy dữ liệu.
+1. **Muốn thêm dòng tổng cộng vào bảng.** Nếu điền đủ các cột bắt buộc, database vẫn nhận, và danh sách có thêm một "hồ sơ" không phải người nào. Số tổng được tính khi lấy dữ liệu.
 2. **Coi thứ tự dòng trong bảng là cố định.** Bảng không có dòng 1, dòng 2 như sheet, nên cùng một yêu cầu có thể ra thứ tự khác nhau. Muốn chỉ một dòng thì dùng mã như `NV005`; muốn thứ tự nhất định thì yêu cầu khi lấy dữ liệu.
 
 </Mistakes>
