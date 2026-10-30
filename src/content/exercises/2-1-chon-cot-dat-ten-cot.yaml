@@ -1,6 +1,18 @@
 lesson: 2-1-chon-cot-dat-ten-cot
 exercises:
   - id: 2-1-1
+    title: Toàn bộ hợp đồng
+    summary: Xem mọi hợp đồng, kể cả hợp đồng chưa có ngày kết thúc.
+    prompt: >-
+      Kế toán hỏi danh sách mọi hợp đồng đang lưu trong bảng hợp đồng, kể cả hợp đồng thử việc, đủ mọi cột.
+      Trong kết quả sẽ có ô NgayKetThuc là NULL: trong dữ liệu mẫu, đó là hợp đồng không xác định thời hạn.
+      Thứ tự dòng không quan trọng.
+    columns: [MaHD, MaNV, LoaiHD, NgayBatDau, NgayKetThuc, LuongCoBan]
+    ordered: false
+    kind: query
+    answer: |
+      SELECT * FROM HopDong;
+  - id: 2-1-2
     title: Rà soát email đang lưu
     summary: Lấy hai cột cần dùng để rà soát email của mọi hồ sơ.
     prompt: >-
@@ -12,7 +24,7 @@ exercises:
     kind: query
     answer: |
       SELECT HoTen, Email FROM NhanVien;
-  - id: 2-1-2
+  - id: 2-1-3
     title: Ngày vào làm đứng trước mã nhân viên
     summary: Đặt ba cột theo thứ tự của mẫu cần điền.
     prompt: >-
@@ -25,7 +37,7 @@ exercises:
     kind: query
     answer: |
       SELECT NgayVaoLam, MaNV, HoTen FROM NhanVien;
-  - id: 2-1-3
+  - id: 2-1-4
     title: Danh mục chức danh có tiêu đề tiếng Việt
     summary: Lấy tên chức danh trước mã chức danh và đặt tiêu đề cho cả hai cột.
     prompt: >-

@@ -134,9 +134,9 @@ export function parseProgress(text: string, knownNums: string[], keepUnknown = f
   };
 }
 
-const DEMO_DONE = ['1.1', '1.2', '1.3', '1.4', '1.5', '1.6', '2.1', '2.2', '2.3', '2.4', '2.5', '2.6', '2.7', '2.9', '3.1', '3.2', '3.3', '3.4'];
+const DEMO_DONE = ['1.1', '1.2', '1.3', '1.4', '1.5', '2.1', '2.2', '2.3', '2.4', '2.5', '2.6', '2.7', '2.9', '3.1', '3.2', '3.3', '3.4'];
 
-/** Progress like the mockup: 18 lessons done, 2.8 flagged, stopped at 3.5 fourteen days ago. */
+/** Progress like the mockup: 17 lessons done, 2.8 flagged, stopped at 3.5 fourteen days ago. */
 export function demoState(now: number): ProgressState {
   const last = now - 14 * DAY_MS;
   const earlier = last - 7 * DAY_MS;

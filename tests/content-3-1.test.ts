@@ -20,7 +20,6 @@ it('3.1 filters approved forms by start month, then aggregates all nine rows int
   const expected = [[days.length, sum.toFixed(1), (sum / days.length).toFixed(2), Math.min(...days).toFixed(1), Math.max(...days).toFixed(1)]];
   expect(lesson.steps.map(s => [s.clause, s.total])).toEqual([['FROM', 20], ['WHERE', 9], ['SELECT', 1]]);
   expect(checkFlow(lesson.steps, lesson.query)).toEqual([]);
-  // A whole-table SELECT * would also give away exercise 1-6-3.
   expect(lesson.steps[0].columns).toEqual(['MaDon', 'TuNgay', 'SoNgay', 'TrangThai']);
   for (const [i, rows] of [source, selected].entries()) {
     const step = lesson.steps[i];

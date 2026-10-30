@@ -80,7 +80,7 @@ Nếu chỉ xếp theo ngày, những hồ sơ cùng ngày chưa có thứ tự 
 
 **`TOP (5)`** viết ngay sau `SELECT`, lấy **tối đa năm dòng** từ **tập kết quả**, tức các dòng câu truy vấn trả về; nếu chỉ có ba dòng đạt điều kiện thì chỉ trả ba. Với yêu cầu của chị Hạnh, lọc hồ sơ đang làm bằng `WHERE`, xếp theo ngày rồi mới giới hạn năm dòng. Đây là năm dòng của cả tập sau lọc, không phải năm dòng cho từng phòng.
 
-Ở bài 1.6, `TOP` chưa kèm `ORDER BY` chỉ giúp xem mẫu, không bảo đảm chọn hồ sơ nào. Muốn “gần nhất”, dùng `NgayVaoLam DESC`; mã lớn hơn chưa chắc có ngày vào làm mới hơn. Giả sử hai mã `A02`, `A03` cùng ngày và chỉ còn một chỗ trong `TOP`: `MaNV ASC` chọn `A02`. Đây là ví dụ giả định, không phải hồ sơ trong bộ mẫu.
+Ở bài 2.1, `TOP` chưa kèm `ORDER BY` chỉ giúp xem mẫu, không bảo đảm chọn hồ sơ nào. Muốn “gần nhất”, dùng `NgayVaoLam DESC`; mã lớn hơn chưa chắc có ngày vào làm mới hơn. Giả sử hai mã `A02`, `A03` cùng ngày và chỉ còn một chỗ trong `TOP`: `MaNV ASC` chọn `A02`. Đây là ví dụ giả định, không phải hồ sơ trong bộ mẫu.
 
 Bạn có thể dùng tên nguồn hoặc alias để sắp: `ORDER BY [Ngày vào làm] DESC, [Mã nhân viên] ASC` có cùng ý nghĩa trong câu phía dưới. Khác `WHERE` ở bài 2.2, `ORDER BY` đứng sau `SELECT` trong thứ tự logic, nên dùng được alias của cột.
 

@@ -5,7 +5,7 @@ export interface LevelDef { no: LevelNo; name: string; outcome: string; color: s
 export interface AreaDef { id: AreaId; name: string; side: 'right' | 'left'; order: number }
 
 export const LEVELS: LevelDef[] = [
-  { no: 1, name: 'Làm quen', outcome: 'Biết dữ liệu của hệ thống nhân sự nằm ở đâu, mở ra đọc được', color: '#0F8B8D', soft: '#DCF2F2' },
+  { no: 1, name: 'Làm quen', outcome: 'Biết dữ liệu của hệ thống nhân sự nằm ở đâu và đọc được cấu trúc của nó', color: '#0F8B8D', soft: '#DCF2F2' },
   { no: 2, name: 'Cơ bản', outcome: 'Tự lấy danh sách nhân viên theo điều kiện bất kỳ', color: '#2F6FD6', soft: '#E3ECFC' },
   { no: 3, name: 'Trung cấp', outcome: 'Tự làm báo cáo từ nhiều bảng, thay cho VLOOKUP và PivotTable', color: '#5B4BC4', soft: '#EBE8FA' },
   { no: 4, name: 'Phân tích', outcome: 'Phân tích, đối soát dữ liệu và viết yêu cầu báo cáo rõ ràng', color: '#9B3FAE', soft: '#F4E6F7' },

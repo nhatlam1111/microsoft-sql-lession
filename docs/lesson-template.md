@@ -10,7 +10,7 @@ Giữ `kind: full` hoặc `summary`; bài nền thêm `noScenario: true`. Tiêu 
 
 ```yaml
 ---
-num: "2.2"                     # đúng bảng 51 bài
+num: "2.2"                     # đúng bảng 50 bài
 title: "WHERE: lọc như AutoFilter"
 shortTitle: WHERE              # tối đa 28 ký tự
 level: 2
