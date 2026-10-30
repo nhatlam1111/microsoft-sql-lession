@@ -194,10 +194,10 @@ describe('fixes from the review of lessons 1.2 to 1.6 (2026-10-19)', () => {
     ['chuyển kiểu ngầm', 'Lưu được chưa chắc đã đúng ý'],
     ['dữ liệu sai loại sẽ bị từ chối', 'Chữ không dấu, tối đa n ký tự', 'nhận bất cứ thứ gì', 'như ô bắt buộc nhập', 'nghĩa là người đó đang làm', 'không còn bị lệch kiểu', 'cần đổi định dạng gì']));
   it('1.4 does not turn a way past the foreign key into the business answer', () => check('1-4-khoa-chinh-khoa-ngoai',
-    ['không nhận NULL', 'UNIQUE', 'không phải ô chọn trên màn hình'],
+    ['không nhận NULL', 'không phải ô chọn trên màn hình'],
     ['trước hết phải chuyển 10 người', 'không bao giờ thiếu', 'Đó chính là khóa chính và khóa ngoại', 'không trùng, không trống', 'dữ liệu ghi từ đâu cũng bị kiểm']));
   it('1.5 explains fan-out and scopes the department to the value stored now', () => check('1-5-doc-so-do-erd',
-    ['phòng ban đang lưu', '0, 1 hoặc nhiều', 'tối đa một dòng lương', '`NV021` có ba hợp đồng'],
+    ['phòng ban đang lưu', 'không bắt phòng nào cũng phải có người', 'tối đa một dòng lương', '`NV021` có ba hợp đồng'],
     ['Sheet nào cũng tra theo mã NV', 'Bảng chứa cột này là phía "nhiều"', 'Một người có một dòng lương mỗi kỳ', 'gần như tự viết ra', 'khỏi hỏi lại', 'NV001 có 19 ngày công']));
   it('1.6 calls the run order logical and does not say a SELECT never writes', () => check('1-6-cau-select-dau-tien',
     ['SELECT INTO', 'tối đa 10 dòng', 'thứ tự logic', 'không phải 10 dòng đã bị sửa'],
@@ -294,11 +294,11 @@ describe('fixes from the independent reviews of 2026-10-19', () => {
       '`NOT NULL`', '`nvarchar', 'Format Cells', '`2099-03-01`', 'số âm', "N'Trần Thị Mai'"],
     ['có người gõ 2024-02-01', 'giá trị trống, chưa có', 'mọi phép so sánh thành so sánh chữ', 'Bên IT nói đúng một nửa', 'một việc riêng của người quản trị', 'không lẻ giây', 'hàm ngày và `CAST` ở bài 2.8']));
   it('1.4 preserves key semantics and what a key cannot check', () => check('1-4-khoa-chinh-khoa-ngoai',
-    ['ràng buộc đang bật', 'nạp hàng loạt', 'không nhận `NULL`', 'không có ràng buộc `UNIQUE`',
-      'khóa chính (primary key)', 'Khóa ngoại (foreign key)', 'ràng buộc (constraint)', 'luật dữ liệu đã nói ở bài 1.1', 'câu ghi (thêm, sửa, xóa dữ liệu)'],
+    ['ràng buộc đang bật', 'không nhận `NULL`', 'chưa có ràng buộc cấm trùng', 'trỏ về chính `NhanVien.MaNV`',
+      'khóa chính (primary key)', 'Khóa ngoại (foreign key)', 'ràng buộc (constraint)', 'luật dữ liệu đã nói ở bài 1.1'],
     ['Đây chính là lỗi bên IT gặp', 'thay cho kiểm ở từng màn hình', 'nghỉ từ 2026-06-30', 'các hồ sơ con']));
   it('1.5 preserves the relation direction, composite-key cardinality and diagram limits without a JOIN preview', () => check('1-5-doc-so-do-erd',
-    ['thực thể', 'chấm tròn', 'một-một', 'cả cặp', 'Từ bảng `PhongBan`', 'Từ bảng `NhanVien`', 'thuộc đúng một phòng ban',
+    ['chấm tròn', 'một-một', 'cả cặp', 'Từ bảng `PhongBan`', 'Từ bảng `NhanVien`', 'thuộc đúng một phòng ban',
       '`BangLuong.MaNV` → `NhanVien.MaNV`', '`NhanVien.MaPB` → `PhongBan.MaPB`', 'không tự cài/lưu sơ đồ', 'không có đường nối'],
     ['vì câu bắt đầu từ bảng lương', 'Azure SQL Database không có', 'cũng là cả khóa chính', 'nên phải xem thêm', '21 người là Chuyên viên', 'Đây là sơ đồ, cũng là sơ đồ',
       'mỗi thông tin chỉ nằm ở một chỗ', 'được khai báo đủ', 'cặp NV001 và ngày 2026-09-01', 'bài 3.4 và 3.5 sẽ học']));

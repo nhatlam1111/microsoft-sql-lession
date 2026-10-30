@@ -17,42 +17,42 @@ noScenario: true
 
 ## Tìm đường lấy dữ liệu trên sơ đồ
 
-Trong Excel, muốn thêm tên phòng vào bảng lương, bạn dò mã nhân viên sang sheet nhân viên để lấy mã phòng, rồi dò mã phòng sang danh mục để lấy tên. Với `NV001`, lần đầu được `KT`, lần sau được `Kế toán`. Database cũng có hai bước như vậy: `BangLuong` lưu tiền lương, `NhanVien` lưu mã phòng, `PhongBan` lưu tên phòng. Sơ đồ cho bạn biết phải đi qua những bảng nào.
+Trong Excel, muốn thêm tên phòng vào bảng lương, bạn dò mã nhân viên sang sheet nhân viên để lấy mã phòng, rồi dò mã phòng sang danh mục để lấy tên. Với `NV001`, dò lần một được `KT`, dò lần hai được `Kế toán`. Database cũng có hai bước như vậy: `BangLuong` lưu tiền lương, `NhanVien` lưu mã phòng, `PhongBan` lưu tên phòng. Sơ đồ cho bạn biết phải đi qua những bảng nào: từ bảng đang có, đi theo đường nối tới bảng chứa cột cần lấy.
 
-**ERD** (Entity–Relationship Diagram) là **sơ đồ thực thể–quan hệ**; thực thể là loại đối tượng cần lưu, như nhân viên hoặc phòng ban. Trong sơ đồ dưới, mỗi hộp là một **bảng**, trong hộp có các **cột**, đường nối thể hiện **khóa ngoại** đã khai báo. Sơ đồ rộng nên có thể cuộn ngang để xem hết.
+**ERD** (Entity–Relationship Diagram) là **sơ đồ quan hệ** giữa các bảng. Trong sơ đồ dưới, mỗi hộp là một bảng, trong hộp có các cột, đường nối thể hiện khóa ngoại đã khai báo. Sơ đồ rộng nên có thể cuộn ngang để xem hết.
 
 <Erd path={['BangLuong', 'NhanVien', 'PhongBan']} caption="Tô xanh: BangLuong → NhanVien → PhongBan, qua MaNV rồi MaPB. 1 là phía một, ∞ là phía nhiều." />
 
 ### Đọc đường liên kết
 
-Đường tô xanh gồm hai cặp cột. Tên phòng lấy theo phòng ban đang lưu hiện tại, không phải phòng tại kỳ lương.
+Đường tô xanh đi qua hai chặng. Tên phòng lấy theo phòng ban đang lưu hiện tại, không phải phòng tại kỳ lương.
 
 | Đường liên kết | Cặp cột | Thông tin tìm được |
 |---|---|---|
 | Lương → hồ sơ | `BangLuong.MaNV` → `NhanVien.MaNV` | Mã phòng `MaPB` của hồ sơ |
 | Hồ sơ → phòng ban | `NhanVien.MaPB` → `PhongBan.MaPB` | Tên phòng `TenPB` |
 
-Trong hình, **`PK`** là khóa chính, **`FK`** là khóa ngoại như ở bài 1.4. Đầu có chấm tròn nằm ở cột khóa ngoại, đầu kia tới cột khóa chính được tham chiếu. Một bảng có thể dùng nhiều cột làm khóa: `BangLuong` có cả `KyLuong` và `MaNV` là `PK`, nghĩa là cả cặp không trùng.
+Trong hình, `PK` là khóa chính, `FK` là khóa ngoại như ở bài 1.4. Đầu có chấm tròn và `∞` nằm ở cột khóa ngoại, đầu có `1` tới cột khóa chính được trỏ tới. Khóa chính có thể gồm nhiều cột: `BangLuong` dùng cả `KyLuong` và `MaNV`, nên cả cặp giá trị không trùng giữa hai dòng, còn từng cột vẫn được lặp.
 
-Trên database khóa học, dùng sơ đồ trong bài hoặc nút **Sơ đồ database** ở trang bài tập; không tự cài/lưu sơ đồ vào database khóa học.
+Trên database khóa học, dùng sơ đồ trong bài hoặc nút **Sơ đồ database** ở trang bài tập; không tự cài/lưu sơ đồ vào database khóa học, vì việc đó ghi vào database dùng chung.
 
 ### Quan hệ một-nhiều
 
 Quan hệ **một-nhiều**, ký hiệu **`1 — ∞`**, đọc từ hai phía:
 
-- **Từ bảng `PhongBan`:** một phòng có thể có 0, 1 hoặc nhiều hồ sơ nhân viên.
+- **Từ bảng `PhongBan`:** một phòng có thể có nhiều hồ sơ nhân viên; khóa ngoại không bắt phòng nào cũng phải có người.
 - **Từ bảng `NhanVien`:** mỗi hồ sơ thuộc đúng một phòng ban trong thiết kế này, vì `MaPB` không nhận `NULL` và phải trỏ tới một mã phòng có thật.
 
-Đi sang phía nhiều có thể làm tăng số dòng. `NV021` có ba hợp đồng, nên lấy hồ sơ qua `HopDong` sẽ ra ba dòng cho cùng một mã. Đây không phải lỗi; bạn cần xác định mỗi dòng kết quả là một người hay một hợp đồng.
+Đi sang phía nhiều có thể làm tăng số dòng. Đường tô xanh đi từ nhiều sang một nên mỗi dòng lương vẫn ra một dòng. Đi từ một sang nhiều thì khác: `NV021` có ba hợp đồng, nên khi lấy hồ sơ kèm hợp đồng, mã này hiện ba dòng. Đây không phải lỗi; bạn cần xác định mỗi dòng kết quả là một người hay một hợp đồng.
 
-Ở bài này chỉ cần đọc được sơ đồ, chỉ ra cặp cột và nhận ra phía có thể làm tăng số dòng. Cú pháp kết bảng học ở bài 3.4, kết nhiều bảng ở bài 3.6.
+Ở bài này chỉ cần đọc được sơ đồ, chỉ ra cặp cột và nhận ra phía có thể làm tăng số dòng. Cú pháp lấy dữ liệu từ nhiều bảng, gọi là kết bảng, học ở bài 3.4 và 3.6.
 
 ## Hay nhầm ở đâu
 
 <Mistakes>
 
-1. **Coi sơ đồ là toàn bộ luật nghiệp vụ.** Sơ đồ chỉ thể hiện quan hệ đã khai báo bằng khóa ngoại; không có đường nối chưa chắc các bảng không liên quan.
-2. **Thấy cột có cả `PK` và `FK` rồi kết luận quan hệ một-một.** `BangLuong.MaNV` chỉ là một phần của khóa `(KyLuong, MaNV)`: một nhân viên có nhiều dòng lương qua các kỳ, tối đa một dòng lương mỗi kỳ.
+1. **Cho rằng hai bảng không có đường nối là không liên quan.** `ChamCong` và `BangLuong` không nối trực tiếp, nhưng cùng liên quan đến `NhanVien` qua `MaNV`. Sơ đồ chỉ vẽ quan hệ đã khai báo bằng khóa ngoại.
+2. **Thấy cột có cả `PK` và `FK` rồi kết luận quan hệ một-một, tức mỗi hồ sơ chỉ ứng với một dòng lương.** `BangLuong.MaNV` chỉ là một phần của khóa `(KyLuong, MaNV)`: một nhân viên có thể có nhiều dòng lương qua các kỳ như `2026-08`, `2026-09`, tối đa một dòng lương mỗi kỳ.
 
 </Mistakes>
 
@@ -60,8 +60,8 @@ Quan hệ **một-nhiều**, ký hiệu **`1 — ∞`**, đọc từ hai phía:
 
 <Apply>
 
-- **Tìm đủ nguồn cho báo cáo:** xác định bảng chứa dữ liệu và cặp cột liên kết trước khi viết câu lệnh.
-- **Dự đoán số dòng kết quả:** nhận ra một nhân viên có nhiều hợp đồng hoặc kỳ lương để chọn đúng ý nghĩa của mỗi dòng báo cáo.
+- **Tìm đủ nguồn cho báo cáo:** xác định bảng và cặp cột liên kết trước khi viết câu lệnh, như lương kèm tên phòng cần ba bảng `BangLuong`, `NhanVien`, `PhongBan`.
+- **Nhận ra dòng bị lặp:** biết một nhân viên có thể có nhiều hợp đồng hoặc kỳ lương để chọn đúng ý nghĩa của mỗi dòng báo cáo.
 
 </Apply>
 
@@ -69,8 +69,8 @@ Quan hệ **một-nhiều**, ký hiệu **`1 — ∞`**, đọc từ hai phía:
 
 <Memo rows={[
   ['Dò mã qua các sheet', 'Đọc đường khóa ngoại → khóa chính trên ERD'],
-  ['Một mã phòng dùng ở nhiều hồ sơ', 'Một-nhiều: một phòng có thể có 0, 1 hoặc nhiều hồ sơ'],
-  ['Dò mã NV rồi dò mã phòng', 'BangLuong → NhanVien → PhongBan'],
+  ['Một mã phòng dùng ở nhiều hồ sơ', 'Một-nhiều: một phòng có thể có nhiều hồ sơ'],
+  ['Một mã NV ở nhiều dòng hợp đồng', 'Đi từ một sang nhiều: một hồ sơ có thể ra nhiều dòng'],
 ]} />
 
 **Tự kiểm tra trước khi bấm "Đã học xong":**
@@ -83,14 +83,14 @@ Hộp là bảng và các cột; đường nối thể hiện khóa ngoại đã
 </details>
 
 <details>
-<summary>Muốn lấy lương kèm tên phòng, đi qua bảng và cặp cột nào?</summary>
+<summary>Muốn lấy hợp đồng kèm tên phòng, đi qua bảng và cặp cột nào?</summary>
 
-`BangLuong.MaNV` với `NhanVien.MaNV`, rồi `NhanVien.MaPB` với `PhongBan.MaPB`.
+`HopDong` → `NhanVien` → `PhongBan`: `HopDong.MaNV` với `NhanVien.MaNV`, rồi `NhanVien.MaPB` với `PhongBan.MaPB`.
 
 </details>
 
 <details>
-<summary>Vì sao lấy hồ sơ qua bảng hợp đồng có thể ra nhiều dòng cho cùng một mã nhân viên?</summary>
+<summary>Vì sao lấy hồ sơ kèm hợp đồng có thể ra nhiều dòng cho cùng một mã nhân viên?</summary>
 
 Vì một người có thể có nhiều hợp đồng, như `NV021` có ba. Đi sang phía nhiều làm tăng số dòng.
 
