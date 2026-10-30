@@ -15,3 +15,7 @@ Từ 20/10/2026, viết tiếp theo khung gộp Excel/SQL trong một phần ch�
 Review bằng Claude dùng Sonnet, effort high; review bằng Codex giữ model đang dùng của phiên. Theo mục 4.5 của quy ước, không áp yêu cầu Sonnet sang Codex.
 
 Dùng gói giao việc và lời dặn hiện hành ở mục 4.5, kiểm tiền đề từng đề theo nền tảng người mới và phân biệt đọc nguồn/HTML với kiểm thực tế. Không đọc review cũ để hình thành nhận xét; nhiều bài hoặc sửa công cụ cần review tích hợp. Xử lý và ghi quyết định từng nhận xét theo mục 4.6 trước khi bàn giao.
+
+## Kỹ năng teach-skills
+
+Bốn kỹ năng `teach`, `source-verifier`, `hidden-case-trainer`, `cognitive-pacer` nằm ở `.claude/skills/` (bản sao từ `E:\Projects\teach-skills`; khi sửa, cập nhật cả hai thư mục `.claude/skills` và `.agents/skills`). Chỉ dùng khi người làm khóa học gọi rõ; chúng không tạo `learning-workspace/` hay bài HTML trong repo này. Nội dung bài vẫn theo `docs/quy-uoc.md` và `docs/lesson-template.md`, nếu mâu thuẫn thì quy ước của repo thắng.

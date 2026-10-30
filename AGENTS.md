@@ -14,3 +14,7 @@ Thực hiện quy trình kiểm tra và review độc lập ở mục 4 của qu
 Khi review bằng Codex, giữ model đang dùng của phiên và để agent reviewer kế thừa model đó, không chỉ định model khác. Quy định Sonnet dành cho review bằng Claude; chi tiết ở mục 4.5 của quy ước.
 
 Giao reviewer theo gói và lời dặn ở mục 4.5: ngữ cảnh mới, source/build đúng phiên bản, nền tảng Excel cơ bản, kiểm đủ tiền đề từng bài tập và ghi riêng những gì chưa xác minh. Sau nhiều bài hoặc sửa công cụ, thêm review tích hợp; xử lý từng nhận xét theo mục 4.6, không dùng Ready thay cho bằng chứng kiểm hay quyền push.
+
+## Kỹ năng teach-skills
+
+Bốn kỹ năng `teach`, `source-verifier`, `hidden-case-trainer`, `cognitive-pacer` nằm ở `.agents/skills/` (bản sao từ `E:\Projects\teach-skills`; khi sửa, cập nhật cả hai thư mục `.claude/skills` và `.agents/skills`). Chỉ dùng khi người làm khóa học gọi rõ; chúng không tạo `learning-workspace/` hay bài HTML trong repo này. Nội dung bài vẫn theo `docs/quy-uoc.md` và `docs/lesson-template.md`, nếu mâu thuẫn thì quy ước của repo thắng.
