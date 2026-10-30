@@ -66,7 +66,7 @@ Quản lý trực tiếp (`MaQuanLy`), theo câu `UPDATE` trong script: Giám đ
 | NV033 | Khúc Văn Hải | VH | NV | 2019-06-03 | 2026-06-30 | Đã nghỉ |
 | NV034 | Văn Thị Ly | KT | NV | 2022-11-01 | | |
 | NV035 | Thái Minh Hiếu | IT | CV | 2022-03-07 | | |
-| NV036 | Doãn Thị Thảo | KD | CV | 2024-11-15 | | Không phải nhân vật chị Thảo bên Kế toán |
+| NV036 | Doãn Thị Thảo | KD | CV | 2024-11-15 | | |
 | NV037 | Giang Văn Bình | VH | NV | 2017-05-02 | | |
 | NV038 | Ninh Thị Hà | KD | NV | 2023-08-14 | | Trùng số CCCD với NV015 (bài 4.6) |
 | NV039 | Âu Văn Kiên | IT | CV | 2022-06-06 | | |
@@ -78,7 +78,7 @@ Quản lý trực tiếp (`MaQuanLy`), theo câu `UPDATE` trong script: Giám đ
 | NV045 | Ung Văn Lực | KD | NV | 2026-07-01 | | Thiếu email (bài 4.6) |
 | NV046 | Hứa Thị Phương | IT | NV | 2026-09-14 | | Vào làm giữa tháng 9, chỉ có lương kỳ 2026-09 |
 | NV047 | Phạm Ngọc Ánh | NS | CV | 2026-10-01 | | Mới vào, chưa có hợp đồng |
-| NV048 | Đỗ Minh Quân | IT | NV | 2026-10-05 | | Mới vào, chưa có hợp đồng; không phải nhân vật Quân ở bài 1.1 |
+| NV048 | Đỗ Minh Quân | IT | NV | 2026-10-05 | | Mới vào, chưa có hợp đồng |
 
 Trạng thái chỉ có hai giá trị: `Đang làm` (45 hồ sơ) và `Đã nghỉ` (3 hồ sơ: NV020, NV033, NV041, đều có `NgayNghiViec`). Người chưa nghỉ có `NgayNghiViec` là NULL; đó là quy ước của bộ mẫu.
 
@@ -91,18 +91,16 @@ Trạng thái chỉ có hai giá trị: `Đang làm` (45 hồ sơ) và `Đã ngh
 
 ## 5. Nhân vật trong tình huống
 
-Các nhân vật là giả định, không phải hồ sơ trong bộ mẫu (bài 1.1 nói rõ điều này).
+Các nhân vật là giả định, không phải hồ sơ trong bộ mẫu.
 
 | Nhân vật | Là ai | Xuất hiện |
 |---|---|---|
-| Chị Hạnh · Phòng Nhân sự | Người đưa yêu cầu trong mọi bài đầy đủ; xưng "chị", gọi người học là "em" | 1.1–1.6, 2.1–2.9, 3.1–3.10, 4.1–4.6 |
+| Chị Hạnh · Phòng Nhân sự | Người đưa yêu cầu trong mọi bài có tình huống; xưng "chị", gọi người học là "em" | 1.2–1.6, 2.1–2.9, 3.1–3.10, 4.1–4.6 |
 | Người học ("em", "bạn") | Người đọc và lấy dữ liệu từ hệ thống nhân sự cho chị Hạnh; có tài khoản vào database qua SSMS | mọi bài |
-| Chị Thảo · Kế toán | Giữ một bản file nhân sự riêng | 1.1 |
-| Quân | Nhân viên chuyển sang IT, nhưng file của Kế toán còn ghi phòng cũ. Hình minh họa của bài ghi `NV052`, Trương Anh Quân, phòng cũ Kinh doanh; mã này nằm ngoài 48 hồ sơ | 1.1 |
-| Bên IT | Quản trị hệ thống, cấp tên máy chủ và tài khoản, nhập file vào hệ thống, xóa dữ liệu theo yêu cầu | 1.1, 1.2, 1.3, 1.4 |
+| Bên IT | Quản trị hệ thống, cấp tên máy chủ và tài khoản, nhập file vào hệ thống, xóa dữ liệu theo yêu cầu | 1.2, 1.3, 1.4 |
 | Kế toán | Người nhận các danh sách và bảng lương | 1.5, 2.1 |
 
-Ba nhân vật trùng tên với hồ sơ trong bộ mẫu: chị Hạnh với NV020 Kiều Thị Hạnh (KD, đã nghỉ), chị Thảo với NV036 Doãn Thị Thảo (KD), Quân với NV048 Đỗ Minh Quân (vào IT tháng 10/2026, không phải chuyển phòng). Khi bài nhắc tới các hồ sơ này thì luôn gọi bằng mã. Nhân vật mới không được trùng tên với 48 hồ sơ ở mục 3.
+Chị Hạnh trùng tên với hồ sơ NV020 Kiều Thị Hạnh (KD, đã nghỉ). Khi bài nhắc tới hồ sơ này thì luôn gọi bằng mã. Nhân vật mới không được trùng tên với 48 hồ sơ ở mục 3.
 
 ## 6. Lỗi dữ liệu cài sẵn
 
@@ -120,7 +118,6 @@ Các lỗi này có chủ ý, dành cho bài 4.6 và 4.7; bài khác không đư
 
 | Bài | Sự việc |
 |---|---|
-| 1.1 | Công ty dùng một workbook nhân sự nhiều sheet, mỗi tháng gửi bản sao qua email, mỗi người sửa bản riêng. Quân (minh họa `NV052`, không có trong bộ mẫu) đã chuyển sang IT nhưng bản của chị Thảo còn phòng cũ Kinh doanh. |
 | 1.2 | Bên IT gửi tên máy chủ và tài khoản để vào database nhân sự; chị Hạnh cần biết công ty có những phòng nào cho buổi họp chiều. |
 | 1.3 | Chị Hạnh gửi bên IT một file danh sách nhân viên để nhập vào hệ thống; file có ngày gõ nhiều kiểu, có ô "chưa rõ", lương ghi "9,61 triệu". Hình minh họa dùng `NV049`–`NV051`, ngoài 48 hồ sơ. |
 | 1.4 | Công ty quyết định gộp phòng Vận hành vào Kinh doanh; bên IT thử xóa VH khỏi danh mục và bị khóa ngoại chặn. **Chỉ là giả định của bài:** dữ liệu vẫn còn VH, các bài khác coi VH là phòng đang hoạt động. |

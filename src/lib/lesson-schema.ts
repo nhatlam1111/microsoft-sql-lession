@@ -15,6 +15,8 @@ export const lessonSchema = z.object({
   summary: z.string().min(1),
   /** The lesson has no "Bài tập" section at all, not even the placeholder (lessons before SELECT is taught). */
   noExercises: z.boolean().optional(),
+  /** A short foundation lesson: no "Tình huống" section and no characters. */
+  noScenario: z.boolean().optional(),
 });
 
 export type LessonFrontmatter = z.infer<typeof lessonSchema>;
@@ -26,11 +28,11 @@ export const SECTION_HEADINGS = {
 } as const;
 
 /** Pass the descriptive main-section title for the narrative format; omission preserves existing lessons. */
-export function sectionHeadings(kind: 'full' | 'summary', noExercises = false, mainSectionTitle?: string): string[] {
+export function sectionHeadings(kind: 'full' | 'summary', noExercises = false, mainSectionTitle?: string, noScenario = false): string[] {
   const headings = kind === 'full' && mainSectionTitle !== undefined
     ? ['Tình huống', mainSectionTitle, ...SECTION_HEADINGS.full.slice(3)]
     : SECTION_HEADINGS[kind];
-  return headings.filter(h => !(noExercises && h === 'Bài tập'));
+  return headings.filter(h => !(noExercises && h === 'Bài tập') && !(noScenario && h === 'Tình huống'));
 }
 
 /** Phrases that make the text read machine-written or tie it to one reader's job (matched in lower case). */

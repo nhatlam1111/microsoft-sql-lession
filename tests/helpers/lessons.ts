@@ -26,7 +26,9 @@ export function readCatalog(): CatalogEntry[] {
 /** The merged main section, or the SQL section of a lesson that still uses the old layout. */
 export function lessonMainSection(body: string): string {
   const sections = body.split(/^## /m).slice(1);
-  return sections.find(s => s.split(/\r?\n/, 1)[0] === 'Làm bằng SQL') ?? sections[1] ?? '';
+  const opening = sections[0]?.split(/\r?\n/, 1)[0];
+  const main = opening === 'Tình huống' || opening === 'Nội dung chính' ? sections[1] : sections[0];
+  return sections.find(s => s.split(/\r?\n/, 1)[0] === 'Làm bằng SQL') ?? main ?? '';
 }
 
 /** Level-3 headings inside the main teaching section, in order, for both layouts. */

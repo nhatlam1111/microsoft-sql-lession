@@ -2,7 +2,7 @@
 
 Mọi quy ước khi viết bài, review bài và làm việc với database của khóa học nằm ở file này. Khung bài và các khối dùng được nằm ở [`lesson-template.md`](lesson-template.md); hiện trạng công ty, nhân vật và những gì các bài đã kể nằm ở [`ho-so-cong-ty.md`](ho-so-cong-ty.md). Có quy ước mới thì ghi vào đây, trong cùng commit với thay đổi đầu tiên áp dụng nó.
 
-**Chuẩn hiện hành, duyệt ngày 20/10/2026:** lấy [`bài 1.1`](../src/content/lessons/1-1-database-la-gi.mdx) làm mẫu về mạch kể, độ sâu và cách đánh dấu chữ. Excel và SQL được giải thích trong cùng một phần chính, có tiêu đề theo chủ đề của bài. Khung này thay các yêu cầu tách "Với Excel" / "Làm bằng SQL" trong spec, plan và mockup cũ. Các bài đang có được chuyển khung khi chỉnh từng bài; không viết bài đầy đủ mới theo khung cũ.
+**Chuẩn hiện hành:** bài có tình huống lấy [`bài 2.2`](../src/content/lessons/2-2-where-loc-nhu-autofilter.mdx) làm mẫu về mạch kể, độ sâu và cách đánh dấu chữ; bài nền theo mục 2.5 lấy [`bài 1.1`](../src/content/lessons/1-1-database-la-gi.mdx) làm mẫu. Excel và SQL được giải thích trong cùng một phần chính, có tiêu đề theo chủ đề của bài. Khung này thay các yêu cầu tách "Với Excel" / "Làm bằng SQL" trong spec, plan và mockup cũ. Các bài đang có được chuyển khung khi chỉnh từng bài; không viết bài đầy đủ mới theo khung cũ.
 
 ## 1. Viết gọn
 
@@ -34,11 +34,11 @@ Mọi quy ước khi viết bài, review bài và làm việc với database c�
 
 ### 2.1 Khung bài và độ sâu
 
-- Thứ tự bài đầy đủ: **Tình huống → phần chính có tiêu đề theo chủ đề → Hay nhầm ở đâu → Ứng dụng → Ghi nhớ → tự kiểm tra (nếu có) → Bài tập**. Tự kiểm tra luôn đặt ngay sau Ghi nhớ, trước Bài tập. Bài `noExercises: true` bỏ mục Bài tập và có ít nhất ba câu tự kiểm tra. Bản tóm tắt giữ khung riêng ở `lesson-template.md`.
-- Phần chính đi từ vấn đề trong tình huống, qua khái niệm cần biết và cách Excel/SQL xử lý, tới câu trả lời. Dùng khoảng 2–4 tiểu mục theo ý nghĩa; không bắt buộc chép đúng các tiểu mục của bài 1.1. Mỗi lần chuyển từ Excel sang database/SQL phải có lời dẫn rõ.
+- Thứ tự bài đầy đủ: **Tình huống → phần chính có tiêu đề theo chủ đề → Hay nhầm ở đâu → Ứng dụng → Ghi nhớ → tự kiểm tra (nếu có) → Bài tập**. Tự kiểm tra luôn đặt ngay sau Ghi nhớ, trước Bài tập. Bài `noExercises: true` bỏ mục Bài tập và có ít nhất ba câu tự kiểm tra. Bản tóm tắt giữ khung riêng ở `lesson-template.md`; bài nền theo mục 2.5.
+- Phần chính đi từ vấn đề trong tình huống, qua khái niệm cần biết và cách Excel/SQL xử lý, tới câu trả lời. Dùng khoảng 2–4 tiểu mục theo ý nghĩa; không bắt buộc chép đúng các tiểu mục của bài mẫu. Mỗi lần chuyển từ Excel sang database/SQL phải có lời dẫn rõ.
 - Khái niệm và ví dụ đứng cạnh nhau. Dùng hình, câu lệnh, kết quả, `LineMap` hay `RunFlow` khi chúng giúp hiểu ý đang nói; không bắt buộc có đủ mọi khối hoặc một bảng so sánh dài. Không giải thích trong lời văn rồi chép nguyên ý vào bảng.
 - Bài khái niệm chưa cần thực hành thì không chèn preview SQL cho đủ khuôn; dẫn sang bài thực hành tương ứng. Bài truy vấn có câu lệnh giải đúng tình huống và kết quả đã kiểm. Nếu có `RunFlow`, hai tiểu mục cuối phần chính là "Câu lệnh cho tình huống" rồi "SQL Server chạy câu này thế nào"; lời giải tình huống nằm cạnh kết quả trước sơ đồ.
-- Giữ kiến thức đủ để hiểu và xử lý yêu cầu của bài. Chi tiết sâu đã có bài riêng thì nêu điều kiện bằng một vế câu và dẫn bài; không biến bài nhập môn thành bài về kiểu dữ liệu, khóa, import hay giao dịch. Ví dụ ở bài 1.1, giữ "hệ thống có lưu lịch sử" nhưng để cách lưu ở bài 6.6; bộ mẫu chỉ giữ phòng ban hiện tại.
+- Giữ kiến thức đủ để hiểu và xử lý yêu cầu của bài. Chi tiết sâu đã có bài riêng thì nêu điều kiện bằng một vế câu và dẫn bài; không biến bài nhập môn thành bài về kiểu dữ liệu, khóa, import hay giao dịch.
 - Bài khái niệm đơn giản hướng tới 10–12 phút gồm tự kiểm tra; bài phức tạp ghi thời lượng theo nội dung thực tế. Rút bằng cách cắt lặp và giảm độ sâu ngoài mục tiêu; giữ phần giảng chính luôn hiển thị, không giấu sau tab/khối bấm mở để trông ngắn hơn.
 
 ### 2.2 In đậm khái niệm, highlight dẫn chứng
@@ -65,6 +65,14 @@ Mọi quy ước khi viết bài, review bài và làm việc với database c�
 - Dùng cùng quy tắc ở câu chính, câu trong sơ đồ, `LineMap`, `Memo` và màn bài tập. CSS dùng token `--sql-tab-size: 4`; editor và lớp tô màu phải cùng mốc tab. Nút **Sao chép** giữ đúng xuống dòng/thụt lề đang hiển thị, không chép ra hai ký tự `\` và `t`. Không tự định dạng lại bản nháp người học khi gõ, mở trang hay chạy SQL.
 - Kiểm trên **bản build**: ít nhất một câu có nhiều cột/điều kiện, một `CASE` có hai cấp thụt lề, câu có highlight trong drawer và thao tác sao chép/dán vào editor. Khi chỉ sửa định dạng, đối chiếu token SQL, giữ nguyên literal/comment/điều kiện, kết quả và thông báo lỗi; không bỏ kiểm số liệu vì test cũ đang đọc chuỗi escape chưa giải mã.
 
+### 2.5 Bài nền (duyệt 30/10/2026)
+
+- Các bài mở đầu level 1 là **bài nền**, không có tình huống hay nhân vật: frontmatter có `noScenario: true`, `noExercises: true`, `minutes: 7`. Bài 1.1 đã chuyển; 1.2–1.5 chuyển theo mẫu này.
+- Thứ tự: phần chính theo chủ đề → Hay nhầm ở đâu (1–2 ý) → Ứng dụng (1–2 ý) → Ghi nhớ → ít nhất ba câu tự kiểm tra. Không dùng `Chat`, `Key`.
+- Dài 500–700 từ, đếm bằng `proseParagraphs`; `npm test` chặn ở 800. Rút bằng cách bỏ chi tiết chưa cần cho bài, không viết tắt lời giải thích.
+- Phần chính mở bằng điều quen trong Excel, dùng 0–3 tiểu mục, vẫn nói vì sao và để làm gì, vẫn có đoạn "Ở bài này chỉ cần…". Ví dụ dùng bảng và giá trị có thật trong dữ liệu mẫu, không kể chuyện.
+- Các quy tắc còn lại của mục 1–3 vẫn áp dụng, như giới hạn đoạn, không hứa quá, in đậm có chọn lọc.
+
 ## 3. Số liệu và hình
 
 - Mọi câu lệnh và con số đưa vào bài, kể cả giá trị ví dụ và nguyên văn lỗi, được chạy trên database khóa học trước khi viết (mục 5).
@@ -80,7 +88,7 @@ Mọi quy ước khi viết bài, review bài và làm việc với database c�
 
 - Đọc `ho-so-cong-ty.md` và các bài đứng trước có liên quan, để không giải thích lại hoặc nói khác đi.
 - Chốt giả định của tình huống: mốc thời gian, phạm vi dữ liệu, ai hỏi và cần câu trả lời gì.
-- Chốt mục tiêu chính, phần đã học và phần để bài sau; chọn 2–4 nhịp giải thích đủ đi tới câu trả lời. Mở bài 1.1 để đối chiếu cách kể, không chép nguyên ví dụ nhân sự của nó vào mọi bài.
+- Chốt mục tiêu chính, phần đã học và phần để bài sau; chọn 2–4 nhịp giải thích đủ đi tới câu trả lời. Mở bài mẫu để đối chiếu cách kể, không chép nguyên ví dụ của nó vào mọi bài.
 - Chạy mọi câu lệnh và con số sẽ đưa vào bài (mục 5).
 
 ### 4.2 Viết theo khung ở `lesson-template.md` và các mục 1–3

@@ -8,7 +8,7 @@ mục đích của project là tạo các bài giảng để giảng dạy cho 1
 1. [Quy ước hiện hành](docs/quy-uoc.md): giọng văn, độ sâu, định dạng dẫn chứng, Ứng dụng, kiểm tra, review và an toàn database.
 2. [Khung bài hiện hành](docs/lesson-template.md): cấu trúc MDX và biến thể bài khái niệm/truy vấn.
 3. [Hồ sơ công ty](docs/ho-so-cong-ty.md) và các bài trước có liên quan: giữ tình huống, nhân vật, dữ liệu và mức kiến thức nhất quán.
-4. [Bài 1.1 đã duyệt](src/content/lessons/1-1-database-la-gi.mdx): mẫu mạch kể, nhấn khái niệm, highlight giá trị và Ứng dụng đúng chủ đề.
+4. Bài mẫu: [bài 2.2](src/content/lessons/2-2-where-loc-nhu-autofilter.mdx) cho bài có tình huống, [bài 1.1](src/content/lessons/1-1-database-la-gi.mdx) cho bài nền.
 
 Từ 20/10/2026, viết tiếp theo khung gộp Excel/SQL trong một phần chính; spec/plan/mockup cũ ghi khung tách hai phần là lịch sử. Quy tắc cụ thể giữ ở các tài liệu hiện hành phía trên, không suy ra lại từ bài cũ chưa chuyển khung.
 

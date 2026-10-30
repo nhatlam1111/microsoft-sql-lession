@@ -29,17 +29,18 @@ describe('lesson files', () => {
   });
   it('uses exactly the section headings of its kind, in order', () => {
     for (const f of files) {
-      const { kind, noExercises } = f.data as { kind: 'full' | 'summary'; noExercises?: boolean };
+      const { kind, noExercises, noScenario } = f.data as { kind: 'full' | 'summary'; noExercises?: boolean; noScenario?: boolean };
       const h2 = [...f.body.matchAll(/^## (.+?)\s*$/gm)].map(m => m[1]);
+      const mainTitle = noScenario ? h2[0] : h2[1];
       if (kind === 'summary') {
         expect(h2, f.slug).toEqual(sectionHeadings(kind, noExercises));
       } else if (h2[1] === 'Với Excel') {
         expect(LEGACY_LAYOUT_SLUGS.has(f.slug), `${f.slug}: new full lessons must use the narrative format`).toBe(true);
         expect(h2, f.slug).toEqual(sectionHeadings(kind, noExercises));
       } else {
-        expect(h2[1] ?? '', `${f.slug}: needs a descriptive main-section title`).not.toBe('');
-        expect([...SECTION_HEADINGS.full, ...SECTION_HEADINGS.summary], f.slug).not.toContain(h2[1]);
-        expect(h2, f.slug).toEqual(sectionHeadings(kind, noExercises, h2[1]));
+        expect(mainTitle ?? '', `${f.slug}: needs a descriptive main-section title`).not.toBe('');
+        expect([...SECTION_HEADINGS.full, ...SECTION_HEADINGS.summary], f.slug).not.toContain(mainTitle);
+        expect(h2, f.slug).toEqual(sectionHeadings(kind, noExercises, mainTitle, noScenario));
       }
     }
   });
@@ -67,6 +68,14 @@ describe('lesson files', () => {
     expect(sectionHeadings('full', false, 'Lọc danh sách nhân viên')).toEqual([
       'Tình huống', 'Lọc danh sách nhân viên', 'Hay nhầm ở đâu', 'Ứng dụng', 'Ghi nhớ', 'Bài tập',
     ]);
+  });
+  it('drops the scenario only for a foundation lesson', () => {
+    expect(sectionHeadings('full', true, 'Bảng, dòng và cột', true)).toEqual(['Bảng, dòng và cột', 'Hay nhầm ở đâu', 'Ứng dụng', 'Ghi nhớ']);
+  });
+  it('finds the main section with or without a scenario, and in a summary', () => {
+    expect(lessonMainSection(['## Bảng và cột', 'Giải thích.', '## Hay nhầm ở đâu', 'Lỗi.'].join('\n'))).toContain('Giải thích.');
+    expect(lessonMainSection(['## Tình huống', 'Yêu cầu.', '## Lọc danh sách', 'Giải thích.'].join('\r\n'))).toContain('Giải thích.');
+    expect(lessonMainSection(['## Nội dung chính', 'Ý.', '## Liên hệ Excel', 'Đoạn.'].join('\n'))).toContain('Đoạn.');
   });
   it.each(['\n', '\r\n'])('reads subheadings from a merged section with %j line endings', newline => {
     const body = ['## Tình huống', 'Yêu cầu.', '## Lọc danh sách nhân viên', '### Từ bộ lọc Excel đến WHERE',
@@ -139,16 +148,28 @@ describe('lesson files', () => {
   });
 });
 
-describe('lesson 1.1 is the approved narrative reference', () => {
-  const lesson = readLessonFiles().find(f => f.slug === '1-1-database-la-gi')!;
-  it('answers the opening request inside the main section without a SQL preview or a separate answer section', () => {
-    const main = lessonMainSection(lesson.body);
-    expect(main).not.toBe('');
-    for (const s of ['quyết định chuyển phòng', 'ngày hiệu lực', 'người có quyền', 'cùng nguồn, cùng thời điểm, cùng điều kiện lọc', 'bản của chị Hạnh đúng']) {
+describe('foundation lessons have no scenario and stay short (2026-10-30)', () => {
+  const foundation = () => readLessonFiles().filter(f => (f.data as { noScenario?: boolean }).noScenario);
+  it('start with lesson 1.1', () => {
+    expect(foundation().map(f => (f.data as { num: string }).num)).toContain('1.1');
+  });
+  it('have no scenario, enough self-checks and the agreed length', () => {
+    for (const f of foundation()) {
+      expect(f.body, f.slug).not.toMatch(/^## Tình huống|<Chat\b|<Key\b/m);
+      expect((f.body.match(/<details>/g) ?? []).length, f.slug).toBeGreaterThanOrEqual(3);
+      expect((f.data as { minutes: number }).minutes, f.slug).toBe(7);
+      expect(proseParagraphs(f.body).reduce((sum, p) => sum + p.words, 0), f.slug).toBeLessThanOrEqual(800);
+    }
+  });
+  it('1.1 separates the four names and says where practice starts', () => {
+    const main = lessonMainSection(readLessonFiles().find(f => f.slug === '1-1-database-la-gi')!.body);
+    for (const s of ['**Database**', '**SQL Server**', '**SQL**', '**SSMS**', '**luật dữ liệu**', 'gioi-thieu/#chon-noi-thuc-hanh', 'bài 1.6']) {
       expect(main, s).toContain(s);
     }
-    expect(lesson.body).not.toMatch(/^## (Với Excel|Làm bằng SQL)$|^### Trả lời chị Hạnh$|<(Sql|Result|RunFlow)\b|^\|/m);
-    expect((lesson.data as { minutes: number }).minutes).toBe(12);
+    expect(main).not.toMatch(/<(Sql|Result|RunFlow)\b/);
+  });
+  it('the intro page holds the target of the practice link', () => {
+    expect(readFileSync('src/pages/gioi-thieu.astro', 'utf8')).toContain('id="chon-noi-thuc-hanh"');
   });
   it('explains result row numbers in 1.6 without pointing to the removed preview', () => {
     const next = readLessonFiles().find(f => f.slug === '1-6-cau-select-dau-tien')!.body;
@@ -250,7 +271,6 @@ describe('lessons explain why, show data before totals and mark what they point 
     expect(body('1-4-khoa-chinh-khoa-ngoai')).toMatch(/<Ssms[^>]*table="NhanVien"[^>]*mark=/);
     expect(body('1-4-khoa-chinh-khoa-ngoai')).toMatch(/<Result[^>]*mark=/);
     expect(body('1-5-doc-so-do-erd')).toMatch(/<Erd[^>]*path=/);
-    expect(body('1-1-database-la-gi')).toMatch(/<Excel[^>]*mark=/);
     expect(body('1-3-bang-cot-kieu-du-lieu')).toMatch(/<Excel[^>]*mark=/);
   });
 });
@@ -262,8 +282,8 @@ describe('fixes from the independent reviews of 2026-10-19', () => {
     for (const s of absent) expect(text, `${slug} still says: ${s}`).not.toContain(s);
     for (const s of present) expect(text, `${slug} lacks: ${s}`).toContain(s);
   };
-  it('1.1 scopes the data rules and shared-data safety without teaching SSMS early', () => check('1-1-database-la-gi',
-    ['Khi luật đang bật', 'chỉ đọc dữ liệu', 'hợp lệ chưa chắc đã đúng', 'T-SQL', 'thống nhất chưa chắc đã đúng'],
+  it('1.1 scopes the data rules without teaching the names of the keys', () => check('1-1-database-la-gi',
+    ['Khi luật đang bật', 'hợp lệ chưa chắc đã đúng', 'T-SQL'],
     ['Mỗi khi có thao tác ghi dữ liệu', 'mỗi người một mã', '(ba dòng, lấy từ bộ dữ liệu mẫu)', 'kiểm quan hệ dữ liệu mỗi khi ghi', 'file xuất tĩnh', 'cột chưa chuẩn hóa']));
   it('1.2 preserves the connection workflow and safe practice on the shared and local databases', () => check('1-2-sql-server-ssms-hrm-demo',
     ['chỉ chạy trên Windows', '1433', 'Disconnect', '**User Name**', '**Encrypt**', 'Connection Properties', 'Connect to database',
@@ -305,41 +325,6 @@ describe('fixes from the independent reviews of 2026-10-19', () => {
     for (const slug of ['1-3-bang-cot-kieu-du-lieu', '1-6-cau-select-dau-tien']) {
       expect(readLessonFiles().find(f => f.slug === slug)!.body, slug).toMatch(/<Excel[^>]*numeric=\{/);
     }
-  });
-});
-
-describe('lesson 1.1 follows one story from two Excel copies to the answer (2026-10-30)', () => {
-  const lessonBody = () => readLessonFiles().find(f => f.slug === '1-1-database-la-gi')!.body;
-  const main = () => lessonMainSection(lessonBody());
-  const at = (text: string) => {
-    const i = main().indexOf(text);
-    expect(i, text).toBeGreaterThanOrEqual(0);
-    return i;
-  };
-
-  it('shows the two copies first, differing only in the department of Quân', () => {
-    const headings = sqlSubheadings(lessonBody());
-    expect(headings).toHaveLength(4);
-    const copies = [...main().matchAll(/<Excel[\s\S]*?\/>/g)].map(m => m[0]);
-    expect(copies).toHaveLength(2);
-    for (const copy of copies) {
-      expect(copy).toContain("mark={['C4']}");
-      expect(copy).toContain("['NV052', 'Trương Anh Quân',");
-    }
-    expect(copies[0]).toContain("'Trương Anh Quân', 'IT'");
-    expect(copies[1]).toContain("'Trương Anh Quân', 'Kinh doanh'");
-    expect(copies[0].replace('formula="IT"', '').replace("'IT'", '')).toBe(copies[1].replace('formula="Kinh doanh"', '').replace("'Kinh doanh'", ''));
-    expect(main().lastIndexOf('<Excel')).toBeLessThan(at(`### ${headings[1]}`));
-  });
-  it('introduces the three concepts together before the data rules', () => {
-    expect(at('**database**')).toBeLessThan(at('**SQL Server**'));
-    expect(at('**SQL Server**')).toBeLessThan(at('**SQL**'));
-    expect(at('**SQL**')).toBeLessThan(at('**luật dữ liệu**'));
-    expect(at('**luật dữ liệu**')).toBeLessThan(at('quyết định chuyển phòng'));
-  });
-  it('states the idea of the rules without teaching the names of the keys', () => {
-    expect(main().slice(0, at('Ở bài này chỉ cần'))).not.toMatch(/khóa chính|khóa ngoại|ràng buộc|constraint|câu ghi|NULL/i);
-    expect(main().trim().split(/\r?\n\r?\n/).at(-1)).toMatch(/^Ở bài này chỉ cần/);
   });
 });
 
