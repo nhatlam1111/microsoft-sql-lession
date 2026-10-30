@@ -9,7 +9,7 @@ import { actions } from '../../lib/progress-store';
 import { useProgress } from './use-progress';
 import SqlEditor from './SqlEditor';
 import { COURSE_SERVER } from '../../lib/course-server';
-import { lessonUrl } from '../../lib/paths';
+import { withBase } from '../../lib/paths';
 import { DbDiagramDialog } from './DbDiagram';
 
 interface Props {
@@ -89,7 +89,7 @@ export default function ExerciseWorkspace({ exercise, apiBase, tables, nums }: P
     <div className="ws" onKeyDown={onKeyDown}>
       <p className="ws-help" id="ws-practice-help">
         Chạy và nộp bài trên web cần mã truy cập từ người phụ trách hoặc người đã gửi bạn khóa học.
-        {' '}Chưa có mã: làm theo hướng dẫn <a href={lessonUrl('1-2-sql-server-ssms-hrm-demo')}>tạo database riêng ở bài 1.2</a> để thực hành trong SSMS; bản riêng không có chấm tự động.
+        {' '}Chưa có mã: làm theo hướng dẫn <a href={withBase('/gioi-thieu/#tao-ban-rieng')}>tạo database riêng ở trang Giới thiệu</a> để thực hành trong SSMS; bản riêng không có chấm tự động.
       </p>
       {askCode && (
         <form className="ws-code" onSubmit={submitCode} noValidate>

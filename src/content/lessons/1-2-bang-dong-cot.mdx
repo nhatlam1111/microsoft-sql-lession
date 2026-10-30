@@ -1,0 +1,96 @@
+---
+num: "1.2"
+title: Bảng, dòng và cột
+shortTitle: Bảng, dòng và cột
+level: 1
+area: A1
+kind: full
+minutes: 7
+prerequisites:
+  - "1.1"
+goal: bạn chỉ ra được bảng, dòng và cột trong database, biết chúng giống và khác sheet Excel ở đâu
+excel: Sheet, dòng, cột
+summary: Hiểu dữ liệu trong database được xếp thành bảng, dòng và cột như thế nào, giống và khác sheet Excel ở đâu.
+noExercises: true
+noScenario: true
+---
+
+import { Image } from 'astro:assets';
+import tableStructure from '../../assets/lessons/1-2-database-table.png';
+
+## Từ sheet Excel đến bảng trong database
+
+Dữ liệu trong database được xếp thành các **bảng**. Nếu đã quen Excel, bạn có thể hình dung mỗi bảng như một sheet có các cột cố định: bảng `NhanVien` lưu hồ sơ nhân viên, giống một sheet danh sách nhân viên. Hình dưới trích ba trong 12 cột của bảng này.
+
+<figure class="lesson-illustration" style="display: block">
+  <Image src={tableStructure} alt="Minh họa database chứa bảng NhanVien với ba cột MaNV, HoTen và NgayVaoLam. Nhãn Bảng chỉ khung bảng, nhãn Dòng chỉ toàn bộ hồ sơ NV005 tô vàng, nhãn Cột chỉ cột HoTen có khung dọc màu xanh." width={960} widths={[720, 1440]} sizes="(max-width: 1024px) 414px, 720px" format="webp" loading="lazy" style="max-width: 100%;" />
+  <figcaption>Hình minh họa ba trong 12 cột của bảng <code>NhanVien</code>: dòng <code>NV005</code> được tô vàng, cột <code>HoTen</code> (họ tên) có khung dọc màu xanh.</figcaption>
+</figure>
+
+- **Bảng** lưu một loại thông tin, như `NhanVien` lưu hồ sơ nhân viên, `PhongBan` lưu danh mục phòng ban.
+- **Dòng**, còn gọi là **bản ghi**, là một hồ sơ, như dòng của `NV005`.
+- **Cột** là một loại thông tin của mọi dòng, như `HoTen` là họ tên.
+
+### Bảng chặt hơn sheet
+
+Trong một sheet chưa đặt giới hạn, bạn có thể thêm dòng ghi chú, gộp ô hoặc chèn dòng tổng cộng giữa danh sách. Bảng thì mọi dòng có cùng các cột, và tên cột được khai báo khi tạo bảng, không nằm ở dòng đầu như tiêu đề trong sheet.
+
+Nhờ vậy SQL Server đọc và lọc dữ liệu theo đúng cột: muốn tìm theo họ tên thì chỉ cần chỉ ra cột `HoTen`, không lo một dòng ghi chú lẫn vào danh sách. Cái giá là thêm cột không đơn giản như chèn cột trong Excel: người có quyền phải đổi thiết kế bảng.
+
+### Mỗi bảng lưu một loại thông tin
+
+File Excel thường gom nhiều thông tin vào một sheet. Database tách chúng ra: hồ sơ ở `NhanVien`, hợp đồng ở `HopDong`, danh mục phòng ở `PhongBan`. Một người có nhiều hợp đồng thì `HopDong` có nhiều dòng, còn `NhanVien` vẫn chỉ một dòng cho người đó.
+
+Các bảng liên quan với nhau qua mã, như `MaNV`. Cách liên kết này học ở bài 1.4 và 1.5.
+
+Ở bài này chỉ cần chỉ ra được bảng, dòng, cột và biết bảng khác sheet ở đâu. Xem dữ liệu của một bảng học ở bài 1.6, sắp xếp ở bài 2.4, tính tổng ở bài 3.1.
+
+## Hay nhầm ở đâu
+
+<Mistakes>
+
+1. **Muốn thêm dòng tổng cộng vào bảng.** Dòng đó sẽ bị tính như một hồ sơ. Số tổng được tính khi lấy dữ liệu, không lưu xen giữa các hồ sơ.
+2. **Coi thứ tự dòng trong bảng là cố định.** Bảng không có dòng 1, dòng 2 như sheet; muốn thứ tự nhất định thì phải yêu cầu khi lấy dữ liệu.
+
+</Mistakes>
+
+## Ứng dụng
+
+<Apply>
+
+- **Mô tả yêu cầu dữ liệu:** nói rõ cần bảng nào, mỗi dòng là gì và lấy những cột nào, thay vì chỉ nói "lấy danh sách".
+- **Chuẩn bị file trước khi gửi IT nhập:** bỏ ô gộp, dòng tổng và dòng ghi chú để mỗi dòng trong file là một hồ sơ.
+
+</Apply>
+
+## Ghi nhớ
+
+<Memo rows={[
+  ['Sheet', 'Bảng'],
+  ['Một dòng trong sheet', 'Một dòng, còn gọi là bản ghi'],
+  ['Tiêu đề ở dòng đầu', 'Tên cột khai báo khi tạo bảng'],
+  ['Ô gộp, dòng tổng xen giữa', 'Không có: mọi dòng cùng các cột'],
+]} />
+
+**Tự kiểm tra trước khi bấm "Đã học xong":**
+
+<details>
+<summary>Bảng giống gì trong Excel, và khác ở điểm nào?</summary>
+
+Bảng giống một sheet, nhưng mọi dòng có cùng các cột, không có ô gộp hay dòng tổng xen giữa.
+
+</details>
+
+<details>
+<summary>Một dòng trong <code>NhanVien</code> chứa gì?</summary>
+
+Một hồ sơ nhân viên, gồm giá trị của người đó ở mọi cột.
+
+</details>
+
+<details>
+<summary>Vì sao hợp đồng nằm ở bảng riêng, không nằm trong <code>NhanVien</code>?</summary>
+
+Vì một người có thể có nhiều hợp đồng. Tách bảng giúp `NhanVien` vẫn giữ một dòng cho mỗi người.
+
+</details>

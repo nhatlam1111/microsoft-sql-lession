@@ -67,7 +67,7 @@ Mọi quy ước khi viết bài, review bài và làm việc với database c�
 
 ### 2.5 Bài nền (duyệt 30/10/2026)
 
-- Các bài mở đầu level 1 là **bài nền**, không có tình huống hay nhân vật: frontmatter có `noScenario: true`, `noExercises: true`, `minutes: 7`. Bài 1.1 đã chuyển; 1.2–1.5 chuyển theo mẫu này.
+- Các bài mở đầu level 1 là **bài nền**, không có tình huống hay nhân vật: frontmatter có `noScenario: true`, `noExercises: true`, `minutes: 7`. Hiện gồm các bài 1.1–1.5.
 - Thứ tự: phần chính theo chủ đề → Hay nhầm ở đâu (1–2 ý) → Ứng dụng (1–2 ý) → Ghi nhớ → ít nhất ba câu tự kiểm tra. Không dùng `Chat`, `Key`.
 - Dài 500–700 từ, đếm bằng `proseParagraphs`; `npm test` chặn ở 800. Rút bằng cách bỏ chi tiết chưa cần cho bài, không viết tắt lời giải thích.
 - Phần chính mở bằng điều quen trong Excel, dùng 0–3 tiểu mục, vẫn nói vì sao và để làm gì, vẫn có đoạn "Ở bài này chỉ cần…". Ví dụ dùng bảng và giá trị có thật trong dữ liệu mẫu, không kể chuyện.

@@ -1,87 +1,58 @@
 ---
 num: "1.5"
-title: Đọc sơ đồ quan hệ (ERD) của HRM_Demo
+title: Đọc sơ đồ quan hệ (ERD)
 shortTitle: Đọc sơ đồ ERD
 level: 1
 area: A1
 kind: full
-minutes: 15
+minutes: 7
 prerequisites:
   - "1.4"
-goal: bạn tìm được đường đi và cặp cột liên kết trên sơ đồ HRM_Demo, giải thích được vì sao một hồ sơ có thể xuất hiện nhiều dòng khi lấy dữ liệu qua bảng khác
+goal: bạn tìm được đường đi và cặp cột liên kết trên sơ đồ, giải thích được vì sao một hồ sơ có thể xuất hiện nhiều dòng khi lấy dữ liệu qua bảng khác
 excel: Các sheet tham chiếu nhau
-summary: Từ yêu cầu lương kèm tên phòng, đọc sơ đồ HRM_Demo, nhận ra quan hệ một-nhiều và đi qua đúng các bảng cần thiết.
+summary: Đọc sơ đồ quan hệ để tìm bảng và cặp cột cần đi qua, nhận ra quan hệ một-nhiều và phía có thể làm tăng số dòng.
 noExercises: true
+noScenario: true
 ---
 
-## Tình huống
+## Tìm đường lấy dữ liệu trên sơ đồ
 
-Tháng 10/2026, chị Hạnh cần bổ sung thông tin cho bảng lương kỳ trước:
+Trong Excel, muốn thêm tên phòng vào bảng lương, bạn dò mã nhân viên sang sheet nhân viên để lấy mã phòng, rồi dò mã phòng sang danh mục để lấy tên. Với `NV001`, lần đầu được `KT`, lần sau được `Kế toán`. Database cũng có hai bước như vậy: `BangLuong` lưu tiền lương, `NhanVien` lưu mã phòng, `PhongBan` lưu tên phòng. Sơ đồ cho bạn biết phải đi qua những bảng nào.
 
-<Chat who="Chị Hạnh · Phòng Nhân sự" time="15:30" initial="H">
-Kế toán xin bảng lương tháng 9 (kỳ 2026-09) có kèm tên phòng ban của từng người. Chị mở bảng lương ra thì có mã nhân viên, có thực lĩnh, mà không thấy cột phòng ban đâu cả. Lấy ở đâu ra em?
-</Chat>
-
-Giả định: lấy các dòng lương kỳ `2026-09`, kèm **phòng ban đang lưu hiện tại** của nhân viên. Nếu cần phòng tại kỳ lương, phải kiểm thêm dữ liệu lịch sử vì bộ mẫu chưa lưu lịch sử chuyển phòng.
-
-<Key>Từ dòng lương đang có, phải đi qua những bảng và cặp cột nào để tìm tên phòng?</Key>
-
-## Tìm đường lấy dữ liệu trên sơ đồ HRM_Demo
-
-### Hai lần dò Excel cho thấy hai bước liên kết
-
-Trong Excel, **VLOOKUP dò chính xác** tìm mã ở cột đầu của một vùng rồi trả giá trị ở cột bạn chọn trên dòng khớp đầu tiên. Bạn dò mã nhân viên sang sheet nhân viên để lấy mã phòng, rồi dò mã phòng sang danh mục để lấy tên. Với `NV001`, lần đầu được `KT`, lần sau được `Kế toán`. Hình dưới minh họa ba dòng lương kỳ `2026-09` sau hai lần dò; ô `D2` được tô vì là đầu vào của công thức tại `E2`:
-
-<Excel sheets="BangLuong · NhanVien · PhongBan" cell="E2" formula="=VLOOKUP(D2,PhongBan!A:B,2,FALSE)" selected="E2" mark={['D2']} rows={[
-  ['Mã NV', 'Kỳ lương', 'Thực lĩnh', 'Mã PB (dò lần 1)', 'Tên phòng (dò lần 2)'],
-  ['NV001', '2026-09', 13285000, 'KT', 'Kế toán'],
-  ['NV002', '2026-09', 21631000, 'KD', 'Kinh doanh'],
-  ['NV003', '2026-09', 14088000, 'KD', 'Kinh doanh'],
-]} />
-
-Trong công thức trên, `D2` là mã cần tìm; `PhongBan!A:B` là vùng gồm cột mã và tên; `2` lấy cột tên, `FALSE` yêu cầu dò chính xác. Trong database cũng có hai bước như vậy: `BangLuong` lưu tiền lương từng kỳ, `NhanVien` lưu mã phòng, `PhongBan` lưu tên phòng. Tách bảng giúp quản lý từng loại thông tin; đổi lại, muốn trả lời câu hỏi này bạn phải biết chúng liên quan qua cột nào.
-
-**ERD** (Entity–Relationship Diagram) là **sơ đồ thực thể–quan hệ**; thực thể là loại đối tượng cần lưu, như nhân viên hoặc phòng ban. Sơ đồ trong bài vẽ ở mức database: mỗi hộp là một **bảng**, trong hộp có các **cột**, còn đường nối thể hiện **khóa ngoại** đã khai báo. Nó là bản đồ để tìm dữ liệu trước khi viết câu lệnh.
-
-### Đọc khóa và phía một, phía nhiều
-
-Phần tô xanh dưới đây là đường cần đi cho yêu cầu của chị Hạnh. Sơ đồ rộng nên có thể cuộn ngang để xem hết:
+**ERD** (Entity–Relationship Diagram) là **sơ đồ thực thể–quan hệ**; thực thể là loại đối tượng cần lưu, như nhân viên hoặc phòng ban. Trong sơ đồ dưới, mỗi hộp là một **bảng**, trong hộp có các **cột**, đường nối thể hiện **khóa ngoại** đã khai báo. Sơ đồ rộng nên có thể cuộn ngang để xem hết.
 
 <Erd path={['BangLuong', 'NhanVien', 'PhongBan']} caption="Tô xanh: BangLuong → NhanVien → PhongBan, qua MaNV rồi MaPB. 1 là phía một, ∞ là phía nhiều." />
 
-| Đường liên kết cần đọc | Cặp cột | Thông tin tìm được |
+### Đọc đường liên kết
+
+Đường tô xanh gồm hai cặp cột. Tên phòng lấy theo phòng ban đang lưu hiện tại, không phải phòng tại kỳ lương.
+
+| Đường liên kết | Cặp cột | Thông tin tìm được |
 |---|---|---|
 | Lương → hồ sơ | `BangLuong.MaNV` → `NhanVien.MaNV` | Mã phòng `MaPB` của hồ sơ |
 | Hồ sơ → phòng ban | `NhanVien.MaPB` → `PhongBan.MaPB` | Tên phòng `TenPB` |
 
-Trong hình, **`PK`** là khóa chính, **`FK`** là khóa ngoại như ở bài 1.4. Đầu có chấm tròn nằm ở cột khóa ngoại, đầu kia tới cột khóa chính được tham chiếu; riêng `MaQuanLy` là đường vòng về chính bảng `NhanVien`.
+Trong hình, **`PK`** là khóa chính, **`FK`** là khóa ngoại như ở bài 1.4. Đầu có chấm tròn nằm ở cột khóa ngoại, đầu kia tới cột khóa chính được tham chiếu. Một bảng có thể dùng nhiều cột làm khóa: `BangLuong` có cả `KyLuong` và `MaNV` là `PK`, nghĩa là cả cặp không trùng.
+
+Trên database khóa học, dùng sơ đồ trong bài hoặc nút **Sơ đồ database** ở trang bài tập; không tự cài/lưu sơ đồ vào database khóa học.
+
+### Quan hệ một-nhiều
 
 Quan hệ **một-nhiều**, ký hiệu **`1 — ∞`**, đọc từ hai phía:
 
-- **Từ bảng `PhongBan`:** một phòng có thể có 0, 1 hoặc nhiều hồ sơ nhân viên. Mã `KT` nằm ở một dòng danh mục nhưng được nhiều dòng `NhanVien` sử dụng.
+- **Từ bảng `PhongBan`:** một phòng có thể có 0, 1 hoặc nhiều hồ sơ nhân viên.
 - **Từ bảng `NhanVien`:** mỗi hồ sơ thuộc đúng một phòng ban trong thiết kế này, vì `MaPB` không nhận `NULL` và phải trỏ tới một mã phòng có thật.
 
-Một hồ sơ chỉ có một ô `MaPB`; nếu nghiệp vụ cho kiêm nhiệm nhiều phòng, thiết kế hiện tại chưa thể hiện được điều đó (bài 5.1).
+Đi sang phía nhiều có thể làm tăng số dòng. `NV021` có ba hợp đồng, nên lấy hồ sơ qua `HopDong` sẽ ra ba dòng cho cùng một mã. Đây không phải lỗi; bạn cần xác định mỗi dòng kết quả là một người hay một hợp đồng.
 
-Không được thấy cột có cả `PK` và `FK` rồi kết luận quan hệ một-một. `BangLuong.MaNV` chỉ là một phần của khóa chính `(KyLuong, MaNV)`; cả cặp không trùng, còn `MaNV` lặp qua các kỳ. Vì vậy một nhân viên có thể có nhiều dòng lương, tối đa một dòng lương mỗi kỳ. `ChamCong` tương tự với khóa `(MaNV, Ngay)`.
-
-Sơ đồ này không ghi cột nào nhận `NULL`; xem **Object Explorer → Columns** như bài 1.3. Chẳng hạn `MaQuanLy` có thể là `NULL`: theo quy ước bộ mẫu, `NV004` không có quản lý trực tiếp, còn `NV001` có quản lý là `NV005`.
-
-### Đi từ dòng lương tới tên phòng
-
-Bạn có thể trả lời chị Hạnh: lấy tên phòng qua **`BangLuong` → `NhanVien` → `PhongBan`**, đúng hai lần dò trong Excel. Mỗi dòng lương khớp một hồ sơ và một phòng trong bộ mẫu, vì cả hai bước đều đi về phía khóa chính và các mã bắt buộc đã có khóa ngoại.
-
-Đường liên kết không tự chọn kỳ lương; khi lấy dữ liệu còn phải chỉ rõ `KyLuong` là `2026-09`. Nếu Kế toán cần phòng tại kỳ lương, hỏi Nhân sự về việc chuyển phòng và nguồn chốt theo kỳ hoặc lịch sử, thay vì suy ra từ `MaPB` hiện tại.
-
-Ở bài này chỉ cần đọc được sơ đồ, chỉ ra cặp cột và nhận ra phía có thể làm tăng số dòng. Cú pháp kết bảng học ở bài 3.4, giữ dòng chưa có dữ liệu liên quan ở bài 3.5, kết nhiều bảng ở bài 3.6, quan hệ tự trỏ ở bài 3.7 và lịch sử ở bài 6.6.
+Ở bài này chỉ cần đọc được sơ đồ, chỉ ra cặp cột và nhận ra phía có thể làm tăng số dòng. Cú pháp kết bảng học ở bài 3.4, kết nhiều bảng ở bài 3.6.
 
 ## Hay nhầm ở đâu
 
 <Mistakes>
 
-1. **Dò sang phía nhiều rồi chỉ lấy một dòng.** Với cách dò chính xác trong hình, VLOOKUP chỉ lấy dòng đầu tiên khi nhiều dòng cùng khớp mã. `NV021` có ba hợp đồng; lấy dữ liệu qua `HopDong` có thể làm hồ sơ này hiện ba dòng. Phải xác định mỗi dòng kết quả là một người hay một hợp đồng, không coi mọi dòng lặp mã là lỗi.
-2. **Coi sơ đồ là toàn bộ luật nghiệp vụ.** Hình vẽ từ database chỉ thể hiện quan hệ đã khai báo bằng khóa ngoại; không có đường nối chưa chắc các bảng không liên quan. Excel cũng có **Data Model** để khai báo quan hệ; file chỉ dùng sheet và VLOOKUP thì không có sẵn bản đồ này.
-3. **Tự cài hoặc lưu Database Diagrams lên nguồn chung.** Trình vẽ của SSMS có thể tạo đối tượng hoặc sửa thiết kế. Dùng sơ đồ trong bài hoặc nút **Sơ đồ database** ở trang bài tập; không tự cài/lưu sơ đồ vào database khóa học.
+1. **Coi sơ đồ là toàn bộ luật nghiệp vụ.** Sơ đồ chỉ thể hiện quan hệ đã khai báo bằng khóa ngoại; không có đường nối chưa chắc các bảng không liên quan.
+2. **Thấy cột có cả `PK` và `FK` rồi kết luận quan hệ một-một.** `BangLuong.MaNV` chỉ là một phần của khóa `(KyLuong, MaNV)`: một nhân viên có nhiều dòng lương qua các kỳ, tối đa một dòng lương mỗi kỳ.
 
 </Mistakes>
 
@@ -89,9 +60,8 @@ Bạn có thể trả lời chị Hạnh: lấy tên phòng qua **`BangLuong` �
 
 <Apply>
 
-- **Tìm đủ nguồn cho báo cáo:** xác định bảng chứa lương, hồ sơ và tên phòng, cùng cặp cột liên kết trước khi viết câu lệnh.
+- **Tìm đủ nguồn cho báo cáo:** xác định bảng chứa dữ liệu và cặp cột liên kết trước khi viết câu lệnh.
 - **Dự đoán số dòng kết quả:** nhận ra một nhân viên có nhiều hợp đồng hoặc kỳ lương để chọn đúng ý nghĩa của mỗi dòng báo cáo.
-- **Đọc phạm vi thiết kế:** phân biệt quan hệ đã khai báo với điều còn phải xác nhận, như dữ liệu theo kỳ hoặc nhân viên kiêm nhiệm nhiều phòng.
 
 </Apply>
 
@@ -101,7 +71,6 @@ Bạn có thể trả lời chị Hạnh: lấy tên phòng qua **`BangLuong` �
   ['Dò mã qua các sheet', 'Đọc đường khóa ngoại → khóa chính trên ERD'],
   ['Một mã phòng dùng ở nhiều hồ sơ', 'Một-nhiều: một phòng có thể có 0, 1 hoặc nhiều hồ sơ'],
   ['Dò mã NV rồi dò mã phòng', 'BangLuong → NhanVien → PhongBan'],
-  ['VLOOKUP dò chính xác lấy dòng khớp đầu tiên', 'Đi sang phía nhiều có thể làm một hồ sơ thành nhiều dòng'],
 ]} />
 
 **Tự kiểm tra trước khi bấm "Đã học xong":**
@@ -109,34 +78,20 @@ Bạn có thể trả lời chị Hạnh: lấy tên phòng qua **`BangLuong` �
 <details>
 <summary>Trong sơ đồ của bài, hộp và đường nối thể hiện gì?</summary>
 
-Hộp là bảng và các cột; đường nối thể hiện khóa ngoại đã khai báo trỏ tới khóa được tham chiếu. Sơ đồ không tự thể hiện hết điều kiện nghiệp vụ hoặc dữ liệu lịch sử.
+Hộp là bảng và các cột; đường nối thể hiện khóa ngoại đã khai báo trỏ tới khóa được tham chiếu.
 
 </details>
 
 <details>
 <summary>Muốn lấy lương kèm tên phòng, đi qua bảng và cặp cột nào?</summary>
 
-`BangLuong.MaNV` với `NhanVien.MaNV`, rồi `NhanVien.MaPB` với `PhongBan.MaPB`. Chọn kỳ bằng `BangLuong.KyLuong`; tên phòng lấy theo dữ liệu hiện tại của bộ mẫu.
-
-</details>
-
-<details>
-<summary>Quan hệ một-nhiều có bắt một phòng phải có nhân viên không?</summary>
-
-Không. Một phòng có thể chưa được hồ sơ nào tham chiếu. Phía một có thể ứng với 0, 1 hoặc nhiều dòng phía nhiều.
-
-</details>
-
-<details>
-<summary><code>BangLuong.MaNV</code> mang cả <code>PK</code> và <code>FK</code> thì quan hệ với nhân viên là một-một?</summary>
-
-Không. Khóa chính là cả cặp `(KyLuong, MaNV)`; riêng mã nhân viên vẫn lặp qua các kỳ. Phải đọc đủ khóa, không chỉ nhìn một nhãn.
+`BangLuong.MaNV` với `NhanVien.MaNV`, rồi `NhanVien.MaPB` với `PhongBan.MaPB`.
 
 </details>
 
 <details>
 <summary>Vì sao lấy hồ sơ qua bảng hợp đồng có thể ra nhiều dòng cho cùng một mã nhân viên?</summary>
 
-Một người có thể có nhiều hợp đồng, như `NV021` có ba.
+Vì một người có thể có nhiều hợp đồng, như `NV021` có ba. Đi sang phía nhiều làm tăng số dòng.
 
 </details>

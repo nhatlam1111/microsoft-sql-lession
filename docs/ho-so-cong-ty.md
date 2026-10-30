@@ -95,10 +95,10 @@ Các nhân vật là giả định, không phải hồ sơ trong bộ mẫu.
 
 | Nhân vật | Là ai | Xuất hiện |
 |---|---|---|
-| Chị Hạnh · Phòng Nhân sự | Người đưa yêu cầu trong mọi bài có tình huống; xưng "chị", gọi người học là "em" | 1.2–1.6, 2.1–2.9, 3.1–3.10, 4.1–4.6 |
+| Chị Hạnh · Phòng Nhân sự | Người đưa yêu cầu trong mọi bài có tình huống; xưng "chị", gọi người học là "em" | 1.6, 2.1–2.9, 3.1–3.10, 4.1–4.6 |
 | Người học ("em", "bạn") | Người đọc và lấy dữ liệu từ hệ thống nhân sự cho chị Hạnh; có tài khoản vào database qua SSMS | mọi bài |
-| Bên IT | Quản trị hệ thống, cấp tên máy chủ và tài khoản, nhập file vào hệ thống, xóa dữ liệu theo yêu cầu | 1.2, 1.3, 1.4 |
-| Kế toán | Người nhận các danh sách và bảng lương | 1.5, 2.1 |
+| Bên IT | Quản trị hệ thống, cấp tên máy chủ và tài khoản, nhập file vào hệ thống, xóa dữ liệu theo yêu cầu | nhắc tới khi cần |
+| Kế toán | Người nhận các danh sách và bảng lương | 2.1 |
 
 Chị Hạnh trùng tên với hồ sơ NV020 Kiều Thị Hạnh (KD, đã nghỉ). Khi bài nhắc tới hồ sơ này thì luôn gọi bằng mã. Nhân vật mới không được trùng tên với 48 hồ sơ ở mục 3.
 
@@ -118,10 +118,6 @@ Các lỗi này có chủ ý, dành cho bài 4.6 và 4.7; bài khác không đư
 
 | Bài | Sự việc |
 |---|---|
-| 1.2 | Bên IT gửi tên máy chủ và tài khoản để vào database nhân sự; chị Hạnh cần biết công ty có những phòng nào cho buổi họp chiều. |
-| 1.3 | Chị Hạnh gửi bên IT một file danh sách nhân viên để nhập vào hệ thống; file có ngày gõ nhiều kiểu, có ô "chưa rõ", lương ghi "9,61 triệu". Hình minh họa dùng `NV049`–`NV051`, ngoài 48 hồ sơ. |
-| 1.4 | Công ty quyết định gộp phòng Vận hành vào Kinh doanh; bên IT thử xóa VH khỏi danh mục và bị khóa ngoại chặn. **Chỉ là giả định của bài:** dữ liệu vẫn còn VH, các bài khác coi VH là phòng đang hoạt động. |
-| 1.5 | Kế toán xin bảng lương kỳ 2026-09 kèm tên phòng; tên phòng lấy theo phòng đang lưu, không phải phòng tại kỳ lương. |
 | 1.6 | Chị Hạnh làm mẫu hồ sơ nhân viên mới, cần biết bảng nhân viên lưu những gì. |
 | 2.1 | Kế toán cần danh sách toàn bộ 48 hồ sơ, ba cột có tiêu đề tiếng Việt. |
 | 2.2 | Chị Hạnh đối chiếu 14 hồ sơ mang mã phòng KD, kể cả người đã nghỉ. |

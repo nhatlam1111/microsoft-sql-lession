@@ -7,7 +7,7 @@ area: A2
 kind: full
 minutes: 20
 prerequisites:
-  - "1.2"
+  - "1.1"
   - "1.4"
 goal: bạn tự viết và chạy được SELECT để xem một bảng, đọc Results và Messages, biết giới hạn của TOP khi chưa sắp xếp
 excel: Mở sheet ra xem
@@ -22,7 +22,7 @@ Tháng 10/2026, chị Hạnh muốn đối chiếu mẫu hồ sơ mới với d�
 Chị đang làm mẫu hồ sơ nhân viên mới. Em mở bảng nhân viên trên hệ thống xem giúp chị nó đang lưu những thông tin gì, cho chị xem vài người làm mẫu nhé.
 </Chat>
 
-Giả định của tình huống: bảng cần xem là `NhanVien` của HRM_Demo, toàn bộ dữ liệu là giả. Bạn chỉ xem các cột và vài hồ sơ minh họa.
+Giả định của tình huống: bạn vừa được cấp quyền đọc database nhân sự; bảng cần xem là `NhanVien`, toàn bộ dữ liệu là giả. Bạn chỉ xem các cột và vài hồ sơ minh họa.
 
 <Key>Viết câu lệnh nào để xem các cột và một ít dòng của bảng nhân viên?</Key>
 
@@ -39,7 +39,7 @@ Trong Excel, bạn mở sheet, nhìn tiêu đề cột rồi xem vài dòng. Hì
   ['NV003', 'Nguyễn Thu Hà', 'Nữ', '25/01/1995', 'KD'],
 ]} />
 
-Với database, bạn gửi **câu truy vấn (query)** để lấy dữ liệu. Câu `SELECT * FROM PhongBan;` đã thấy ở bài 1.2 gồm **`SELECT`** chọn cột, dấu **`*`** lấy mọi cột, **`FROM`** chỉ bảng nguồn. Database có nhiều bảng, nên không có một “sheet đang mở” để SQL Server tự đoán.
+Với database, bạn gửi **câu truy vấn (query)** để lấy dữ liệu. Câu `SELECT * FROM PhongBan;` gồm **`SELECT`** chọn cột, dấu **`*`** lấy mọi cột, **`FROM`** chỉ bảng nguồn. Database có nhiều bảng, nên không có một “sheet đang mở” để SQL Server tự đoán.
 
 Thêm **`TOP (n)`** sau `SELECT` để lấy tối đa `n` dòng. Với bảng `NhanVien` có 48 hồ sơ, `TOP (10)` trả 10 dòng; nếu bảng chỉ có sáu dòng thì vẫn chỉ trả sáu. Cách này giúp xem mẫu mà không đưa cả bảng lớn lên màn hình.
 
@@ -204,6 +204,6 @@ FROM NhanVien;`,
 
 Không nhớ tên bảng thì xem Object Explorer hoặc nút **Sơ đồ database**. Trang bài tập chạy cả khung soạn, mỗi lần chỉ nhận một câu; bôi đen không chọn riêng đoạn như SSMS. Chữ nhắc trong ô mới là placeholder: nó biến mất khi bạn gõ và không thuộc câu SQL. Nếu bản nháp cũ có dòng bắt đầu bằng `--`, đó là ghi chú; viết câu lệnh ở dòng dưới hoặc xóa ghi chú trước khi gõ.
 
-Nếu dùng web, bấm **Làm bài** ở bài tập 1, nhập câu mẫu rồi bấm **Chạy (F5)** để thử. Sau đó thay câu mẫu bằng câu theo đề và làm lần lượt ba bài. Việc luôn hoàn tác trên trang bài tập đã được giới thiệu ở bài 1.2.
+Nếu dùng web, bấm **Làm bài** ở bài tập 1, nhập câu mẫu rồi bấm **Chạy (F5)** để thử. Sau đó thay câu mẫu bằng câu theo đề và làm lần lượt ba bài. Cách trang bài tập luôn hoàn tác được nói ở [trang Giới thiệu](/microsoft-sql-lession/gioi-thieu/#chon-noi-thuc-hanh).
 
 <Exercises />
