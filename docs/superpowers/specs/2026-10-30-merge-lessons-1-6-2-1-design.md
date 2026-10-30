@@ -90,3 +90,13 @@ Hệ quả nhỏ: bài tập đã làm lưu theo mã, nên sau khi đánh số l
 
 - Tiêu đề cuối của bài, câu chữ và tên tiểu mục, trong giới hạn của khung bài.
 - Số ý Hay nhầm, miễn không thêm ý ngoài mục tiêu bài.
+
+## Kết quả
+
+Đã làm trên nhánh `feat/merge-lessons-1-6-2-1`, chưa push. Bài 2.1 mới một tình huống, 22 phút, bốn bài tập; khóa học còn 50 bài. Một review độc lập không có mục Cần sửa. Bản cuối đạt 324/324 test, check 0 lỗi, build 129 trang, `check:dist` 1952 liên kết, `check:exercises` và `check:data` đạt. [Hồ sơ xử lý](../../reviews/2026-10-30-gop-1-6-2-1/verification.md).
+
+Khác thiết kế:
+
+- Tiêu đề bài là "Câu SELECT đầu tiên: chọn cột và đặt tiêu đề", vì "đặt tên cột" dễ hiểu là đổi tên cột trong bảng.
+- Trang Giới thiệu có thêm mục `#chay-cau-lenh`, bài 2.1 trỏ tới đó.
+- Câu Hay nhầm về chuỗi dùng `'HoTen'`, bỏ `N`.

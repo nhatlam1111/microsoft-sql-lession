@@ -308,8 +308,8 @@ describe('fixes from the independent reviews of 2026-10-19', () => {
       'mỗi thông tin chỉ nằm ở một chỗ', 'được khai báo đủ', 'cặp NV001 và ngày 2026-09-01', 'bài 3.4 và 3.5 sẽ học']));
   it('2.1 counts records not people, closes the scenario and keeps the first-run advice', () => {
     check('2-1-chon-cot-dat-ten-cot',
-      ['48 hồ sơ', 'mỗi lần chỉ nhận một câu', 'là ghi chú', 'bài 6.1', 'SoCCCD', 'đánh lại mỗi lần chạy', 'Copy with Headers',
-        'có thể toàn là dòng cũ', 'bài 2.2', 'câu truy vấn (query)', 'Giả định của tình huống', 'Chạy (F5)', 'Sơ đồ database'],
+      ['48 hồ sơ', 'mỗi lần chỉ nhận một câu', 'bài 6.1', 'SoCCCD', 'đánh lại mỗi lần chạy', 'Copy with Headers',
+        'năm dòng bất kỳ', 'bài 2.2', 'câu truy vấn (query)', 'Giả định của tình huống', 'Chạy (F5)', 'Sơ đồ database'],
       ['48 người, mỗi người một dòng', 'sẽ học ở các bài sau', 'của 10 người là đủ', 'đó là 10 người nào', 'PhongBanCu', 'Select Top 1000 Rows']);
     const page = readFileSync('src/pages/gioi-thieu.astro', 'utf8');
     for (const s of ['bôi đen', 'Parse']) expect(page, s).toContain(s);
@@ -347,7 +347,7 @@ describe('fixes from the final review', () => {
     expect(f.body.match(/<Chat\b/g)).toHaveLength(1);
     expect(f.body.match(/<RunFlow\b/g)).toHaveLength(1);
     expect(f.body).toContain('SELECT TOP (5) *');
-    for (const s of ['Chạy (F5)', 'gioi-thieu/#ket-noi-ssms', 'gioi-thieu/#chon-noi-thuc-hanh', 'Results', 'Messages', 'số thứ tự dòng của kết quả']) expect(f.body, s).toContain(s);
+    for (const s of ['Chạy (F5)', 'gioi-thieu/#ket-noi-ssms', 'gioi-thieu/#chon-noi-thuc-hanh', 'gioi-thieu/#chay-cau-lenh', 'sẽ hỏi mã truy cập', 'chưa bấm **Nộp bài**', 'Results', 'Messages', 'số thứ tự dòng của kết quả', 'trang bài tập không có lệnh này', '(48 rows affected)']) expect(f.body, s).toContain(s);
     // Exercise 1 asks for this table, so printing the query would hand out the answer.
     expect(f.body).not.toContain('FROM HopDong');
   });
