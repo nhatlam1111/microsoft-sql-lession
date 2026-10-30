@@ -1,5 +1,7 @@
 # Bài 1.1: triển khai lời dẫn và hình minh họa
 
+Lượt tiếp ngày 30/10/2026 có [plan giảm tải riêng](2026-10-30-lesson-1-1-reduce-load.md); các checkbox/kết quả dưới đây là lịch sử triển khai ngày 29/10.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans. Thực hiện liên tục trong phiên; review một bài theo AGENTS, kế thừa model phiên.
 
 **Goal:** người mới theo được chuyện hai file đến cách database giúp lưu/đọc dữ liệu mà không mất mạch.

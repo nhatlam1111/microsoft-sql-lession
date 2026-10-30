@@ -30,7 +30,7 @@ Giả định của tình huống: đây là phương án gộp phòng riêng c�
 
 ### Khóa chính xác định đúng một dòng
 
-Trong Excel, bạn có thể tô màu mã nhân viên bị trùng để kiểm lại. Với database, khi `NhanVien.MaNV` được khai báo là **khóa chính (primary key)**, SQL Server từ chối hai dòng trùng mã và không nhận `NULL` ở cột khóa. Đây là **ràng buộc (constraint)** của dữ liệu, chứ không chỉ là cảnh báo bằng màu.
+Trong Excel, bạn có thể tô màu mã nhân viên bị trùng để kiểm lại. Với database, khi `NhanVien.MaNV` được khai báo là **khóa chính (primary key)**, SQL Server từ chối hai dòng trùng mã và không nhận `NULL` ở cột khóa. Đây là một **ràng buộc (constraint)**, tức luật dữ liệu đã nói ở bài 1.1, chứ không chỉ là cảnh báo bằng màu.
 
 Mã dùng để xác định một hồ sơ vì họ tên có thể trùng hoặc thay đổi. Hồ sơ `NV001` là `Trần Thị Mai`; dùng lại `NV001` cho một người có tên khác vẫn vi phạm khóa chính. Các bảng hợp đồng, chấm công và lương dùng mã này để nhắc tới đúng hồ sơ.
 
@@ -49,7 +49,7 @@ Trong file minh họa, cột mã phòng dùng **Data Validation dạng List**, t
 
 Nếu xóa `VH` khỏi sheet danh mục, các ô đã chứa `VH` ở sheet nhân viên cũng không tự mất đi. Trong database, **khóa ngoại (foreign key)** là luật buộc mã khác `NULL` phải trỏ tới một giá trị khóa có thật. Với `NhanVien.MaPB` trỏ sang `PhongBan.MaPB`, `KT` được nhận vì có trong danh mục; `KT01` không có thì bị từ chối.
 
-Khóa ngoại là luật kiểm khi ghi, **không phải ô chọn trên màn hình**. Khi ràng buộc đang bật, các câu ghi thông thường đều bị kiểm; việc nạp hàng loạt có kiểm khóa ngoại hay không còn tùy cách nạp (bài 5.5). Trong bộ mẫu, khóa ngoại dùng cách xử lý mặc định **`NO ACTION`**: còn hồ sơ trỏ tới `VH` thì không xóa hoặc đổi mã `VH` trong danh mục được.
+Khóa ngoại là luật kiểm khi ghi, **không phải ô chọn trên màn hình**. Khi ràng buộc đang bật, các câu ghi (thêm, sửa, xóa dữ liệu) thông thường đều bị kiểm; việc nạp hàng loạt có kiểm khóa ngoại hay không còn tùy cách nạp (bài 5.5). Trong bộ mẫu, khóa ngoại dùng cách xử lý mặc định **`NO ACTION`**: còn hồ sơ trỏ tới `VH` thì không xóa hoặc đổi mã `VH` trong danh mục được.
 
 Một mã phòng được nhiều nhân viên dùng là bình thường: phía `PhongBan` giữ một dòng cho mỗi mã, phía `NhanVien` có nhiều dòng cùng mã phòng. Khóa ngoại cũng có thể trỏ về chính bảng đó: `NhanVien.MaQuanLy` trỏ về `NhanVien.MaNV`, vì người quản lý cũng là nhân viên. `NhanVien.MaCD` trỏ sang `ChucDanh.MaCD` để lấy chức danh.
 
