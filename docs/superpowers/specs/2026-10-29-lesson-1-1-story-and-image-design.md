@@ -1,5 +1,7 @@
 # Bài 1.1: lời dẫn liền mạch và hình minh họa
 
+Điều chỉnh tiếp ngày 30/10/2026: [giảm tải, giữ mạch kể](2026-10-30-lesson-1-1-reduce-load-design.md). Thiết kế mới cập nhật phần Ghi nhớ, câu ôn thứ ba, vị trí đoạn chốt và bỏ nhánh nhập file/dán-kéo điền; các kết quả dưới đây thuộc lượt ngày 29/10.
+
 Người dùng chọn ngày 29/10/2026: viết lại kèm hình ảnh, theo đề xuất hai bản riêng → nguồn chính thức → cấu trúc/luật → lấy lại danh sách cho chị Hạnh. Đây là lựa chọn triển khai local, chưa phải quyền push/merge/deploy. Chỉ bài 1.1, giữ URL/schema, 12 phút, khung phần cuối và dữ liệu mẫu.
 
 ## Các hướng đã cân nhắc

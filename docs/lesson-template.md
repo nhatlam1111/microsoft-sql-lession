@@ -1,12 +1,12 @@
 # Khung một bài học
 
-Chuẩn hiện hành từ 20/10/2026, sau khi người làm khóa học duyệt [`bài 1.1`](../src/content/lessons/1-1-database-la-gi.mdx). Dùng bài này để đối chiếu mạch kể, độ sâu, chữ đậm và giá trị được highlight. [`Bài 3.5`](../src/content/lessons/3-5-left-join.mdx) là ví dụ kỹ thuật `RunFlow`, đã chuyển sang khung gộp từ 24/10/2026.
+Bài có tình huống đối chiếu với [`bài 2.2`](../src/content/lessons/2-2-where-loc-nhu-autofilter.mdx) về mạch kể, độ sâu, chữ đậm và giá trị được highlight; bài nền đối chiếu với [`bài 1.1`](../src/content/lessons/1-1-database-la-gi.mdx). [`Bài 3.5`](../src/content/lessons/3-5-left-join.mdx) là ví dụ kỹ thuật `RunFlow`, đã chuyển sang khung gộp từ 24/10/2026.
 
 File này hướng dẫn dựng bài và dùng các khối. Quy tắc viết, định dạng, số liệu, review và an toàn database nằm ở [`quy-uoc.md`](quy-uoc.md); bối cảnh, nhân vật và dữ liệu mẫu ở [`ho-so-cong-ty.md`](ho-so-cong-ty.md). Các spec/plan/mockup cũ ghi hai phần Excel/SQL là lịch sử thiết kế; khi viết tiếp dùng hai tài liệu hiện hành này.
 
 ## Phần đầu file
 
-Không thêm trường frontmatter để chọn khung. Giữ `kind: full` hoặc `summary`; tiêu đề phần chính được đọc trực tiếp từ MDX.
+Giữ `kind: full` hoặc `summary`; bài nền thêm `noScenario: true`. Tiêu đề phần chính được đọc trực tiếp từ MDX.
 
 ```yaml
 ---
@@ -23,12 +23,13 @@ goal: bạn tự lọc được danh sách nhân viên theo một điều kiện
 excel: AutoFilter
 summary: Một câu nói đúng vấn đề và nội dung chính của bài.
 # noExercises: true            # bài khái niệm không có mục Bài tập, hiện là 1.1–1.5 và 4.5
+# noScenario: true             # bài nền không có mục Tình huống
 ---
 ```
 
 ## Thân bài đầy đủ
 
-Thứ tự cấp 2: **Tình huống → phần chính theo chủ đề → Hay nhầm ở đâu → Ứng dụng → Ghi nhớ → Bài tập**. Tiêu đề phần chính được đặt theo bài, như "Từ hai bản Excel đến một nguồn dữ liệu chung" ở bài 1.1 hoặc "Lọc danh sách nhân viên theo điều kiện" ở bài `WHERE`. Các tên mục còn lại giữ đúng như khung.
+Thứ tự cấp 2: **Tình huống → phần chính theo chủ đề → Hay nhầm ở đâu → Ứng dụng → Ghi nhớ → Bài tập**. Tiêu đề phần chính được đặt theo bài, như "Từ file Excel đến một nguồn dữ liệu chung" ở bài 1.1 hoặc "Lọc danh sách nhân viên theo điều kiện" ở bài `WHERE`. Các tên mục còn lại giữ đúng như khung.
 
 Khung dưới chép vào file MDX được; thay toàn bộ lời chỉ dẫn bằng nội dung thật. Các tiểu mục chỉ gợi ý nhịp kể, chọn khoảng 2–4 tiểu mục theo mục tiêu bài. Ví dụ và hình đặt ngay cạnh ý cần minh họa.
 
@@ -114,6 +115,10 @@ Giữ lời giải ngay trong phần chính, không thêm preview SQL hay mục 
 
 Gợi ý dưới nút "Đã học xong" là "Bấm khi bạn trả lời được các câu tự kiểm tra cuối bài mà không nhìn bài."
 
+### Bài nền
+
+Bài nền là bài mở đầu ngắn theo mục 2.5 của `quy-uoc.md`. Frontmatter có `noScenario: true`, `noExercises: true`, `minutes: 7`. Thứ tự cấp 2: **phần chính theo chủ đề → Hay nhầm ở đâu → Ứng dụng → Ghi nhớ**, sau `Memo` là các câu tự kiểm tra như bài khái niệm. Không dùng `Chat`, `Key`. Đối chiếu với bài 1.1.
+
 ### Bài có câu lệnh và kết quả
 
 Giữ lý thuyết, Excel và ví dụ trong phần chính theo chủ đề. Cuối phần đó dùng `### Câu lệnh cho tình huống`, đặt câu SQL đầy đủ và kết quả đã kiểm chứng, rồi trả lời người hỏi ngay cạnh kết quả. Nếu có `RunFlow`, tiểu mục cuối cùng là `### SQL Server chạy câu này thế nào`. Không chép thêm một phần giải SQL độc lập hay "Trả lời chị Hạnh" ở sau.
@@ -166,7 +171,7 @@ Kết quả cần thấy: `SELECT`/`FROM`/`WHERE` cùng cột; `HoTen`, `CASE`, 
 ## Trình tự dùng khung
 
 1. Đọc quy ước và hồ sơ công ty; chốt mục tiêu, giả định và câu trả lời cần có.
-2. Chọn biến thể khái niệm hoặc truy vấn; đặt tiêu đề phần chính theo vấn đề cụ thể.
+2. Chọn biến thể bài nền, khái niệm hoặc truy vấn; đặt tiêu đề phần chính theo vấn đề cụ thể.
 3. Chọn ví dụ tối thiểu và các khối thật sự cần; chạy, đối chiếu dữ liệu theo quy trình trước khi điền.
 4. Viết mạch Excel → khái niệm/cách SQL xử lý → giải yêu cầu; không tách lại hai phần Excel/SQL.
 5. Rà chữ đậm, code của giá trị dẫn chứng, dấu ô trong hình, ứng dụng đúng chủ đề và câu tự kiểm tra phủ mục tiêu.

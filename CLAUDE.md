@@ -6,12 +6,16 @@ mục đích của project là tạo các bài giảng để giảng dạy cho 1
 ## Tài liệu cần đọc trước khi viết hoặc sửa bài
 
 1. [Quy ước hiện hành](docs/quy-uoc.md): giọng văn, độ sâu, định dạng dẫn chứng, Ứng dụng, kiểm tra, review và an toàn database.
-2. [Khung bài hiện hành](docs/lesson-template.md): cấu trúc MDX và biến thể bài khái niệm/truy vấn.
+2. [Khung bài hiện hành](docs/lesson-template.md): cấu trúc MDX và biến thể bài nền/khái niệm/truy vấn.
 3. [Hồ sơ công ty](docs/ho-so-cong-ty.md) và các bài trước có liên quan: giữ tình huống, nhân vật, dữ liệu và mức kiến thức nhất quán.
-4. [Bài 1.1 đã duyệt](src/content/lessons/1-1-database-la-gi.mdx): mẫu mạch kể, nhấn khái niệm, highlight giá trị và Ứng dụng đúng chủ đề.
+4. Bài mẫu: [bài 2.2](src/content/lessons/2-2-where-loc-nhu-autofilter.mdx) cho bài có tình huống, [bài 1.1](src/content/lessons/1-1-database-la-gi.mdx) cho bài nền.
 
 Từ 20/10/2026, viết tiếp theo khung gộp Excel/SQL trong một phần chính; spec/plan/mockup cũ ghi khung tách hai phần là lịch sử. Quy tắc cụ thể giữ ở các tài liệu hiện hành phía trên, không suy ra lại từ bài cũ chưa chuyển khung.
 
 Review bằng Claude dùng Sonnet, effort high; review bằng Codex giữ model đang dùng của phiên. Theo mục 4.5 của quy ước, không áp yêu cầu Sonnet sang Codex.
 
 Dùng gói giao việc và lời dặn hiện hành ở mục 4.5, kiểm tiền đề từng đề theo nền tảng người mới và phân biệt đọc nguồn/HTML với kiểm thực tế. Không đọc review cũ để hình thành nhận xét; nhiều bài hoặc sửa công cụ cần review tích hợp. Xử lý và ghi quyết định từng nhận xét theo mục 4.6 trước khi bàn giao.
+
+## Kỹ năng teach-skills
+
+Bốn kỹ năng `teach`, `source-verifier`, `hidden-case-trainer`, `cognitive-pacer` nằm ở `.claude/skills/` (bản sao từ `E:\Projects\teach-skills`; khi sửa, cập nhật cả hai thư mục `.claude/skills` và `.agents/skills`). Chỉ dùng khi người làm khóa học gọi rõ; chúng không tạo `learning-workspace/` hay bài HTML trong repo này. Nội dung bài vẫn theo `docs/quy-uoc.md` và `docs/lesson-template.md`, nếu mâu thuẫn thì quy ước của repo thắng.

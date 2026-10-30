@@ -29,17 +29,18 @@ describe('lesson files', () => {
   });
   it('uses exactly the section headings of its kind, in order', () => {
     for (const f of files) {
-      const { kind, noExercises } = f.data as { kind: 'full' | 'summary'; noExercises?: boolean };
+      const { kind, noExercises, noScenario } = f.data as { kind: 'full' | 'summary'; noExercises?: boolean; noScenario?: boolean };
       const h2 = [...f.body.matchAll(/^## (.+?)\s*$/gm)].map(m => m[1]);
+      const mainTitle = noScenario ? h2[0] : h2[1];
       if (kind === 'summary') {
         expect(h2, f.slug).toEqual(sectionHeadings(kind, noExercises));
       } else if (h2[1] === 'Với Excel') {
         expect(LEGACY_LAYOUT_SLUGS.has(f.slug), `${f.slug}: new full lessons must use the narrative format`).toBe(true);
         expect(h2, f.slug).toEqual(sectionHeadings(kind, noExercises));
       } else {
-        expect(h2[1] ?? '', `${f.slug}: needs a descriptive main-section title`).not.toBe('');
-        expect([...SECTION_HEADINGS.full, ...SECTION_HEADINGS.summary], f.slug).not.toContain(h2[1]);
-        expect(h2, f.slug).toEqual(sectionHeadings(kind, noExercises, h2[1]));
+        expect(mainTitle ?? '', `${f.slug}: needs a descriptive main-section title`).not.toBe('');
+        expect([...SECTION_HEADINGS.full, ...SECTION_HEADINGS.summary], f.slug).not.toContain(mainTitle);
+        expect(h2, f.slug).toEqual(sectionHeadings(kind, noExercises, mainTitle, noScenario));
       }
     }
   });
@@ -67,6 +68,14 @@ describe('lesson files', () => {
     expect(sectionHeadings('full', false, 'Lọc danh sách nhân viên')).toEqual([
       'Tình huống', 'Lọc danh sách nhân viên', 'Hay nhầm ở đâu', 'Ứng dụng', 'Ghi nhớ', 'Bài tập',
     ]);
+  });
+  it('drops the scenario only for a foundation lesson', () => {
+    expect(sectionHeadings('full', true, 'Bảng, dòng và cột', true)).toEqual(['Bảng, dòng và cột', 'Hay nhầm ở đâu', 'Ứng dụng', 'Ghi nhớ']);
+  });
+  it('finds the main section with or without a scenario, and in a summary', () => {
+    expect(lessonMainSection(['## Bảng và cột', 'Giải thích.', '## Hay nhầm ở đâu', 'Lỗi.'].join('\n'))).toContain('Giải thích.');
+    expect(lessonMainSection(['## Tình huống', 'Yêu cầu.', '## Lọc danh sách', 'Giải thích.'].join('\r\n'))).toContain('Giải thích.');
+    expect(lessonMainSection(['## Nội dung chính', 'Ý.', '## Liên hệ Excel', 'Đoạn.'].join('\n'))).toContain('Đoạn.');
   });
   it.each(['\n', '\r\n'])('reads subheadings from a merged section with %j line endings', newline => {
     const body = ['## Tình huống', 'Yêu cầu.', '## Lọc danh sách nhân viên', '### Từ bộ lọc Excel đến WHERE',
@@ -110,7 +119,7 @@ describe('lesson files', () => {
     for (const p of BANNED_PHRASES) expect(text.includes(p), p).toBe(false);
     expect(/\p{Extended_Pictographic}/u.test(page)).toBe(false);
     const h2 = [...page.matchAll(/<h2[^>]*>([^<]+)<\/h2>/g)].map(m => m[1].trim());
-    expect(h2).toEqual(['Khóa học này dạy gì', 'Chọn nơi thực hành', 'Cách dùng trang', '6 level', 'Database mẫu HRM_Demo', 'Tiến độ của bạn được lưu ở đâu']);
+    expect(h2).toEqual(['Khóa học này dạy gì', 'Chọn nơi thực hành', 'Cách dùng trang', '6 level', 'Kết nối bằng SSMS', 'Database mẫu HRM_Demo', 'Khi không kết nối được', 'Tiến độ của bạn được lưu ở đâu']);
   });
   it('lesson SQL uses escaped tabs instead of literal leading whitespace that MDX strips', () => {
     for (const f of files) for (const m of f.body.matchAll(/<Sql[^>]*code=\{`([\s\S]*?)`\}/g)) {
@@ -139,16 +148,34 @@ describe('lesson files', () => {
   });
 });
 
-describe('lesson 1.1 is the approved narrative reference', () => {
-  const lesson = readLessonFiles().find(f => f.slug === '1-1-database-la-gi')!;
-  it('answers the opening request inside the main section without a SQL preview or a separate answer section', () => {
-    const main = lessonMainSection(lesson.body);
-    expect(main).not.toBe('');
-    for (const s of ['quyết định chuyển phòng', 'ngày hiệu lực', 'người có quyền', 'cùng nguồn, cùng thời điểm, cùng điều kiện lọc', 'bản của chị Hạnh đúng']) {
+describe('foundation lessons have no scenario and stay short (2026-10-30)', () => {
+  const foundation = () => readLessonFiles().filter(f => (f.data as { noScenario?: boolean }).noScenario);
+  it('are lessons 1.1 to 1.5', () => {
+    expect(foundation().map(f => (f.data as { num: string }).num).sort()).toEqual(['1.1', '1.2', '1.3', '1.4', '1.5']);
+  });
+  it('have no scenario, enough self-checks and the agreed length', () => {
+    for (const f of foundation()) {
+      expect(f.body, f.slug).not.toMatch(/^## Tình huống|<Chat\b|<Key\b|chị Hạnh|chị Thảo|\bQuân\b/m);
+      expect((f.body.match(/<details>/g) ?? []).length, f.slug).toBeGreaterThanOrEqual(3);
+      expect((f.data as { minutes: number }).minutes, f.slug).toBe(7);
+      expect(proseParagraphs(f.body).reduce((sum, p) => sum + p.words, 0), f.slug).toBeLessThanOrEqual(800);
+    }
+  });
+  it('1.1 separates the four names and says where practice starts', () => {
+    const main = lessonMainSection(readLessonFiles().find(f => f.slug === '1-1-database-la-gi')!.body);
+    for (const s of ['**Database**', '**SQL Server**', '**SQL**', '**SSMS**', '**luật dữ liệu**', 'gioi-thieu/#chon-noi-thuc-hanh', 'bài 1.6']) {
       expect(main, s).toContain(s);
     }
-    expect(lesson.body).not.toMatch(/^## (Với Excel|Làm bằng SQL)$|^### Trả lời chị Hạnh$|<(Sql|Result|RunFlow)\b|^\|/m);
-    expect((lesson.data as { minutes: number }).minutes).toBe(12);
+    expect(main).not.toMatch(/<(Sql|Result|RunFlow)\b/);
+    expect(main.slice(0, main.indexOf('Ở bài này chỉ cần'))).not.toMatch(/khóa chính|khóa ngoại|ràng buộc|constraint|câu ghi|NULL/i);
+  });
+  it('every link to a section of the intro page has its target', () => {
+    const page = readFileSync('src/pages/gioi-thieu.astro', 'utf8');
+    const sources = [...readLessonFiles().map(f => f.body), readFileSync('src/components/islands/ExerciseWorkspace.tsx', 'utf8')];
+    const fromElsewhere = sources.flatMap(s => [...s.matchAll(/gioi-thieu\/#([a-z-]+)/g)].map(m => m[1]));
+    expect(fromElsewhere.length).toBeGreaterThanOrEqual(4);
+    const fromPage = [...page.matchAll(/href="#([a-z-]+)"/g)].map(m => m[1]);
+    for (const id of [...fromElsewhere, ...fromPage]) expect(page, id).toContain(`id="${id}"`);
   });
   it('explains result row numbers in 1.6 without pointing to the removed preview', () => {
     const next = readLessonFiles().find(f => f.slug === '1-6-cau-select-dau-tien')!.body;
@@ -164,20 +191,22 @@ describe('fixes from the review of lessons 1.2 to 1.6 (2026-10-19)', () => {
     for (const s of absent) expect(text, `${slug} still says: ${s}`).not.toContain(s);
     for (const s of present) expect(text, `${slug} lacks: ${s}`).toContain(s);
   };
-  it('1.2 scopes the undo promise and the 40613 advice, and says what to send when stuck', () => check('1-2-sql-server-ssms-hrm-demo',
-    ['Azure SQL Database', 'chỉ có trên trang bài tập', 'gửi nguyên văn lỗi', 'thứ tự dòng'],
-    ['không bao giờ bị đổi', 'thường chỉ gửi ba', 'Lỗi này nghĩa là database đang thức dậy', 'Câu lệnh luôn chạy', 'Database thì không có file nào']));
-  it('1.3 separates a rejected value from a converted one that changed meaning', () => check('1-3-bang-cot-kieu-du-lieu',
-    ['DATEFORMAT', 'byte (đơn vị lưu trữ)', 'dấu cách ở cuối', 'Lưu được chưa chắc đã đúng ý'],
+  it('the intro page scopes the undo promise and the 40613 advice, and says what to send when stuck', () => {
+    const page = readFileSync('src/pages/gioi-thieu.astro', 'utf8');
+    for (const s of ['Azure SQL Database', 'chỉ có trên trang bài tập', 'gửi nguyên văn lỗi', 'thứ tự dòng']) expect(page, s).toContain(s);
+    for (const s of ['không bao giờ bị đổi', 'thường chỉ gửi ba', 'Lỗi này nghĩa là database đang thức dậy', 'Câu lệnh luôn chạy']) expect(page, s).not.toContain(s);
+  });
+  it('1.3 separates a rejected value from a converted one that changed meaning', () => check('1-3-kieu-du-lieu',
+    ['chuyển kiểu ngầm', 'Lưu được chưa chắc đã đúng ý'],
     ['dữ liệu sai loại sẽ bị từ chối', 'Chữ không dấu, tối đa n ký tự', 'nhận bất cứ thứ gì', 'như ô bắt buộc nhập', 'nghĩa là người đó đang làm', 'không còn bị lệch kiểu', 'cần đổi định dạng gì']));
   it('1.4 does not turn a way past the foreign key into the business answer', () => check('1-4-khoa-chinh-khoa-ngoai',
-    ['2 người đã nghỉ', 'không nhận NULL', 'chính bảng đó', 'UNIQUE', 'không phải ô chọn trên màn hình'],
+    ['không nhận NULL', 'không phải ô chọn trên màn hình'],
     ['trước hết phải chuyển 10 người', 'không bao giờ thiếu', 'Đó chính là khóa chính và khóa ngoại', 'không trùng, không trống', 'dữ liệu ghi từ đâu cũng bị kiểm']));
   it('1.5 explains fan-out and scopes the department to the value stored now', () => check('1-5-doc-so-do-erd',
-    ['phòng ban đang lưu', '0, 1 hoặc nhiều', 'tối đa một dòng lương', '`NV021` có ba hợp đồng', 'bài 3.5'],
+    ['phòng ban đang lưu', 'không bắt phòng nào cũng phải có người', 'tối đa một dòng lương', '`NV021` có ba hợp đồng'],
     ['Sheet nào cũng tra theo mã NV', 'Bảng chứa cột này là phía "nhiều"', 'Một người có một dòng lương mỗi kỳ', 'gần như tự viết ra', 'khỏi hỏi lại', 'NV001 có 19 ngày công']));
   it('1.6 calls the run order logical and does not say a SELECT never writes', () => check('1-6-cau-select-dau-tien',
-    ['SELECT INTO', 'tối đa 10 dòng', 'thứ tự logic', 'không phải 10 dòng đã bị sửa'],
+    ['SELECT INTO', 'tối đa 10 dòng', 'thứ tự logic', 'không phải 10 dòng đã bị sửa', 'được cấp quyền đọc'],
     ['không bao giờ làm đổi dữ liệu', 'Đây luôn là việc làm đầu tiên', 'vì dữ liệu đang nằm theo thứ tự mã', 'Đó là những thông tin chị Hạnh cần', 'Chỉ nhìn 10 dòng đầu']));
   it('the 1.6 exercises name the employee code, not a person', () => {
     const text = readFileSync(join('src', 'content', 'exercises', '1-6-cau-select-dau-tien.yaml'), 'utf8');
@@ -238,20 +267,13 @@ describe('lessons explain why, show data before totals and mark what they point 
     }
   });
   it('1.3 says where the conversion comes from', () => {
-    expect(theory(body('1-3-bang-cot-kieu-du-lieu'))).toContain('chuyển kiểu ngầm');
-  });
-  it('1.4 lists the records that still point to VH instead of only counting them', () => {
-    const b = body('1-4-khoa-chinh-khoa-ngoai');
-    for (const s of ['NV033', 'NV041', "WHERE MaPB = 'VH'", '2 người đã nghỉ']) expect(b).toContain(s);
+    expect(theory(body('1-3-kieu-du-lieu'))).toContain('chuyển kiểu ngầm');
   });
   it('the SSMS pictures, the results, the sheets and the diagram mark what the text points at', () => {
-    expect(body('1-2-sql-server-ssms-hrm-demo')).toMatch(/<Ssms[^>]*table="PhongBan"[^>]*mark=/);
-    expect(body('1-3-bang-cot-kieu-du-lieu')).toMatch(/<Ssms[^>]*table="HopDong"[^>]*mark=/);
+    expect(readFileSync('src/pages/gioi-thieu.astro', 'utf8')).toMatch(/<Ssms[^>]*table="PhongBan"[^>]*mark=/);
+    expect(body('1-3-kieu-du-lieu')).toMatch(/<Ssms[^>]*table="HopDong"[^>]*mark=/);
     expect(body('1-4-khoa-chinh-khoa-ngoai')).toMatch(/<Ssms[^>]*table="NhanVien"[^>]*mark=/);
-    expect(body('1-4-khoa-chinh-khoa-ngoai')).toMatch(/<Result[^>]*mark=/);
     expect(body('1-5-doc-so-do-erd')).toMatch(/<Erd[^>]*path=/);
-    expect(body('1-1-database-la-gi')).toMatch(/<Excel[^>]*mark=/);
-    expect(body('1-3-bang-cot-kieu-du-lieu')).toMatch(/<Excel[^>]*mark=/);
   });
 });
 
@@ -262,28 +284,28 @@ describe('fixes from the independent reviews of 2026-10-19', () => {
     for (const s of absent) expect(text, `${slug} still says: ${s}`).not.toContain(s);
     for (const s of present) expect(text, `${slug} lacks: ${s}`).toContain(s);
   };
-  it('1.1 scopes constraints and shared-data safety without teaching SSMS early', () => check('1-1-database-la-gi',
-    ['Khi ràng buộc đang bật', 'chỉ đọc dữ liệu', 'thêm, sửa hoặc xóa dữ liệu', 'mỗi mã tối đa một dòng', 'một ngày hợp lệ vẫn có thể sai hồ sơ', 'T-SQL', 'constraint', 'thống nhất chưa chắc đã đúng'],
+  it('1.1 scopes the data rules', () => check('1-1-database-la-gi',
+    ['Khi luật đang bật', 'hợp lệ chưa chắc đã đúng', 'máy chủ'],
     ['Mỗi khi có thao tác ghi dữ liệu', 'mỗi người một mã', '(ba dòng, lấy từ bộ dữ liệu mẫu)', 'kiểm quan hệ dữ liệu mỗi khi ghi', 'file xuất tĩnh', 'cột chưa chuẩn hóa']));
-  it('1.2 preserves the connection workflow and safe practice on the shared and local databases', () => check('1-2-sql-server-ssms-hrm-demo',
-    ['chỉ chạy trên Windows', '1433', 'Disconnect', '**User Name**', '**Encrypt**', 'Connection Properties', 'Connect to database',
-      'Edit Top 200 Rows', 'localhost', 'HRM_Demo đã sẵn sàng', 'Windows Authentication', 'mỗi lần một câu lệnh', 'xóa và tạo lại',
-      'không có cột trạng thái', '`Ban Giám đốc`', '`Vận hành`'],
-    ['như địa chỉ một căn phòng', 'giá trị trống (NULL)', 'Từ bài 1.6, cuối mỗi bài có mục', '- **Server type**', 'Developer đủ tính năng']));
-  it('1.3 keeps the import assumption, the cell outcomes and the limits of type validation', () => check('1-3-bang-cot-kieu-du-lieu',
-    ['Giả định của tình huống', 'Chuỗi rỗng', 'Database làm gì', 'numeric={', 'không dùng để cộng trừ',
-      '`C2`', '`C3`', '`C4`', '`D2`', '`D3`', '`D4`', '`2024-01-02`', '`2024-02-01`', '`9610000`', '`9610001`', '`21.3`',
-      '`NOT NULL`', '`nvarchar', 'Format Cells'],
+  it('the intro page preserves the connection workflow and safe practice on the shared and local databases', () => {
+    const page = readFileSync('src/pages/gioi-thieu.astro', 'utf8');
+    for (const s of ['chỉ chạy trên Windows', '1433', 'Disconnect', '<strong>User Name</strong>', '<strong>Encrypt</strong>', 'Connection Properties', 'Connect to database',
+      'Edit Top 200 Rows', 'localhost', 'HRM_Demo đã sẵn sàng', 'Windows Authentication', 'mỗi lần một câu lệnh', 'xóa và tạo lại', 'SELECT * FROM PhongBan;', 'id="ket-noi-ssms"', 'id="tao-ban-rieng"']) {
+      expect(page, s).toContain(s);
+    }
+    for (const s of ['như địa chỉ một căn phòng', 'Developer đủ tính năng', 'bài 1.2', '1-2-sql-server']) expect(page, s).not.toContain(s);
+  });
+  it('1.3 keeps the three outcomes of a conversion and the limits of type validation', () => check('1-3-kieu-du-lieu',
+    ['Chuỗi rỗng', 'không dùng để cộng trừ', '`2024-01-02`', '`9610000`', '`21.3`', '`decimal(p,s)`',
+      '`NOT NULL`', '`nvarchar', 'Format Cells', '`2099-03-01`', 'số âm', "N'Trần Thị Mai'"],
     ['có người gõ 2024-02-01', 'giá trị trống, chưa có', 'mọi phép so sánh thành so sánh chữ', 'Bên IT nói đúng một nửa', 'một việc riêng của người quản trị', 'không lẻ giây', 'hàm ngày và `CAST` ở bài 2.8']));
-  it('1.4 preserves key semantics, the delete error and the business decisions it cannot make', () => check('1-4-khoa-chinh-khoa-ngoai',
-    ['Giả định của tình huống', '`NhanVien.MaCD` trỏ sang `ChucDanh.MaCD`', 'REFERENCE constraint', '**Keys**',
-      '`NO ACTION`', 'ràng buộc đang bật', 'nạp hàng loạt', 'không nhận `NULL`', 'không tự đổi `MaQuanLy` hoặc `MaCD`',
-      'chỉ lưu phòng hiện tại', 'ngừng cho chọn', 'không có ràng buộc `UNIQUE`'],
+  it('1.4 preserves key semantics and what a key cannot check', () => check('1-4-khoa-chinh-khoa-ngoai',
+    ['ràng buộc đang bật', 'không nhận `NULL`', 'chưa có ràng buộc cấm trùng', 'trỏ về chính `NhanVien.MaNV`',
+      'khóa chính (primary key)', 'Khóa ngoại (foreign key)', 'ràng buộc (constraint)', 'luật dữ liệu đã nói ở bài 1.1'],
     ['Đây chính là lỗi bên IT gặp', 'thay cho kiểm ở từng màn hình', 'nghỉ từ 2026-06-30', 'các hồ sơ con']));
   it('1.5 preserves the relation direction, composite-key cardinality and diagram limits without a JOIN preview', () => check('1-5-doc-so-do-erd',
-    ['chỉ lấy dòng đầu tiên', 'Data Model', 'thực thể', 'chấm tròn', 'một-một', 'cả cặp', 'Từ bảng `PhongBan`', 'Từ bảng `NhanVien`', 'thuộc đúng một phòng ban', 'không ghi cột nào nhận `NULL`',
-      '`BangLuong.MaNV` → `NhanVien.MaNV`', '`NhanVien.MaPB` → `PhongBan.MaPB`', '`KyLuong` là `2026-09`',
-      'không tự cài/lưu sơ đồ', 'bài 5.1', 'không có đường nối', 'bài 6.6'],
+    ['chấm tròn', 'một-một', 'cả cặp', 'Từ bảng `PhongBan`', 'Từ bảng `NhanVien`', 'thuộc đúng một phòng ban',
+      '`BangLuong.MaNV` → `NhanVien.MaNV`', '`NhanVien.MaPB` → `PhongBan.MaPB`', 'không tự cài/lưu sơ đồ', 'không có đường nối'],
     ['vì câu bắt đầu từ bảng lương', 'Azure SQL Database không có', 'cũng là cả khóa chính', 'nên phải xem thêm', '21 người là Chuyên viên', 'Đây là sơ đồ, cũng là sơ đồ',
       'mỗi thông tin chỉ nằm ở một chỗ', 'được khai báo đủ', 'cặp NV001 và ngày 2026-09-01', 'bài 3.4 và 3.5 sẽ học']));
   it('1.6 counts records not people, keeps the run advice safe, answers the small whys and closes the scenario without personal data', () => check('1-6-cau-select-dau-tien',
@@ -301,26 +323,9 @@ describe('fixes from the independent reviews of 2026-10-19', () => {
     for (const s of ['kể cả hợp đồng thử việc', 'mọi loại nghỉ, mọi trạng thái']) expect(y, s).toContain(s);
   });
   it('pictures of Excel put real dates on the right', () => {
-    for (const slug of ['1-1-database-la-gi', '1-3-bang-cot-kieu-du-lieu', '1-6-cau-select-dau-tien']) {
+    for (const slug of ['1-6-cau-select-dau-tien']) {
       expect(readLessonFiles().find(f => f.slug === slug)!.body, slug).toMatch(/<Excel[^>]*numeric=\{/);
     }
-  });
-});
-
-describe('lessons 1.2 and 1.3 follow the approved narrative format (2026-10-20)', () => {
-  const lesson = (num: string) => readLessonFiles().find(f => (f.data as { num: string }).num === num)!;
-  it.each(['1.2', '1.3'])('%s explains and closes the scenario in its main section', num => {
-    const f = lesson(num);
-    expect(LEGACY_LAYOUT_SLUGS.has(f.slug)).toBe(false);
-    expect(f.body).not.toMatch(/^## (Với Excel|Làm bằng SQL)$/m);
-    expect(f.body).not.toContain('### Trả lời chị Hạnh');
-    expect((f.body.match(/<details>/g) ?? []).length).toBeGreaterThanOrEqual(4);
-    expect(lessonMainSection(f.body)).toContain('chị Hạnh');
-  });
-  it('1.2 keeps the working query and its result; 1.3 teaches types without SQL previews', () => {
-    expect(lesson('1.2').body).toContain('SELECT * FROM PhongBan;');
-    expect(lessonMainSection(lesson('1.2').body)).toContain('<Result');
-    expect(lesson('1.3').body).not.toMatch(/<(Sql|Result|Messages|LineMap)\b/);
   });
 });
 
@@ -330,13 +335,13 @@ describe('fixes from the final review', () => {
     const b = body('1-1-database-la-gi');
     for (const s of ['một bản duy nhất', 'không thể có chuyện', 'Excel để bạn gõ gì cũng được', 'từ chối ngay lúc nhập', 'luật cho từng cột']) expect(b, s).not.toContain(s);
     expect(b).toMatch(/hợp lệ chưa chắc đã đúng/i);
-    for (const s of ['Data Validation', 'không phải ô chọn trên màn hình']) expect(b, s).toContain(s);
+    expect(b).toContain('Data Validation');
   });
   it('1.4 says a foreign key is a rule checked on write, not a dropdown', () => {
     expect(body('1-4-khoa-chinh-khoa-ngoai')).toContain('không phải ô chọn trên màn hình');
   });
-  it('1.2 says what to do when the sleeping course database refuses the first connection', () => {
-    expect(body('1-2-sql-server-ssms-hrm-demo')).toContain('40613');
+  it('the intro page says what to do when the sleeping course database refuses the first connection', () => {
+    expect(readFileSync('src/pages/gioi-thieu.astro', 'utf8')).toContain('40613');
   });
   it('1.6 warns that the Edit Top 200 Rows grid writes to the shared table', () => {
     expect(body('1-6-cau-select-dau-tien')).toContain('Edit Top 200 Rows');
@@ -403,5 +408,6 @@ describe('lessons stay short (docs/quy-uoc.md, section 1)', () => {
   it('counts paragraphs outside components only', () => {
     const body = ['Một hai ba.', '', '<LineMap rows={[', "  ['a', 'b c d'],", ']} />', '', '1. **Lỗi.** Bốn năm.', '2. Sáu.', '', '| a | b |'].join('\n');
     expect(proseParagraphs(body).map(p => p.words)).toEqual([3, 3, 1]);
+    expect(proseParagraphs("import a from 'b';\n\nMột hai.").map(p => p.words)).toEqual([2]);
   });
 });

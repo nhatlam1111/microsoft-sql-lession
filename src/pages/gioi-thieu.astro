@@ -1,6 +1,9 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import StatusIcon from '../components/islands/StatusIcon';
+import Result from '../components/lesson/Result.astro';
+import Sql from '../components/lesson/Sql.astro';
+import Ssms from '../components/lesson/Ssms.astro';
 import { LEVELS } from '../data/curriculum';
 import { withBase } from '../lib/paths';
 ---
@@ -11,14 +14,17 @@ import { withBase } from '../lib/paths';
 
       <h2>Khóa học này dạy gì</h2>
       <p>Khóa học đi từ chỗ chưa viết câu SQL nào tới lúc tự đọc hiểu, truy vấn và phân tích được dữ liệu trên Microsoft SQL Server. Mọi ví dụ đều dùng dữ liệu nhân sự: nhân viên, hợp đồng, chấm công, nghỉ phép, bảng lương. Mỗi khái niệm SQL được đặt cạnh một việc quen làm trên Excel, như AutoFilter, VLOOKUP hay PivotTable.</p>
-      <p>Khóa học tập trung vào truy vấn và phân tích; bài 1.2 có hướng dẫn chuẩn bị nơi thực hành, không đi sâu quản trị máy chủ. Phần cấp cứu dữ liệu ở level cuối dừng ở mức hiểu: biết việc gì phải làm ngay, dữ liệu còn cứu được bằng cách nào và cần báo cho ai.</p>
+      <p>Khóa học tập trung vào truy vấn và phân tích; trang này có hướng dẫn chuẩn bị nơi thực hành, không đi sâu quản trị máy chủ. Phần cấp cứu dữ liệu ở level cuối dừng ở mức hiểu: biết việc gì phải làm ngay, dữ liệu còn cứu được bằng cách nào và cần báo cho ai.</p>
 
-      <h2>Chọn nơi thực hành</h2>
+      <h2 id="chon-noi-thuc-hanh">Chọn nơi thực hành</h2>
+      <p>Các bài 1.1–1.5 chỉ đọc hiểu, chưa cần công cụ nào. Bạn bắt đầu viết SQL từ bài 1.6, theo một trong ba lối:</p>
       <ul>
-        <li><strong>Có mã truy cập:</strong> từ bài 1.6, bấm Làm bài để viết, chạy và nộp SQL ngay trên web. Mã do người phụ trách hoặc người đã gửi bạn khóa học cung cấp, khác tài khoản SSMS.</li>
-        <li><strong>Chưa có mã:</strong> dùng SQL Server riêng với bộ dữ liệu mẫu theo <a href={withBase('/bai/1-2-sql-server-ssms-hrm-demo/')}>hướng dẫn bài 1.2</a>. Bạn chạy SQL trong SSMS và tự đối chiếu yêu cầu; bản riêng không có chấm tự động.</li>
+        <li><strong>Có mã truy cập:</strong> bấm Làm bài để viết, chạy và nộp SQL ngay trên web, không cần Windows hay SSMS. Mã do người phụ trách hoặc người đã gửi bạn khóa học cung cấp, khác tài khoản SSMS.</li>
+        <li><strong>Có tài khoản SSMS của khóa học:</strong> làm theo mục <a href="#ket-noi-ssms">Kết nối bằng SSMS</a>. Cách này cần Windows; tài khoản do người phụ trách cấp.</li>
+        <li><strong>Chưa có mã hay tài khoản:</strong> dùng SQL Server riêng với bộ dữ liệu mẫu theo <a href="#tao-ban-rieng">hướng dẫn tạo bản riêng</a>. Bạn chạy SQL trong SSMS và tự đối chiếu yêu cầu; bản riêng không có chấm tự động.</li>
       </ul>
-      <p>Nếu chỉ dùng web, ở bài 1.2 bạn học phân biệt công cụ và chọn nơi thực hành; không cần hoàn thành kết nối SSMS. Phần thực hành SQL trên web bắt đầu từ bài 1.6.</p>
+      <p>Trên trang bài tập, <strong>Chạy (F5)</strong> hiện kết quả; <strong>Nộp bài</strong> còn đối chiếu yêu cầu. Trang nhận mỗi lần một câu lệnh, luôn <strong>hoàn tác</strong> thay đổi sau khi chạy. Cơ chế này chỉ có trên trang bài tập; trong SSMS, mặc định câu sửa thành công là ghi hẳn ngay, không có Ctrl+Z. Trên database dùng chung, ở Level 1 chỉ chạy các câu đọc có trong bài; cách hoàn tác học ở bài 5.4.</p>
+      <p>Nếu chỉ dùng web, bạn không cần làm theo mục kết nối SSMS bên dưới.</p>
 
       <h2>Cách dùng trang</h2>
       <ul>
@@ -44,15 +50,71 @@ import { withBase } from '../lib/paths';
         </tbody>
       </table>
 
+      <h2 id="ket-noi-ssms">Kết nối bằng SSMS</h2>
+      <p>SSMS chỉ chạy trên Windows. Cài theo <a href="https://learn.microsoft.com/en-us/ssms/install/install">hướng dẫn Microsoft</a>, hoặc nhờ IT cài. Thời lượng các bài không tính thời gian cài phần mềm.</p>
+      <p>Khóa học dùng <strong>Azure SQL Database</strong>, dịch vụ Microsoft quản lý trên nền bộ máy dữ liệu SQL Server. Những câu truy vấn trong khóa học cũng dùng được với SQL Server; phần cài đặt và quản trị hai môi trường có khác nhau.</p>
+      <p>Đường đi tới một bảng là <strong>máy chủ → database → bảng</strong>:</p>
+      <ul>
+        <li>Máy chủ: <code>sql-lession.database.windows.net</code>, địa chỉ để SSMS kết nối.</li>
+        <li>Database: <code>free-sql-db-8797714</code>, tương tự workbook chứa nhiều sheet.</li>
+        <li>Bảng: <code>dbo.PhongBan</code>, tương tự sheet danh mục phòng ban. <code>dbo</code> là <strong>schema</strong>, một nhóm chứa các bảng; bảy bảng mẫu đều nằm trong nhóm này.</li>
+      </ul>
+      <p>Để đi được đường đó, bạn cần bốn thông tin: <strong>tên máy chủ</strong>, <strong>cách đăng nhập</strong>, <strong>tài khoản và mật khẩu</strong>, <strong>tên database</strong>. Khóa học dùng <strong>SQL Server Authentication</strong>, tức tên đăng nhập và mật khẩu riêng được cấp; không lấy tài khoản Windows điền thay. Chọn thông tin theo nơi đặt dữ liệu, đừng lấy tên database của môi trường này điền cho môi trường kia:</p>
+      <table>
+        <thead><tr><th>Nơi thực hành</th><th>Server Name</th><th>Database</th><th>Authentication</th></tr></thead>
+        <tbody>
+          <tr><td>Nguồn khóa học dùng chung</td><td><code>sql-lession.database.windows.net</code></td><td><code>free-sql-db-8797714</code></td><td>SQL Server Authentication; tài khoản được cấp</td></tr>
+          <tr><td>Bản SQL Server riêng</td><td><code>localhost</code> hoặc <code>localhost\SQLEXPRESS</code> theo lúc cài</td><td><code>HRM_Demo</code>, do bạn tạo</td><td>Windows Authentication</td></tr>
+        </tbody>
+      </table>
+      <p>Mở SSMS; nếu hộp <strong>Connect to Server</strong> chưa hiện, chọn <strong>Connect → Database Engine</strong> trong Object Explorer bên trái. Các ô dưới minh họa nguồn dùng chung; nếu đã tạo bản riêng, thay bằng dòng tương ứng trong bảng trên. Với hộp kết nối kiểu mới, điền:</p>
+      <ul>
+        <li><strong>Server Name</strong>: <code>sql-lession.database.windows.net</code>.</li>
+        <li><strong>Authentication</strong>: SQL Server Authentication.</li>
+        <li><strong>User Name</strong> và <strong>Password</strong>: tài khoản và mật khẩu được cấp.</li>
+        <li><strong>Database Name</strong>: <code>free-sql-db-8797714</code>.</li>
+        <li><strong>Encrypt</strong>: chọn <strong>Strict</strong> (tên đầy đủ có thể kèm SQL Server 2022 và Azure SQL).</li>
+        <li><strong>Trust Server Certificate</strong>: không bật; với Strict, ô này có thể bị vô hiệu hóa vì kết nối kiểm chứng chỉ máy chủ.</li>
+      </ul>
+      <Ssms view="connect" caption="Hộp kết nối kiểu mới. Ô Database Name có viền xanh: phải chỉ rõ database khóa học." />
+      <p>Nếu dùng hộp kiểu cũ, <strong>Login</strong> thay cho User Name; bấm <strong>Options &gt;&gt; → Connection Properties</strong>, điền <code>free-sql-db-8797714</code> vào <strong>Connect to database</strong>. Thiết lập mã hóa và tên trường đối chiếu theo <a href="https://learn.microsoft.com/sql/ssms/quickstarts/ssms-connect-query-sql-server">hướng dẫn kết nối SSMS của Microsoft</a>.</p>
+      <p>Bấm <strong>Connect</strong>. Nếu hiện hộp New Firewall Rule, bấm <strong>Cancel</strong>; gặp lỗi khác thì xem <a href="#loi-ket-noi">Khi không kết nối được</a>. Khi đã vào được, trong <strong>Object Explorer</strong>, khung cây bên trái SSMS, mở <strong>Databases → <code>free-sql-db-8797714</code> → Tables → <code>dbo.PhongBan</code> → Columns</strong>:</p>
+      <Ssms view="explorer" table="PhongBan" mark={['MaPB', 'TenPB']} caption="Hai cột của dbo.PhongBan được đánh dấu. Chữ trong ngoặc mô tả khóa, kiểu dữ liệu và khả năng nhận NULL; bài 1.3 và 1.4 giải thích." />
+      <p><strong>Columns</strong> cho biết cấu trúc, chưa phải các dòng dữ liệu. Tránh <strong>Edit Top 200 Rows</strong>: đó là lưới sửa dữ liệu dùng chung, không phải chế độ xem an toàn.</p>
+      <p>Để kiểm tra kết nối, bấm <strong>New Query</strong>, xem ô chọn database bên cạnh nút <strong>Execute</strong> là <code>free-sql-db-8797714</code> (bản riêng là <code>HRM_Demo</code>), gõ câu dưới rồi bấm <strong>F5</strong> hoặc <strong>Execute</strong>. Kết nối đúng máy chủ nhưng chọn nhầm database vẫn không tìm thấy bảng cần xem. Câu này chỉ đọc dữ liệu; cú pháp học ở bài 1.6.</p>
+      <Ssms view="toolbar" caption="Kiểm ô chọn database có viền xanh trước khi chạy câu lệnh." />
+      <Sql code="SELECT * FROM PhongBan;" />
+      <Result columns={['MaPB', 'TenPB']} rows={[
+        ['BGD', 'Ban Giám đốc'],
+        ['IT', 'IT'],
+        ['KD', 'Kinh doanh'],
+        ['KT', 'Kế toán'],
+        ['NS', 'Nhân sự'],
+        ['VH', 'Vận hành'],
+      ]} />
+      <p>Câu này không yêu cầu sắp xếp, nên thứ tự dòng trên máy bạn có thể khác hình. Học xong, bấm chuột phải máy chủ trong Object Explorer → <strong>Disconnect</strong>, rồi đóng các cửa sổ truy vấn hoặc đóng SSMS để ngắt hết kết nối. Kết nối còn mở có thể giữ database thức và tiêu hao hạn mức miễn phí chung.</p>
+
       <h2>Database mẫu HRM_Demo</h2>
       <p>Các câu lệnh trong bài chạy trên bộ dữ liệu nhân sự giả lập tên <code>HRM_Demo</code>, gồm 7 bảng: phòng ban, chức danh, nhân viên, hợp đồng, chấm công, đơn nghỉ phép và bảng lương. Tên người, số CCCD, lương đều là dữ liệu giả.</p>
-      <p>Trên máy chủ của khóa học, bộ dữ liệu này đã có sẵn trong database <code>free-sql-db-8797714</code>, dùng chung cho mọi học viên (cách kết nối ở bài 1.2). Ở đó đừng chạy script: script xóa và tạo lại 7 bảng, tức là xóa dữ liệu mọi người đang dùng.</p>
-      <p>Script chỉ dành cho ai muốn có bản riêng: <a href={withBase('/HRM_Demo.sql')} download>Tải script HRM_Demo.sql</a></p>
+      <p>Trên máy chủ của khóa học, bộ dữ liệu này đã có sẵn trong database <code>free-sql-db-8797714</code>, dùng chung cho mọi học viên. Ở đó đừng chạy script: script xóa và tạo lại 7 bảng, tức là xóa dữ liệu mọi người đang dùng.</p>
+      <h3 id="tao-ban-rieng">Tạo bản riêng</h3>
+      <p>Bỏ qua mục này nếu đã dùng web hoặc có tài khoản database khóa học. Muốn có dữ liệu riêng để thử:</p>
+      <ol>
+        <li>Cài <a href="https://www.microsoft.com/en-us/sql-server/sql-server-downloads">SQL Server Express hoặc Developer</a> phiên bản 2019 trở lên và SSMS. Hai bản đều miễn phí; Developer chỉ dành cho học, phát triển và thử nghiệm, không dùng cho hệ thống chạy thật.</li>
+        <li>Kết nối tới <code>localhost</code> nếu chọn <strong>Default instance</strong> (bản SQL Server không đặt tên riêng), hoặc <code>localhost\SQLEXPRESS</code> nếu Express giữ tên mặc định; chọn <strong>Windows Authentication</strong>. Trên máy riêng, nếu dùng chứng chỉ tự ký thì chọn <strong>Encrypt: Mandatory</strong> và <strong>Trust Server Certificate</strong>; không dùng cách bỏ kiểm chứng chỉ này cho máy chủ khóa học.</li>
+        <li>Trong Object Explorer, bấm chuột phải <strong>Databases → New Database…</strong>, tạo database <code>HRM_Demo</code>.</li>
+        <li><a href={withBase('/HRM_Demo.sql')} download>Tải script HRM_Demo.sql</a>, mở bằng SSMS, chọn database riêng vừa tạo rồi bấm <strong>Execute</strong>. Kết quả báo <code>HRM_Demo đã sẵn sàng</code>; bấm chuột phải <strong>Tables → Refresh</strong> để thấy bảy bảng.</li>
+      </ol>
+      <p>Script chỉ dùng trên database riêng: nó <strong>xóa và tạo lại bảy bảng mẫu</strong>, làm mất thay đổi bạn đã thực hiện trên các bảng đó. Trên bản riêng, script chạy lại bao nhiêu lần cũng được. Nếu database đã có bảng trùng tên không phải do script tạo hoặc bảng khác trỏ vào bảng mẫu, script tự dừng và không xóa gì. Trên một Azure SQL Database của riêng bạn (không phải máy chủ của khóa học), mở database đó rồi chạy cả file script.</p>
+
+      <h2 id="loi-ket-noi">Khi không kết nối được</h2>
       <ul>
-        <li>Trên máy riêng: tạo một database tên <code>HRM_Demo</code> trong SSMS, mở database đó rồi chạy cả file script.</li>
-        <li>Trên một Azure SQL Database của riêng bạn (không phải máy chủ của khóa học): mở database đó rồi chạy cả file script.</li>
+        <li><strong>Bỏ trống Database Name hoặc chọn nhầm database:</strong> bạn có thể gặp lỗi đăng nhập <code>18456</code> dù mật khẩu đúng, hoặc vào được nhưng không tìm thấy <code>PhongBan</code>. Kiểm tên database cùng thông tin đăng nhập trước khi xin mật khẩu mới.</li>
+        <li><strong>Gõ thiếu tên máy chủ:</strong> phải dùng đủ <code>sql-lession.database.windows.net</code>. Nếu tên đúng mà vẫn không tới được máy chủ, hoặc lỗi nhắc địa chỉ IP, gửi nguyên văn lỗi cho người phụ trách để kiểm mạng và tường lửa.</li>
+        <li><strong>Mạng chặn kết nối:</strong> gửi IT: “Máy em có được kết nối tới <code>sql-lession.database.windows.net</code> qua cổng <code>1433</code> không?”; cổng là đường kết nối mạng cần được cho phép.</li>
+        <li><strong>Lỗi <code>40613</code>:</strong> lỗi này thường xuất hiện khi database đang thức dậy, nhưng cũng có thể do dịch vụ tạm thời không sẵn sàng. Chờ khoảng một phút rồi thử lại; nếu vẫn lỗi sau vài lần, gửi nguyên văn lỗi cho người phụ trách. Nếu thông báo nhắc hết hạn mức miễn phí, chờ khởi động không giải quyết được.</li>
+        <li><strong>Xuất hiện New Firewall Rule yêu cầu đăng nhập Azure:</strong> bấm <strong>Cancel</strong> và nhờ người phụ trách xử lý.</li>
       </ul>
-      <p>Trên bản riêng, script chạy lại bao nhiêu lần cũng được. Nếu database đã có bảng trùng tên không phải do script tạo, script tự dừng và không xóa gì.</p>
 
       <h2>Tiến độ của bạn được lưu ở đâu</h2>
       <p>Tiến độ được lưu ngay trong trình duyệt bạn đang dùng, không gửi đi đâu cả. Đổi máy, đổi trình duyệt hoặc xóa dữ liệu duyệt web thì tiến độ ở đó sẽ không còn.</p>
