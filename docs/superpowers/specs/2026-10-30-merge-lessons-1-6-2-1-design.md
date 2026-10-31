@@ -1,6 +1,6 @@
 # Gộp bài 1.6 và 2.1 thành bài 2.1
 
-Trạng thái: người làm khóa học đã duyệt ngày 30/10/2026. Người làm khóa học yêu cầu gộp và giao phần chọn nội dung cho người viết, nên mọi quyết định nội dung dưới đây là đề xuất của người viết.
+Trạng thái: đã xong và đã merge; bố cục bài 2.1 ở đây đã được thay, xem `docs/quy-uoc.md` mục 2.1. Người làm khóa học đã duyệt ngày 30/10/2026. Người làm khóa học yêu cầu gộp và giao phần chọn nội dung cho người viết, nên mọi quyết định nội dung dưới đây là đề xuất của người viết.
 
 ## Ý định
 

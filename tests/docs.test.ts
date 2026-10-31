@@ -49,7 +49,7 @@ it('the copyable full-lesson template follows the approved narrative structure',
   const template = readFileSync('docs/lesson-template.md', 'utf8');
   const intro = template.split('## Phần đầu file')[0];
   expect(intro).toContain('1-1-database-la-gi.mdx');
-  expect(intro).toContain('2-2-where-loc-nhu-autofilter.mdx');
+  expect(intro).toContain('2-1-chon-cot-dat-ten-cot.mdx');
   const body = template.match(/````mdx\r?\n([\s\S]*?)\r?\n````/)?.[1] ?? '';
   const headings = [...body.matchAll(/^## (.+?)\s*$/gm)].map(m => m[1]);
   expect(headings.length).toBe(6);

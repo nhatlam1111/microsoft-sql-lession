@@ -1,6 +1,6 @@
 # Bài 2.1 đi từ Excel sang SQL
 
-Trạng thái: người làm khóa học đã duyệt ngày 31/10/2026.
+Trạng thái: đã làm rồi được thay trong cùng ngày; bố cục hiện hành là mục 2.1 của `docs/quy-uoc.md`, không dùng bốn tiểu mục ở đây. Người làm khóa học đã duyệt ngày 31/10/2026.
 
 ## Ý định
 

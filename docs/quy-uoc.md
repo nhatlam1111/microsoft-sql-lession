@@ -2,7 +2,7 @@
 
 Mọi quy ước khi viết bài, review bài và làm việc với database của khóa học nằm ở file này. Khung bài và các khối dùng được nằm ở [`lesson-template.md`](lesson-template.md); hiện trạng công ty, nhân vật và những gì các bài đã kể nằm ở [`ho-so-cong-ty.md`](ho-so-cong-ty.md). Có quy ước mới thì ghi vào đây, trong cùng commit với thay đổi đầu tiên áp dụng nó.
 
-**Chuẩn hiện hành:** bài có tình huống lấy [`bài 2.2`](../src/content/lessons/2-2-where-loc-nhu-autofilter.mdx) làm mẫu về mạch kể, độ sâu và cách đánh dấu chữ; bài nền theo mục 2.5 lấy [`bài 1.1`](../src/content/lessons/1-1-database-la-gi.mdx) làm mẫu. Excel và SQL được giải thích trong cùng một phần chính, có tiêu đề theo chủ đề của bài. Khung này thay các yêu cầu tách "Với Excel" / "Làm bằng SQL" trong spec, plan và mockup cũ. Các bài đang có được chuyển khung khi chỉnh từng bài; không viết bài đầy đủ mới theo khung cũ. Bố cục hai tiểu mục và quy tắc bám tình huống ở mục 2.1 áp dụng từ 31/10/2026; các bài chưa chuyển, gồm cả bài mẫu 2.2, giữ bố cục cũ tới lượt chỉnh và được liệt kê trong `tests/content.test.ts`.
+**Chuẩn hiện hành:** bài có câu lệnh lấy [`bài 2.1`](../src/content/lessons/2-1-chon-cot-dat-ten-cot.mdx) làm mẫu về mạch kể, độ sâu và cách đánh dấu chữ; bài nền theo mục 2.5 lấy [`bài 1.1`](../src/content/lessons/1-1-database-la-gi.mdx) làm mẫu. Excel và SQL được giải thích trong cùng một phần chính, có tiêu đề theo chủ đề của bài. Bố cục hai tiểu mục và quy tắc bám tình huống ở mục 2.1 áp dụng từ 31/10/2026; các bài chưa chuyển được liệt kê trong `tests/content.test.ts`, được chỉnh dần từng bài và không dùng làm mẫu bố cục. Không viết bài đầy đủ mới theo khung cũ. Spec, plan, mockup ở `docs/superpowers` và hồ sơ ở `docs/reviews` là lịch sử từng lượt; gặp chỗ khác file này thì file này đúng.
 
 ## 1. Viết gọn
 
@@ -21,7 +21,7 @@ Mọi quy ước khi viết bài, review bài và làm việc với database c�
 - Dùng "kết bảng" cho `JOIN`, không dùng "nối bảng" hay "ghép". Không dùng các cụm trong `BANNED_PHRASES` (`src/lib/lesson-schema.ts`), không dùng emoji.
 - Phần giảng tự trả lời "vì sao, để làm gì, cái giá là gì" bằng lời dẫn liền mạch; câu hỏi nằm ở tình huống và phần tự kiểm tra. Cơ chế SQL Server tự làm thì gọi đúng tên (chuyển kiểu ngầm) và nói gặp lại ở bài nào.
 - Mẫu tin nhắn cần gửi IT có thể trích câu hỏi trong ngoặc kép để người học dùng khi mắc lỗi; đó là hướng dẫn thao tác, không dùng nó làm câu hỏi dẫn lý thuyết.
-- Mỗi dòng `LineMap` có "Ví dụ:" với giá trị cụ thể: giá trị nào qua, bị từ chối hay bị đổi.
+- Mỗi dòng `LineMap` có "Ví dụ:" với giá trị cụ thể của tình huống.
 - Cuối lý thuyết có đoạn "Ở bài này chỉ cần…" kể các bài đi sâu hơn ("bài 5.2").
 - Giải thích trong drawer của `RunFlow` bắt đầu từ từ khóa của bước: nó làm gì với các dòng, kèm số dòng thật. Lời các bước đi theo yêu cầu của tình huống, bước cuối là kết quả chị Hạnh cần.
 - Không hứa điều database không tự bảo đảm. Ràng buộc chỉ có khi được khai báo ("khi `MaNV` được khai báo là khóa chính…"). Tách "hợp lệ" với "đúng", "lưu được" với "đúng ý". Khóa ngoại là luật kiểm khi ghi, không phải ô chọn trên màn hình; nó xác nhận mã có thật, không xác nhận mã đúng.
@@ -35,10 +35,10 @@ Mọi quy ước khi viết bài, review bài và làm việc với database c�
 ### 2.1 Khung bài và độ sâu
 
 - Thứ tự bài đầy đủ: **Tình huống → phần chính có tiêu đề theo chủ đề → Hay nhầm ở đâu → Ứng dụng → Ghi nhớ → tự kiểm tra (nếu có) → Bài tập**. Tự kiểm tra luôn đặt ngay sau Ghi nhớ, trước Bài tập. Bài `noExercises: true` bỏ mục Bài tập và có ít nhất ba câu tự kiểm tra. Bản tóm tắt giữ khung riêng ở `lesson-template.md`; bài nền theo mục 2.5.
-- Phần chính đi từ vấn đề trong tình huống, qua khái niệm cần biết và cách Excel/SQL xử lý, tới câu trả lời. Bài có câu lệnh dùng đúng hai tiểu mục theo mạch ở gạch dưới. Bài khái niệm dùng khoảng 2–4 tiểu mục theo ý nghĩa, bài nền theo mục 2.5, bài xử lý sự cố như 6.5 theo diễn biến. Không bắt buộc chép đúng các tiểu mục của bài mẫu. Mỗi lần chuyển từ Excel sang database/SQL phải có lời dẫn rõ.
+- Phần chính đi từ vấn đề trong tình huống, qua khái niệm cần biết và cách Excel/SQL xử lý, tới câu trả lời. Bài có câu lệnh dùng đúng hai tiểu mục theo mạch nêu ở dưới. Bài khái niệm dùng khoảng 2–4 tiểu mục theo ý nghĩa, bài nền theo mục 2.5, bài xử lý sự cố như 6.5 theo diễn biến. Không bắt buộc chép đúng các tiểu mục của bài mẫu. Mỗi lần chuyển từ Excel sang database/SQL phải có lời dẫn rõ.
 - Mọi giải thích SQL và câu lệnh trong phần chính, Hay nhầm chỉ bám tình huống đầu bài, trên đúng bảng và cột tình huống cần; không thêm câu ví dụ trên bảng hay cột khác, để người học không rối và bài gọn. Đoạn trích của chính câu lệnh thì được. Hay nhầm dùng biến thể sai của chính câu đó. Từ khóa ngoài lời giải chỉ nhắc khi đề bài tập cần, bằng một vế gắn với tình huống. Bài tập được dùng bảng khác.
-- Khái niệm và ví dụ đứng cạnh nhau. Dùng hình, câu lệnh, kết quả, `LineMap` hay `RunFlow` khi chúng giúp hiểu ý đang nói; không bắt buộc có đủ mọi khối hoặc một bảng so sánh dài. Không giải thích trong lời văn rồi chép nguyên ý vào bảng.
-- Bài khái niệm chưa cần thực hành thì không chèn preview SQL cho đủ khuôn; dẫn sang bài thực hành tương ứng. Bài truy vấn có câu lệnh giải đúng tình huống và kết quả đã kiểm, người học thấy câu lệnh trước khi nghe giải thích. Tiểu mục đầu đi theo việc trong Excel → trong SQL cần chạy câu lệnh gì → câu lệnh của tình huống → giải thích từng phần của chính câu đó. Tiểu mục sau là "SQL Server chạy câu này thế nào": `RunFlow` → bảng kết quả cuối → câu trả lời; bài không có `RunFlow` đặt tên tiểu mục này là "Kết quả cho tình huống". Không có hướng dẫn chạy hay giải thích cách đọc Results, Messages; phần này nằm ở trang Giới thiệu.
+- Khái niệm và ví dụ đứng cạnh nhau. Chỉ dùng khối giúp hiểu ý đang nói, không cần một bảng so sánh dài. Không giải thích trong lời văn rồi chép nguyên ý vào bảng.
+- Bài khái niệm chưa cần thực hành thì không chèn preview SQL cho đủ khuôn; dẫn sang bài thực hành tương ứng. Bài truy vấn có câu lệnh giải đúng tình huống và kết quả đã kiểm, người học thấy câu lệnh trước khi nghe giải thích. Tiểu mục đầu đi theo việc trong Excel → trong SQL cần chạy câu lệnh gì → câu lệnh của tình huống → giải thích từng phần của chính câu đó bằng `LineMap`. Tiểu mục sau là "SQL Server chạy câu này thế nào": `RunFlow` → bảng kết quả cuối → câu trả lời; bài không có `RunFlow` đặt tên tiểu mục này là "Kết quả cho tình huống". Không có hướng dẫn chạy hay giải thích cách đọc Results, Messages; phần này nằm ở trang Giới thiệu.
 - Giữ kiến thức đủ để hiểu và xử lý yêu cầu của bài. Chi tiết sâu đã có bài riêng thì nêu điều kiện bằng một vế câu và dẫn bài; không biến bài nhập môn thành bài về kiểu dữ liệu, khóa, import hay giao dịch.
 - Bài khái niệm đơn giản hướng tới 10–12 phút gồm tự kiểm tra, bài nền theo mục 2.5; bài phức tạp ghi thời lượng theo nội dung thực tế. Rút bằng cách cắt lặp và giảm độ sâu ngoài mục tiêu; giữ phần giảng chính luôn hiển thị, không giấu sau tab/khối bấm mở để trông ngắn hơn.
 
@@ -89,14 +89,14 @@ Mọi quy ước khi viết bài, review bài và làm việc với database c�
 
 - Đọc `ho-so-cong-ty.md` và các bài đứng trước có liên quan, để không giải thích lại hoặc nói khác đi.
 - Chốt giả định của tình huống: mốc thời gian, phạm vi dữ liệu, ai hỏi và cần câu trả lời gì.
-- Chốt mục tiêu chính, phần đã học và phần để bài sau; chọn 2–4 nhịp giải thích đủ đi tới câu trả lời. Mở bài mẫu để đối chiếu cách kể, không chép nguyên ví dụ của nó vào mọi bài.
+- Chốt mục tiêu chính, phần đã học và phần để bài sau; bài khái niệm chọn 2–4 nhịp giải thích đủ đi tới câu trả lời. Mở bài mẫu để đối chiếu cách kể, không chép nguyên ví dụ của nó vào mọi bài.
 - Chạy mọi câu lệnh và con số sẽ đưa vào bài (mục 5).
 
 ### 4.2 Viết theo khung ở `lesson-template.md` và các mục 1–3
 
 1. Viết tình huống và giả định ngắn; chốt một câu hỏi dữ liệu bằng `Key`.
 2. Đặt tiêu đề phần chính theo vấn đề cụ thể. Lồng cách Excel và SQL xử lý vào từng ý, giải nghĩa thuật ngữ ngay chỗ dùng.
-3. Đặt ví dụ/hình cạnh ý cần minh họa. Bài truy vấn thêm câu lệnh cùng `RunFlow` hoặc kết quả; bài khái niệm dùng lời giải thích, không ép có câu lệnh.
+3. Đặt ví dụ/hình cạnh ý cần minh họa. Bài truy vấn đi theo mạch ở mục 2.1; bài khái niệm dùng lời giải thích, không ép có câu lệnh.
 4. Trả lời người hỏi ngay trong phần chính, đúng phạm vi giả định. Dẫn các chi tiết sâu sang bài tương ứng.
 5. Viết Hay nhầm bằng lỗi/hậu quả; Ứng dụng bằng khả năng áp dụng của chủ đề; Ghi nhớ và tự kiểm tra theo mục tiêu.
 6. Rà lần lượt chữ đậm của khái niệm, code của giá trị dẫn chứng, dấu ô trong hình và các chỗ lặp trước khi chạy kiểm tra.
@@ -108,6 +108,7 @@ Bài nền bỏ qua các mục về tình huống, SQL và `LineMap`.
 - [ ] Không đoạn nào dài dòng, vòng vo; không ý nào nói hai lần ngoài "Ghi nhớ" và câu tự kiểm tra.
 - [ ] Lý thuyết trả lời "vì sao, để làm gì, cái giá là gì"; không có câu hỏi trong lý thuyết.
 - [ ] Excel và SQL cùng một phần chính, chuyển ý rõ; ví dụ ở cạnh phần giải thích, không có bảng/khối chỉ để đủ khuôn.
+- [ ] Bài có câu lệnh: thấy câu lệnh trước phần giải thích, đúng mạch ở mục 2.1, mọi câu lệnh và giải thích chỉ bám tình huống.
 - [ ] Độ sâu và thời lượng phù hợp mục tiêu; điều kiện sâu có chỉ sang bài sau, phần chính luôn nhìn thấy.
 - [ ] Khái niệm được in đậm có chọn lọc; mọi giá trị dẫn chứng trong lời văn, tên bảng/cột và địa chỉ ô có kiểu code phù hợp.
 - [ ] Ứng dụng đúng khả năng của chủ đề, có việc làm/mục đích cụ thể và điều kiện cần thiết.
@@ -125,7 +126,7 @@ Bài nền bỏ qua các mục về tình huống, SQL và `LineMap`.
 3. `npm test`, `npm run check`, `npm run build`, `npm run check:dist`.
 4. Mở bản build trên máy, xem các hình có đánh dấu và các khối mới.
 
-Khi chuyển một bài cũ sang khung mới, cập nhật các test đang kiểm tiêu đề cũ thành kiểm ý nghĩa còn phải giữ; không xóa bảo vệ về số liệu, giới hạn của database hay câu trả lời tình huống. Danh sách cho phép khung cũ trong `tests/content.test.ts` chỉ dành cho các bài đã tồn tại, không thêm bài mới vào đó. Nếu có lỗi nền ngoài phạm vi, ghi rõ tên test, bài bị ảnh hưởng và kết quả thực tế; không báo toàn bộ đạt hay nới test để bỏ qua.
+Khi chuyển một bài cũ sang khung mới, cập nhật các test đang kiểm tiêu đề cũ thành kiểm ý nghĩa còn phải giữ; không xóa bảo vệ về số liệu, giới hạn của database hay câu trả lời tình huống. Các danh sách cho phép khung cũ trong `tests/content.test.ts` chỉ dành cho các bài đã tồn tại: không thêm bài mới vào đó, chuyển xong bài nào thì gỡ bài đó. Nếu có lỗi nền ngoài phạm vi, ghi rõ tên test, bài bị ảnh hưởng và kết quả thực tế; không báo toàn bộ đạt hay nới test để bỏ qua.
 
 ### 4.5 Review độc lập (bắt buộc, mỗi bài một lần)
 
@@ -163,12 +164,12 @@ Phải luôn tự đặt ra các câu hỏi tại sao, để làm gì, vì sao n
 
 Bối cảnh:
 - Bài: src/content/lessons/<slug>.mdx; YAML: <đường dẫn hoặc không có>; source: <commit/trạng thái>; build: <đường dẫn và phiên bản hoặc chưa có>; report: temp/review/<lượt>/review-bai-<slug>.md.
-- Đọc AGENTS.md, docs/quy-uoc.md, docs/lesson-template.md, docs/ho-so-cong-ty.md, bài mẫu tương ứng (2.2 hoặc 1.1) và các bài trước liên quan đã được chỉ ra. Quyết định đã duyệt: <phạm vi và mục spec/plan>. Không đọc report cũ ở temp/review hoặc docs/reviews, nhận xét reviewer khác hay ma trận tác giả. Tài liệu quyết định dùng để hiểu phạm vi, không dùng kết luận cũ thay cho học thử.
+- Đọc AGENTS.md, docs/quy-uoc.md, docs/lesson-template.md, docs/ho-so-cong-ty.md, bài mẫu tương ứng (2.1 hoặc 1.1) và các bài trước liên quan đã được chỉ ra. Quyết định đã duyệt: <phạm vi và mục spec/plan>. Không đọc report cũ ở temp/review hoặc docs/reviews, nhận xét reviewer khác hay ma trận tác giả. Tài liệu quyết định dùng để hiểu phạm vi, không dùng kết luận cũ thay cho học thử.
 - Giả định chưa biết SQL, lập trình hoặc quản trị hệ thống; chỉ biết Excel văn phòng cơ bản. Không mặc định đã biết VLOOKUP/PivotTable. Chỉ dùng bài đang học và các bài trước để hiểu; không lấy bài sau, đáp án hoặc kiến thức chuyên gia có sẵn bù phần chưa được dạy. Thuật ngữ mới cần có nghĩa tại chỗ; một mã/giá trị dữ liệu xuất hiện lần đầu không tự thành thuật ngữ cần thêm định nghĩa hoặc bảng chứng minh.
 - Không đọc database/HRM_Demo.sql, .env/secret hoặc tài liệu SQL ngoài khóa học; không kết nối database, chạy SQL, API/runner hay nộp bài. Chỗ nghi kiến thức/số liệu sai chỉ ghi nghi ngờ cùng căn cứ; điều cần chạy mới biết thì ghi "chưa xác minh". Người viết xác minh kỹ thuật riêng theo mục 4.6 và 5.
 - Đọc hết bài và mọi khối Excel/Sql/Result/Messages/LineMap/RunFlow/Ssms/Erd, gồm từng bước và nội dung drawer. Phân biệt hình minh họa, thẻ xem nhanh, bảng trích và tổng thật; không kết luận tổng sai vì thẻ/bảng chỉ hiện một phần.
 - Kiểm đường đi người học thực sự theo được: chỗ chọn web có mã hoặc SQL Server riêng, nơi nhận mã, bước cần làm và điều kiện hoàn thành có nhất quán không. Không bắt người chỉ chọn web tự kết nối SSMS, không đề nghị bỏ xác thực hoặc tự thêm thông tin liên hệ.
-- Kiểm mục tiêu, giả định, đơn vị đếm, thuật ngữ lần đầu và các giới hạn. Excel/SQL phải cùng phần chính; câu trả lời tình huống nằm cạnh lời giải/kết quả, trừ bài nền không có tình huống. Kiến thức cốt lõi để hiểu câu chính và làm đề phải được giảng trước phần ôn; không dùng tự kiểm tra để dạy bù. Với giới hạn đặt trong Hay nhầm theo quyết định riêng đã duyệt, kiểm tác động thực tế thay vì ép đổi vị trí theo quy tắc khái quát. Không yêu cầu khôi phục khung cũ hoặc chèn preview SQL cho bài khái niệm.
+- Kiểm mục tiêu, giả định, đơn vị đếm, thuật ngữ lần đầu và các giới hạn. Excel/SQL phải cùng phần chính; câu trả lời tình huống nằm ngay sau kết quả, trừ bài nền không có tình huống. Kiến thức cốt lõi để hiểu câu chính và làm đề phải được giảng trước phần ôn; không dùng tự kiểm tra để dạy bù. Với giới hạn đặt trong Hay nhầm theo quyết định riêng đã duyệt, kiểm tác động thực tế thay vì ép đổi vị trí theo quy tắc khái quát. Không yêu cầu khôi phục khung cũ hoặc chèn preview SQL cho bài khái niệm.
 - Đọc từng đề và thử xác định cách làm từ kiến thức đã học trước khi đối chiếu answer YAML. Ghi cho mỗi đề: cần kiến thức gì, đã được dạy ở đâu, còn thiếu gì; không coi answer là lời giảng. Không chép nguyên đáp án vào report. Tự kiểm tra phải phủ mục tiêu, đáp án đã được giảng và nằm sau Ghi nhớ, trước Bài tập nếu có.
 - Rà bold có chọn lọc, code cho dẫn chứng/tên bảng/cột/ô và dấu đánh trong hình; Ứng dụng phải nói việc làm được nhờ chủ đề. Đối chiếu bản render khi có: nháy SQL, tab bốn cột, query/focus/SQL bước khớp nhau và không lộ backtick/escape. Đọc HTML không chứng minh đã kiểm copy/paste, bàn phím, drawer hoặc SSMS thật.
 - Chỉ tương tác browser nếu được giao, giữ nháp/clipboard của người dùng và không chạy SQL. Ghi đúng thao tác đã thử, viewport thực tế, kết quả và giới hạn; không đổi thiết lập bảo mật để ép một phép kiểm đạt. Một lỗi truy cập trên trang dùng chung chỉ là một bằng chứng, không tự nhân thành lỗi riêng của mọi bài chưa mở.

@@ -73,4 +73,4 @@ Test `2.1 calls the run order logical…` đổi `không phải 5 dòng đã b�
 
 ## Kết quả
 
-Hoàn tất theo Native. Review độc lập xử lý ở commit sau. [Hồ sơ xử lý](../../reviews/2026-10-31-bai-2-1-excel-truoc/verification.md). Commit trên nhánh `feat/lesson-2-1-excel-first`, không push.
+Hoàn tất theo Native. Review độc lập xử lý ở commit sau. [Hồ sơ xử lý](../../reviews/2026-10-31-bai-2-1-excel-truoc/verification.md). Commit trên nhánh `feat/lesson-2-1-excel-first`, không push. Bố cục sau đó đổi tiếp, bản hiện hành ở `docs/quy-uoc.md` mục 2.1.

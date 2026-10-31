@@ -1,8 +1,8 @@
 # Khung một bài học
 
-Bài có tình huống đối chiếu với [`bài 2.2`](../src/content/lessons/2-2-where-loc-nhu-autofilter.mdx) về mạch kể, độ sâu, chữ đậm và giá trị được highlight; bài nền đối chiếu với [`bài 1.1`](../src/content/lessons/1-1-database-la-gi.mdx). [`Bài 3.5`](../src/content/lessons/3-5-left-join.mdx) là ví dụ kỹ thuật `RunFlow`, đã chuyển sang khung gộp từ 24/10/2026.
+Bài có câu lệnh đối chiếu với [`bài 2.1`](../src/content/lessons/2-1-chon-cot-dat-ten-cot.mdx) về mạch kể, độ sâu, chữ đậm và giá trị được highlight; bài nền đối chiếu với [`bài 1.1`](../src/content/lessons/1-1-database-la-gi.mdx). [`Bài 3.5`](../src/content/lessons/3-5-left-join.mdx) là ví dụ kỹ thuật `RunFlow` nhiều bước, chưa chuyển sang bố cục hai tiểu mục.
 
-File này hướng dẫn dựng bài và dùng các khối. Quy tắc viết, định dạng, số liệu, review và an toàn database nằm ở [`quy-uoc.md`](quy-uoc.md); bối cảnh, nhân vật và dữ liệu mẫu ở [`ho-so-cong-ty.md`](ho-so-cong-ty.md). Các spec/plan/mockup cũ ghi hai phần Excel/SQL là lịch sử thiết kế; khi viết tiếp dùng hai tài liệu hiện hành này.
+File này hướng dẫn dựng bài và dùng các khối. Quy tắc viết, định dạng, số liệu, review và an toàn database nằm ở [`quy-uoc.md`](quy-uoc.md); bối cảnh, nhân vật và dữ liệu mẫu ở [`ho-so-cong-ty.md`](ho-so-cong-ty.md). Spec, plan, mockup và hồ sơ review là lịch sử từng lượt; khi viết tiếp dùng hai tài liệu hiện hành này.
 
 ## Phần đầu file
 
@@ -67,7 +67,7 @@ Nêu giới hạn quan trọng và cái giá của cách làm bằng một vế 
 
 Trả lời chị Hạnh ngay trong mạch này, đủ điều kiện và đúng phạm vi dữ kiện.
 Tách căn cứ nghiệp vụ với thao tác mà database hay người có quyền thực hiện.
-Bài truy vấn thay tiểu mục này bằng biến thể có câu lệnh ở phần hướng dẫn bên dưới.
+Bài truy vấn thay cả phần chính này bằng khung ở mục "Bài có câu lệnh và kết quả".
 
 ## Hay nhầm ở đâu
 
@@ -181,7 +181,7 @@ Kết quả cần thấy: `SELECT`/`FROM`/`WHERE` cùng cột; `HoTen`, `CASE`, 
 1. Đọc quy ước và hồ sơ công ty; chốt mục tiêu, giả định và câu trả lời cần có.
 2. Chọn biến thể bài nền, khái niệm hoặc truy vấn; đặt tiêu đề phần chính theo vấn đề cụ thể.
 3. Chọn ví dụ tối thiểu và các khối thật sự cần; chạy, đối chiếu dữ liệu theo quy trình trước khi điền.
-4. Viết mạch Excel → khái niệm/cách SQL xử lý → giải yêu cầu; không tách lại hai phần Excel/SQL.
+4. Viết theo mạch của biến thể đã chọn, không tách lại hai phần Excel/SQL.
 5. Rà chữ đậm, code của giá trị dẫn chứng, dấu ô trong hình, ứng dụng đúng chủ đề và câu tự kiểm tra phủ mục tiêu.
 6. Chạy kiểm tra và review theo mục 4 của `quy-uoc.md`. Bài cũ chuyển khung thì cập nhật các assertion về tiêu đề, giữ các kiểm về kiến thức và số liệu.
 
