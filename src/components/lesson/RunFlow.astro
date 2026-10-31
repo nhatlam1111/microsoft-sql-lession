@@ -39,7 +39,7 @@ const views = steps.map((step, i) => {
     inputText: step.input ? parts(step.input) : null,
     inputs: inputs[i].map(from => {
       const preview = previewOf(from, 5);
-      return { preview, note: excerptNote(preview), clause: highlightTsql(from.clause) };
+      return { preview, note: excerptNote(preview), clause: highlightTsql(from.clause), num: String(steps.indexOf(from) + 1).padStart(2, '0') };
     }),
     checks: step.checks && { ...step.checks, key: inputs[i][0]?.columns[0], source: inputs[i].reduce((sum, from) => sum + rowCount(from), 0) },
   };
@@ -99,7 +99,7 @@ const views = steps.map((step, i) => {
             : v.inputs.length === 0 && <p class="rf-d-text">Chưa qua bước nào; dữ liệu lấy trực tiếp từ bảng nguồn.</p>}
           {v.inputs.map(input => (
             <>
-              {v.inputs.length > 1 && <p class="rf-in-from">Từ bước {input.clause.map(t => t.text)}</p>}
+              {v.inputs.length > 1 && <p class="rf-in-from">Từ bước {input.num}, {input.clause.map(t => t.text)}</p>}
               <div class="rf-tb-scroll">
                 <table class="rf-tb">
                   <thead><tr>{input.preview.columns.map(c => <th scope="col">{c}</th>)}</tr></thead>

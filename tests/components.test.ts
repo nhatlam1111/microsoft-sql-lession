@@ -31,6 +31,7 @@ it('RunFlow gives UNION two independent inputs instead of an arrow from one inpu
   expect(html).toContain('grid-row: 1; grid-column: 1;');
   expect(html).toContain('grid-row: 1; grid-column: 2;');
   expect(html.match(/class="rf-panel"/g)).toHaveLength(4);
+  expect([...html.matchAll(/class="rf-in-from"[^>]*>([^<]+)</g)].map(m => m[1])).toEqual(['Từ bước 01, SELECT', 'Từ bước 02, SELECT']);
 });
 
 it('Result shows NULL cells in the SSMS style and says how many rows were trimmed', async () => {
