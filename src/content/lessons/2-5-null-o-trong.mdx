@@ -80,8 +80,9 @@ ORDER BY MaNV ASC;`} steps={[
   clause: "FROM",
   title: "Lấy bảng nhân viên làm nguồn.",
   focus: "FROM NhanVien",
-  meaning: "`FROM` xác định bảng có các cột dùng để lọc và hiển thị.",
-  detail: "Có `48` hồ sơ, đủ `12` cột. Hình trích bốn hồ sơ để đối chiếu bước sau: `NV033` đã có ngày nghỉ việc, `NV045` thuộc `KD`.",
+  input: "Bảng `NhanVien` lưu trong database.",
+  meaning: "`FROM` lấy bảng `NhanVien` làm nguồn, chưa xét phòng hay ngày nghỉ việc.",
+  detail: "Có `48` hồ sơ, đủ `12` cột. Hình trích bốn hồ sơ để đối chiếu ở bước sau.",
   sql: `SELECT * FROM NhanVien;`,
   columns: ["MaNV","HoTen","GioiTinh","NgaySinh","SoCCCD","Email","NgayVaoLam","NgayNghiViec","MaPB","MaCD","MaQuanLy","TrangThai"],
   rows: [
@@ -97,8 +98,9 @@ ORDER BY MaNV ASC;`} steps={[
   clause: "WHERE",
   title: "Giữ hồ sơ phòng VH chưa có ngày nghỉ việc.",
   focus: "WHERE MaPB = 'VH'\n\tAND NgayNghiViec IS NULL",
-  meaning: "`WHERE` chỉ giữ dòng khi cả hai điều kiện đúng: `MaPB` bằng `VH` và `NgayNghiViec` là `NULL`.",
-  detail: "Còn `8` hồ sơ, vẫn đủ `12` cột; hình trích ba hồ sơ. `NV033` có ngày nghỉ việc và `NV045` thuộc `KD` đã bị loại. Email của `NV044` vẫn là `NULL`; thứ tự dòng chưa được bảo đảm.",
+  meaning: "`WHERE` xét từng hồ sơ, `AND` yêu cầu cả hai điều kiện cùng đúng: `MaPB` bằng `VH` và `NgayNghiViec` là `NULL`.",
+  detail: "Còn `8` hồ sơ, vẫn đủ `12` cột. `NV033` có ngày nghỉ việc, `NV045` thuộc `KD`. Email của `NV044` vẫn là `NULL`. Hình trích ba hồ sơ, thứ tự dòng chưa được bảo đảm.",
+  checks: { conditions: ["MaPB = 'VH'", "IS NULL"], rows: [["NV008", true, true], ["NV033", true, false], ["NV044", true, true], ["NV045", false, true]], totals: [10, 45, 8] },
   sql: `SELECT *
 FROM NhanVien
 WHERE MaPB = 'VH'
@@ -116,8 +118,8 @@ WHERE MaPB = 'VH'
   clause: "SELECT",
   title: "Chọn ba cột và ghi nhãn ở email còn thiếu.",
   focus: "SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],\n\tCOALESCE(Email, N'(chưa có)') AS [Email]",
-  meaning: "`SELECT` chọn cột, đặt tiêu đề và dùng `COALESCE` tạo giá trị email hiển thị.",
-  detail: "Vẫn `8` hồ sơ, còn `3` cột; hình trích ba hồ sơ. Bảy email giữ nguyên, `NV044` hiện `(chưa có)`; email trong bảng nguồn vẫn là `NULL`. Chưa chốt thứ tự dòng.",
+  meaning: "`SELECT` giữ nguyên `8` dòng, lấy ba cột và đặt tiêu đề. `COALESCE` thay `NULL` của `Email` bằng nhãn, email có sẵn giữ nguyên.",
+  detail: "Vẫn `8` hồ sơ, còn `3` cột. Bảy email giữ nguyên, `NV044` hiện `(chưa có)`; email trong bảng nguồn vẫn là `NULL`. Hình trích ba hồ sơ, chưa chốt thứ tự dòng.",
   sql: `SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
 \tCOALESCE(Email, N'(chưa có)') AS [Email]
 FROM NhanVien
@@ -136,7 +138,7 @@ WHERE MaPB = 'VH'
   clause: "ORDER BY",
   title: "Xếp kết quả theo mã tăng dần.",
   focus: "ORDER BY MaNV ASC",
-  meaning: "`ORDER BY` sắp tám dòng kết quả theo mã nhân viên để dễ đối chiếu.",
+  meaning: "`ORDER BY` xếp tám dòng theo `MaNV` tăng dần để dễ đối chiếu.",
   detail: "Vẫn `8` hồ sơ và `3` cột, `NV008` đứng đầu, `NV044` đứng cuối; đây là danh sách chị Hạnh cần.",
   sql: `SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
 \tCOALESCE(Email, N'(chưa có)') AS [Email]
