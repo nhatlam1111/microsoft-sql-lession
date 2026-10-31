@@ -378,7 +378,7 @@ describe('fixes from the final review', () => {
     expect(f.body.match(/<Chat\b/g)).toHaveLength(1);
     expect(f.body.match(/<RunFlow\b/g)).toHaveLength(1);
     expect(f.body).toContain('SELECT TOP (5) *');
-    for (const s of ['gioi-thieu/#doc-ket-qua', 'gioi-thieu/#chon-noi-thuc-hanh', 'trang bài tập không có lệnh này']) expect(f.body, s).toContain(s);
+    for (const s of ['gioi-thieu/#doc-ket-qua', 'gioi-thieu/#chon-noi-thuc-hanh']) expect(f.body, s).toContain(s);
     // Exercise 1 asks for this table, so printing the query would hand out the answer.
     expect(f.body).not.toContain('FROM HopDong');
   });

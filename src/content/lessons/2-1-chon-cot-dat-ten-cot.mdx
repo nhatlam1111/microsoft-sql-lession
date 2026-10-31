@@ -9,7 +9,7 @@ minutes: 15
 prerequisites:
   - "1.2"
   - "1.3"
-goal: bạn viết được câu SELECT đầu tiên, chọn đúng cột, đúng thứ tự, đặt tiêu đề bằng AS mà không đổi dữ liệu nguồn, và lần theo được từng bước SQL Server xử lý
+goal: bạn viết được câu SELECT đầu tiên, chọn đúng cột, đúng thứ tự, đặt tiêu đề bằng AS mà không đổi dữ liệu nguồn, và lần theo được thứ tự FROM rồi SELECT
 excel: Mở sheet, chọn cột, đổi tiêu đề
 summary: Từ việc chép cột và sửa tiêu đề trong Excel đến SELECT, FROM và AS; lần theo từng bước để ra danh sách gửi Kế toán.
 ---
@@ -41,22 +41,20 @@ Trong Excel, bạn mở sheet nhân viên, chép ba cột cần gửi sang một
 
 Trong SQL không có sheet nào đang mở, nên bạn gửi cho SQL Server một **câu truy vấn (query)**, còn gọi là câu lệnh, nói rõ cần lấy gì. **`FROM`** chỉ bảng nguồn, giống việc chọn sheet. **`SELECT`** chọn cột, giống việc chép cột: viết **danh sách cột** ngăn cách bằng dấu phẩy, như `SELECT MaNV, HoTen FROM NhanVien;`. Dấu `;` kết thúc câu lệnh; xuống dòng và viết hoa các từ khóa như `SELECT`, `FROM` chỉ giúp dễ đọc.
 
-Cột trong kết quả đi theo thứ tự bạn viết: `SELECT TenPB, MaPB FROM PhongBan;` đặt tên phòng trước mã phòng. Cột không chọn không có trong kết quả, còn số dòng không đổi vì câu chưa lọc gì.
+Cột trong kết quả đi theo thứ tự bạn viết: `SELECT TenPB, MaPB FROM PhongBan;` đặt tên phòng trước mã phòng. Cột không chọn không có trong kết quả, còn số dòng không đổi vì câu chưa lọc gì. Câu `SELECT … FROM` như trên chỉ đọc, không sửa bảng.
 
-Câu `SELECT … FROM` như trên chỉ đọc, không sửa bảng. Tên cột xem ở Object Explorer → **Columns** hoặc nút **Sơ đồ database** trên trang bài tập.
-
-Dòng tiêu đề `A1:C1` trong hình ứng với **bí danh cột (alias)**, tên đặt cho cột trong kết quả bằng `AS`. Viết `HoTen AS [Họ tên]` thì tiêu đề là `Họ tên`, còn ô dữ liệu vẫn chứa tên như `Trần Thị Mai`; giá trị và kiểu dữ liệu không đổi.
+Dòng tiêu đề `A1:C1` trong hình ứng với **bí danh cột (alias)**, tên đặt cho cột trong kết quả bằng `AS`. Viết `HoTen AS [Họ tên]` thì tiêu đề là `Họ tên`, còn ô dữ liệu vẫn chứa tên như `Trần Thị Mai`; giá trị và kiểu dữ liệu không đổi. Không có `AS` thì tiêu đề là tên cột.
 
 Alias chỉ có trong câu lệnh đó, không được lưu thành tên mới trong bảng: như trong Excel, bạn sửa tiêu đề ở bản gửi đi, còn nguồn dùng chung vẫn như cũ.
 
-**Ngoặc vuông** `[]` bao một tên có khoảng trắng, như `[Ngày vào làm]`, và không hiện trong tiêu đề; khóa học dùng ngoặc cho mọi alias. Không thêm `N` trước ngoặc: đây là một tên, không phải chuỗi giá trị; chuỗi tiếng Việt mới viết như `N'Trần Thị Mai'` (bài 1.3).
+**Ngoặc vuông** `[]` bao một tên có khoảng trắng, như `[Ngày vào làm]`, và không hiện trong tiêu đề; khóa học dùng ngoặc cho mọi alias. Không thêm `N` trước ngoặc: đây là một tên, không phải chuỗi giá trị (bài 1.3).
 
-Muốn xem thử một bảng lạ, như lướt vài dòng đầu trong Excel, dùng dấu **`*`** thay danh sách cột để lấy mọi cột, và **`TOP (5)`** ngay sau `SELECT` để lấy tối đa năm dòng. Dấu `*` lấy cả dữ liệu cá nhân như `SoCCCD`, `Email`, nên bản gửi đi phải liệt kê đúng cột. Câu xem thử có dạng:
+Muốn xem nhanh một bảng lạ, như lướt qua một sheet trong Excel, dùng dấu **`*`** thay danh sách cột để lấy mọi cột, và **`TOP (5)`** ngay sau `SELECT` để lấy tối đa năm dòng, dòng nào cũng được. Dấu `*` lấy cả dữ liệu cá nhân như `SoCCCD`, `Email`, nên bản gửi đi phải liệt kê đúng cột. Câu xem thử có dạng:
 
 <Sql copy={false} title="Xem thử một bảng, chỉ để đọc" code={`SELECT TOP (5) *
 FROM NhanVien;`} />
 
-Ở bài này chỉ cần chọn cột, đặt tiêu đề và nhận ra câu xem thử. Lọc dòng học ở bài 2.2, sắp xếp dòng bằng `ORDER BY` ở bài 2.4.
+Ở bài này chỉ cần chọn cột, đặt tiêu đề và dùng `*` để lấy mọi cột. Lọc dòng học ở bài 2.2, sắp xếp dòng bằng `ORDER BY` ở bài 2.4.
 
 ### Câu lệnh cho tình huống
 
@@ -65,7 +63,7 @@ Ba cột tương ứng với yêu cầu là `MaNV`, `HoTen`, `NgayVaoLam`. Viế
 <Sql code={`SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên], NgayVaoLam AS [Ngày vào làm]
 FROM NhanVien;`} />
 
-Sơ đồ đi theo **thứ tự xử lý logic**, không phải cách SQL Server thực sự đọc dữ liệu. Bấm từng bước để xem câu lệnh biến bảng 12 cột thành danh sách chị Hạnh cần:
+Sơ đồ đi theo **thứ tự xử lý logic**, tức thứ tự để hiểu câu lệnh, không phải cách máy đọc dữ liệu: phải biết bảng nguồn rồi mới chọn được cột. Bấm từng bước để thấy bảng 12 cột còn lại ba cột chị Hạnh cần:
 
 <RunFlow query={`SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên], NgayVaoLam AS [Ngày vào làm]
 FROM NhanVien;`} steps={[
@@ -74,13 +72,14 @@ FROM NhanVien;`} steps={[
     title: 'Lấy bảng NhanVien làm nguồn.',
     focus: 'FROM NhanVien',
     meaning: '`FROM` cho biết các cột nguồn nằm ở bảng nào. Bảng `NhanVien` có 12 cột; bước này chưa chọn ba cột cần gửi.',
-    detail: 'Có 48 hồ sơ, gồm cả người đã nghỉ, vì câu không có điều kiện lọc; hình trích ba dòng với đủ 12 cột của nguồn.',
+    detail: 'Có 48 hồ sơ, gồm cả người đã nghỉ như `NV033`, vì câu không có điều kiện lọc; hình trích bốn dòng với đủ 12 cột của nguồn.',
     sql: `SELECT * FROM NhanVien;`,
     columns: ['MaNV', 'HoTen', 'GioiTinh', 'NgaySinh', 'SoCCCD', 'Email', 'NgayVaoLam', 'NgayNghiViec', 'MaPB', 'MaCD', 'MaQuanLy', 'TrangThai'],
     rows: [
       ['NV001', 'Trần Thị Mai', 'Nữ', '1992-04-12', '000192131376', 'mai.tt@hrmdemo.vn', '2024-03-01', null, 'KT', 'CV', 'NV005', 'Đang làm'],
       ['NV002', 'Lê Văn Hùng', 'Nam', '1988-09-03', '000088139295', 'hung.lv@hrmdemo.vn', '2024-04-01', null, 'KD', 'CVC', 'NV006', 'Đang làm'],
       ['NV003', 'Nguyễn Thu Hà', 'Nữ', '1995-01-25', '000195147214', 'ha.nt@hrmdemo.vn', '2023-06-01', null, 'KD', 'CV', 'NV006', 'Đang làm'],
+      ['NV033', 'Khúc Văn Hải', 'Nam', '1990-01-01', '000090384784', 'hai.kv@hrmdemo.vn', '2019-06-03', '2026-06-30', 'VH', 'NV', 'NV008', 'Đã nghỉ'],
     ],
     total: 48,
     excel: 'Mở sheet nguồn có đủ thông tin nhân viên.',
@@ -98,6 +97,7 @@ FROM NhanVien;`,
       ['NV001', 'Trần Thị Mai', '2024-03-01'],
       ['NV002', 'Lê Văn Hùng', '2024-04-01'],
       ['NV003', 'Nguyễn Thu Hà', '2023-06-01'],
+      ['NV033', 'Khúc Văn Hải', '2019-06-03'],
     ],
     total: 48,
     excel: 'Chép ba cột sang bản báo cáo, đặt thứ tự và sửa tiêu đề.',
@@ -116,8 +116,6 @@ Kết quả cuối, thứ tự dòng có thể khác hình vì câu chưa có `O
 
 Bạn có thể trả lời chị Hạnh: danh sách đủ `48` hồ sơ vì câu không có điều kiện lọc, nên có cả `3` hồ sơ đã nghỉ trong dữ liệu mẫu là `NV020`, `NV033`, `NV041`; có đúng ba cột, thứ tự và tiêu đề yêu cầu. Ba cột này không cho biết ai đã nghỉ; nếu Kế toán cần phân biệt thì chị Hạnh cần bổ sung yêu cầu về trạng thái.
 
-Trong SSMS, **Copy with Headers** trên lưới Results chép kết quả kèm tiêu đề sang Excel; trang bài tập không có lệnh này. Bản chép không tự cập nhật theo database.
-
 ## Hay nhầm ở đâu
 
 <Mistakes>
@@ -135,8 +133,7 @@ Trong SSMS, **Copy with Headers** trên lưới Results chép kết quả kèm t
 <Apply>
 
 - **Xem mẫu dữ liệu của một bảng:** lấy một ít dòng để nhận ra các cột đang lưu thông tin gì trước khi đặt yêu cầu báo cáo.
-- **Tạo danh sách theo mẫu:** chọn cột và thứ tự phù hợp để dán kết quả vào mẫu Excel của người nhận.
-- **Đặt tiêu đề dễ đọc:** dùng `AS` cho báo cáo tiếng Việt, đồng thời giữ tên kỹ thuật trong bảng nguồn.
+- **Tạo danh sách theo mẫu:** chọn cột, thứ tự và tiêu đề `AS` phù hợp để dán vào mẫu Excel của người nhận; trong SSMS, **Copy with Headers** chép kết quả kèm tiêu đề.
 - **Giới hạn thông tin trả về:** liệt kê cột cần gửi để tránh đưa thêm số CCCD, email hay ngày sinh vào bản báo cáo; việc này không thay thế phân quyền đọc dữ liệu (bài 6.1).
 
 </Apply>
@@ -144,9 +141,9 @@ Trong SSMS, **Copy with Headers** trên lưới Results chép kết quả kèm t
 ## Ghi nhớ
 
 <Memo rows={[
-  ['Chép các cột cần gửi, đúng thứ tự', 'Liệt kê cột sau SELECT, ngăn bằng dấu phẩy; chọn cột không lọc dòng'],
+  ['Chọn sheet, chép các cột cần gửi theo đúng thứ tự', 'FROM chọn bảng nguồn, xét trước; SELECT liệt kê cột, ngăn bằng dấu phẩy, không lọc dòng'],
   ['Sửa dòng tiêu đề bản gửi', 'HoTen AS [Họ tên]: chỉ đổi tiêu đề trong kết quả'],
-  ['Lướt vài dòng đầu', 'SELECT TOP (5) * FROM NhanVien; — mọi cột, tối đa 5 dòng'],
+  ['Lướt qua một sheet', 'SELECT TOP (5) * FROM NhanVien; — mọi cột, tối đa 5 dòng'],
 ]} />
 
 ## Bài tập
