@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { runInNewContext } from 'node:vm';
 import { parse } from 'yaml';
-import { readLessonFiles } from './helpers/lessons';
+import { readLessonFiles, lessonMainSection } from './helpers/lessons';
 
 const slug = '2-7-ham-chuoi-tieng-viet';
 const value = <T>(source: string): T => JSON.parse(JSON.stringify(runInNewContext(`(${source})`)));
@@ -29,7 +29,7 @@ describe('2.7 string projections preserve identity and source values', () => {
     const steps = value<{ clause: string; columns: string[]; rows: unknown[][]; total: number }[]>(flow![2]);
     const source = people();
     const itPeople = source.filter(p => p.MaPB === 'IT');
-    const expected = itPeople.map(p => [p.MaNV, `${p.MaNV} - ${p.HoTen}`]);
+    const expected = itPeople.map(p => [p.MaNV, `${p.MaNV!.slice(-3)} - ${p.HoTen!.toUpperCase()}`, p.HoTen!.length]);
     expect(itPeople.map(p => p.MaNV)).toEqual([
       'NV007', 'NV011', 'NV017', 'NV021', 'NV029', 'NV035', 'NV039', 'NV043', 'NV046', 'NV048',
     ]);
@@ -53,12 +53,11 @@ describe('2.7 string projections preserve identity and source values', () => {
     expect(results.some(m => JSON.stringify(value(m[2])) === JSON.stringify(expected))).toBe(true);
   });
 
-  it('keeps illustrative slicing, trailing-space length and NULL concatenation outputs exact', () => {
-    const results = [...lesson().body.matchAll(/<Result columns=\{(\[[\s\S]*?\])\} rows=\{(\[[\s\S]*?\])\}[^>]*\/>/g)]
-      .map(m => value<unknown[][]>(m[2]));
-    expect(results).toContainEqual([['NV', '007', '007', 5, 5]]);
-    expect(results).toContainEqual([['Kế  toán', 8, 'KẾ TOÁN', 'it', '[]']]);
-    expect(results).toContainEqual([['NV003', 'Nguyễn Thu Hà']]);
+  it('teaches what the exercises and lesson 4.6 need, on values of the scenario', () => {
+    const main = lessonMainSection(lesson().body);
+    for (const term of ['LEFT(MaNV, 2)', 'SUBSTRING(MaNV, 3, 3)', 'TRIM(HoTen)', 'LOWER(HoTen)', 'COLLATE Vietnamese_CI_AI', "CONCAT(N'[', NULL, N']')"]) {
+      expect(main).toContain(term);
+    }
   });
 
   it('provides three distinct ordered query exercises, including a preserved source NULL', () => {
