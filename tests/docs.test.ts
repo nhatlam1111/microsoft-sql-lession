@@ -61,9 +61,10 @@ it('the copyable full-lesson template follows the approved narrative structure',
 it('the template gives lessons with a query two subsections', () => {
   const template = readFileSync('docs/lesson-template.md', 'utf8');
   expect(template).toContain('dùng đúng hai tiểu mục');
-  expect(template).not.toContain('### SQL Server chạy câu này thế nào');
-  expect(template.indexOf('<RunFlow query={sqlDaKiemChung}')).toBeLessThan(template.indexOf('<Result columns={cacCot}'));
-  expect(template.indexOf('<Result columns={cacCot}')).toBeLessThan(template.indexOf('Câu trả lời nghiệp vụ từ kết quả này'));
+  const steps = ['<Sql code={sqlDaKiemChung}', '<LineMap rows={cacPhanCuaCau}', '### SQL Server chạy câu này thế nào', '<RunFlow query={sqlDaKiemChung}', '<Result columns={cacCot}', 'Câu trả lời nghiệp vụ từ kết quả này'];
+  const places = steps.map(s => template.lastIndexOf(s));
+  expect(places.every(p => p >= 0)).toBe(true);
+  expect(places).toEqual([...places].sort((a, b) => a - b));
   const rules = readFileSync('docs/quy-uoc.md', 'utf8');
   expect(rules).toContain('Bài có câu lệnh dùng đúng hai tiểu mục');
   expect(rules).toContain('chỉ bám tình huống đầu bài');

@@ -121,16 +121,24 @@ Bài nền là bài mở đầu ngắn theo mục 2.5 của `quy-uoc.md`. Frontm
 
 ### Bài có câu lệnh và kết quả
 
-Phần chính dùng đúng hai tiểu mục. Tiểu mục đầu giữ lý thuyết, Excel và ví dụ, đặt tên theo nhịp "Từ <việc trong Excel> đến <từ khóa SQL>", đi từ việc trong Excel sang SQL. Tiểu mục sau là `### Câu lệnh cho tình huống`. Bài có `RunFlow` đi theo câu SQL đầy đủ → một lời dẫn ngắn → `RunFlow` → `Result` đã kiểm chứng → câu trả lời người hỏi. Bài không có `RunFlow` đi theo câu SQL → `Result` → câu trả lời. Không thêm hướng dẫn chạy hay giải thích cách đọc Results, Messages. Mọi giải thích và câu lệnh chỉ bám tình huống đầu bài, không thêm câu ví dụ trên bảng hay cột khác. Không chép thêm một phần giải SQL độc lập hay "Trả lời chị Hạnh" ở sau.
+Phần chính dùng đúng hai tiểu mục. Tiểu mục đầu đặt tên theo nhịp "Từ <việc trong Excel> đến <từ khóa SQL>", đi theo việc trong Excel kèm hình → trong SQL cần chạy câu lệnh gì → câu SQL đầy đủ của tình huống → `LineMap` giải thích từng phần của chính câu đó. Tiểu mục sau là `### SQL Server chạy câu này thế nào`: một lời dẫn ngắn → `RunFlow` → `Result` đã kiểm chứng → câu trả lời người hỏi. Bài không có `RunFlow` đặt tên tiểu mục sau là `### Kết quả cho tình huống`, gồm `Result` → câu trả lời. Không thêm hướng dẫn chạy hay giải thích cách đọc Results, Messages. Mọi giải thích và câu lệnh chỉ bám tình huống đầu bài, không thêm câu ví dụ trên bảng hay cột khác. Không chép thêm một phần giải SQL độc lập hay "Trả lời chị Hạnh" ở sau.
 
 Nếu có câu tự kiểm tra, đặt ngay sau `Memo` và trước `## Bài tập`, dùng `<details>` với đáp án đã được giải thích trong bài. Không đặt sau danh sách bài tập. Trong `<summary>`, dùng `<code>` cho tên cột hoặc giá trị thay vì backtick; chuỗi có nháy dùng biểu thức JSX, ví dụ `<code>{"MaPB = 'IT'"}</code>`, để giữ nháy thẳng sau build. Các bài 2.3, 2.7, 2.8 có ít nhất ba câu để ôn từng nhịp học; không dùng câu hỏi làm chỗ bổ sung lý thuyết còn thiếu.
 
-Sơ đồ đặt khối dưới đây là **mã minh họa thuộc tính**, không dán nguyên các tên biến vào bài. Thay `sqlDaKiemChung`, `cacCot`, `cacDong`, `tongSoDong`, `cacBuocDaKiemChung` bằng các giá trị literal đã chạy và kiểm trước khi viết.
+Sơ đồ đặt khối dưới đây là **mã minh họa thuộc tính**, không dán nguyên các tên biến vào bài. Thay `sqlDaKiemChung`, `cacPhanCuaCau`, `cacCot`, `cacDong`, `tongSoDong`, `cacBuocDaKiemChung` bằng các giá trị literal đã chạy và kiểm trước khi viết.
 
 ````mdx
-### Câu lệnh cho tình huống
+### Từ <việc trong Excel> đến <từ khóa SQL>
+
+Việc trong Excel, kèm hình `Excel`.
+
+Trong SQL, câu lệnh cần chạy để làm việc đó. Với tình huống này, câu lệnh là:
 
 <Sql code={sqlDaKiemChung} />
+
+<LineMap rows={cacPhanCuaCau} />
+
+### SQL Server chạy câu này thế nào
 
 Một lời dẫn ngắn về thứ tự xử lý logic.
 
@@ -147,7 +155,7 @@ Câu trả lời nghiệp vụ từ kết quả này, đúng giả định đầ
 - Mỗi phần tử `RunFlow.steps` có `clause`, `title`, `focus`, `meaning`, `detail`, `sql`, `columns`, `rows`, `total`; `excel` là tùy chọn. `query` trùng câu cho tình huống, `focus` thuộc câu đó, `sql` trả đúng trạng thái dữ liệu của bước. Bước cuối là kết quả của câu; lời các bước đi theo yêu cầu của tình huống. Chỉ thêm sơ đồ khi có từ hai bước xử lý logic trở lên và sơ đồ giúp hiểu bài.
 - `rows` mỗi bước trích tối đa 10 dòng; `total` là số dòng thật sau bước đó. Giải thích trong drawer bắt đầu từ từ khóa, nêu dòng nào giữ/bỏ/đổi. Thứ tự logic không mô tả cách SQL Server đọc vật lý.
 - Với hai nhánh `UNION`, có thể tóm tắt mỗi nhánh đã qua `FROM` → `WHERE` → `SELECT` thành một bước `SELECT`, rồi bước `UNION` và `ORDER BY`. `RunFlow` nhận dạng bốn bước này để vẽ hai đầu vào độc lập, cùng đi vào phép gộp; không dùng mũi tên nối nhánh đầu sang nhánh sau. Viết `note` riêng để nói rõ quan hệ logic, không quy định nhánh nào chạy trước; câu kiểm từng nhánh chỉ đọc bảng của chính nhánh đó. Xem bài 3.8.
-- `LineMap` là khối tùy chọn khi cần tách nghĩa từng phần. Mỗi dòng có "Ví dụ:" và giá trị cụ thể được nhận, loại hoặc đổi; không chép lại cùng lời giải thích ở cả bảng lẫn đoạn văn.
+- `LineMap` giải thích từng phần của câu lệnh tình huống. Mỗi dòng có "Ví dụ:" và giá trị cụ thể được nhận, loại hoặc đổi; không chép lại cùng lời giải thích ở cả bảng lẫn đoạn văn.
 - Bài xử lý sự cố như 6.5 có thể đặt tên tiểu mục theo diễn biến sự cố; vẫn đi từ tình huống tới lời giải, giữ giới hạn an toàn và các mục cuối.
 
 ### Ví dụ thụt lề SQL trong MDX

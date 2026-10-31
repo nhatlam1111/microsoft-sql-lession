@@ -129,7 +129,7 @@
 
 /* ---------- Line-by-line reading of a query ---------- */
 .linemap { margin: 1em 0; border: 1px solid var(--rule); border-radius: var(--radius-m); overflow: hidden; background: var(--surface); box-shadow: var(--shadow-s); }
-.linemap-row { display: grid; grid-template-columns: 240px minmax(0, 1fr); border-top: 1px solid var(--rule); }
+.linemap-row { display: grid; grid-template-columns: 150px minmax(0, 1fr); border-top: 1px solid var(--rule); }
 .linemap-row:first-child { border-top: 0; }
 .linemap dt { padding: 10px 12px; background: var(--surface-subtle); border-right: 1px solid var(--rule); }
 .linemap dt code { font-family: var(--font-code); font-size: 12.5px; background: none; padding: 0; white-space: pre-wrap; tab-size: var(--sql-tab-size); }

@@ -68,26 +68,25 @@ describe('lesson files', () => {
       if (PENDING_TWO_SUBSECTIONS.has(f.slug) && f.body.includes('<RunFlow')) expect(h3.slice(-2), f.slug).toEqual(['Câu lệnh cho tình huống', 'SQL Server chạy câu này thế nào']);
     }
   });
-  it('lessons with a query use two subsections: query, run order, final result, answer', () => {
+  it('lessons with a query go Excel, statement, its parts, then run order, result, answer', () => {
     for (const f of files) {
       const h3 = sqlSubheadings(f.body);
-      if (!h3.includes('Câu lệnh cho tình huống')) continue;
       if (PENDING_TWO_SUBSECTIONS.has(f.slug)) {
         expect(h3.length, `${f.slug}: moved to two subsections, take it off the pending list`).toBeGreaterThan(2);
         continue;
       }
+      if (!h3.includes('SQL Server chạy câu này thế nào') && !h3.includes('Kết quả cho tình huống')) continue;
       expect(h3, f.slug).toHaveLength(2);
-      expect(h3[1], f.slug).toBe('Câu lệnh cho tình huống');
-      // Everything in the main section stays on the scenario: one statement, no other query in the prose.
+      // The learner sees the statement first, then its parts; the scenario is the only example.
       const main = lessonMainSection(f.body);
+      const [first, second] = main.split(/^### /m).slice(1);
       expect(main.match(/<Sql\b/g), f.slug).toHaveLength(1);
+      expect(first.indexOf('<Excel'), f.slug).toBeLessThan(first.indexOf('<Sql'));
+      expect(first.indexOf('<Sql'), f.slug).toBeLessThan(first.indexOf('<LineMap'));
       expect(main.replace(/<RunFlow[\s\S]*?\]\} \/>/, '').replace(/<Sql\b[\s\S]*?\/>/, ''), f.slug).not.toMatch(/`SELECT [^`]*`/);
-      const query = f.body.slice(f.body.indexOf('### Câu lệnh cho tình huống')).split(/^## /m)[0];
-      if (!query.includes('<RunFlow')) continue;
-      expect(query, f.slug).not.toContain('<Messages');
-      expect(query.indexOf('<Sql'), f.slug).toBeLessThan(query.indexOf('<RunFlow'));
-      expect(query.indexOf('<RunFlow'), f.slug).toBeLessThan(query.indexOf('<Result'));
-      expect(query.slice(query.lastIndexOf('<Result')), f.slug).toContain('chị Hạnh');
+      expect(second, f.slug).not.toContain('<Messages');
+      if (second.includes('<RunFlow')) expect(second.indexOf('<RunFlow'), f.slug).toBeLessThan(second.indexOf('<Result'));
+      expect(second.slice(second.lastIndexOf('<Result')), f.slug).toContain('chị Hạnh');
     }
   });
   it('sectionHeadings drops Bài tập only when asked', () => {

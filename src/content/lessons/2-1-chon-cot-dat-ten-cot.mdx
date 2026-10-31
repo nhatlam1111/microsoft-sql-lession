@@ -39,26 +39,29 @@ Trong Excel, bạn mở sheet nhân viên, chép ba cột cần gửi sang một
   ['NV003', 'Nguyễn Thu Hà', '01/06/2023'],
 ]} />
 
-Trong SQL không có sheet nào đang mở, nên bạn gửi cho SQL Server một **câu truy vấn (query)**, còn gọi là câu lệnh, nói rõ cần lấy gì. Với danh sách của chị Hạnh, **`FROM NhanVien`** chỉ bảng nguồn, giống việc chọn sheet. **`SELECT`** chọn cột, giống việc chép cột: viết **danh sách cột** `MaNV`, `HoTen`, `NgayVaoLam`, ngăn cách bằng dấu phẩy; cột trong kết quả đi theo thứ tự bạn viết. Câu này chỉ đọc, không sửa bảng.
-
-Cột không chọn không có trong kết quả, nên `NgaySinh`, `SoCCCD`, `Email` không đi theo; số dòng không đổi vì câu chưa lọc gì. Dấu **`*`** thay danh sách cột sẽ lấy mọi cột, nên không dùng ở đây.
-
-Dòng tiêu đề `A1:C1` trong hình ứng với **bí danh cột (alias)**, tên đặt cho cột trong kết quả bằng `AS`. Viết `HoTen AS [Họ tên]` thì tiêu đề là `Họ tên`, còn ô dữ liệu vẫn chứa tên như `Trần Thị Mai`; giá trị và kiểu dữ liệu không đổi. Không có `AS` thì tiêu đề là tên cột.
-
-Alias chỉ có trong câu lệnh đó, không được lưu thành tên mới trong bảng: như trong Excel, bạn sửa tiêu đề ở bản gửi đi, còn nguồn dùng chung vẫn như cũ.
-
-**Ngoặc vuông** `[]` bao một tên có khoảng trắng, như `[Ngày vào làm]`, và không hiện trong tiêu đề; khóa học dùng ngoặc cho mọi alias. Không thêm `N` trước ngoặc: đây là một tên, không phải chuỗi giá trị (bài 1.3).
-
-Ở bài này chỉ cần chọn cột và đặt tiêu đề. Lọc dòng học ở bài 2.2, sắp xếp dòng bằng `ORDER BY` ở bài 2.4.
-
-### Câu lệnh cho tình huống
-
-Ba cột tương ứng với yêu cầu là `MaNV`, `HoTen`, `NgayVaoLam`. Viết chúng theo đúng thứ tự và đặt tiêu đề:
+Trong SQL, để lấy dữ liệu, bạn chạy một câu lệnh `SELECT`, còn gọi là **câu truy vấn (query)**, nói rõ lấy cột nào từ bảng nào. Với danh sách của chị Hạnh, câu lệnh là:
 
 <Sql code={`SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên], NgayVaoLam AS [Ngày vào làm]
 FROM NhanVien;`} />
 
-Dấu `;` kết thúc câu lệnh; xuống dòng và viết hoa các từ khóa như `SELECT`, `FROM` chỉ giúp dễ đọc.
+Từng phần của câu:
+
+<LineMap rows={[
+  ['SELECT', 'Chọn cột, giống việc chép cột. Các cột ngăn bằng dấu phẩy và hiện theo thứ tự bạn viết. Ví dụ: MaNV đứng đầu vì được viết đầu tiên.'],
+  ['HoTen AS [Họ tên]', 'AS đặt tiêu đề cho cột trong kết quả, giống việc sửa dòng tiêu đề. Ví dụ: tiêu đề là Họ tên, ô dữ liệu vẫn chứa Trần Thị Mai.'],
+  ['[Ngày vào làm]', 'Ngoặc vuông bao một tên có khoảng trắng và không hiện trong tiêu đề. Ví dụ: tiêu đề hiện là Ngày vào làm.'],
+  ['FROM NhanVien', 'Chỉ bảng nguồn, giống việc chọn sheet. Ví dụ: lấy từ 48 hồ sơ của bảng NhanVien.'],
+]} />
+
+Cột không chọn không có trong kết quả, nên `NgaySinh`, `SoCCCD`, `Email` không đi theo; số dòng không đổi vì câu chưa lọc gì. Dấu **`*`** thay danh sách cột sẽ lấy mọi cột, nên không dùng ở đây.
+
+Tên đặt bằng `AS` gọi là **bí danh cột (alias)**. Nó chỉ có trong câu lệnh đó, không được lưu thành tên mới trong bảng; giá trị và kiểu dữ liệu không đổi. Không có `AS` thì tiêu đề là tên cột. Khóa học dùng ngoặc vuông cho mọi alias; không thêm `N` trước ngoặc vì đây là một tên, không phải chuỗi giá trị (bài 1.3).
+
+Dấu `;` kết thúc câu lệnh; xuống dòng và viết hoa các từ khóa như `SELECT`, `FROM` chỉ giúp dễ đọc. Câu này chỉ đọc, không sửa bảng.
+
+Ở bài này chỉ cần chọn cột và đặt tiêu đề. Lọc dòng học ở bài 2.2, sắp xếp dòng bằng `ORDER BY` ở bài 2.4.
+
+### SQL Server chạy câu này thế nào
 
 Sơ đồ đi theo **thứ tự xử lý logic**, tức thứ tự để hiểu câu lệnh, không phải cách máy đọc dữ liệu: phải biết bảng nguồn rồi mới chọn được cột. Bấm từng bước để thấy bảng 12 cột còn lại ba cột chị Hạnh cần:
 
