@@ -64,5 +64,8 @@ it('the template gives lessons with a query two subsections', () => {
   expect(template).not.toContain('### SQL Server chạy câu này thế nào');
   expect(template.indexOf('<RunFlow query={sqlDaKiemChung}')).toBeLessThan(template.indexOf('<Result columns={cacCot}'));
   expect(template.indexOf('<Result columns={cacCot}')).toBeLessThan(template.indexOf('Câu trả lời nghiệp vụ từ kết quả này'));
-  expect(readFileSync('docs/quy-uoc.md', 'utf8')).toContain('Bài có câu lệnh dùng đúng hai tiểu mục');
+  const rules = readFileSync('docs/quy-uoc.md', 'utf8');
+  expect(rules).toContain('Bài có câu lệnh dùng đúng hai tiểu mục');
+  expect(rules).toContain('chỉ bám tình huống đầu bài');
+  expect(template).toContain('chỉ bám tình huống đầu bài');
 });

@@ -100,7 +100,7 @@ import { withBase } from '../lib/paths';
         ['VH', 'Vận hành'],
       ]} />
       <p>Câu này không yêu cầu sắp xếp, nên thứ tự dòng trên máy bạn có thể khác hình.</p>
-      <p>SSMS chỉ chạy đoạn đang bôi đen; không bôi đen thì chạy cả cửa sổ, nên phải kiểm cả những câu còn lại trước khi chạy. Bôi đen thiếu phần, như chỉ chọn <code>SELECT TOP (5) *</code>, có thể gặp lỗi <code>Must specify table to select from.</code>; bôi đen lại trọn câu, từ <code>SELECT</code> tới <code>;</code>, rồi chạy lại.</p>
+      <p>SSMS chỉ chạy đoạn đang bôi đen; không bôi đen thì chạy cả cửa sổ, nên phải kiểm cả những câu còn lại trước khi chạy. Bôi đen thiếu phần, như chỉ chọn <code>SELECT *</code>, có thể gặp lỗi <code>Must specify table to select from.</code>; bôi đen lại trọn câu, từ <code>SELECT</code> tới <code>;</code>, rồi chạy lại.</p>
       <p>Thấy chữ <code>SELECT</code> đầu câu chưa đủ để kết luận chỉ đọc: <code>SELECT INTO</code> còn tạo bảng mới. Trên database dùng chung, chỉ chạy các câu đã hiểu trong bài.</p>
       <p>Học xong, bấm chuột phải máy chủ trong Object Explorer → <strong>Disconnect</strong>, rồi đóng các cửa sổ truy vấn hoặc đóng SSMS để ngắt hết kết nối. Kết nối còn mở có thể giữ database thức và tiêu hao hạn mức miễn phí chung.</p>
 

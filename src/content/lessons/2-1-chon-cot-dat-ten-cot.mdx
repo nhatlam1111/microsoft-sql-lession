@@ -39,9 +39,9 @@ Trong Excel, bạn mở sheet nhân viên, chép ba cột cần gửi sang một
   ['NV003', 'Nguyễn Thu Hà', '01/06/2023'],
 ]} />
 
-Trong SQL không có sheet nào đang mở, nên bạn gửi cho SQL Server một **câu truy vấn (query)**, còn gọi là câu lệnh, nói rõ cần lấy gì. **`FROM`** chỉ bảng nguồn, giống việc chọn sheet. **`SELECT`** chọn cột, giống việc chép cột: viết **danh sách cột** ngăn cách bằng dấu phẩy, như `SELECT MaNV, HoTen FROM NhanVien;`. Dấu `;` kết thúc câu lệnh; xuống dòng và viết hoa các từ khóa như `SELECT`, `FROM` chỉ giúp dễ đọc.
+Trong SQL không có sheet nào đang mở, nên bạn gửi cho SQL Server một **câu truy vấn (query)**, còn gọi là câu lệnh, nói rõ cần lấy gì. Với danh sách của chị Hạnh, **`FROM NhanVien`** chỉ bảng nguồn, giống việc chọn sheet. **`SELECT`** chọn cột, giống việc chép cột: viết **danh sách cột** `MaNV`, `HoTen`, `NgayVaoLam`, ngăn cách bằng dấu phẩy; cột trong kết quả đi theo thứ tự bạn viết. Câu này chỉ đọc, không sửa bảng.
 
-Cột trong kết quả đi theo thứ tự bạn viết: `SELECT TenPB, MaPB FROM PhongBan;` đặt tên phòng trước mã phòng. Cột không chọn không có trong kết quả, còn số dòng không đổi vì câu chưa lọc gì. Câu `SELECT … FROM` như trên chỉ đọc, không sửa bảng.
+Cột không chọn không có trong kết quả, nên `NgaySinh`, `SoCCCD`, `Email` không đi theo; số dòng không đổi vì câu chưa lọc gì. Dấu **`*`** thay danh sách cột sẽ lấy mọi cột, nên không dùng ở đây.
 
 Dòng tiêu đề `A1:C1` trong hình ứng với **bí danh cột (alias)**, tên đặt cho cột trong kết quả bằng `AS`. Viết `HoTen AS [Họ tên]` thì tiêu đề là `Họ tên`, còn ô dữ liệu vẫn chứa tên như `Trần Thị Mai`; giá trị và kiểu dữ liệu không đổi. Không có `AS` thì tiêu đề là tên cột.
 
@@ -49,12 +49,7 @@ Alias chỉ có trong câu lệnh đó, không được lưu thành tên mới t
 
 **Ngoặc vuông** `[]` bao một tên có khoảng trắng, như `[Ngày vào làm]`, và không hiện trong tiêu đề; khóa học dùng ngoặc cho mọi alias. Không thêm `N` trước ngoặc: đây là một tên, không phải chuỗi giá trị (bài 1.3).
 
-Muốn xem nhanh một bảng lạ, như lướt qua một sheet trong Excel, dùng dấu **`*`** thay danh sách cột để lấy mọi cột, và **`TOP (5)`** ngay sau `SELECT` để lấy tối đa năm dòng, dòng nào cũng được. Dấu `*` lấy cả dữ liệu cá nhân như `SoCCCD`, `Email`, nên bản gửi đi phải liệt kê đúng cột. Câu xem thử có dạng:
-
-<Sql copy={false} title="Xem thử một bảng, chỉ để đọc" code={`SELECT TOP (5) *
-FROM NhanVien;`} />
-
-Ở bài này chỉ cần chọn cột, đặt tiêu đề và dùng `*` để lấy mọi cột. Lọc dòng học ở bài 2.2, sắp xếp dòng bằng `ORDER BY` ở bài 2.4.
+Ở bài này chỉ cần chọn cột và đặt tiêu đề. Lọc dòng học ở bài 2.2, sắp xếp dòng bằng `ORDER BY` ở bài 2.4.
 
 ### Câu lệnh cho tình huống
 
@@ -62,6 +57,8 @@ Ba cột tương ứng với yêu cầu là `MaNV`, `HoTen`, `NgayVaoLam`. Viế
 
 <Sql code={`SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên], NgayVaoLam AS [Ngày vào làm]
 FROM NhanVien;`} />
+
+Dấu `;` kết thúc câu lệnh; xuống dòng và viết hoa các từ khóa như `SELECT`, `FROM` chỉ giúp dễ đọc.
 
 Sơ đồ đi theo **thứ tự xử lý logic**, tức thứ tự để hiểu câu lệnh, không phải cách máy đọc dữ liệu: phải biết bảng nguồn rồi mới chọn được cột. Bấm từng bước để thấy bảng 12 cột còn lại ba cột chị Hạnh cần:
 
@@ -123,8 +120,6 @@ Bạn có thể trả lời chị Hạnh: danh sách đủ `48` hồ sơ vì câ
 1. **Thiếu dấu phẩy nhưng câu vẫn chạy.** `SELECT MaNV HoTen FROM NhanVien;` được hiểu là `MaNV AS HoTen`, vì SQL Server cho phép bỏ `AS`. Kết quả chỉ có một cột tiêu đề `HoTen` chứa mã như `NV001`. Muốn hai cột phải viết `MaNV, HoTen`.
 2. **Nhầm tên cột với chuỗi chữ.** `SELECT 'HoTen' AS [Họ tên] FROM NhanVien;` trả chữ `HoTen` ở mọi dòng, vì chữ trong nháy đơn là một giá trị cố định. Bỏ nháy mới lấy giá trị của cột.
 3. **Thấy tiêu đề đúng thì tin dữ liệu đúng.** `NgaySinh AS [Ngày vào làm]` vẫn chạy vì SQL Server không kiểm nghĩa của tiêu đề. Đối chiếu cột trước `AS` để tránh gửi ngày sinh dưới tên ngày vào làm.
-4. **Chọn một cột rồi tưởng đã bỏ trùng.** `SELECT MaPB FROM NhanVien;` vẫn trả `48` dòng, trong đó `KD` lặp `14` lần. Lấy mỗi giá trị một lần là việc của `DISTINCT` (bài 2.6).
-5. **Tưởng `TOP (5)` chọn năm mã nhỏ nhất hoặc năm hồ sơ mới nhất.** Chưa có `ORDER BY` thì đó chỉ là năm dòng bất kỳ, gửi đi như danh sách “mới nhất” là sai. Sắp xếp rồi lấy nhóm đầu học ở bài 2.4.
 
 </Mistakes>
 
@@ -132,7 +127,6 @@ Bạn có thể trả lời chị Hạnh: danh sách đủ `48` hồ sơ vì câ
 
 <Apply>
 
-- **Xem mẫu dữ liệu của một bảng:** lấy một ít dòng để nhận ra các cột đang lưu thông tin gì trước khi đặt yêu cầu báo cáo.
 - **Tạo danh sách theo mẫu:** chọn cột, thứ tự và tiêu đề `AS` phù hợp để dán vào mẫu Excel của người nhận; trong SSMS, **Copy with Headers** chép kết quả kèm tiêu đề.
 - **Giới hạn thông tin trả về:** liệt kê cột cần gửi để tránh đưa thêm số CCCD, email hay ngày sinh vào bản báo cáo; việc này không thay thế phân quyền đọc dữ liệu (bài 6.1).
 
@@ -143,7 +137,7 @@ Bạn có thể trả lời chị Hạnh: danh sách đủ `48` hồ sơ vì câ
 <Memo rows={[
   ['Chọn sheet, chép các cột cần gửi theo đúng thứ tự', 'FROM chọn bảng nguồn, xét trước; SELECT liệt kê cột, ngăn bằng dấu phẩy, không lọc dòng'],
   ['Sửa dòng tiêu đề bản gửi', 'HoTen AS [Họ tên]: chỉ đổi tiêu đề trong kết quả'],
-  ['Lướt qua một sheet', 'SELECT TOP (5) * FROM NhanVien; — mọi cột, tối đa 5 dòng'],
+  ['Chép cả sheet', 'SELECT *: lấy mọi cột, gồm cả dữ liệu không cần gửi'],
 ]} />
 
 ## Bài tập

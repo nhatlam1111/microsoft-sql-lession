@@ -121,7 +121,7 @@ Bài nền là bài mở đầu ngắn theo mục 2.5 của `quy-uoc.md`. Frontm
 
 ### Bài có câu lệnh và kết quả
 
-Phần chính dùng đúng hai tiểu mục. Tiểu mục đầu giữ lý thuyết, Excel và ví dụ, đặt tên theo nhịp "Từ <việc trong Excel> đến <từ khóa SQL>", đi từ việc trong Excel sang SQL. Tiểu mục sau là `### Câu lệnh cho tình huống`. Bài có `RunFlow` đi theo câu SQL đầy đủ → một lời dẫn ngắn → `RunFlow` → `Result` đã kiểm chứng → câu trả lời người hỏi. Bài không có `RunFlow` đi theo câu SQL → `Result` → câu trả lời. Không thêm hướng dẫn chạy hay giải thích cách đọc Results, Messages. Không chép thêm một phần giải SQL độc lập hay "Trả lời chị Hạnh" ở sau.
+Phần chính dùng đúng hai tiểu mục. Tiểu mục đầu giữ lý thuyết, Excel và ví dụ, đặt tên theo nhịp "Từ <việc trong Excel> đến <từ khóa SQL>", đi từ việc trong Excel sang SQL. Tiểu mục sau là `### Câu lệnh cho tình huống`. Bài có `RunFlow` đi theo câu SQL đầy đủ → một lời dẫn ngắn → `RunFlow` → `Result` đã kiểm chứng → câu trả lời người hỏi. Bài không có `RunFlow` đi theo câu SQL → `Result` → câu trả lời. Không thêm hướng dẫn chạy hay giải thích cách đọc Results, Messages. Mọi giải thích và câu lệnh chỉ bám tình huống đầu bài, không thêm câu ví dụ trên bảng hay cột khác. Không chép thêm một phần giải SQL độc lập hay "Trả lời chị Hạnh" ở sau.
 
 Nếu có câu tự kiểm tra, đặt ngay sau `Memo` và trước `## Bài tập`, dùng `<details>` với đáp án đã được giải thích trong bài. Không đặt sau danh sách bài tập. Trong `<summary>`, dùng `<code>` cho tên cột hoặc giá trị thay vì backtick; chuỗi có nháy dùng biểu thức JSX, ví dụ `<code>{"MaPB = 'IT'"}</code>`, để giữ nháy thẳng sau build. Các bài 2.3, 2.7, 2.8 có ít nhất ba câu để ôn từng nhịp học; không dùng câu hỏi làm chỗ bổ sung lý thuyết còn thiếu.
 

@@ -32,3 +32,9 @@ Trong lúc review, người làm khóa học yêu cầu thêm bảng kết quả
 - Chưa chạy thật trên trang bài tập vì cần mã truy cập; chưa kiểm trong SSMS thật, kể cả Copy with Headers.
 - 15 phút là nhãn dự kiến, chưa đo.
 - 21 bài có sơ đồ chưa chuyển thứ tự mới, trong 23 bài chờ chuyển bố cục.
+
+## Lượt chỉnh sau review: chỉ bám tình huống
+
+Người làm khóa học yêu cầu mọi giải thích SQL và câu lệnh chỉ bám tình huống đầu bài, ghi vào `docs/quy-uoc.md` mục 2.1. Bài 2.1 bỏ `TOP`, hai ví dụ `NhanVien` và `PhongBan` trong lời văn, Hay nhầm về bỏ trùng và `TOP`, ý Ứng dụng xem mẫu. Dấu `*` giữ đúng một vế vì đề 1 cần. Bài 2.4 bỏ câu trỏ về `TOP` của bài 2.1; ví dụ bôi đen ở trang Giới thiệu đổi thành `SELECT *`, lỗi `Must specify table to select from.` đã chạy thật.
+
+Phần chính không tính sơ đồ còn 618 từ. Bản cuối đạt `npm test` 327/327, `npm run check` 0 lỗi, build 129 trang, `check:dist` đạt; xem ở 1024×720 không tràn trang. Lượt này chỉ cắt theo yêu cầu của người làm khóa học, không có review độc lập mới.

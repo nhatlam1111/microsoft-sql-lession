@@ -78,6 +78,10 @@ describe('lesson files', () => {
       }
       expect(h3, f.slug).toHaveLength(2);
       expect(h3[1], f.slug).toBe('Câu lệnh cho tình huống');
+      // Everything in the main section stays on the scenario: one statement, no other query in the prose.
+      const main = lessonMainSection(f.body);
+      expect(main.match(/<Sql\b/g), f.slug).toHaveLength(1);
+      expect(main.replace(/<RunFlow[\s\S]*?\]\} \/>/, '').replace(/<Sql\b[\s\S]*?\/>/, ''), f.slug).not.toMatch(/`SELECT [^`]*`/);
       const query = f.body.slice(f.body.indexOf('### Câu lệnh cho tình huống')).split(/^## /m)[0];
       if (!query.includes('<RunFlow')) continue;
       expect(query, f.slug).not.toContain('<Messages');
@@ -237,7 +241,7 @@ describe('fixes from the review of lessons 1.2 to 1.6 (2026-10-19)', () => {
     ['Sheet nào cũng tra theo mã NV', 'Bảng chứa cột này là phía "nhiều"', 'Một người có một dòng lương mỗi kỳ', 'gần như tự viết ra', 'khỏi hỏi lại', 'NV001 có 19 ngày công']));
   it('2.1 calls the run order logical and scopes TOP, and the intro page says a SELECT can still write', () => {
     check('2-1-chon-cot-dat-ten-cot',
-      ['tối đa', 'thứ tự xử lý logic', 'được cấp quyền đọc'],
+      ['thứ tự xử lý logic', 'được cấp quyền đọc'],
       ['không bao giờ làm đổi dữ liệu', 'Đây luôn là việc làm đầu tiên', 'vì dữ liệu đang nằm theo thứ tự mã', 'Chỉ nhìn 5 dòng đầu']);
     const page = readFileSync('src/pages/gioi-thieu.astro', 'utf8');
     for (const s of ['SELECT INTO', 'không phải <code>48</code> dòng đã bị sửa']) expect(page, s).toContain(s);
@@ -340,7 +344,7 @@ describe('fixes from the independent reviews of 2026-10-19', () => {
   it('2.1 counts records not people, closes the scenario and keeps the first-run advice', () => {
     check('2-1-chon-cot-dat-ten-cot',
       ['48 hồ sơ', 'mỗi lần chỉ nhận một câu', 'bài 6.1', 'SoCCCD', 'Copy with Headers',
-        'năm dòng bất kỳ', 'bài 2.2', 'câu truy vấn (query)', 'Giả định của tình huống', 'Sơ đồ database'],
+        'bài 2.2', 'câu truy vấn (query)', 'Giả định của tình huống', 'Sơ đồ database'],
       ['48 người, mỗi người một dòng', 'sẽ học ở các bài sau', 'của 10 người là đủ', 'đó là 10 người nào', 'PhongBanCu', 'Select Top 1000 Rows']);
     const page = readFileSync('src/pages/gioi-thieu.astro', 'utf8');
     for (const s of ['bôi đen', 'Parse', 'đánh lại mỗi lần chạy', 'Chạy (F5)', 'id="doc-ket-qua"']) expect(page, s).toContain(s);
@@ -377,7 +381,9 @@ describe('fixes from the final review', () => {
     expect((f.data as { prerequisites: string[] }).prerequisites).toEqual(['1.2', '1.3']);
     expect(f.body.match(/<Chat\b/g)).toHaveLength(1);
     expect(f.body.match(/<RunFlow\b/g)).toHaveLength(1);
-    expect(f.body).toContain('SELECT TOP (5) *');
+    expect(f.body).not.toContain('TOP (5)');
+    expect(f.body).not.toContain('SELECT MaPB');
+    expect(f.body).toContain('Dấu **`*`**');
     for (const s of ['gioi-thieu/#doc-ket-qua', 'gioi-thieu/#chon-noi-thuc-hanh']) expect(f.body, s).toContain(s);
     // Exercise 1 asks for this table, so printing the query would hand out the answer.
     expect(f.body).not.toContain('FROM HopDong');
@@ -392,7 +398,6 @@ describe('fixes from the final review', () => {
     expect(main.indexOf('<Excel')).toBeLessThan(main.indexOf('<Sql'));
     expect(main.match(/<Result\b/g)).toHaveLength(1);
     expect(main).not.toContain('<Messages');
-    expect(first).toMatch(/<Sql copy=\{false\}[^>]*code=\{`SELECT TOP \(5\) \*/);
     expect(query.indexOf('<RunFlow')).toBeLessThan(query.indexOf('<Result'));
     expect(query.indexOf('<Result')).toBeLessThan(query.indexOf('Bạn có thể trả lời chị Hạnh'));
   });
