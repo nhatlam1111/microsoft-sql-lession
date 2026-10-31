@@ -5,361 +5,197 @@ shortTitle: "NULL"
 level: 2
 area: A2
 kind: full
-minutes: 25
+minutes: 15
 prerequisites:
   - "2.4"
-goal: bạn phân biệt được NULL với chuỗi rỗng, dấu cách và số 0, lọc hồ sơ có hoặc không có giá trị, và chọn cách hiển thị giá trị thiếu
-excel: Lọc Blanks, IF và ô trống
-summary: Từ danh sách thiếu email, dùng IS NULL để lọc và COALESCE để hiển thị nhãn; hiểu ISNULL, UNKNOWN và phép cộng với NULL.
+goal: bạn lọc được hồ sơ chưa có hoặc đã có giá trị, giải thích được vì sao so sánh bằng dấu = không tìm ra NULL, và ghi được nhãn ở chỗ còn thiếu
+excel: Lọc Blanks, cột phụ dùng IF
+summary: Từ danh sách liên hệ phòng Vận hành, dùng IS NULL để lọc hồ sơ chưa có ngày nghỉ việc và COALESCE để ghi nhãn ở email còn thiếu; hiểu vì sao so sánh bằng dấu = không tìm ra NULL.
 ---
 
 ## Tình huống
 
-Tháng 10/2026, chị Hạnh rà thông tin liên hệ trên hệ thống:
+Tháng 10/2026, chị Hạnh rà thông tin liên hệ của một phòng:
 
 <Chat who="Chị Hạnh · Phòng Nhân sự" time="14:10" initial="H">
-Em lấy giúp chị các hồ sơ chưa có giá trị email trong hệ thống để nhắc bổ sung nhé. Lấy tất cả các phòng, kể cả người đã nghỉ nếu có. Chị cần mã nhân viên, họ tên, mã phòng và email; chỗ email thiếu thì hiện “(chưa có)”, tiêu đề tiếng Việt và xếp mã tăng dần.
+Em lấy giúp chị danh sách liên hệ phòng Vận hành, mã VH, chỉ những hồ sơ chưa có ngày nghỉ việc nhé. Chị cần mã nhân viên, họ tên và email, tiêu đề tiếng Việt, xếp mã tăng dần. Ai chưa có email thì hiện “(chưa có)” để chị nhắc bổ sung.
 </Chat>
 
-Phạm vi: toàn bộ `NhanVien` đang lưu, không giới hạn trạng thái hay ngày vào làm. Yêu cầu này chỉ xét trường hợp `Email` là `NULL`; không kiểm địa chỉ có đúng định dạng hay còn sử dụng được không.
+Phạm vi: hồ sơ trong `NhanVien` đang lưu `MaPB` bằng `VH` và `NgayNghiViec` chưa có giá trị. Trong bộ mẫu, ngày nghỉ việc trống là quy ước cho người chưa nghỉ. Yêu cầu chỉ xét email có giá trị hay chưa, không kiểm địa chỉ đúng định dạng hay còn dùng được không.
 
-<Key>Lọc theo giá trị đang lưu, rồi trình bày phần thiếu bằng nhãn dễ đọc.</Key>
+<Key>Giữ hồ sơ phòng `VH` chưa có ngày nghỉ việc, rồi ghi nhãn ở chỗ email còn thiếu.</Key>
 
-## Phân biệt giá trị thiếu trước khi lọc và hiển thị
+## Lọc và ghi nhãn ở những ô chưa có giá trị
 
-### Nhìn trống chưa biết đang lưu gì
+### Từ lọc ô trống trong Excel đến IS NULL và COALESCE
 
-Trong Excel, bạn có thể mở bộ lọc ở cột email và chọn **(Blanks)** để tìm ô trống. Hình minh họa bản xuất thu gọn bốn hồ sơ, quy ước email `NULL` được xuất thành ô trống. Hai ô `D3`, `D4` được đánh dấu là chỗ thiếu email; ô trống trong một file khác chưa chắc có cùng nguồn gốc.
+Trong Excel, bạn lọc `MaPB` lấy `VH`, mở bộ lọc ở `NgayNghiViec` chọn **(Blanks)** để giữ ô trống, rồi thêm một cột dùng công thức `IF` ghi `(chưa có)` ở chỗ email trống. Hình minh họa bản xuất từ database, trong đó giá trị chưa có thành ô trống; hình chỉ giữ các cột cần nhìn và trích ba hồ sơ sau khi lọc. Hai ô `B45`, `C45` được đánh dấu là hai ô trống của cùng một hồ sơ.
 
-<Excel sheets="Minh họa bản xuất email" mark={['D3', 'D4']} rows={[
-  [
-    "MaNV",
-    "HoTen",
-    "MaPB",
-    "Email"
-  ],
-  [
-    "NV043",
-    "Đàm Văn Khánh",
-    "IT",
-    "khanh.dv@hrmdemo.vn"
-  ],
-  [
-    "NV044",
-    "Lã Thị Oanh",
-    "VH",
-    ""
-  ],
-  [
-    "NV045",
-    "Ung Văn Lực",
-    "KD",
-    ""
-  ],
-  [
-    "NV046",
-    "Hứa Thị Phương",
-    "IT",
-    "phuong.ht@hrmdemo.vn"
-  ]
+<Excel sheets="Minh họa danh sách liên hệ" cell="D45" formula={'=IF(B45="","(chưa có)",B45)'} selected="D45" rowNumbers={[1, 9, 32, 45]} mark={['B45', 'C45']} rows={[
+  ['MaNV', 'Email', 'NgayNghiViec', 'Email gửi'],
+  ['NV008', 'loi.pv@hrmdemo.vn', '', 'loi.pv@hrmdemo.vn'],
+  ['NV031', 'tu.ov@hrmdemo.vn', '', 'tu.ov@hrmdemo.vn'],
+  ['NV044', '', '', '(chưa có)'],
 ]} />
 
-Trong SQL Server, **`NULL`** biểu thị chưa có giá trị xác định, có thể do chưa biết, chưa nhập hoặc không áp dụng. Nó không tự nói nguyên nhân: `NV044`, `NV045` thiếu email; còn `NgayNghiViec` là `NULL` được bộ mẫu dùng cho người chưa nghỉ việc. Ý nghĩa sau phải dựa vào quy ước dữ liệu, không suy từ chữ `NULL`.
-
-Những giá trị dưới đây khác nhau dù một số cách hiển thị khiến chúng trông giống ô trống:
-
-| Giá trị SQL | Đang biểu thị |
-|---|---|
-| `NULL` | Chưa có giá trị xác định |
-| `0` | Có giá trị số, bằng không |
-| `''` | Có chuỗi không chứa ký tự nào |
-| `' '` | Có chuỗi chứa một dấu cách |
-
-Chuỗi chữ `'NULL'` cũng là văn bản, không phải `NULL`. Cột chữ có `NOT NULL` vẫn có thể chứa chuỗi rỗng hoặc dấu cách nếu không có luật khác, như đã gặp ở bài 1.3.
-
-### Lọc giá trị thiếu và chọn cách trình bày
-
-**`IS NULL`** kiểm tra giá trị có phải `NULL` không; **`IS NOT NULL`** kiểm tra điều ngược lại. Đây là điều kiện viết sau `WHERE`, không phải so sánh với chuỗi chữ. Đoạn dưới chọn hồ sơ có giá trị email:
-
-<Sql copy={false} title="Điều kiện đọc riêng, đặt sau WHERE" code={`Email IS NOT NULL`} />
-
-So sánh `Email = NULL` hoặc `Email <> NULL` cho kết quả **`UNKNOWN`**: không đủ thông tin để kết luận đúng hay sai. `WHERE` chỉ giữ dòng có điều kiện đúng, nên cả hai cách đều không lấy được nhóm bạn định tìm. Muốn giữ cả email khác một địa chỉ cụ thể lẫn email thiếu, kết hợp phép so sánh với `OR Email IS NULL` như cách dùng `OR` ở bài 2.3.
-
-Lọc và hiển thị là hai việc khác nhau. Trong Excel, bạn có thể tạo cột phụ bằng `IF` để ghi nhãn cho ô trống. Trong SQL, **`COALESCE`** nhận các giá trị ứng viên và trả giá trị đầu tiên khác `NULL`, xét từ trái sang phải; nếu tất cả là `NULL` thì kết quả vẫn là `NULL`.
-
-Trong `COALESCE(Email, N'(chưa có)')`, hồ sơ có email giữ email, còn email `NULL` nhận nhãn `(chưa có)`. Chuỗi rỗng hoặc dấu cách không phải `NULL`, nên hàm không thay chúng. Dùng hàm trong `SELECT` chỉ tạo giá trị trả về; nó không cập nhật cột `Email` ở nguồn.
-
-**`ISNULL`** nhận giá trị cần kiểm và giá trị thay khi gặp `NULL`; nếu đầu vào đầu tiên là một cột, hàm giữ kiểu và độ dài của cột đó, nên nhãn thay có thể bị cắt hoặc mất dấu. Bài này dùng `COALESCE(Email, N'(chưa có)')`: cột `Email` là `varchar(100)`, nhưng nhãn Unicode khiến kết quả dùng `nvarchar` để giữ tiếng Việt. Đây là **chuyển kiểu ngầm** như bài 1.3.
-
-Với phép cộng số, `10 + NULL` cho `NULL`, còn `10 + 0` cho `10`. Câu `SELECT` dưới đây kiểm hai phép tính trực tiếp, không đọc bảng; cột thứ hai dùng `ISNULL` thay phần thiếu bằng số `0` trước khi cộng:
-
-<Sql code={`SELECT 10 + NULL AS [Giữ phần thiếu],
-\t10 + ISNULL(NULL, 0) AS [Thay phần thiếu bằng 0];`} />
-
-<Result columns={['Giữ phần thiếu', 'Thay phần thiếu bằng 0']} rows={[[null, 10]]} />
-
-Thay `NULL` bằng `0` là một lựa chọn về ý nghĩa dữ liệu: chưa biết số ngày không có nghĩa là không có ngày nào. Cần thống nhất cách xử lý trước khi tính, thay vì làm mất dấu hiệu còn thiếu chỉ để có kết quả số.
-
-Ở bài này chỉ cần phân biệt giá trị thiếu, lọc đúng và chọn giá trị hiển thị hoặc thay thế. Kiểu dữ liệu và chuyển kiểu đã gặp ở bài 1.3; hàm chuỗi và Unicode ở bài 2.7. Cách hàm tổng hợp xử lý `NULL` học ở bài 3.1, kiểm chất lượng dữ liệu ở bài 4.6.
-
-### Câu lệnh cho tình huống
-
-Kiểm email gốc bằng `IS NULL`, rồi tạo nhãn trong phần `SELECT`:
+Trong SQL, ô chưa có giá trị là **`NULL`**. Bạn lọc nó bằng **`IS NULL`** trong `WHERE` và ghi nhãn bằng hàm **`COALESCE`** trong `SELECT`. Với danh sách của chị Hạnh, câu lệnh là:
 
 <Sql code={`SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
-\tMaPB AS [Mã phòng], COALESCE(Email, N'(chưa có)') AS [Email]
+\tCOALESCE(Email, N'(chưa có)') AS [Email]
 FROM NhanVien
-WHERE Email IS NULL
+WHERE MaPB = 'VH'
+\tAND NgayNghiViec IS NULL
 ORDER BY MaNV ASC;`} />
 
-<Result columns={[
-  "Mã nhân viên",
-  "Họ tên",
-  "Mã phòng",
-  "Email"
-]} rows={[
-  [
-    "NV044",
-    "Lã Thị Oanh",
-    "VH",
-    "(chưa có)"
-  ],
-  [
-    "NV045",
-    "Ung Văn Lực",
-    "KD",
-    "(chưa có)"
-  ]
-]} mark={[1, 2]} />
+Từng phần của câu:
 
-Bạn có thể trả lời chị Hạnh: có `2` hồ sơ chưa có giá trị email là `NV044` ở `VH` và `NV045` ở `KD`. Cả hai dòng được đánh dấu để đối chiếu với ô trống trong hình Excel. Danh sách đã có bốn cột và được xếp theo mã; kết quả không cho biết hai người có địa chỉ email ngoài hệ thống hay chưa. Việc nhắc bổ sung và xác minh địa chỉ cần người phụ trách thực hiện.
+<LineMap rows={[
+  ['SELECT … AS …', 'Chọn ba cột và đặt tiêu đề như bài 2.1. Ví dụ: MaNV hiển thị dưới tiêu đề Mã nhân viên.'],
+  ["COALESCE(Email, N'(chưa có)')", 'Trả giá trị đầu tiên khác NULL, xét từ trái sang phải. Ví dụ: NV008 giữ email thật, NV044 có Email là NULL nên nhận (chưa có).'],
+  ['FROM NhanVien', 'Chỉ bảng nguồn chứa hồ sơ cần lấy. Ví dụ: bắt đầu từ 48 hồ sơ.'],
+  ["WHERE MaPB = 'VH'", 'Giữ hồ sơ phòng Vận hành như bài 2.2. Ví dụ: NV045 có mã KD bị loại.'],
+  ['AND NgayNghiViec IS NULL', 'AND yêu cầu thêm điều kiện cùng đúng như bài 2.3; IS NULL kiểm ô chưa có giá trị. Ví dụ: NV008 được giữ, NV033 có ngày 2026-06-30 bị loại.'],
+  ['ORDER BY MaNV ASC', 'Xếp mã tăng dần như bài 2.4. Ví dụ: NV008 đứng đầu, NV044 đứng cuối.'],
+]} />
+
+`NULL` khác số `0` và chuỗi rỗng `''` (chuỗi không có ký tự nào): đó là những giá trị đã có. Nó cũng không tự nói lý do. Ở `NV044`, `Email` là `NULL` được hiểu là còn thiếu, còn `NgayNghiViec` là `NULL` theo quy ước của bộ mẫu là chưa nghỉ; ý nghĩa dựa vào quy ước dữ liệu, không dựa vào chữ `NULL`.
+
+Kiểm ô đã có giá trị thì viết **`IS NOT NULL`**, như `NgayNghiViec IS NOT NULL` chọn ra `NV033`, `NV041` trong phòng này. Công thức Excel so được ô trống với `""`, còn SQL không dùng `= NULL`: so sánh ô `NULL` bằng `=`, `<>` hay `>=` đều cho **`UNKNOWN`**, nghĩa là không đủ thông tin để kết luận đúng hay sai. `WHERE` chỉ giữ dòng có điều kiện đúng, nên những dòng đó bị bỏ.
+
+Lọc và hiển thị là hai việc. `IS NULL` ở `WHERE` quyết định giữ dòng nào; `COALESCE` ở `SELECT` chỉ tạo giá trị trả về, `Email` của `NV044` trong bảng vẫn là `NULL`. Cột `Email` là `varchar(100)`, còn nhãn có `N` là chuỗi Unicode, nên kết quả dùng `nvarchar` để giữ dấu tiếng Việt; đây là **chuyển kiểu ngầm** đã gặp ở bài 1.3.
+
+Ở bài này chỉ cần kiểm ô `NULL`, hiểu vì sao dấu `=` không dùng được và ghi nhãn trong kết quả. Cách hàm tổng hợp xử lý `NULL` học ở bài 3.1, kiểm chuỗi rỗng và chất lượng dữ liệu ở bài 4.6.
 
 ### SQL Server chạy câu này thế nào
 
-Sơ đồ là **thứ tự xử lý logic**, không phải cách SQL Server đọc dữ liệu vật lý. Chú ý bước `WHERE` còn giữ email `NULL`, tới `SELECT` mới tạo nhãn hiển thị:
+Sơ đồ là **thứ tự xử lý logic**, không phải cách SQL Server đọc dữ liệu. Bấm từng bước để thấy `48` hồ sơ còn `8`; tới bước `WHERE`, email của `NV044` vẫn là `NULL`, sang `SELECT` mới có nhãn:
 
 <RunFlow query={`SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
-\tMaPB AS [Mã phòng], COALESCE(Email, N'(chưa có)') AS [Email]
+\tCOALESCE(Email, N'(chưa có)') AS [Email]
 FROM NhanVien
-WHERE Email IS NULL
+WHERE MaPB = 'VH'
+\tAND NgayNghiViec IS NULL
 ORDER BY MaNV ASC;`} steps={[
-  {
-    clause: "FROM",
-    title: "Lấy bảng nhân viên làm nguồn.",
-    focus: "FROM NhanVien",
-    meaning: "`FROM` xác định bảng chứa email cần kiểm và các cột để đối chiếu hồ sơ.",
-    detail: "Có `48` hồ sơ, đủ `12` cột. Hình trích `NV043`, `NV044`, `NV045`; email của hai hồ sơ cuối là `NULL`.",
-    sql: `SELECT * FROM NhanVien;`,
-    columns: [
-  "MaNV",
-  "HoTen",
-  "GioiTinh",
-  "NgaySinh",
-  "SoCCCD",
-  "Email",
-  "NgayVaoLam",
-  "NgayNghiViec",
-  "MaPB",
-  "MaCD",
-  "MaQuanLy",
-  "TrangThai"
+{
+  clause: "FROM",
+  title: "Lấy bảng nhân viên làm nguồn.",
+  focus: "FROM NhanVien",
+  meaning: "`FROM` xác định bảng có các cột dùng để lọc và hiển thị.",
+  detail: "Có `48` hồ sơ, đủ `12` cột. Hình trích bốn hồ sơ để đối chiếu bước sau: `NV033` đã có ngày nghỉ việc, `NV045` thuộc `KD`.",
+  sql: `SELECT * FROM NhanVien;`,
+  columns: ["MaNV","HoTen","GioiTinh","NgaySinh","SoCCCD","Email","NgayVaoLam","NgayNghiViec","MaPB","MaCD","MaQuanLy","TrangThai"],
+  rows: [
+  ["NV008","Phan Văn Lợi","Nam","1980-12-15","000080186809","loi.pv@hrmdemo.vn","2015-09-01",null,"VH","TP","NV004","Đang làm"],
+  ["NV033","Khúc Văn Hải","Nam","1990-01-01","000090384784","hai.kv@hrmdemo.vn","2019-06-03","2026-06-30","VH","NV","NV008","Đã nghỉ"],
+  ["NV044","Lã Thị Oanh","Nữ","1998-04-14","000198471893",null,"2025-08-04",null,"VH","NV","NV008","Đang làm"],
+  ["NV045","Ung Văn Lực","Nam","2001-01-09","000201479812",null,"2026-07-01",null,"KD","NV","NV006","Đang làm"],
 ],
-    rows: [
-  [
-    "NV043",
-    "Đàm Văn Khánh",
-    "Nam",
-    "1997-11-02",
-    "000097463974",
-    "khanh.dv@hrmdemo.vn",
-    "2023-02-06",
-    null,
-    "IT",
-    "CV",
-    "NV007",
-    "Đang làm"
-  ],
-  [
-    "NV044",
-    "Lã Thị Oanh",
-    "Nữ",
-    "1998-04-14",
-    "000198471893",
-    null,
-    "2025-08-04",
-    null,
-    "VH",
-    "NV",
-    "NV008",
-    "Đang làm"
-  ],
-  [
-    "NV045",
-    "Ung Văn Lực",
-    "Nam",
-    "2001-01-09",
-    "000201479812",
-    null,
-    "2026-07-01",
-    null,
-    "KD",
-    "NV",
-    "NV006",
-    "Đang làm"
-  ]
-],
-    total: 48,
-    preview: [
-  "MaNV",
-  "Email",
-  "TrangThai"
-],
-    excel: "Mở bản danh sách nguồn, chưa lọc email.",
-  },
-  {
-    clause: "WHERE",
-    title: "Chỉ giữ hồ sơ có Email là NULL.",
-    focus: "WHERE Email IS NULL",
-    meaning: "`WHERE` dùng `IS NULL` để giữ hồ sơ chưa có giá trị ở cột email.",
-    detail: "Còn `2` hồ sơ: `NV044`, `NV045`, vẫn đủ `12` cột và email vẫn là `NULL`. Bộ lọc chưa thay giá trị nào; thứ tự dòng chưa được bảo đảm.",
-    sql: `SELECT *
+  total: 48,
+  preview: ["MaNV","Email","NgayNghiViec"],
+  excel: "Mở danh sách nguồn, chưa áp dụng bộ lọc.",
+},
+{
+  clause: "WHERE",
+  title: "Giữ hồ sơ phòng VH chưa có ngày nghỉ việc.",
+  focus: "WHERE MaPB = 'VH'\n\tAND NgayNghiViec IS NULL",
+  meaning: "`WHERE` chỉ giữ dòng khi cả hai điều kiện đúng: `MaPB` bằng `VH` và `NgayNghiViec` là `NULL`.",
+  detail: "Còn `8` hồ sơ, vẫn đủ `12` cột. `NV033` có ngày nghỉ việc và `NV045` thuộc `KD` đã bị loại. Email của `NV044` vẫn là `NULL`; thứ tự dòng chưa được bảo đảm.",
+  sql: `SELECT *
 FROM NhanVien
-WHERE Email IS NULL;`,
-    columns: [
-  "MaNV",
-  "HoTen",
-  "GioiTinh",
-  "NgaySinh",
-  "SoCCCD",
-  "Email",
-  "NgayVaoLam",
-  "NgayNghiViec",
-  "MaPB",
-  "MaCD",
-  "MaQuanLy",
-  "TrangThai"
+WHERE MaPB = 'VH'
+\tAND NgayNghiViec IS NULL;`,
+  columns: ["MaNV","HoTen","GioiTinh","NgaySinh","SoCCCD","Email","NgayVaoLam","NgayNghiViec","MaPB","MaCD","MaQuanLy","TrangThai"],
+  rows: [
+  ["NV008","Phan Văn Lợi","Nam","1980-12-15","000080186809","loi.pv@hrmdemo.vn","2015-09-01",null,"VH","TP","NV004","Đang làm"],
+  ["NV015","Dương Văn Nam","Nam","1992-12-05","000092242242","nam.dv@hrmdemo.vn","2019-09-09",null,"VH","NV","NV008","Đang làm"],
+  ["NV019","Châu Văn Phúc","Nam","1987-11-30","000087273918","phuc.cv@hrmdemo.vn","2018-01-15",null,"VH","NV","NV008","Đang làm"],
+  ["NV024","Võ Thị Thanh","Nữ","1998-01-20","000198313513","thanh.vt@hrmdemo.vn","2022-02-14",null,"VH","NV","NV008","Đang làm"],
+  ["NV027","Đinh Công Hậu","Nam","1989-02-02","000089337270","hau.dc@hrmdemo.vn","2018-08-20",null,"VH","NV","NV008","Đang làm"],
+  ["NV031","Ông Văn Tú","Nam","1992-03-27","000092368946","tu.ov@hrmdemo.vn","2020-10-05",null,"VH","NV","NV008","Đang làm"],
+  ["NV037","Giang Văn Bình","Nam","1988-06-24","000088416460","binh.gv@hrmdemo.vn","2017-05-02",null,"VH","NV","NV008","Đang làm"],
+  ["NV044","Lã Thị Oanh","Nữ","1998-04-14","000198471893",null,"2025-08-04",null,"VH","NV","NV008","Đang làm"],
 ],
-    rows: [
-  [
-    "NV044",
-    "Lã Thị Oanh",
-    "Nữ",
-    "1998-04-14",
-    "000198471893",
-    null,
-    "2025-08-04",
-    null,
-    "VH",
-    "NV",
-    "NV008",
-    "Đang làm"
-  ],
-  [
-    "NV045",
-    "Ung Văn Lực",
-    "Nam",
-    "2001-01-09",
-    "000201479812",
-    null,
-    "2026-07-01",
-    null,
-    "KD",
-    "NV",
-    "NV006",
-    "Đang làm"
-  ]
-],
-    total: 2,
-    preview: [
-  "MaNV",
-  "Email"
-],
-    excel: "Trong hình minh họa đã xuất NULL thành ô trống, lọc Blanks giữ hai hồ sơ này.",
-  },
-  {
-    clause: "SELECT",
-    title: "Chọn bốn cột và hiển thị nhãn email.",
-    focus: "MaPB AS [Mã phòng], COALESCE(Email, N'(chưa có)') AS [Email]",
-    meaning: "`SELECT` chọn cột, đặt tiêu đề và dùng `COALESCE` tạo giá trị email hiển thị.",
-    detail: "Vẫn `2` hồ sơ, còn `4` cột. Email trong kết quả là `(chưa có)`; email ở bảng nguồn vẫn là `NULL`. Chưa chốt thứ tự dòng.",
-    sql: `SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
-\tMaPB AS [Mã phòng], COALESCE(Email, N'(chưa có)') AS [Email]
+  total: 8,
+  preview: ["MaNV","Email","NgayNghiViec"],
+  excel: "Lọc VH ở MaPB, chọn (Blanks) ở NgayNghiViec.",
+},
+{
+  clause: "SELECT",
+  title: "Chọn ba cột và ghi nhãn ở email còn thiếu.",
+  focus: "SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],\n\tCOALESCE(Email, N'(chưa có)') AS [Email]",
+  meaning: "`SELECT` chọn cột, đặt tiêu đề và dùng `COALESCE` tạo giá trị email hiển thị.",
+  detail: "Vẫn `8` hồ sơ, còn `3` cột. Bảy email giữ nguyên, `NV044` hiện `(chưa có)`; email trong bảng nguồn vẫn là `NULL`. Chưa chốt thứ tự dòng.",
+  sql: `SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
+\tCOALESCE(Email, N'(chưa có)') AS [Email]
 FROM NhanVien
-WHERE Email IS NULL;`,
-    columns: [
-  "Mã nhân viên",
-  "Họ tên",
-  "Mã phòng",
-  "Email"
+WHERE MaPB = 'VH'
+\tAND NgayNghiViec IS NULL;`,
+  columns: ["Mã nhân viên","Họ tên","Email"],
+  rows: [
+  ["NV008","Phan Văn Lợi","loi.pv@hrmdemo.vn"],
+  ["NV015","Dương Văn Nam","nam.dv@hrmdemo.vn"],
+  ["NV019","Châu Văn Phúc","phuc.cv@hrmdemo.vn"],
+  ["NV024","Võ Thị Thanh","thanh.vt@hrmdemo.vn"],
+  ["NV027","Đinh Công Hậu","hau.dc@hrmdemo.vn"],
+  ["NV031","Ông Văn Tú","tu.ov@hrmdemo.vn"],
+  ["NV037","Giang Văn Bình","binh.gv@hrmdemo.vn"],
+  ["NV044","Lã Thị Oanh","(chưa có)"],
 ],
-    rows: [
-  [
-    "NV044",
-    "Lã Thị Oanh",
-    "VH",
-    "(chưa có)"
-  ],
-  [
-    "NV045",
-    "Ung Văn Lực",
-    "KD",
-    "(chưa có)"
-  ]
-],
-    total: 2,
-    preview: [
-  "Mã nhân viên",
-  "Email"
-],
-    excel: "Tạo cột hiển thị nhãn cho ô thiếu, giữ dữ liệu nguồn để đối chiếu.",
-  },
-  {
-    clause: "ORDER BY",
-    title: "Sắp kết quả theo mã nhân viên tăng dần.",
-    focus: "ORDER BY MaNV ASC",
-    meaning: "`ORDER BY` sắp hai dòng kết quả theo mã nhân viên để dễ đối chiếu.",
-    detail: "Vẫn `2` hồ sơ và `4` cột: `NV044` trước `NV045`. Sắp xếp không làm bớt hồ sơ.",
-    sql: `SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
-\tMaPB AS [Mã phòng], COALESCE(Email, N'(chưa có)') AS [Email]
+  total: 8,
+  preview: ["Mã nhân viên","Email"],
+  excel: "Thêm cột dùng IF, ghi nhãn ở ô email trống, giữ cột gốc để đối chiếu.",
+},
+{
+  clause: "ORDER BY",
+  title: "Xếp kết quả theo mã tăng dần.",
+  focus: "ORDER BY MaNV ASC",
+  meaning: "`ORDER BY` sắp tám dòng kết quả theo mã nhân viên để dễ đối chiếu.",
+  detail: "Vẫn `8` hồ sơ và `3` cột, `NV008` đứng đầu, `NV044` đứng cuối; đây là danh sách chị Hạnh cần.",
+  sql: `SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
+\tCOALESCE(Email, N'(chưa có)') AS [Email]
 FROM NhanVien
-WHERE Email IS NULL
+WHERE MaPB = 'VH'
+\tAND NgayNghiViec IS NULL
 ORDER BY MaNV ASC;`,
-    columns: [
-  "Mã nhân viên",
-  "Họ tên",
-  "Mã phòng",
-  "Email"
+  columns: ["Mã nhân viên","Họ tên","Email"],
+  rows: [
+  ["NV008","Phan Văn Lợi","loi.pv@hrmdemo.vn"],
+  ["NV015","Dương Văn Nam","nam.dv@hrmdemo.vn"],
+  ["NV019","Châu Văn Phúc","phuc.cv@hrmdemo.vn"],
+  ["NV024","Võ Thị Thanh","thanh.vt@hrmdemo.vn"],
+  ["NV027","Đinh Công Hậu","hau.dc@hrmdemo.vn"],
+  ["NV031","Ông Văn Tú","tu.ov@hrmdemo.vn"],
+  ["NV037","Giang Văn Bình","binh.gv@hrmdemo.vn"],
+  ["NV044","Lã Thị Oanh","(chưa có)"],
 ],
-    rows: [
-  [
-    "NV044",
-    "Lã Thị Oanh",
-    "VH",
-    "(chưa có)"
-  ],
-  [
-    "NV045",
-    "Ung Văn Lực",
-    "KD",
-    "(chưa có)"
-  ]
-],
-    total: 2,
-    preview: [
-  "Mã nhân viên",
-  "Email"
-],
-    excel: "Sắp cột mã từ nhỏ đến lớn sau khi đã lọc.",
-  },
+  total: 8,
+  preview: ["Mã nhân viên","Email"],
+  excel: "Sắp cột mã từ nhỏ đến lớn sau khi đã lọc.",
+},
 ]} />
+
+<Result columns={["Mã nhân viên","Họ tên","Email"]} rows={[
+  ["NV008","Phan Văn Lợi","loi.pv@hrmdemo.vn"],
+  ["NV015","Dương Văn Nam","nam.dv@hrmdemo.vn"],
+  ["NV019","Châu Văn Phúc","phuc.cv@hrmdemo.vn"],
+  ["NV024","Võ Thị Thanh","thanh.vt@hrmdemo.vn"],
+  ["NV027","Đinh Công Hậu","hau.dc@hrmdemo.vn"],
+  ["NV031","Ông Văn Tú","tu.ov@hrmdemo.vn"],
+  ["NV037","Giang Văn Bình","binh.gv@hrmdemo.vn"],
+  ["NV044","Lã Thị Oanh","(chưa có)"],
+]} mark={[8]} />
+
+Bạn có thể trả lời chị Hạnh: phòng `VH` có `8` hồ sơ chưa có ngày nghỉ việc. Dòng được đánh dấu là `NV044`, hồ sơ duy nhất trong danh sách cần nhắc bổ sung email. `NV033`, `NV041` không có mặt vì đã có ngày nghỉ việc.
+
+Bảy email còn lại có giá trị trong hệ thống, nhưng kết quả chưa cho biết địa chỉ có dùng được không. Việc nhắc bổ sung và xác minh do người phụ trách thực hiện.
 
 ## Hay nhầm ở đâu
 
 <Mistakes>
 
-1. **Nhầm `ISNULL` với `IS NULL`.** Hàm trả về giá trị nên không thay trực tiếp phép kiểm tra `NULL`.
-2. **Coi có email là liên hệ được ngay.** `IS NOT NULL` vẫn nhận chuỗi rỗng, dấu cách hoặc địa chỉ gõ sai; cần bước kiểm chất lượng trước khi gửi thông báo.
-3. **Coi ngày nghỉ việc thiếu là dữ liệu lỗi.** Tự điền ngày giả vào `NgayNghiViec` sẽ làm sai cách đọc hồ sơ người chưa nghỉ.
+1. **So sánh bằng dấu `=`.** Đổi điều kiện thành `AND NgayNghiViec = NULL`, câu vẫn chạy không báo lỗi nhưng trả `0` dòng thay vì `8`. Không ra dòng nào chưa có nghĩa là không có hồ sơ phù hợp.
+2. **Đổi `COALESCE` thành `ISNULL`.** Tên gần giống `IS NULL` nhưng đây là hàm trả giá trị, không phải điều kiện lọc. `ISNULL(Email, N'(chưa có)')` giữ kiểu `varchar` của cột nên nhãn ra `(chua có)`, mất dấu.
+3. **Coi dòng có email là liên hệ được ngay.** `COALESCE` chỉ thay `NULL`; chuỗi rỗng, dấu cách hay địa chỉ gõ sai vẫn được giữ như một giá trị. Cần bước kiểm chất lượng ở bài 4.6 trước khi gửi thông báo.
 
 </Mistakes>
 
@@ -367,19 +203,19 @@ ORDER BY MaNV ASC;`,
 
 <Apply>
 
-- **Lập danh sách cần bổ sung:** lọc cột email `NULL` để chuyển đúng hồ sơ cho người phụ trách xác minh.
-- **Đọc dữ liệu theo quy ước:** phân biệt mục chưa nhập với mục không áp dụng, như ngày nghỉ việc của người chưa nghỉ.
-- **Trình bày phần còn thiếu:** dùng nhãn trong kết quả để người nhận thấy rõ thông tin cần xử lý, đồng thời giữ nguyên dữ liệu nguồn.
+- **Lập danh sách cần bổ sung:** lọc ô còn thiếu bằng `IS NULL` để chuyển đúng hồ sơ cho người phụ trách xác minh.
+- **Đọc dữ liệu theo quy ước:** hỏi rõ `NULL` ở từng cột nghĩa là gì trước khi kết luận dữ liệu thiếu, như ngày nghỉ việc trống là chưa nghỉ.
+- **Trình bày phần còn thiếu:** ghi nhãn trong kết quả để người nhận thấy ngay việc cần xử lý, dữ liệu nguồn giữ nguyên.
 
 </Apply>
 
 ## Ghi nhớ
 
 <Memo rows={[
-  ['Ô nhìn trống cần kiểm giá trị và cách xuất/import', 'NULL khác 0, chuỗi rỗng và dấu cách'],
-  ['Lọc Blanks trong hình minh họa', 'WHERE Email IS NULL; có giá trị dùng IS NOT NULL'],
-  ['Cột phụ IF để hiển thị nhãn', 'COALESCE lấy giá trị đầu tiên khác NULL; ISNULL có hai đầu vào'],
-  ['Chưa biết số ngày khác với không có ngày nào', '10 + NULL là NULL; chỉ thay bằng 0 khi đúng ý nghĩa'],
+  ['Ô trống chưa nói vì sao trống', 'NULL là chưa có giá trị, khác 0 và chuỗi rỗng'],
+  ['Lọc (Blanks) ở một cột', 'WHERE NgayNghiViec IS NULL; đã có giá trị thì IS NOT NULL'],
+  ['Công thức so được ô trống với ""', 'So sánh với NULL cho UNKNOWN nên WHERE bỏ dòng'],
+  ['Cột dùng IF ghi nhãn, ô gốc giữ nguyên', "COALESCE(Email, N'(chưa có)') chỉ đổi giá trị trả về"],
 ]} />
 
 ## Bài tập

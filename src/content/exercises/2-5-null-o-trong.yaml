@@ -34,10 +34,10 @@ exercises:
       WHERE MaPB = 'KD' AND Email IS NOT NULL
       ORDER BY MaNV ASC;
   - id: 2-5-3
-    title: Danh sách email của phòng Vận hành
-    summary: Giữ toàn bộ hồ sơ VH và hiển thị nhãn ở email NULL.
+    title: Danh sách email của phòng Kinh doanh
+    summary: Giữ toàn bộ hồ sơ KD và hiển thị nhãn ở email NULL.
     prompt: >-
-      Trong NhanVien, lấy tất cả hồ sơ hiện có MaPB bằng VH, kể cả đã nghỉ nếu có.
+      Trong NhanVien, lấy tất cả hồ sơ hiện có MaPB bằng KD, kể cả đã nghỉ nếu có.
       Không lọc bỏ hồ sơ thiếu email. Trả về đúng ba cột theo thứ tự: MaNV, HoTen,
       rồi giá trị Email; riêng Email là NULL thì hiển thị chuỗi Unicode “(chưa có)”.
       Email khác NULL phải được giữ nguyên. Không thêm điều kiện trạng thái hay ngày.
@@ -48,5 +48,5 @@ exercises:
     answer: |
       SELECT MaNV, HoTen, COALESCE(Email, N'(chưa có)') AS Email
       FROM NhanVien
-      WHERE MaPB = 'VH'
+      WHERE MaPB = 'KD'
       ORDER BY MaNV ASC;
