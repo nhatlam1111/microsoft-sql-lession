@@ -4,6 +4,8 @@ Trạng thái: đã duyệt và đã làm trên nhánh `feat/lesson-2-5-null`, c
 
 Khác thiết kế, sau review:
 
+Hồ sơ tích hợp cuối: [merge 2.5–2.9](../../reviews/2026-10-31-publish-2-5-2-9/verification.md), có review mới và UI UNKNOWN/CASE. Không đổi thiết kế sản phẩm trong lượt merge.
+
 - Sửa lời hai đề, thiết kế ghi không đổi YAML: 2-8-1 thành "ngày sau ngày chốt một tháng", 2-9-2 thành "ngày chốt 2026-08-14". Đáp án giữ nguyên.
 - Bảng hàm của 2.8 thêm hai hàng trên ngày chốt, cho đề 2-8-1 và 2-8-3.
 - Ghi chú dưới bảng nhánh nói ô cuối là số dòng vào `ELSE`.

@@ -4,6 +4,8 @@ Trạng thái: đã duyệt và đã làm trên nhánh `feat/lesson-2-5-null`, c
 
 Khác thiết kế: hình Excel bỏ cột họ tên và dùng `NV031` thay `NV037` để thấy ô `(chưa có)` ở rộng 1024; Hay nhầm 3 đổi thành "coi dòng không có nhãn là đã có email"; bước `WHERE`, `SELECT` trích ba hồ sơ để thẻ sơ đồ thấy `NV044`.
 
+Tích hợp sau review từng bài: [hồ sơ merge 2.5–2.9](../../reviews/2026-10-31-publish-2-5-2-9/verification.md), có review mới và quyết định giữ nháp khi đề 2-5-3 đổi phạm vi. Không đổi thiết kế sản phẩm trong lượt merge.
+
 ## Ý định
 
 Chuyển bài 2.5 sang bố cục của 2.1–2.4: một câu lệnh của tình huống, giải thích từng phần, sơ đồ, bảng kết quả, trả lời chị Hạnh. Bài hiện có 4 tiểu mục và 3 khối `Sql`; kết quả chỉ có 2 dòng đều là `(chưa có)`, nên người học không thấy `COALESCE` giữ lại email thật, trong khi đề 2-5-3 cần đúng phần đó.

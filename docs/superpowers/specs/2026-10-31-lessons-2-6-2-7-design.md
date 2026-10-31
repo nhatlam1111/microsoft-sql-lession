@@ -4,6 +4,8 @@ Trạng thái: đã duyệt và đã làm trên nhánh `feat/lesson-2-5-null`, c
 
 Khác thiết kế, sau review:
 
+Hồ sơ tích hợp cuối: [merge 2.5–2.9](../../reviews/2026-10-31-publish-2-5-2-9/verification.md); giữ riêng giới hạn grader không xác minh tên collation từ kết quả. Không đổi thiết kế sản phẩm trong lượt merge.
+
 - Bài 2.7 và đề 2-7-2 đổi từ `Vietnamese_CI_AI` sang `Latin1_General_CI_AI`, vì `Vietnamese_CI_AI` coi `Đ`, `Â` là chữ riêng. Thiết kế ghi không đổi YAML; đây là thay đổi duy nhất ở YAML, Hay nhầm của 2.7 thành bốn ý, tự kiểm tra thành bốn câu.
 - Bài 2.6 đổi lời trỏ sang bài 3.2, vì không bài nào dạy đếm số giá trị khác nhau.
 - Bước `ORDER BY` của 2.5 thêm câu chỉ bước này mới bảo đảm thứ tự.

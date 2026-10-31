@@ -4,6 +4,8 @@ Trạng thái: đã duyệt và đã làm trên nhánh `feat/lesson-2-5-null`, c
 
 Khác thiết kế, sau review:
 
+Hồ sơ tích hợp cuối: [merge 2.5–2.9](../../reviews/2026-10-31-publish-2-5-2-9/verification.md), gồm UNKNOWN/CASE đã mở rộng và các giới hạn bài cũ/mobile. Không đổi thiết kế sản phẩm trong lượt merge.
+
 - Thêm trường `inputColumns`, vì `preview` của bước trước không đủ cột cho cả thẻ lẫn đầu vào của bước sau.
 - Câu mặc định của bước đầu thành "Bước này không nhận dữ liệu từ bước nào trước đó trong sơ đồ."
 - Tiêu đề bảng soi có tên cột, dưới bảng có ghi chú tự động nói phần trích và cách đếm hàng cuối.
