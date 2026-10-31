@@ -65,4 +65,13 @@ Kiểm bằng IAB trên preview localhost cổng 4327, không chạy SQL/Chạy/
 
 ## Merge và đăng bài
 
-Đang thực hiện; chỉ ghi kết quả sau khi có bằng chứng. Giữ nguyên hai worktree khác của người dùng; không dọn nhánh hoặc worktree trong tác vụ merge.
+- Commit hồ sơ review tích hợp trên feature: `833c4ec`.
+- Fetch lại origin trước merge: main/origin/main vẫn `9a0762b393cc2674f262bf0ffa88f43cb4911c18`.
+- Merge không xung đột bằng commit `2336eae56db614cf9204e27bf7e5e99875c4a59d`. `git diff --exit-code feat/lesson-2-5-null HEAD` đạt: tree kết quả bằng tree nhánh đã review. Diff từ source được review tới feature cuối không đổi `src`, `tests`, `api`.
+- Kiểm mới trên merge: 49 file/366 test đạt; Astro check 194 file, 0 lỗi/0 warning/3 hint nền; build 129 trang, check:dist 1951 link đạt. Log `tests-main.log`, `check-main.log`, `build-main.log`, `dist-main.log` cùng thư mục kiểm.
+- Commit ghi kết quả kiểm sau merge chỉ đổi tài liệu. Không cần chạy lại SQL/runner sau merge vì sản phẩm/YAML bằng bản feature đã kiểm, không sửa database.
+- Giữ nguyên hai worktree khác của người dùng; không dọn nhánh hoặc worktree trong tác vụ merge.
+
+Quyền push: người làm khóa học đã yêu cầu “merge vào main giúp mình và push lên nhé” trong cùng chat, và yêu cầu hiện tại tiếp tục “merge các bài mới vào main”. Lệnh đích `git push origin main`, không force. Push main sẽ kích hoạt [GitHub Pages](https://github.com/nhatlam1111/microsoft-sql-lession/actions/workflows/deploy.yml) và [API](https://github.com/nhatlam1111/microsoft-sql-lession/actions/workflows/deploy-api.yml) do YAML bài tập thay đổi. Không chạy lệnh tạo/sửa tài nguyên Azure.
+
+File này chốt bằng chứng trước push; kết quả SHA remote, hai workflow và kiểm HTTP các bài đã đăng được đối chiếu sau push, bàn giao trong chat. Không dự đoán deploy thành công và không tạo thêm deploy chỉ để cập nhật trạng thái deploy trong file.
