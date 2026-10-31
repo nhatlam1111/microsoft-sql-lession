@@ -48,13 +48,13 @@ Muốn lấy dữ liệu, bạn gửi yêu cầu bằng **SQL**: ngôn ngữ đ�
 
 ### SSMS là công cụ làm việc với database
 
-**SSMS** (SQL Server Management Studio) là công cụ cài trên máy Windows để kết nối tới SQL Server, xem các bảng, gửi câu lệnh và đọc kết quả. Dữ liệu nằm ở máy chủ, không nằm trong SSMS, nên đóng SSMS không làm mất dữ liệu. Người không viết SQL thường xem dữ liệu qua màn hình hệ thống hoặc báo cáo.
+**SSMS** (SQL Server Management Studio) là công cụ cài trên máy Windows để kết nối tới SQL Server, xem các bảng, gửi câu lệnh và đọc kết quả. Dữ liệu nằm ở máy chủ, không nằm trong SSMS, nên đóng SSMS không làm mất dữ liệu.
 
 Bạn bắt đầu viết câu lệnh từ bài 2.1, trên trang bài tập của khóa học hoặc trong SSMS; chọn nơi thực hành ở [trang Giới thiệu](/microsoft-sql-lession/gioi-thieu/#chon-noi-thuc-hanh).
 
 ### Nguồn chung vẫn cần kiểm tra
 
-Người thiết kế database có thể khai báo **luật dữ liệu**, như cột ngày chỉ nhận ngày, mã như `NV005` không được trùng, phòng ban phải có trong danh mục phòng. Khi luật đang bật, SQL Server từ chối dữ liệu vi phạm khi thêm hoặc sửa theo cách thông thường. Excel cũng có Data Validation để giới hạn dữ liệu nhập, nhưng phải thiết lập trong từng file.
+Người thiết kế database có thể khai báo **luật dữ liệu**, như mã phòng phải có trong danh mục phòng. Khi luật đang bật, SQL Server từ chối dữ liệu vi phạm khi thêm hoặc sửa theo cách thông thường. Excel cũng có Data Validation để giới hạn dữ liệu nhập, nhưng phải thiết lập trong từng file.
 
 Dữ liệu qua được luật là hợp lệ, nhưng **hợp lệ chưa chắc đã đúng**. `Kinh doanh` là phòng có trong danh mục, nên ghi nhầm một nhân viên vào phòng này vẫn lưu được. Database không tự biết ai thuộc phòng nào; người được giao cập nhật phải đối chiếu giấy tờ gốc rồi sửa.
 
@@ -89,16 +89,16 @@ Dữ liệu qua được luật là hợp lệ, nhưng **hợp lệ chưa chắc
 **Tự kiểm tra trước khi bấm "Đã học xong":**
 
 <details>
-<summary>Database, SQL Server, SQL và SSMS khác nhau thế nào?</summary>
+<summary>Database, SQL Server, SQL và SSMS khác nhau thế nào; vì sao các phòng cùng dùng một database?</summary>
 
-Database lưu dữ liệu; SQL Server là phần mềm quản lý database; SQL là ngôn ngữ để đọc và thay đổi dữ liệu; SSMS là công cụ gửi câu SQL tới SQL Server và nhận kết quả.
+Database lưu dữ liệu; SQL Server là phần mềm quản lý database; SQL là ngôn ngữ để đọc và thay đổi dữ liệu; SSMS là công cụ gửi câu SQL tới SQL Server và nhận kết quả. Các phòng cùng đọc dữ liệu cập nhật ở một nơi, nên giảm lệch giữa các bản sao.
 
 </details>
 
 <details>
-<summary>Nguồn chung giúp giảm lệch giữa các phòng như thế nào?</summary>
+<summary>Bạn đóng SSMS rồi mở lại. Dữ liệu có mất theo cửa sổ vừa đóng không, và vì sao?</summary>
 
-Các bên cùng đọc một nguồn và thay đổi được cập nhật ở một nơi, nên giảm việc sót sửa trên các bản riêng.
+Không. SSMS là công cụ kết nối và gửi yêu cầu; dữ liệu được SQL Server quản lý ở máy chủ, không nằm trong cửa sổ SSMS.
 
 </details>
 

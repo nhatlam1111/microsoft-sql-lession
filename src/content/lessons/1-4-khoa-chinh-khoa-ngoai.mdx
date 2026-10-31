@@ -25,11 +25,11 @@ Khi `NhanVien.MaNV` được khai báo là **khóa chính (primary key)**, SQL S
 
 Mã được dùng để xác định hồ sơ vì họ tên có thể trùng hoặc thay đổi. `NV001` luôn chỉ một hồ sơ, nên các bảng hợp đồng, chấm công và lương dùng mã này để nhắc tới đúng hồ sơ.
 
-### Khóa ngoại buộc mã phải có ở bảng kia
+### Khóa ngoại giữ mã tham chiếu có thật
 
-**Khóa ngoại (foreign key)** buộc mã khác `NULL` phải trỏ tới một giá trị khóa có thật ở bảng kia. `NhanVien.MaPB` trỏ sang `PhongBan.MaPB`, khóa chính của danh mục phòng: mã `KT` được nhận vì có trong danh mục, `KT01` không có thì bị từ chối. Nhờ vậy hồ sơ nào cũng tìm được phòng của mình. Một mã phòng được nhiều nhân viên dùng là bình thường, vì chỉ `PhongBan` mới bắt mỗi mã một dòng.
+**Khóa ngoại (foreign key)** buộc mã khác `NULL` phải trỏ tới một giá trị khóa có thật ở bảng được trỏ tới. `NhanVien.MaPB` trỏ sang `PhongBan.MaPB`, khóa chính của danh mục phòng: mã `KT` được nhận vì có trong danh mục, `KT01` không có thì bị từ chối. Ở đây `MaPB` không nhận `NULL`, nên hồ sơ nào cũng tìm được phòng của mình. Một mã phòng được nhiều nhân viên dùng là bình thường, vì chỉ `PhongBan` mới bắt mỗi mã một dòng.
 
-Khóa ngoại là luật kiểm khi ghi, **không phải ô chọn trên màn hình**: mã sai bị từ chối dù màn hình có ô chọn hay không. Khi ràng buộc đang bật, thêm, sửa, xóa dữ liệu theo cách thông thường đều bị kiểm. Trong dữ liệu mẫu, phòng còn hồ sơ trỏ tới thì không xóa được khỏi danh mục, vì xóa phòng đi thì các hồ sơ đó sẽ trỏ tới một phòng không còn.
+Khóa ngoại là luật kiểm khi ghi, **không phải ô chọn trên màn hình**: mã sai bị từ chối dù màn hình có ô chọn hay không. Khi ràng buộc đang bật, thêm, sửa, xóa dữ liệu theo cách thông thường đều bị kiểm; trong dữ liệu mẫu, không xóa được phòng còn hồ sơ trỏ tới.
 
 ### Đọc khóa trong SSMS
 
@@ -88,8 +88,8 @@ Vì `NhanVien.MaPB` là khóa ngoại, không phải khóa chính của bảng n
 </details>
 
 <details>
-<summary>Một người thuộc <code>KT</code> bị gán mã <code>KD</code>. Khóa ngoại có chặn không?</summary>
+<summary>Hai hồ sơ có cùng <code>MaNV</code> và hai hồ sơ khác mã cùng thuộc <code>KT</code>: trường hợp nào bị khóa chặn?</summary>
 
-Không. `KD` có trong danh mục nên hợp lệ. Khóa ngoại kiểm mã có thật, không xác nhận mã đúng cho người đó.
+Hai hồ sơ trùng `MaNV` bị khóa chính chặn. Hai hồ sơ khác mã cùng có `MaPB` là `KT` vẫn được nhận vì `KT` có trong danh mục; khóa ngoại cho phép nhiều hồ sơ dùng cùng mã phòng.
 
 </details>

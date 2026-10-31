@@ -39,9 +39,9 @@ Nhờ vậy SQL Server đọc và lọc dữ liệu theo đúng cột: muốn t�
 
 ### Mỗi bảng lưu một loại đối tượng
 
-File Excel thường gom nhiều thông tin vào một sheet. Database tách chúng ra: hồ sơ ở `NhanVien`, hợp đồng ở `HopDong`, danh mục phòng ở `PhongBan`. `NV021` có ba hợp đồng: nếu gộp vào `NhanVien`, thông tin của người này phải lặp lại ở mỗi hợp đồng và dễ sửa sót. Tách bảng thì `HopDong` có ba dòng, còn hồ sơ chỉ nằm ở một nơi.
+File Excel thường gom nhiều thông tin vào một sheet. Database tách chúng ra: hồ sơ ở `NhanVien`, hợp đồng ở `HopDong`, danh mục phòng ở `PhongBan`. `NV021` có ba hợp đồng: nếu gộp vào `NhanVien`, thông tin của người này phải lặp lại ở mỗi hợp đồng và dễ sửa sót. Tách bảng thì riêng `NV021` có ba dòng ở `HopDong`, còn hồ sơ chỉ nằm ở một nơi.
 
-Các bảng liên quan với nhau qua mã: mỗi dòng `HopDong` ghi `MaNV` của người đó. Cách liên kết này học ở bài 1.4 và 1.5.
+Các bảng liên quan với nhau qua mã: mỗi dòng `HopDong` ghi `MaNV` của người đó. Vì mỗi dòng ở đây là một hợp đồng, cùng mã `NV021` xuất hiện ba lần không có nghĩa là có ba hồ sơ nhân viên. Cách liên kết này học ở bài 1.4 và 1.5.
 
 Ở bài này chỉ cần chỉ ra được bảng, dòng, cột và biết bảng khác sheet ở đâu. Xem dữ liệu của một bảng học ở bài 2.1, sắp xếp ở bài 2.4, tính tổng ở bài 3.1.
 
@@ -49,7 +49,7 @@ Các bảng liên quan với nhau qua mã: mỗi dòng `HopDong` ghi `MaNV` củ
 
 <Mistakes>
 
-1. **Muốn thêm dòng tổng cộng vào bảng.** Nếu điền đủ các cột bắt buộc, database vẫn nhận, và danh sách có thêm một "hồ sơ" không phải người nào. Số tổng được tính khi lấy dữ liệu.
+1. **Muốn thêm dòng tổng cộng vào bảng.** Database vẫn có thể nhận một dòng tổng nếu dòng đó thỏa các luật đã khai báo, khiến danh sách có thêm một "hồ sơ" không phải người nào. Số tổng được tính khi lấy dữ liệu.
 2. **Coi thứ tự dòng trong bảng là cố định.** Bảng không có dòng 1, dòng 2 như sheet, nên cùng một yêu cầu có thể ra thứ tự khác nhau. Muốn chỉ một dòng thì dùng mã như `NV005`; muốn thứ tự nhất định thì yêu cầu khi lấy dữ liệu.
 
 </Mistakes>
@@ -82,15 +82,15 @@ Bảng giống một sheet, nhưng không gộp ô được, mọi dòng có cù
 </details>
 
 <details>
-<summary>Trong <code>NhanVien</code>, <code>NV005</code> và <code>HoTen</code> mỗi cái thuộc dòng hay cột?</summary>
+<summary>Trong hình, dòng tô vàng đại diện cho gì và cột có khung xanh chứa thông tin gì?</summary>
 
-`NV005` là mã của một dòng, tức một hồ sơ. `HoTen` là một cột, lưu họ tên của mọi dòng.
+Dòng tô vàng là hồ sơ mang mã `NV005`. Cột có khung xanh là `HoTen`, lưu họ tên của mọi hồ sơ.
 
 </details>
 
 <details>
-<summary>Vì sao hợp đồng nằm ở bảng riêng, không nằm trong <code>NhanVien</code>?</summary>
+<summary><code>NV021</code> có ba hợp đồng. Riêng mã này có mấy dòng ở <code>NhanVien</code> và <code>HopDong</code>, và mỗi dòng là gì?</summary>
 
-Vì một người có thể có nhiều hợp đồng. Gộp vào `NhanVien` thì thông tin của người đó phải lặp lại ở mỗi hợp đồng và dễ sửa sót.
+`NhanVien` có một dòng hồ sơ của `NV021`; `HopDong` có ba dòng, mỗi dòng là một hợp đồng của hồ sơ đó. Tách hai bảng giúp thông tin nhân viên không phải lặp lại ở mỗi hợp đồng.
 
 </details>
