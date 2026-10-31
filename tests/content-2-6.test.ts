@@ -38,15 +38,12 @@ it('2.6 projects every profile before DISTINCT and sorts the six department code
   expect(flow![1]).toMatch(/^SELECT DISTINCT MaPB\s+FROM NhanVien\s+ORDER BY MaPB ASC;$/);
 });
 
-it('2.6 shows that adding the unique employee code changes 19 pairs into 48 distinct rows', () => {
-  const results = [...body().matchAll(/<Result columns=\{(\[[\s\S]*?\])\} rows=\{(\[[\s\S]*?\])\}([^>]*?)\/>/g)]
-    .map(m => ({ columns: value<string[]>(m[1]), rows: value<(string | null)[][]>(m[2]), total: Number(m[3].match(/total=\{(\d+)\}/)?.[1]) }));
-  for (const [keys, count] of [[['MaPB', 'MaCD'], 19], [['MaPB', 'MaCD', 'MaNV'], 48]] as const) {
-    const result = results.find(r => r.columns.join(',') === keys.join(','));
-    expect(result).toBeDefined();
-    const expected = uniqueSorted(project([...keys]));
-    expect(expected).toHaveLength(count);
-    expect(result!.total).toBe(count);
-    expect(result!.rows).toEqual(expected.slice(0, result!.rows.length));
-  }
+it('2.6 says adding a column changes what DISTINCT compares, with counts that match the seed', () => {
+  expect(uniqueSorted(project(['MaPB', 'MaCD']))).toHaveLength(19);
+  expect(uniqueSorted(project(['MaPB', 'MaCD', 'MaNV']))).toHaveLength(48);
+  expect(body()).toContain('`19` cặp');
+  expect(body()).toContain('ra `48` dòng');
+  // Exercises 2-6-2 and 2-6-3 need both of these from the main section.
+  expect(body()).toContain('cả dòng kết quả');
+  expect(body()).toContain('Câu có `WHERE` thì `DISTINCT` chỉ xét các dòng đã lọc');
 });
