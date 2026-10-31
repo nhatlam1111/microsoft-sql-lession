@@ -25,6 +25,12 @@ import { withBase } from '../lib/paths';
       </ul>
       <p>Trên trang bài tập, <strong>Chạy (F5)</strong> hiện kết quả; <strong>Nộp bài</strong> còn đối chiếu yêu cầu. Trang nhận mỗi lần một câu lệnh, luôn <strong>hoàn tác</strong> thay đổi sau khi chạy. Cơ chế này chỉ có trên trang bài tập; trong SSMS, mặc định câu sửa thành công là ghi hẳn ngay, không có Ctrl+Z. Trên database dùng chung, ở các bài đầu chỉ chạy các câu đọc có trong bài; cách hoàn tác học ở bài 5.4.</p>
       <p>Nếu chỉ dùng web, bạn không cần làm theo mục kết nối SSMS bên dưới.</p>
+      <h3 id="doc-ket-qua">Đọc kết quả sau khi chạy</h3>
+      <p>Trên trang bài tập lẫn trong SSMS, kết quả hiện ở hai tab:</p>
+      <ul>
+        <li><strong>Results</strong> là lưới dữ liệu. Cột ngoài cùng bên trái là số thứ tự dòng của kết quả, được đánh lại mỗi lần chạy, không phải mã hay cột trong bảng.</li>
+        <li><strong>Messages</strong> hiện thông tin lần chạy hoặc lỗi. <code>(48 rows affected)</code> nghĩa là câu trả về <code>48</code> dòng, không phải <code>48</code> dòng đã bị sửa. Gõ sai tên cột, như <code>TenNV</code>, thì câu không trả kết quả và tab này báo <code>Invalid column name 'TenNV'.</code>, phần trong nháy là tên bị sai.</li>
+      </ul>
 
       <h2>Cách dùng trang</h2>
       <ul>
@@ -94,7 +100,7 @@ import { withBase } from '../lib/paths';
         ['VH', 'Vận hành'],
       ]} />
       <p>Câu này không yêu cầu sắp xếp, nên thứ tự dòng trên máy bạn có thể khác hình.</p>
-      <p>SSMS chỉ chạy đoạn đang bôi đen; không bôi đen thì chạy cả cửa sổ, nên phải kiểm cả những câu còn lại trước khi chạy. Bôi đen thiếu phần, như chỉ chọn <code>SELECT TOP (5) *</code>, có thể gặp lỗi <code>Must specify table to select from.</code>; bôi đen lại trọn câu, từ <code>SELECT</code> tới <code>;</code>, rồi chạy lại.</p>
+      <p>SSMS chỉ chạy đoạn đang bôi đen; không bôi đen thì chạy cả cửa sổ, nên phải kiểm cả những câu còn lại trước khi chạy. Bôi đen thiếu phần, như chỉ chọn <code>SELECT *</code>, có thể gặp lỗi <code>Must specify table to select from.</code>; bôi đen lại trọn câu, từ <code>SELECT</code> tới <code>;</code>, rồi chạy lại.</p>
       <p>Thấy chữ <code>SELECT</code> đầu câu chưa đủ để kết luận chỉ đọc: <code>SELECT INTO</code> còn tạo bảng mới. Trên database dùng chung, chỉ chạy các câu đã hiểu trong bài.</p>
       <p>Học xong, bấm chuột phải máy chủ trong Object Explorer → <strong>Disconnect</strong>, rồi đóng các cửa sổ truy vấn hoặc đóng SSMS để ngắt hết kết nối. Kết nối còn mở có thể giữ database thức và tiêu hao hạn mức miễn phí chung.</p>
 

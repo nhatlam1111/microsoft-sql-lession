@@ -49,11 +49,24 @@ it('the copyable full-lesson template follows the approved narrative structure',
   const template = readFileSync('docs/lesson-template.md', 'utf8');
   const intro = template.split('## Phần đầu file')[0];
   expect(intro).toContain('1-1-database-la-gi.mdx');
-  expect(intro).toContain('2-2-where-loc-nhu-autofilter.mdx');
+  expect(intro).toContain('2-1-chon-cot-dat-ten-cot.mdx');
   const body = template.match(/````mdx\r?\n([\s\S]*?)\r?\n````/)?.[1] ?? '';
   const headings = [...body.matchAll(/^## (.+?)\s*$/gm)].map(m => m[1]);
   expect(headings.length).toBe(6);
   expect(headings[1]).not.toBe('Với Excel');
   expect(headings).toEqual(sectionHeadings('full', false, headings[1]));
   expect(body).not.toMatch(/^### (Lý thuyết cơ bản|Trả lời chị Hạnh)$/m);
+});
+
+it('the template gives lessons with a query two subsections', () => {
+  const template = readFileSync('docs/lesson-template.md', 'utf8');
+  expect(template).toContain('dùng đúng hai tiểu mục');
+  const steps = ['<Sql code={sqlDaKiemChung}', '<LineMap rows={cacPhanCuaCau}', '### SQL Server chạy câu này thế nào', '<RunFlow query={sqlDaKiemChung}', '<Result columns={cacCot}', 'Câu trả lời nghiệp vụ từ kết quả này'];
+  const places = steps.map(s => template.lastIndexOf(s));
+  expect(places.every(p => p >= 0)).toBe(true);
+  expect(places).toEqual([...places].sort((a, b) => a - b));
+  const rules = readFileSync('docs/quy-uoc.md', 'utf8');
+  expect(rules).toContain('Bài có câu lệnh dùng đúng hai tiểu mục');
+  expect(rules).toContain('chỉ bám tình huống đầu bài');
+  expect(template).toContain('chỉ bám tình huống đầu bài');
 });

@@ -37,7 +37,9 @@ api/                    API bài tập (Azure Functions), có package.json riên
 database/               HRM_Demo.sql, checksum chuẩn của 7 bảng, script tạo user cho API
 scripts/check-dist.mjs  kiểm bản build: link, trang bài, trang bài tập, không lọt đáp án
 tests/                  test Vitest
+docs/                   quy ước, khung bài, hồ sơ công ty
 docs/superpowers/       spec, plan và mockup của từng đợt
+docs/reviews/           report và hồ sơ xử lý của từng lượt review
 ```
 
 ## Chạy trên máy
@@ -114,8 +116,8 @@ Mỗi bài là một file `src/content/lessons/<số>-<slug>.mdx`, ví dụ `3-5
 | `noScenario` | `true` khi là bài nền, không có mục "Tình huống" (bài 1.1–1.5) |
 
 - Bài nền lấy [bài 1.1](src/content/lessons/1-1-database-la-gi.mdx) làm mẫu: phần chính → Hay nhầm ở đâu → Ứng dụng → Ghi nhớ → tự kiểm tra, khoảng 7 phút (mục 2.5 của `docs/quy-uoc.md`).
-- Bài có tình huống lấy [bài 2.2](src/content/lessons/2-2-where-loc-nhu-autofilter.mdx) làm mẫu: Tình huống → phần chính có tiêu đề theo chủ đề, gộp cách Excel và SQL xử lý → Hay nhầm ở đâu → Ứng dụng → Ghi nhớ → Bài tập. Bài `noExercises: true` bỏ mục Bài tập và có ít nhất ba câu tự kiểm tra theo mục tiêu. Các bài cũ chuyển khung khi được chỉnh tới; bài đầy đủ mới dùng khung này.
-- Trong phần chính, đặt ví dụ cạnh lời giải thích và khép yêu cầu ngay tại đó. Bài khái niệm không cần preview SQL; bài truy vấn có câu lệnh và kết quả đã kiểm chứng, thêm `RunFlow` khi cần. Không thêm mục trả lời riêng. Tiểu mục và cách đặt khối xem [khung bài](docs/lesson-template.md).
+- Bài có câu lệnh lấy [bài 2.1](src/content/lessons/2-1-chon-cot-dat-ten-cot.mdx) làm mẫu: Tình huống → phần chính → Hay nhầm ở đâu → Ứng dụng → Ghi nhớ → Bài tập. Phần chính có hai tiểu mục: từ việc trong Excel tới câu lệnh của tình huống và giải thích từng phần; rồi sơ đồ thứ tự chạy, bảng kết quả, câu trả lời. Các bài cũ chuyển khung khi được chỉnh tới; bài đầy đủ mới dùng khung này.
+- Mọi giải thích và câu lệnh chỉ bám tình huống đầu bài. Bài `noExercises: true` bỏ mục Bài tập và có ít nhất ba câu tự kiểm tra theo mục tiêu; bài khái niệm không cần preview SQL. Không thêm mục trả lời riêng. Tiểu mục và cách đặt khối xem [khung bài](docs/lesson-template.md).
 - In đậm có chọn lọc khái niệm; highlight giá trị dẫn chứng, tên bảng/cột và địa chỉ ô bằng kiểu code có nền. Mục Ứng dụng nêu việc làm được nhờ chủ đề, kèm điều kiện cần thiết; lịch sử chỉ tra được khi hệ thống có lưu lịch sử. Chi tiết và danh sách tự rà ở [quy ước](docs/quy-uoc.md).
 - Bản tóm tắt giữ: Nội dung chính, Liên hệ Excel, Tình huống ví dụ, Bài tập; không có khối SQL, kết quả hay sơ đồ chạy lệnh.
 - Trong MDX dùng thẳng các khối `Sql`, `Result`, `Messages`, `Excel`, `Chat`, `Key`, `LineMap`, `Mistakes`, `Apply`, `Memo`, `Exercises`, `RunFlow`, `Ssms` (mô phỏng SSMS), `Erd` (sơ đồ quan hệ), không cần import.
@@ -167,21 +169,7 @@ Cấu hình cần có (giá trị do người phụ trách tự điền, không 
 
 ## Tài liệu thiết kế
 
-| Đợt | Spec | Plan |
-|---|---|---|
-| 1. Website và 51 bài | [site design](docs/superpowers/specs/2026-10-17-sql-server-course-site-design.md) | [plan](docs/superpowers/plans/2026-10-17-sql-server-course-site.md) |
-| 2. Sơ đồ thứ tự chạy, bài tập, bài đầy đủ | [phase 2 design](docs/superpowers/specs/2026-10-18-step-flow-exercises-full-lessons-design.md) | [plan phần A và chạy thử](docs/superpowers/plans/2026-10-18-run-flow-and-runner-spike.md) |
-| 2B. Bài tập chạy SQL trên web | [spec B](docs/superpowers/specs/2026-10-18-exercise-runner-design.md) (mục 12: hiện trạng) | [plan](docs/superpowers/plans/2026-10-18-exercise-runner.md) |
+- Tài liệu hiện hành: [quy ước](docs/quy-uoc.md), [khung bài](docs/lesson-template.md), [hồ sơ công ty](docs/ho-so-cong-ty.md).
+- `docs/superpowers/` giữ spec, plan, mockup của từng đợt; `docs/reviews/` giữ report và hồ sơ xử lý của từng lượt review. Đây là lịch sử theo ngày, có thể đã cũ; gặp chỗ khác tài liệu hiện hành thì tài liệu hiện hành đúng.
 
 Các bài đầy đủ được liệt kê ở đầu README; tiếp tục viết các bài tóm tắt theo từng level. Bài luyện truy vấn có bài tập; bài đọc hiểu không có mục Bài tập dùng câu tự kiểm tra.
-
-Review độc lập bài 2.1: [bản review](docs/reviews/2026-10-20-bai-2-1.md). Các mục đã sửa, quyết định giữ nguyên và giới hạn kiểm live database được ghi trong spec đợt 2, mục 11.
-
-Review độc lập bài 2.2: [bản review](docs/reviews/2026-10-20-bai-2-2.md). Các mục đã sửa, quyết định giữ nguyên và giới hạn kiểm live database được ghi trong spec đợt 2, mục 12.
-
-Review độc lập bài 2.3: [bản review](docs/reviews/2026-10-21-bai-2-3.md). Đã xử lý nhận xét diễn đạt/cắt lặp; còn thiếu kiểm SQL live và trực quan/bàn phím do giới hạn môi trường, ghi ở spec đợt 2 mục 14.
-
-
-Review độc lập bài 2.4: [bản review](docs/reviews/2026-10-21-bai-2-4.md). Đã xử lý bốn nhận xét; giới hạn kiểm live database và browser được ghi ở spec đợt 2 mục 15.
-
-Review độc lập bài 2.5: [bản review](docs/reviews/2026-10-21-bai-2-5.md). Đã xử lý hai nhận xét cần sửa, một chỗ cần làm rõ, bốn chỗ lặp và ba điểm biên tập; giới hạn SQL live/browser được ghi ở spec đợt 2 mục 16.

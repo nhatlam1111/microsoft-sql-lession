@@ -1,8 +1,8 @@
 # Khung một bài học
 
-Bài có tình huống đối chiếu với [`bài 2.2`](../src/content/lessons/2-2-where-loc-nhu-autofilter.mdx) về mạch kể, độ sâu, chữ đậm và giá trị được highlight; bài nền đối chiếu với [`bài 1.1`](../src/content/lessons/1-1-database-la-gi.mdx). [`Bài 3.5`](../src/content/lessons/3-5-left-join.mdx) là ví dụ kỹ thuật `RunFlow`, đã chuyển sang khung gộp từ 24/10/2026.
+Bài có câu lệnh đối chiếu với [`bài 2.1`](../src/content/lessons/2-1-chon-cot-dat-ten-cot.mdx) về mạch kể, độ sâu, chữ đậm và giá trị được highlight; bài nền đối chiếu với [`bài 1.1`](../src/content/lessons/1-1-database-la-gi.mdx). [`Bài 3.5`](../src/content/lessons/3-5-left-join.mdx) là ví dụ kỹ thuật `RunFlow` nhiều bước, chưa chuyển sang bố cục hai tiểu mục.
 
-File này hướng dẫn dựng bài và dùng các khối. Quy tắc viết, định dạng, số liệu, review và an toàn database nằm ở [`quy-uoc.md`](quy-uoc.md); bối cảnh, nhân vật và dữ liệu mẫu ở [`ho-so-cong-ty.md`](ho-so-cong-ty.md). Các spec/plan/mockup cũ ghi hai phần Excel/SQL là lịch sử thiết kế; khi viết tiếp dùng hai tài liệu hiện hành này.
+File này hướng dẫn dựng bài và dùng các khối. Quy tắc viết, định dạng, số liệu, review và an toàn database nằm ở [`quy-uoc.md`](quy-uoc.md); bối cảnh, nhân vật và dữ liệu mẫu ở [`ho-so-cong-ty.md`](ho-so-cong-ty.md). Spec, plan, mockup và hồ sơ review là lịch sử từng lượt; khi viết tiếp dùng hai tài liệu hiện hành này.
 
 ## Phần đầu file
 
@@ -31,7 +31,7 @@ summary: Một câu nói đúng vấn đề và nội dung chính của bài.
 
 Thứ tự cấp 2: **Tình huống → phần chính theo chủ đề → Hay nhầm ở đâu → Ứng dụng → Ghi nhớ → Bài tập**. Tiêu đề phần chính được đặt theo bài, như "Từ file Excel đến một nguồn dữ liệu chung" ở bài 1.1 hoặc "Lọc danh sách nhân viên theo điều kiện" ở bài `WHERE`. Các tên mục còn lại giữ đúng như khung.
 
-Khung dưới chép vào file MDX được; thay toàn bộ lời chỉ dẫn bằng nội dung thật. Các tiểu mục chỉ gợi ý nhịp kể, chọn khoảng 2–4 tiểu mục theo mục tiêu bài. Ví dụ và hình đặt ngay cạnh ý cần minh họa.
+Khung dưới chép vào file MDX được; thay toàn bộ lời chỉ dẫn bằng nội dung thật. Các tiểu mục chỉ gợi ý nhịp kể. Bài khái niệm chọn khoảng 2–4 tiểu mục theo mục tiêu bài; bài có câu lệnh dùng đúng hai tiểu mục theo phần hướng dẫn bên dưới. Ví dụ và hình đặt ngay cạnh ý cần minh họa.
 
 ````mdx
 ## Tình huống
@@ -67,7 +67,7 @@ Nêu giới hạn quan trọng và cái giá của cách làm bằng một vế 
 
 Trả lời chị Hạnh ngay trong mạch này, đủ điều kiện và đúng phạm vi dữ kiện.
 Tách căn cứ nghiệp vụ với thao tác mà database hay người có quyền thực hiện.
-Bài truy vấn thay tiểu mục này bằng biến thể có câu lệnh ở phần hướng dẫn bên dưới.
+Bài truy vấn thay cả phần chính này bằng khung ở mục "Bài có câu lệnh và kết quả".
 
 ## Hay nhầm ở đâu
 
@@ -121,33 +121,41 @@ Bài nền là bài mở đầu ngắn theo mục 2.5 của `quy-uoc.md`. Frontm
 
 ### Bài có câu lệnh và kết quả
 
-Giữ lý thuyết, Excel và ví dụ trong phần chính theo chủ đề. Cuối phần đó dùng `### Câu lệnh cho tình huống`, đặt câu SQL đầy đủ và kết quả đã kiểm chứng, rồi trả lời người hỏi ngay cạnh kết quả. Nếu có `RunFlow`, tiểu mục cuối cùng là `### SQL Server chạy câu này thế nào`. Không chép thêm một phần giải SQL độc lập hay "Trả lời chị Hạnh" ở sau.
+Phần chính dùng đúng hai tiểu mục. Tiểu mục đầu đặt tên theo nhịp "Từ <việc trong Excel> đến <từ khóa SQL>", đi theo việc trong Excel kèm hình → trong SQL cần chạy câu lệnh gì → câu SQL đầy đủ của tình huống → `LineMap` giải thích từng phần của chính câu đó. Tiểu mục sau là `### SQL Server chạy câu này thế nào`: một lời dẫn ngắn → `RunFlow` → `Result` đã kiểm chứng → câu trả lời người hỏi. Bài không có `RunFlow` đặt tên tiểu mục sau là `### Kết quả cho tình huống`, gồm `Result` → câu trả lời. Không thêm hướng dẫn chạy hay giải thích cách đọc Results, Messages. Mọi giải thích và câu lệnh chỉ bám tình huống đầu bài, không thêm câu ví dụ trên bảng hay cột khác. Không chép thêm một phần giải SQL độc lập hay "Trả lời chị Hạnh" ở sau.
 
 Nếu có câu tự kiểm tra, đặt ngay sau `Memo` và trước `## Bài tập`, dùng `<details>` với đáp án đã được giải thích trong bài. Không đặt sau danh sách bài tập. Trong `<summary>`, dùng `<code>` cho tên cột hoặc giá trị thay vì backtick; chuỗi có nháy dùng biểu thức JSX, ví dụ `<code>{"MaPB = 'IT'"}</code>`, để giữ nháy thẳng sau build. Các bài 2.3, 2.7, 2.8 có ít nhất ba câu để ôn từng nhịp học; không dùng câu hỏi làm chỗ bổ sung lý thuyết còn thiếu.
 
-Sơ đồ đặt khối dưới đây là **mã minh họa thuộc tính**, không dán nguyên các tên biến vào bài. Thay `sqlDaKiemChung`, `cacCot`, `cacDong`, `tongSoDong`, `cacBuocDaKiemChung` bằng các giá trị literal đã chạy và kiểm trước khi viết.
+Sơ đồ đặt khối dưới đây là **mã minh họa thuộc tính**, không dán nguyên các tên biến vào bài. Thay `sqlDaKiemChung`, `cacPhanCuaCau`, `cacCot`, `cacDong`, `tongSoDong`, `cacBuocDaKiemChung` bằng các giá trị literal đã chạy và kiểm trước khi viết.
 
 ````mdx
-### Câu lệnh cho tình huống
+### Từ <việc trong Excel> đến <từ khóa SQL>
+
+Việc trong Excel, kèm hình `Excel`.
+
+Trong SQL, câu lệnh cần chạy để làm việc đó. Với tình huống này, câu lệnh là:
 
 <Sql code={sqlDaKiemChung} />
+
+<LineMap rows={cacPhanCuaCau} />
+
+### SQL Server chạy câu này thế nào
+
+Một lời dẫn ngắn về thứ tự xử lý logic.
+
+<RunFlow query={sqlDaKiemChung} steps={cacBuocDaKiemChung} />
 
 <Result columns={cacCot} rows={cacDong} total={tongSoDong} />
 
 Câu trả lời nghiệp vụ từ kết quả này, đúng giả định đầu bài.
-
-### SQL Server chạy câu này thế nào
-
-<RunFlow query={sqlDaKiemChung} steps={cacBuocDaKiemChung} />
 ````
 
 - `Sql` dùng câu lệnh đầy đủ giải đúng tình huống. Đoạn trích, khuôn cú pháp và câu ghi dữ liệu chỉ để đọc có `copy={false}`. Kết quả lỗi dùng `Messages` với nguyên văn đã kiểm; không tự sáng tác thông báo.
 - SQL nhiều dòng theo mục 2.4 của `quy-uoc.md`: mệnh đề chính thẳng cột, phần tiếp dòng lùi một cấp 4 cột. Ghi `\t` trong template literal MDX để giữ thụt lề sau build; `focus` phải dùng cùng khoảng trắng với `query`. Không dán khoảng trắng/tab literal đầu dòng vào MDX rồi chỉ kiểm file nguồn.
 - `Result.rows` là các dòng đã chạy, `total` là tổng thật khi chỉ trích; không lấy vài dòng minh họa rồi gắn tổng ước lượng. Ví dụ thu gọn giả lập dùng bảng Markdown, ghi rõ phạm vi, không giả làm kết quả database thật.
-- Mỗi phần tử `RunFlow.steps` có `clause`, `title`, `focus`, `meaning`, `detail`, `sql`, `columns`, `rows`, `total`; `excel` là tùy chọn. `query` trùng câu cho tình huống, `focus` thuộc câu đó, `sql` trả đúng trạng thái dữ liệu của bước. Chỉ thêm sơ đồ khi có từ hai bước xử lý logic trở lên và sơ đồ giúp hiểu bài.
+- Mỗi phần tử `RunFlow.steps` có `clause`, `title`, `focus`, `meaning`, `detail`, `sql`, `columns`, `rows`, `total`; `excel` là tùy chọn. `query` trùng câu cho tình huống, `focus` thuộc câu đó, `sql` trả đúng trạng thái dữ liệu của bước. Bước cuối là kết quả của câu; lời các bước đi theo yêu cầu của tình huống. Chỉ thêm sơ đồ khi có từ hai bước xử lý logic trở lên và sơ đồ giúp hiểu bài.
 - `rows` mỗi bước trích tối đa 10 dòng; `total` là số dòng thật sau bước đó. Giải thích trong drawer bắt đầu từ từ khóa, nêu dòng nào giữ/bỏ/đổi. Thứ tự logic không mô tả cách SQL Server đọc vật lý.
 - Với hai nhánh `UNION`, có thể tóm tắt mỗi nhánh đã qua `FROM` → `WHERE` → `SELECT` thành một bước `SELECT`, rồi bước `UNION` và `ORDER BY`. `RunFlow` nhận dạng bốn bước này để vẽ hai đầu vào độc lập, cùng đi vào phép gộp; không dùng mũi tên nối nhánh đầu sang nhánh sau. Viết `note` riêng để nói rõ quan hệ logic, không quy định nhánh nào chạy trước; câu kiểm từng nhánh chỉ đọc bảng của chính nhánh đó. Xem bài 3.8.
-- `LineMap` là khối tùy chọn khi cần tách nghĩa từng phần. Mỗi dòng có "Ví dụ:" và giá trị cụ thể được nhận, loại hoặc đổi; không chép lại cùng lời giải thích ở cả bảng lẫn đoạn văn.
+- `LineMap` giải thích từng phần của câu lệnh tình huống. Mỗi dòng có "Ví dụ:" và giá trị cụ thể được nhận, loại hoặc đổi; không chép lại cùng lời giải thích ở cả bảng lẫn đoạn văn.
 - Bài xử lý sự cố như 6.5 có thể đặt tên tiểu mục theo diễn biến sự cố; vẫn đi từ tình huống tới lời giải, giữ giới hạn an toàn và các mục cuối.
 
 ### Ví dụ thụt lề SQL trong MDX
@@ -173,7 +181,7 @@ Kết quả cần thấy: `SELECT`/`FROM`/`WHERE` cùng cột; `HoTen`, `CASE`, 
 1. Đọc quy ước và hồ sơ công ty; chốt mục tiêu, giả định và câu trả lời cần có.
 2. Chọn biến thể bài nền, khái niệm hoặc truy vấn; đặt tiêu đề phần chính theo vấn đề cụ thể.
 3. Chọn ví dụ tối thiểu và các khối thật sự cần; chạy, đối chiếu dữ liệu theo quy trình trước khi điền.
-4. Viết mạch Excel → khái niệm/cách SQL xử lý → giải yêu cầu; không tách lại hai phần Excel/SQL.
+4. Viết theo mạch của biến thể đã chọn, không tách lại hai phần Excel/SQL.
 5. Rà chữ đậm, code của giá trị dẫn chứng, dấu ô trong hình, ứng dụng đúng chủ đề và câu tự kiểm tra phủ mục tiêu.
 6. Chạy kiểm tra và review theo mục 4 của `quy-uoc.md`. Bài cũ chuyển khung thì cập nhật các assertion về tiêu đề, giữ các kiểm về kiến thức và số liệu.
 
