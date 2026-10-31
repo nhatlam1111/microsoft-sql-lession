@@ -23,7 +23,7 @@ Mọi quy ước khi viết bài, review bài và làm việc với database c�
 - Mẫu tin nhắn cần gửi IT có thể trích câu hỏi trong ngoặc kép để người học dùng khi mắc lỗi; đó là hướng dẫn thao tác, không dùng nó làm câu hỏi dẫn lý thuyết.
 - Mỗi dòng `LineMap` có "Ví dụ:" với giá trị cụ thể của tình huống.
 - Cuối lý thuyết có đoạn "Ở bài này chỉ cần…" kể các bài đi sâu hơn ("bài 5.2").
-- Drawer của `RunFlow` có ba phần, không có liên hệ Excel hay câu lệnh xem dữ liệu. **Đầu vào** tự lấy từ bước trước; bước đầu có `input` nêu bảng gốc. **Thực hiện** bắt đầu từ từ khóa của bước: nó làm gì với các dòng của tình huống. **Kết quả** nêu số dòng, số cột thật và hồ sơ giữ hoặc loại. Bước lọc có `checks` soi từng hồ sơ qua từng điều kiện, vì `WHERE` xét mọi điều kiện trên mỗi dòng, không lọc nhiều lượt. Lời các bước đi theo yêu cầu của tình huống, bước cuối là kết quả chị Hạnh cần. Các bài chưa chuyển bố cục được viết lại lời khi đến lượt.
+- Drawer của `RunFlow` theo mục 2.6.
 - Không hứa điều database không tự bảo đảm. Ràng buộc chỉ có khi được khai báo ("khi `MaNV` được khai báo là khóa chính…"). Tách "hợp lệ" với "đúng", "lưu được" với "đúng ý". Khóa ngoại là luật kiểm khi ghi, không phải ô chọn trên màn hình; nó xác nhận mã có thật, không xác nhận mã đúng.
 - Không tuyệt đối hóa Excel (có Data Validation, có làm việc chung, `SUM` bỏ qua ô chữ); nói điều kiện của tình huống.
 - `TOP (n)` là tối đa n dòng. Kết quả không có `ORDER BY` thì nói thứ tự dòng có thể khác hình. `TOP` đi cùng `ORDER BY`, trừ khi bài đang nói đúng chuyện không có `ORDER BY`. Thứ tự trong `RunFlow` là thứ tự xử lý logic, không phải cách SQL Server đọc dữ liệu.
@@ -74,6 +74,14 @@ Mọi quy ước khi viết bài, review bài và làm việc với database c�
 - Phần chính mở bằng điều quen trong Excel, dùng 0–3 tiểu mục, vẫn nói vì sao và để làm gì, vẫn có đoạn "Ở bài này chỉ cần…". Ví dụ dùng bảng và giá trị có thật trong dữ liệu mẫu, không kể chuyện.
 - Các quy tắc còn lại của mục 1–3 vẫn áp dụng, như giới hạn đoạn, không hứa quá, in đậm có chọn lọc.
 
+### 2.6 Drawer của sơ đồ (duyệt 31/10/2026)
+
+- Bấm vào một bước, học viên chỉ đọc ba phần: **Đầu vào**, **Thực hiện**, **Kết quả**. Drawer không có liên hệ Excel hay câu lệnh xem dữ liệu; `sql` của bước là bằng chứng để chạy lại, không hiện trên trang.
+- **Đầu vào** tự lấy từ bước trước, tối đa 5 dòng. Bước đầu có `input` nêu bảng gốc. Đầu vào phải đủ để hiểu bước đang xét: bước lọc thấy cột của điều kiện, bước `SELECT` thấy cột sắp lấy, bước sắp xếp thấy cột đang sắp; dùng `inputColumns` khi cần. Chọn dòng trích sao cho thấy được điều bước sau làm: hồ sơ bị loại, dòng trùng, thứ tự cần đổi.
+- **Thực hiện** bắt đầu từ từ khóa, nói việc bước đó làm với các dòng của tình huống. **Kết quả** nói số dòng, số cột và danh sách cần. Hai phần không lặp nhau, không chép lại điều bảng đã cho thấy. Bước `FROM` gọn: Đầu vào nêu bảng, Thực hiện nói chưa lọc, chưa chọn cột, Kết quả nêu số.
+- Bước `WHERE` có `checks` soi từng hồ sơ qua từng điều kiện, vì `WHERE` xét mọi điều kiện trên mỗi dòng, không lọc nhiều lượt. Tiêu đề điều kiện có tên cột, như `NgayNghiViec IS NULL`. Bảng có cả hồ sơ giữ và hồ sơ loại, mã hồ sơ nằm trong các dòng đang hiện ở Đầu vào.
+- Lời các bước đi theo yêu cầu của tình huống, bước cuối là kết quả chị Hạnh cần. Các bài chưa chuyển bố cục được viết lại lời khi đến lượt.
+
 ## 3. Số liệu và hình
 
 - Mọi câu lệnh và con số đưa vào bài, kể cả giá trị ví dụ và nguyên văn lỗi, được chạy trên database khóa học trước khi viết (mục 5).
@@ -113,6 +121,7 @@ Bài nền bỏ qua các mục về tình huống, SQL và `LineMap`.
 - [ ] Khái niệm được in đậm có chọn lọc; mọi giá trị dẫn chứng trong lời văn, tên bảng/cột và địa chỉ ô có kiểu code phù hợp.
 - [ ] Ứng dụng đúng khả năng của chủ đề, có việc làm/mục đích cụ thể và điều kiện cần thiết.
 - [ ] Mỗi dòng `LineMap` có "Ví dụ:"; có đoạn "Ở bài này chỉ cần…".
+- [ ] Mỗi bước sơ đồ đúng mục 2.6: Đầu vào đủ cột, Thực hiện không lặp Kết quả, bước `WHERE` có bảng soi với tiêu đề có tên cột.
 - [ ] Không câu nào hứa quá; con số nói rõ đếm gì và đã chạy lại.
 - [ ] Hình đánh dấu đúng chỗ, chú thích nói phần được đánh dấu.
 - [ ] Tình huống được khép lại, khớp hồ sơ công ty; Excel được tả đúng.
@@ -167,11 +176,11 @@ Bối cảnh:
 - Đọc AGENTS.md, docs/quy-uoc.md, docs/lesson-template.md, docs/ho-so-cong-ty.md, bài mẫu tương ứng (2.1 hoặc 1.1) và các bài trước liên quan đã được chỉ ra. Quyết định đã duyệt: <phạm vi và mục spec/plan>. Không đọc report cũ ở temp/review hoặc docs/reviews, nhận xét reviewer khác hay ma trận tác giả. Tài liệu quyết định dùng để hiểu phạm vi, không dùng kết luận cũ thay cho học thử.
 - Giả định chưa biết SQL, lập trình hoặc quản trị hệ thống; chỉ biết Excel văn phòng cơ bản. Không mặc định đã biết VLOOKUP/PivotTable. Chỉ dùng bài đang học và các bài trước để hiểu; không lấy bài sau, đáp án hoặc kiến thức chuyên gia có sẵn bù phần chưa được dạy. Thuật ngữ mới cần có nghĩa tại chỗ; một mã/giá trị dữ liệu xuất hiện lần đầu không tự thành thuật ngữ cần thêm định nghĩa hoặc bảng chứng minh.
 - Không đọc database/HRM_Demo.sql, .env/secret hoặc tài liệu SQL ngoài khóa học; không kết nối database, chạy SQL, API/runner hay nộp bài. Chỗ nghi kiến thức/số liệu sai chỉ ghi nghi ngờ cùng căn cứ; điều cần chạy mới biết thì ghi "chưa xác minh". Người viết xác minh kỹ thuật riêng theo mục 4.6 và 5.
-- Đọc hết bài và mọi khối Excel/Sql/Result/Messages/LineMap/RunFlow/Ssms/Erd, gồm từng bước và nội dung drawer. Phân biệt hình minh họa, thẻ xem nhanh, bảng trích và tổng thật; không kết luận tổng sai vì thẻ/bảng chỉ hiện một phần.
+- Đọc hết bài và mọi khối Excel/Sql/Result/Messages/LineMap/RunFlow/Ssms/Erd, gồm từng bước và nội dung drawer. Phân biệt hình minh họa, thẻ xem nhanh, bảng trích và tổng thật; không kết luận tổng sai vì thẻ/bảng chỉ hiện một phần. Với mỗi bước theo mục 2.6, kiểm Đầu vào có đủ cột để hiểu vì sao dòng bị giữ hoặc loại, bảng soi khớp Đầu vào và Kết quả, số dòng và số cột nối được sang bước sau.
 - Kiểm đường đi người học thực sự theo được: chỗ chọn web có mã hoặc SQL Server riêng, nơi nhận mã, bước cần làm và điều kiện hoàn thành có nhất quán không. Không bắt người chỉ chọn web tự kết nối SSMS, không đề nghị bỏ xác thực hoặc tự thêm thông tin liên hệ.
 - Kiểm mục tiêu, giả định, đơn vị đếm, thuật ngữ lần đầu và các giới hạn. Excel/SQL phải cùng phần chính; câu trả lời tình huống nằm ngay sau kết quả, trừ bài nền không có tình huống. Kiến thức cốt lõi để hiểu câu chính và làm đề phải được giảng trước phần ôn; không dùng tự kiểm tra để dạy bù. Với giới hạn đặt trong Hay nhầm theo quyết định riêng đã duyệt, kiểm tác động thực tế thay vì ép đổi vị trí theo quy tắc khái quát. Không yêu cầu khôi phục khung cũ hoặc chèn preview SQL cho bài khái niệm.
 - Đọc từng đề và thử xác định cách làm từ kiến thức đã học trước khi đối chiếu answer YAML. Ghi cho mỗi đề: cần kiến thức gì, đã được dạy ở đâu, còn thiếu gì; không coi answer là lời giảng. Không chép nguyên đáp án vào report. Tự kiểm tra phải phủ mục tiêu, đáp án đã được giảng và nằm sau Ghi nhớ, trước Bài tập nếu có.
-- Rà bold có chọn lọc, code cho dẫn chứng/tên bảng/cột/ô và dấu đánh trong hình; Ứng dụng phải nói việc làm được nhờ chủ đề. Đối chiếu bản render khi có: nháy SQL, tab bốn cột, query/focus/SQL bước khớp nhau và không lộ backtick/escape. Đọc HTML không chứng minh đã kiểm copy/paste, bàn phím, drawer hoặc SSMS thật.
+- Rà bold có chọn lọc, code cho dẫn chứng/tên bảng/cột/ô và dấu đánh trong hình; Ứng dụng phải nói việc làm được nhờ chủ đề. Đối chiếu bản render khi có: nháy SQL, tab bốn cột, query và focus khớp nhau, không lộ backtick/escape; `sql` của bước không hiện trên trang nên chỉ đối chiếu trong nguồn. Đọc HTML không chứng minh đã kiểm copy/paste, bàn phím, drawer hoặc SSMS thật.
 - Chỉ tương tác browser nếu được giao, giữ nháp/clipboard của người dùng và không chạy SQL. Ghi đúng thao tác đã thử, viewport thực tế, kết quả và giới hạn; không đổi thiết lập bảo mật để ép một phép kiểm đạt. Một lỗi truy cập trên trang dùng chung chỉ là một bằng chứng, không tự nhân thành lỗi riêng của mọi bài chưa mở.
 - Soi độ tải, chuyển ý, vòng vo và lặp ý; chỉ rõ câu nên bỏ/gộp. Đề xuất thêm bằng một vế ngắn khi thiếu nó người mới thật sự vấp. Không tăng nội dung chỉ để đủ khối/số finding; nhóm các đoạn giữ được, không chép lại cả bài. Với mỗi câu "tại sao/để làm gì" tự đặt ra, ghi bài đã trả lời ở đâu hoặc chưa.
 - Chỉ ghi report được giao; không sửa source/test/docs/index/HEAD/branch và không tạo reviewer khác. Đúng thì công nhận, không có finding là kết quả hợp lệ; không dùng điểm số tự đặt thay bằng chứng hoặc khẳng định học viên chắc chắn tự học được.
