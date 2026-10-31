@@ -1,6 +1,6 @@
 # Chỉnh nhẹ năm bài Làm quen — kiểm và xử lý review
 
-Ngày31/10/2026. Người dùng chọn làm theo đề xuất sau brainstorming: giữ năm bài/thứ tự, giảm độ sâu 1.3, dẫn ERD từ hai bảng, chỉnh điều kiện và câu ôn. Không có quyền push/deploy trong lượt này.
+Ngày 31/10/2026. Người dùng chọn làm theo đề xuất sau brainstorming: giữ năm bài/thứ tự, giảm độ sâu 1.3, dẫn ERD từ hai bảng, chỉnh điều kiện và câu ôn. Đã hoàn tất sửa và kiểm trong nhánh local; chưa merge/push/deploy.
 
 ## Phiên bản và phạm vi
 
@@ -49,7 +49,18 @@ Mỗi bài một agent mới, fork none, Codex kế thừa model phiên, không 
 - Sau build lại, CUA reload trang1.5 và đối chiếu lời “Ở đường tô xanh”; mở câu ôn nguồn chung1.1 bằng Enter, câu nhận diện hình1.2 bằng Space và thấy đúng đáp án mới;1.4 có tiêu đề/định nghĩa “bảng được trỏ tới”. Đã dùng viewport1024×900, không tràn toàn trang; reset viewport sau kiểm.
 - Không đổi SQL/số liệu sau sáu SELECT vòng1; không chạy lại SQL hoặc runner chỉ vì biên tập câu chữ. Log vòng2 có hậu tố final trong thư mục evidence local.
 
-Chờ review tích hợp mới trên source/build cuối. Chưa dùng trạng thái này làm bàn giao hoàn tất.
+## Review tích hợp và kết thúc
+
+Reviewer mới, ngữ cảnh mới/model kế thừa, kiểm base740c569 → eec184e và HTML build21:43. [Report gốc](integration-review.md) không phát hiện thiếu tiền đề hay lỗi mạch; đã lập tiền đề cho đủ bảy đề nối tiếp của 2.1/2.2. Review chỉ đọc nguồn/HTML và evidence được giao; không tự chạy SQL/UI/test. Năm report từng bài và [report brainstorming ban đầu](brainstorm-teacher-review.md) được lưu nguyên văn; bản sao report tích hợp/brainstorm đã đối chiếu hash với nguồn.
+
+| Mục tích hợp | Quyết định của tác giả |
+|---|---|
+| Biên tập: hai regex mới khóa sát câu chữ/cùng dòng | Làm theo. Chuẩn hóa Markdown/khoảng trắng, kiểm các ý trong cùng cảnh báo hoặc đoạn nói hai cột phòng; cho phép vài cách diễn đạt tương đương. Giữ bảo vệ NOT NULL/FK, phủ định câu sai cũ và quan hệ hai bảng. |
+| Reviewer không tự xác minh SQL/UI và các luồng đăng nhập/chạy/nộp/nháp | Giữ giới hạn. SQL và UI tác giả đã kiểm được ghi riêng phía trên; các luồng thực hành không thay đổi nên để ngoài phạm vi, không ghi đạt thay reviewer. |
+| TRY_CONVERT trả NULL không phải nguyên văn lỗi khi ghi | Giữ đúng phạm vi bằng chứng: chỉ xác nhận ví dụ không chuyển thành ngày. Không thu thông báo lỗi ghi hoặc dùng kết quả này để chứng minh đã chạy câu ghi. Nội dung từ chối kiểu đã có, không thêm câu ghi hay thông báo lỗi mới vào bài. |
+| Chưa đo thời lượng học thật, mobile/zoom, SSMS thật | Giữ là phần chưa nghiệm thu; không đổi thời lượng ước tính thành thời gian đã đo, không mở sửa component ngoài phạm vi. |
+
+Kiểm cuối sau sửa test: 369/369 test, 49 file đạt; Astro check 0 lỗi/0 warning và 3 hint deprecated nền; build21:50:28 đạt129 trang, check:dist1951 link đạt. `git diff eec184e -- src/content/lessons` rỗng: MDX giữ đúng bản đã được tích hợp và đã mở trong browser; chỉ test/tài liệu được chỉnh sau đó. Không có nhận xét còn chờ quyết định. Log cuối có hậu tố integration trong thư mục evidence.
 
 ## Giới hạn
 

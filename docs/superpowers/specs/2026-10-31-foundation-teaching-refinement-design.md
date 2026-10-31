@@ -4,6 +4,8 @@ Ngày: 31/10/2026. Người làm khóa học đã chọn làm theo đề xuất 
 
 Source bắt đầu: `740c5694f6f6fd337c93cee2f7e3d9f899344dcb`, working tree sạch. Nhánh thực hiện: `codex/refine-foundation-lessons`.
 
+Trạng thái: hoàn tất sửa, năm review độc lập, review tích hợp và các kiểm sau sửa. Chỉ commit local trên nhánh trên, chưa merge/push/deploy. [Hồ sơ cuối](../../reviews/2026-10-31-foundation-teaching-refinement/verification.md).
+
 ## Mục đích và giới hạn
 
 Người chỉ biết Excel cơ bản đọc được cấu trúc dữ liệu trước khi vào SELECT; phần nền giúp giải thích mỗi dòng và quan hệ giữa các bảng mà không tăng số thuật ngữ phải nhớ. Giữ quy ước bài nền ở mục 2.5: noScenario/noExercises, 7 phút ước tính, khoảng 500–700 từ và tối đa 800, ít nhất ba câu tự kiểm tra sau Ghi nhớ. Quy ước/template hiện hành thắng các thiết kế lịch sử.
@@ -50,3 +52,9 @@ Chạy npm test/check/build/check:dist; xem năm trang build và hình/Ssms/Erd,
 ### Kiểm sau sửa
 
 Đã đọc đủ năm report và xử lý các mục có căn cứ. Vòng2 vẫn đạt 369 test, check 0 lỗi/0 warning/3 hint nền, build 129 trang, check:dist 1951 link. Số từ cuối 692/608/665/620/622, giữ 3/3/4/4/3 câu ôn. Browser đã mở năm bài; kiểm desktop 1280×900 và 1024×900 trên các hình/khối liên quan, mở câu ôn bằng bàn phím; sau build21:43 kiểm lại riêng chữ sửa ở1.1/1.2/1.4/1.5. Đang review tích hợp; hồ sơ ở `docs/reviews/2026-10-31-foundation-teaching-refinement/verification.md`.
+
+### Sau review tích hợp
+
+Review mới trên eec184e không thấy thiếu tiền đề hoặc lỗi mạch. Làm theo mục Biên tập về test: chuẩn hóa Markdown/khoảng trắng, kiểm điều kiện trong cùng mục cảnh báo/đoạn khóa ngoại và nhận vài cách diễn đạt tương đương; giữ kiểm phủ định câu cũ cùng các bảo vệ NULL/FK/ERD. Không sửa MDX sau build21:43. Các giới hạn SQL/UI/mobile/thời lượng giữ riêng; TRY_CONVERT chỉ là kiểm không đổi được ngày, không thay cho thông báo lỗi ghi dữ liệu.
+
+Kiểm cuối sau sửa test: 369/369 test, check 0 lỗi/0 warning/3 hint nền, build 21:50 đạt 129 trang, check:dist 1951 link. Không sửa sản phẩm sau bản MDX đã được review tích hợp; không phải kiểm lại với học viên thật.

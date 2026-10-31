@@ -359,14 +359,20 @@ describe('fixes from the independent reviews of 2026-10-19', () => {
 
 describe('foundation teaching refinements preserve conditions and progress from a familiar relation (2026-10-31)', () => {
   const body = (slug: string) => readLessonFiles().find(f => f.slug === slug)!.body;
+  const prose = (text: string) => text.replace(/[`*]/g, '').replace(/\s+/g, ' ').trim();
   it('a total row is accepted only if it satisfies the declared rules', () => {
     const lesson = body('1-2-bang-dong-cot');
-    expect(lesson).toMatch(/dòng tổng[^\n]*thỏa[^\n]*luật đã khai báo/);
+    const warning = lesson.match(/<Mistakes>([\s\S]*?)<\/Mistakes>/)![1]
+      .split(/\r?\n(?=\d+\. )/).map(prose).find(p => p.includes('dòng tổng'))!;
+    expect(warning).toMatch(/(?:nếu|khi|với điều kiện).*(?:thỏa|đáp ứng|tuân thủ).*(?:luật|ràng buộc)/);
     expect(lesson).not.toContain('Nếu điền đủ các cột bắt buộc, database vẫn nhận');
   });
   it('a department for every profile requires a non-null department key as well as its foreign key', () => {
     const main = lessonMainSection(body('1-4-khoa-chinh-khoa-ngoai'));
-    expect(main).toMatch(/`MaPB` không nhận `NULL`[^\n]*hồ sơ nào cũng tìm được phòng/);
+    const department = main.split(/\r?\n\s*\r?\n/).map(prose)
+      .find(p => p.includes('NhanVien.MaPB') && p.includes('PhongBan.MaPB'))!;
+    expect(department).toMatch(/MaPB (?:không nhận NULL|là NOT NULL|không cho phép NULL)/);
+    expect(department).toMatch(/(?:hồ sơ nào cũng|mỗi hồ sơ)[^.]*phòng/);
   });
   it('the ERD first highlights employees and departments, then explains the longer payroll path', () => {
     const main = lessonMainSection(body('1-5-doc-so-do-erd'));

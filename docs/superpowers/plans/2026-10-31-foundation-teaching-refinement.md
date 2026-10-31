@@ -41,8 +41,8 @@
 - [x] Xem năm trang build, hình/Ssms/Erd, caption/đánh dấu/câu ôn; desktop 1280/1024, giới hạn ghi trong verification.
 - [x] Giao reviewer mới từng bài, model kế thừa/fork none, source/build đúng phiên bản; giữ đủ năm report gốc và lập ma trận xử lý.
 - [x] Sửa theo nhận xét có căn cứ, chạy lại test/check/build/dist đều đạt; cập nhật spec/plan mỗi vòng.
-- [ ] Review tích hợp mới, xử lý mọi nhận xét và mục chưa kết luận; lưu report và bằng chứng phân biệt source/HTML/UI/SQL.
-- [ ] Commit local và bàn giao bài/report/ma trận/checks, không push/deploy.
+- [x] Review tích hợp mới trên eec184e, không thiếu tiền đề/mạch; làm theo mục Biên tập giảm khóa câu chữ của hai test, giữ điều kiện được bảo vệ. Xử lý mọi giới hạn theo verification; không sửa MDX sau build21:43.
+- [x] Commit local và chốt bài/report/ma trận/checks để bàn giao, không push/deploy.
 
 ## Nhật ký review
 
@@ -51,3 +51,4 @@
 - 1.2: Làm theo Cần làm rõ câu ôn2 và Biên tập phạm vi ba dòng hợp đồng.
 - 1.3: không finding, giữ nguồn.1.4: làm theo cách gọi đích khóa ngoại, không thêm kiến thức; đã đọc hết report trước sửa.
 - 1.5: đã đọc hết report; làm một phần bằng vế “Ở đường tô xanh” để không áp mô tả chấm tròn cho tự tham chiếu. Đã đủ năm report, chuẩn bị kiểm cuối và review tích hợp.
+- Review tích hợp mới: không thiếu tiền đề; đã giảm khóa câu chữ của hai test. Kiểm cuối 21:50: 369 test, check không lỗi/warning (3 hint nền), build129/dist1951 đạt. MDX không đổi từ eec184e; chỉ test và hồ sơ thay đổi sau đó. Hoàn tất trong nhánh local, chưa merge/push/deploy.
