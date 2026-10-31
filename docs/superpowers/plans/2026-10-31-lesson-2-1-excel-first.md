@@ -28,7 +28,7 @@
 
 ### Task 1: Thiết kế và kế hoạch
 
-- [ ] Đổi trạng thái spec thành đã duyệt, commit spec và plan: `docs: design the Excel-first lesson 2.1`.
+- [x] Đổi trạng thái spec thành đã duyệt, commit spec và plan: `docs: design the Excel-first lesson 2.1`.
 
 ### Task 2: Sắp lại bài 2.1
 
@@ -36,7 +36,7 @@
 - Modify: `src/content/lessons/2-1-chon-cot-dat-ten-cot.mdx`
 - Test: `tests/content.test.ts`
 
-- [ ] **Bước 1: thêm test.**
+- [x] **Bước 1: thêm test.**
 
 ```ts
 it('2.1 leads from Excel to SQL like the lessons after it', () => {
@@ -59,14 +59,18 @@ it('2.1 leads from Excel to SQL like the lessons after it', () => {
 
 Test `2.1 calls the run order logical…` đổi `không phải 5 dòng đã bị sửa` thành ``không phải `48` dòng đã bị sửa``.
 
-- [ ] **Bước 2:** `npm test`, xác nhận test mới FAIL.
-- [ ] **Bước 3:** viết lại theo mục Phần chính mới của spec, sửa `goal`, `summary`, `Key`. Đoạn tên cột chuyển lên tiểu mục đầu; lỗi `TenNV` chuyển vào ý Messages; bỏ ý `NULL` ở ý Results vì câu cuối không có ô `NULL`.
-- [ ] **Bước 4:** `npm test`, toàn bộ PASS.
-- [ ] **Bước 5:** commit `docs: lead lesson 2.1 from Excel to SQL`.
+- [x] **Bước 2:** `npm test`, xác nhận test mới FAIL.
+- [x] **Bước 3:** viết lại theo mục Phần chính mới của spec, sửa `goal`, `summary`, `Key`. Đoạn tên cột chuyển lên tiểu mục đầu; lỗi `TenNV` chuyển vào ý Messages; bỏ ý `NULL` ở ý Results vì câu cuối không có ô `NULL`.
+- [x] **Bước 4:** `npm test`, toàn bộ PASS.
+- [x] **Bước 5:** commit `docs: lead lesson 2.1 from Excel to SQL`.
 
 ### Task 3: Kiểm chứng, review, hồ sơ
 
-- [ ] Đối chiếu hình Excel mới bằng MCP `SELECT` (`NgaySinh`, `Email`, `NgayVaoLam` của `NV001` đến `NV003`).
-- [ ] `npm run check`, `npm run build`, `npm run check:dist`; xem build ở 1280×800 và 1024×720.
-- [ ] Một review độc lập bằng Claude Sonnet, effort high, theo mục 4.5.
-- [ ] Xử lý theo mục 4.6, ghi `docs/reviews/2026-10-31-bai-2-1-excel-truoc/`; cập nhật spec, plan, memory; commit trên nhánh, không push.
+- [x] Đối chiếu hình Excel mới bằng MCP `SELECT` (`NgaySinh`, `Email`, `NgayVaoLam` của `NV001` đến `NV003`).
+- [x] `npm run check`, `npm run build`, `npm run check:dist`; xem build ở 1280×800 và 1024×720.
+- [x] Một review độc lập bằng Claude Sonnet, effort high, theo mục 4.5.
+- [x] Xử lý theo mục 4.6, ghi `docs/reviews/2026-10-31-bai-2-1-excel-truoc/`; cập nhật spec, plan, memory; commit trên nhánh, không push.
+
+## Kết quả
+
+Hoàn tất theo Native. Review độc lập xử lý ở commit sau. [Hồ sơ xử lý](../../reviews/2026-10-31-bai-2-1-excel-truoc/verification.md). Commit trên nhánh `feat/lesson-2-1-excel-first`, không push.

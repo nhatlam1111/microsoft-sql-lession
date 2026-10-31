@@ -52,3 +52,12 @@ Của người viết:
 
 - Câu chữ và tên tiểu mục, miễn mở bằng điều tiêu đề hứa.
 - Ba hồ sơ trong hình mới, lấy từ dữ liệu thật.
+
+## Kết quả
+
+Đã làm trên nhánh `feat/lesson-2-1-excel-first`, chưa push. Một review độc lập không có mục Cần sửa. [Hồ sơ xử lý](../../reviews/2026-10-31-bai-2-1-excel-truoc/verification.md).
+
+Khác thiết kế:
+
+- Hình đầu có bốn cột, bỏ `Email`, vì năm cột làm cột `NgayVaoLam` được đánh dấu bị cắt ở rộng 1024px.
+- Bỏ câu về bảng nguồn thêm cột; ý Hay nhầm về `TOP` chuyển xuống cuối.
