@@ -207,7 +207,7 @@ describe('fixes from the review of lessons 1.2 to 1.6 (2026-10-19)', () => {
     ['Sheet nào cũng tra theo mã NV', 'Bảng chứa cột này là phía "nhiều"', 'Một người có một dòng lương mỗi kỳ', 'gần như tự viết ra', 'khỏi hỏi lại', 'NV001 có 19 ngày công']));
   it('2.1 calls the run order logical and scopes TOP, and the intro page says a SELECT can still write', () => {
     check('2-1-chon-cot-dat-ten-cot',
-      ['tối đa', 'thứ tự xử lý logic', 'không phải 5 dòng đã bị sửa', 'được cấp quyền đọc'],
+      ['tối đa', 'thứ tự xử lý logic', 'không phải `48` dòng đã bị sửa', 'được cấp quyền đọc'],
       ['không bao giờ làm đổi dữ liệu', 'Đây luôn là việc làm đầu tiên', 'vì dữ liệu đang nằm theo thứ tự mã', 'Chỉ nhìn 5 dòng đầu']);
     expect(readFileSync('src/pages/gioi-thieu.astro', 'utf8')).toContain('SELECT INTO');
   });
@@ -350,6 +350,22 @@ describe('fixes from the final review', () => {
     for (const s of ['Chạy (F5)', 'gioi-thieu/#ket-noi-ssms', 'gioi-thieu/#chon-noi-thuc-hanh', 'gioi-thieu/#chay-cau-lenh', 'sẽ hỏi mã truy cập', 'chưa bấm **Nộp bài**', 'Results', 'Messages', 'số thứ tự dòng của kết quả', 'trang bài tập không có lệnh này', '(48 rows affected)']) expect(f.body, s).toContain(s);
     // Exercise 1 asks for this table, so printing the query would hand out the answer.
     expect(f.body).not.toContain('FROM HopDong');
+  });
+  it('2.1 leads from Excel to SQL like the lessons after it', () => {
+    const b = body('2-1-chon-cot-dat-ten-cot');
+    const main = lessonMainSection(b);
+    const [first, second, third] = main.split(/^### /m).slice(1);
+    expect(sqlSubheadings(b)).toHaveLength(4);
+    for (const part of [first, second]) {
+      expect(part).toMatch(/^Từ .+\r?\n\r?\nTrong Excel, /);
+      expect(part.indexOf('<Excel')).toBeLessThan(part.indexOf('Trong SQL'));
+      expect(part).not.toContain('Invalid column name');
+    }
+    expect(main.indexOf('<Excel')).toBeLessThan(main.indexOf('<Sql'));
+    expect(main.match(/<Result\b/g)).toHaveLength(1);
+    expect(main.match(/<Messages\b/g)).toHaveLength(1);
+    expect(first).toMatch(/<Sql copy=\{false\}[^>]*code=\{`SELECT TOP \(5\) \*/);
+    for (const s of ['Chạy (F5)', 'Results', 'Messages', "Invalid column name 'TenNV'"]) expect(third, s).toContain(s);
   });
   it('no lesson or page points to the removed lesson 1.6', () => {
     const sources = [...readLessonFiles().map(f => f.body), readFileSync('src/pages/gioi-thieu.astro', 'utf8'), readFileSync('docs/ho-so-cong-ty.md', 'utf8')];
