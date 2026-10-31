@@ -1,6 +1,8 @@
 # Bài 2.5 theo mạch một câu lệnh
 
-Trạng thái: chờ người làm khóa học duyệt, 31/10/2026.
+Trạng thái: đã duyệt và đã làm trên nhánh `feat/lesson-2-5-null`, chưa push, 31/10/2026. [Hồ sơ kiểm](../../reviews/2026-10-31-lesson-2-5/verification.md).
+
+Khác thiết kế: hình Excel bỏ cột họ tên và dùng `NV031` thay `NV037` để thấy ô `(chưa có)` ở rộng 1024; Hay nhầm 3 đổi thành "coi dòng không có nhãn là đã có email"; bước `WHERE`, `SELECT` trích ba hồ sơ để thẻ sơ đồ thấy `NV044`.
 
 ## Ý định
 

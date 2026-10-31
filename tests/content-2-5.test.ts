@@ -23,6 +23,9 @@ it('2.5 keeps VH profiles with no leave date and labels only the missing email',
   expect(steps[1].rows.map(r => r[id])).not.toContain('NV033');
   expect(steps[1].rows.filter(r => r[email] === null).map(r => r[id])).toEqual(['NV044']);
   expect(steps[1].rows.flat()).not.toContain(LABEL);
+  // The cards preview three rows, so the point of each step has to be among them.
+  expect(steps[1].rows.slice(0, 3).map(r => r[id])).toContain('NV044');
+  expect(steps[2].rows.slice(0, 3).flat()).toContain(LABEL);
   const expected = steps[3].rows;
   expect(expected.map(r => r[0])).toEqual(['NV008', 'NV015', 'NV019', 'NV024', 'NV027', 'NV031', 'NV037', 'NV044']);
   expect(expected.filter(r => r[2] === LABEL).map(r => r[0])).toEqual(['NV044']);
