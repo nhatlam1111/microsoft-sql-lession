@@ -29,3 +29,5 @@ Lượt trước đã review tích hợp 2.1–2.3. Lượt này là một bài 
 Hoàn tất: chuyển khung, hình Excel và rút định dạng mảng; assert giữ nguyên năm câu SQL/focus/columns/rows/totals/previews. SQL live có 13 bản ghi bằng chứng; 45 hồ sơ đang làm không có nhóm trùng ngày, lời giảng dùng điều kiện chung, không ví dụ giả. 330 test, check/build/check:dist và 76 bài tập runner đạt, data không lệch; ba hint deprecated sẵn có. UI hai viewport/năm drawer/highlight/copy-paste/tab4 đã thử.
 
 Review độc lập agent mới/model kế thừa không có finding cần sửa; đủ tiền đề ba đề và ba hash khớp. Giữ nguyên source/build sau kiểm, không lặp kiểm khi không sửa. [Report gốc, ma trận, bằng chứng và giới hạn](../../reviews/2026-10-31-lesson-2-4/verification.md). Chưa kiểm xác thực/Chạy/Nộp/lưu tiến độ web, SSMS thật, thời lượng với học viên thật hoặc chọn ở ranh giới nhóm ngày trùng live. Không commit/push/deploy.
+
+Sau bàn giao, người dùng đã yêu cầu merge main và push ngày 31/10/2026; xem [hồ sơ tích hợp/kiểm trước xuất bản](../../reviews/2026-10-31-publish-2-2-2-4/verification.md). Quyền mới này áp dụng cho thao tác Git, không thay đổi nội dung hoặc kết luận review đã lưu.

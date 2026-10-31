@@ -65,3 +65,7 @@ Lượt trước đã có review tích hợp 2.1–2.3; lượt này một bài 
 ## Trạng thái bàn giao
 
 Hoàn tất nội dung, kiểm và review. MDX/YAML/HTML không đổi sau phiên bản manifest đã kiểm; không lặp bộ kiểm đã đạt khi không có sửa mới. `git diff --check` đạt; bài 2.2/2.3 giữ nguyên hash từ lượt trước. Đã đóng tab kiểm thử, hoàn trả nháp/clipboard, reset viewport và dừng preview do tác giả mở. Không commit/push/deploy.
+
+## Yêu cầu xuất bản sau bàn giao
+
+Ngày 31/10/2026, người làm khóa học đã yêu cầu merge main và push. Trạng thái không commit/push ở trên thuộc lượt soạn trước yêu cầu này. [Hồ sơ tích hợp và kiểm trước xuất bản](../2026-10-31-publish-2-2-2-4/verification.md) ghi quyền mới, commit/merge và kiểm trên main; report gốc vẫn giữ nguyên.

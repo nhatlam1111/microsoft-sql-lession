@@ -28,3 +28,5 @@ Chạy SQL chỉ SELECT để kiểm câu chính, từng bước, bảng trích 
 Hoàn tất hai vòng. Vòng 1 chuyển khung và kiểm SQL SELECT-only; reviewer Codex mới, ngữ cảnh mới/model kế thừa đọc nguồn/HTML, kiểm đủ tiền đề từng đề. Vòng 2 làm theo finding C1 mức thấp: bỏ vế lặp cuối dòng 56, giữ Hay nhầm 3; không thay SQL/YAML/số liệu. Cùng reviewer xác nhận C1 đã xử lý trên source/build cuối.
 
 Kiểm cuối: 328 test đạt, Astro check không lỗi/cảnh báo (ba hint deprecated sẵn có); build/check:dist đạt 129 trang/1951 link. API build/check:exercises đạt 76 bài; check:data không bảng nào lệch. Browser kiểm hai viewport desktop, drawer/highlight/copy-paste và tab bốn cột; chưa kiểm SSMS thật hoặc chạy/nộp SQL trên web. [Hồ sơ, report gốc, ma trận và giới hạn](../../reviews/2026-10-31-lesson-2-2/verification.md). Không commit/push/deploy.
+
+Sau bàn giao, người dùng đã yêu cầu merge main và push ngày 31/10/2026; xem [hồ sơ tích hợp/kiểm trước xuất bản](../../reviews/2026-10-31-publish-2-2-2-4/verification.md). Quyền mới này áp dụng cho thao tác Git, không thay đổi nội dung hoặc kết luận review đã lưu.

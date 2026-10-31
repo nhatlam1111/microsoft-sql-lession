@@ -78,3 +78,7 @@ Bản HTML 2.1/2.2 đã được dựng lại trong build hiện tại và có h
 Hoàn tất nội dung, test và hai vòng review; không có sửa sản phẩm sau bản source/build đã kiểm và giao reviewer. Vì không đổi MDX/test/YAML/API sau review, không lặp các bộ kiểm đã đạt chỉ để có log mới. Manifest vẫn khớp file hiện tại; `git diff --check` đạt. Bài 2.2 giữ nguyên SHA256 `1c4261fac141161ab0fb0b452b0f985054d4b91c4b0e502471dceb3acd73af5f` từ lượt trước. Không cập nhật hồ sơ công ty vì tình huống/sự việc 2.3 không đổi.
 
 Đã đóng tab kiểm thử và dừng preview server do tác giả mở. Không commit/push/deploy.
+
+## Yêu cầu xuất bản sau bàn giao
+
+Ngày 31/10/2026, người làm khóa học đã yêu cầu merge main và push. Trạng thái không commit/push ở trên thuộc lượt soạn trước yêu cầu này. [Hồ sơ tích hợp và kiểm trước xuất bản](../2026-10-31-publish-2-2-2-4/verification.md) ghi quyền mới, commit/merge và kiểm trên main; report gốc vẫn giữ nguyên.

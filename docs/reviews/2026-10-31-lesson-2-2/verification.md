@@ -62,3 +62,7 @@ Build cuối lúc **15:32:24 ngày 31/10/2026 +07:00**. Manifest cuối: `temp/v
 - Tác giả reload trang build cuối qua browser: đúng hai tiêu đề, vế lặp đã bỏ, Hay nhầm 3 còn nguyên. SQL và các component không đổi sau kiểm tương tác lần đầu; không lặp lại kiểm SSMS hay SQL trên web và không báo đã kiểm chúng.
 
 Không có lỗi nền test; ba hint deprecated còn như cũ. Không đổi source bài khác, YAML, API, dữ liệu hoặc component; không tạo learning-workspace/HTML riêng. Không commit, push hoặc deploy. Review tích hợp nhiều bài/công cụ không áp dụng vì lượt này chỉ sửa bài 2.2 và test nội dung liên quan.
+
+## Yêu cầu xuất bản sau bàn giao
+
+Ngày 31/10/2026, người làm khóa học đã yêu cầu merge main và push. Trạng thái không commit/push ở trên thuộc lượt soạn trước yêu cầu này. [Hồ sơ tích hợp và kiểm trước xuất bản](../2026-10-31-publish-2-2-2-4/verification.md) ghi quyền mới, commit/merge và kiểm trên main; report gốc vẫn giữ nguyên.
