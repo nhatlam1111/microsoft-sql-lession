@@ -71,8 +71,9 @@ FROM NhanVien;`} steps={[
     clause: 'FROM',
     title: 'Lấy bảng NhanVien làm nguồn.',
     focus: 'FROM NhanVien',
-    meaning: '`FROM` cho biết các cột nguồn nằm ở bảng nào. Bảng `NhanVien` có 12 cột; bước này chưa chọn ba cột cần gửi.',
-    detail: 'Có 48 hồ sơ, gồm cả người đã nghỉ như `NV033`, vì câu không có điều kiện lọc; hình trích bốn dòng với đủ 12 cột của nguồn.',
+    input: "Bảng `NhanVien` trong database.",
+    meaning: "`FROM` chọn bảng này làm nguồn, chưa lọc dòng, chưa chọn cột.",
+    detail: "`48` hồ sơ, `12` cột, gồm cả người đã nghỉ như `NV033`. Hình trích bốn dòng.",
     sql: `SELECT * FROM NhanVien;`,
     columns: ['MaNV', 'HoTen', 'GioiTinh', 'NgaySinh', 'SoCCCD', 'Email', 'NgayVaoLam', 'NgayNghiViec', 'MaPB', 'MaCD', 'MaQuanLy', 'TrangThai'],
     rows: [
@@ -82,14 +83,14 @@ FROM NhanVien;`} steps={[
       ['NV033', 'Khúc Văn Hải', 'Nam', '1990-01-01', '000090384784', 'hai.kv@hrmdemo.vn', '2019-06-03', '2026-06-30', 'VH', 'NV', 'NV008', 'Đã nghỉ'],
     ],
     total: 48,
-    excel: 'Mở sheet nguồn có đủ thông tin nhân viên.',
   },
   {
     clause: 'SELECT',
     title: 'Chọn ba cột chị Hạnh cần và đặt tiêu đề.',
     focus: 'SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên], NgayVaoLam AS [Ngày vào làm]',
-    meaning: '`SELECT` liệt kê các cột cần trả về theo thứ tự yêu cầu. `AS` đặt tiêu đề cho từng cột trong kết quả.',
-    detail: 'Vẫn `48` dòng, chỉ còn ba cột với tiêu đề `Mã nhân viên`, `Họ tên`, `Ngày vào làm`: đây là danh sách chị Hạnh cần. Ngày hiện dạng năm-tháng-ngày, `2024-03-01` cùng ngày với `01/03/2024` trong hình Excel.',
+    inputColumns: ["MaNV", "HoTen", "GioiTinh", "NgayVaoLam"],
+    meaning: "`SELECT` chọn ba cột theo thứ tự chị Hạnh cần, bỏ chín cột còn lại như `GioiTinh`. `AS` đặt tiêu đề cho từng cột trong kết quả.",
+    detail: "Vẫn `48` dòng, còn `3` cột: đây là danh sách chị Hạnh cần. Ngày hiện dạng năm-tháng-ngày, `2024-03-01` cùng ngày với `01/03/2024` trong hình Excel.",
     sql: `SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên], NgayVaoLam AS [Ngày vào làm]
 FROM NhanVien;`,
     columns: ['Mã nhân viên', 'Họ tên', 'Ngày vào làm'],
@@ -100,7 +101,6 @@ FROM NhanVien;`,
       ['NV033', 'Khúc Văn Hải', '2019-06-03'],
     ],
     total: 48,
-    excel: 'Chép ba cột sang bản báo cáo, đặt thứ tự và sửa tiêu đề.',
   },
 ]} />
 

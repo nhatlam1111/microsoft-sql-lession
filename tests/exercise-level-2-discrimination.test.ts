@@ -34,6 +34,16 @@ it('2.5 non-NULL practice selects a scope containing both present and missing em
   expect(e.answer).toContain('Email IS NOT NULL');
 });
 
+it('2.5 label practice selects a scope containing both present and missing email', () => {
+  const e = exercise('2-5-null-o-trong', '2-5-3');
+  const department = e.answer.match(/MaPB = '([^']+)'/)![1];
+  const scoped = people.filter(p => p.department === department);
+  expect(department, 'the lesson statement already covers VH').not.toBe('VH');
+  expect(scoped.some(p => p.email === null), 'omitting COALESCE must lose correctness').toBe(true);
+  expect(scoped.some(p => p.email !== null), 'a fixed label must lose correctness').toBe(true);
+  expect(e.answer).toContain('COALESCE(Email');
+});
+
 it('2.9 anniversary practice includes a profile exactly on the three-year boundary', () => {
   const e = exercise('2-9-case-when-ham-if', '2-9-2');
   const cutoff = e.answer.match(/DATEADD\(year, 3, NgayVaoLam\) <= '(\d{8})'/)![1];

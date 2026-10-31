@@ -100,7 +100,7 @@ Chị Hạnh nhận `6` dòng phòng; `KD` có nhiều hồ sơ đang làm nhấ
 
 ### SQL Server chạy câu này thế nào
 
-Theo thứ tự logic, lọc hồ sơ trước, gom nhóm sau, rồi chọn cột kết quả và sắp xếp. Bấm từng bước để xem dữ liệu ở mốc đó bằng một câu `SELECT` riêng; các câu này không phải những lệnh SQL Server tự chạy nối tiếp. Trước `ORDER BY`, thứ tự dòng có thể khác hình; sơ đồ không mô tả cách thực thi vật lý.
+Theo thứ tự logic, lọc hồ sơ trước, gom nhóm sau, rồi chọn cột kết quả và sắp xếp. Bấm từng bước để xem dữ liệu ở mốc đó. Trước `ORDER BY`, thứ tự dòng có thể khác hình; sơ đồ không mô tả cách thực thi vật lý.
 
 <RunFlow query={`SELECT MaPB, COUNT(*) AS [SoHoSo]
 FROM NhanVien
@@ -129,7 +129,6 @@ FROM NhanVien;`,
       ['NV041', 'VH', 'Đã nghỉ'],
     ],
     total: 48,
-    excel: 'Lấy danh sách nguồn cho PivotTable, chưa chọn trạng thái.',
   },
   {
     clause: 'WHERE',
@@ -154,14 +153,13 @@ WHERE TrangThai = N'Đang làm';`,
       ['NV010', 'NS', 'Đang làm'],
     ],
     total: 45,
-    excel: 'Chọn trạng thái đang làm làm phạm vi tính của PivotTable.',
   },
   {
     clause: 'GROUP BY',
     title: 'Gom theo mã phòng và đếm từng nhóm.',
     focus: 'GROUP BY MaPB',
     meaning: '`GROUP BY` xác định nhóm theo các cột đã chọn; hàm tổng hợp tính riêng trên các dòng thuộc mỗi nhóm.',
-    detail: '`GROUP BY` chia `45` hồ sơ thành `6` nhóm mã phòng. Câu kiểm dùng `SELECT` để hiện kích thước nhóm: `KD` có `13`, `VH` có `8` hồ sơ đang làm; chưa yêu cầu thứ tự các nhóm.',
+    detail: '`GROUP BY` chia `45` hồ sơ thành `6` nhóm mã phòng. Bảng trích hiện kích thước nhóm: `KD` có `13`, `VH` có `8` hồ sơ đang làm; chưa yêu cầu thứ tự các nhóm.',
     sql: `SELECT MaPB, COUNT(*) AS [SoHoSo]
 FROM NhanVien
 WHERE TrangThai = N'Đang làm'
@@ -169,7 +167,6 @@ GROUP BY MaPB;`,
     columns: ['MaPB', 'SoHoSo'],
     rows: [['KT', 7], ['KD', 13], ['BGD', 2], ['IT', 10], ['VH', 8], ['NS', 5]],
     total: 6,
-    excel: 'Đặt MaPB vào Rows và Count of MaNV vào Values.',
   },
   {
     clause: 'SELECT',
@@ -184,7 +181,6 @@ GROUP BY MaPB;`,
     columns: ['MaPB', 'SoHoSo'],
     rows: [['KT', 7], ['KD', 13], ['BGD', 2], ['IT', 10], ['VH', 8], ['NS', 5]],
     total: 6,
-    excel: 'Giữ nhãn phòng và chỉ tiêu đếm cần đưa vào báo cáo.',
   },
   {
     clause: 'ORDER BY',
@@ -200,7 +196,6 @@ ORDER BY [SoHoSo] DESC, MaPB ASC;`,
     columns: ['MaPB', 'SoHoSo'],
     rows: [['KD', 13], ['IT', 10], ['VH', 8], ['KT', 7], ['NS', 5], ['BGD', 2]],
     total: 6,
-    excel: 'Sắp các nhãn phòng theo chỉ tiêu Count giảm dần.',
   },
 ]} />
 

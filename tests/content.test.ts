@@ -16,8 +16,6 @@ const LEGACY_LAYOUT_SLUGS = new Set([
 
 // Frozen migration list: lessons with a query keep the old subsections until each one is edited; remove a lesson when it moves to two.
 const PENDING_TWO_SUBSECTIONS = new Set([
-  '2-5-null-o-trong', '2-6-distinct-bo-dong-trung',
-  '2-7-ham-chuoi-tieng-viet', '2-8-ham-ngay-tham-nien', '2-9-case-when-ham-if',
   '3-1-count-sum-avg', '3-2-group-by-pivottable', '3-3-having-loc-sau-khi-gop',
   '3-4-inner-join-vlookup', '3-5-left-join', '3-6-ket-nhieu-bang',
   '3-7-self-join-quan-ly', '3-8-union-gop-danh-sach', '3-9-subquery',
@@ -424,8 +422,8 @@ describe('fixes from the final review', () => {
     }
   });
   it('2.5 replaces a varchar NULL with COALESCE so Vietnamese text keeps its accents', () => {
-    expect(body('2-5-null-o-trong')).not.toContain('ISNULL(Email');
-    expect(body('2-5-null-o-trong')).toContain("COALESCE(Email, N'(chưa có)')");
+    expect(lessonMainSection(body('2-5-null-o-trong'))).not.toContain('ISNULL(Email');
+    expect(lessonMainSection(body('2-5-null-o-trong'))).toContain("COALESCE(Email, N'(chưa có)')");
   });
   it('3.5 run-order text gets the row arithmetic and the general rules right', () => {
     const b = body('3-5-left-join');

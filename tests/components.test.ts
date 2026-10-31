@@ -31,6 +31,7 @@ it('RunFlow gives UNION two independent inputs instead of an arrow from one inpu
   expect(html).toContain('grid-row: 1; grid-column: 1;');
   expect(html).toContain('grid-row: 1; grid-column: 2;');
   expect(html.match(/class="rf-panel"/g)).toHaveLength(4);
+  expect([...html.matchAll(/class="rf-in-from"[^>]*>([^<]+)</g)].map(m => m[1])).toEqual(['Từ bước 01, SELECT', 'Từ bước 02, SELECT']);
 });
 
 it('Result shows NULL cells in the SSMS style and says how many rows were trimmed', async () => {
@@ -110,7 +111,45 @@ it('RunFlow numbers the steps, counts rows and previews 3 rows by 3 columns', as
   expect([...html.matchAll(/class="rf-count"[^>]*>(có|còn) /g)].map(m => m[1])).toEqual(['có', 'còn', 'còn', 'còn', 'còn']);
   expect(html).toMatch(/<span class="rf-mini"[^>]*>(?:(?!<\/button>)[\s\S])*res-null/);
   expect((html.match(/class="rf-panel"/g) ?? []).length).toBe(5);
-  for (const s of ['Bước trước', 'Bước sau', 'Trích 10 dòng (kết quả có 57 dòng)', 'Câu lệnh để xem dữ liệu ở bước này', 'Sao chép', 'Ở bước này']) expect(html).toContain(s);
+  for (const s of ['Bước trước', 'Bước sau', 'Trích 10 dòng (kết quả có 57 dòng)', 'Đầu vào', 'Thực hiện', 'Kết quả', 'từ bước', 'không nhận dữ liệu từ bước nào']) expect(html).toContain(s);
+  for (const s of ['Câu lệnh để xem dữ liệu ở bước này', 'Ở bước này', 'Liên hệ Excel']) expect(html).not.toContain(s);
+});
+it('RunFlow shows what each condition did to the rows of the step before', async () => {
+  const f = sampleFlow();
+  const [kept, dropped] = ['NV001', 'NV003'];
+  const checks = { conditions: ['IS NULL'], rows: [[kept, true], [dropped, false]] as [string, boolean][], totals: [f[2].total!, f[2].total!] };
+  const steps = [f[0], f[1], { ...f[2], rows: [[kept, 'Người 1', null], ['NV002', 'Người 2', null]], input: 'Thêm `HopDong` vào đầu vào.', checks }, f[3], f[4]];
+  const html = await c.renderToString(RunFlow, { props: { query: sampleQuery(), steps } });
+  const table = html.match(/<table class="rf-tb rf-check"[\s\S]*?<\/table>/)![0];
+  for (const s of ['IS NULL', 'Kết luận', kept, dropped, 'Đúng', 'Sai', 'Giữ', 'Loại', `Cả ${f[1].total} dòng`]) expect(table).toContain(s);
+  expect(html).toContain('Thêm <code');
+  expect(html).toContain('aria-label="Đầu vào từ bước LEFT JOIN"');
+  expect(html).toContain('aria-label="Bảng soi từng điều kiện"');
+  expect(html).toContain(`Trích 2 trong ${f[1].total} dòng; hàng cuối đếm trên cả ${f[1].total} dòng.`);
+});
+it('RunFlow shows UNKNOWN on a filter and the branches of a CASE', async () => {
+  const f = sampleFlow();
+  const filter = { conditions: ['IS NULL'], rows: [['NV001', true], ['NV002', true], ['NV003', null]] as [string, ...(boolean | null)[]][], totals: [2, 2] };
+  const kept = [['NV001', 'Người 1', null], ['NV002', 'Người 2', null]];
+  const filtered = await c.renderToString(RunFlow, { props: { query: sampleQuery(), steps: [f[0], f[1], { ...f[2], rows: kept, checks: filter }, f[3], f[4]] } });
+  expect(filtered.match(/<table class="rf-tb rf-check"[\s\S]*?<\/table>/)![0]).toContain('UNKNOWN');
+  const branches = { conditions: ['x'], rows: [['NV047', true], ['NV048', false]] as [string, ...(boolean | null)[]][], totals: [1, 1], labels: ['A', 'B'] };
+  const select = { ...f[3], columns: ['MaNV', 'Nhãn'], rows: [['NV047', 'A'], ['NV048', 'B']], total: 2, checks: branches };
+  const html = await c.renderToString(RunFlow, { props: { query: sampleQuery(), steps: [f[0], f[1], { ...f[2], rows: [['NV047', 'a', null], ['NV048', 'b', null]] }, select, f[4]] } });
+  const table = html.match(/<table class="rf-tb rf-check"[\s\S]*?<\/table>/)![0];
+  expect(table).toContain('aria-label="Bảng soi từng nhánh"');
+  expect(table).toContain('Nhãn');
+  expect(table).not.toContain('Kết luận');
+  expect(table).not.toContain('Giữ');
+});
+it('RunFlow says so when the step before left no rows', async () => {
+  const f = sampleFlow();
+  f[2] = { ...f[2], rows: [], total: 0 };
+  expect(await c.renderToString(RunFlow, { props: { query: sampleQuery(), steps: f } })).toContain('Bước trước không còn dòng nào.');
+});
+it('RunFlow speaks the same count word on the first step as its card shows', async () => {
+  const html = await c.renderToString(RunFlow, { props: { query: sampleQuery(), steps: sampleFlow() } });
+  expect(html).toMatch(/aria-label="Bước 01, FROM: [^"]*Có 48 dòng\."/);
 });
 it("RunFlow highlights the step's lines in the full query and boxes SQL words in the explanation", async () => {
   const html = await c.renderToString(RunFlow, { props: { query: sampleQuery(), steps: sampleFlow() } });

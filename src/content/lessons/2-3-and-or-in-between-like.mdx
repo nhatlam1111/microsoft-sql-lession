@@ -80,25 +80,27 @@ WHERE MaPB IN ('KD', 'IT')
     clause: 'FROM',
     title: 'Xác định bảng NhanVien làm nguồn.',
     focus: 'FROM NhanVien',
-    meaning: '`FROM` xác định bảng nguồn cho các cột cần lọc và hiển thị.',
-    detail: 'Có `48` hồ sơ, đủ `12` cột; hình trích `NV003`, `NV030`, `NV043` để đối chiếu bước lọc tiếp theo.',
+    input: "Bảng `NhanVien` trong database.",
+    meaning: "`FROM` chọn bảng này làm nguồn, chưa lọc dòng, chưa chọn cột.",
+    detail: "`48` hồ sơ, `12` cột. Hình trích bốn hồ sơ để đối chiếu ở bước sau.",
     sql: `SELECT * FROM NhanVien;`,
     columns: ['MaNV', 'HoTen', 'GioiTinh', 'NgaySinh', 'SoCCCD', 'Email', 'NgayVaoLam', 'NgayNghiViec', 'MaPB', 'MaCD', 'MaQuanLy', 'TrangThai'],
     rows: [
+      ['NV002', 'Lê Văn Hùng', 'Nam', '1988-09-03', '000088139295', 'hung.lv@hrmdemo.vn', '2024-04-01', null, 'KD', 'CVC', 'NV006', 'Đang làm'],
       ['NV003', 'Nguyễn Thu Hà', 'Nữ', '1995-01-25', '000195147214', 'ha.nt@hrmdemo.vn', '2023-06-01', null, 'KD', 'CV', 'NV006', 'Đang làm'],
       ['NV030', 'Nghiêm Thị Hoa', 'Nữ', '1999-07-15', '000199361027', 'hoa.nt@hrmdemo.vn', '2023-04-03', null, 'NS', 'CV', 'NV010', 'Đang làm'],
       ['NV043', 'Đàm Văn Khánh', 'Nam', '1997-11-02', '000097463974', 'khanh.dv@hrmdemo.vn', '2023-02-06', null, 'IT', 'CV', 'NV007', 'Đang làm'],
     ],
     total: 48,
     preview: ['MaNV', 'MaPB', 'NgayVaoLam'],
-    excel: 'Mở sheet nguồn trước khi áp dụng các bộ lọc.',
   },
   {
     clause: 'WHERE',
     title: 'Giữ hồ sơ qua cả nhóm phòng và khoảng ngày.',
     focus: "WHERE MaPB IN ('KD', 'IT')\n\tAND NgayVaoLam BETWEEN '20230101' AND '20230630'",
-    meaning: '`WHERE` chỉ giữ hồ sơ khi toàn bộ điều kiện đúng: phòng thuộc danh sách `IN` và ngày trong khoảng `BETWEEN`.',
-    detail: 'Còn `2` hồ sơ, vẫn đủ `12` cột. `NV003`, `NV043` được giữ; `NV030` bị loại vì mã phòng là `NS`.',
+    meaning: "`WHERE` xét từng hồ sơ, `AND` yêu cầu cả hai điều kiện cùng đúng.",
+    detail: "Còn `2` hồ sơ `NV003`, `NV043`, vẫn đủ `12` cột.",
+    checks: { conditions: ["MaPB IN (…)", "NgayVaoLam BETWEEN …"], rows: [["NV002", true, false], ["NV003", true, true], ["NV030", false, true], ["NV043", true, true]], totals: [24, 3, 2] },
     sql: `SELECT * FROM NhanVien
 WHERE MaPB IN ('KD', 'IT')
 \tAND NgayVaoLam BETWEEN '20230101' AND '20230630';`,
@@ -109,14 +111,14 @@ WHERE MaPB IN ('KD', 'IT')
     ],
     total: 2,
     preview: ['MaNV', 'MaPB', 'NgayVaoLam'],
-    excel: 'Chọn KD hoặc IT tại MaPB, đồng thời lọc NgayVaoLam trong sáu tháng đầu năm 2023.',
   },
   {
     clause: 'SELECT',
     title: 'Lấy bốn cột và đặt tiêu đề tiếng Việt.',
     focus: "SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],\n\tMaPB AS [Mã phòng], NgayVaoLam AS [Ngày vào làm]",
-    meaning: '`SELECT` chọn cột từ những hồ sơ đã qua điều kiện; `AS` đặt tiêu đề trong kết quả.',
-    detail: 'Vẫn `2` hồ sơ, còn `4` cột với tiêu đề tiếng Việt: đây là danh sách chị Hạnh cần.',
+    inputColumns: ["MaNV", "HoTen", "MaPB", "NgayVaoLam"],
+    meaning: "`SELECT` chọn bốn cột, bỏ các cột còn lại. `AS` đặt tiêu đề tiếng Việt.",
+    detail: "Vẫn `2` hồ sơ, còn `4` cột: đây là danh sách chị Hạnh cần.",
     sql: `SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
 \tMaPB AS [Mã phòng], NgayVaoLam AS [Ngày vào làm]
 FROM NhanVien
@@ -128,7 +130,6 @@ WHERE MaPB IN ('KD', 'IT')
       ['NV043', 'Đàm Văn Khánh', 'IT', '2023-02-06'],
     ],
     total: 2,
-    excel: 'Chép bốn cột cần dùng và sửa dòng tiêu đề.',
   },
 ]} />
 

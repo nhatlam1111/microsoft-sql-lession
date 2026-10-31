@@ -153,7 +153,7 @@ Chị Hạnh nhận `48` dòng; hình trích `10` dòng đầu. Dòng `NV004` đ
 
 ### SQL Server chạy câu này thế nào
 
-Theo **thứ tự logic**, lấy vai trò nhân viên, tìm hồ sơ quản lý, chọn cột rồi sắp xếp. Mỗi bảng chi tiết trích tối đa `10` dòng bằng một câu `SELECT` riêng; thứ tự trước `ORDER BY` có thể khác hình. Sơ đồ không mô tả thứ tự đọc vật lý.
+Theo **thứ tự logic**, lấy vai trò nhân viên, tìm hồ sơ quản lý, chọn cột rồi sắp xếp. Mỗi bảng chi tiết trích tối đa `10` dòng; thứ tự trước `ORDER BY` có thể khác hình. Sơ đồ không mô tả thứ tự đọc vật lý.
 
 <RunFlow query={`SELECT nv.MaNV, nv.HoTen, nv.MaQuanLy,
 \tql.HoTen AS [QuanLyTrucTiep]

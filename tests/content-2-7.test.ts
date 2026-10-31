@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { runInNewContext } from 'node:vm';
 import { parse } from 'yaml';
-import { readLessonFiles } from './helpers/lessons';
+import { readLessonFiles, lessonMainSection } from './helpers/lessons';
 
 const slug = '2-7-ham-chuoi-tieng-viet';
 const value = <T>(source: string): T => JSON.parse(JSON.stringify(runInNewContext(`(${source})`)));
@@ -29,7 +29,7 @@ describe('2.7 string projections preserve identity and source values', () => {
     const steps = value<{ clause: string; columns: string[]; rows: unknown[][]; total: number }[]>(flow![2]);
     const source = people();
     const itPeople = source.filter(p => p.MaPB === 'IT');
-    const expected = itPeople.map(p => [p.MaNV, `${p.MaNV} - ${p.HoTen}`]);
+    const expected = itPeople.map(p => [p.MaNV, `${p.MaNV!.slice(-3)} - ${p.HoTen!.toUpperCase()}`, p.HoTen!.length]);
     expect(itPeople.map(p => p.MaNV)).toEqual([
       'NV007', 'NV011', 'NV017', 'NV021', 'NV029', 'NV035', 'NV039', 'NV043', 'NV046', 'NV048',
     ]);
@@ -53,12 +53,14 @@ describe('2.7 string projections preserve identity and source values', () => {
     expect(results.some(m => JSON.stringify(value(m[2])) === JSON.stringify(expected))).toBe(true);
   });
 
-  it('keeps illustrative slicing, trailing-space length and NULL concatenation outputs exact', () => {
-    const results = [...lesson().body.matchAll(/<Result columns=\{(\[[\s\S]*?\])\} rows=\{(\[[\s\S]*?\])\}[^>]*\/>/g)]
-      .map(m => value<unknown[][]>(m[2]));
-    expect(results).toContainEqual([['NV', '007', '007', 5, 5]]);
-    expect(results).toContainEqual([['Kế  toán', 8, 'KẾ TOÁN', 'it', '[]']]);
-    expect(results).toContainEqual([['NV003', 'Nguyễn Thu Hà']]);
+  it('teaches what the exercises and lesson 4.6 need, on values of the scenario', () => {
+    const main = lessonMainSection(lesson().body);
+    for (const term of ['LEFT(MaNV, 2)', 'SUBSTRING(MaNV, 3, 3)', 'TRIM(HoTen)', 'LOWER(HoTen)', 'COLLATE Latin1_General_CI_AI', "CONCAT(N'[', NULL, N']')"]) {
+      expect(main).toContain(term);
+    }
+    // Vietnamese_CI_AI keeps Đ and Â as separate letters, so it does not search without marks.
+    expect(main).not.toContain('Vietnamese_CI_AI');
+    expect(lesson().body).toContain("`N'dang%'` không ra `Đặng Quốc Bảo`");
   });
 
   it('provides three distinct ordered query exercises, including a preserved source NULL', () => {
@@ -79,7 +81,7 @@ describe('2.7 string projections preserve identity and source values', () => {
       expect(lesson().body.replace(/\s+/g, ' ')).not.toContain(e.answer.replace(/\s+/g, ' ').trim());
     }
     expect(file.exercises[0].answer).toMatch(/LEFT\(MaNV, 2\)[\s\S]*SUBSTRING\(MaNV, 3, 3\)[\s\S]*MaPB = 'KT'/);
-    expect(file.exercises[1].answer).toMatch(/LEN\(HoTen\)[\s\S]*HoTen COLLATE Vietnamese_CI_AI LIKE N'ho%'/);
+    expect(file.exercises[1].answer).toMatch(/LEN\(HoTen\)[\s\S]*HoTen COLLATE Latin1_General_CI_AI LIKE N'ho%'/);
     expect(file.exercises[2].answer).toMatch(/MaNV, Email, CONCAT\(N'\[', UPPER\(Email\), N'\]'\)[\s\S]*MaPB = 'VH'/);
     const source = people();
     expect(source.filter(p => p.MaPB === 'KT')).toHaveLength(7);

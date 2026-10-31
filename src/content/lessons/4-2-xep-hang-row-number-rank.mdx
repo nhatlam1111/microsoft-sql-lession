@@ -202,7 +202,7 @@ ORDER BY xh.MaNV ASC;`} steps={[
     "title": "Giữ số thứ tự 1",
     "focus": "WHERE xh.SoThuTu = 1",
     "meaning": "`WHERE` ngoài lọc cột số thứ tự đã được CTE tính.",
-    "detail": "Mỗi mã có hợp đồng trong phạm vi giữ một dòng: `46` dòng. Câu kiểm vẫn hiện số thứ tự để kiểm điều kiện.",
+    "detail": "Mỗi mã có hợp đồng trong phạm vi giữ một dòng: `46` dòng. Bảng trích vẫn hiện số thứ tự để kiểm điều kiện.",
     "sql": "WITH XepHopDong AS (\n\tSELECT MaNV, MaHD, NgayBatDau,\n\t\tROW_NUMBER() OVER (\n\t\t\tPARTITION BY MaNV\n\t\t\tORDER BY NgayBatDau DESC, MaHD DESC\n\t\t) AS [SoThuTu]\n\tFROM HopDong\n\tWHERE NgayBatDau <= '20261021'\n)\nSELECT xh.MaNV, xh.MaHD, xh.NgayBatDau, xh.SoThuTu\nFROM XepHopDong AS xh\nWHERE xh.SoThuTu = 1\nORDER BY xh.MaNV ASC;",
     "columns": [
       "MaNV",

@@ -5,7 +5,7 @@ exercises:
     summary: Từ ngày chốt, tìm tháng kế tiếp rồi lọc theo tháng sinh.
     prompt: >-
       Ngày chốt là 21/10/2026. Trong NhanVien, lấy mọi hồ sơ có tháng sinh
-      trùng tháng của ngày cách ngày chốt một tháng, bất kể năm sinh,
+      trùng tháng của ngày sau ngày chốt một tháng, bất kể năm sinh,
       phòng hay trạng thái. Chỉ xét tháng, không xét sinh nhật đã qua hay chưa.
       Dùng DATEADD và MONTH với ngày chốt cố định, không dùng GETDATE.
       Trả về đúng ba cột theo thứ tự: MaNV, HoTen, NgaySinh.
