@@ -1,13 +1,21 @@
 export type FlowCell = string | number | null;
 
-/** How a filtering step treated some rows of its input, one condition per column. Rows joined by AND: all true means kept. */
+/** Whether a condition holds; null is UNKNOWN on a filter and a branch not reached in a CASE. */
+export type CheckCell = boolean | null;
+
+/**
+ * How a step treated some rows of its input, one condition per column.
+ * On a filter, conditions join by AND: all true means kept. With `labels` it is a CASE: each row stops at its first true branch.
+ */
 export interface FlowChecks {
-  /** Header per condition, such as "IN" or "BETWEEN". */
+  /** Header per condition, naming its column. */
   conditions: string[];
-  /** One row per record: its key from the input's first column, then whether each condition holds. */
-  rows: [string, ...boolean[]][];
-  /** Input rows meeting each condition, then the rows kept. */
+  /** One row per record: its key from the input's first column, then each condition. */
+  rows: [string, ...CheckCell[]][];
+  /** Input rows meeting each condition, then the rows kept; with `labels`, rows stopping at each branch, then at ELSE. */
   totals: number[];
+  /** The label each row ends with, in row order. */
+  labels?: string[];
 }
 
 /** One step of a run-order diagram, as written in a lesson file. */
@@ -77,29 +85,47 @@ export function inputSteps(steps: FlowStep[]): FlowStep[][] {
   });
 }
 
-export const checkKept = ([, ...results]: [string, ...boolean[]]): boolean => results.every(Boolean);
+export const checkKept = ([, ...results]: [string, ...CheckCell[]]): boolean => results.every(r => r === true);
+
+export function checkCellText(cell: CheckCell, branches: boolean): string {
+  if (cell === null) return branches ? 'Không xét' : 'UNKNOWN';
+  return cell ? 'Đúng' : 'Sai';
+}
 
 /** Says the check table is an excerpt and what its last row counts. */
 export function checkNote(checks: FlowChecks, source: number): string {
+  const excerpt = `Trích ${checks.rows.length} trong ${source} dòng`;
+  if (checks.labels) return `${excerpt}; hàng cuối đếm số dòng dừng ở từng nhánh.`;
   const counted = checks.conditions.length > 1 ? 'đếm riêng từng điều kiện' : 'đếm';
-  return `Trích ${checks.rows.length} trong ${source} dòng; hàng cuối ${counted} trên cả ${source} dòng.`;
+  return `${excerpt}; hàng cuối ${counted} trên cả ${source} dòng.`;
 }
 
 function checkTable(step: FlowStep, inputs: FlowStep[]): string[] {
   if (inputs.length === 0) return ['bảng soi cần bước trước'];
-  const { conditions, rows, totals } = step.checks!;
+  const { conditions, rows, totals, labels } = step.checks!;
   const problems: string[] = [];
   const width = conditions.length + 1;
+  const count = rowCount(step);
   if (totals.length !== width) problems.push(`bảng soi cần ${width} số tổng, đang có ${totals.length}`);
-  else if (totals[width - 1] !== rowCount(step)) problems.push(`bảng soi giữ ${totals[width - 1]} dòng, bước có ${rowCount(step)} dòng`);
-  else if (totals.slice(0, -1).some(n => n < rowCount(step))) problems.push('bảng soi có số đúng nhỏ hơn số giữ');
+  else if (labels) {
+    const counted = totals.reduce((sum, n) => sum + n, 0);
+    if (counted !== count) problems.push(`bảng nhánh đếm ${counted} dòng, bước có ${count} dòng`);
+  } else if (totals[width - 1] !== count) problems.push(`bảng soi giữ ${totals[width - 1]} dòng, bước có ${count} dòng`);
+  else if (totals.slice(0, -1).some(n => n < count)) problems.push('bảng soi có số đúng nhỏ hơn số giữ');
+  if (labels && labels.length !== rows.length) problems.push(`bảng nhánh có ${labels.length} nhãn cho ${rows.length} hàng`);
   const inInput = new Set(inputs.flatMap(s => s.rows.slice(0, INPUT_ROWS).map(r => r[0])));
   const inResult = new Set(step.rows.map(r => r[0]));
   rows.forEach((row, r) => {
     if (row.length !== width) { problems.push(`bảng soi dòng ${r + 1} có ${row.length} ô, cần ${width}`); return; }
-    const [key] = row;
+    const [key, ...cells] = row;
     if (!inInput.has(key)) problems.push(`bảng soi có ${key} nhưng ${key} không nằm trong đầu vào`);
-    else if (checkKept(row) && !inResult.has(key)) problems.push(`${key} được giữ nhưng không có trong kết quả của bước`);
+    else if (labels) {
+      const stop = cells.indexOf(true);
+      const reached = stop < 0 ? cells.length : stop;
+      if (cells.some((c, i) => (i < reached ? c !== false : i > reached && c !== null))) problems.push(`${key}: nhánh trước nhánh đúng phải là false, sau nhánh đúng phải là null`);
+      const shown = step.rows.find(s => s[0] === key);
+      if (shown && labels[r] !== undefined && !shown.includes(labels[r])) problems.push(`${key} có nhãn ${labels[r]} khác kết quả của bước`);
+    } else if (checkKept(row) && !inResult.has(key)) problems.push(`${key} được giữ nhưng không có trong kết quả của bước`);
     else if (!checkKept(row) && inResult.has(key)) problems.push(`${key} bị loại nhưng vẫn có trong kết quả của bước`);
   });
   return problems;

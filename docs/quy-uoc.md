@@ -79,7 +79,8 @@ Mọi quy ước khi viết bài, review bài và làm việc với database c�
 - Bấm vào một bước, học viên chỉ đọc ba phần: **Đầu vào**, **Thực hiện**, **Kết quả**. Drawer không có liên hệ Excel hay câu lệnh xem dữ liệu; `sql` của bước là bằng chứng để chạy lại, không hiện trên trang.
 - **Đầu vào** tự lấy từ bước trước, tối đa 5 dòng. Bước đầu có `input` nêu bảng gốc. Đầu vào phải đủ để hiểu bước đang xét: bước lọc thấy cột của điều kiện, bước `SELECT` thấy cột sắp lấy, bước sắp xếp thấy cột đang sắp; dùng `inputColumns` khi cần. Chọn dòng trích sao cho thấy được điều bước sau làm: hồ sơ bị loại, dòng trùng, thứ tự cần đổi.
 - **Thực hiện** bắt đầu từ từ khóa, nói việc bước đó làm với các dòng của tình huống. **Kết quả** nói số dòng, số cột và danh sách cần. Hai phần không lặp nhau, không chép lại điều bảng đã cho thấy. Bước `FROM` gọn: Đầu vào nêu bảng, Thực hiện nói chưa lọc, chưa chọn cột, Kết quả nêu số.
-- Bước `WHERE` có `checks` soi từng hồ sơ qua từng điều kiện, vì `WHERE` xét mọi điều kiện trên mỗi dòng, không lọc nhiều lượt. Tiêu đề điều kiện có tên cột, như `NgayNghiViec IS NULL`. Bảng có cả hồ sơ giữ và hồ sơ loại, mã hồ sơ nằm trong các dòng đang hiện ở Đầu vào.
+- Bước `WHERE` có `checks` soi từng hồ sơ qua từng điều kiện, vì `WHERE` xét mọi điều kiện trên mỗi dòng, không lọc nhiều lượt. Tiêu đề điều kiện có tên cột, như `NgayNghiViec IS NULL`. Bảng có cả hồ sơ giữ và hồ sơ loại, mã hồ sơ nằm trong các dòng đang hiện ở Đầu vào. Ô so với `NULL` ghi `UNKNOWN`, không ghi Sai.
+- Bước `SELECT` có `CASE` dùng bảng nhánh: mỗi `WHEN` một cột, cột cuối là nhãn, ô sau nhánh đúng ghi `Không xét`, vì `CASE` dừng ở nhánh đúng đầu tiên. Bảng có đủ một hồ sơ dừng ở mỗi nhánh và một hồ sơ vào `ELSE`.
 - Lời các bước đi theo yêu cầu của tình huống, bước cuối là kết quả chị Hạnh cần. Các bài chưa chuyển bố cục được viết lại lời khi đến lượt.
 
 ## 3. Số liệu và hình

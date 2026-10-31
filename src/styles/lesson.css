@@ -244,6 +244,8 @@
 .rf-tb .rf-gone { background: #FDF0EF; }
 .rf-tb .rf-yes { color: #16794C; font-weight: 700; }
 .rf-tb .rf-no { color: #B42318; font-weight: 700; }
+.rf-tb .rf-skip { color: var(--ink-3); }
+.rf-check td { white-space: normal; }
 .rf-in-from { margin-top: 10px; font-size: 13px; font-weight: 600; color: var(--ink-2); }
 .rf-in-note { margin-top: 4px; font-size: 12px; color: var(--ink-3); }
 .rf-d-text { margin-top: 6px; font-family: var(--font-read); font-size: 15.5px; line-height: 1.7; }

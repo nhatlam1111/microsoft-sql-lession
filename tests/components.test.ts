@@ -127,6 +127,21 @@ it('RunFlow shows what each condition did to the rows of the step before', async
   expect(html).toContain('aria-label="Bảng soi từng điều kiện"');
   expect(html).toContain(`Trích 2 trong ${f[1].total} dòng; hàng cuối đếm trên cả ${f[1].total} dòng.`);
 });
+it('RunFlow shows UNKNOWN on a filter and the branches of a CASE', async () => {
+  const f = sampleFlow();
+  const filter = { conditions: ['IS NULL'], rows: [['NV001', true], ['NV002', true], ['NV003', null]] as [string, ...(boolean | null)[]][], totals: [2, 2] };
+  const kept = [['NV001', 'Người 1', null], ['NV002', 'Người 2', null]];
+  const filtered = await c.renderToString(RunFlow, { props: { query: sampleQuery(), steps: [f[0], f[1], { ...f[2], rows: kept, checks: filter }, f[3], f[4]] } });
+  expect(filtered.match(/<table class="rf-tb rf-check"[\s\S]*?<\/table>/)![0]).toContain('UNKNOWN');
+  const branches = { conditions: ['x'], rows: [['NV047', true], ['NV048', false]] as [string, ...(boolean | null)[]][], totals: [1, 1], labels: ['A', 'B'] };
+  const select = { ...f[3], columns: ['MaNV', 'Nhãn'], rows: [['NV047', 'A'], ['NV048', 'B']], total: 2, checks: branches };
+  const html = await c.renderToString(RunFlow, { props: { query: sampleQuery(), steps: [f[0], f[1], { ...f[2], rows: [['NV047', 'a', null], ['NV048', 'b', null]] }, select, f[4]] } });
+  const table = html.match(/<table class="rf-tb rf-check"[\s\S]*?<\/table>/)![0];
+  expect(table).toContain('aria-label="Bảng soi từng nhánh"');
+  expect(table).toContain('Nhãn');
+  expect(table).not.toContain('Kết luận');
+  expect(table).not.toContain('Giữ');
+});
 it('RunFlow says so when the step before left no rows', async () => {
   const f = sampleFlow();
   f[2] = { ...f[2], rows: [], total: 0 };

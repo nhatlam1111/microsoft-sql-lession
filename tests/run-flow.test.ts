@@ -1,5 +1,5 @@
 import { it, expect } from 'vitest';
-import { clauseRank, checkFlow, snakeLayout, previewOf, splitFocus, inlineCode, arrowMove, inputSteps, isUnionFlow, excerptNote, checkKept, inputPreview, checkNote } from '../src/lib/run-flow';
+import { clauseRank, checkFlow, snakeLayout, previewOf, splitFocus, inlineCode, arrowMove, inputSteps, isUnionFlow, excerptNote, checkKept, inputPreview, checkNote, checkCellText } from '../src/lib/run-flow';
 import { sampleFlow, sampleQuery } from './helpers/flows';
 import { unionFlow, unionQuery } from './helpers/union-flow';
 
@@ -107,6 +107,28 @@ it('says the check table is an excerpt and what its last row counts', () => {
 it('keeps a row in the check table only when every condition holds', () => {
   expect(checkKept(['NV003', true, true])).toBe(true);
   expect(checkKept(['NV002', true, false])).toBe(false);
+  expect(checkKept(['HD2015-001', null, null])).toBe(false);
+});
+it('names a missing cell UNKNOWN on a filter and not reached in a CASE', () => {
+  expect([true, false, null].map(c => checkCellText(c, false))).toEqual(['Đúng', 'Sai', 'UNKNOWN']);
+  expect([true, false, null].map(c => checkCellText(c, true))).toEqual(['Đúng', 'Sai', 'Không xét']);
+});
+it('says what the last row of a branch table counts', () => {
+  const checks = { conditions: ['3 năm', '1 năm'], rows: [['NV003', true, null], ['NV045', false, false]] as [string, ...(boolean | null)[]][], totals: [33, 8, 4], labels: ['a', 'b'] };
+  expect(checkNote(checks, 45)).toBe('Trích 2 trong 45 dòng; hàng cuối đếm số dòng dừng ở từng nhánh.');
+});
+it('stops a branch table whose rows, labels or totals do not match the step', () => {
+  const f = sampleFlow();
+  const step = { ...f[3], columns: ['MaNV', 'Nhãn'], rows: [['NV047', 'A'], ['NV048', 'B']], total: 2 };
+  const input = { ...f[2], rows: [['NV047', 'Người 47', null], ['NV048', 'Người 48', null]] };
+  const flow = (checks: typeof step.checks) => checkFlow([f[0], f[1], input, { ...step, checks }], sampleQuery());
+  const good = { conditions: ['x', 'y'], rows: [['NV047', true, null], ['NV048', false, true]] as [string, ...(boolean | null)[]][], totals: [1, 1, 0], labels: ['A', 'B'] };
+  expect(flow(good)).toEqual([]);
+  expect(flow({ ...good, totals: [1, 1, 1] })[0]).toMatch(/^bước 4: bảng nhánh đếm 3 dòng, bước có 2 dòng/);
+  expect(flow({ ...good, labels: ['A'] })[0]).toMatch(/^bước 4: bảng nhánh có 1 nhãn cho 2 hàng/);
+  expect(flow({ ...good, labels: ['A', 'C'] })[0]).toMatch(/^bước 4: NV048 có nhãn C khác kết quả/);
+  expect(flow({ ...good, rows: [['NV047', true, false], good.rows[1]] })[0]).toMatch(/^bước 4: NV047: nhánh/);
+  expect(flow({ ...good, rows: [good.rows[0], ['NV048', null, true]] })[0]).toMatch(/^bước 4: NV048: nhánh/);
 });
 it('stops a check table whose rows or totals do not match the step', () => {
   const f = sampleFlow();
