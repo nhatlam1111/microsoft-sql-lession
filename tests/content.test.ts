@@ -325,7 +325,7 @@ describe('fixes from the independent reviews of 2026-10-19', () => {
     for (const s of ['như địa chỉ một căn phòng', 'Developer đủ tính năng', 'bài 1.2', '1-2-sql-server']) expect(page, s).not.toContain(s);
   });
   it('1.3 keeps the three outcomes of a conversion and the limits of type validation', () => check('1-3-kieu-du-lieu',
-    ['Chuỗi rỗng', 'không dùng để cộng trừ', '`2024-01-02`', '`9610000`', '`21.3`', '`decimal(p,s)`',
+    ['Chuỗi rỗng', 'không dùng để cộng trừ', '`2024-01-02`', '`9610000`', '`decimal(p,s)`',
       '`NOT NULL`', '`nvarchar', 'Format Cells', '`2099-03-01`', 'số âm', "N'Trần Thị Mai'"],
     ['có người gõ 2024-02-01', 'giá trị trống, chưa có', 'mọi phép so sánh thành so sánh chữ', 'Bên IT nói đúng một nửa', 'một việc riêng của người quản trị', 'không lẻ giây', 'hàm ngày và `CAST` ở bài 2.8']));
   it('1.4 preserves key semantics and what a key cannot check', () => check('1-4-khoa-chinh-khoa-ngoai',
@@ -333,7 +333,7 @@ describe('fixes from the independent reviews of 2026-10-19', () => {
       'khóa chính (primary key)', 'Khóa ngoại (foreign key)', 'ràng buộc (constraint)', 'luật dữ liệu đã nói ở bài 1.1'],
     ['Đây chính là lỗi bên IT gặp', 'thay cho kiểm ở từng màn hình', 'nghỉ từ 2026-06-30', 'các hồ sơ con']));
   it('1.5 preserves the relation direction, composite-key cardinality and diagram limits without a JOIN preview', () => check('1-5-doc-so-do-erd',
-    ['chấm tròn', 'một-một', 'cả cặp', 'Từ bảng `PhongBan`', 'Từ bảng `NhanVien`', 'thuộc đúng một phòng ban',
+    ['chấm tròn', 'cả cặp', 'Từ bảng `PhongBan`', 'Từ bảng `NhanVien`', 'thuộc đúng một phòng ban',
       '`BangLuong.MaNV` → `NhanVien.MaNV`', '`NhanVien.MaPB` → `PhongBan.MaPB`', 'không tự cài/lưu sơ đồ', 'không có đường nối'],
     ['vì câu bắt đầu từ bảng lương', 'Azure SQL Database không có', 'cũng là cả khóa chính', 'nên phải xem thêm', '21 người là Chuyên viên', 'Đây là sơ đồ, cũng là sơ đồ',
       'mỗi thông tin chỉ nằm ở một chỗ', 'được khai báo đủ', 'cặp NV001 và ngày 2026-09-01', 'bài 3.4 và 3.5 sẽ học']));
@@ -354,6 +354,25 @@ describe('fixes from the independent reviews of 2026-10-19', () => {
     for (const slug of ['2-1-chon-cot-dat-ten-cot']) {
       expect(readLessonFiles().find(f => f.slug === slug)!.body, slug).toMatch(/<Excel[^>]*numeric=\{/);
     }
+  });
+});
+
+describe('foundation teaching refinements preserve conditions and progress from a familiar relation (2026-10-31)', () => {
+  const body = (slug: string) => readLessonFiles().find(f => f.slug === slug)!.body;
+  it('a total row is accepted only if it satisfies the declared rules', () => {
+    const lesson = body('1-2-bang-dong-cot');
+    expect(lesson).toMatch(/dòng tổng[^\n]*thỏa[^\n]*luật đã khai báo/);
+    expect(lesson).not.toContain('Nếu điền đủ các cột bắt buộc, database vẫn nhận');
+  });
+  it('a department for every profile requires a non-null department key as well as its foreign key', () => {
+    const main = lessonMainSection(body('1-4-khoa-chinh-khoa-ngoai'));
+    expect(main).toMatch(/`MaPB` không nhận `NULL`[^\n]*hồ sơ nào cũng tìm được phòng/);
+  });
+  it('the ERD first highlights employees and departments, then explains the longer payroll path', () => {
+    const main = lessonMainSection(body('1-5-doc-so-do-erd'));
+    expect(main).toContain("<Erd path={['NhanVien', 'PhongBan']}");
+    expect(main.indexOf("<Erd")).toBeLessThan(main.indexOf('`BangLuong.MaNV` → `NhanVien.MaNV`'));
+    expect(main).toContain('`KyLuong` và `MaNV`');
   });
 });
 

@@ -54,7 +54,7 @@ Bạn bắt đầu viết câu lệnh từ bài 2.1, trên trang bài tập củ
 
 ### Nguồn chung vẫn cần kiểm tra
 
-Người thiết kế database có thể khai báo **luật dữ liệu**, như cột ngày chỉ nhận ngày, mã như `NV005` không được trùng, phòng ban phải có trong danh mục phòng. Khi luật đang bật, SQL Server từ chối dữ liệu vi phạm khi thêm hoặc sửa theo cách thông thường. Excel cũng có Data Validation để giới hạn dữ liệu nhập, nhưng phải thiết lập trong từng file.
+Người thiết kế database có thể khai báo **luật dữ liệu**, như mã phòng phải có trong danh mục phòng. Khi luật đang bật, SQL Server từ chối dữ liệu vi phạm khi thêm hoặc sửa theo cách thông thường. Excel cũng có Data Validation để giới hạn dữ liệu nhập, nhưng phải thiết lập trong từng file.
 
 Dữ liệu qua được luật là hợp lệ, nhưng **hợp lệ chưa chắc đã đúng**. `Kinh doanh` là phòng có trong danh mục, nên ghi nhầm một nhân viên vào phòng này vẫn lưu được. Database không tự biết ai thuộc phòng nào; người được giao cập nhật phải đối chiếu giấy tờ gốc rồi sửa.
 
@@ -96,9 +96,9 @@ Database lưu dữ liệu; SQL Server là phần mềm quản lý database; SQL 
 </details>
 
 <details>
-<summary>Nguồn chung giúp giảm lệch giữa các phòng như thế nào?</summary>
+<summary>Bạn đóng SSMS rồi mở lại. Dữ liệu có mất theo cửa sổ vừa đóng không, và vì sao?</summary>
 
-Các bên cùng đọc một nguồn và thay đổi được cập nhật ở một nơi, nên giảm việc sót sửa trên các bản riêng.
+Không. SSMS là công cụ kết nối và gửi yêu cầu; dữ liệu được SQL Server quản lý ở máy chủ, không nằm trong cửa sổ SSMS.
 
 </details>
 

@@ -36,7 +36,7 @@ Bảng dưới giải thích các kiểu thường gặp; `NhanVien.MaNV` nghĩa
 | `date` | `NhanVien.NgayVaoLam`: `2024-03-01` | Ngày, không kèm giờ; dạng hiển thị do công cụ quyết định |
 | `decimal(p,s)` | `DonNghiPhep.SoNgay`: `2.0`, kiểu `decimal(4,1)` | Số có tối đa `p` chữ số, trong đó `s` chữ số sau dấu thập phân |
 
-Ví dụ, `decimal(4,1)` có tối đa ba chữ số phần nguyên và một chữ số phần lẻ, như `999.9`; `decimal(18,0)` không có phần lẻ. Khi tự viết giá trị tiếng Việt trong câu SQL, dùng `N'Trần Thị Mai'`: chữ `N` đánh dấu chuỗi Unicode, bỏ đi có thể mất dấu.
+Ví dụ, `decimal(18,0)` lưu số có tối đa `18` chữ số, không có phần lẻ. Khi tự viết giá trị tiếng Việt trong câu SQL, dùng `N'Trần Thị Mai'`: chữ `N` đánh dấu chuỗi Unicode, bỏ đi có thể mất dấu.
 
 ### Chọn kiểu theo ý nghĩa của dữ liệu
 
@@ -52,14 +52,13 @@ Khi hai giá trị khác kiểu gặp nhau, như chữ được ghi vào cột n
 
 Kiểu dữ liệu chỉ kiểm được một phần: `2099-03-01` là ngày hợp lệ nhưng có thể sai hồ sơ; cột tiền vẫn nhận số âm nếu không có luật chặn. **Lưu được chưa chắc đã đúng ý**.
 
-Ở bài này chỉ cần đọc kiểu cột, khả năng nhận `NULL` và biết chuyển kiểu có thể đổi giá trị. Chuyển kiểu ngầm gặp lại ở bài 2.2, `NULL` ở bài 2.5, Unicode ở bài 2.7, các luật khác ở bài 5.2.
+Ở bài này chỉ cần đọc kiểu cột, khả năng nhận `NULL` và biết chuyển kiểu có thể đổi giá trị. Chuyển kiểu ngầm gặp lại ở bài 2.2, `NULL` ở bài 2.5, Unicode ở bài 2.7; tính toán và làm tròn số ở bài 3.1, các luật khác ở bài 5.2.
 
 ## Hay nhầm ở đâu
 
 <Mistakes>
 
-1. **Nghĩ cột số giữ nguyên mọi chữ số.** `21.25` vào `decimal(4,1)` thành `21.3`: phần lẻ bị làm tròn mà không báo lỗi. Còn `1000.0` vượt ba chữ số phần nguyên thì bị từ chối.
-2. **Hiểu `NOT NULL` là đã nhập đầy đủ.** Chuỗi rỗng (không có ký tự nào) hoặc chuỗi toàn dấu cách vẫn có thể vào cột chữ `NOT NULL` nếu không có luật khác.
+1. **Hiểu `NOT NULL` là đã nhập đầy đủ.** Chuỗi rỗng (không có ký tự nào) hoặc chuỗi toàn dấu cách vẫn có thể vào cột chữ `NOT NULL` nếu không có luật khác.
 
 </Mistakes>
 
@@ -97,9 +96,9 @@ Cột lưu số có tối đa `18` chữ số, không có phần lẻ và không
 </details>
 
 <details>
-<summary>Chuyển kiểu ngầm là gì, và có thể dẫn tới những kết quả nào?</summary>
+<summary>Người nhập muốn ngày 1 tháng 2, gửi chữ <code>01/02/2024</code> vào cột ngày của database khóa học. Lưu được thì đã đúng ý chưa?</summary>
 
-Là việc SQL Server tự đổi giá trị sang kiểu khác, như chữ sang kiểu của cột. Kết quả có thể giữ đúng giá trị, đổi khác ý người nhập hoặc bị từ chối.
+Chưa. Chuyển kiểu ngầm trong cấu hình của database khóa học đọc tháng trước, ngày sau, nên giá trị thành `2024-01-02`, tức ngày 2 tháng 1. Đây là ngày hợp lệ nhưng khác ý người nhập.
 
 </details>
 
