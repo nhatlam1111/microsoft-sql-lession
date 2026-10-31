@@ -81,11 +81,3 @@ it('2.9 keeps the three distinct exercise scopes, column order and ordered gradi
   }
 });
 
-it('2.9 maps the TP code to a readable label without treating every other role as missing', () => {
-  const results = [...lesson().matchAll(/<Result columns=\{(\[[\s\S]*?\])\} rows=\{(\[[\s\S]*?\])\}[^>]*\/>/g)];
-  const expected = [
-    ['NV001', 'CV', 'Chức danh khác'],
-    ['NV005', 'TP', 'Trưởng phòng'],
-  ];
-  expect(results.some(m => JSON.stringify(literal(m[2])) === JSON.stringify(expected))).toBe(true);
-});

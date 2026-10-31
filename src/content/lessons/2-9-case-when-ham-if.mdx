@@ -5,7 +5,7 @@ shortTitle: CASE WHEN
 level: 2
 area: A3
 kind: full
-minutes: 22
+minutes: 18
 prerequisites:
   - "2.8"
 goal: bạn tạo được nhãn bằng CASE, chọn đúng thứ tự điều kiện và phân nhóm theo số năm làm việc đã tròn
@@ -21,7 +21,7 @@ Chị Hạnh chuẩn bị danh sách nhân sự tháng 10/2026:
 Em lấy giúp chị các hồ sơ đang làm, thêm nhóm thâm niên tính đến ngày 21/10/2026: dưới 1 năm, từ 1 đến dưới 3 năm, từ 3 năm trở lên. Chị cần mã nhân viên, họ tên, ngày vào làm và nhóm; xếp mã tăng dần nhé.
 </Chat>
 
-Giả định dữ liệu đang mở là **bản chốt**, tức bản được lưu tại ngày `2026-10-21` để đối chiếu về sau: chỉ lấy `TrangThai = N'Đang làm'` và `NgayVaoLam` không sau ngày đó. Bảng chỉ giữ trạng thái hiện tại; đổi mốc ngày trong câu lệnh không tự dựng lại danh sách đang làm ở quá khứ, muốn vậy cần bản chốt hoặc lịch sử như bài 6.6.
+Giả định dữ liệu đang mở là **bản chốt**, tức bản được lưu tại ngày `2026-10-21` để đối chiếu về sau: chỉ lấy `TrangThai` bằng `Đang làm` và `NgayVaoLam` không sau ngày đó. Bảng chỉ giữ trạng thái hiện tại; đổi mốc ngày trong câu lệnh không tự dựng lại danh sách đang làm ở quá khứ, muốn vậy cần bản chốt hoặc lịch sử như bài 6.6.
 
 <Key>Mỗi hồ sơ trong phạm vi cần một nhãn dựa trên số năm làm việc đã tròn.</Key>
 
@@ -29,7 +29,7 @@ Giả định dữ liệu đang mở là **bản chốt**, tức bản được 
 
 ### Từ IF trong Excel đến biểu thức CASE
 
-Trong Excel, bạn có thể thêm cột nhóm bằng **IF lồng nhau** hoặc **IFS**: thử điều kiện, rồi trả nhãn tương ứng. Hình minh họa ba hồ sơ được chọn từ bộ mẫu; ô `C2` được đánh dấu là kết quả công thức IF so ngày kỷ niệm với ngày chốt. `EDATE(B2,36)` lấy mốc sau `36` tháng.
+Trong Excel, bạn thêm cột nhóm bằng **IF lồng nhau** hoặc **IFS**: thử điều kiện, rồi trả nhãn tương ứng. Hình minh họa ba hồ sơ được chọn từ bộ mẫu; ô `C2` được đánh dấu là kết quả công thức IF so ngày kỷ niệm với ngày chốt. `EDATE(B2,36)` lấy mốc sau `36` tháng.
 
 <Excel sheets="Minh họa cột nhóm thâm niên" cell="C2" mark={['C2']} formula={'=IF(EDATE(B2,36)<=DATE(2026,10,21),"Từ 3 năm trở lên",IF(EDATE(B2,12)<=DATE(2026,10,21),"Từ 1 đến dưới 3 năm","Dưới 1 năm"))'} numeric={['B2', 'B3', 'B4']} rows={[
   ['MaNV', 'NgayVaoLam', 'NhomThamNien'],
@@ -38,49 +38,7 @@ Trong Excel, bạn có thể thêm cột nhóm bằng **IF lồng nhau** hoặc 
   ['NV045', '2026-07-01', 'Dưới 1 năm'],
 ]} />
 
-Trong SQL Server, **`CASE` là một biểu thức**: một đoạn tính toán trả về một giá trị. Dạng **`CASE WHEN`** thử điều kiện ở từng nhánh `WHEN`, trả giá trị sau `THEN` của nhánh phù hợp và kết thúc bằng `END`. Đặt nó trong `SELECT` tạo một cột kết quả cho mỗi dòng; `AS` đặt tên cột đó.
-
-`CASE` chọn giá trị giống IF trong công thức Excel. Nó cũng không thay `WHERE`: tạo nhãn trong `SELECT` không loại hồ sơ và không ghi nhãn vào bảng nguồn.
-
-Một ví dụ nhỏ đổi mã chức danh thành nhãn: kiểm `MaCD` bằng `TP`, rồi trả chữ tương ứng.
-
-<Sql code={`SELECT MaNV, MaCD,
-\tCASE
-\t\tWHEN MaCD = 'TP' THEN N'Trưởng phòng'
-\t\tELSE N'Chức danh khác'
-\tEND AS [Nhãn chức danh]
-FROM NhanVien
-WHERE MaNV IN ('NV001', 'NV005')
-ORDER BY MaNV ASC;`} />
-
-<Result columns={['MaNV', 'MaCD', 'Nhãn chức danh']} rows={[
-  ['NV001', 'CV', 'Chức danh khác'],
-  ['NV005', 'TP', 'Trưởng phòng'],
-]} mark={[2]} />
-
-Dòng `NV005` được đánh dấu vì mã `TP` nhận nhãn `Trưởng phòng`. `ELSE` gộp các mã còn lại thành `Chức danh khác` trong ví dụ, không phải tên đầy đủ của từng chức danh và không có nghĩa là thiếu mã.
-
-### Chốt ranh giới và thứ tự nhánh
-
-Thâm niên ở đây tính theo **mốc kỷ niệm**, không chỉ lấy năm báo cáo trừ năm vào làm. `DATEADD(year, 3, NgayVaoLam)` cộng `3` năm vào ngày vào làm; mốc này nhỏ hơn hoặc bằng ngày chốt nghĩa là đã đủ `3` năm. Với `NV025`, ngày vào làm là `2023-11-01`, nên phải tới `2026-11-01` mới đủ `3` năm; tại `2026-10-21` vẫn thuộc nhóm `Từ 1 đến dưới 3 năm`.
-
-Đặt nhánh đã đủ `3` năm trước nhánh đã đủ `1` năm. Với các điều kiện so ngày của từng dòng như trong bài, SQL Server xét `WHEN` theo thứ tự và chọn nhánh đúng đầu tiên. `NV003` thỏa cả hai điều kiện; đảo nhánh đủ `1` năm lên trước sẽ gán nhầm vào nhóm `Từ 1 đến dưới 3 năm`.
-
-| Điều kiện được xét | Nhãn trả về trong phạm vi đã chốt |
-|---|---|
-| Đã tới mốc kỷ niệm `3` năm | `Từ 3 năm trở lên` |
-| Chưa tới mốc `3` năm nhưng đã tới mốc `1` năm | `Từ 1 đến dưới 3 năm` |
-| Hai nhánh trên đều không đúng | `Dưới 1 năm` |
-
-**`ELSE`** cung cấp giá trị khi không nhánh `WHEN` nào đúng. Ở yêu cầu này, `NgayVaoLam` có `NOT NULL` và đã lọc ngày không sau mốc chốt, nên phần còn lại chính là nhóm `Dưới 1 năm`. Đây là một nhóm nghiệp vụ có chủ đích, không phải nhãn để gom mọi dữ liệu chưa hiểu vào đó.
-
-Nếu bỏ `ELSE`, dòng không khớp nhánh nào nhận **`NULL`**. So sánh với ngày `NULL` cũng không cho kết quả đúng; trên nguồn cho phép thiếu ngày, nếu phạm vi giữ cả dòng thiếu ngày qua `WHERE`, thêm nhánh `WHEN NgayVaoLam IS NULL` trả nhãn như `Chưa rõ ngày vào làm` trước các nhánh ngày. Bộ mẫu hiện không có trường hợp thiếu này.
-
-Các nhánh trong bài cùng trả chuỗi Unicode `N'…'`, để kết quả là một cột chữ. Trộn nhãn chữ với số có thể dẫn tới chuyển kiểu ngầm hoặc lỗi, như cách chọn kiểu ở bài 1.3. Ở bài này chỉ cần tạo giá trị bằng các điều kiện của từng dòng; tổng hợp theo nhóm học ở bài 3.1–3.2, kiểm dữ liệu bất thường ở bài 4.6.
-
-### Câu lệnh cho tình huống
-
-Lọc phạm vi trước, rồi dùng hai mốc kỷ niệm để tạo cột nhóm:
+Trong SQL, **`CASE`** là một biểu thức: một đoạn tính toán trả về một giá trị cho mỗi dòng. Đặt nó trong `SELECT` thì được một cột kết quả. Với danh sách của chị Hạnh, câu lệnh là:
 
 <Sql code={`SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
 \tNgayVaoLam AS [Ngày vào làm],
@@ -93,81 +51,32 @@ FROM NhanVien
 WHERE TrangThai = N'Đang làm' AND NgayVaoLam <= '20261021'
 ORDER BY MaNV ASC;`} />
 
-<Result columns={[
-  "Mã nhân viên",
-  "Họ tên",
-  "Ngày vào làm",
-  "Nhóm thâm niên"
-]} rows={[
-  [
-    "NV001",
-    "Trần Thị Mai",
-    "2024-03-01",
-    "Từ 1 đến dưới 3 năm"
-  ],
-  [
-    "NV002",
-    "Lê Văn Hùng",
-    "2024-04-01",
-    "Từ 1 đến dưới 3 năm"
-  ],
-  [
-    "NV003",
-    "Nguyễn Thu Hà",
-    "2023-06-01",
-    "Từ 3 năm trở lên"
-  ],
-  [
-    "NV004",
-    "Hoàng Minh Tuấn",
-    "2015-01-05",
-    "Từ 3 năm trở lên"
-  ],
-  [
-    "NV005",
-    "Vũ Thị Lan",
-    "2016-03-14",
-    "Từ 3 năm trở lên"
-  ],
-  [
-    "NV006",
-    "Đặng Quốc Bảo",
-    "2016-08-01",
-    "Từ 3 năm trở lên"
-  ],
-  [
-    "NV007",
-    "Bùi Thanh Sơn",
-    "2017-02-13",
-    "Từ 3 năm trở lên"
-  ],
-  [
-    "NV008",
-    "Phan Văn Lợi",
-    "2015-09-01",
-    "Từ 3 năm trở lên"
-  ],
-  [
-    "NV009",
-    "Ngô Thị Thu Trang",
-    "2019-05-06",
-    "Từ 3 năm trở lên"
-  ],
-  [
-    "NV010",
-    "Đỗ Thị Hồng",
-    "2016-06-01",
-    "Từ 3 năm trở lên"
-  ]
-]} total={45} mark={[1, 3]} />
+Từng phần của câu:
 
-Kết quả trích `10` dòng đầu trong `45` hồ sơ đang làm đã chốt. Hai dòng đánh dấu cho thấy `NV001` thuộc nhóm `Từ 1 đến dưới 3 năm`, còn `NV003` thuộc nhóm `Từ 3 năm trở lên`. Các hồ sơ `NV045`–`NV048` nằm ở phần sau của danh sách và đều thuộc nhóm `Dưới 1 năm`.
+<LineMap rows={[
+  ['SELECT … AS …', 'Chọn ba cột và đặt tiêu đề như bài 2.1. Ví dụ: NgayVaoLam hiển thị dưới tiêu đề Ngày vào làm.'],
+  ['CASE … END AS [Nhóm thâm niên]', 'Bắt đầu bằng CASE, kết thúc bằng END; cả khối là một cột, AS đặt tiêu đề. Ví dụ: mỗi hồ sơ nhận đúng một nhãn.'],
+  ["WHEN DATEADD(year, 3, NgayVaoLam) <= '20261021'", 'WHEN nêu điều kiện của nhánh: mốc đủ 3 năm đã tới ngày chốt chưa. Ví dụ: NV003 có mốc 2026-06-01 nên đúng.'],
+  ["THEN N'Từ 3 năm trở lên'", 'THEN là giá trị trả về khi nhánh đúng. Ví dụ: NV003 nhận nhãn này.'],
+  ["WHEN DATEADD(year, 1, NgayVaoLam) <= '20261021'", 'Chỉ xét khi nhánh trên sai. Ví dụ: NV025 có mốc 3 năm là 2026-11-01 nên sai nhánh trên, đúng nhánh này.'],
+  ["ELSE N'Dưới 1 năm'", 'Giá trị khi không nhánh nào đúng. Ví dụ: NV045 vào làm 2026-07-01 nên chưa đủ 1 năm.'],
+  ["WHERE TrangThai = N'Đang làm' AND NgayVaoLam <= '20261021'", 'Giữ hồ sơ trong phạm vi như bài 2.3. Ví dụ: NV020 đã nghỉ bị loại.'],
+  ['ORDER BY MaNV ASC', 'Xếp mã tăng dần như bài 2.4. Ví dụ: NV001 đứng đầu.'],
+]} />
 
-Bạn có thể gửi chị Hạnh danh sách đủ bốn cột theo mã tăng dần. Ba nhóm là quy tắc chị đã chọn; SQL chỉ áp dụng chúng lên ngày vào làm của từng hồ sơ trong bản chốt.
+Thâm niên ở đây tính theo **mốc kỷ niệm**, không chỉ lấy năm báo cáo trừ năm vào làm: `DATEADD(year, 3, NgayVaoLam)` nhỏ hơn hoặc bằng ngày chốt nghĩa là đã đủ `3` năm, như bài 2.8. `NV025` vào làm `2023-11-01`, phải tới `2026-11-01` mới đủ, nên tại `2026-10-21` vẫn thuộc nhóm `Từ 1 đến dưới 3 năm`.
+
+Với các điều kiện so ngày của từng dòng như trong bài, SQL Server xét `WHEN` theo thứ tự và chọn nhánh đúng đầu tiên, nên đặt nhánh đủ `3` năm trước nhánh đủ `1` năm. `NV003` thỏa cả hai điều kiện; đảo thứ tự sẽ gán nhầm vào nhóm `Từ 1 đến dưới 3 năm`.
+
+**`ELSE`** cung cấp giá trị khi không nhánh `WHEN` nào đúng. Ở đây `NgayVaoLam` có `NOT NULL` và đã lọc ngày không sau mốc chốt, nên phần còn lại chính là nhóm `Dưới 1 năm`. Bỏ `ELSE` thì dòng không khớp nhánh nào nhận **`NULL`**.
+
+`CASE` chọn giá trị giống IF trong công thức Excel, không thay `WHERE`: tạo nhãn trong `SELECT` không loại hồ sơ và không ghi nhãn vào bảng nguồn. Các nhánh cùng trả chuỗi Unicode `N'…'` để kết quả là một cột chữ; trộn chữ với số có thể gây chuyển kiểu ngầm hoặc lỗi như bài 1.3.
+
+Ở bài này chỉ cần tạo giá trị bằng các điều kiện của từng dòng; tổng hợp theo nhóm học ở bài 3.1–3.2, kiểm dữ liệu bất thường ở bài 4.6.
 
 ### SQL Server chạy câu này thế nào
 
-Sơ đồ trình bày **thứ tự xử lý logic**, không phải cách đọc dữ liệu vật lý. Các bước đầu trích một nhóm hồ sơ để thấy ba người đã nghỉ bị loại; bước cuối hiển thị `10` dòng đầu sau khi sắp xếp:
+Sơ đồ là **thứ tự xử lý logic**, không phải cách SQL Server đọc dữ liệu. Bấm từng bước để thấy `48` hồ sơ còn `45`, rồi `SELECT` gán nhãn cho từng hồ sơ:
 
 <RunFlow query={`SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
 \tNgayVaoLam AS [Ngày vào làm],
@@ -183,308 +92,57 @@ ORDER BY MaNV ASC;`} steps={[
     clause: "FROM",
     title: "Lấy nguồn 48 hồ sơ.",
     focus: "FROM NhanVien",
-    meaning: "`FROM` lấy bảng nhân viên làm nguồn cho việc phân nhóm.",
-    detail: "Có `48` hồ sơ và `12` cột. Hình trích `10` hồ sơ, gồm `NV020`, `NV033`, `NV041` đã nghỉ để thấy tác dụng của bước lọc tiếp theo.",
+    input: "Bảng `NhanVien` trong database.",
+    meaning: "`FROM` chọn bảng này làm nguồn, chưa lọc dòng, chưa chọn cột.",
+    detail: "`48` hồ sơ, `12` cột, gồm `3` hồ sơ đã nghỉ. Hình trích `10` dòng.",
     sql: `SELECT * FROM NhanVien;`,
-    columns: [
-  "MaNV",
-  "HoTen",
-  "GioiTinh",
-  "NgaySinh",
-  "SoCCCD",
-  "Email",
-  "NgayVaoLam",
-  "NgayNghiViec",
-  "MaPB",
-  "MaCD",
-  "MaQuanLy",
-  "TrangThai"
-],
+    columns: ["MaNV","HoTen","GioiTinh","NgaySinh","SoCCCD","Email","NgayVaoLam","NgayNghiViec","MaPB","MaCD","MaQuanLy","TrangThai"],
     rows: [
-  [
-    "NV001",
-    "Trần Thị Mai",
-    "Nữ",
-    "1992-04-12",
-    "000192131376",
-    "mai.tt@hrmdemo.vn",
-    "2024-03-01",
-    null,
-    "KT",
-    "CV",
-    "NV005",
-    "Đang làm"
-  ],
-  [
-    "NV003",
-    "Nguyễn Thu Hà",
-    "Nữ",
-    "1995-01-25",
-    "000195147214",
-    "ha.nt@hrmdemo.vn",
-    "2023-06-01",
-    null,
-    "KD",
-    "CV",
-    "NV006",
-    "Đang làm"
-  ],
-  [
-    "NV020",
-    "Kiều Thị Hạnh",
-    "Nữ",
-    "1990-05-19",
-    "000190281837",
-    "hanh.kt@hrmdemo.vn",
-    "2019-04-01",
-    "2025-12-31",
-    "KD",
-    "CV",
-    "NV006",
-    "Đã nghỉ"
-  ],
-  [
-    "NV025",
-    "Huỳnh Văn Tài",
-    "Nam",
-    "1993-06-06",
-    "000093321432",
-    "tai.hv@hrmdemo.vn",
-    "2023-11-01",
-    null,
-    "KD",
-    "CV",
-    "NV006",
-    "Đang làm"
-  ],
-  [
-    "NV033",
-    "Khúc Văn Hải",
-    "Nam",
-    "1990-01-01",
-    "000090384784",
-    "hai.kv@hrmdemo.vn",
-    "2019-06-03",
-    "2026-06-30",
-    "VH",
-    "NV",
-    "NV008",
-    "Đã nghỉ"
-  ],
-  [
-    "NV041",
-    "Hà Văn Quý",
-    "Nam",
-    "1991-07-21",
-    "000091448136",
-    "quy.hv@hrmdemo.vn",
-    "2020-01-06",
-    "2026-08-15",
-    "VH",
-    "NV",
-    "NV008",
-    "Đã nghỉ"
-  ],
-  [
-    "NV044",
-    "Lã Thị Oanh",
-    "Nữ",
-    "1998-04-14",
-    "000198471893",
-    null,
-    "2025-08-04",
-    null,
-    "VH",
-    "NV",
-    "NV008",
-    "Đang làm"
-  ],
-  [
-    "NV045",
-    "Ung Văn Lực",
-    "Nam",
-    "2001-01-09",
-    "000201479812",
-    null,
-    "2026-07-01",
-    null,
-    "KD",
-    "NV",
-    "NV006",
-    "Đang làm"
-  ],
-  [
-    "NV047",
-    "Phạm Ngọc Ánh",
-    "Nữ",
-    "1999-02-17",
-    "000199495650",
-    "anh.pn@hrmdemo.vn",
-    "2026-10-01",
-    null,
-    "NS",
-    "CV",
-    "NV010",
-    "Đang làm"
-  ],
-  [
-    "NV048",
-    "Đỗ Minh Quân",
-    "Nam",
-    "2000-08-25",
-    "000200503569",
-    "quan.dm@hrmdemo.vn",
-    "2026-10-05",
-    null,
-    "IT",
-    "NV",
-    "NV007",
-    "Đang làm"
-  ]
-],
+      ["NV001","Trần Thị Mai","Nữ","1992-04-12","000192131376","mai.tt@hrmdemo.vn","2024-03-01",null,"KT","CV","NV005","Đang làm"],
+      ["NV003","Nguyễn Thu Hà","Nữ","1995-01-25","000195147214","ha.nt@hrmdemo.vn","2023-06-01",null,"KD","CV","NV006","Đang làm"],
+      ["NV020","Kiều Thị Hạnh","Nữ","1990-05-19","000190281837","hanh.kt@hrmdemo.vn","2019-04-01","2025-12-31","KD","CV","NV006","Đã nghỉ"],
+      ["NV025","Huỳnh Văn Tài","Nam","1993-06-06","000093321432","tai.hv@hrmdemo.vn","2023-11-01",null,"KD","CV","NV006","Đang làm"],
+      ["NV033","Khúc Văn Hải","Nam","1990-01-01","000090384784","hai.kv@hrmdemo.vn","2019-06-03","2026-06-30","VH","NV","NV008","Đã nghỉ"],
+      ["NV041","Hà Văn Quý","Nam","1991-07-21","000091448136","quy.hv@hrmdemo.vn","2020-01-06","2026-08-15","VH","NV","NV008","Đã nghỉ"],
+      ["NV044","Lã Thị Oanh","Nữ","1998-04-14","000198471893",null,"2025-08-04",null,"VH","NV","NV008","Đang làm"],
+      ["NV045","Ung Văn Lực","Nam","2001-01-09","000201479812",null,"2026-07-01",null,"KD","NV","NV006","Đang làm"],
+      ["NV047","Phạm Ngọc Ánh","Nữ","1999-02-17","000199495650","anh.pn@hrmdemo.vn","2026-10-01",null,"NS","CV","NV010","Đang làm"],
+      ["NV048","Đỗ Minh Quân","Nam","2000-08-25","000200503569","quan.dm@hrmdemo.vn","2026-10-05",null,"IT","NV","NV007","Đang làm"],
+    ],
     total: 48,
-    preview: [
-  "MaNV",
-  "NgayVaoLam",
-  "TrangThai"
-],
+    preview: ["MaNV","NgayVaoLam","TrangThai"],
   },
   {
     clause: "WHERE",
     title: "Giữ 45 hồ sơ trong phạm vi.",
     focus: "WHERE TrangThai = N'Đang làm' AND NgayVaoLam <= '20261021'",
-    meaning: "`WHERE` chỉ giữ trạng thái đang làm và ngày vào làm không sau mốc chốt.",
-    detail: "Còn `45` hồ sơ, vẫn đủ `12` cột. Trong phần trích, ba hồ sơ đã nghỉ bị bỏ; còn `7` dòng. Chưa có cột nhóm và chưa bảo đảm thứ tự dòng.",
+    meaning: "`WHERE` xét từng hồ sơ, `AND` yêu cầu cả hai điều kiện cùng đúng: đang làm và vào làm không sau ngày chốt.",
+    checks: { conditions: ["TrangThai = N'Đang làm'","NgayVaoLam <= ngày chốt"], rows: [["NV001",true,true],["NV003",true,true],["NV020",false,true],["NV025",true,true]], totals: [45,48,45] },
+    detail: "Còn `45` hồ sơ, vẫn đủ `12` cột. Hình trích bảy dòng, thứ tự dòng chưa được bảo đảm.",
     sql: `SELECT *
 FROM NhanVien
 WHERE TrangThai = N'Đang làm' AND NgayVaoLam <= '20261021';`,
-    columns: [
-  "MaNV",
-  "HoTen",
-  "GioiTinh",
-  "NgaySinh",
-  "SoCCCD",
-  "Email",
-  "NgayVaoLam",
-  "NgayNghiViec",
-  "MaPB",
-  "MaCD",
-  "MaQuanLy",
-  "TrangThai"
-],
+    columns: ["MaNV","HoTen","GioiTinh","NgaySinh","SoCCCD","Email","NgayVaoLam","NgayNghiViec","MaPB","MaCD","MaQuanLy","TrangThai"],
     rows: [
-  [
-    "NV001",
-    "Trần Thị Mai",
-    "Nữ",
-    "1992-04-12",
-    "000192131376",
-    "mai.tt@hrmdemo.vn",
-    "2024-03-01",
-    null,
-    "KT",
-    "CV",
-    "NV005",
-    "Đang làm"
-  ],
-  [
-    "NV003",
-    "Nguyễn Thu Hà",
-    "Nữ",
-    "1995-01-25",
-    "000195147214",
-    "ha.nt@hrmdemo.vn",
-    "2023-06-01",
-    null,
-    "KD",
-    "CV",
-    "NV006",
-    "Đang làm"
-  ],
-  [
-    "NV025",
-    "Huỳnh Văn Tài",
-    "Nam",
-    "1993-06-06",
-    "000093321432",
-    "tai.hv@hrmdemo.vn",
-    "2023-11-01",
-    null,
-    "KD",
-    "CV",
-    "NV006",
-    "Đang làm"
-  ],
-  [
-    "NV044",
-    "Lã Thị Oanh",
-    "Nữ",
-    "1998-04-14",
-    "000198471893",
-    null,
-    "2025-08-04",
-    null,
-    "VH",
-    "NV",
-    "NV008",
-    "Đang làm"
-  ],
-  [
-    "NV045",
-    "Ung Văn Lực",
-    "Nam",
-    "2001-01-09",
-    "000201479812",
-    null,
-    "2026-07-01",
-    null,
-    "KD",
-    "NV",
-    "NV006",
-    "Đang làm"
-  ],
-  [
-    "NV047",
-    "Phạm Ngọc Ánh",
-    "Nữ",
-    "1999-02-17",
-    "000199495650",
-    "anh.pn@hrmdemo.vn",
-    "2026-10-01",
-    null,
-    "NS",
-    "CV",
-    "NV010",
-    "Đang làm"
-  ],
-  [
-    "NV048",
-    "Đỗ Minh Quân",
-    "Nam",
-    "2000-08-25",
-    "000200503569",
-    "quan.dm@hrmdemo.vn",
-    "2026-10-05",
-    null,
-    "IT",
-    "NV",
-    "NV007",
-    "Đang làm"
-  ]
-],
+      ["NV001","Trần Thị Mai","Nữ","1992-04-12","000192131376","mai.tt@hrmdemo.vn","2024-03-01",null,"KT","CV","NV005","Đang làm"],
+      ["NV003","Nguyễn Thu Hà","Nữ","1995-01-25","000195147214","ha.nt@hrmdemo.vn","2023-06-01",null,"KD","CV","NV006","Đang làm"],
+      ["NV025","Huỳnh Văn Tài","Nam","1993-06-06","000093321432","tai.hv@hrmdemo.vn","2023-11-01",null,"KD","CV","NV006","Đang làm"],
+      ["NV044","Lã Thị Oanh","Nữ","1998-04-14","000198471893",null,"2025-08-04",null,"VH","NV","NV008","Đang làm"],
+      ["NV045","Ung Văn Lực","Nam","2001-01-09","000201479812",null,"2026-07-01",null,"KD","NV","NV006","Đang làm"],
+      ["NV047","Phạm Ngọc Ánh","Nữ","1999-02-17","000199495650","anh.pn@hrmdemo.vn","2026-10-01",null,"NS","CV","NV010","Đang làm"],
+      ["NV048","Đỗ Minh Quân","Nam","2000-08-25","000200503569","quan.dm@hrmdemo.vn","2026-10-05",null,"IT","NV","NV007","Đang làm"],
+    ],
     total: 45,
-    preview: [
-  "MaNV",
-  "NgayVaoLam",
-  "TrangThai"
-],
+    preview: ["MaNV","NgayVaoLam","TrangThai"],
   },
   {
     clause: "SELECT",
     title: "Tính một nhãn cho mỗi hồ sơ.",
     focus: "CASE",
-    meaning: "`SELECT` chọn bốn cột và dùng `CASE` trả nhãn thâm niên cho từng dòng.",
-    detail: "Vẫn `45` hồ sơ, còn `4` cột. Bảy dòng trích được gán đủ ba nhóm: `NV003` đủ ba năm, `NV025` chưa đủ ba năm, `NV045` chưa đủ một năm. Dữ liệu nguồn không đổi.",
+    inputColumns: ["MaNV","HoTen","NgayVaoLam"],
+    meaning: "`SELECT` chọn ba cột rồi dùng `CASE` gán nhãn: mỗi hồ sơ đi qua các nhánh `WHEN` từ trên xuống và dừng ở nhánh đúng đầu tiên.",
+    checks: { conditions: ["Mốc 3 năm <= ngày chốt","Mốc 1 năm <= ngày chốt"], rows: [["NV003",true,null],["NV025",false,true],["NV045",false,false]], labels: ["Từ 3 năm trở lên","Từ 1 đến dưới 3 năm","Dưới 1 năm"], totals: [33,8,4] },
+    detail: "Vẫn `45` hồ sơ, còn `4` cột. Thứ tự dòng chưa được bảo đảm.",
     sql: `SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
 \tNgayVaoLam AS [Ngày vào làm],
 \tCASE
@@ -494,68 +152,25 @@ WHERE TrangThai = N'Đang làm' AND NgayVaoLam <= '20261021';`,
 \tEND AS [Nhóm thâm niên]
 FROM NhanVien
 WHERE TrangThai = N'Đang làm' AND NgayVaoLam <= '20261021';`,
-    columns: [
-  "Mã nhân viên",
-  "Họ tên",
-  "Ngày vào làm",
-  "Nhóm thâm niên"
-],
+    columns: ["Mã nhân viên","Họ tên","Ngày vào làm","Nhóm thâm niên"],
     rows: [
-  [
-    "NV001",
-    "Trần Thị Mai",
-    "2024-03-01",
-    "Từ 1 đến dưới 3 năm"
-  ],
-  [
-    "NV003",
-    "Nguyễn Thu Hà",
-    "2023-06-01",
-    "Từ 3 năm trở lên"
-  ],
-  [
-    "NV025",
-    "Huỳnh Văn Tài",
-    "2023-11-01",
-    "Từ 1 đến dưới 3 năm"
-  ],
-  [
-    "NV044",
-    "Lã Thị Oanh",
-    "2025-08-04",
-    "Từ 1 đến dưới 3 năm"
-  ],
-  [
-    "NV045",
-    "Ung Văn Lực",
-    "2026-07-01",
-    "Dưới 1 năm"
-  ],
-  [
-    "NV047",
-    "Phạm Ngọc Ánh",
-    "2026-10-01",
-    "Dưới 1 năm"
-  ],
-  [
-    "NV048",
-    "Đỗ Minh Quân",
-    "2026-10-05",
-    "Dưới 1 năm"
-  ]
-],
+      ["NV001","Trần Thị Mai","2024-03-01","Từ 1 đến dưới 3 năm"],
+      ["NV003","Nguyễn Thu Hà","2023-06-01","Từ 3 năm trở lên"],
+      ["NV025","Huỳnh Văn Tài","2023-11-01","Từ 1 đến dưới 3 năm"],
+      ["NV044","Lã Thị Oanh","2025-08-04","Từ 1 đến dưới 3 năm"],
+      ["NV045","Ung Văn Lực","2026-07-01","Dưới 1 năm"],
+      ["NV047","Phạm Ngọc Ánh","2026-10-01","Dưới 1 năm"],
+      ["NV048","Đỗ Minh Quân","2026-10-05","Dưới 1 năm"],
+    ],
     total: 45,
-    preview: [
-  "Mã nhân viên",
-  "Nhóm thâm niên"
-],
+    preview: ["Mã nhân viên","Nhóm thâm niên"],
   },
   {
     clause: "ORDER BY",
     title: "Xếp mã tăng dần.",
     focus: "ORDER BY MaNV ASC",
-    meaning: "`ORDER BY` sắp danh sách `45` hồ sơ theo mã tăng dần.",
-    detail: "Vẫn `45` hồ sơ và `4` cột. Hình đổi sang trích `10` dòng đầu từ `NV001` tới `NV010`; sắp xếp không bỏ bớt dòng nào.",
+    meaning: "`ORDER BY` xếp `45` dòng theo `MaNV` tăng dần. Đầu vào có thể đã đúng thứ tự, nhưng chỉ bước này mới bảo đảm điều đó.",
+    detail: "Vẫn `45` hồ sơ và `4` cột; hình trích `10` dòng đầu. Đây là danh sách chị Hạnh cần.",
     sql: `SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
 \tNgayVaoLam AS [Ngày vào làm],
 \tCASE
@@ -566,81 +181,40 @@ WHERE TrangThai = N'Đang làm' AND NgayVaoLam <= '20261021';`,
 FROM NhanVien
 WHERE TrangThai = N'Đang làm' AND NgayVaoLam <= '20261021'
 ORDER BY MaNV ASC;`,
-    columns: [
-  "Mã nhân viên",
-  "Họ tên",
-  "Ngày vào làm",
-  "Nhóm thâm niên"
-],
+    columns: ["Mã nhân viên","Họ tên","Ngày vào làm","Nhóm thâm niên"],
     rows: [
-  [
-    "NV001",
-    "Trần Thị Mai",
-    "2024-03-01",
-    "Từ 1 đến dưới 3 năm"
-  ],
-  [
-    "NV002",
-    "Lê Văn Hùng",
-    "2024-04-01",
-    "Từ 1 đến dưới 3 năm"
-  ],
-  [
-    "NV003",
-    "Nguyễn Thu Hà",
-    "2023-06-01",
-    "Từ 3 năm trở lên"
-  ],
-  [
-    "NV004",
-    "Hoàng Minh Tuấn",
-    "2015-01-05",
-    "Từ 3 năm trở lên"
-  ],
-  [
-    "NV005",
-    "Vũ Thị Lan",
-    "2016-03-14",
-    "Từ 3 năm trở lên"
-  ],
-  [
-    "NV006",
-    "Đặng Quốc Bảo",
-    "2016-08-01",
-    "Từ 3 năm trở lên"
-  ],
-  [
-    "NV007",
-    "Bùi Thanh Sơn",
-    "2017-02-13",
-    "Từ 3 năm trở lên"
-  ],
-  [
-    "NV008",
-    "Phan Văn Lợi",
-    "2015-09-01",
-    "Từ 3 năm trở lên"
-  ],
-  [
-    "NV009",
-    "Ngô Thị Thu Trang",
-    "2019-05-06",
-    "Từ 3 năm trở lên"
-  ],
-  [
-    "NV010",
-    "Đỗ Thị Hồng",
-    "2016-06-01",
-    "Từ 3 năm trở lên"
-  ]
-],
+      ["NV001","Trần Thị Mai","2024-03-01","Từ 1 đến dưới 3 năm"],
+      ["NV002","Lê Văn Hùng","2024-04-01","Từ 1 đến dưới 3 năm"],
+      ["NV003","Nguyễn Thu Hà","2023-06-01","Từ 3 năm trở lên"],
+      ["NV004","Hoàng Minh Tuấn","2015-01-05","Từ 3 năm trở lên"],
+      ["NV005","Vũ Thị Lan","2016-03-14","Từ 3 năm trở lên"],
+      ["NV006","Đặng Quốc Bảo","2016-08-01","Từ 3 năm trở lên"],
+      ["NV007","Bùi Thanh Sơn","2017-02-13","Từ 3 năm trở lên"],
+      ["NV008","Phan Văn Lợi","2015-09-01","Từ 3 năm trở lên"],
+      ["NV009","Ngô Thị Thu Trang","2019-05-06","Từ 3 năm trở lên"],
+      ["NV010","Đỗ Thị Hồng","2016-06-01","Từ 3 năm trở lên"],
+    ],
     total: 45,
-    preview: [
-  "Mã nhân viên",
-  "Nhóm thâm niên"
-],
+    preview: ["Mã nhân viên","Nhóm thâm niên"],
   },
 ]} />
+
+<Result columns={["Mã nhân viên","Họ tên","Ngày vào làm","Nhóm thâm niên"]} rows={[
+  ["NV001","Trần Thị Mai","2024-03-01","Từ 1 đến dưới 3 năm"],
+  ["NV002","Lê Văn Hùng","2024-04-01","Từ 1 đến dưới 3 năm"],
+  ["NV003","Nguyễn Thu Hà","2023-06-01","Từ 3 năm trở lên"],
+  ["NV004","Hoàng Minh Tuấn","2015-01-05","Từ 3 năm trở lên"],
+  ["NV005","Vũ Thị Lan","2016-03-14","Từ 3 năm trở lên"],
+  ["NV006","Đặng Quốc Bảo","2016-08-01","Từ 3 năm trở lên"],
+  ["NV007","Bùi Thanh Sơn","2017-02-13","Từ 3 năm trở lên"],
+  ["NV008","Phan Văn Lợi","2015-09-01","Từ 3 năm trở lên"],
+  ["NV009","Ngô Thị Thu Trang","2019-05-06","Từ 3 năm trở lên"],
+  ["NV010","Đỗ Thị Hồng","2016-06-01","Từ 3 năm trở lên"],
+]} total={45} mark={[1, 3]} />
+
+Kết quả trích `10` dòng đầu trong `45` hồ sơ đang làm đã chốt. Hai dòng đánh dấu cho thấy `NV001` thuộc nhóm `Từ 1 đến dưới 3 năm`, còn `NV003` thuộc nhóm `Từ 3 năm trở lên`. Toàn bộ danh sách có `33` hồ sơ từ `3` năm trở lên, `8` hồ sơ từ `1` đến dưới `3` năm và `4` hồ sơ dưới `1` năm.
+
+Bạn có thể gửi chị Hạnh danh sách đủ bốn cột theo mã tăng dần. Ba nhóm là quy tắc chị đã chọn; SQL chỉ áp dụng chúng lên ngày vào làm của từng hồ sơ trong bản chốt.
 
 ## Hay nhầm ở đâu
 
