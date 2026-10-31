@@ -1,6 +1,6 @@
 # Chỉnh nhẹ năm bài Làm quen — kiểm và xử lý review
 
-Ngày 31/10/2026. Người dùng chọn làm theo đề xuất sau brainstorming: giữ năm bài/thứ tự, giảm độ sâu 1.3, dẫn ERD từ hai bảng, chỉnh điều kiện và câu ôn. Đã hoàn tất sửa và kiểm trong nhánh local; chưa merge/push/deploy.
+Ngày 31/10/2026. Người dùng chọn làm theo đề xuất sau brainstorming: giữ năm bài/thứ tự, giảm độ sâu 1.3, dẫn ERD từ hai bảng, chỉnh điều kiện và câu ôn. Đã hoàn tất sửa và kiểm; yêu cầu merge/push tiếp theo cùng kết quả trước xuất bản ghi ở cuối hồ sơ.
 
 ## Phiên bản và phạm vi
 
@@ -65,3 +65,11 @@ Kiểm cuối sau sửa test: 369/369 test, 49 file đạt; Astro check 0 lỗi/
 ## Giới hạn
 
 Review học thử không thay SQL/UI tác giả đã kiểm. Chưa có học viên thật hoặc đo thời lượng7 phút; chưa kiểm SSMS thật, mobile/zoom hay toàn bộ đăng nhập/chạy/nộp/lưu tiến độ web. Năm bài không có thực hànhSQL và không sửa các luồng đó, nên không chạy lại check:exercises/check:data hoặc sửagrader/nháp. Không có dữ liệu nguồn bị đổi.
+
+## Nhập main và xuất bản — snapshot trước push
+
+Người dùng cho phép “merge main và push nhé” ngày31/10/2026. Fetch mới xác nhận main và origin/main cùng740c569, không có thay đổi của người khác cần xử lý. Nhánh đã soạn có ba commit ae7a2f3/eec184e/3489da4.
+
+Merge main2585031032ce834a83e2d60e1ef45735f0ee73b5 không xung đột. Đối chiếu toàn cây merge với nhánh soạn bằng `git diff --exit-code codex/refine-foundation-lessons HEAD`: không khác. Các kiểm 369test/check/build/dist và review đã làm trên cùng cây nội dung này; không chạy lại SQL/runner hoặc lặp review vì chỉ thêm merge metadata.
+
+Commit hồ sơ tiếp theo chỉ ghi quyền xuất bản/trạng thái trước push; không sửa MDX/test/sản phẩm. Sau push, xác minh remote có đúng HEAD, chờ workflowDeploy to GitHub Pages và kiểm nội dung năm trang công khai. WorkflowAPI chỉ chạy khi các đường dẫn API/guard/grader/YAML/workflow thay đổi; lượt này không có các đường dẫn đó. Kết quả thực tế được bàn giao trong chat và ghi log local, không tự ghi bước chưa chạy là đạt hoặc push thêm chỉ để cập nhật nhãn trạng thái.

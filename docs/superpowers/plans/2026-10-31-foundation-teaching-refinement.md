@@ -52,3 +52,14 @@
 - 1.3: không finding, giữ nguồn.1.4: làm theo cách gọi đích khóa ngoại, không thêm kiến thức; đã đọc hết report trước sửa.
 - 1.5: đã đọc hết report; làm một phần bằng vế “Ở đường tô xanh” để không áp mô tả chấm tròn cho tự tham chiếu. Đã đủ năm report, chuẩn bị kiểm cuối và review tích hợp.
 - Review tích hợp mới: không thiếu tiền đề; đã giảm khóa câu chữ của hai test. Kiểm cuối 21:50: 369 test, check không lỗi/warning (3 hint nền), build129/dist1951 đạt. MDX không đổi từ eec184e; chỉ test và hồ sơ thay đổi sau đó. Hoàn tất trong nhánh local, chưa merge/push/deploy.
+
+## Merge và push theo quyền mới
+
+Người dùng đã yêu cầu merge main và push ngày31/10/2026; không sửa thêm nội dung trong lượt xuất bản.
+
+- [x] Fetch và xác nhận main/origin/main không lệch, working tree sạch.
+- [x] Merge ba commit của nhánh đến3489da4 vào main không xung đột, merge2585031; đối chiếu toàn cây bằng nhánh đã kiểm/review.
+- [x] Ghi hồ sơ và quyền xuất bản trước push.
+- [ ] Push main bình thường, xác minh SHA remote; chờ workflowPages và đối chiếu năm trang đã đăng.
+
+Đây là snapshot trước push. Bước cuối được xác minh và bàn giao trong chat sau push; log máy bổ sung ở `temp/verification/2026-10-31-foundation-teaching-refinement/`, không tạo thêm deploy chỉ để ghi trạng thái.

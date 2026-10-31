@@ -4,7 +4,7 @@ Ngày: 31/10/2026. Người làm khóa học đã chọn làm theo đề xuất 
 
 Source bắt đầu: `740c5694f6f6fd337c93cee2f7e3d9f899344dcb`, working tree sạch. Nhánh thực hiện: `codex/refine-foundation-lessons`.
 
-Trạng thái: hoàn tất sửa, năm review độc lập, review tích hợp và các kiểm sau sửa. Chỉ commit local trên nhánh trên, chưa merge/push/deploy. [Hồ sơ cuối](../../reviews/2026-10-31-foundation-teaching-refinement/verification.md).
+Trạng thái nội dung: hoàn tất sửa, năm review độc lập, review tích hợp và các kiểm sau sửa. Người dùng sau đó cho phép merge main và push; trạng thái Git của lượt xuất bản được ghi ở cuối tài liệu. [Hồ sơ cuối](../../reviews/2026-10-31-foundation-teaching-refinement/verification.md).
 
 ## Mục đích và giới hạn
 
@@ -58,3 +58,9 @@ Chạy npm test/check/build/check:dist; xem năm trang build và hình/Ssms/Erd,
 Review mới trên eec184e không thấy thiếu tiền đề hoặc lỗi mạch. Làm theo mục Biên tập về test: chuẩn hóa Markdown/khoảng trắng, kiểm điều kiện trong cùng mục cảnh báo/đoạn khóa ngoại và nhận vài cách diễn đạt tương đương; giữ kiểm phủ định câu cũ cùng các bảo vệ NULL/FK/ERD. Không sửa MDX sau build21:43. Các giới hạn SQL/UI/mobile/thời lượng giữ riêng; TRY_CONVERT chỉ là kiểm không đổi được ngày, không thay cho thông báo lỗi ghi dữ liệu.
 
 Kiểm cuối sau sửa test: 369/369 test, check 0 lỗi/0 warning/3 hint nền, build 21:50 đạt 129 trang, check:dist 1951 link. Không sửa sản phẩm sau bản MDX đã được review tích hợp; không phải kiểm lại với học viên thật.
+
+## Merge và xuất bản theo yêu cầu tiếp theo
+
+Ngày 31/10/2026, người dùng yêu cầu “merge main và push nhé”, thay giới hạn chỉ bàn giao local của lượt soạn. Fetch xác nhận main/origin/main đều ở740c569 và working tree sạch. Đã merge toàn bộ ba commit đến3489da4 bằng merge2585031032ce834a83e2d60e1ef45735f0ee73b5, không xung đột; `git diff --exit-code codex/refine-foundation-lessons HEAD` đạt, cây merge bằng bản đã kiểm/review. Không đổi nội dung hoặc kết luận review.
+
+Đây là snapshot trước push: chuẩn bị push main bình thường, xác minh SHA remote, chờ Pages và đối chiếu năm trang đã đăng. API workflow có bộ lọc đường dẫn; diff không chạm API/guard/grader/YAML/workflow nên không có triển khai API mới. Kết quả push/CI/trang được xác minh và bàn giao trong chat, tránh kích hoạt thêm deploy chỉ để ghi trạng thái deploy.
