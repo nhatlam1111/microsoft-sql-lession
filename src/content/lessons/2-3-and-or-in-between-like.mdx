@@ -5,7 +5,7 @@ shortTitle: AND, OR, IN, LIKE
 level: 2
 area: A2
 kind: full
-minutes: 25
+minutes: 20
 prerequisites:
   - "2.2"
 goal: bạn kết hợp được nhiều điều kiện, đặt ngoặc đúng nhóm, lọc khoảng có hai đầu mút và tìm theo mẫu chữ
@@ -27,7 +27,7 @@ Phạm vi: dữ liệu hiện lưu trong `NhanVien`, ngày vào làm từ `01/01
 
 ## Kết hợp điều kiện để lấy đúng nhóm hồ sơ
 
-### Từ lọc nhiều cột đến AND, OR và IN
+### Từ bộ lọc nhiều cột trong Excel đến AND, IN và BETWEEN
 
 Trong Excel, bạn bật **AutoFilter**, chọn cả `KD` và `IT` tại cột `MaPB`, rồi lọc cột `NgayVaoLam` theo khoảng ngày. Một dòng phải qua bộ lọc của cả hai cột mới còn hiển thị. Hình minh họa sheet xếp theo mã rồi lọc, chỉ còn hai hồ sơ; các ô ngày là ngày thật. Các ô `C4`, `D4`, `C44`, `D44` được đánh dấu để đối chiếu hai điều kiện.
 
@@ -37,56 +37,7 @@ Trong Excel, bạn bật **AutoFilter**, chọn cả `KD` và `IT` tại cột `
   ['NV043', 'Đàm Văn Khánh', 'IT', '06/02/2023'],
 ]} />
 
-Trong SQL, **`AND`** yêu cầu các điều kiện cùng đúng; **`OR`** chỉ cần ít nhất một điều kiện đúng. Để chọn hai phòng, viết `MaPB = 'KD' OR MaPB = 'IT'`. Viết `MaPB = 'KD' AND MaPB = 'IT'` lại đòi một ô vừa bằng hai mã khác nhau, nên không hồ sơ nào đạt.
-
-Khi kết hợp, SQL Server xét **`AND` trước `OR`** về mặt logic. Dùng **ngoặc tròn** để nhóm hai phòng trước khi ràng buộc khoảng ngày; xuống dòng hoặc thụt lề không thay cho ngoặc. So hai cách viết dưới đây, chỉ trích phần điều kiện:
-
-<Sql copy={false} title="Đặt ngoặc để khoảng ngày áp dụng cho cả hai phòng" code={`WHERE (MaPB = 'KD' OR MaPB = 'IT')
-\tAND NgayVaoLam >= '20230101'
-\tAND NgayVaoLam <= '20230630'`} />
-
-<Sql copy={false} title="Thiếu ngoặc: mọi hồ sơ KD đều được giữ" code={`WHERE MaPB = 'KD' OR MaPB = 'IT'
-\tAND NgayVaoLam >= '20230101'
-\tAND NgayVaoLam <= '20230630'`} />
-
-Ở cách thiếu ngoặc, điều kiện được hiểu là `KD` **hoặc** (`IT` **và** đạt hai mốc ngày). `NV002` thuộc `KD` nhưng vào làm `2024-04-01` vẫn lọt vào, dù nằm ngoài khoảng yêu cầu. Với ngoặc đúng, hồ sơ này bị loại.
-
-**`IN`** viết gọn nhiều phép so sánh bằng trên **cùng một cột**. `MaPB IN ('KD', 'IT')` tương đương `(MaPB = 'KD' OR MaPB = 'IT')`, nên có thể kết hợp với khoảng ngày bằng `AND`. Mỗi giá trị có cặp nháy riêng; `'KD, IT'` là một chuỗi, không phải danh sách hai mã. `IN` không thay cho mọi cách dùng `OR` trên các cột khác nhau.
-
-### Lọc khoảng bằng BETWEEN và tìm mẫu bằng LIKE
-
-Với cột `date` không có giờ của bộ mẫu, **`BETWEEN`** kiểm khoảng **gồm cả hai đầu mút**. `NgayVaoLam BETWEEN '20230101' AND '20230630'` tương đương `NgayVaoLam >= '20230101' AND NgayVaoLam <= '20230630'`. Viết mốc nhỏ trước, mốc lớn sau; dạng ngày `yyyymmdd` đã học ở bài 2.2. Chữ `AND` nằm giữa hai mốc là một phần của cú pháp `BETWEEN`.
-
-Trong Excel, dùng **Date Filters → Between** để đặt hai mốc. Với cột có cả giờ, mốc cuối là đầu ngày có thể làm thiếu dữ liệu trong ngày đó; cách lọc tới hết ngày học ở bài 2.8.
-
-Khi chỉ nhớ một phần tên, Excel có **Text Filters → Begins With, Ends With, Contains**. Trong SQL, **`LIKE`** so chuỗi với một **mẫu**: `%` đại diện cho từ `0` ký tự trở lên, `_` đại diện cho đúng một ký tự. Dùng `N` trước mẫu tiếng Việt để giữ dấu, như ở bài 2.2.
-
-| Điều kiện | Ý nghĩa | Giá trị trong bộ mẫu khớp mẫu |
-|---|---|---|
-| `HoTen LIKE N'Nguyễn%'` | Bắt đầu bằng `Nguyễn` | `Nguyễn Thu Hà` |
-| `HoTen LIKE N'%Hà'` | Kết thúc bằng `Hà` | `Nguyễn Thu Hà`, `Ninh Thị Hà` |
-| `HoTen LIKE N'%Thị%'` | Có chuỗi `Thị` ở bất kỳ vị trí nào | Ví dụ `Trần Thị Mai`, `Vũ Thị Lan` |
-| `MaNV LIKE 'NV00_'` | `NV00` rồi đúng một ký tự | Các mã `NV001` đến `NV009` trong bộ mẫu |
-
-Mẫu so khớp chuỗi ký tự, không tự hiểu họ hay từ riêng biệt. `_` không chỉ đại diện chữ số; ở ví dụ mã, phần còn lại tình cờ đều là số. Các dòng trong bảng trên là những cách tìm riêng, không tự kết hợp với bộ lọc phòng và ngày.
-
-Ví dụ này tìm trong toàn bộ hồ sơ, không giới hạn phòng hay ngày:
-
-<Sql code={`SELECT MaNV, HoTen
-FROM NhanVien
-WHERE HoTen LIKE N'Nguyễn%';`} />
-
-<Result columns={['MaNV', 'HoTen']} rows={[
-  ['NV003', 'Nguyễn Thu Hà'],
-]} />
-
-Đổi `LIKE` thành `=` sẽ so đúng giá trị chuỗi `Nguyễn%`, không dùng `%` làm ký tự đại diện. Muốn thêm điều kiện tên vào danh sách hai phòng, kết hợp `HoTen LIKE ...` bằng `AND`.
-
-Ở bài này chỉ cần kết hợp điều kiện, đọc hai đầu khoảng và hiểu hai ký tự đại diện. Sắp xếp học ở bài 2.4; điều kiện có `NULL` ở bài 2.5; quy tắc so dấu, hoa thường ở bài 2.7. `LIKE` vẫn chịu quy tắc so chữ của database như bài 2.2.
-
-### Câu lệnh cho tình huống
-
-Dùng `IN` để gom hai phòng và `BETWEEN` để ghi khoảng ngày, rồi đặt bốn tiêu đề như bài 2.1:
+Trong SQL, bạn kết hợp điều kiện phòng và ngày trong cùng một `WHERE`. Câu dưới dùng `IN` cho hai mã phòng và `BETWEEN` cho khoảng ngày, rồi lấy bốn cột chị Hạnh cần:
 
 <Sql code={`SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
 \tMaPB AS [Mã phòng], NgayVaoLam AS [Ngày vào làm]
@@ -94,14 +45,27 @@ FROM NhanVien
 WHERE MaPB IN ('KD', 'IT')
 \tAND NgayVaoLam BETWEEN '20230101' AND '20230630';`} />
 
-<Result columns={['Mã nhân viên', 'Họ tên', 'Mã phòng', 'Ngày vào làm']} rows={[
-  ['NV003', 'Nguyễn Thu Hà', 'KD', '2023-06-01'],
-  ['NV043', 'Đàm Văn Khánh', 'IT', '2023-02-06'],
-]} mark={[1, 2]} />
+Từng phần của câu:
 
-Bạn có thể trả lời chị Hạnh: có `2` hồ sơ đạt cả nhóm phòng và khoảng ngày là `NV003`, `NV043`; bốn cột có đúng tiêu đề yêu cầu. Hai dòng được đánh dấu là toàn bộ kết quả của bộ mẫu. Điều kiện không loại người đã nghỉ nếu họ đạt yêu cầu; cả hai hồ sơ tìm được hiện đều có trạng thái `Đang làm`.
+<LineMap rows={[
+  ['SELECT … AS …', 'Chọn bốn cột và đặt tiêu đề như bài 2.1. Ví dụ: MaPB hiển thị dưới tiêu đề Mã phòng.'],
+  ['FROM NhanVien', 'Chỉ bảng nguồn chứa hồ sơ cần đối chiếu. Ví dụ: bắt đầu từ 48 hồ sơ của NhanVien.'],
+  ["MaPB IN ('KD', 'IT')", 'IN kiểm mã phòng có bằng một giá trị trong danh sách trên cùng cột không. Ví dụ: NV003 có mã KD được giữ, NV030 có mã NS bị loại.'],
+  ['AND', 'Yêu cầu cả điều kiện phòng và điều kiện ngày cùng đúng. Ví dụ: NV002 thuộc KD nhưng vào làm 01/04/2024 nên bị loại.'],
+  ["NgayVaoLam BETWEEN '20230101' AND '20230630'", 'BETWEEN kiểm khoảng gồm cả hai đầu mút. Ví dụ: NV043 vào làm 06/02/2023 nằm trong khoảng 01/01–30/06/2023.'],
+]} />
 
-Câu không có `ORDER BY`, nên thứ tự hai dòng có thể khác hình.
+**`IN`** viết gọn các phép so sánh bằng trên cùng một cột: `MaPB IN ('KD', 'IT')` tương đương `(MaPB = 'KD' OR MaPB = 'IT')`, không thay mọi cách dùng `OR`. **`OR`** chỉ cần ít nhất một điều kiện đúng; một ô mã phòng không thể đồng thời bằng hai mã khác nhau. Mỗi giá trị trong danh sách `IN` có cặp nháy riêng.
+
+Khi viết bằng `OR`, giữ ngoặc tròn cho nhóm hai phòng rồi mới kết hợp điều kiện ngày, vì SQL Server xét **`AND` trước `OR`** về mặt logic. Ngoặc làm điều kiện ngày áp dụng cho cả hai phòng; xuống dòng và thụt lề không thay được ngoặc.
+
+Cột `NgayVaoLam` là `date`, không có giờ. Với **`BETWEEN`**, viết mốc nhỏ trước, mốc lớn sau bằng dạng `yyyymmdd` đã học ở bài 2.2; chữ `AND` giữa hai mốc thuộc cú pháp của khoảng. Trong Excel, bạn đặt hai mốc ở **Date Filters → Between**; cột có cả giờ cần cách lọc mốc cuối khác ở bài 2.8.
+
+Khi yêu cầu đối chiếu đổi sang phần họ tên còn nhớ ở bài tập, **`LIKE`** so chuỗi với một **mẫu chữ**: `%` thay từ `0` ký tự trở lên, `_` thay đúng một ký tự. Chẳng hạn `HoTen LIKE N'Nguy_n%'` khớp `Nguyễn Thu Hà`: `_` thay chữ `ễ`, `%` thay phần còn lại; giữ `N` trước mẫu tiếng Việt như bài 2.2.
+
+Đặt `%` ở hai đầu phần chữ cần tìm để khớp ở mọi vị trí, tương tự **Text Filters → Contains** trong Excel. Mẫu chỉ so ký tự, không tách họ hoặc tên gọi; dùng dấu `=` sẽ so đúng chuỗi chứa `%`, `_` thay vì dùng chúng làm ký tự đại diện. Việc so chữ theo **collation** (quy tắc so sánh chữ) của database: bộ mẫu không phân biệt hoa thường nhưng phân biệt dấu.
+
+Ở bài này chỉ cần kết hợp điều kiện, đọc hai đầu khoảng và hiểu hai ký tự đại diện. Sắp xếp học ở bài 2.4; điều kiện có `NULL` ở bài 2.5; collation học kỹ ở bài 2.7.
 
 ### SQL Server chạy câu này thế nào
 
@@ -152,7 +116,7 @@ WHERE MaPB IN ('KD', 'IT')
     title: 'Lấy bốn cột và đặt tiêu đề tiếng Việt.',
     focus: "SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],\n\tMaPB AS [Mã phòng], NgayVaoLam AS [Ngày vào làm]",
     meaning: '`SELECT` chọn cột từ những hồ sơ đã qua điều kiện; `AS` đặt tiêu đề trong kết quả.',
-    detail: 'Vẫn `2` hồ sơ, còn `4` cột để gửi chị Hạnh; không thêm hoặc loại hồ sơ ở bước này.',
+    detail: 'Vẫn `2` hồ sơ, còn `4` cột với tiêu đề tiếng Việt: đây là danh sách chị Hạnh cần.',
     sql: `SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
 \tMaPB AS [Mã phòng], NgayVaoLam AS [Ngày vào làm]
 FROM NhanVien
@@ -168,13 +132,23 @@ WHERE MaPB IN ('KD', 'IT')
   },
 ]} />
 
+<Result columns={['Mã nhân viên', 'Họ tên', 'Mã phòng', 'Ngày vào làm']} rows={[
+  ['NV003', 'Nguyễn Thu Hà', 'KD', '2023-06-01'],
+  ['NV043', 'Đàm Văn Khánh', 'IT', '2023-02-06'],
+]} mark={[1, 2]} />
+
+Bạn có thể trả lời chị Hạnh: có `2` hồ sơ đạt cả nhóm phòng và khoảng ngày là `NV003`, `NV043`; bốn cột có đúng tiêu đề yêu cầu. Hai dòng được đánh dấu là toàn bộ kết quả của bộ mẫu. Điều kiện không loại người đã nghỉ nếu họ đạt yêu cầu; cả hai hồ sơ tìm được hiện đều có trạng thái `Đang làm`.
+
+Câu không có `ORDER BY`, nên thứ tự hai dòng có thể khác hình.
+
 ## Hay nhầm ở đâu
 
 <Mistakes>
 
-1. **Viết `OR 'IT'` mà không nhắc lại phép so sánh.** `WHERE MaPB = 'KD' OR 'IT'` không tạo được điều kiện hợp lệ; dùng `OR MaPB = 'IT'` hoặc danh sách `IN`.
-2. **Đảo hai mốc của `BETWEEN`.** SQL Server không tự đổi chỗ mốc lớn và nhỏ. `BETWEEN '20230630' AND '20230101'` không lấy được hồ sơ nào của cột ngày này.
-3. **Dùng `LIKE N'%Hà%'` để tìm đúng người có tên Hà.** Trong bộ mẫu, `NV041` là `Hà Văn Quý` cũng khớp vì có chuỗi `Hà` ở phần họ.
+1. **Thiếu ngoặc khi đổi `IN` thành `OR`.** `MaPB = 'KD' OR MaPB = 'IT' AND NgayVaoLam BETWEEN '20230101' AND '20230630'` giữ mọi hồ sơ `KD`, còn chỉ `IT` bị ràng buộc ngày. Trong bộ mẫu, `NV002` vào làm `2024-04-01` vẫn lọt vào, khiến kết quả thành `15` hồ sơ thay vì `2`.
+2. **Đảo hai mốc của `BETWEEN`.** `BETWEEN '20230630' AND '20230101'` không lấy được hồ sơ nào của cột ngày này; SQL Server không tự đổi chỗ mốc lớn và nhỏ.
+3. **Gộp hai mã vào một chuỗi.** `IN ('KD, IT')` chỉ tìm đúng chuỗi `KD, IT`, nên không khớp mã `KD` hay `IT` và trả `0` hồ sơ trong tình huống này.
+4. **Viết `OR 'IT'` mà thiếu phép so sánh.** `MaPB = 'KD' OR 'IT'` không tạo được điều kiện hợp lệ; mỗi vế cần đủ cột và phép so sánh như nhóm `OR` đã giảng.
 
 </Mistakes>
 
@@ -214,9 +188,9 @@ Có. Với cột `date` trong bài, `BETWEEN` lấy cả hai đầu. Đảo mố
 </details>
 
 <details>
-<summary><code>{"LIKE N'%Hà%'"}</code> có chắc chỉ tìm người có tên gọi Hà không?</summary>
+<summary>Trong mẫu <code>{"LIKE N'Nguy_n%'"}</code>, hai ký tự đại diện khác nhau thế nào?</summary>
 
-Không. Nó tìm chuỗi `Hà` ở mọi vị trí, nên cả `Hà Văn Quý` cũng khớp. `%` thay cho không hoặc nhiều ký tự; `_` thay đúng một ký tự.
+`_` thay đúng một ký tự, ở `Nguyễn Thu Hà` là chữ `ễ`; `%` thay phần còn lại, có thể không có ký tự nào. Mẫu so chuỗi ký tự, không xác nhận họ hoặc tên gọi.
 
 </details>
 

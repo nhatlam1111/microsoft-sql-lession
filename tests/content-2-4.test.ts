@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { existsSync, readFileSync } from 'node:fs';
 import { runInNewContext } from 'node:vm';
 import { parse } from 'yaml';
-import { readLessonFiles } from './helpers/lessons';
+import { readLessonFiles, lessonMainSection, sqlSubheadings } from './helpers/lessons';
 import { compareResults, type Shape } from '../src/lib/grade';
 import { guardExercise } from '../src/lib/sql-guard';
 import type { ExerciseFile } from '../src/lib/exercise-types';
@@ -22,6 +22,23 @@ function latestActive() {
 }
 
 describe('lesson 2.4 orders the filtered rows before applying TOP', () => {
+  it('uses the scenario once, after Excel and before LineMap, then steps, result and answer', () => {
+    const body=lesson().body,main=lessonMainSection(body);
+    expect(sqlSubheadings(body)).toHaveLength(2);
+    const [first,second]=main.split(/^### /m).slice(1);
+    expect(main.match(/<Sql\b/g)).toHaveLength(1);
+    expect(main.match(/<Result\b/g)).toHaveLength(1);
+    expect(first.indexOf('<Excel')).toBeLessThan(first.indexOf('<Sql'));
+    expect(first.indexOf('<Sql')).toBeLessThan(first.indexOf('<LineMap'));
+    expect(second.indexOf('<RunFlow')).toBeLessThan(second.indexOf('<Result'));
+    expect(second.slice(second.indexOf('<Result'))).toContain('chị Hạnh');
+    const plain=main.replace(/`|\*\*/g,'');
+    expect(plain).toContain('tối đa');
+    expect(plain).toMatch(/mặc định.{0,30}ASC/);
+    expect(plain).toContain('trái sang phải');
+    expect(main).not.toContain('A02');
+  });
+
   it('shows the latest five active profiles and the correct logical totals', () => {
     const f = lesson();
     expect((f.data as { kind: string }).kind).toBe('full');
