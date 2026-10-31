@@ -231,14 +231,25 @@
 .rf-q { display: grid; grid-template-columns: auto; margin: 14px 0 0; padding: 10px 0; border: 1px solid #CDD5E3; border-radius: var(--radius-s); background: #FFF; font-family: var(--font-code); font-size: 12.5px; line-height: 1.7; color: #000; white-space: pre; overflow-x: auto; tab-size: var(--sql-tab-size); }
 .rf-q-dim { display: block; padding: 0 14px; opacity: 0.4; }
 .rf-q-on { display: block; padding: 2px 14px 2px 11px; background: #FFF6D6; border-left: 3px solid #E0A800; color: inherit; }
-.rf-d-sub { margin-top: 18px; font-size: 13px; font-weight: 600; color: var(--ink-3); }
+.rf-d-sub { margin-top: 18px; font-size: 14.5px; font-weight: 700; color: var(--ink); }
+.rf-d-sub small { font-size: 12.5px; font-weight: 500; color: var(--ink-3); }
+.rf-tb-scroll { margin-top: 8px; overflow-x: auto; }
+.rf-tb { width: 100%; border-collapse: collapse; font-family: var(--font-ui); font-size: 12.5px; line-height: 1.4; }
+.rf-tb th, .rf-tb td { padding: 4px 7px; border: 1px solid #E3E6EC; text-align: left; white-space: nowrap; }
+.rf-tb thead th { background: #F0F0F0; font-weight: 600; }
+.rf-tb tbody th, .rf-tb tfoot th { font-weight: 500; }
+.rf-tb .res-null { background: var(--ssms-null); }
+.rf-tb tfoot th, .rf-tb tfoot td { background: var(--surface-subtle); font-weight: 600; }
+.rf-tb .rf-gone { background: #FDF0EF; }
+.rf-tb .rf-yes { color: #16794C; font-weight: 700; }
+.rf-tb .rf-no { color: #B42318; font-weight: 700; }
+.rf-in-from { margin-top: 10px; font-size: 13px; font-weight: 600; color: var(--ink-2); }
+.rf-in-note { margin-top: 4px; font-size: 12px; color: var(--ink-3); }
 .rf-d-text { margin-top: 6px; font-family: var(--font-read); font-size: 15.5px; line-height: 1.7; }
 .prose .rf-kw { font-size: 0.86em; font-weight: 500; padding: 1px 5px; border-radius: var(--radius-s); background: var(--accent-soft); border: 1px solid var(--accent-line); color: var(--ink); white-space: nowrap; }
 .prose .rf-d-sub .rf-kw { font-size: 12.5px; }
 .prose .rf-id { font-size: 0.86em; padding: 0; background: none; color: var(--ink); }
-.rf-drawer .res, .rf-drawer .sql { margin: 16px 0 0; }
-.rf-excel { display: flex; align-items: flex-start; gap: 10px; margin-top: 16px; font-size: 14px; line-height: 1.45; color: var(--ink-2); }
-.rf-xmark { flex: none; width: 20px; height: 20px; margin-top: 1px; display: grid; place-items: center; border-radius: 4px; background: var(--excel); color: #FFF; font-size: 11.5px; font-weight: 700; }
+.rf-drawer .res { margin: 16px 0 0; }
 .rf-d-foot { display: flex; justify-content: space-between; padding: 14px 22px 18px; border-top: 1px solid var(--rule); background: var(--surface-subtle); }
 .rf-nav { min-height: 40px; padding: 8px 14px; border: 1px solid var(--rule-strong); border-radius: var(--radius-m); background: var(--surface); font: inherit; font-size: 14px; font-weight: 600; color: var(--ink); cursor: pointer; box-shadow: var(--shadow-s); transition: background-color var(--motion-fast) var(--ease-ui), border-color var(--motion-fast) var(--ease-ui), color var(--motion-fast) var(--ease-ui); }
 .rf-nav:hover:not(:disabled) { border-color: var(--accent-line); background: var(--accent-soft); color: var(--accent); }

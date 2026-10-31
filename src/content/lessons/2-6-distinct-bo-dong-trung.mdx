@@ -129,7 +129,6 @@ ORDER BY MaPB ASC;`} steps={[
     ],
     total: 48,
     preview: ['MaNV', 'MaPB'],
-    excel: "Mở danh sách hồ sơ nguồn, gồm cả người đang làm và đã nghỉ.",
   },
   {
     clause: "SELECT",
@@ -142,7 +141,6 @@ FROM NhanVien;`,
     columns: ['MaPB'],
     rows: [['KT'], ['KD'], ['KD']],
     total: 48,
-    excel: "Chép riêng cột mã phòng sang vùng làm việc để tạo danh sách.",
   },
   {
     clause: "DISTINCT",
@@ -155,7 +153,6 @@ FROM NhanVien;`,
     columns: ['MaPB'],
     rows: [['KT'], ['KD'], ['BGD'], ['IT'], ['VH'], ['NS']],
     total: 6,
-    excel: "Dùng Remove Duplicates trên vùng chỉ chứa cột mã phòng đã chép.",
   },
   {
     clause: "ORDER BY",
@@ -169,7 +166,6 @@ ORDER BY MaPB ASC;`,
     columns: ['MaPB'],
     rows: [['BGD'], ['IT'], ['KD'], ['KT'], ['NS'], ['VH']],
     total: 6,
-    excel: "Sắp mã phòng từ A đến Z sau khi tạo danh sách không trùng.",
   },
 ]} />
 

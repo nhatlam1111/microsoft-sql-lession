@@ -1,5 +1,5 @@
 import { it, expect } from 'vitest';
-import { clauseRank, checkFlow, snakeLayout, previewOf, splitFocus, inlineCode, arrowMove } from '../src/lib/run-flow';
+import { clauseRank, checkFlow, snakeLayout, previewOf, splitFocus, inlineCode, arrowMove, inputSteps, isUnionFlow, excerptNote, checkKept } from '../src/lib/run-flow';
 import { sampleFlow, sampleQuery } from './helpers/flows';
 import { unionFlow, unionQuery } from './helpers/union-flow';
 
@@ -71,6 +71,41 @@ it('moves a step with a bare arrow key on the drawer or a card, and leaves every
 });
 it('an empty step previews no columns either', () => {
   expect(previewOf({ ...sampleFlow()[0], rows: [], total: 0 })).toMatchObject({ rows: [], moreRows: 0, moreCols: 0 });
+});
+it('feeds each step from the one before it, and a set operation from both branches', () => {
+  const f = sampleFlow();
+  expect(isUnionFlow(f)).toBe(false);
+  expect(inputSteps(f).map(i => i.map(s => s.clause))).toEqual([[], ['FROM'], ['LEFT JOIN'], ['WHERE'], ['SELECT']]);
+  const u = unionFlow();
+  expect(isUnionFlow(u)).toBe(true);
+  expect(inputSteps(u).map(i => i.length)).toEqual([0, 0, 2, 1]);
+});
+it('says how much of a table an excerpt shows, and nothing when it shows all of it', () => {
+  const note = (rows: number, moreRows: number, columns: number, moreCols: number) => excerptNote({
+    columns: Array(columns).fill('c'), rows: Array(rows).fill([]), moreRows, moreCols,
+  });
+  expect(note(4, 44, 3, 9)).toBe('Trích 4 trong 48 dòng, 3 trong 12 cột');
+  expect(note(4, 0, 3, 9)).toBe('Trích 3 trong 12 cột');
+  expect(note(4, 44, 3, 0)).toBe('Trích 4 trong 48 dòng');
+  expect(note(4, 0, 3, 0)).toBe('');
+});
+it('keeps a row in the check table only when every condition holds', () => {
+  expect(checkKept(['NV003', true, true])).toBe(true);
+  expect(checkKept(['NV002', true, false])).toBe(false);
+});
+it('stops a check table whose rows or totals do not match the step', () => {
+  const f = sampleFlow();
+  const [kept, dropped] = ['NV001', 'NV003'];
+  const step = { ...f[2], rows: [[kept, 'Người 1', null], ['NV002', 'Người 2', null]] };
+  const flow = (checks: typeof step.checks) => checkFlow([f[0], f[1], { ...step, checks }], sampleQuery());
+  const good = { conditions: ['IS NULL'], rows: [[kept, true], [dropped, false]] as [string, boolean][], totals: [step.total!, step.total!] };
+  expect(flow(good)).toEqual([]);
+  expect(flow({ ...good, rows: [[kept, true, false]] })[0]).toMatch(/^bước 3: bảng soi dòng 1/);
+  expect(flow({ ...good, totals: [step.total!] })[0]).toMatch(/^bước 3: bảng soi cần 2 số tổng/);
+  expect(flow({ ...good, totals: [step.total!, step.total! + 1] })[0]).toMatch(/^bước 3: bảng soi giữ/);
+  expect(flow({ ...good, rows: [['KHONGCO', true]] })[0]).toMatch(/^bước 3: .*KHONGCO.*đầu vào/);
+  expect(flow({ ...good, rows: [[dropped, true]] })[0]).toMatch(/^bước 3: .*được giữ nhưng không có/);
+  expect(flow({ ...good, rows: [[kept, false]] })[0]).toMatch(/^bước 3: .*bị loại nhưng vẫn có/);
 });
 it('an empty step must say its total is 0', () => {
   const f = sampleFlow();

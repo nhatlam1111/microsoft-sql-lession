@@ -110,7 +110,18 @@ it('RunFlow numbers the steps, counts rows and previews 3 rows by 3 columns', as
   expect([...html.matchAll(/class="rf-count"[^>]*>(có|còn) /g)].map(m => m[1])).toEqual(['có', 'còn', 'còn', 'còn', 'còn']);
   expect(html).toMatch(/<span class="rf-mini"[^>]*>(?:(?!<\/button>)[\s\S])*res-null/);
   expect((html.match(/class="rf-panel"/g) ?? []).length).toBe(5);
-  for (const s of ['Bước trước', 'Bước sau', 'Trích 10 dòng (kết quả có 57 dòng)', 'Câu lệnh để xem dữ liệu ở bước này', 'Sao chép', 'Ở bước này']) expect(html).toContain(s);
+  for (const s of ['Bước trước', 'Bước sau', 'Trích 10 dòng (kết quả có 57 dòng)', 'Đầu vào', 'Thực hiện', 'Kết quả', 'từ bước', 'Chưa qua bước nào']) expect(html).toContain(s);
+  for (const s of ['Câu lệnh để xem dữ liệu ở bước này', 'Ở bước này', 'Liên hệ Excel']) expect(html).not.toContain(s);
+});
+it('RunFlow shows what each condition did to the rows of the step before', async () => {
+  const f = sampleFlow();
+  const [kept, dropped] = ['NV001', 'NV003'];
+  const checks = { conditions: ['IS NULL'], rows: [[kept, true], [dropped, false]] as [string, boolean][], totals: [f[2].total!, f[2].total!] };
+  const steps = [f[0], f[1], { ...f[2], rows: [[kept, 'Người 1', null], ['NV002', 'Người 2', null]], input: 'Thêm `HopDong` vào đầu vào.', checks }, f[3], f[4]];
+  const html = await c.renderToString(RunFlow, { props: { query: sampleQuery(), steps } });
+  const table = html.match(/<table class="rf-tb rf-check"[\s\S]*?<\/table>/)![0];
+  for (const s of ['IS NULL', 'Kết luận', kept, dropped, 'Đúng', 'Sai', 'Giữ', 'Loại', `Cả ${f[1].total} dòng`]) expect(table).toContain(s);
+  expect(html).toContain('Thêm <code');
 });
 it("RunFlow highlights the step's lines in the full query and boxes SQL words in the explanation", async () => {
   const html = await c.renderToString(RunFlow, { props: { query: sampleQuery(), steps: sampleFlow() } });

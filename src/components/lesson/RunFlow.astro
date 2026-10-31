@@ -1,8 +1,7 @@
 ---
 import Result from './Result.astro';
-import Sql from './Sql.astro';
 import { highlightTsql } from '../../lib/tsql-highlight';
-import { checkFlow, inlineCode, nextFlowId, previewOf, rowCount, snakeLayout, splitFocus, type FlowStep } from '../../lib/run-flow';
+import { checkFlow, checkKept, excerptNote, inlineCode, inputSteps, isUnionFlow, nextFlowId, previewOf, rowCount, snakeLayout, splitFocus, type FlowStep } from '../../lib/run-flow';
 
 interface Props {
   /** The whole query the diagram walks through. */
@@ -17,10 +16,8 @@ if (problems.length) throw new Error(`Sơ đồ thứ tự chạy có lỗi:\n${
 
 const drawerId = nextFlowId();
 const cells = snakeLayout(steps.length);
-// Two completed SELECT branches feed one set operation, rather than feeding each other.
-const unionInputs = steps.length === 4
-  && steps[0].clause === 'SELECT' && steps[1].clause === 'SELECT'
-  && /^UNION(?: ALL)?$/.test(steps[2].clause) && steps[3].clause === 'ORDER BY';
+const unionInputs = isUnionFlow(steps);
+const inputs = inputSteps(steps);
 const isSqlWord = (code: string) => highlightTsql(code).some(t => t.kind === 'keyword' || t.kind === 'gray' || t.kind === 'function');
 const parts = (text: string) => inlineCode(text).map(p => ({ ...p, sqlWord: p.code && isSqlWord(p.text), tokens: highlightTsql(p.text) }));
 
@@ -39,6 +36,12 @@ const views = steps.map((step, i) => {
     after: highlightTsql(split.after.replace(/^\r?\n/, '')),
     meaning: parts(step.meaning),
     detail: parts(step.detail),
+    inputText: step.input ? parts(step.input) : null,
+    inputs: inputs[i].map(from => {
+      const preview = previewOf(from, 5);
+      return { preview, note: excerptNote(preview), clause: highlightTsql(from.clause) };
+    }),
+    checks: step.checks && { ...step.checks, key: inputs[i][0]?.columns[0], source: inputs[i].reduce((sum, from) => sum + rowCount(from), 0) },
   };
 });
 ---
@@ -90,15 +93,42 @@ const views = steps.map((step, i) => {
           </p>
           <p class="rf-d-title">{v.step.title}</p>
           <pre class="rf-q">{v.before.length > 0 && <span class="rf-q-dim">{v.before.map(t => (t.kind === 'plain' ? t.text : <span class={`t-${t.kind}`}>{t.text}</span>))}</span>}<mark class="rf-q-on">{v.focus.map(t => (t.kind === 'plain' ? t.text : <span class={`t-${t.kind}`}>{t.text}</span>))}</mark>{v.after.length > 0 && <span class="rf-q-dim">{v.after.map(t => (t.kind === 'plain' ? t.text : <span class={`t-${t.kind}`}>{t.text}</span>))}</span>}</pre>
-          <p class="rf-d-sub"><code class="rf-kw">{v.clause.map(t => (t.kind === 'plain' ? t.text : <span class={`t-${t.kind}`}>{t.text}</span>))}</code> làm gì</p>
+          <p class="rf-d-sub">Đầu vào{v.inputs.length === 1 && <small> từ bước {v.inputs[0].clause.map(t => t.text)}</small>}</p>
+          {v.inputText
+            ? <p class="rf-d-text">{v.inputText.map(p => (!p.code ? p.text : p.sqlWord ? <code class="rf-kw">{p.tokens.map(t => (t.kind === 'plain' ? t.text : <span class={`t-${t.kind}`}>{t.text}</span>))}</code> : <code class="rf-id">{p.text}</code>))}</p>
+            : v.inputs.length === 0 && <p class="rf-d-text">Chưa qua bước nào; dữ liệu lấy trực tiếp từ bảng nguồn.</p>}
+          {v.inputs.map(input => (
+            <>
+              {v.inputs.length > 1 && <p class="rf-in-from">Từ bước {input.clause.map(t => t.text)}</p>}
+              <div class="rf-tb-scroll">
+                <table class="rf-tb">
+                  <thead><tr>{input.preview.columns.map(c => <th scope="col">{c}</th>)}</tr></thead>
+                  <tbody>{input.preview.rows.map(r => <tr>{r.map(c => <td class={c === null ? 'res-null' : undefined}>{c ?? 'NULL'}</td>)}</tr>)}</tbody>
+                </table>
+              </div>
+              {input.note && <p class="rf-in-note">{input.note}</p>}
+            </>
+          ))}
+          <p class="rf-d-sub">Thực hiện</p>
           <p class="rf-d-text">{v.meaning.map(p => (!p.code ? p.text : p.sqlWord ? <code class="rf-kw">{p.tokens.map(t => (t.kind === 'plain' ? t.text : <span class={`t-${t.kind}`}>{t.text}</span>))}</code> : <code class="rf-id">{p.text}</code>))}</p>
-          <p class="rf-d-sub">Ở bước này</p>
+          {v.checks && (
+            <div class="rf-tb-scroll">
+              <table class="rf-tb rf-check">
+                <thead><tr><th scope="col">{v.checks.key}</th>{v.checks.conditions.map(c => <th scope="col">{c}</th>)}<th scope="col">Kết luận</th></tr></thead>
+                <tbody>{v.checks.rows.map(row => (
+                  <tr class={checkKept(row) ? undefined : 'rf-gone'}>
+                    <th scope="row">{row[0]}</th>
+                    {row.slice(1).map(ok => <td class={ok ? 'rf-yes' : 'rf-no'}>{ok ? 'Đúng' : 'Sai'}</td>)}
+                    <td class={checkKept(row) ? 'rf-yes' : 'rf-no'}>{checkKept(row) ? 'Giữ' : 'Loại'}</td>
+                  </tr>
+                ))}</tbody>
+                <tfoot><tr><th scope="row">Cả {v.checks.source} dòng</th>{v.checks.totals.slice(0, -1).map(n => <td>{n} đúng</td>)}<td>{v.checks.totals.at(-1)} giữ</td></tr></tfoot>
+              </table>
+            </div>
+          )}
+          <p class="rf-d-sub">Kết quả</p>
           <p class="rf-d-text">{v.detail.map(p => (!p.code ? p.text : p.sqlWord ? <code class="rf-kw">{p.tokens.map(t => (t.kind === 'plain' ? t.text : <span class={`t-${t.kind}`}>{t.text}</span>))}</code> : <code class="rf-id">{p.text}</code>))}</p>
           <Result columns={v.step.columns} rows={v.step.rows} total={v.count} />
-          <Sql code={v.step.sql} title="Câu lệnh để xem dữ liệu ở bước này" />
-          {v.step.excel && (
-            <p class="rf-excel"><span class="rf-xmark" aria-hidden="true">X</span><span>Liên hệ Excel: {v.step.excel}</span></p>
-          )}
         </section>
       ))}
     </div>
