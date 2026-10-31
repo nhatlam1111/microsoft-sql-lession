@@ -81,7 +81,7 @@ Chị Hạnh nhận `2` loại: `Phép năm` tổng `9.0` ngày và `Nghỉ ốm
 
 ### SQL Server chạy câu này thế nào
 
-Sơ đồ chỉ diễn giải **SELECT ngoài**, lấy `TongTheoLoai` làm nguồn có ba dòng. Các định nghĩa CTE nằm đầy đủ trong từng câu kiểm. Đây là thứ tự logic để đọc câu lệnh, không mô tả các bảng được tạo và lưu lần lượt. Thẻ xem nhanh tối đa ba dòng; drawer hiển thị bảng trích tối đa mười dòng cùng tổng thật.
+Sơ đồ chỉ diễn giải **SELECT ngoài**, lấy `TongTheoLoai` làm nguồn có ba dòng. Các định nghĩa CTE nằm trong câu lệnh ở đầu drawer. Đây là thứ tự logic để đọc câu lệnh, không mô tả các bảng được tạo và lưu lần lượt. Thẻ xem nhanh tối đa ba dòng; drawer hiển thị bảng trích tối đa mười dòng cùng tổng thật.
 
 <RunFlow query={`WITH DonDaDuyetThang9 AS (
 \tSELECT MaDon, LoaiNghi, SoNgay
@@ -102,7 +102,7 @@ ORDER BY tl.TongNgay DESC, tl.LoaiNghi ASC;`} steps={[
     "title": "Đọc ba tổng theo loại",
     "focus": "FROM TongTheoLoai AS tl",
     "meaning": "`FROM` lấy kết quả có tên làm nguồn cho SELECT ngoài.",
-    "detail": "Nguồn có `3` loại. Câu kiểm thêm sắp theo tổng để bảng trích dễ đối chiếu.",
+    "detail": "Nguồn có `3` loại. Bảng trích xếp theo tổng để dễ đối chiếu.",
     "sql": "WITH DonDaDuyetThang9 AS (\n\tSELECT MaDon, LoaiNghi, SoNgay\n\tFROM DonNghiPhep\n\tWHERE TrangThai = N'Đã duyệt'\n\t\tAND TuNgay >= '20260901' AND TuNgay < '20261001'\n), TongTheoLoai AS (\n\tSELECT LoaiNghi, SUM(SoNgay) AS [TongNgay]\n\tFROM DonDaDuyetThang9\n\tGROUP BY LoaiNghi\n)\nSELECT tl.LoaiNghi, tl.TongNgay\nFROM TongTheoLoai AS tl\nORDER BY tl.TongNgay DESC, tl.LoaiNghi ASC;",
     "columns": [
       "LoaiNghi",

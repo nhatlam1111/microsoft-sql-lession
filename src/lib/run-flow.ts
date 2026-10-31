@@ -29,12 +29,15 @@ export interface FlowStep {
   total?: number;
   /** Words for "Đầu vào": the source of a first step, or the other table of a join. Text between backticks is code. */
   input?: string;
+  /** Columns of the step before shown under "Đầu vào"; by default the ones its card previews. Use it when this step needs other columns. */
+  inputColumns?: string[];
   checks?: FlowChecks;
   /** Columns the card previews, in this order; by default the first three. Use it when the step is about a column further right. */
   preview?: string[];
 }
 
 const MAX_ROWS = 10;
+const INPUT_ROWS = 5;
 
 // SQL Server's logical processing order; steps that update data reuse the SELECT slot for SET and DELETE.
 const RANKS: [RegExp, number][] = [
@@ -76,13 +79,21 @@ export function inputSteps(steps: FlowStep[]): FlowStep[][] {
 
 export const checkKept = ([, ...results]: [string, ...boolean[]]): boolean => results.every(Boolean);
 
+/** Says the check table is an excerpt and what its last row counts. */
+export function checkNote(checks: FlowChecks, source: number): string {
+  const counted = checks.conditions.length > 1 ? 'đếm riêng từng điều kiện' : 'đếm';
+  return `Trích ${checks.rows.length} trong ${source} dòng; hàng cuối ${counted} trên cả ${source} dòng.`;
+}
+
 function checkTable(step: FlowStep, inputs: FlowStep[]): string[] {
+  if (inputs.length === 0) return ['bảng soi cần bước trước'];
   const { conditions, rows, totals } = step.checks!;
   const problems: string[] = [];
   const width = conditions.length + 1;
   if (totals.length !== width) problems.push(`bảng soi cần ${width} số tổng, đang có ${totals.length}`);
   else if (totals[width - 1] !== rowCount(step)) problems.push(`bảng soi giữ ${totals[width - 1]} dòng, bước có ${rowCount(step)} dòng`);
-  const inInput = new Set(inputs.flatMap(s => s.rows.map(r => r[0])));
+  else if (totals.slice(0, -1).some(n => n < rowCount(step))) problems.push('bảng soi có số đúng nhỏ hơn số giữ');
+  const inInput = new Set(inputs.flatMap(s => s.rows.slice(0, INPUT_ROWS).map(r => r[0])));
   const inResult = new Set(step.rows.map(r => r[0]));
   rows.forEach((row, r) => {
     if (row.length !== width) { problems.push(`bảng soi dòng ${r + 1} có ${row.length} ô, cần ${width}`); return; }
@@ -118,6 +129,7 @@ export function checkFlow(steps: FlowStep[], query: string): string[] {
     if (step.rows.length === 0 && rowCount(step) !== 0) problems.push(`${at} không ghi dòng nào thì total phải là 0`);
     if (step.rows.length > MAX_ROWS) problems.push(`${at} ghi tối đa ${MAX_ROWS} dòng, phần còn lại dùng total`);
     for (const c of step.preview ?? []) if (!step.columns.includes(c)) problems.push(`${at} preview có cột ${c} không nằm trong columns`);
+    for (const c of step.inputColumns ?? []) if (!inputs[i].some(s => s.columns.includes(c))) problems.push(`${at} inputColumns có cột ${c} không nằm trong bước trước`);
     if (step.checks) for (const p of checkTable(step, inputs[i])) problems.push(`${at} ${p}`);
     previous = step;
   });
@@ -148,6 +160,11 @@ export function previewOf(step: FlowStep, maxRows = 3, maxCols = 3): Preview {
   // With no rows the card shows no table, so there are no hidden columns to count either.
   const moreCols = rows.length === 0 ? 0 : step.columns.length - columns.length;
   return { columns, rows, moreRows: rowCount(step) - rows.length, moreCols };
+}
+
+/** The excerpt of an earlier step shown as this step's input. */
+export function inputPreview(step: FlowStep, from: FlowStep): Preview {
+  return previewOf({ ...from, preview: step.inputColumns ?? from.preview }, INPUT_ROWS);
 }
 
 /** How much of the table a preview shows, in words; empty when it shows all of it. */

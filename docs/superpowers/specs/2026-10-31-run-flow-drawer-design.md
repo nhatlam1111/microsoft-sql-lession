@@ -1,6 +1,14 @@
 # Drawer sơ đồ: đầu vào, thực hiện, kết quả
 
-Trạng thái: chờ người làm khóa học duyệt, 31/10/2026.
+Trạng thái: đã duyệt và đã làm trên nhánh `feat/lesson-2-5-null`, chưa push, 31/10/2026. [Hồ sơ kiểm](../../reviews/2026-10-31-run-flow-drawer/verification.md).
+
+Khác thiết kế, sau review:
+
+- Thêm trường `inputColumns`, vì `preview` của bước trước không đủ cột cho cả thẻ lẫn đầu vào của bước sau.
+- Câu mặc định của bước đầu thành "Bước này không nhận dữ liệu từ bước nào trước đó trong sơ đồ."
+- Tiêu đề bảng soi có tên cột, dưới bảng có ghi chú tự động nói phần trích và cách đếm hàng cuối.
+- Mã trong bảng soi phải nằm trong 5 dòng đang hiện ở đầu vào.
+- Bảng soi 2.4 thêm `NV001`; sửa 14 câu ở các bài sau còn nhắc câu lệnh xem dữ liệu trong drawer.
 
 ## Ý định
 

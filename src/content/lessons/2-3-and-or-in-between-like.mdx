@@ -80,9 +80,9 @@ WHERE MaPB IN ('KD', 'IT')
     clause: 'FROM',
     title: 'Xác định bảng NhanVien làm nguồn.',
     focus: 'FROM NhanVien',
-    input: "Bảng `NhanVien` lưu trong database.",
-    meaning: "`FROM` lấy bảng `NhanVien` làm nguồn, chưa xét phòng hay ngày.",
-    detail: "Có `48` hồ sơ, đủ `12` cột. Hình trích bốn hồ sơ để đối chiếu ở bước sau.",
+    input: "Bảng `NhanVien` trong database.",
+    meaning: "`FROM` chọn bảng này làm nguồn, chưa lọc dòng, chưa chọn cột.",
+    detail: "`48` hồ sơ, `12` cột. Hình trích bốn hồ sơ để đối chiếu ở bước sau.",
     sql: `SELECT * FROM NhanVien;`,
     columns: ['MaNV', 'HoTen', 'GioiTinh', 'NgaySinh', 'SoCCCD', 'Email', 'NgayVaoLam', 'NgayNghiViec', 'MaPB', 'MaCD', 'MaQuanLy', 'TrangThai'],
     rows: [
@@ -98,9 +98,9 @@ WHERE MaPB IN ('KD', 'IT')
     clause: 'WHERE',
     title: 'Giữ hồ sơ qua cả nhóm phòng và khoảng ngày.',
     focus: "WHERE MaPB IN ('KD', 'IT')\n\tAND NgayVaoLam BETWEEN '20230101' AND '20230630'",
-    meaning: "`WHERE` xét từng hồ sơ, `AND` yêu cầu cả hai điều kiện cùng đúng: mã phòng thuộc danh sách `IN` và ngày vào làm trong khoảng `BETWEEN`.",
-    detail: "Còn `2` hồ sơ `NV003`, `NV043`, vẫn đủ `12` cột. `NV002` vào làm ngoài khoảng ngày, `NV030` có mã phòng `NS`.",
-    checks: { conditions: ["IN", "BETWEEN"], rows: [["NV002", true, false], ["NV003", true, true], ["NV030", false, true], ["NV043", true, true]], totals: [24, 3, 2] },
+    meaning: "`WHERE` xét từng hồ sơ, `AND` yêu cầu cả hai điều kiện cùng đúng.",
+    detail: "Còn `2` hồ sơ `NV003`, `NV043`, vẫn đủ `12` cột.",
+    checks: { conditions: ["MaPB IN (…)", "NgayVaoLam BETWEEN …"], rows: [["NV002", true, false], ["NV003", true, true], ["NV030", false, true], ["NV043", true, true]], totals: [24, 3, 2] },
     sql: `SELECT * FROM NhanVien
 WHERE MaPB IN ('KD', 'IT')
 \tAND NgayVaoLam BETWEEN '20230101' AND '20230630';`,
@@ -116,8 +116,9 @@ WHERE MaPB IN ('KD', 'IT')
     clause: 'SELECT',
     title: 'Lấy bốn cột và đặt tiêu đề tiếng Việt.',
     focus: "SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],\n\tMaPB AS [Mã phòng], NgayVaoLam AS [Ngày vào làm]",
-    meaning: "`SELECT` giữ nguyên `2` dòng, chỉ lấy bốn cột. `AS` đặt tiêu đề tiếng Việt.",
-    detail: "Vẫn `2` hồ sơ, còn `4` cột với tiêu đề tiếng Việt: đây là danh sách chị Hạnh cần.",
+    inputColumns: ["MaNV", "HoTen", "MaPB", "NgayVaoLam"],
+    meaning: "`SELECT` chọn bốn cột, bỏ các cột còn lại. `AS` đặt tiêu đề tiếng Việt.",
+    detail: "Vẫn `2` hồ sơ, còn `4` cột: đây là danh sách chị Hạnh cần.",
     sql: `SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
 \tMaPB AS [Mã phòng], NgayVaoLam AS [Ngày vào làm]
 FROM NhanVien

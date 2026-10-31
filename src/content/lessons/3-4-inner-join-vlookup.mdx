@@ -132,7 +132,7 @@ Dòng `NV001` được đánh dấu: mã `KT` đi cùng tên `Kế toán`. Chị
 
 ### SQL Server chạy câu này thế nào
 
-Sơ đồ là **thứ tự xử lý logic**: lấy hồ sơ, tìm cặp phòng khớp, chọn cột rồi sắp xếp. Mỗi bước dùng một câu `SELECT` riêng để nhìn dữ liệu, không mô tả các lệnh SQL Server chạy nối tiếp hay thứ tự đọc vật lý. Trước `ORDER BY`, thứ tự dòng có thể khác hình; các bảng chi tiết trích tối đa `10` dòng.
+Sơ đồ là **thứ tự xử lý logic**: lấy hồ sơ, tìm cặp phòng khớp, chọn cột rồi sắp xếp. Sơ đồ không mô tả các lệnh SQL Server chạy nối tiếp hay thứ tự đọc vật lý. Trước `ORDER BY`, thứ tự dòng có thể khác hình; các bảng chi tiết trích tối đa `10` dòng.
 
 <RunFlow query={`SELECT nv.MaNV, nv.HoTen, nv.MaPB,
 \tpb.TenPB

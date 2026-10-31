@@ -1,7 +1,7 @@
 ---
 import Result from './Result.astro';
 import { highlightTsql } from '../../lib/tsql-highlight';
-import { checkFlow, checkKept, excerptNote, inlineCode, inputSteps, isUnionFlow, nextFlowId, previewOf, rowCount, snakeLayout, splitFocus, type FlowStep } from '../../lib/run-flow';
+import { checkFlow, checkKept, checkNote, excerptNote, inlineCode, inputPreview, inputSteps, isUnionFlow, nextFlowId, previewOf, rowCount, snakeLayout, splitFocus, type FlowStep } from '../../lib/run-flow';
 
 interface Props {
   /** The whole query the diagram walks through. */
@@ -26,7 +26,7 @@ const views = steps.map((step, i) => {
   return {
     step,
     num: String(i + 1).padStart(2, '0'),
-    label: `Bước ${String(i + 1).padStart(2, '0')}, ${step.clause}: ${step.title} ${unionInputs && i < 2 ? 'Có' : 'Còn'} ${rowCount(step)} dòng.`,
+    label: `Bước ${String(i + 1).padStart(2, '0')}, ${step.clause}: ${step.title} ${inputs[i].length === 0 ? 'Có' : 'Còn'} ${rowCount(step)} dòng.`,
     cell: cells[i],
     preview: previewOf(step),
     count: rowCount(step),
@@ -38,10 +38,15 @@ const views = steps.map((step, i) => {
     detail: parts(step.detail),
     inputText: step.input ? parts(step.input) : null,
     inputs: inputs[i].map(from => {
-      const preview = previewOf(from, 5);
+      const preview = inputPreview(step, from);
       return { preview, note: excerptNote(preview), clause: highlightTsql(from.clause), num: String(steps.indexOf(from) + 1).padStart(2, '0') };
     }),
-    checks: step.checks && { ...step.checks, key: inputs[i][0]?.columns[0], source: inputs[i].reduce((sum, from) => sum + rowCount(from), 0) },
+    checks: step.checks && {
+      ...step.checks,
+      key: inputs[i][0]?.columns[0],
+      source: rowCount(inputs[i][0]),
+      note: checkNote(step.checks, rowCount(inputs[i][0])),
+    },
   };
 });
 ---
@@ -96,16 +101,20 @@ const views = steps.map((step, i) => {
           <p class="rf-d-sub">Đầu vào{v.inputs.length === 1 && <small> từ bước {v.inputs[0].clause.map(t => t.text)}</small>}</p>
           {v.inputText
             ? <p class="rf-d-text">{v.inputText.map(p => (!p.code ? p.text : p.sqlWord ? <code class="rf-kw">{p.tokens.map(t => (t.kind === 'plain' ? t.text : <span class={`t-${t.kind}`}>{t.text}</span>))}</code> : <code class="rf-id">{p.text}</code>))}</p>
-            : v.inputs.length === 0 && <p class="rf-d-text">Chưa qua bước nào; dữ liệu lấy trực tiếp từ bảng nguồn.</p>}
+            : v.inputs.length === 0 && <p class="rf-d-text">Bước này không nhận dữ liệu từ bước nào trước đó trong sơ đồ.</p>}
           {v.inputs.map(input => (
             <>
               {v.inputs.length > 1 && <p class="rf-in-from">Từ bước {input.num}, {input.clause.map(t => t.text)}</p>}
-              <div class="rf-tb-scroll">
-                <table class="rf-tb">
-                  <thead><tr>{input.preview.columns.map(c => <th scope="col">{c}</th>)}</tr></thead>
-                  <tbody>{input.preview.rows.map(r => <tr>{r.map(c => <td class={c === null ? 'res-null' : undefined}>{c ?? 'NULL'}</td>)}</tr>)}</tbody>
-                </table>
-              </div>
+              {input.preview.rows.length === 0
+                ? <p class="rf-d-text">Bước trước không còn dòng nào.</p>
+                : (
+                  <div class="rf-tb-scroll">
+                    <table class="rf-tb" aria-label={`Đầu vào từ bước ${input.clause.map(t => t.text).join('')}`}>
+                      <thead><tr>{input.preview.columns.map(c => <th scope="col">{c}</th>)}</tr></thead>
+                      <tbody>{input.preview.rows.map(r => <tr>{r.map(c => <td class={c === null ? 'res-null' : undefined}>{c ?? 'NULL'}</td>)}</tr>)}</tbody>
+                    </table>
+                  </div>
+                )}
               {input.note && <p class="rf-in-note">{input.note}</p>}
             </>
           ))}
@@ -113,7 +122,7 @@ const views = steps.map((step, i) => {
           <p class="rf-d-text">{v.meaning.map(p => (!p.code ? p.text : p.sqlWord ? <code class="rf-kw">{p.tokens.map(t => (t.kind === 'plain' ? t.text : <span class={`t-${t.kind}`}>{t.text}</span>))}</code> : <code class="rf-id">{p.text}</code>))}</p>
           {v.checks && (
             <div class="rf-tb-scroll">
-              <table class="rf-tb rf-check">
+              <table class="rf-tb rf-check" aria-label="Bảng soi từng điều kiện">
                 <thead><tr><th scope="col">{v.checks.key}</th>{v.checks.conditions.map(c => <th scope="col">{c}</th>)}<th scope="col">Kết luận</th></tr></thead>
                 <tbody>{v.checks.rows.map(row => (
                   <tr class={checkKept(row) ? undefined : 'rf-gone'}>
@@ -126,6 +135,7 @@ const views = steps.map((step, i) => {
               </table>
             </div>
           )}
+          {v.checks && <p class="rf-in-note">{v.checks.note}</p>}
           <p class="rf-d-sub">Kết quả</p>
           <p class="rf-d-text">{v.detail.map(p => (!p.code ? p.text : p.sqlWord ? <code class="rf-kw">{p.tokens.map(t => (t.kind === 'plain' ? t.text : <span class={`t-${t.kind}`}>{t.text}</span>))}</code> : <code class="rf-id">{p.text}</code>))}</p>
           <Result columns={v.step.columns} rows={v.step.rows} total={v.count} />
@@ -198,7 +208,7 @@ const views = steps.map((step, i) => {
     if (event.key === 'Escape') { hide(root, true); return; }
     const target = event.target as HTMLElement;
     const drawer = drawerOf(root);
-    const onDrawerOrCard = !!target.closest?.('.rf-card') || (drawer.contains(target) && !target.closest('.res-scroll, pre'));
+    const onDrawerOrCard = !!target.closest?.('.rf-card') || (drawer.contains(target) && !target.closest('.res-scroll, .rf-tb-scroll, pre'));
     const by = arrowMove(event, onDrawerOrCard);
     if (by !== 0) {
       event.preventDefault();

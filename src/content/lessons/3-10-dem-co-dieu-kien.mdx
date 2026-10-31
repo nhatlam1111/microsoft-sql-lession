@@ -95,7 +95,7 @@ Gửi chị Hạnh `6` dòng phòng, tổng `45` hồ sơ đang làm. Phòng `KT
 
 ### SQL Server chạy câu này thế nào
 
-Sơ đồ cho thấy phạm vi dòng trước, nhóm phòng sau và các chỉ tiêu được tính trên từng nhóm. Đây là thứ tự logic để hiểu câu lệnh, không phải kế hoạch đọc vật lý. Mỗi thẻ xem nhanh ba dòng; drawer có bảng trích tối đa mười dòng và câu kiểm.
+Sơ đồ cho thấy phạm vi dòng trước, nhóm phòng sau và các chỉ tiêu được tính trên từng nhóm. Đây là thứ tự logic để hiểu câu lệnh, không phải kế hoạch đọc vật lý. Mỗi thẻ xem nhanh ba dòng; drawer có bảng trích tối đa mười dòng.
 
 <RunFlow query={`SELECT MaPB,
 \tSUM(CASE WHEN GioiTinh = N'Nam' THEN 1 ELSE 0 END) AS [SoNam],
@@ -264,7 +264,7 @@ ORDER BY MaPB;`} steps={[
     "title": "Gom thành sáu nhóm phòng",
     "focus": "GROUP BY MaPB",
     "meaning": "`GROUP BY` gom các dòng có cùng mã phòng.",
-    "detail": "Có `6` nhóm từ các hồ sơ còn lại; `SoHoSo` trong câu kiểm là số dòng mỗi nhóm, chưa tách điều kiện giới tính.",
+    "detail": "Có `6` nhóm từ các hồ sơ còn lại; `SoHoSo` trong bảng trích là số dòng mỗi nhóm, chưa tách điều kiện giới tính.",
     "sql": "SELECT MaPB, COUNT(*) AS [SoHoSo] FROM NhanVien WHERE TrangThai = N'Đang làm' GROUP BY MaPB ORDER BY MaPB;",
     "columns": [
       "MaPB",
@@ -356,7 +356,7 @@ ORDER BY MaPB;`} steps={[
     "title": "Xếp sáu dòng theo mã phòng",
     "focus": "ORDER BY MaPB",
     "meaning": "`ORDER BY` sắp xếp các dòng báo cáo đã tính.",
-    "detail": "Xếp `6` dòng theo mã phòng. Các câu kiểm trước cũng xếp mã để bảng trích dễ đọc, không phải `WHERE` hoặc `GROUP BY` tự sắp xếp.",
+    "detail": "Xếp `6` dòng theo mã phòng. Các bảng trích trước cũng xếp mã để dễ đọc, không phải `WHERE` hoặc `GROUP BY` tự sắp xếp.",
     "sql": "SELECT MaPB,\n\tSUM(CASE WHEN GioiTinh = N'Nam' THEN 1 ELSE 0 END) AS [SoNam],\n\tSUM(CASE WHEN GioiTinh = N'Nữ' THEN 1 ELSE 0 END) AS [SoNu],\n\tCOUNT(*) AS [TongSo]\nFROM NhanVien\nWHERE TrangThai = N'Đang làm'\nGROUP BY MaPB\nORDER BY MaPB;",
     "columns": [
       "MaPB",

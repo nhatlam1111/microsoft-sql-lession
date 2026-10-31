@@ -33,33 +33,33 @@
 - `FlowStep` thêm `input?: string`, `checks?: FlowChecks`, bỏ `excel`.
 - `isUnionFlow(steps: FlowStep[]): boolean`, `inputSteps(steps: FlowStep[]): FlowStep[][]`, `excerptNote(p: Preview): string`, `checkKept(row: [string, ...boolean[]]): boolean`.
 
-- [ ] Viết test: `inputSteps` trả `[[], [f0], …]`, luồng `UNION` trả `[[], [], [b0, b1], [u]]`; `excerptNote` cho "Trích 4 trong 48 dòng, 3 trong 12 cột" và chuỗi rỗng khi không trích; `checkFlow` báo bốn lỗi bảng soi; drawer có ba nhãn, không còn "Câu lệnh để xem dữ liệu ở bước này", "Ở bước này", "Liên hệ Excel".
-- [ ] Chạy `npx vitest run tests/run-flow.test.ts tests/components.test.ts`, mong đợi FAIL.
-- [ ] Làm `run-flow.ts`, `RunFlow.astro`, CSS.
-- [ ] Chạy lại, mong đợi PASS.
+- [x] Viết test: `inputSteps` trả `[[], [f0], …]`, luồng `UNION` trả `[[], [], [b0, b1], [u]]`; `excerptNote` cho "Trích 4 trong 48 dòng, 3 trong 12 cột" và chuỗi rỗng khi không trích; `checkFlow` báo bốn lỗi bảng soi; drawer có ba nhãn, không còn "Câu lệnh để xem dữ liệu ở bước này", "Ở bước này", "Liên hệ Excel".
+- [x] Chạy `npx vitest run tests/run-flow.test.ts tests/components.test.ts`, mong đợi FAIL.
+- [x] Làm `run-flow.ts`, `RunFlow.astro`, CSS.
+- [x] Chạy lại, mong đợi PASS.
 
 ## Task 2: Bỏ `excel` khỏi các bước
 
 **Files:** 22 bài có `RunFlow`.
 
-- [ ] Script chỉ xóa dòng `excel` trong khối `RunFlow`, đối chiếu mọi trường còn lại trước và sau bằng `node:vm`.
-- [ ] Chạy `npx vitest run`, mong đợi PASS.
-- [ ] Commit Task 1 và 2.
+- [x] Script chỉ xóa dòng `excel` trong khối `RunFlow`, đối chiếu mọi trường còn lại trước và sau bằng `node:vm`.
+- [x] Chạy `npx vitest run`, mong đợi PASS.
+- [x] Commit Task 1 và 2.
 
 ## Task 3: Lời mới và bảng soi 2.1–2.5
 
 **Files:** `src/content/lessons/2-1` đến `2-5`, test nội dung các bài này.
 
-- [ ] Chạy `SELECT` cho mọi số của bảng soi.
-- [ ] Thêm test số liệu `checks` của 2.3 (`24`, `3`, `2`) và 2.5 (`10`, `45`, `8`).
-- [ ] Viết `input`, `meaning`, `detail`, `checks` cho 17 bước; thêm `NV020` vào bước `FROM` của 2.2, `NV002` vào của 2.3; thêm `preview` cho bước `SELECT` của 2.4.
-- [ ] Chạy `npx vitest run`, mong đợi PASS, rồi commit.
+- [x] Chạy `SELECT` cho mọi số của bảng soi.
+- [x] Thêm test số liệu `checks` của 2.3 (`24`, `3`, `2`) và 2.5 (`10`, `45`, `8`).
+- [x] Viết `input`, `meaning`, `detail`, `checks` cho 17 bước; thêm `NV020` vào bước `FROM` của 2.2, `NV002` vào của 2.3; thêm `preview` cho bước `SELECT` của 2.4.
+- [x] Chạy `npx vitest run`, mong đợi PASS, rồi commit.
 
 ## Task 4: Quy ước, kiểm, review
 
 **Files:** `docs/quy-uoc.md`, `docs/lesson-template.md`, `docs/reviews/2026-10-31-run-flow-drawer/`, spec, plan, memory.
 
-- [ ] Sửa quy ước và khung bài trong cùng commit với phần áp dụng.
-- [ ] `npm test`, `npm run check`, `npm run build`, `npm run check:dist`.
-- [ ] Xem bản build ở rộng 1024 và 1440: 2.3, 2.5, một bài có `JOIN`, bài 3.8, bàn phím.
-- [ ] Review tích hợp theo mục 4.5, xử lý theo mục 4.6, lưu hồ sơ, commit.
+- [x] Sửa quy ước và khung bài trong cùng commit với phần áp dụng.
+- [x] `npm test`, `npm run check`, `npm run build`, `npm run check:dist`.
+- [x] Xem bản build ở rộng 1024 và 1440: 2.3, 2.5, một bài có `JOIN`, bài 3.8, bàn phím.
+- [x] Review tích hợp theo mục 4.5, xử lý theo mục 4.6, lưu hồ sơ, commit.

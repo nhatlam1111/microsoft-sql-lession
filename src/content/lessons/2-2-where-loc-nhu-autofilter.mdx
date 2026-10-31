@@ -75,9 +75,9 @@ WHERE MaPB = 'KD';`} steps={[
     clause: 'FROM',
     title: 'Xác định nguồn là bảng NhanVien.',
     focus: 'FROM NhanVien',
-    input: "Bảng `NhanVien` lưu trong database.",
-    meaning: "`FROM` lấy bảng `NhanVien` làm nguồn, chưa xét phòng nào.",
-    detail: "Có `48` hồ sơ, đủ `12` cột, thuộc các phòng khác nhau và gồm cả người đã nghỉ. Hình trích bốn hồ sơ để đối chiếu ở bước sau.",
+    input: "Bảng `NhanVien` trong database.",
+    meaning: "`FROM` chọn bảng này làm nguồn, chưa lọc dòng, chưa chọn cột.",
+    detail: "`48` hồ sơ, `12` cột, thuộc các phòng khác nhau và gồm cả người đã nghỉ. Hình trích bốn hồ sơ để đối chiếu ở bước sau.",
     sql: `SELECT * FROM NhanVien;`,
     columns: ['MaNV', 'HoTen', 'GioiTinh', 'NgaySinh', 'SoCCCD', 'Email', 'NgayVaoLam', 'NgayNghiViec', 'MaPB', 'MaCD', 'MaQuanLy', 'TrangThai'],
     rows: [
@@ -93,7 +93,7 @@ WHERE MaPB = 'KD';`} steps={[
     clause: 'WHERE',
     title: 'Giữ các hồ sơ có mã phòng KD.',
     focus: "WHERE MaPB = 'KD'",
-    meaning: "`WHERE` xét từng hồ sơ, chỉ giữ dòng khi điều kiện đúng: `MaPB` bằng `KD`. Nó xét cột nguồn, chưa dùng các tiêu đề alias.",
+    meaning: "`WHERE` xét từng hồ sơ, chỉ giữ dòng khi điều kiện đúng. Nó xét cột nguồn `MaPB`, chưa dùng các tiêu đề alias.",
     detail: "Còn `14` hồ sơ, vẫn đủ `12` cột. `NV020` đã nghỉ vẫn được giữ vì điều kiện chỉ xét mã phòng.",
     checks: { conditions: ["MaPB = 'KD'"], rows: [["NV001", false], ["NV002", true], ["NV003", true], ["NV020", true]], totals: [14, 14] },
     sql: `SELECT * FROM NhanVien WHERE MaPB = 'KD';`,
@@ -110,8 +110,9 @@ WHERE MaPB = 'KD';`} steps={[
     clause: 'SELECT',
     title: 'Hiển thị bốn cột với tiêu đề yêu cầu.',
     focus: "SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],\n\tMaPB AS [Mã phòng], TrangThai AS [Trạng thái]",
-    meaning: "`SELECT` giữ nguyên `14` dòng, chỉ lấy bốn cột. `AS` đặt tiêu đề tiếng Việt như bài 2.1.",
-    detail: "Vẫn `14` hồ sơ, còn `4` cột: `Mã nhân viên`, `Họ tên`, `Mã phòng`, `Trạng thái`. Đây là danh sách chị Hạnh cần, có cả hồ sơ đã nghỉ.",
+    inputColumns: ["MaNV", "HoTen", "MaPB", "TrangThai"],
+    meaning: "`SELECT` chọn bốn cột, bỏ các cột còn lại. `AS` đặt tiêu đề tiếng Việt như bài 2.1.",
+    detail: "Vẫn `14` hồ sơ, còn `4` cột: đây là danh sách chị Hạnh cần, có cả hồ sơ đã nghỉ.",
     sql: `SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
 \tMaPB AS [Mã phòng], TrangThai AS [Trạng thái]
 FROM NhanVien

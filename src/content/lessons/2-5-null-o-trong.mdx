@@ -80,9 +80,9 @@ ORDER BY MaNV ASC;`} steps={[
   clause: "FROM",
   title: "Lấy bảng nhân viên làm nguồn.",
   focus: "FROM NhanVien",
-  input: "Bảng `NhanVien` lưu trong database.",
-  meaning: "`FROM` lấy bảng `NhanVien` làm nguồn, chưa xét phòng hay ngày nghỉ việc.",
-  detail: "Có `48` hồ sơ, đủ `12` cột. Hình trích bốn hồ sơ để đối chiếu ở bước sau.",
+  input: "Bảng `NhanVien` trong database.",
+  meaning: "`FROM` chọn bảng này làm nguồn, chưa lọc dòng, chưa chọn cột.",
+  detail: "`48` hồ sơ, `12` cột. Hình trích bốn hồ sơ để đối chiếu ở bước sau.",
   sql: `SELECT * FROM NhanVien;`,
   columns: ["MaNV","HoTen","GioiTinh","NgaySinh","SoCCCD","Email","NgayVaoLam","NgayNghiViec","MaPB","MaCD","MaQuanLy","TrangThai"],
   rows: [
@@ -98,9 +98,10 @@ ORDER BY MaNV ASC;`} steps={[
   clause: "WHERE",
   title: "Giữ hồ sơ phòng VH chưa có ngày nghỉ việc.",
   focus: "WHERE MaPB = 'VH'\n\tAND NgayNghiViec IS NULL",
-  meaning: "`WHERE` xét từng hồ sơ, `AND` yêu cầu cả hai điều kiện cùng đúng: `MaPB` bằng `VH` và `NgayNghiViec` là `NULL`.",
-  detail: "Còn `8` hồ sơ, vẫn đủ `12` cột. `NV033` có ngày nghỉ việc, `NV045` thuộc `KD`. Email của `NV044` vẫn là `NULL`. Hình trích ba hồ sơ, thứ tự dòng chưa được bảo đảm.",
-  checks: { conditions: ["MaPB = 'VH'", "IS NULL"], rows: [["NV008", true, true], ["NV033", true, false], ["NV044", true, true], ["NV045", false, true]], totals: [10, 45, 8] },
+  inputColumns: ["MaNV", "MaPB", "NgayNghiViec"],
+  meaning: "`WHERE` xét từng hồ sơ, `AND` yêu cầu cả hai điều kiện cùng đúng.",
+  detail: "Còn `8` hồ sơ, vẫn đủ `12` cột. Email của `NV044` vẫn là `NULL`. Hình trích ba hồ sơ, thứ tự dòng chưa được bảo đảm.",
+  checks: { conditions: ["MaPB = 'VH'", "NgayNghiViec IS NULL"], rows: [["NV008", true, true], ["NV033", true, false], ["NV044", true, true], ["NV045", false, true]], totals: [10, 45, 8] },
   sql: `SELECT *
 FROM NhanVien
 WHERE MaPB = 'VH'
@@ -118,8 +119,9 @@ WHERE MaPB = 'VH'
   clause: "SELECT",
   title: "Chọn ba cột và ghi nhãn ở email còn thiếu.",
   focus: "SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],\n\tCOALESCE(Email, N'(chưa có)') AS [Email]",
-  meaning: "`SELECT` giữ nguyên `8` dòng, lấy ba cột và đặt tiêu đề. `COALESCE` thay `NULL` của `Email` bằng nhãn, email có sẵn giữ nguyên.",
-  detail: "Vẫn `8` hồ sơ, còn `3` cột. Bảy email giữ nguyên, `NV044` hiện `(chưa có)`; email trong bảng nguồn vẫn là `NULL`. Hình trích ba hồ sơ, chưa chốt thứ tự dòng.",
+  inputColumns: ["MaNV", "HoTen", "Email"],
+  meaning: "`SELECT` chọn ba cột và đặt tiêu đề. `COALESCE` thay `NULL` của `Email` bằng nhãn, email có sẵn giữ nguyên.",
+  detail: "Vẫn `8` hồ sơ, còn `3` cột. `NV044` hiện `(chưa có)`; email trong bảng nguồn vẫn là `NULL`. Hình trích ba hồ sơ, chưa chốt thứ tự dòng.",
   sql: `SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
 \tCOALESCE(Email, N'(chưa có)') AS [Email]
 FROM NhanVien

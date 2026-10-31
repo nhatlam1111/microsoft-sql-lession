@@ -91,7 +91,7 @@ Chị Hạnh thấy tổng trên đơn của ba tháng là `14.0`, `20.0`, `11.0
 
 ### SQL Server chạy câu này thế nào
 
-`TongTheoThang` gom tháng, `SoSanh` tính cửa sổ trên các dòng tháng đó; sơ đồ chỉ diễn giải **SELECT ngoài** đọc `SoSanh`, thêm phép trừ rồi sắp bảng. Đây là thứ tự logic để hiểu nguồn và cột, không phải cam kết CTE được lưu hay thực thi tuần tự. Mỗi câu kiểm có đủ phần `WITH`; thẻ xem nhanh ba dòng và drawer có tổng thật.
+`TongTheoThang` gom tháng, `SoSanh` tính cửa sổ trên các dòng tháng đó; sơ đồ chỉ diễn giải **SELECT ngoài** đọc `SoSanh`, thêm phép trừ rồi sắp bảng. Đây là thứ tự logic để hiểu nguồn và cột, không phải cam kết CTE được lưu hay thực thi tuần tự. Thẻ xem nhanh ba dòng, drawer có tổng thật.
 
 <RunFlow query={`WITH TongTheoThang AS (
 \tSELECT EOMONTH(TuNgay) AS [Thang], SUM(SoNgay) AS [TongNgay]

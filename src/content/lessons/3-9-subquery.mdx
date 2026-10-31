@@ -107,7 +107,7 @@ Gửi chị Hạnh `9` hồ sơ kèm họ tên và mã phòng hiện lưu. Đi�
 
 ### SQL Server chạy câu này thế nào
 
-Sơ đồ diễn giải logic lọc của câu ngoài; không mô tả thứ tự đọc vật lý hoặc khẳng định câu con luôn chạy lại từng dòng. Mỗi thẻ chỉ xem nhanh ba dòng; drawer chứa bảng trích tối đa mười dòng và câu kiểm tương ứng. Bước đầu chỉ hiển thị mã để dễ theo dõi.
+Sơ đồ diễn giải logic lọc của câu ngoài; không mô tả thứ tự đọc vật lý hoặc khẳng định câu con luôn chạy lại từng dòng. Mỗi thẻ chỉ xem nhanh ba dòng; drawer chứa bảng trích tối đa mười dòng. Bước đầu chỉ hiển thị mã để dễ theo dõi.
 
 <RunFlow query={`SELECT nv.MaNV, nv.HoTen, nv.MaPB
 FROM NhanVien AS nv
@@ -269,7 +269,7 @@ ORDER BY nv.MaNV;`} steps={[
     "title": "Xếp mã tăng dần",
     "focus": "ORDER BY nv.MaNV",
     "meaning": "`ORDER BY` quyết định thứ tự kết quả.",
-    "detail": "Xếp `9` dòng theo mã tăng dần. Câu kiểm của các bước trước cũng xếp mã để dễ đối chiếu, không có nghĩa bước lọc tự sắp xếp.",
+    "detail": "Xếp `9` dòng theo mã tăng dần. Bảng trích của các bước trước cũng xếp mã để dễ đối chiếu, không có nghĩa bước lọc tự sắp xếp.",
     "sql": "SELECT nv.MaNV, nv.HoTen, nv.MaPB\nFROM NhanVien AS nv\nWHERE nv.MaNV IN (\n\tSELECT dp.MaNV\n\tFROM DonNghiPhep AS dp\n\tWHERE dp.TrangThai = N'Đã duyệt'\n\t\tAND dp.TuNgay >= '20260901' AND dp.TuNgay < '20261001'\n)\nORDER BY nv.MaNV;",
     "columns": [
       "MaNV",

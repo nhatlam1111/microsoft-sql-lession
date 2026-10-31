@@ -100,7 +100,7 @@ Chị Hạnh nhận `6` dòng phòng; `KD` có nhiều hồ sơ đang làm nhấ
 
 ### SQL Server chạy câu này thế nào
 
-Theo thứ tự logic, lọc hồ sơ trước, gom nhóm sau, rồi chọn cột kết quả và sắp xếp. Bấm từng bước để xem dữ liệu ở mốc đó bằng một câu `SELECT` riêng; các câu này không phải những lệnh SQL Server tự chạy nối tiếp. Trước `ORDER BY`, thứ tự dòng có thể khác hình; sơ đồ không mô tả cách thực thi vật lý.
+Theo thứ tự logic, lọc hồ sơ trước, gom nhóm sau, rồi chọn cột kết quả và sắp xếp. Bấm từng bước để xem dữ liệu ở mốc đó. Trước `ORDER BY`, thứ tự dòng có thể khác hình; sơ đồ không mô tả cách thực thi vật lý.
 
 <RunFlow query={`SELECT MaPB, COUNT(*) AS [SoHoSo]
 FROM NhanVien
@@ -159,7 +159,7 @@ WHERE TrangThai = N'Đang làm';`,
     title: 'Gom theo mã phòng và đếm từng nhóm.',
     focus: 'GROUP BY MaPB',
     meaning: '`GROUP BY` xác định nhóm theo các cột đã chọn; hàm tổng hợp tính riêng trên các dòng thuộc mỗi nhóm.',
-    detail: '`GROUP BY` chia `45` hồ sơ thành `6` nhóm mã phòng. Câu kiểm dùng `SELECT` để hiện kích thước nhóm: `KD` có `13`, `VH` có `8` hồ sơ đang làm; chưa yêu cầu thứ tự các nhóm.',
+    detail: '`GROUP BY` chia `45` hồ sơ thành `6` nhóm mã phòng. Bảng trích hiện kích thước nhóm: `KD` có `13`, `VH` có `8` hồ sơ đang làm; chưa yêu cầu thứ tự các nhóm.',
     sql: `SELECT MaPB, COUNT(*) AS [SoHoSo]
 FROM NhanVien
 WHERE TrangThai = N'Đang làm'

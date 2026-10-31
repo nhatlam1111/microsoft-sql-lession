@@ -72,7 +72,7 @@ Chị Hạnh nhận một dòng: `KD` có `13` hồ sơ đang làm theo phòng h
 
 ### SQL Server chạy câu này thế nào
 
-Sơ đồ đi theo thứ tự logic: lấy hồ sơ, lọc dòng, gom nhóm, lọc nhóm, chọn cột rồi sắp xếp. Bấm từng bước để xem dữ liệu bằng một câu `SELECT` riêng; alias trong các câu kiểm không làm alias của câu gốc xuất hiện sớm hơn. Thứ tự trước `ORDER BY` có thể khác hình; đây không phải thứ tự thực thi vật lý.
+Sơ đồ đi theo thứ tự logic: lấy hồ sơ, lọc dòng, gom nhóm, lọc nhóm, chọn cột rồi sắp xếp. Bấm từng bước để xem dữ liệu ở mỗi mốc. Thứ tự trước `ORDER BY` có thể khác hình; đây không phải thứ tự thực thi vật lý.
 
 <RunFlow query={`SELECT MaPB, COUNT(*) AS [SoHoSo]
 FROM NhanVien
@@ -132,7 +132,7 @@ WHERE TrangThai = N'Đang làm';`,
     title: 'Gom hồ sơ theo mã phòng.',
     focus: 'GROUP BY MaPB',
     meaning: '`GROUP BY` chia những dòng đã lọc thành nhóm; `COUNT(*)` tính số dòng trong từng nhóm.',
-    detail: '`GROUP BY` tạo `6` nhóm từ `45` hồ sơ đang làm. Câu kiểm hiển thị kích thước mỗi nhóm: `KD` có `13`, `IT` có `10`; chưa loại nhóm theo ngưỡng.',
+    detail: '`GROUP BY` tạo `6` nhóm từ `45` hồ sơ đang làm. Bảng trích hiện kích thước mỗi nhóm: `KD` có `13`, `IT` có `10`; chưa loại nhóm theo ngưỡng.',
     sql: `SELECT MaPB, COUNT(*) AS [SoHoSo]
 FROM NhanVien
 WHERE TrangThai = N'Đang làm'

@@ -1,5 +1,5 @@
 import { it, expect } from 'vitest';
-import { clauseRank, checkFlow, snakeLayout, previewOf, splitFocus, inlineCode, arrowMove, inputSteps, isUnionFlow, excerptNote, checkKept } from '../src/lib/run-flow';
+import { clauseRank, checkFlow, snakeLayout, previewOf, splitFocus, inlineCode, arrowMove, inputSteps, isUnionFlow, excerptNote, checkKept, inputPreview, checkNote } from '../src/lib/run-flow';
 import { sampleFlow, sampleQuery } from './helpers/flows';
 import { unionFlow, unionQuery } from './helpers/union-flow';
 
@@ -89,6 +89,21 @@ it('says how much of a table an excerpt shows, and nothing when it shows all of 
   expect(note(4, 44, 3, 0)).toBe('Trích 4 trong 48 dòng');
   expect(note(4, 0, 3, 0)).toBe('');
 });
+it('shows the columns a step asks for in its input, up to five rows of the step before', () => {
+  const f = sampleFlow();
+  expect(inputPreview(f[1], f[0])).toMatchObject({ columns: ['MaNV', 'HoTen', 'GioiTinh'], moreRows: 43, moreCols: 9 });
+  expect(inputPreview(f[1], f[0]).rows).toHaveLength(5);
+  const step = { ...f[1], inputColumns: ['MaNV', 'MaPB'] };
+  expect(inputPreview(step, f[0])).toMatchObject({ columns: ['MaNV', 'MaPB'], moreCols: 10 });
+  expect(checkFlow([f[0], step], sampleQuery())).toEqual([]);
+  expect(checkFlow([f[0], { ...f[1], inputColumns: ['KhongCo'] }], sampleQuery())[0]).toMatch(/^bước 2: .*KhongCo/);
+  expect(checkFlow([{ ...f[0], inputColumns: ['MaNV'] }, f[1]], sampleQuery())[0]).toMatch(/^bước 1: .*MaNV/);
+});
+it('says the check table is an excerpt and what its last row counts', () => {
+  const checks = { conditions: ['IN', 'BETWEEN'], rows: [['NV002', true, false], ['NV003', true, true]] as [string, ...boolean[]][], totals: [24, 3, 2] };
+  expect(checkNote(checks, 48)).toBe('Trích 2 trong 48 dòng; hàng cuối đếm riêng từng điều kiện trên cả 48 dòng.');
+  expect(checkNote({ ...checks, conditions: ['IN'] }, 48)).toBe('Trích 2 trong 48 dòng; hàng cuối đếm trên cả 48 dòng.');
+});
 it('keeps a row in the check table only when every condition holds', () => {
   expect(checkKept(['NV003', true, true])).toBe(true);
   expect(checkKept(['NV002', true, false])).toBe(false);
@@ -106,6 +121,10 @@ it('stops a check table whose rows or totals do not match the step', () => {
   expect(flow({ ...good, rows: [['KHONGCO', true]] })[0]).toMatch(/^bước 3: .*KHONGCO.*đầu vào/);
   expect(flow({ ...good, rows: [[dropped, true]] })[0]).toMatch(/^bước 3: .*được giữ nhưng không có/);
   expect(flow({ ...good, rows: [[kept, false]] })[0]).toMatch(/^bước 3: .*bị loại nhưng vẫn có/);
+  expect(flow({ ...good, totals: [1, step.total!] })[0]).toMatch(/^bước 3: .*số đúng nhỏ hơn số giữ/);
+  // The input shows five rows, so a record further down could not be followed from the table above.
+  expect(flow({ ...good, rows: [['NV006', false]] })[0]).toMatch(/^bước 3: .*NV006.*đầu vào/);
+  expect(checkFlow([{ ...f[0], checks: good }, f[1]], sampleQuery())[0]).toMatch(/^bước 1: bảng soi cần bước trước/);
 });
 it('an empty step must say its total is 0', () => {
   const f = sampleFlow();

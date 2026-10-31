@@ -237,6 +237,7 @@
 .rf-tb { width: 100%; border-collapse: collapse; font-family: var(--font-ui); font-size: 12.5px; line-height: 1.4; }
 .rf-tb th, .rf-tb td { padding: 4px 7px; border: 1px solid #E3E6EC; text-align: left; white-space: nowrap; }
 .rf-tb thead th { background: #F0F0F0; font-weight: 600; }
+.rf-check thead th { white-space: normal; }
 .rf-tb tbody th, .rf-tb tfoot th { font-weight: 500; }
 .rf-tb .res-null { background: var(--ssms-null); }
 .rf-tb tfoot th, .rf-tb tfoot td { background: var(--surface-subtle); font-weight: 600; }
