@@ -5,7 +5,7 @@ shortTitle: SELECT, chọn cột, tiêu đề
 level: 2
 area: A2
 kind: full
-minutes: 22
+minutes: 18
 prerequisites:
   - "1.2"
   - "1.3"
@@ -28,35 +28,9 @@ Giả định của tình huống: bạn vừa được cấp quyền đọc dat
 
 ## Từ bảng nhân viên đến danh sách gửi Kế toán
 
-### Từ mở sheet và chép cột đến SELECT
+### Từ chép cột trong Excel đến câu SELECT
 
-Trong Excel, bạn mở sheet nhân viên, nhìn dòng tiêu đề để tìm ba cột cần gửi, rồi chép chúng sang một workbook mới. Hình trích bốn cột và ba hồ sơ của dữ liệu mẫu; các ô `A1`, `B1`, `D1` được đánh dấu là ba cột cần lấy, cột `NgaySinh` không gửi.
-
-<Excel sheets="NhanVien" mark={['A1', 'B1', 'D1']} numeric={['C2', 'C3', 'C4', 'D2', 'D3', 'D4']} rows={[
-  ['MaNV', 'HoTen', 'NgaySinh', 'NgayVaoLam'],
-  ['NV001', 'Trần Thị Mai', '12/04/1992', '01/03/2024'],
-  ['NV002', 'Lê Văn Hùng', '03/09/1988', '01/04/2024'],
-  ['NV003', 'Nguyễn Thu Hà', '25/01/1995', '01/06/2023'],
-]} />
-
-Chỉ ẩn cột rồi gửi nguyên workbook thì dữ liệu thừa vẫn ở trong file, nên phải chép riêng ba cột.
-
-Trong SQL không có sheet nào đang mở, nên bạn gửi cho SQL Server một **câu truy vấn (query)**, còn gọi là câu lệnh, nói rõ cần lấy gì. **`FROM`** chỉ bảng nguồn, giống việc chọn sheet; **`SELECT`** chọn cột, giống việc chép cột. Trong **danh sách cột** sau `SELECT`, viết tên cột và ngăn cách bằng dấu phẩy, như `SELECT MaNV, HoTen FROM NhanVien;`. Dấu `;` kết thúc câu lệnh; xuống dòng và viết hoa các từ khóa như `SELECT`, `FROM` chỉ giúp dễ đọc.
-
-Cột không chọn không có trong kết quả; bài này chưa có điều kiện lọc nên chọn ít cột không làm bớt dòng. Câu `SELECT … FROM` như trên chỉ đọc, không sửa bảng. Tên cột xem ở Object Explorer → **Columns** hoặc nút **Sơ đồ database** trên trang bài tập, và phải khớp đúng tên trong bảng.
-
-Thứ tự cột đi theo thứ tự viết sau `SELECT`. Ví dụ `SELECT TenPB, MaPB FROM PhongBan;` đặt tên phòng trước mã phòng, dù trong bảng nguồn mã đứng trước. Đó là đổi vị trí cột; muốn sắp các dòng phải dùng `ORDER BY` (bài 2.4).
-
-Dấu **`*`** thay cho danh sách cột để lấy mọi cột. Cách này tiện để xem nhưng lấy cả dữ liệu cá nhân như `SoCCCD`, `Email`, nên bản gửi đi phải chọn đúng cột.
-
-Gặp một bảng lạ, trong Excel bạn lướt vài dòng đầu. Trong SQL, **`TOP (5)`** viết ngay sau `SELECT` để lấy tối đa năm dòng, giúp xem mẫu mà không đưa cả bảng lớn, như `ChamCong` có `806` dòng, lên màn hình; bảng chỉ có ba dòng thì trả ba. Câu chưa có `ORDER BY`, nên `TOP` không bảo đảm chọn hồ sơ nào. Ở bài này chỉ cần nhận ra câu xem thử dưới đây; bài 2.4 mới dùng `TOP` cùng `ORDER BY`.
-
-<Sql copy={false} title="Xem thử một bảng, chỉ để đọc" code={`SELECT TOP (5) *
-FROM NhanVien;`} />
-
-### Từ sửa dòng tiêu đề đến AS
-
-Trong Excel, sau khi chép ba cột sang workbook mới, bạn sửa dòng tiêu đề theo yêu cầu. Hình minh họa bản gửi đi, trích ba hồ sơ của dữ liệu mẫu. Các ô `A1`, `B1`, `C1` được đánh dấu là tiêu đề cần có; cột ngày chứa ngày thật, đang hiển thị theo ngày/tháng/năm.
+Trong Excel, bạn mở sheet nhân viên, chép ba cột cần gửi sang một workbook mới rồi sửa dòng tiêu đề. Hình minh họa bản gửi đi, trích ba hồ sơ của dữ liệu mẫu; các ô `A1`, `B1`, `C1` được đánh dấu là tiêu đề cần có, cột ngày chứa ngày thật, đang hiển thị theo ngày/tháng/năm.
 
 <Excel sheets="Danh sách gửi kế toán" mark={['A1', 'B1', 'C1']} numeric={['C2', 'C3', 'C4']} rows={[
   ['Mã nhân viên', 'Họ tên', 'Ngày vào làm'],
@@ -65,11 +39,22 @@ Trong Excel, sau khi chép ba cột sang workbook mới, bạn sửa dòng tiêu
   ['NV003', 'Nguyễn Thu Hà', '01/06/2023'],
 ]} />
 
-Trong SQL, **bí danh cột (alias)** là tên đặt cho cột trong kết quả bằng `AS`. Viết `HoTen AS [Họ tên]` thì tiêu đề là `Họ tên`, còn ô dữ liệu vẫn chứa tên như `Trần Thị Mai`. Tên cột nguồn vẫn là `HoTen`; giá trị và kiểu dữ liệu không đổi.
+Trong SQL không có sheet nào đang mở, nên bạn gửi cho SQL Server một **câu truy vấn (query)**, còn gọi là câu lệnh, nói rõ cần lấy gì. **`FROM`** chỉ bảng nguồn, giống việc chọn sheet. **`SELECT`** chọn cột, giống việc chép cột: viết **danh sách cột** ngăn cách bằng dấu phẩy, như `SELECT MaNV, HoTen FROM NhanVien;`. Dấu `;` kết thúc câu lệnh; xuống dòng và viết hoa các từ khóa như `SELECT`, `FROM` chỉ giúp dễ đọc.
 
-Alias chỉ có trong câu lệnh đó, không được lưu thành tên mới trong bảng: cũng như trong Excel, bạn sửa tiêu đề ở bản gửi đi, còn nguồn dùng chung vẫn như cũ. Nhờ nằm trong câu lệnh, tiêu đề vẫn đủ mỗi lần chạy lại, không phải sửa tay.
+Cột trong kết quả đi theo thứ tự bạn viết: `SELECT TenPB, MaPB FROM PhongBan;` đặt tên phòng trước mã phòng. Cột không chọn không có trong kết quả, còn số dòng không đổi vì câu chưa lọc gì. Câu `SELECT … FROM` như trên chỉ đọc, không sửa bảng. Tên cột xem ở Object Explorer → **Columns** hoặc nút **Sơ đồ database** trên trang bài tập.
 
-**Ngoặc vuông** `[]` bao một tên có khoảng trắng, như `[Ngày vào làm]`; dấu ngoặc không hiện trong tiêu đề. Khóa học dùng ngoặc cho mọi alias để thống nhất. Không thêm `N` trước ngoặc: đây là một tên, không phải chuỗi giá trị; chuỗi tiếng Việt mới viết như `N'Trần Thị Mai'` (bài 1.3).
+Muốn xem thử một bảng lạ, như lướt vài dòng đầu trong Excel, dùng dấu **`*`** thay danh sách cột để lấy mọi cột, và **`TOP (5)`** ngay sau `SELECT` để lấy tối đa năm dòng. Ở bài này chỉ cần nhận ra câu dưới:
+
+<Sql copy={false} title="Xem thử một bảng, chỉ để đọc" code={`SELECT TOP (5) *
+FROM NhanVien;`} />
+
+Chưa có `ORDER BY` thì `TOP` không bảo đảm chọn hồ sơ nào, còn `*` lấy cả dữ liệu cá nhân như `SoCCCD`, `Email`. Vì vậy bản gửi đi phải liệt kê đúng cột.
+
+Việc sửa dòng tiêu đề ứng với **bí danh cột (alias)**, tên đặt cho cột trong kết quả bằng `AS`. Viết `HoTen AS [Họ tên]` thì tiêu đề là `Họ tên`, còn ô dữ liệu vẫn chứa tên như `Trần Thị Mai`; giá trị và kiểu dữ liệu không đổi.
+
+Alias chỉ có trong câu lệnh đó, không được lưu thành tên mới trong bảng: cũng như trong Excel, bạn sửa tiêu đề ở bản gửi đi, còn nguồn dùng chung vẫn như cũ. Nhờ nằm trong câu lệnh, tiêu đề vẫn đủ mỗi lần chạy lại.
+
+**Ngoặc vuông** `[]` bao một tên có khoảng trắng, như `[Ngày vào làm]`, và không hiện trong tiêu đề; khóa học dùng ngoặc cho mọi alias. Không thêm `N` trước ngoặc: đây là một tên, không phải chuỗi giá trị; chuỗi tiếng Việt mới viết như `N'Trần Thị Mai'` (bài 1.3).
 
 Ở bài này chỉ cần chọn cột, xem thử bảng và đặt tiêu đề. Lọc dòng học ở bài 2.2, sắp xếp dòng ở bài 2.4.
 
@@ -80,7 +65,7 @@ Ba cột tương ứng với yêu cầu là `MaNV`, `HoTen`, `NgayVaoLam`. Viế
 <Sql code={`SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên], NgayVaoLam AS [Ngày vào làm]
 FROM NhanVien;`} />
 
-Đây là câu bạn tự chạy. Trên web, kéo xuống mục Bài tập, bấm **Làm bài** ở bài 1 để mở trang bài tập, nhập câu trên rồi bấm **Chạy (F5)**; lần đầu trang sẽ hỏi mã truy cập. **Nộp bài** chấm theo đề của trang đó, nên với câu thử này chỉ bấm Chạy, xem xong thì xóa câu rồi quay lại đây. Trong SSMS, sau khi [kết nối](/microsoft-sql-lession/gioi-thieu/#ket-noi-ssms), mở **New Query**, dán câu trên rồi bấm **F5**; lưu ý khi bôi đen nằm ở [mục chạy câu lệnh](/microsoft-sql-lession/gioi-thieu/#chay-cau-lenh). Chưa có nơi thực hành thì [chọn một trong ba lối](/microsoft-sql-lession/gioi-thieu/#chon-noi-thuc-hanh).
+Đây là câu bạn tự chạy. Trên web, kéo xuống mục Bài tập, bấm **Làm bài** ở bài 1, nhập câu trên rồi bấm **Chạy (F5)**; lần đầu trang sẽ hỏi mã truy cập. **Nộp bài** chấm theo đề của trang đó, nên chỉ bấm Chạy, xem xong thì xóa câu rồi quay lại đây. Trong SSMS, [kết nối](/microsoft-sql-lession/gioi-thieu/#ket-noi-ssms) rồi làm theo [mục chạy câu lệnh](/microsoft-sql-lession/gioi-thieu/#chay-cau-lenh) với câu trên. Chưa có nơi thực hành thì [chọn một trong ba lối](/microsoft-sql-lession/gioi-thieu/#chon-noi-thuc-hanh).
 
 <Result columns={['Mã nhân viên', 'Họ tên', 'Ngày vào làm']} rows={[
   ['NV001', 'Trần Thị Mai', '2024-03-01'],
@@ -92,18 +77,14 @@ FROM NhanVien;`} />
 
 <Messages lines={['(48 rows affected)']} />
 
-Hình trích năm trong `48` hồ sơ của dữ liệu mẫu. Ở dòng đánh dấu, `NV001` có ngày vào làm `2024-03-01`, cùng ngày với `01/03/2024` trong hình Excel: `AS` chỉ đổi tiêu đề, nên cột vẫn có kiểu `date`, hiển thị năm-tháng-ngày. Câu chưa có `ORDER BY`, thứ tự dòng có thể khác hình.
+Hình trích năm trong `48` hồ sơ của dữ liệu mẫu; câu chưa có `ORDER BY` nên thứ tự dòng có thể khác hình. Hai tab dưới cửa sổ câu lệnh giúp đọc lần chạy:
 
-Hai tab dưới cửa sổ câu lệnh giúp đọc lần chạy:
-
-- **Results** là lưới dữ liệu. Cột ngoài cùng bên trái là số thứ tự dòng của kết quả, được đánh lại mỗi lần chạy; đó không phải mã hay cột trong bảng.
+- **Results** là lưới dữ liệu. Cột ngoài cùng bên trái là số thứ tự dòng của kết quả, được đánh lại mỗi lần chạy, không phải mã hay cột trong bảng. Ở dòng đánh dấu, `2024-03-01` cùng ngày với `01/03/2024` trong hình Excel: `AS` chỉ đổi tiêu đề, cột vẫn có kiểu `date`.
 - **Messages** hiện thông tin lần chạy hoặc lỗi. Ở đây `(48 rows affected)` nghĩa là câu trả về `48` dòng, không phải `48` dòng đã bị sửa. Gõ sai tên cột, như `TenNV`, thì câu không trả kết quả và tab này báo `Invalid column name 'TenNV'.`, phần trong nháy là tên bị sai.
 
-Bạn có thể trả lời chị Hạnh: danh sách đủ `48` hồ sơ, bằng số dòng của bảng `NhanVien` vì câu không có điều kiện lọc, nên có cả `3` hồ sơ đã nghỉ trong dữ liệu mẫu là `NV020`, `NV033`, `NV041`; có đúng ba cột, thứ tự và tiêu đề yêu cầu, không kèm ngày sinh, số CCCD hay email. Ba cột này không cho biết ai đã nghỉ; nếu Kế toán cần phân biệt thì chị Hạnh cần bổ sung yêu cầu về trạng thái.
+Bạn có thể trả lời chị Hạnh: danh sách đủ `48` hồ sơ vì câu không có điều kiện lọc, nên có cả `3` hồ sơ đã nghỉ trong dữ liệu mẫu là `NV020`, `NV033`, `NV041`; có đúng ba cột, thứ tự và tiêu đề yêu cầu. Ba cột này không cho biết ai đã nghỉ; nếu Kế toán cần phân biệt thì chị Hạnh cần bổ sung yêu cầu về trạng thái.
 
-Để chép sang Excel trong SSMS, chọn vùng kết quả (Ctrl+A chọn cả lưới) → chuột phải → **Copy with Headers**, rồi dán vào workbook gửi đi để giữ cả ba tiêu đề; trang bài tập không có lệnh này. Nếu ô dán vào là ngày thật, dùng **Format Cells** để hiển thị ngày/tháng/năm; `AS` không định dạng ngày. Bản chép phản ánh dữ liệu lúc lấy, không tự cập nhật theo database.
-
-### SQL Server chạy câu này thế nào
+Để chép sang Excel trong SSMS, chọn vùng kết quả (Ctrl+A chọn cả lưới) → chuột phải → **Copy with Headers**, rồi dán vào workbook gửi đi; trang bài tập không có lệnh này. Nếu ô dán vào là ngày thật, dùng **Format Cells** để hiển thị ngày/tháng/năm. Bản chép không tự cập nhật theo database.
 
 Sơ đồ thể hiện **thứ tự xử lý logic**, không phải cách SQL Server đọc dữ liệu vật lý. Bấm từng bước để đối chiếu nguồn 12 cột với kết quả ba cột:
 

@@ -14,6 +14,18 @@ const LEGACY_LAYOUT_SLUGS = new Set([
   '6-5-update-quen-where',
 ]);
 
+// Frozen migration list: lessons with a query keep the old subsections until each one is edited; remove a lesson when it moves to two.
+const PENDING_TWO_SUBSECTIONS = new Set([
+  '2-2-where-loc-nhu-autofilter', '2-3-and-or-in-between-like',
+  '2-4-sap-xep-va-top', '2-5-null-o-trong', '2-6-distinct-bo-dong-trung',
+  '2-7-ham-chuoi-tieng-viet', '2-8-ham-ngay-tham-nien', '2-9-case-when-ham-if',
+  '3-1-count-sum-avg', '3-2-group-by-pivottable', '3-3-having-loc-sau-khi-gop',
+  '3-4-inner-join-vlookup', '3-5-left-join', '3-6-ket-nhieu-bang',
+  '3-7-self-join-quan-ly', '3-8-union-gop-danh-sach', '3-9-subquery',
+  '3-10-dem-co-dieu-kien', '4-1-cte-tung-buoc', '4-2-xep-hang-row-number-rank',
+  '4-3-luy-ke-so-thang-truoc', '4-4-pivot-xoay-bang', '4-6-soi-chat-luong-du-lieu',
+]);
+
 describe('lesson files', () => {
   const files = readLessonFiles();
   it('every frontmatter passes the schema', () => {
@@ -53,7 +65,21 @@ describe('lesson files', () => {
       if (legacy) expect(h3[0], f.slug).toBe('Lý thuyết cơ bản');
       else expect(h3, f.slug).not.toContain('Trả lời chị Hạnh');
       expect(h3.filter(h => h.startsWith('Bước')), f.slug).toEqual([]);
-      if (f.body.includes('<RunFlow')) expect(h3.slice(-2), f.slug).toEqual(['Câu lệnh cho tình huống', 'SQL Server chạy câu này thế nào']);
+      if (PENDING_TWO_SUBSECTIONS.has(f.slug) && f.body.includes('<RunFlow')) expect(h3.slice(-2), f.slug).toEqual(['Câu lệnh cho tình huống', 'SQL Server chạy câu này thế nào']);
+    }
+  });
+  it('lessons with a query use two subsections, with the run order after the answer', () => {
+    for (const f of files) {
+      const h3 = sqlSubheadings(f.body);
+      if (!h3.includes('Câu lệnh cho tình huống')) continue;
+      if (PENDING_TWO_SUBSECTIONS.has(f.slug)) {
+        expect(h3.length, `${f.slug}: moved to two subsections, take it off the pending list`).toBeGreaterThan(2);
+        continue;
+      }
+      expect(h3, f.slug).toHaveLength(2);
+      expect(h3[1], f.slug).toBe('Câu lệnh cho tình huống');
+      const query = f.body.slice(f.body.indexOf('### Câu lệnh cho tình huống'));
+      if (f.body.includes('<RunFlow')) expect(query.indexOf('<Result'), f.slug).toBeLessThan(query.indexOf('<RunFlow'));
     }
   });
   it('sectionHeadings drops Bài tập only when asked', () => {
@@ -342,7 +368,7 @@ describe('fixes from the final review', () => {
   });
   it('the first SQL lesson is one story that web and SSMS users can both run', () => {
     const f = readLessonFiles().find(x => x.slug === '2-1-chon-cot-dat-ten-cot')!;
-    expect((f.data as { minutes: number }).minutes).toBe(22);
+    expect((f.data as { minutes: number }).minutes).toBe(18);
     expect((f.data as { prerequisites: string[] }).prerequisites).toEqual(['1.2', '1.3']);
     expect(f.body.match(/<Chat\b/g)).toHaveLength(1);
     expect(f.body.match(/<RunFlow\b/g)).toHaveLength(1);
@@ -354,18 +380,15 @@ describe('fixes from the final review', () => {
   it('2.1 leads from Excel to SQL like the lessons after it', () => {
     const b = body('2-1-chon-cot-dat-ten-cot');
     const main = lessonMainSection(b);
-    const [first, second, third] = main.split(/^### /m).slice(1);
-    expect(sqlSubheadings(b)).toHaveLength(4);
-    for (const part of [first, second]) {
-      expect(part).toMatch(/^Từ .+\r?\n\r?\nTrong Excel, /);
-      expect(part.indexOf('<Excel')).toBeLessThan(part.indexOf('Trong SQL'));
-      expect(part).not.toContain('Invalid column name');
-    }
+    const [first, query] = main.split(/^### /m).slice(1);
+    expect(first).toMatch(/^Từ .+\r?\n\r?\nTrong Excel, /);
+    expect(first.indexOf('<Excel')).toBeLessThan(first.indexOf('Trong SQL'));
+    expect(first).not.toContain('Invalid column name');
     expect(main.indexOf('<Excel')).toBeLessThan(main.indexOf('<Sql'));
     expect(main.match(/<Result\b/g)).toHaveLength(1);
     expect(main.match(/<Messages\b/g)).toHaveLength(1);
     expect(first).toMatch(/<Sql copy=\{false\}[^>]*code=\{`SELECT TOP \(5\) \*/);
-    for (const s of ['Chạy (F5)', 'Results', 'Messages', "Invalid column name 'TenNV'"]) expect(third, s).toContain(s);
+    for (const s of ['Chạy (F5)', 'Results', 'Messages', "Invalid column name 'TenNV'"]) expect(query, s).toContain(s);
   });
   it('no lesson or page points to the removed lesson 1.6', () => {
     const sources = [...readLessonFiles().map(f => f.body), readFileSync('src/pages/gioi-thieu.astro', 'utf8'), readFileSync('docs/ho-so-cong-ty.md', 'utf8')];

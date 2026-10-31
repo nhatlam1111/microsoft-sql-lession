@@ -31,7 +31,7 @@ summary: Một câu nói đúng vấn đề và nội dung chính của bài.
 
 Thứ tự cấp 2: **Tình huống → phần chính theo chủ đề → Hay nhầm ở đâu → Ứng dụng → Ghi nhớ → Bài tập**. Tiêu đề phần chính được đặt theo bài, như "Từ file Excel đến một nguồn dữ liệu chung" ở bài 1.1 hoặc "Lọc danh sách nhân viên theo điều kiện" ở bài `WHERE`. Các tên mục còn lại giữ đúng như khung.
 
-Khung dưới chép vào file MDX được; thay toàn bộ lời chỉ dẫn bằng nội dung thật. Các tiểu mục chỉ gợi ý nhịp kể, chọn khoảng 2–4 tiểu mục theo mục tiêu bài. Ví dụ và hình đặt ngay cạnh ý cần minh họa.
+Khung dưới chép vào file MDX được; thay toàn bộ lời chỉ dẫn bằng nội dung thật. Các tiểu mục chỉ gợi ý nhịp kể. Bài khái niệm chọn khoảng 2–4 tiểu mục theo mục tiêu bài; bài có câu lệnh dùng đúng hai tiểu mục theo phần hướng dẫn bên dưới. Ví dụ và hình đặt ngay cạnh ý cần minh họa.
 
 ````mdx
 ## Tình huống
@@ -121,7 +121,7 @@ Bài nền là bài mở đầu ngắn theo mục 2.5 của `quy-uoc.md`. Frontm
 
 ### Bài có câu lệnh và kết quả
 
-Giữ lý thuyết, Excel và ví dụ trong phần chính theo chủ đề. Cuối phần đó dùng `### Câu lệnh cho tình huống`, đặt câu SQL đầy đủ và kết quả đã kiểm chứng, rồi trả lời người hỏi ngay cạnh kết quả. Nếu có `RunFlow`, tiểu mục cuối cùng là `### SQL Server chạy câu này thế nào`. Không chép thêm một phần giải SQL độc lập hay "Trả lời chị Hạnh" ở sau.
+Phần chính dùng đúng hai tiểu mục. Tiểu mục đầu giữ lý thuyết, Excel và ví dụ, đặt tên theo nhịp "Từ <việc trong Excel> đến <từ khóa SQL>", đi từ việc trong Excel sang SQL. Tiểu mục sau là `### Câu lệnh cho tình huống`: câu SQL đầy đủ, kết quả đã kiểm chứng, câu trả lời người hỏi ngay cạnh kết quả, rồi `RunFlow` nếu có, kèm một lời dẫn ngắn. Không chép thêm một phần giải SQL độc lập hay "Trả lời chị Hạnh" ở sau.
 
 Nếu có câu tự kiểm tra, đặt ngay sau `Memo` và trước `## Bài tập`, dùng `<details>` với đáp án đã được giải thích trong bài. Không đặt sau danh sách bài tập. Trong `<summary>`, dùng `<code>` cho tên cột hoặc giá trị thay vì backtick; chuỗi có nháy dùng biểu thức JSX, ví dụ `<code>{"MaPB = 'IT'"}</code>`, để giữ nháy thẳng sau build. Các bài 2.3, 2.7, 2.8 có ít nhất ba câu để ôn từng nhịp học; không dùng câu hỏi làm chỗ bổ sung lý thuyết còn thiếu.
 
@@ -136,7 +136,7 @@ Sơ đồ đặt khối dưới đây là **mã minh họa thuộc tính**, khô
 
 Câu trả lời nghiệp vụ từ kết quả này, đúng giả định đầu bài.
 
-### SQL Server chạy câu này thế nào
+Một lời dẫn ngắn về thứ tự xử lý logic.
 
 <RunFlow query={sqlDaKiemChung} steps={cacBuocDaKiemChung} />
 ````
