@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync, existsSync } from 'node:fs';
 import { runInNewContext } from 'node:vm';
 import { parse } from 'yaml';
-import { readLessonFiles } from './helpers/lessons';
+import { readLessonFiles, lessonMainSection, sqlSubheadings } from './helpers/lessons';
 import { guardExercise } from '../src/lib/sql-guard';
 import type { ExerciseFile } from '../src/lib/exercise-types';
 
@@ -20,6 +20,24 @@ function seedPeople() {
 }
 
 describe('lesson 2.3 combines conditions without changing their scope', () => {
+  it('uses one scenario statement before its parts, then logical steps, result and answer', () => {
+    const body = lesson().body;
+    expect(sqlSubheadings(body)).toHaveLength(2);
+    const main = lessonMainSection(body);
+    const [first, second] = main.split(/^### /m).slice(1);
+    expect(main.match(/<Sql\b/g)).toHaveLength(1);
+    expect(first.indexOf('<Excel')).toBeLessThan(first.indexOf('<Sql'));
+    expect(first.indexOf('<Sql')).toBeLessThan(first.indexOf('<LineMap'));
+    expect(second.indexOf('<RunFlow')).toBeLessThan(second.indexOf('<Result'));
+    expect(second.slice(second.indexOf('<Result'))).toContain('chị Hạnh');
+    expect(main.match(/<Result\b/g)).toHaveLength(1);
+    expect(main).toContain("N'Nguy_n%'");
+    expect(main.replace(/`|\*\*/g, '')).toMatch(/0 ký tự|không ký tự/);
+    expect(main.replace(/`|\*\*/g, '')).toContain('đúng một ký tự');
+    expect(body.indexOf('**Tự kiểm tra')).toBeGreaterThan(body.indexOf('## Ghi nhớ'));
+    expect(body.indexOf('**Tự kiểm tra')).toBeLessThan(body.indexOf('## Bài tập'));
+  });
+
   it('is a full lesson whose main example keeps both departments inside the date range', () => {
     expect((lesson().data as { kind: string }).kind).toBe('full');
     const blocks = [...lesson().body.matchAll(/<Sql[^>]*code=\{(`([\s\S]*?)`)\}/g)].map(m => runInNewContext(m[1]) as string);
