@@ -23,12 +23,12 @@ Mọi quy ước khi viết bài, review bài và làm việc với database c�
 - Mẫu tin nhắn cần gửi IT có thể trích câu hỏi trong ngoặc kép để người học dùng khi mắc lỗi; đó là hướng dẫn thao tác, không dùng nó làm câu hỏi dẫn lý thuyết.
 - Mỗi dòng `LineMap` có "Ví dụ:" với giá trị cụ thể: giá trị nào qua, bị từ chối hay bị đổi.
 - Cuối lý thuyết có đoạn "Ở bài này chỉ cần…" kể các bài đi sâu hơn ("bài 5.2").
-- Giải thích trong drawer của `RunFlow` bắt đầu từ từ khóa của bước: nó làm gì với các dòng, kèm số dòng thật.
+- Giải thích trong drawer của `RunFlow` bắt đầu từ từ khóa của bước: nó làm gì với các dòng, kèm số dòng thật. Lời các bước đi theo yêu cầu của tình huống, bước cuối là kết quả chị Hạnh cần.
 - Không hứa điều database không tự bảo đảm. Ràng buộc chỉ có khi được khai báo ("khi `MaNV` được khai báo là khóa chính…"). Tách "hợp lệ" với "đúng", "lưu được" với "đúng ý". Khóa ngoại là luật kiểm khi ghi, không phải ô chọn trên màn hình; nó xác nhận mã có thật, không xác nhận mã đúng.
 - Không tuyệt đối hóa Excel (có Data Validation, có làm việc chung, `SUM` bỏ qua ô chữ); nói điều kiện của tình huống.
 - `TOP (n)` là tối đa n dòng. Kết quả không có `ORDER BY` thì nói thứ tự dòng có thể khác hình. `TOP` đi cùng `ORDER BY`, trừ khi bài đang nói đúng chuyện không có `ORDER BY`. Thứ tự trong `RunFlow` là thứ tự xử lý logic, không phải cách SQL Server đọc dữ liệu.
 - Lời hứa của công cụ nói rõ phạm vi: hoàn tác chỉ có trên trang bài tập, SSMS chạy thật; lỗi 40613 thường do database đang thức dậy, lỗi kéo dài thì gửi nguyên văn cho người phụ trách.
-- Tình huống được khép lại ngay trong phần chính: có giả định rõ (mốc thời gian, phạm vi) và câu trả lời cho người hỏi, tách việc database làm với quyết định nghiệp vụ. Bài có truy vấn trả lời ngay cạnh câu lệnh và kết quả. Bài khái niệm trả lời bằng lời trong mạch giải thích. Không tách thêm mục "Trả lời chị Hạnh".
+- Tình huống được khép lại ngay trong phần chính: có giả định rõ (mốc thời gian, phạm vi) và câu trả lời cho người hỏi, tách việc database làm với quyết định nghiệp vụ. Bài có truy vấn trả lời ngay sau kết quả, hoặc sau sơ đồ nếu có `RunFlow`. Bài khái niệm trả lời bằng lời trong mạch giải thích. Không tách thêm mục "Trả lời chị Hạnh".
 - Bài khái niệm có ít nhất ba câu tự kiểm tra, bao phủ mục tiêu đầu bài; không chỉ hỏi các trường hợp ngoại lệ. Mỗi đáp án ngắn và tự đủ nghĩa.
 - SQL: chuỗi tiếng Việt có `N`; xuống dòng và thụt lề theo mục 2.4. Đoạn chỉ để đọc (câu ghi dữ liệu, đoạn trích có `...`, khuôn cú pháp) có `copy={false}`. Level 1 không bảo học viên chạy `INSERT`, `UPDATE`, `DELETE` trong SSMS.
 
@@ -37,7 +37,7 @@ Mọi quy ước khi viết bài, review bài và làm việc với database c�
 - Thứ tự bài đầy đủ: **Tình huống → phần chính có tiêu đề theo chủ đề → Hay nhầm ở đâu → Ứng dụng → Ghi nhớ → tự kiểm tra (nếu có) → Bài tập**. Tự kiểm tra luôn đặt ngay sau Ghi nhớ, trước Bài tập. Bài `noExercises: true` bỏ mục Bài tập và có ít nhất ba câu tự kiểm tra. Bản tóm tắt giữ khung riêng ở `lesson-template.md`; bài nền theo mục 2.5.
 - Phần chính đi từ vấn đề trong tình huống, qua khái niệm cần biết và cách Excel/SQL xử lý, tới câu trả lời. Bài có câu lệnh dùng đúng hai tiểu mục: tiểu mục đầu giảng từ Excel sang SQL, tiểu mục sau là "Câu lệnh cho tình huống". Bài khái niệm dùng khoảng 2–4 tiểu mục theo ý nghĩa, bài nền theo mục 2.5, bài xử lý sự cố như 6.5 theo diễn biến. Không bắt buộc chép đúng các tiểu mục của bài mẫu. Mỗi lần chuyển từ Excel sang database/SQL phải có lời dẫn rõ.
 - Khái niệm và ví dụ đứng cạnh nhau. Dùng hình, câu lệnh, kết quả, `LineMap` hay `RunFlow` khi chúng giúp hiểu ý đang nói; không bắt buộc có đủ mọi khối hoặc một bảng so sánh dài. Không giải thích trong lời văn rồi chép nguyên ý vào bảng.
-- Bài khái niệm chưa cần thực hành thì không chèn preview SQL cho đủ khuôn; dẫn sang bài thực hành tương ứng. Bài truy vấn có câu lệnh giải đúng tình huống và kết quả đã kiểm. Tiểu mục "Câu lệnh cho tình huống" chứa câu lệnh, kết quả, lời giải tình huống rồi `RunFlow` nếu có; lời giải nằm cạnh kết quả, trước sơ đồ.
+- Bài khái niệm chưa cần thực hành thì không chèn preview SQL cho đủ khuôn; dẫn sang bài thực hành tương ứng. Bài truy vấn có câu lệnh giải đúng tình huống và kết quả đã kiểm. Bài có `RunFlow`: tiểu mục "Câu lệnh cho tình huống" đi theo câu lệnh → sơ đồ → câu trả lời, không có khối `Result`, `Messages` hay hướng dẫn chạy riêng, vì bước cuối của sơ đồ là kết quả. Bài không có `RunFlow`: câu lệnh → kết quả → câu trả lời. Cách chạy và đọc Results, Messages nằm ở trang Giới thiệu.
 - Giữ kiến thức đủ để hiểu và xử lý yêu cầu của bài. Chi tiết sâu đã có bài riêng thì nêu điều kiện bằng một vế câu và dẫn bài; không biến bài nhập môn thành bài về kiểu dữ liệu, khóa, import hay giao dịch.
 - Bài khái niệm đơn giản hướng tới 10–12 phút gồm tự kiểm tra, bài nền theo mục 2.5; bài phức tạp ghi thời lượng theo nội dung thực tế. Rút bằng cách cắt lặp và giảm độ sâu ngoài mục tiêu; giữ phần giảng chính luôn hiển thị, không giấu sau tab/khối bấm mở để trông ngắn hơn.
 
@@ -95,7 +95,7 @@ Mọi quy ước khi viết bài, review bài và làm việc với database c�
 
 1. Viết tình huống và giả định ngắn; chốt một câu hỏi dữ liệu bằng `Key`.
 2. Đặt tiêu đề phần chính theo vấn đề cụ thể. Lồng cách Excel và SQL xử lý vào từng ý, giải nghĩa thuật ngữ ngay chỗ dùng.
-3. Đặt ví dụ/hình cạnh ý cần minh họa. Bài truy vấn thêm câu lệnh, kết quả và `RunFlow` nếu cần; bài khái niệm dùng lời giải thích, không ép có câu lệnh.
+3. Đặt ví dụ/hình cạnh ý cần minh họa. Bài truy vấn thêm câu lệnh cùng `RunFlow` hoặc kết quả; bài khái niệm dùng lời giải thích, không ép có câu lệnh.
 4. Trả lời người hỏi ngay trong phần chính, đúng phạm vi giả định. Dẫn các chi tiết sâu sang bài tương ứng.
 5. Viết Hay nhầm bằng lỗi/hậu quả; Ứng dụng bằng khả năng áp dụng của chủ đề; Ghi nhớ và tự kiểm tra theo mục tiêu.
 6. Rà lần lượt chữ đậm của khái niệm, code của giá trị dẫn chứng, dấu ô trong hình và các chỗ lặp trước khi chạy kiểm tra.

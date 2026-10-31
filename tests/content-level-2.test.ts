@@ -17,7 +17,7 @@ describe('fixes from the independent reviews of 2026-10-20', () => {
   };
 
   it('2.1 preserves column selection, alias scope, source data and copying/grading limits in the shorter narrative', () => check('2-1-chon-cot-dat-ten-cot',
-    ['ORDER BY', 'Copy with Headers', "Invalid column name 'TenNV'", 'NV020', 'NV033', 'NV041', '14 lần', 'bài 6.1', 'không kiểm nghĩa',
+    ['ORDER BY', 'Copy with Headers', 'NV020', 'NV033', 'NV041', '14 lần', 'bài 6.1', 'không kiểm nghĩa',
       'không so tên tiêu đề', 'không phải chuỗi giá trị', 'kiểu dữ liệu không đổi', 'không được lưu thành tên mới', '48 hồ sơ',
       'không yêu cầu thứ tự dòng',
       'SELECT MaNV HoTen FROM NhanVien;', "SELECT 'HoTen' AS [Họ tên] FROM NhanVien;", '"1.3"'],

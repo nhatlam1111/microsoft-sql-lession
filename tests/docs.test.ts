@@ -62,5 +62,6 @@ it('the template gives lessons with a query two subsections', () => {
   const template = readFileSync('docs/lesson-template.md', 'utf8');
   expect(template).toContain('dùng đúng hai tiểu mục');
   expect(template).not.toContain('### SQL Server chạy câu này thế nào');
+  expect(template.indexOf('<RunFlow query={sqlDaKiemChung}')).toBeLessThan(template.indexOf('Câu trả lời nghiệp vụ từ bước cuối'));
   expect(readFileSync('docs/quy-uoc.md', 'utf8')).toContain('Bài có câu lệnh dùng đúng hai tiểu mục');
 });
