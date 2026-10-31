@@ -38,3 +38,15 @@ Chạy npm test/check/build/check:dist; xem năm trang build và hình/Ssms/Erd,
 
 - Đã sửa năm bài và test bảo vệ ba điều kiện; không đổi phạm vi. Sáu SELECT-only kiểm lại dẫn chứng đạt. Số từ theo proseParagraphs lần lượt 690/603/665/618/618, đoạn dài nhất 88 từ; số câu ôn 3/3/4/4/3.
 - Kiểm vòng đầu: 369 test đạt, check 0 lỗi/0 warning và 3 hint deprecated nền; build 129 trang, check:dist 1951 link. Đang kiểm UI và review độc lập.
+
+### Điều chỉnh sau review từng bài
+
+- 1.1: làm theo nhận xét về độ phủ mục tiêu, thêm một vế về lợi ích nguồn chung vào câu ôn1/đáp án; giữ ba câu và câu suy luận đóng SSMS. Cắt câu về người không viết SQL để bù độ dài, không mất tiền đề.
+- 1.2: làm theo hai nhận xét, câu ôn2 hỏi đúng dấu dòng/cột trên hình thay lựa chọn giá trị mã thuộc dòng hay cột; nói rõ ba dòng HopDong là riêng NV021.
+- 1.3: reviewer không có finding cần sửa; giữ nguyên source đã kiểm.
+- 1.4: làm theo nhận xét diễn đạt đích khóa ngoại: “bảng kia” thành “bảng được trỏ tới”, tiêu đề thành “Khóa ngoại giữ mã tham chiếu có thật”, để định nghĩa bao gồm ví dụ tự tham chiếu đã có.
+- 1.5: làm một phần nhận xét chấm tròn: giới hạn lời mô tả vào đường tô xanh NhanVien→PhongBan, nơi dấu này thực sự có, thay vì bỏ dấu nhận diện; không áp lời đó cho đường tự tham chiếu MaQuanLy không có chấm tròn.
+
+### Kiểm sau sửa
+
+Đã đọc đủ năm report và xử lý các mục có căn cứ. Vòng2 vẫn đạt 369 test, check 0 lỗi/0 warning/3 hint nền, build 129 trang, check:dist 1951 link. Số từ cuối 692/608/665/620/622, giữ 3/3/4/4/3 câu ôn. Browser đã mở năm bài; kiểm desktop 1280×900 và 1024×900 trên các hình/khối liên quan, mở câu ôn bằng bàn phím; sau build21:43 kiểm lại riêng chữ sửa ở1.1/1.2/1.4/1.5. Đang review tích hợp; hồ sơ ở `docs/reviews/2026-10-31-foundation-teaching-refinement/verification.md`.

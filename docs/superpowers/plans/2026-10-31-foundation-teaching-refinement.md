@@ -38,8 +38,16 @@
 **Files:** `docs/reviews/2026-10-31-foundation-teaching-refinement/`, spec, plan. Evidence local: `temp/verification/2026-10-31-foundation-teaching-refinement/`.
 
 - [x] Chạy npm test (369 đạt), npm run check (0 lỗi/warning, 3 hint nền), npm run build (129 trang), npm run check:dist (1951 link).
-- [ ] Xem năm trang build, hình/Ssms/Erd, caption/đánh dấu/câu ôn; ghi rõ UI đã thử hoặc chưa xác minh.
-- [ ] Giao reviewer mới từng bài, model kế thừa/fork none, source/build đúng phiên bản; giữ report gốc và lập ma trận xử lý.
-- [ ] Sửa theo nhận xét có căn cứ, chạy lại các kiểm bị ảnh hưởng, cập nhật spec/plan mỗi vòng.
+- [x] Xem năm trang build, hình/Ssms/Erd, caption/đánh dấu/câu ôn; desktop 1280/1024, giới hạn ghi trong verification.
+- [x] Giao reviewer mới từng bài, model kế thừa/fork none, source/build đúng phiên bản; giữ đủ năm report gốc và lập ma trận xử lý.
+- [x] Sửa theo nhận xét có căn cứ, chạy lại test/check/build/dist đều đạt; cập nhật spec/plan mỗi vòng.
 - [ ] Review tích hợp mới, xử lý mọi nhận xét và mục chưa kết luận; lưu report và bằng chứng phân biệt source/HTML/UI/SQL.
 - [ ] Commit local và bàn giao bài/report/ma trận/checks, không push/deploy.
+
+## Nhật ký review
+
+- Source vòng1: ae7a2f3, build21:33. Đã đọc hết report1.1/1.2/1.3 trước sửa.
+- 1.1: Làm theo mục độ phủ nguồn chung bằng một vế trong câu ôn1, giữ số câu; cắt câu ngoài mục tiêu để bù độ dài.
+- 1.2: Làm theo Cần làm rõ câu ôn2 và Biên tập phạm vi ba dòng hợp đồng.
+- 1.3: không finding, giữ nguồn.1.4: làm theo cách gọi đích khóa ngoại, không thêm kiến thức; đã đọc hết report trước sửa.
+- 1.5: đã đọc hết report; làm một phần bằng vế “Ở đường tô xanh” để không áp mô tả chấm tròn cho tự tham chiếu. Đã đủ năm report, chuẩn bị kiểm cuối và review tích hợp.
