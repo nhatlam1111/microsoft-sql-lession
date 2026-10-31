@@ -8,7 +8,7 @@ Bản review: commit `00d283b`, nhánh `feat/lesson-2-5-null`, base `617ae0d`. R
 |---|---|---|
 | R12 Đầu vào 2.5 thiếu `MaPB` | Làm theo | Thêm trường `inputColumns`; bước `WHERE` hiện `MaNV`, `MaPB`, `NgayNghiViec` |
 | T1 câu mặc định sai ở nhánh `UNION`, CTE | Làm theo | Đổi thành "Bước này không nhận dữ liệu từ bước nào trước đó trong sơ đồ.", đúng với mọi bước đầu |
-| L1 lời còn nhắc câu kiểm trong drawer | Làm một phần | Sửa 14 câu ở 3.2, 3.3, 3.4, 3.7, 3.9, 3.10, 4.1, 4.2, 4.3. Giữ 3.6 dòng 91 và 4.1 dòng 80 vì nói về câu lệnh có thật trong thân bài: reviewer đọc nhầm 4.1, danh sách 9 đơn có ở khối `Result` phía trên. Thêm test chặn cụm cũ |
+| L1 lời còn nhắc câu kiểm trong drawer | Làm một phần | Sửa 15 câu ở 3.2, 3.3, 3.4, 3.7, 3.9, 3.10, 4.1, 4.2, 4.3. Giữ 3.6 dòng 91 và 4.1 dòng 80 vì nói về câu lệnh có thật trong thân bài: reviewer đọc nhầm 4.1, danh sách 9 đơn có ở khối `Result` phía trên. Thêm test chặn cụm cũ |
 | R1 bước `FROM` nói ba lần | Làm theo | Đầu vào nêu bảng, Thực hiện nói chưa lọc, chưa chọn cột, Kết quả nêu số |
 | R2 `SELECT` lặp giữa Thực hiện và Kết quả | Làm theo | Thực hiện nói việc, Kết quả nói số và danh sách cần |
 | R3 đầu vào 2.1 đã chỉ có ba cột | Làm theo | Đầu vào thêm `GioiTinh`, Thực hiện nói bỏ chín cột |
@@ -38,12 +38,12 @@ Bản review: commit `00d283b`, nhánh `feat/lesson-2-5-null`, base `617ae0d`. R
 | `npm run build`, `check:dist` | 129 trang, 1951 liên kết |
 | `SELECT` | 2.2 `14`; 2.3 `24`, `3`, `2`; 2.4 `45`; 2.5 `10`, `45`, `8`; các hồ sơ trong bảng soi |
 | Bản build rộng 1024, sau sửa | 2.3, 2.4, 2.5, 3.8: đủ ba phần, đúng cột đầu vào, bảng không tràn, bước `UNION` phân biệt hai nhánh, không lỗi console |
-| Trước khi sửa theo review | 2.3 chụp màn hình; 3.5 có `JOIN`; ← và Esc; rộng 1440 |
+| Trước khi sửa theo review | 2.3 chụp màn hình; 3.5 có `JOIN`; phím → và Esc trên 2.5; rộng 1440 |
 | `check:exercises`, `check:data` | Không chạy lại ở lượt drawer vì YAML không đổi; đã đạt ở bản 2.5 |
 
 ## Giới hạn
 
 - Các sửa theo report chưa có review độc lập.
 - Sau khi sửa, ảnh chụp màn hình lỗi do cửa sổ không vẽ kịp nên kiểm bản cuối bằng dữ liệu trang; phím và rộng 1440 chỉ thử trước khi sửa.
-- Chưa kiểm trình đọc màn hình, màn hẹp, học viên thật.
+- Chưa bấm thử nút Bước trước, Bước sau; mã của hai nút không đổi. Chưa kiểm trình đọc màn hình, màn hẹp, học viên thật.
 - Từ 2.6 trở đi: lời cũ đặt vào nhãn mới, bước `JOIN` chỉ hiện bảng trái, bước lọc chưa có bảng soi; bảng đầu vào có thể lệch số với lời cũ như 2.9.

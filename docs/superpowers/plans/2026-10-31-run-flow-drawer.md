@@ -63,3 +63,8 @@
 - [x] `npm test`, `npm run check`, `npm run build`, `npm run check:dist`.
 - [x] Xem bản build ở rộng 1024 và 1440: 2.3, 2.5, một bài có `JOIN`, bài 3.8, bàn phím.
 - [x] Review tích hợp theo mục 4.5, xử lý theo mục 4.6, lưu hồ sơ, commit.
+
+## Sai khác so với plan
+
+- `preview` thêm ở bước `FROM` của 2.1 và bước `SELECT` của 2.4 đã bỏ sau review, thay bằng trường `inputColumns` ở bước cần cột đó.
+- Thêm `inputPreview`, `checkNote`. Spec ghi các thay đổi này; [hồ sơ kiểm](../../reviews/2026-10-31-run-flow-drawer/verification.md).
