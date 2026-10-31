@@ -55,9 +55,12 @@ describe('2.7 string projections preserve identity and source values', () => {
 
   it('teaches what the exercises and lesson 4.6 need, on values of the scenario', () => {
     const main = lessonMainSection(lesson().body);
-    for (const term of ['LEFT(MaNV, 2)', 'SUBSTRING(MaNV, 3, 3)', 'TRIM(HoTen)', 'LOWER(HoTen)', 'COLLATE Vietnamese_CI_AI', "CONCAT(N'[', NULL, N']')"]) {
+    for (const term of ['LEFT(MaNV, 2)', 'SUBSTRING(MaNV, 3, 3)', 'TRIM(HoTen)', 'LOWER(HoTen)', 'COLLATE Latin1_General_CI_AI', "CONCAT(N'[', NULL, N']')"]) {
       expect(main).toContain(term);
     }
+    // Vietnamese_CI_AI keeps Đ and Â as separate letters, so it does not search without marks.
+    expect(main).not.toContain('Vietnamese_CI_AI');
+    expect(lesson().body).toContain("`N'dang%'` không ra `Đặng Quốc Bảo`");
   });
 
   it('provides three distinct ordered query exercises, including a preserved source NULL', () => {
@@ -78,7 +81,7 @@ describe('2.7 string projections preserve identity and source values', () => {
       expect(lesson().body.replace(/\s+/g, ' ')).not.toContain(e.answer.replace(/\s+/g, ' ').trim());
     }
     expect(file.exercises[0].answer).toMatch(/LEFT\(MaNV, 2\)[\s\S]*SUBSTRING\(MaNV, 3, 3\)[\s\S]*MaPB = 'KT'/);
-    expect(file.exercises[1].answer).toMatch(/LEN\(HoTen\)[\s\S]*HoTen COLLATE Vietnamese_CI_AI LIKE N'ho%'/);
+    expect(file.exercises[1].answer).toMatch(/LEN\(HoTen\)[\s\S]*HoTen COLLATE Latin1_General_CI_AI LIKE N'ho%'/);
     expect(file.exercises[2].answer).toMatch(/MaNV, Email, CONCAT\(N'\[', UPPER\(Email\), N'\]'\)[\s\S]*MaPB = 'VH'/);
     const source = people();
     expect(source.filter(p => p.MaPB === 'KT')).toHaveLength(7);

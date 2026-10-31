@@ -140,7 +140,7 @@ WHERE MaPB = 'VH'
   clause: "ORDER BY",
   title: "Xếp kết quả theo mã tăng dần.",
   focus: "ORDER BY MaNV ASC",
-  meaning: "`ORDER BY` xếp tám dòng theo `MaNV` tăng dần để dễ đối chiếu.",
+  meaning: "`ORDER BY` xếp tám dòng theo `MaNV` tăng dần. Đầu vào có thể đã đúng thứ tự, nhưng chỉ bước này mới bảo đảm điều đó.",
   detail: "Vẫn `8` hồ sơ và `3` cột, `NV008` đứng đầu, `NV044` đứng cuối; đây là danh sách chị Hạnh cần.",
   sql: `SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
 \tCOALESCE(Email, N'(chưa có)') AS [Email]

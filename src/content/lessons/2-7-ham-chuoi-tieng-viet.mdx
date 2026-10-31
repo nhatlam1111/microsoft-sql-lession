@@ -63,7 +63,7 @@ Từng phần của câu:
 
 Hàm nằm trong được tính trước: `CONCAT` nhận `007` từ `RIGHT` và `BÙI THANH SƠN` từ `UPPER` rồi mới ghép. Các hàm này chỉ đổi giá trị trả về, `HoTen` trong bảng vẫn là `Bùi Thanh Sơn`.
 
-Những hàm cùng nhóm mà phiếu này chưa cần, đọc trên chính hồ sơ `NV007`:
+Các hàm cùng nhóm mà bài tập sẽ dùng, đọc trên chính hồ sơ `NV007`:
 
 | Hàm | Làm gì | Kết quả |
 |---|---|---|
@@ -72,17 +72,17 @@ Những hàm cùng nhóm mà phiếu này chưa cần, đọc trên chính hồ 
 | `LOWER(HoTen)` | Đổi chữ hoa thành chữ thường, giữ dấu | `bùi thanh sơn` |
 | `TRIM(HoTen)` | Bỏ dấu cách thông thường ở hai đầu; họ tên này không có nên giữ nguyên | `Bùi Thanh Sơn` |
 
-Khác Excel, `LEN` của SQL không tính dấu cách cuối, còn `TRIM` không gộp dấu cách giữa các từ. `CONCAT` coi đầu vào `NULL` là chuỗi rỗng: `CONCAT(N'[', NULL, N']')` ra `[]`, nên ghép được nhãn chưa chứng minh mọi thành phần đều có. Cần đánh dấu phần thiếu thì dùng `COALESCE` của bài 2.5 trước khi ghép. `UPPER`, `LOWER` nhận `NULL` thì vẫn trả `NULL`.
+Khác Excel, `LEN` của SQL không tính dấu cách cuối, còn `TRIM` không gộp dấu cách giữa các từ. `UPPER`, `LOWER` nhận `NULL` thì vẫn trả `NULL`, rồi `CONCAT` coi đầu vào `NULL` là chuỗi rỗng: `CONCAT(N'[', NULL, N']')` ra `[]`. Vì vậy, ghép được nhãn chưa chứng minh mọi thành phần đều có. Cần đánh dấu phần thiếu thì dùng `COALESCE` của bài 2.5 trước khi ghép.
 
-**Unicode** là chuẩn biểu diễn ký tự, gồm cả chữ tiếng Việt; `HoTen` là `nvarchar(100)` nên lưu được Unicode. Chuỗi tự viết có chữ **`N`** ngay trước dấu nháy, như `N' - '`, để giữ ký tự như bài 1.3. Chuỗi tiếng Việt thiếu `N` có thể mất dấu hoặc thành `?`, và thêm `N` sau đó không khôi phục được.
+**Unicode** là chuẩn biểu diễn ký tự, gồm cả chữ tiếng Việt; `HoTen` là `nvarchar(100)` nên lưu được Unicode. Chuỗi tiếng Việt tự viết cần chữ **`N`** ngay trước dấu nháy như bài 1.3, thiếu `N` có thể mất dấu hoặc thành `?`. Khóa học viết `N` cho mọi chuỗi chữ tự viết, kể cả `N' - '` không có dấu, để khỏi phải nhớ chuỗi nào cần.
 
-**Collation** là bộ quy tắc so sánh và sắp xếp chữ. Database khóa học không phân biệt hoa thường (`CI`) nhưng phân biệt dấu (`AS`), nên `HoTen LIKE N'bui%'` không ra dòng nào. Khi việc tra cứu cho phép bỏ dấu, thêm **`COLLATE`** vào chính điều kiện: `HoTen COLLATE Vietnamese_CI_AI LIKE N'bui%'` tìm ra `NV007`, vì `AI` là không phân biệt dấu. `COLLATE` chỉ áp dụng cho phép so sánh đó, không đổi collation của database hay sửa họ tên; `N` giữ ký tự bạn viết, không quyết định cách so sánh.
+**Collation** là bộ quy tắc so sánh và sắp xếp chữ. Database khóa học không phân biệt hoa thường (`CI`) nhưng phân biệt dấu (`AS`), nên `HoTen LIKE N'bui%'` không ra dòng nào. Khi việc tra cứu cho phép bỏ dấu, thêm **`COLLATE`** vào chính điều kiện: `HoTen COLLATE Latin1_General_CI_AI LIKE N'bui%'` tìm ra `NV007`, vì `AI` là không phân biệt dấu. `COLLATE` chỉ áp dụng cho phép so sánh đó, không đổi collation của database. Bỏ dấu thì tìm rộng hơn, nên xác nhận lại hồ sơ bằng mã. `N` giữ ký tự bạn viết, không quyết định cách so sánh.
 
-Ở bài này chỉ cần chọn hàm theo phần chuỗi cần lấy, giữ Unicode khi viết chữ và phân biệt luật so sánh với nội dung lưu. Kiểu dữ liệu xem lại bài 1.3, kiểm chất lượng dữ liệu học ở bài 4.6. Đặc tả cách tìm kiếm cho cả hệ thống cần thống nhất với bên IT.
+Ở bài này chỉ cần chọn hàm theo phần chuỗi cần lấy, giữ Unicode khi viết chữ và phân biệt luật so sánh với nội dung lưu. Kiểu dữ liệu xem lại bài 1.3, kiểm chất lượng dữ liệu học ở bài 4.6.
 
 ### SQL Server chạy câu này thế nào
 
-Sơ đồ là **thứ tự xử lý logic**, không phải cách SQL Server đọc dữ liệu. Bấm từng bước để thấy `48` hồ sơ còn `10`, rồi tới `SELECT` các hàm mới tạo nhãn:
+Sơ đồ là **thứ tự xử lý logic**, không phải cách SQL Server đọc dữ liệu. Bấm từng bước để thấy `48` hồ sơ còn `10`, rồi `SELECT` dùng các hàm để tạo nhãn:
 
 <RunFlow query={`SELECT MaNV AS [Mã nhân viên],
 \tCONCAT(RIGHT(MaNV, 3), N' - ', UPPER(HoTen)) AS [Nhãn ký nhận],
@@ -131,7 +131,7 @@ WHERE MaPB = 'IT';`,
     title: "Lấy mã, tạo nhãn và đếm ký tự họ tên.",
     focus: "SELECT MaNV AS [Mã nhân viên],\n\tCONCAT(RIGHT(MaNV, 3), N' - ', UPPER(HoTen)) AS [Nhãn ký nhận],\n\tLEN(HoTen) AS [Số ký tự họ tên]",
     meaning: "`SELECT` lấy mã rồi tạo hai giá trị mới cho từng dòng: `RIGHT` và `UPPER` chạy trước, `CONCAT` ghép kết quả thành nhãn, `LEN` đếm ký tự của `HoTen`.",
-    detail: "Vẫn `10` hồ sơ, còn `3` cột. `HoTen` trong bảng nguồn không đổi. Thứ tự dòng chưa được bảo đảm.",
+    detail: "Vẫn `10` hồ sơ, còn `3` cột. Thứ tự dòng chưa được bảo đảm.",
     sql: `SELECT MaNV AS [Mã nhân viên],
 \tCONCAT(RIGHT(MaNV, 3), N' - ', UPPER(HoTen)) AS [Nhãn ký nhận],
 \tLEN(HoTen) AS [Số ký tự họ tên]
@@ -156,7 +156,7 @@ WHERE MaPB = 'IT';`,
     clause: "ORDER BY",
     title: "Xếp kết quả theo mã tăng dần.",
     focus: "ORDER BY MaNV ASC",
-    meaning: "`ORDER BY` xếp mười dòng theo `MaNV` tăng dần để chị Hạnh dễ đối chiếu.",
+    meaning: "`ORDER BY` xếp mười dòng theo `MaNV` tăng dần. Đầu vào có thể đã đúng thứ tự, nhưng chỉ bước này mới bảo đảm điều đó.",
     detail: "Vẫn `10` hồ sơ và `3` cột, `NV007` đứng đầu, `NV048` đứng cuối; đây là danh sách chị Hạnh cần.",
     sql: `SELECT MaNV AS [Mã nhân viên],
 \tCONCAT(RIGHT(MaNV, 3), N' - ', UPPER(HoTen)) AS [Nhãn ký nhận],
@@ -194,15 +194,16 @@ ORDER BY MaNV ASC;`,
   ["NV048","048 - ĐỖ MINH QUÂN",12],
 ]} mark={[6, 9]} />
 
-Bạn có thể gửi chị Hạnh `10` nhãn của các hồ sơ hiện mang mã phòng `IT`, xếp theo mã tăng dần. Hai dòng được đánh dấu có họ tên dài nhất, `14` ký tự: `NV035`, `NV046`; ngắn nhất là `NV039` với `11` ký tự. Danh sách này là dữ liệu để in; việc ai thực tế đã ký nhận cần được ghi nhận riêng.
+Bạn có thể gửi chị Hạnh `10` nhãn của các hồ sơ hiện mang mã phòng `IT`, xếp theo mã tăng dần. Hai dòng được đánh dấu có họ tên dài nhất, `14` ký tự: `NV035`, `NV046`; ngắn nhất là `NV039` với `11` ký tự. Mỗi nhãn dài hơn họ tên `6` ký tự, gồm ba số của mã và dấu phân cách. Danh sách này là dữ liệu để in; việc ai thực tế đã ký nhận cần được ghi nhận riêng.
 
 ## Hay nhầm ở đâu
 
 <Mistakes>
 
-1. **Coi phần số của mã là số để tính toán.** Đổi `007` thành số `7` làm mất số `0` đầu, nhãn không còn khớp mã; mã là thông tin nhận diện, không phải đại lượng để cộng trừ.
+1. **Coi phần số của mã là số.** Ép `007` thành kiểu số thì còn `7`, mất số `0` đầu, nhãn không còn khớp mã; lý do giống `SoCCCD` ở bài 1.3.
 2. **Đổi sang `UPPER` rồi mong tìm được chữ không dấu.** `BÙI` vẫn có dấu; cách này không thay được luật so sánh dấu.
 3. **Dùng `TRIM` rồi coi dữ liệu đã sạch.** Dấu cách bên trong hoặc ký tự trắng khác vẫn có thể còn; cần xác định lỗi trước khi chọn cách xử lý.
+4. **Dùng `Vietnamese_CI_AI` để tìm không dấu.** Tên nghe hợp tiếng Việt nhưng luật này coi `Đ`, `Â` là chữ riêng: `N'dang%'` không ra `Đặng Quốc Bảo`, `N'au%'` không ra `Âu Văn Kiên`. Với `Latin1_General_CI_AI`, cả hai đều ra.
 
 </Mistakes>
 
@@ -225,7 +226,7 @@ Bạn có thể gửi chị Hạnh `10` nhãn của các hồ sơ hiện mang m�
   ['CONCAT tạo cột nhãn', 'CONCAT ghép đầu vào; NULL được coi là chuỗi rỗng'],
   ['TRIM còn gộp dấu cách thông thường bên trong', 'TRIM chỉ bỏ dấu cách thông thường ở hai đầu'],
   ['UPPER, LOWER đổi hoa thường', 'UPPER, LOWER giữ dấu; N giữ Unicode trong chuỗi tự viết'],
-  ['Cách tìm chữ cần theo yêu cầu', 'CI: không phân biệt hoa/thường; AS: phân biệt dấu; AI: không phân biệt dấu'],
+  ['Text Filters tìm một phần chữ', "COLLATE Latin1_General_CI_AI trước LIKE để tìm không dấu; AS là phân biệt dấu, AI là không"],
 ]} />
 
 **Tự kiểm tra trước khi viết truy vấn:**
@@ -238,9 +239,16 @@ Bạn có thể gửi chị Hạnh `10` nhãn của các hồ sơ hiện mang m�
 </details>
 
 <details>
-<summary>Tiền tố <code>N</code> và <code>COLLATE Vietnamese_CI_AI</code> giải quyết hai việc gì khác nhau?</summary>
+<summary>Vì sao <code>SUBSTRING(MaNV, 3, 3)</code> của <code>NV007</code> ra <code>007</code>?</summary>
 
-`N` giữ ký tự Unicode trong chuỗi tự viết, như `N'Nguyễn'`. `COLLATE Vietnamese_CI_AI` chọn luật so sánh không phân biệt hoa thường và dấu; nó không khôi phục ký tự đã mất vì chuyển kiểu.
+Vị trí đầu là `1`, nên hàm bắt đầu ở ký tự thứ ba là `0` rồi lấy ba ký tự.
+
+</details>
+
+<details>
+<summary>Tiền tố <code>N</code> và <code>COLLATE Latin1_General_CI_AI</code> giải quyết hai việc gì khác nhau?</summary>
+
+`N` giữ ký tự Unicode trong chuỗi tự viết, như `N'Nguyễn'`. `COLLATE Latin1_General_CI_AI` chọn luật so sánh không phân biệt hoa thường và dấu; nó không khôi phục ký tự đã mất vì chuyển kiểu.
 
 </details>
 

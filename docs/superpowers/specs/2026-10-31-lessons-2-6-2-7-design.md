@@ -1,6 +1,12 @@
 # Quy ước drawer, bài 2.6 và 2.7 theo mạch một câu lệnh
 
-Trạng thái: chờ người làm khóa học duyệt, 31/10/2026.
+Trạng thái: đã duyệt và đã làm trên nhánh `feat/lesson-2-5-null`, chưa push, 31/10/2026. Hồ sơ kiểm: [2.6](../../reviews/2026-10-31-lesson-2-6/verification.md), [2.7](../../reviews/2026-10-31-lesson-2-7/verification.md).
+
+Khác thiết kế, sau review:
+
+- Bài 2.7 và đề 2-7-2 đổi từ `Vietnamese_CI_AI` sang `Latin1_General_CI_AI`, vì `Vietnamese_CI_AI` coi `Đ`, `Â` là chữ riêng. Thiết kế ghi không đổi YAML; đây là thay đổi duy nhất ở YAML, Hay nhầm của 2.7 thành bốn ý, tự kiểm tra thành bốn câu.
+- Bài 2.6 đổi lời trỏ sang bài 3.2, vì không bài nào dạy đếm số giá trị khác nhau.
+- Bước `ORDER BY` của 2.5 thêm câu chỉ bước này mới bảo đảm thứ tự.
 
 ## Ý định
 

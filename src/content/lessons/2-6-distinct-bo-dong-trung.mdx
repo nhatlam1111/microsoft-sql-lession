@@ -10,7 +10,7 @@ prerequisites:
   - "2.5"
 goal: bạn lấy được danh sách không trùng trên một hoặc nhiều cột và giải thích được vì sao thêm mã nhân viên làm đổi kết quả
 excel: Remove Duplicates
-summary: Lấy các mã phòng xuất hiện trong hồ sơ bằng DISTINCT; phân biệt trùng giá trị, trùng cả dòng kết quả và hồ sơ trùng cần kiểm tra.
+summary: Lấy các mã phòng xuất hiện trong hồ sơ bằng DISTINCT; phân biệt trùng giá trị một cột với trùng cả dòng kết quả.
 ---
 
 ## Tình huống
@@ -29,7 +29,7 @@ Phạm vi: toàn bộ `NhanVien` đang lưu, không lọc trạng thái hay ngà
 
 ### Từ Remove Duplicates đến DISTINCT
 
-Trong Excel, bạn chép cột mã phòng sang vùng khác rồi dùng **Remove Duplicates**, để giữ nguyên danh sách hồ sơ gốc. Hình minh họa ba hồ sơ đầu của bản xuất; hai ô `B3`, `B4` được đánh dấu cùng chứa `KD`, nên sau khi bỏ trùng chỉ còn một.
+Trong Excel, bạn chép cột mã phòng sang vùng khác rồi dùng **Data > Remove Duplicates**, để giữ nguyên danh sách hồ sơ gốc. Hình minh họa ba hồ sơ đầu của bản xuất; hai ô `B3`, `B4` được đánh dấu cùng chứa `KD`, nên sau khi bỏ trùng chỉ còn một.
 
 <Excel sheets="Minh họa bản xuất hồ sơ" mark={['B3', 'B4']} rows={[
   ['MaNV', 'MaPB'],
@@ -55,9 +55,11 @@ Từng phần của câu:
 
 `DISTINCT` chỉ tạo danh sách trả về, không xóa hồ sơ trong `NhanVien`, giống việc bỏ trùng trên bản sao trong Excel.
 
-`DISTINCT` so **cả dòng kết quả**, trên mọi cột đứng sau `SELECT`, tương tự việc chọn cột làm căn cứ trong hộp Remove Duplicates. Chọn thêm `MaCD` thì `IT`, `CV` và `IT`, `CVC` là hai dòng khác nhau nên đều được giữ; cả bảng ra `19` cặp thay vì `6` mã. Câu có `WHERE` thì `DISTINCT` chỉ xét các dòng đã lọc.
+`DISTINCT` so **cả dòng kết quả**, trên mọi cột đứng sau `SELECT`, tương tự việc chọn cột làm căn cứ trong hộp Remove Duplicates. Bạn viết `DISTINCT` một lần, các cột ngăn bằng dấu phẩy như bài 2.1. Chọn thêm `MaCD` (mã chức danh) thì `IT`, `CV` và `IT`, `CVC` là hai dòng khác nhau nên đều được giữ; cả bảng ra `19` cặp thay vì `6` mã.
 
-Ở bài này chỉ cần lấy danh sách không trùng theo đúng các cột cần trả về. Đếm số giá trị khác nhau học ở bài 3.1; truy nguyên hồ sơ trùng và kiểm chất lượng dữ liệu học ở bài 4.6.
+Câu có `WHERE` thì `DISTINCT` chỉ xét các dòng đã lọc: chỉ giữ hồ sơ phòng `IT` thì chỉ các dòng đó được so với nhau.
+
+Ở bài này chỉ cần lấy danh sách không trùng theo đúng các cột cần trả về. Đếm số hồ sơ của từng phòng học ở bài 3.2, kiểm hồ sơ trùng và chất lượng dữ liệu học ở bài 4.6.
 
 ### SQL Server chạy câu này thế nào
 
@@ -72,7 +74,7 @@ ORDER BY MaPB ASC;`} steps={[
     focus: "FROM NhanVien",
     input: "Bảng `NhanVien` trong database.",
     meaning: "`FROM` chọn bảng này làm nguồn, chưa lọc dòng, chưa chọn cột. Câu không có `WHERE` nên dùng mọi hồ sơ.",
-    detail: "`48` hồ sơ, `12` cột, gồm cả đang làm và đã nghỉ. Hình trích năm hồ sơ.",
+    detail: "`48` hồ sơ, `12` cột. Hình trích năm hồ sơ.",
     sql: `SELECT * FROM NhanVien;`,
     columns: ["MaNV","HoTen","GioiTinh","NgaySinh","SoCCCD","Email","NgayVaoLam","NgayNghiViec","MaPB","MaCD","MaQuanLy","TrangThai"],
     rows: [
@@ -102,7 +104,7 @@ FROM NhanVien;`,
     title: "Giữ mỗi mã phòng một dòng trong kết quả.",
     focus: "DISTINCT",
     meaning: "`DISTINCT` so các dòng với nhau: dòng nào trùng dòng đã có thì bỏ, nên `KD` lần hai và `KT` lần hai không còn.",
-    detail: "Còn `6` dòng, `1` cột, mỗi mã phòng một lần. Bảng `NhanVien` vẫn có `48` hồ sơ. Thứ tự các mã ở hình chưa được bảo đảm.",
+    detail: "Còn `6` dòng, `1` cột, mỗi mã phòng một lần. Thứ tự các mã ở hình chưa được bảo đảm.",
     sql: `SELECT DISTINCT MaPB
 FROM NhanVien;`,
     columns: ["MaPB"],
@@ -141,7 +143,7 @@ Bạn có thể trả lời chị Hạnh: toàn bộ `48` hồ sơ đang lưu, g
 
 1. **Thêm `MaNV` cho dễ đối chiếu rồi vẫn mong mỗi phòng một dòng.** Câu có thêm `MaNV` ra `48` dòng, vì `MaNV` được khai báo là khóa chính nên mỗi hồ sơ là một dòng khác nhau.
 2. **Thấy mã phòng lặp thì cho rằng hồ sơ bị nhập trùng.** Nhiều người cùng phòng là hợp lệ; xóa hồ sơ chỉ vì trùng mã phòng sẽ làm mất người trong danh sách.
-3. **Dùng `DISTINCT` để che hồ sơ trùng.** Chỉ chọn họ tên thì hai hồ sơ trùng tên có thể hiện thành một dòng, dù bảng nguồn vẫn còn cả hai. Cần xác minh mã hồ sơ trước khi kết luận đã xử lý trùng.
+3. **Dùng `DISTINCT` để che hồ sơ trùng.** `DISTINCT` chỉ so các cột đã chọn: chọn họ tên thì hai hồ sơ trùng tên hiện thành một dòng, dù bảng nguồn vẫn còn cả hai và chưa chắc là cùng một người. Phải đối chiếu mã hồ sơ; cách soi hồ sơ trùng học ở bài 4.6.
 4. **Sắp theo cột không chọn.** Đổi thành `ORDER BY NgayVaoLam`, câu báo `ORDER BY items must appear in the select list if SELECT DISTINCT is specified.` Một mã phòng sau bỏ trùng đại diện nhiều hồ sơ có ngày vào làm khác nhau, nên không có một ngày duy nhất để sắp theo.
 
 </Mistakes>
@@ -152,7 +154,7 @@ Bạn có thể trả lời chị Hạnh: toàn bộ `48` hồ sơ đang lưu, g
 
 - **Lập danh sách mã đang dùng:** lấy các mã phòng xuất hiện trong hồ sơ để đối chiếu với danh mục phòng ban.
 - **Rà cơ cấu chức danh:** lấy các cặp phòng/chức danh thực sự xuất hiện trong hồ sơ để đối chiếu chức danh đang dùng ở từng phòng.
-- **Chuẩn bị lựa chọn cho báo cáo:** lấy danh sách giá trị không trùng trong phạm vi đã lọc để người nhận chọn đúng nhóm cần xem.
+- **Xem cột đang có những giá trị nào:** lấy các trạng thái đang lưu, mỗi giá trị một dòng, để biết phải lọc theo giá trị nào trước khi viết `WHERE`.
 
 </Apply>
 
@@ -161,12 +163,12 @@ Bạn có thể trả lời chị Hạnh: toàn bộ `48` hồ sơ đang lưu, g
 <Memo rows={[
   ['Chép cột mã phòng rồi Remove Duplicates', 'SELECT DISTINCT MaPB giữ mỗi mã phòng một dòng kết quả'],
   ['Chọn nhiều cột làm căn cứ bỏ trùng', 'DISTINCT so cả dòng trên tất cả cột được chọn'],
-  ['Thêm mã riêng làm mỗi dòng khác nhau', 'MaNV là khóa chính của bảng nguồn; chọn thêm mã thì mỗi hồ sơ vẫn một dòng'],
+  ['Chọn thêm cột mã riêng trong hộp Remove Duplicates', 'MaNV là khóa chính của bảng nguồn; chọn thêm mã thì mỗi hồ sơ vẫn một dòng'],
   ['Bỏ trùng ở vùng sao chép rồi sắp A đến Z', 'SELECT DISTINCT không sửa nguồn; ORDER BY mới yêu cầu thứ tự'],
 ]} />
 
 ## Bài tập
 
-Ba bài chấm vị trí cột và **thứ tự dòng**; bộ chấm không so tên cột. Xác định mỗi dòng cần đại diện cho giá trị nào trước khi chọn cột.
+Ba bài chấm vị trí cột và **thứ tự dòng**; bộ chấm không so tên cột. Trước khi chọn cột, xác định mỗi dòng kết quả là một mã hay một cặp mã.
 
 <Exercises />
