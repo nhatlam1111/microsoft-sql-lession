@@ -121,11 +121,11 @@ Bài nền là bài mở đầu ngắn theo mục 2.5 của `quy-uoc.md`. Frontm
 
 ### Bài có câu lệnh và kết quả
 
-Phần chính dùng đúng hai tiểu mục. Tiểu mục đầu giữ lý thuyết, Excel và ví dụ, đặt tên theo nhịp "Từ <việc trong Excel> đến <từ khóa SQL>", đi từ việc trong Excel sang SQL. Tiểu mục sau là `### Câu lệnh cho tình huống`. Bài có `RunFlow` đi theo câu SQL đầy đủ → một lời dẫn ngắn → `RunFlow` → câu trả lời người hỏi; bước cuối của sơ đồ là kết quả nên không thêm `Result`, `Messages` hay hướng dẫn chạy riêng. Bài không có `RunFlow` đi theo câu SQL → `Result` đã kiểm chứng → câu trả lời. Không chép thêm một phần giải SQL độc lập hay "Trả lời chị Hạnh" ở sau.
+Phần chính dùng đúng hai tiểu mục. Tiểu mục đầu giữ lý thuyết, Excel và ví dụ, đặt tên theo nhịp "Từ <việc trong Excel> đến <từ khóa SQL>", đi từ việc trong Excel sang SQL. Tiểu mục sau là `### Câu lệnh cho tình huống`. Bài có `RunFlow` đi theo câu SQL đầy đủ → một lời dẫn ngắn → `RunFlow` → `Result` đã kiểm chứng → câu trả lời người hỏi. Bài không có `RunFlow` đi theo câu SQL → `Result` → câu trả lời. Không thêm hướng dẫn chạy hay giải thích cách đọc Results, Messages. Không chép thêm một phần giải SQL độc lập hay "Trả lời chị Hạnh" ở sau.
 
 Nếu có câu tự kiểm tra, đặt ngay sau `Memo` và trước `## Bài tập`, dùng `<details>` với đáp án đã được giải thích trong bài. Không đặt sau danh sách bài tập. Trong `<summary>`, dùng `<code>` cho tên cột hoặc giá trị thay vì backtick; chuỗi có nháy dùng biểu thức JSX, ví dụ `<code>{"MaPB = 'IT'"}</code>`, để giữ nháy thẳng sau build. Các bài 2.3, 2.7, 2.8 có ít nhất ba câu để ôn từng nhịp học; không dùng câu hỏi làm chỗ bổ sung lý thuyết còn thiếu.
 
-Sơ đồ đặt khối dưới đây là **mã minh họa thuộc tính**, không dán nguyên các tên biến vào bài. Thay `sqlDaKiemChung`, `cacBuocDaKiemChung` bằng các giá trị literal đã chạy và kiểm trước khi viết.
+Sơ đồ đặt khối dưới đây là **mã minh họa thuộc tính**, không dán nguyên các tên biến vào bài. Thay `sqlDaKiemChung`, `cacCot`, `cacDong`, `tongSoDong`, `cacBuocDaKiemChung` bằng các giá trị literal đã chạy và kiểm trước khi viết.
 
 ````mdx
 ### Câu lệnh cho tình huống
@@ -136,7 +136,9 @@ Một lời dẫn ngắn về thứ tự xử lý logic.
 
 <RunFlow query={sqlDaKiemChung} steps={cacBuocDaKiemChung} />
 
-Câu trả lời nghiệp vụ từ bước cuối, đúng giả định đầu bài.
+<Result columns={cacCot} rows={cacDong} total={tongSoDong} />
+
+Câu trả lời nghiệp vụ từ kết quả này, đúng giả định đầu bài.
 ````
 
 - `Sql` dùng câu lệnh đầy đủ giải đúng tình huống. Đoạn trích, khuôn cú pháp và câu ghi dữ liệu chỉ để đọc có `copy={false}`. Kết quả lỗi dùng `Messages` với nguyên văn đã kiểm; không tự sáng tác thông báo.

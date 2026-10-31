@@ -68,7 +68,7 @@ describe('lesson files', () => {
       if (PENDING_TWO_SUBSECTIONS.has(f.slug) && f.body.includes('<RunFlow')) expect(h3.slice(-2), f.slug).toEqual(['Câu lệnh cho tình huống', 'SQL Server chạy câu này thế nào']);
     }
   });
-  it('lessons with a query use two subsections, with the query, the run order, then the answer', () => {
+  it('lessons with a query use two subsections: query, run order, final result, answer', () => {
     for (const f of files) {
       const h3 = sqlSubheadings(f.body);
       if (!h3.includes('Câu lệnh cho tình huống')) continue;
@@ -80,9 +80,10 @@ describe('lesson files', () => {
       expect(h3[1], f.slug).toBe('Câu lệnh cho tình huống');
       const query = f.body.slice(f.body.indexOf('### Câu lệnh cho tình huống')).split(/^## /m)[0];
       if (!query.includes('<RunFlow')) continue;
-      expect(query, f.slug).not.toMatch(/<(Result|Messages)\b/);
+      expect(query, f.slug).not.toContain('<Messages');
       expect(query.indexOf('<Sql'), f.slug).toBeLessThan(query.indexOf('<RunFlow'));
-      expect(query.slice(query.lastIndexOf(']} />')), f.slug).toContain('chị Hạnh');
+      expect(query.indexOf('<RunFlow'), f.slug).toBeLessThan(query.indexOf('<Result'));
+      expect(query.slice(query.lastIndexOf('<Result')), f.slug).toContain('chị Hạnh');
     }
   });
   it('sectionHeadings drops Bài tập only when asked', () => {
@@ -389,9 +390,11 @@ describe('fixes from the final review', () => {
     expect(first.indexOf('<Excel')).toBeLessThan(first.indexOf('Trong SQL'));
     expect(first).not.toContain('Invalid column name');
     expect(main.indexOf('<Excel')).toBeLessThan(main.indexOf('<Sql'));
-    expect(main).not.toMatch(/<(Result|Messages)\b/);
+    expect(main.match(/<Result\b/g)).toHaveLength(1);
+    expect(main).not.toContain('<Messages');
     expect(first).toMatch(/<Sql copy=\{false\}[^>]*code=\{`SELECT TOP \(5\) \*/);
-    expect(query.indexOf('<RunFlow')).toBeLessThan(query.indexOf('Bạn có thể trả lời chị Hạnh'));
+    expect(query.indexOf('<RunFlow')).toBeLessThan(query.indexOf('<Result'));
+    expect(query.indexOf('<Result')).toBeLessThan(query.indexOf('Bạn có thể trả lời chị Hạnh'));
   });
   it('no lesson or page points to the removed lesson 1.6', () => {
     const sources = [...readLessonFiles().map(f => f.body), readFileSync('src/pages/gioi-thieu.astro', 'utf8'), readFileSync('docs/ho-so-cong-ty.md', 'utf8')];

@@ -104,7 +104,15 @@ FROM NhanVien;`,
   },
 ]} />
 
-Bước `SELECT` là kết quả cuối, hình trích ba dòng; câu chưa có `ORDER BY` nên thứ tự dòng có thể khác hình.
+Kết quả cuối, thứ tự dòng có thể khác hình vì câu chưa có `ORDER BY`:
+
+<Result columns={['Mã nhân viên', 'Họ tên', 'Ngày vào làm']} rows={[
+  ['NV001', 'Trần Thị Mai', '2024-03-01'],
+  ['NV002', 'Lê Văn Hùng', '2024-04-01'],
+  ['NV003', 'Nguyễn Thu Hà', '2023-06-01'],
+  ['NV004', 'Hoàng Minh Tuấn', '2015-01-05'],
+  ['NV005', 'Vũ Thị Lan', '2016-03-14'],
+]} total={48} />
 
 Bạn có thể trả lời chị Hạnh: danh sách đủ `48` hồ sơ vì câu không có điều kiện lọc, nên có cả `3` hồ sơ đã nghỉ trong dữ liệu mẫu là `NV020`, `NV033`, `NV041`; có đúng ba cột, thứ tự và tiêu đề yêu cầu. Ba cột này không cho biết ai đã nghỉ; nếu Kế toán cần phân biệt thì chị Hạnh cần bổ sung yêu cầu về trạng thái.
 
