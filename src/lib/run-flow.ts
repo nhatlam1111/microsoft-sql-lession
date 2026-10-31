@@ -95,7 +95,7 @@ export function checkCellText(cell: CheckCell, branches: boolean): string {
 /** Says the check table is an excerpt and what its last row counts. */
 export function checkNote(checks: FlowChecks, source: number): string {
   const excerpt = `Trích ${checks.rows.length} trong ${source} dòng`;
-  if (checks.labels) return `${excerpt}; hàng cuối đếm số dòng dừng ở từng nhánh.`;
+  if (checks.labels) return `${excerpt}; hàng cuối đếm số dòng dừng ở từng nhánh, ô cuối là số dòng vào ELSE.`;
   const counted = checks.conditions.length > 1 ? 'đếm riêng từng điều kiện' : 'đếm';
   return `${excerpt}; hàng cuối ${counted} trên cả ${source} dòng.`;
 }

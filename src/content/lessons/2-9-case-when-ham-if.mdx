@@ -21,7 +21,7 @@ Chị Hạnh chuẩn bị danh sách nhân sự tháng 10/2026:
 Em lấy giúp chị các hồ sơ đang làm, thêm nhóm thâm niên tính đến ngày 21/10/2026: dưới 1 năm, từ 1 đến dưới 3 năm, từ 3 năm trở lên. Chị cần mã nhân viên, họ tên, ngày vào làm và nhóm; xếp mã tăng dần nhé.
 </Chat>
 
-Giả định dữ liệu đang mở là **bản chốt**, tức bản được lưu tại ngày `2026-10-21` để đối chiếu về sau: chỉ lấy `TrangThai` bằng `Đang làm` và `NgayVaoLam` không sau ngày đó. Bảng chỉ giữ trạng thái hiện tại; đổi mốc ngày trong câu lệnh không tự dựng lại danh sách đang làm ở quá khứ, muốn vậy cần bản chốt hoặc lịch sử như bài 6.6.
+Giả định dữ liệu đang mở là **bản chốt**, tức bản được lưu tại ngày `2026-10-21` để đối chiếu về sau: chỉ lấy `TrangThai` bằng `Đang làm` và `NgayVaoLam` không sau ngày đó. Bảng chỉ giữ trạng thái hiện tại, nên đổi mốc ngày trong câu lệnh không tự dựng lại danh sách đang làm ở quá khứ.
 
 <Key>Mỗi hồ sơ trong phạm vi cần một nhãn dựa trên số năm làm việc đã tròn.</Key>
 
@@ -56,7 +56,7 @@ Từng phần của câu:
 <LineMap rows={[
   ['SELECT … AS …', 'Chọn ba cột và đặt tiêu đề như bài 2.1. Ví dụ: NgayVaoLam hiển thị dưới tiêu đề Ngày vào làm.'],
   ['CASE … END AS [Nhóm thâm niên]', 'Bắt đầu bằng CASE, kết thúc bằng END; cả khối là một cột, AS đặt tiêu đề. Ví dụ: mỗi hồ sơ nhận đúng một nhãn.'],
-  ["WHEN DATEADD(year, 3, NgayVaoLam) <= '20261021'", 'WHEN nêu điều kiện của nhánh: mốc đủ 3 năm đã tới ngày chốt chưa. Ví dụ: NV003 có mốc 2026-06-01 nên đúng.'],
+  ["WHEN DATEADD(year, 3, NgayVaoLam) <= '20261021'", 'WHEN nêu điều kiện của nhánh: mốc đủ 3 năm đã tới ngày chốt chưa; chuỗi ngày được đổi sang kiểu ngày như bài 2.2. Ví dụ: NV003 có mốc 2026-06-01 nên đúng.'],
   ["THEN N'Từ 3 năm trở lên'", 'THEN là giá trị trả về khi nhánh đúng. Ví dụ: NV003 nhận nhãn này.'],
   ["WHEN DATEADD(year, 1, NgayVaoLam) <= '20261021'", 'Chỉ xét khi nhánh trên sai. Ví dụ: NV025 có mốc 3 năm là 2026-11-01 nên sai nhánh trên, đúng nhánh này.'],
   ["ELSE N'Dưới 1 năm'", 'Giá trị khi không nhánh nào đúng. Ví dụ: NV045 vào làm 2026-07-01 nên chưa đủ 1 năm.'],
@@ -64,13 +64,13 @@ Từng phần của câu:
   ['ORDER BY MaNV ASC', 'Xếp mã tăng dần như bài 2.4. Ví dụ: NV001 đứng đầu.'],
 ]} />
 
-Thâm niên ở đây tính theo **mốc kỷ niệm**, không chỉ lấy năm báo cáo trừ năm vào làm: `DATEADD(year, 3, NgayVaoLam)` nhỏ hơn hoặc bằng ngày chốt nghĩa là đã đủ `3` năm, như bài 2.8. `NV025` vào làm `2023-11-01`, phải tới `2026-11-01` mới đủ, nên tại `2026-10-21` vẫn thuộc nhóm `Từ 1 đến dưới 3 năm`.
+Thâm niên ở đây tính theo **mốc kỷ niệm**, tức ngày vào làm cộng đủ số năm bằng `DATEADD` như bài 2.8, không phải năm báo cáo trừ năm vào làm. Đúng ngày mốc cũng tính là đã đủ, nên điều kiện dùng `<=`. `NV025` vào làm `2023-11-01`, phải tới `2026-11-01` mới đủ, nên tại `2026-10-21` vẫn thuộc nhóm `Từ 1 đến dưới 3 năm`.
 
-Với các điều kiện so ngày của từng dòng như trong bài, SQL Server xét `WHEN` theo thứ tự và chọn nhánh đúng đầu tiên, nên đặt nhánh đủ `3` năm trước nhánh đủ `1` năm. `NV003` thỏa cả hai điều kiện; đảo thứ tự sẽ gán nhầm vào nhóm `Từ 1 đến dưới 3 năm`.
+SQL Server xét `WHEN` từ trên xuống và chọn nhánh đúng đầu tiên, nên đặt nhánh đủ `3` năm trước nhánh đủ `1` năm. `NV003` thỏa cả hai điều kiện nên dừng ngay ở nhánh đầu.
 
-**`ELSE`** cung cấp giá trị khi không nhánh `WHEN` nào đúng. Ở đây `NgayVaoLam` có `NOT NULL` và đã lọc ngày không sau mốc chốt, nên phần còn lại chính là nhóm `Dưới 1 năm`. Bỏ `ELSE` thì dòng không khớp nhánh nào nhận **`NULL`**.
+**`ELSE`** cung cấp giá trị khi không nhánh `WHEN` nào đúng. Ở đây `NgayVaoLam` có `NOT NULL` (hình ở bài 1.4) và đã lọc ngày không sau mốc chốt, nên phần còn lại chính là nhóm `Dưới 1 năm`. Cột có ô `NULL` thì so sánh cho `UNKNOWN` như bài 2.5, nên dòng đó cũng rơi vào `ELSE`. Bỏ `ELSE` thì dòng không khớp nhánh nào nhận `NULL`.
 
-`CASE` chọn giá trị giống IF trong công thức Excel, không thay `WHERE`: tạo nhãn trong `SELECT` không loại hồ sơ và không ghi nhãn vào bảng nguồn. Các nhánh cùng trả chuỗi Unicode `N'…'` để kết quả là một cột chữ; trộn chữ với số có thể gây chuyển kiểu ngầm hoặc lỗi như bài 1.3.
+`CASE` chọn giá trị giống IF trong công thức Excel, không thay `WHERE`: tạo nhãn trong `SELECT` không loại hồ sơ và không ghi nhãn vào bảng nguồn. Các nhánh cùng trả chuỗi Unicode `N'…'` để kết quả là một cột chữ.
 
 Ở bài này chỉ cần tạo giá trị bằng các điều kiện của từng dòng; tổng hợp theo nhóm học ở bài 3.1–3.2, kiểm dữ liệu bất thường ở bài 4.6.
 
@@ -118,7 +118,7 @@ ORDER BY MaNV ASC;`} steps={[
     focus: "WHERE TrangThai = N'Đang làm' AND NgayVaoLam <= '20261021'",
     meaning: "`WHERE` xét từng hồ sơ, `AND` yêu cầu cả hai điều kiện cùng đúng: đang làm và vào làm không sau ngày chốt.",
     checks: { conditions: ["TrangThai = N'Đang làm'","NgayVaoLam <= ngày chốt"], rows: [["NV001",true,true],["NV003",true,true],["NV020",false,true],["NV025",true,true]], totals: [45,48,45] },
-    detail: "Còn `45` hồ sơ, vẫn đủ `12` cột. Hình trích bảy dòng, thứ tự dòng chưa được bảo đảm.",
+    detail: "Còn `45` hồ sơ, vẫn đủ `12` cột. Điều kiện ngày chưa loại hồ sơ nào trong dữ liệu hiện có; nó bảo đảm `ELSE` không nhận ngày sau mốc chốt. Hình trích bảy dòng, thứ tự dòng chưa được bảo đảm.",
     sql: `SELECT *
 FROM NhanVien
 WHERE TrangThai = N'Đang làm' AND NgayVaoLam <= '20261021';`,
@@ -138,9 +138,9 @@ WHERE TrangThai = N'Đang làm' AND NgayVaoLam <= '20261021';`,
   {
     clause: "SELECT",
     title: "Tính một nhãn cho mỗi hồ sơ.",
-    focus: "CASE",
+    focus: "SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],\n\tNgayVaoLam AS [Ngày vào làm],\n\tCASE\n\t\tWHEN DATEADD(year, 3, NgayVaoLam) <= '20261021' THEN N'Từ 3 năm trở lên'\n\t\tWHEN DATEADD(year, 1, NgayVaoLam) <= '20261021' THEN N'Từ 1 đến dưới 3 năm'\n\t\tELSE N'Dưới 1 năm'\n\tEND AS [Nhóm thâm niên]",
     inputColumns: ["MaNV","HoTen","NgayVaoLam"],
-    meaning: "`SELECT` chọn ba cột rồi dùng `CASE` gán nhãn: mỗi hồ sơ đi qua các nhánh `WHEN` từ trên xuống và dừng ở nhánh đúng đầu tiên.",
+    meaning: "`SELECT` chọn ba cột rồi dùng `CASE` gán nhãn: mỗi hồ sơ đi qua các nhánh `WHEN` từ trên xuống và dừng ở nhánh đúng đầu tiên; không nhánh nào đúng thì lấy `ELSE`.",
     checks: { conditions: ["Mốc 3 năm <= ngày chốt","Mốc 1 năm <= ngày chốt"], rows: [["NV003",true,null],["NV025",false,true],["NV045",false,false]], labels: ["Từ 3 năm trở lên","Từ 1 đến dưới 3 năm","Dưới 1 năm"], totals: [33,8,4] },
     detail: "Vẫn `45` hồ sơ, còn `4` cột. Thứ tự dòng chưa được bảo đảm.",
     sql: `SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
@@ -220,9 +220,9 @@ Bạn có thể gửi chị Hạnh danh sách đủ bốn cột theo mã tăng d
 
 <Mistakes>
 
-1. **Dùng `DATEDIFF(year, NgayVaoLam, '20261021')` làm số năm tròn.** Hàm đếm số ranh giới năm đã đi qua; `NV025` có kết quả `3` dù chưa tới kỷ niệm ba năm, nên bị xếp nhóm sớm.
-2. **Thử điều kiện rộng trước điều kiện hẹp.** Nhánh đủ `1` năm đứng đầu sẽ nhận cả người đã đủ `3` năm, khiến nhãn sau không được chọn cho họ.
-3. **Coi `ELSE` là nhóm “chưa biết”.** Gán nhãn `Dưới 1 năm` cho ngày thiếu hoặc ngày tương lai sẽ che dữ liệu cần kiểm; phải xác định phạm vi và cách xử lý riêng.
+1. **Dùng `DATEDIFF(year, NgayVaoLam, '20261021')` làm số năm tròn.** Hàm đếm số ranh giới năm đã đi qua; `NV025` có kết quả `3` dù chưa tới kỷ niệm ba năm, nên bị xếp vào `Từ 3 năm trở lên` quá sớm.
+2. **Đặt nhánh đủ `1` năm trước nhánh đủ `3` năm.** `NV003` dừng ngay ở nhánh đầu và nhận `Từ 1 đến dưới 3 năm`; nhãn `Từ 3 năm trở lên` không còn hồ sơ nào nhận được.
+3. **Dùng `ELSE` cho mọi dòng còn lại mà không chặn phạm vi.** Bỏ điều kiện `NgayVaoLam <= '20261021'` thì hồ sơ có ngày sau mốc chốt cũng rơi vào `ELSE` và nhận `Dưới 1 năm`, che mất dữ liệu cần kiểm.
 
 </Mistakes>
 
@@ -239,8 +239,8 @@ Bạn có thể gửi chị Hạnh danh sách đủ bốn cột theo mã tăng d
 
 <Memo rows={[
   ['IF hoặc IFS chọn một giá trị', 'CASE là biểu thức trả một giá trị cho mỗi dòng'],
-  ['Xếp IF từ điều kiện ưu tiên cao hơn', 'Với điều kiện từng dòng, WHEN đúng đầu tiên quyết định nhãn'],
-  ['Ngày kỷ niệm đạt mốc đã chọn', 'DATEADD cộng năm để so mốc; DATEDIFF(year) không phải số năm tròn'],
+  ['IF lồng nhau: điều kiện đầu đúng thì dừng', 'WHEN đúng đầu tiên quyết định nhãn'],
+  ['EDATE(ngày, 36) tạo mốc sau 36 tháng', 'DATEADD cộng năm để so mốc; DATEDIFF(year) không phải số năm tròn'],
   ['Giá trị cuối khi không điều kiện nào đúng', 'ELSE trả giá trị mặc định; bỏ ELSE thì nhận NULL'],
 ]} />
 

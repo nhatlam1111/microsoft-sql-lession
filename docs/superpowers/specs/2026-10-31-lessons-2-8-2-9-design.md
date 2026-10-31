@@ -1,6 +1,13 @@
 # Bài 2.8 và 2.9 theo mạch một câu lệnh
 
-Trạng thái: chờ người làm khóa học duyệt, 31/10/2026.
+Trạng thái: đã duyệt và đã làm trên nhánh `feat/lesson-2-5-null`, chưa push, 31/10/2026. Hồ sơ kiểm: [2.8](../../reviews/2026-10-31-lesson-2-8/verification.md), [2.9](../../reviews/2026-10-31-lesson-2-9/verification.md).
+
+Khác thiết kế, sau review:
+
+- Sửa lời hai đề, thiết kế ghi không đổi YAML: 2-8-1 thành "ngày sau ngày chốt một tháng", 2-9-2 thành "ngày chốt 2026-08-14". Đáp án giữ nguyên.
+- Bảng hàm của 2.8 thêm hai hàng trên ngày chốt, cho đề 2-8-1 và 2-8-3.
+- Ghi chú dưới bảng nhánh nói ô cuối là số dòng vào `ELSE`.
+- Bỏ lời rào "điều kiện từng dòng" ở 2.9.
 
 ## Ý định
 

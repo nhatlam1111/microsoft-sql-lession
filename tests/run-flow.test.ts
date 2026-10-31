@@ -115,7 +115,7 @@ it('names a missing cell UNKNOWN on a filter and not reached in a CASE', () => {
 });
 it('says what the last row of a branch table counts', () => {
   const checks = { conditions: ['3 năm', '1 năm'], rows: [['NV003', true, null], ['NV045', false, false]] as [string, ...(boolean | null)[]][], totals: [33, 8, 4], labels: ['a', 'b'] };
-  expect(checkNote(checks, 45)).toBe('Trích 2 trong 45 dòng; hàng cuối đếm số dòng dừng ở từng nhánh.');
+  expect(checkNote(checks, 45)).toBe('Trích 2 trong 45 dòng; hàng cuối đếm số dòng dừng ở từng nhánh, ô cuối là số dòng vào ELSE.');
 });
 it('stops a branch table whose rows, labels or totals do not match the step', () => {
   const f = sampleFlow();
