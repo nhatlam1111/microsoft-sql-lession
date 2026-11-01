@@ -7,9 +7,9 @@ keywords: [LEN, DATALENGTH, TRIM, LTRIM, RTRIM, LEFT, RIGHT, SUBSTRING, CHARINDE
 relatedLessons: ["2.1", "2.7"]
 ---
 
-Bài này giúp chọn hàm theo việc cần làm, rồi kiểm đầu vào và kết quả trước khi dùng với cột thật. Bạn chỉ cần biết `SELECT` và bí danh `AS`; các ví dụ dùng giá trị cố định để thấy riêng cơ chế của hàm, không sửa dữ liệu. Chuỗi tiếng Việt có tiền tố `N` để tạo chuỗi Unicode; xem [kiểu chuỗi ở PL.1](../pl-1-chi-tiet-kieu-du-lieu/).
+Bài này giúp chọn hàm theo việc cần làm, rồi kiểm đầu vào và kết quả trước khi dùng với cột thật. Các ví dụ dùng giá trị cố định để thấy riêng cơ chế của hàm, không sửa dữ liệu. Chuỗi tiếng Việt có tiền tố `N` để tạo chuỗi Unicode; xem [kiểu chuỗi ở PL.1](../pl-1-chi-tiet-kieu-du-lieu/).
 
-Cách đọc `SELECT` và `AS` có ở [bài 2.1](../../bai/2-1-chon-cot-dat-ten-cot/). Có thể chạy các câu chỉ đọc này trong SSMS; trang bài tập web có danh sách câu lệnh riêng nên không nhận mọi ví dụ của Phụ lục.
+`SELECT` trả giá trị tính từ các hằng số mà không cần `FROM` vì không đọc bảng; `AS` đặt tiêu đề cột kết quả, xem [bài 2.1](../../bai/2-1-chon-cot-dat-ten-cot/). Có thể chạy các câu chỉ đọc này trong SSMS; trang bài tập web có danh sách câu lệnh riêng nên không nhận mọi ví dụ của Phụ lục.
 
 ## Tra nhanh
 
@@ -151,6 +151,8 @@ Nguồn: [STRING_SPLIT](https://learn.microsoft.com/en-us/sql/t-sql/functions/st
 `STRING_AGG(bieuThuc, dauNgan)` gộp giá trị của nhiều dòng thành một chuỗi; thêm `WITHIN GROUP (ORDER BY cot)` để chọn thứ tự bên trong chuỗi. `NULL` bị bỏ qua cùng dấu ngăn của nó, còn chuỗi rỗng vẫn được giữ. Muốn hiện nhãn cho phần thiếu, thay `NULL` trước khi gộp bằng `ISNULL` hoặc `COALESCE` ở [PL.6](../pl-6-null-va-dieu-kien/).
 
 Ví dụ dưới dùng **bảng dẫn xuất**: `VALUES` dựng các dòng tạm ngay trong câu `SELECT`, không tạo bảng lưu; `v(ThuTu, Ma)` đặt bí danh bảng là `v` và tên hai cột.
+
+`CAST(x AS kiểu)` tạo giá trị của kiểu đích trong kết quả; dưới đây đổi `Ma` thành chuỗi Unicode dài `nvarchar(max)` trước khi gộp để tránh giới hạn của chuỗi ngắn.
 
 <Sql code={"SELECT STRING_AGG(CAST(Ma AS nvarchar(max)), N', ')\n\tWITHIN GROUP (ORDER BY ThuTu) AS [DanhSach]\nFROM (VALUES (2, N'KT'), (1, N'IT'), (3, NULL)) AS v(ThuTu, Ma);"} />
 

@@ -1,20 +1,9 @@
 import {describe,it,expect} from 'vitest';
-import {existsSync,readdirSync,readFileSync} from 'node:fs';
-import {join} from 'node:path';
-import {parse} from 'yaml';
 import {BANNED_PHRASES} from '../src/lib/lesson-schema';
 import {findUnprefixedUnicodeStrings} from '../src/lib/tsql-lexer';
 import {proseParagraphs} from './helpers/lessons';
+import {readAppendixFiles as files} from './helpers/appendices';
 
-const dir='src/content/appendices';
-function files(){
- return (existsSync(dir)?readdirSync(dir):[]).filter(f=>f.endsWith('.mdx')).map(name=>{
-  const raw=readFileSync(join(dir,name),'utf8');
-  const m=raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
-  if(!m)throw new Error(`${name}: missing frontmatter`);
-  return {name,data:parse(m[1]),body:m[2]};
- });
-}
 const sqlBlocks=(body:string)=>[...body.matchAll(/<Sql\b([^>]*?)code=\{("(?:[^"\\]|\\.)*")\}([^>]*?)\/>/g)]
  .map(m=>({code:JSON.parse(m[2]) as string,attrs:m[1]+m[3]}));
 

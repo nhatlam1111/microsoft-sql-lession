@@ -2,7 +2,7 @@
 
 ## Phạm vi và phiên bản
 
-Nhánh `codex/appendix-reference-pl-1-6`, base main `5c2604a2495ddf6fbb9a2835f5057a551834f55e`. Source sau sửa sáu review bài được build ngày01/11/2026 lúc10:27:24 (Asia/Saigon); hash từng MDX và từng câu SQL tại `sql-source-coverage.json`. Chuẩn bị commit để giao review tích hợp, chưa chốt lượt tích hợp. Không push/deploy trong lượt này.
+Nhánh `codex/appendix-reference-pl-1-6`, base main `5c2604a2495ddf6fbb9a2835f5057a551834f55e`. Review tích hợp đọc commit `35b35ab`; bản sửa theo report được build ngày01/11/2026 lúc10:44:38 (Asia/Saigon). Hash từng MDX và từng câu SQL cuối tại `sql-source-coverage.json`. Sáu review bài, review tích hợp và mọi quyết định đã hoàn tất. Không merge/push/deploy trong lượt này.
 
 ## Môi trường SQL và an toàn dữ liệu
 
@@ -16,7 +16,7 @@ Script và kết quả riêng ở `temp/verification/2026-11-01-appendix-referen
 - Audit UI strict trước sửa giao diện: exit 1, một finding `form.textarea-resize-missing` ở `src/components/islands/SqlEditor.tsx:53`. Đây là phạm vi nền; cần đối chiếu CSS/runtime trước kết luận. Không sửa editor trong phạm vi phụ lục.
 - Đã xem màn hình bài 1.1 của **build cũ** trên localhost ở 1280×900 làm đối chiếu identity (font, khung ba cột, màu); không có tràn trang ngang, thanh cuộn có màu theo token. Tiến độ hiển thị 0/50. Không dùng lần mở này làm bằng chứng UI Phụ lục.
 
-## Kết quả sau sửa sáu review bài
+## Kết quả sau sửa sáu review bài, trước review tích hợp
 
 | Kiểm | Kết quả thực tế |
 |---|---|
@@ -52,4 +52,16 @@ Công cụ CUA, in-app browser tại localhost4332, kiểm build10:27:24. Không
 
 ## Review và phạm vi bàn giao
 
-Cả6review độc lập có report nguyên gốc và bảng tiền đề từng câu ôn; PL.3/PL.4 tiếp tục đúng lượt sau ngắt hạn mức, không thay agent/model. Root đã đọc đầy đủ và xử lý mọifinding kể cả mức thấp tại `decisions.md`. Review source/HTML không được dùng thay bằng chứng SQL/UI nêu riêng ở trên. Review tích hợp và quyết định của root sau report đó sẽ được ghi tiếp; chưa coi kết luận của reviewer là quyền push.
+Cả6review độc lập có report nguyên gốc và bảng tiền đề từng câu ôn; PL.3/PL.4 tiếp tục đúng lượt sau ngắt hạn mức, không thay agent/model. Root đã đọc đầy đủ và xử lý mọifinding kể cả mức thấp tại `decisions.md`. Review source/HTML không được dùng thay bằng chứng SQL/UI nêu riêng ở trên; kết luận reviewer không tạo quyền push.
+
+## Chốt sau review tích hợp
+
+- Report gốc `integration-review.md` đọc base→`35b35ab`, tự kiểm79tests,6hash/53SQL–HTML/18details/119fragments. Root đã đọc đủ report và ghi quyết định cho finding, trường hợp SQL_VARIANT_PROPERTY, minor, undetermined và ngoài phạm vi ở `decisions.md`.
+- Sửa metadata tìm kiếm và lời mở SELECT/CAST ở PL.3–PL.4; không đổi UI owner/progress, SQL hoặc Result. Test trên frontmatter thật đã RED ở integer trước sửa, GREEN cả15targeted tests sau sửa.
+- Kiểm cuối: **385/385test,51files** (`test-final.log`); check **219files,0errors,0warnings,3hints nền** (`check-final.log`); **136trang,10:44:38** (`build-final.log`); **2.502link đạt** (`dist-final.log`). DESIGN và UI owner không đổi sau lần lint/audit ở trên, nên giữ kết quả đó, không nhận audit exit1 là đạt.
+- `audit-sql-coverage.mjs` chạy lại sau sửa: **53 câu nguồn/47Result** vẫn khớp live evidence. `sql-source-coverage.json` hiện chứa hash cuối; bản hash mà reviewer đã đọc có trong commit35b35ab. Không cần chạy lại database khi chỉ đổi metadata/lời dẫn và mọi query nguyên văn còn khớp.
+- Browser build10:44:38 trên origin riêng4333, khởi đầu có lời chào mới/0 bài; không nhập editor hoặc SQL. Tìm integer/double precision/character varying raPL.1, SUM cóPL.4 cùng các bài chính, SQL_VARIANT_PROPERTY raPL.5. Không làm thay đổi tiến độ ở origin4332 của lượt trước.
+- Kiểm trạng thái khác level1: mở bài3.1, sangPL.5 và reload trực tiếp; Back/Forward vẫn có Lộ trình dừng3.1. Bấm Học tiếp mở bài3.1, nhóm3 mở đúng;0/50 hoàn thành, console error rỗng. Trên trangPL, nhóm chính3 chưa tự mở sau hydrate; giữ khởi tạo nhóm hiện hành vì Phụ lục đang mở nhóm riêng và resume vẫn đúng. Không tuyên bố đã kiểm cơ chế cache nội bộ hay mọi snapshot lưu trữ.
+- Đã reset viewport sau lần kiểm cuối. Chỉ đóng tab/preview phục vụ kiểm do agent tạo; không xóa nháp, reset tiến độ hoặc sửa dữ liệu ở origin đang dùng của người học. Không kiểm thêm các nền tảng/IME/accessibility/API/editor đã ghi ngoài phạm vi.
+
+Không còn việc sửa được chấp nhận đang bỏ dở. Giới hạn kỹ thuật/audit nền được giữ minh bạch; bản bàn giao là local branch đã commit, chưa đăng lên web.

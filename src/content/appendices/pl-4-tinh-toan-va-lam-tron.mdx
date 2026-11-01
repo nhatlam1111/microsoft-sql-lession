@@ -3,13 +3,13 @@ num: "PL.4"
 title: Tính toán và làm tròn
 shortTitle: Tính toán, làm tròn
 summary: Tra phép toán và hàm số; giữ phần lẻ, chọn thời điểm làm tròn, xử lý chia cho không và tránh tràn kiểu kết quả.
-keywords: [ROUND, CEILING, FLOOR, ABS, POWER, NULLIF, decimal, numeric, precision, scale, chia nguyên, chia cho không, làm tròn, overflow, phép chia dư]
+keywords: [ROUND, CEILING, FLOOR, ABS, POWER, NULLIF, SUM, decimal, numeric, precision, scale, chia nguyên, chia cho không, làm tròn, overflow, phép chia dư]
 relatedLessons: ["1.3", "2.1", "3.1"]
 ---
 
 Bài này giúp tính đúng giá trị trước khi chọn cách hiển thị nó. Bạn cần biết `SELECT`, bí danh `AS` và rằng một biểu thức trả về một giá trị có kiểu dữ liệu. Ví dụ dùng số cố định; nếu chưa quen `decimal(p, s)`, `p` là tổng số chữ số tối đa, `s` là số chữ số sau dấu thập phân, xem [PL.1](../pl-1-chi-tiet-kieu-du-lieu/).
 
-Cách đọc `SELECT` và `AS` có ở [bài 2.1](../../bai/2-1-chon-cot-dat-ten-cot/). Có thể chạy các câu chỉ đọc này trong SSMS; trang bài tập web có danh sách câu lệnh riêng nên không nhận mọi ví dụ của Phụ lục.
+`SELECT` trả giá trị tính từ các hằng số mà không cần `FROM` vì không đọc bảng; `AS` đặt tiêu đề cột kết quả, xem [bài 2.1](../../bai/2-1-chon-cot-dat-ten-cot/). Có thể chạy các câu chỉ đọc này trong SSMS; trang bài tập web có danh sách câu lệnh riêng nên không nhận mọi ví dụ của Phụ lục.
 
 ## Tra nhanh
 
@@ -38,7 +38,7 @@ Nguồn: [Toán tử số học](https://learn.microsoft.com/en-us/sql/t-sql/lan
 
 ## decimal
 
-Muốn phần lẻ, chuyển ít nhất một **đầu vào** của phép chia sang `decimal` trước khi chia. Chuyển kết quả sau khi đã chia nguyên chỉ đổi kiểu của số `2`, không lấy lại phần `0.5` đã mất.
+`CAST(x AS kiểu)` tạo giá trị của kiểu đích trong kết quả. Muốn phần lẻ, chuyển ít nhất một **đầu vào** của phép chia sang `decimal` trước khi chia. Chuyển kết quả sau khi đã chia nguyên chỉ đổi kiểu của số `2`, không lấy lại phần `0.5` đã mất.
 
 <Sql code={"SELECT CAST(5 / 2 AS decimal(10, 2)) AS [DoiSau],\n\tCAST(5 AS decimal(10, 2)) / 2 AS [DoiTruoc];"} />
 

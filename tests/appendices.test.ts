@@ -11,6 +11,7 @@ import { neighbors } from '../src/lib/catalog';
 import { AREAS, LEVELS } from '../src/data/curriculum';
 import SidebarNav from '../src/components/islands/SidebarNav';
 import { readCatalog } from './helpers/lessons';
+import { readAppendices } from './helpers/appendices';
 
 const main = readCatalog();
 const references = (): AppendixEntry[] => Object.entries(APPENDIX_SLUGS).map(([num, slug]) => ({
@@ -70,6 +71,15 @@ describe('independent reference catalog', () => {
 });
 
 describe('combined lookup without changing the learning path', () => {
+  it('finds taught aliases and function sections using the actual published metadata', () => {
+    const items = createSearchItems(main, readAppendices(), AREAS);
+    for (const [query, num] of [
+      ['integer', 'PL.1'], ['double precision', 'PL.1'], ['character varying', 'PL.1'],
+      ['national character varying', 'PL.1'], ['SUM', 'PL.4'], ['SQL_VARIANT_PROPERTY', 'PL.5'],
+    ]) {
+      expect(searchItems(items, query).some(entry => entry.num === num), `${query} → ${num}`).toBe(true);
+    }
+  });
   it('finds normalized PL numbers and keywords absent from title or summary', () => {
     const entries = references();
     entries[1].keywords = ['TRY_CONVERT', 'chuyển đổi kiểu'];

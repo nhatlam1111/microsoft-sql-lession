@@ -45,4 +45,20 @@ Giữ các phần được công nhận về UNKNOWN, ba câu ôn, quy tắc ki�
 
 ## Các lượt đang tiếp tục
 
-PL.3/PL.4 bị ngắt do hạn mức, đã tiếp tục đúng agent và đúng lượt sau yêu cầu “tiếp tục” của người làm khóa học rồi hoàn tất. Không tạo reviewer thay thế hoặc đổi model. Sáu review bài đã hoàn tất, mọi finding trong report đã có quyết định. Review tích hợp và kiểm bản sửa cuối còn tiếp tục; chưa có kết luận nghiệm thu cả chương.
+PL.3/PL.4 bị ngắt do hạn mức, đã tiếp tục đúng agent và đúng lượt sau yêu cầu “tiếp tục” của người làm khóa học rồi hoàn tất. Không tạo reviewer thay thế hoặc đổi model. Sáu review bài và review tích hợp đã hoàn tất; các quyết định cuối ở dưới.
+
+## Review tích hợp — commit được review `35b35ab`
+
+Root đã đọc đầy đủ report gốc `integration-review.md`; giữ nguyên kết luận và bằng chứng của reviewer. Bản sửa sau report không đổi thuật toán tìm kiếm, progress owner, câu SQL hoặc kết quả.
+
+| Mục của reviewer | Quyết định | Xử lý và căn cứ |
+|---|---|---|
+| INT-01 — tên đồng nghĩa/nhóm SUM khó tìm | Làm theo | Thêm toàn bộ tên đồng nghĩa đang giảng vào PL.1 và SUM vào PL.4. Test dùng frontmatter thực tái hiện lỗi integer trước sửa, sau sửa cả sáu truy vấn hồi quy đạt; không lập chỉ mục toàn văn hoặc đổi ranking. Browser xác nhận integer/double precision/character varying tới PL.1, SUM có PL.4 trong kết quả và vẫn giữ các bài chính phía trước. |
+| SQL_VARIANT_PROPERTY — trường hợp cùng cơ chế để root chọn | Làm theo | Thêm vào từ khóa PL.5 vì bài đã giải nghĩa hàm hỗ trợ kiểm kiểu này. Có test và browser tìm ra PL.5; không mở thêm bài metadata. |
+| Minor1 — SELECT không FROM/CAST tại PL.3–PL.4 | Làm theo | Đồng bộ một vế đọc SELECT hằng số/AS; giải thích CAST ngay trước lần dùng cần thiết. Giữ đường dẫn PL.1/PL.2 cho danh mục sâu, không thêm ví dụ SQL hoặc kiến thức trong đáp án. |
+| Undetermined2 — hydrate/nhóm sidebar và resume ở level khác | Làm một phần | Kiểm trên origin thử riêng4333, ban đầu chào mới/0 bài. Mở3.1 rồi PL.5, reload trực tiếp, Back/Forward: Lộ trình vẫn dừng3.1; bấm Học tiếp mở3.1 và nhóm3 mở đúng, console không lỗi. Trên trang PL, nhóm chính3 không tự mở sau hydrate; giữ hành vi khởi tạo nhóm hiện có vì PL có nhóm đang mở riêng và không có cam kết tự mở nhóm chính theo resume tại đây. Không có mất dữ liệu để sửa progress owner; không tự nhận đã chứng minh cơ chế bfcache nội bộ. Origin4332 của lượt trước không bị đổi vị trí. |
+| Undetermined3 — IME/screenreader/thiết bị | Không làm theo việc mở rộng kiểm | Giữ đúng giới hạn chưa kiểm IME thật, toàn bộ screenreader/zoom200%/thiết bị. Đã thử keyboard, focus, inert qua luồng tìm kiếm và native details; source có guard composition. Không gọi các giới hạn chưa có tái hiện là bug, không suy thành đạt mọi tổ hợp. |
+| Giới hạn4 — SQLServer2025 cài riêng/MI và cực trị | Không làm theo việc thử thêm nền tảng | Nguồn Microsoft và phép SELECT Azure đã tách rõ; không có môi trường cài riêng/MI được giao. Không tạo tài nguyên, bật preview hoặc đổi DB để mở rộng bằng chứng. Giữ giới hạn tài liệu/live, gồm PATINDEX. |
+| Ngoài phạm vi5 — API/editor/draft/auth/câu ghi và audit nền | Không làm theo việc mở rộng sửa/chạy | Không đổi API/YAML/runner/editor/seed, chỉ thêm reference đọc; không có câu ghi để cần check:data. Giữ audit nền và ba hint đúng kết quả thực tế, không sửa ngoài phạm vi hoặc báo kiểm chưa chạy là đạt. |
+
+Sau sửa: 385/385test,51files; check219files/0errors/0warnings/3hints nền; build136trang10:44:38; check:dist2.502link. Source SQL coverage vẫn53SELECT/47Result, hash được cập nhật theo source cuối. Không còn finding được chấp nhận chưa xử lý; mọi minor/undetermined/ngoài phạm vi đều có quyết định và giới hạn ở trên.

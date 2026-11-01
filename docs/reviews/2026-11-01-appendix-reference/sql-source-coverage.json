@@ -1,7 +1,7 @@
 [
   {
     "name": "pl-1-chi-tiet-kieu-du-lieu.mdx",
-    "sha256": "ceebb4a37634b422d7d93788011142e0bf0cf752c970ec55b193776ae317cec8",
+    "sha256": "66aa1c01c69bd4deb518ebee86fdb6dee8bff8a39bcb504ff2e11f7445764209",
     "examples": [
       {
         "index": 1,
@@ -141,7 +141,7 @@
   },
   {
     "name": "pl-3-ham-xu-ly-chuoi.mdx",
-    "sha256": "bffa6a611806cad64355e21247a1bd28dbc32fe9be6c5597e63e12ffb8d5f56b",
+    "sha256": "03783e7189338843cf5b7cecb568ff6ba351fd7b4e88b11c277d310728b693bd",
     "examples": [
       {
         "index": 1,
@@ -235,7 +235,7 @@
   },
   {
     "name": "pl-4-tinh-toan-va-lam-tron.mdx",
-    "sha256": "bfc5c03704e260c01523b6b705f3a69897c82d88ac7493e63d388c5bba1f0e70",
+    "sha256": "9ebfa0a99f9e49983f55a0fc421efae966af6445da8c2e13dbf75ec56b97190d",
     "examples": [
       {
         "index": 1,
@@ -313,7 +313,7 @@
   },
   {
     "name": "pl-5-ham-ngay-gio.mdx",
-    "sha256": "acc56d00876a44a66cd0c8b06b1ada02c81a10656c3a151cd66a8da05ab7fcfe",
+    "sha256": "53bc964b71a0c4adf3b575e5ecc80aca6f976f677e44a2b19720d7bce05ffe09",
     "examples": [
       {
         "index": 1,

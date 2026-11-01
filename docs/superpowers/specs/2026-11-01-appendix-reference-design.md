@@ -49,9 +49,9 @@ Sáu reviewer mới độc lập học từng bài theo §4.5; sau đó một re
 
 ## Tiến độ
 
-- Builder check bằng agent mới ngày 01/11/2026: “nothing important left”. Thiết kế đủ rõ, đã bắt đầu triển khai trên nhánh riêng.
-- Quy ước §2.7 và template đã có biến thể tra cứu. Ruling: dùng collection và search adapter riêng, tự kiểm tra inline, không thêm grader — giữ tiến độ khóa học và phạm vi được duyệt.
-- Sáu bài/hạ tầng đã có bản đầu, đã qua test/type/build/dist và kiểm SELECT từng câu; chưa chốt nghiệm thu. Vòng review PL.1/PL.2 làm rõ yêu cầu: đóng đáp án vẫn thấy đủ dữ kiện của đề. Đã ghi vào quy ước/template và sửa vị trí SQL tương ứng; các thuật ngữ và link tra nhanh cũng được xử lý. Theo dõi mọi nhận xét tại ma trận trong hồ sơ review.
-- Vòng PL.3–PL.5 đã xử lý các chỗ mơ hồ về NULL tìm mẫu, ký hiệu toán và nguồn giờ; giữ phạm vi tra cứu/ba câu ôn. PATINDEX có khác biệt giữa tài liệu và Azure đã kiểm, được ghi trung thực thay vì hứa một hành vi cho mọi môi trường. Đã kiểm thêm biên TRY_CAST và ghi đơn vị byte/UTF-16 rõ ràng. PL.6 và tích hợp còn tiếp tục.
-- Cả sáu review độc lập đã hoàn tất và có ma trận xử lý; PL.6 đã sửa tiền đề đọc câu, cắt metadata ngoài phạm vi, giải nghĩa tổng hợp/MAX. Không thay query/result hoặc thêm bài tập chấm tự động. Đang kiểm source cuối và chuẩn bị review tích hợp.
+- Đã hoàn tất hạ tầng và PL.1–PL.6 trên nhánh `codex/appendix-reference-pl-1-6`. Builder check mới: “nothing important left”; quy ước §2.7/template/DESIGN đã ghi biến thể tra cứu, không dùng allowlist cũ hoặc thêm grader.
+- Cả sáu review bài độc lập và một review tích hợp mới đã hoàn tất, kế thừa model phiên. Giữ report nguyên gốc; mọifinding/minor/undetermined có quyết định tại hồ sơ review. Các điểm sửa gồm dữ kiện đề hiện trước đáp án, đơn vị/ký hiệu, đường vào SELECT/CAST, PATINDEX NULL, nguồn giờ, câu thừa và metadata tìm kiếm tên đã giảng.
+- Kiểm cuối:385tests/51files; check0errors/0warnings và3hints nền; build136trang10:44:38; check:dist2.502link.53SELECT/47Result khớp live evidence, thêm9probe ngưỡng sau review. UI tại1280/1024/1440, tìm kiếm/bàn phím/details/copy/resume đã kiểm; giữ50bài và tiến độ độc lập.
+- Giữ rõ giới hạn tài liệu/live theo nền tảng, PATINDEX có khác biệt, audit tĩnh editor nền và những phép kiểm chưa làm. Origin thử riêng xác nhận resume3.1 quaPL/reload/Back/Forward; không đổi progress owner hoặc tự mở nhóm chính theo snapshot mới trên trangPL.
+- Đã chốt triển khai local; không merge/push/deploy trong phạm vi này. Bằng chứng và ma trận ở `docs/reviews/2026-11-01-appendix-reference/`.
 - Evidence và kết quả thực tế sẽ ghi trong `docs/reviews/2026-11-01-appendix-reference/`.

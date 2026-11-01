@@ -32,8 +32,8 @@ Tra nhanh rồi dùng được; units/storage/type result chính xác; người 
 - [x] Soạn PL.3–PL.6 theo nguồn Microsoft và kiểm SELECT.
 - [x] Kiểm source, test/type/build/dist, browser và audit thiết kế.
 - [x] Sáu review bài độc lập; đọc report, xác minh/sửa và ghi ma trận.
-- [ ] Review tích hợp mới, xử lý findings, chạy lại kiểm liên quan.
-- [ ] Lưu evidence, cập nhật spec/plan, commit local và bàn giao.
+- [x] Review tích hợp mới, xử lý findings, chạy lại kiểm liên quan.
+- [x] Lưu evidence, cập nhật spec/plan, commit local và bàn giao.
 
 ## Execution log
 
@@ -52,3 +52,5 @@ Sau lượt tiếp tục: PL.3/PL.4/PL.5 đã có report đầy đủ và root �
 PL.6 hoàn tất review; root đọc đủ report, xử lý3finding: SELECT hằng số, bỏ câu metadata ngoài tiền đề, giải nghĩa MAX/tổng hợp ngay cảnh báo CASE. Cả6report nguyên gốc được giữ, ma trận có quyết định cho mọifinding. Chuẩn bị kiểm cuối và review tích hợp trên source/build khớp sau sửa.
 
 Source sau review: test384/384(51files), check0errors/0warnings/3hints nền, build136pages10:27:24, dist2502links, DESIGNlint0errors. UIaudit còn1finding literaltextarea nền cóCSSresize:none, ghi riêng không báođạt. Browser đã mở6trang1280, kiểm1024/1440, sao chépnewline/tab+khôi phụcclipboard, Enter/Space details, Escape/search, lộtrình1.1 và0/50. Đã resetviewport. Hồ sơverification.md và technical snapshots/source SQL coverage đã lưu trongdocs/reviews. Chờreviewtíchhợp trêncommit đóngbăng.
+
+Review tích hợp mới đã hoàn tất trên commit35b35ab; root đọc đủ report và quyết định mọifinding/minor/undetermined. Sửa keywords alias/SUM/SQL_VARIANT_PROPERTY, thêm một vế SELECT/CAST cho PL.3–4. Test metadata thật đã RED→GREEN; kiểm cuối385/385test(51files), check219files/0errors/0warnings/3hints nền, build136trang10:44:38, dist2502links, SQL coverage53/47 không đổi. Browser origin thử4333 xác nhận tìm tên mới và resume3.1 qua PL/reload/Back/Forward/Học tiếp; không lỗi console. Giữ quyết định nhóm chính không tự đổi theo hydrate trênPL, cùng các giới hạn IME/nền tảng/audit/API đã ghi rõ. Đã resetviewport; chốt local branch, không merge/push/deploy.
