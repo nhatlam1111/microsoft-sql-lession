@@ -1,6 +1,6 @@
 # Drawer 3.1–3.2: hiểu cách SELECT tạo kết quả
 
-Trạng thái: người dùng đã chọn cách B và yêu cầu chỉ dùng vài nhóm đại diện; bản thiết kế cụ thể dưới đây chờ duyệt trước khi sửa sản phẩm. Bổ sung thiết kế này cho lượt làm lại 3.1–3.2, không sửa lịch sử review trước.
+Trạng thái: người dùng đã chọn cách B, yêu cầu chỉ dùng vài nhóm đại diện và duyệt bản thiết kế trong chat bằng “duyệt”. Bổ sung thiết kế này cho lượt làm lại 3.1–3.2, không sửa lịch sử review trước.
 
 ## Mục đích và phạm vi
 
@@ -31,4 +31,4 @@ Khi triển khai, bổ sung mục 2.6 của quy ước và template để quy đ
 
 Chạy SELECT chỉ đọc kiểm lại số liệu tần suất/người trong nhóm, câu chính và bằng chứng các bước. Test có ý nghĩa cho giới hạn khối, ánh xạ dữ liệu và việc các flow cũ không đổi; không khóa nguyên câu văn. Thực hiện kiểm bắt buộc ở §4.4, UI đúng build ở desktop và màn hẹp, review độc lập mỗi bài và review tích hợp vì sửa renderer (§4.5–4.6). Lưu report mới, xử lý mọi nhận xét, cập nhật thiết kế/kế hoạch theo mỗi vòng. Không push/deploy trong phạm vi này.
 
-Prototype v3 dùng dữ liệu SQL đã kiểm của lượt trước để thảo luận cách trình bày; chưa thay thế bằng chứng SQL live, build hoặc kiểm UI của sản phẩm. Thiết kế đủ nhỏ để dùng bản ngắn; chưa gọi skill triển khai hoặc sửa sản phẩm trước khi người dùng duyệt bản này.
+Prototype v3 dùng dữ liệu SQL đã kiểm của lượt trước để thảo luận cách trình bày; chưa thay thế bằng chứng SQL live, build hoặc kiểm UI của sản phẩm. Thiết kế đủ nhỏ để dùng bản ngắn. Kế hoạch triển khai: [drawer SELECT](../plans/2026-11-01-drawer-3-1-3-2-select.md); tác giả triển khai trong phiên hiện tại, review bằng agent mới kế thừa model theo quy ước repo.
