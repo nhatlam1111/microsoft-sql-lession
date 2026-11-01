@@ -18,6 +18,17 @@ export interface FlowChecks {
   labels?: string[];
 }
 
+/** A small teaching illustration, distinct from a SQL result or an input excerpt. */
+export interface FlowExample {
+  title: string;
+  /** State the scope: a complete sample group, an excerpt, or a compact calculation illustration. */
+  note: string;
+  table?: { columns: string[]; rows: FlowCell[][] };
+  /** Each expression explains one cell; all cells must belong to the same result row. */
+  calculations?: { expression: string; explanation: string; column: string; value: FlowCell }[];
+  conclusion?: string;
+}
+
 /** One step of a run-order diagram, as written in a lesson file. */
 export interface FlowStep {
   clause: string;
@@ -40,6 +51,10 @@ export interface FlowStep {
   /** Columns of the step before shown under "Đầu vào"; by default the ones its card previews. Use it when this step needs other columns. */
   inputColumns?: string[];
   checks?: FlowChecks;
+  /** At most two representative examples under "Thực hiện"; never a full data browser. */
+  examples?: FlowExample[];
+  /** Result row numbers, from 1, that the examples point to. */
+  mark?: number[];
   /** Columns the card previews, in this order; by default the first three. Use it when the step is about a column further right. */
   preview?: string[];
 }
@@ -131,6 +146,36 @@ function checkTable(step: FlowStep, inputs: FlowStep[]): string[] {
   return problems;
 }
 
+function checkExamples(step: FlowStep): string[] {
+  const problems: string[] = [];
+  const examples = step.examples!;
+  if (examples.length < 1 || examples.length > 2) problems.push('minh họa cần một hoặc hai ví dụ đại diện');
+  examples.forEach((example, i) => {
+    const at = `minh họa ${i + 1}:`;
+    if (!example.title.trim() || !example.note.trim()) problems.push(`${at} cần tiêu đề và chú thích phạm vi`);
+    if (!example.table && !example.calculations) problems.push(`${at} cần dữ liệu hoặc phép tính`);
+    if (example.table) {
+      const { columns, rows } = example.table;
+      if (!columns.length || columns.some(c => !c.trim())) problems.push(`${at} thiếu tên cột`);
+      if (rows.length < 1 || rows.length > 5) problems.push(`${at} bảng cần từ một đến năm dòng`);
+      if (rows.some(r => r.length !== columns.length)) problems.push(`${at} số ô không khớp số cột`);
+    }
+    if (example.calculations) {
+      const calculations = example.calculations;
+      if (calculations.length < 1 || calculations.length > 5) problems.push(`${at} cần từ một đến năm biểu thức`);
+      for (const c of calculations) {
+        if (!c.expression.trim() || !c.explanation.trim()) problems.push(`${at} thiếu biểu thức hoặc lời giải`);
+        if (!step.columns.includes(c.column)) problems.push(`${at} không có cột kết quả ${c.column}`);
+      }
+      if (!step.rows.some(row => calculations.every(c => {
+        const column = step.columns.indexOf(c.column);
+        return column >= 0 && row[column] === c.value;
+      }))) problems.push(`${at} các ô đã tính không cùng khớp một dòng kết quả`);
+    }
+  });
+  return problems;
+}
+
 /** Every broken rule in a flow, as readable messages; empty when all is well. */
 export function checkFlow(steps: FlowStep[], query: string): string[] {
   if (steps.length < 2) return ['sơ đồ cần ít nhất 2 bước'];
@@ -157,6 +202,10 @@ export function checkFlow(steps: FlowStep[], query: string): string[] {
     for (const c of step.preview ?? []) if (!step.columns.includes(c)) problems.push(`${at} preview có cột ${c} không nằm trong columns`);
     for (const c of step.inputColumns ?? []) if (!inputs[i].some(s => s.columns.includes(c))) problems.push(`${at} inputColumns có cột ${c} không nằm trong bước trước`);
     if (step.checks) for (const p of checkTable(step, inputs[i])) problems.push(`${at} ${p}`);
+    if (step.examples) for (const p of checkExamples(step)) problems.push(`${at} ${p}`);
+    for (const m of step.mark ?? []) {
+      if (!Number.isInteger(m) || m < 1 || m > step.rows.length) problems.push(`${at} không có dòng ${m} để đánh dấu`);
+    }
     previous = step;
   });
   return problems;

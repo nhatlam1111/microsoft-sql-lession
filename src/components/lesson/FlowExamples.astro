@@ -1,0 +1,52 @@
+---
+import { inlineCode, type FlowExample } from '../../lib/run-flow';
+import { highlightTsql } from '../../lib/tsql-highlight';
+
+interface Props { examples: FlowExample[] }
+const { examples } = Astro.props;
+---
+{examples.map(example => (
+  <section class="rf-example" aria-label={example.title}>
+    <p class="rf-example-title">{example.title}</p>
+    <p class="rf-example-note">{inlineCode(example.note).map(p => p.code ? <code>{p.text}</code> : p.text)}</p>
+    {example.table && (
+      <div class="rf-tb-scroll" tabindex="0" role="region" aria-label={`Dữ liệu minh họa: ${example.title}`}>
+        <table class="rf-tb">
+          <thead><tr>{example.table.columns.map(c => <th scope="col">{c}</th>)}</tr></thead>
+          <tbody>{example.table.rows.map(row => <tr>{row.map(c => <td class={c === null ? 'res-null' : undefined}>{c ?? 'NULL'}</td>)}</tr>)}</tbody>
+        </table>
+      </div>
+    )}
+    {example.calculations && (
+      <div class="rf-tb-scroll" tabindex="0" role="region" aria-label={`Cách tạo ô kết quả: ${example.title}`}>
+        <table class="rf-tb rf-workings">
+          <thead><tr><th scope="col">Biểu thức</th><th scope="col">Cách lấy giá trị</th><th scope="col">Ô kết quả</th></tr></thead>
+          <tbody>{example.calculations.map(c => (
+            <tr>
+              <th scope="row"><code>{highlightTsql(c.expression).map(t => t.kind === 'plain' ? t.text : <span class={`t-${t.kind}`}>{t.text}</span>)}</code></th>
+              <td>{inlineCode(c.explanation).map(p => p.code ? <code>{p.text}</code> : p.text)}</td>
+              <td><code class={c.value === null ? 'res-null' : undefined}>{c.value ?? 'NULL'}</code><small>→ <code>{c.column}</code></small></td>
+            </tr>
+          ))}</tbody>
+        </table>
+      </div>
+    )}
+    {example.conclusion && <p class="rf-example-conclusion">{inlineCode(example.conclusion).map(p => p.code ? <code>{p.text}</code> : p.text)}</p>}
+  </section>
+))}
+
+<style>
+  .rf-example { margin-top: 14px; padding: 12px; border: 1px solid var(--rule); border-radius: var(--radius-s); background: var(--surface); }
+  .rf-example-title { font: 600 14px/1.5 var(--font-ui); }
+  .rf-example-note { margin-top: 5px; font: 12.5px/1.6 var(--font-ui); color: var(--ink-2); }
+  .rf-example .rf-tb-scroll:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .rf-example .rf-tb :is(th, td) { white-space: normal; vertical-align: top; border-color: var(--rule); padding: 7px 6px; }
+  .rf-example .rf-tb thead th { background: var(--surface-subtle); }
+  .rf-workings { table-layout: fixed; }
+  .rf-workings th:first-child { width: 30%; }
+  .rf-workings th:last-child { width: 23%; }
+  .rf-example :global(code) { font-size: .92em; overflow-wrap: anywhere; white-space: normal; }
+  .rf-workings th :global(code) { padding: 0; background: none; }
+  .rf-workings small { display: block; margin-top: 5px; color: var(--ink-2); }
+  .rf-example-conclusion { margin-top: 10px; padding: 9px 10px; border-left: 3px solid var(--accent); background: var(--accent-soft); font: 13px/1.7 var(--font-ui); }
+</style>

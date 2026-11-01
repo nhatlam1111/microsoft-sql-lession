@@ -283,3 +283,5 @@ Dùng thẳng trong MDX, không cần import.
 | `Erd` | `caption?`, `path?` (tên bảng theo thứ tự đi) | Sơ đồ quan hệ của HRM_Demo đặt thẳng trong bài; `path` tô xanh các bảng, cột nối và đường nối |
 
 Dòng trạng thái của `Result` và `Messages` mặc định ghi `free-sql-db-8797714`, đúng tên database học viên thấy trong SSMS.
+
+Một bước `RunFlow` có thể thêm `examples` trong Thực hiện theo mục 2.6 của quy ước. Mỗi ví dụ có `title`, `note` nêu rõ phạm vi; `table?: { columns, rows }` cho dữ liệu minh họa (tối đa năm dòng), `calculations?: [{ expression, explanation, column, value }]` nối tối đa năm biểu thức với ô kết quả, `conclusion?` để ghép các ô thành dòng. `note`, `explanation`, `conclusion` hỗ trợ code giữa backtick, không hỗ trợ HTML/Markdown khối. Tối đa hai ví dụ đại diện; các ô `column/value` của cùng ví dụ phải cùng khớp một dòng trong `steps[].rows`. Bảng minh họa tách khỏi SQL Results và không thay bảng Đầu vào trích năm dòng. `steps[].mark?: number[]` đánh dấu dòng Results, đếm từ 1 trên các dòng đang hiện. Xem SELECT của bài 3.1 và GROUP BY/SELECT của bài 3.2; không tự thêm ví dụ cho các bài khác.

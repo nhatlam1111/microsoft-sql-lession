@@ -1,5 +1,6 @@
 ---
 import Result from './Result.astro';
+import FlowExamples from './FlowExamples.astro';
 import { highlightTsql } from '../../lib/tsql-highlight';
 import { checkCellText, checkFlow, checkKept, checkNote, excerptNote, inlineCode, inputPreview, inputSteps, isUnionFlow, nextFlowId, previewOf, rowCount, snakeLayout, splitFocus, type FlowStep } from '../../lib/run-flow';
 
@@ -142,9 +143,10 @@ const views = steps.map((step, i) => {
             </div>
           )}
           {v.checks && <p class="rf-in-note">{v.checks.note}</p>}
+          {v.step.examples && <FlowExamples examples={v.step.examples} />}
           <p class="rf-d-sub">Kết quả</p>
           <p class="rf-d-text">{v.detail.map(p => (!p.code ? p.text : p.sqlWord ? <code class="rf-kw">{p.tokens.map(t => (t.kind === 'plain' ? t.text : <span class={`t-${t.kind}`}>{t.text}</span>))}</code> : <code class="rf-id">{p.text}</code>))}</p>
-          <Result columns={v.step.columns} rows={v.step.rows} total={v.count} />
+          <Result columns={v.step.columns} rows={v.step.rows} total={v.count} mark={v.step.mark} />
         </section>
       ))}
     </div>
