@@ -1,10 +1,12 @@
 import type { AreaDef } from '../data/curriculum';
 import { sortCatalog, type CatalogEntry } from './catalog';
 import { sortAppendices, type AppendixEntry } from './appendices';
-import { appendixUrl, lessonUrl } from './paths';
+import { sortPresentations, type PresentationEntry } from './presentations';
+import { appendixUrl, lessonUrl, presentationUrl } from './paths';
 
 /** Search is the only place where course lessons and reference articles share an index. */
 export interface SearchItem {
+  key: string;
   num: string;
   slug: string;
   title: string;
@@ -12,23 +14,31 @@ export interface SearchItem {
   summary: string;
   keywords: string[];
   href: string;
-  section: 'lesson' | 'appendix';
+  section: 'lesson' | 'appendix' | 'presentation';
   groupLabel: string;
   level?: number;
 }
 
-export function createSearchItems(catalog: CatalogEntry[], appendices: AppendixEntry[], areas: AreaDef[]): SearchItem[] {
+export function createSearchItems(catalog: CatalogEntry[], appendices: AppendixEntry[], areas: AreaDef[], presentations: PresentationEntry[] = []): SearchItem[] {
   const areaName = new Map(areas.map(a => [a.id, a.name]));
   return [
     ...sortCatalog(catalog).map(entry => ({
+      key: `lesson:${entry.slug}`,
       num: entry.num, slug: entry.slug, title: entry.title, shortTitle: entry.shortTitle,
       summary: entry.summary, keywords: [entry.excel], href: lessonUrl(entry.slug),
       section: 'lesson' as const, groupLabel: areaName.get(entry.area) ?? '', level: entry.level,
     })),
     ...sortAppendices(appendices).map(entry => ({
+      key: `appendix:${entry.slug}`,
       num: entry.num, slug: entry.slug, title: entry.title, shortTitle: entry.shortTitle,
       summary: entry.summary, keywords: entry.keywords, href: appendixUrl(entry.slug),
       section: 'appendix' as const, groupLabel: 'Phụ lục · Tra cứu',
+    })),
+    ...sortPresentations(presentations).map(entry => ({
+      key: `presentation:${entry.slug}`,
+      num: '', slug: entry.slug, title: entry.title, shortTitle: entry.title,
+      summary: entry.summary, keywords: ['slide', 'bài giảng', ...entry.keywords], href: presentationUrl(entry.slug),
+      section: 'presentation' as const, groupLabel: 'Slide · Bài giảng tổng hợp',
     })),
   ];
 }

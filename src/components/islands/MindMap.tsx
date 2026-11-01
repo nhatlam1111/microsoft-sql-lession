@@ -6,6 +6,7 @@ import {
 import '@xyflow/react/dist/style.css';
 import type { CatalogEntry } from '../../lib/catalog';
 import type { AppendixNavEntry } from '../../lib/appendices';
+import type { PresentationNavEntry } from '../../lib/presentations';
 import type { AreaDef, AreaId, LevelDef } from '../../data/curriculum';
 import { getSnapshot, initProgressStore } from '../../lib/progress-store';
 import { countDone, iconOf, isFlagged, type ProgressState } from '../../lib/progress';
@@ -23,6 +24,7 @@ interface Props {
   areas: AreaDef[];
   levels: LevelDef[];
   appendices?: AppendixNavEntry[];
+  presentations?: PresentationNavEntry[];
 }
 
 type RootData = { label: string };
@@ -80,7 +82,7 @@ function LessonNode({ data }: NodeProps<Node<LessonData>>) {
 
 const nodeTypes = { root: RootNode, area: AreaNode, lesson: LessonNode };
 
-function MindMapCanvas({ catalog, areas, levels, appendices }: Props) {
+function MindMapCanvas({ catalog, areas, levels, appendices, presentations }: Props) {
   const nums = useMemo(() => catalog.map(e => e.num), [catalog]);
   const [expanded, setExpanded] = useState<Set<AreaId>>(() => {
     initProgressStore(nums);
@@ -198,7 +200,7 @@ function MindMapCanvas({ catalog, areas, levels, appendices }: Props) {
       </div>
       <div className="mm-body">
         <div className="mm-menu" id="mm-menu" hidden={!menuOpen}>
-          <SidebarNav catalog={catalog} levels={levels} appendices={appendices} />
+          <SidebarNav catalog={catalog} levels={levels} appendices={appendices} presentations={presentations} />
         </div>
         <div className="mm-canvas">
           <ReactFlow

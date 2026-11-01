@@ -178,6 +178,10 @@ Color/border/shadow feedback uses 140ms; overlay entrances use 200ms and `cubic-
 
 ### Content and data visualization
 
+Lecture decks use `PresentationLayout` and `presentation.css`, a projection variant independent of the lesson progress shell. A white 1280×720 logical canvas scales as one unit inside a 16:9 frame. Be Vietnam Pro headings at 44px and body at 32px retain Vietnamese accents; table labels may use 26–28px and captions 24px. The single teal rule identifies foundational teaching. Semantic data tables and cropped relationship schemas carry the visual argument, without decorative card grids. Presenter preview shares the same canvas; notes use normal UI typography beside it. Below 1024px the notes move beneath the preview. No JavaScript leaves a natural-height sequence with native answer disclosures.
+
+`presentation-state.ts` and `scripts/presentation.ts` own navigation, reveal steps and same-browser two-window synchronization. `PresentationShell` owns localized controls, one persistent status region, slide outline and popup/fullscreen fallback. URL state restores the teaching run; clean share links contain only a slide ID. There is no learning storage, completion control or progress island in the presentation layout. Existing course routes retain their normal progress behavior.
+
 Reference articles PL.1–PL.6 form a separate Phụ lục chapter at `/phu-luc/`. They reuse the lesson reading grid, typography, tool replicas and H2 table of contents; the chapter badge uses the existing accent tokens, without a seventh level. The index is a numbered reading list, not a new mindmap branch. Appendix navigation has no completion controls and does not change the 50-lesson progress or resume target. `AppendixLayout.astro` owns this named reference variant; `SidebarNav` owns both chapter navigation styles.
 
 Appendix Markdown tables use the shared `ReferenceTable.astro` wrapper with a labeled keyboard-scrollable region. The table owns horizontal overflow; the document keeps its natural height. Existing Result/Excel/SQL replicas keep their own scroll containers. All inherit the global scrollbar baseline in `base.css`.

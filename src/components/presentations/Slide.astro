@@ -1,0 +1,13 @@
+---
+import { loadCatalog } from '../../lib/load-catalog';
+import { lessonUrl } from '../../lib/paths';
+interface Props { id: string; title: string; source: string; minutes: number }
+const { id, title, source, minutes } = Astro.props;
+const lesson = (await loadCatalog()).find(entry => entry.num === source);
+if (!lesson) throw new Error(`Slide ${id}: không có bài nguồn ${source}`);
+---
+<section id={id} data-slide data-title={title} data-source={source} data-minutes={minutes} class="projection-slide" aria-labelledby={`${id}-title`}>
+  <header class="projection-heading"><h2 id={`${id}-title`}>{title}</h2></header>
+  <div class="projection-body"><slot /></div>
+  {lesson && <footer class="projection-footer"><a href={lessonUrl(lesson.slug)}>Bài nguồn {source}</a></footer>}
+</section>

@@ -1,0 +1,30 @@
+---
+interface Props {
+  caption: string;
+  columns: string[];
+  rows: (string | number | null)[][];
+  markRow?: number;
+  markColumn?: number;
+}
+const { caption, columns, rows, markRow, markColumn } = Astro.props;
+if (rows.some(row => row.length !== columns.length)) throw new Error(`ProjectionTable: số ô không khớp ${caption}`);
+---
+<figure class="projection-table">
+  <figcaption>{caption}</figcaption>
+  <table>
+    <thead><tr>{columns.map((column, i) => <th scope="col" class:list={{ 'projection-column-mark': i === markColumn }}><code>{column}</code></th>)}</tr></thead>
+    <tbody>{rows.map((row, r) => <tr class:list={{ 'projection-row-mark': r === markRow }}>{row.map((cell, c) => <td class:list={{ 'projection-column-mark': c === markColumn, 'projection-null': cell === null }}>{cell === null ? <code>NULL</code> : cell}</td>)}</tr>)}</tbody>
+  </table>
+</figure>
+<style>
+  .projection-table { margin: 0; min-width: 0; }
+  figcaption { margin-bottom: 12px; font-size: 22px; color: var(--ink-2); line-height: 1.4; }
+  table { width: 100%; border-collapse: collapse; font-size: 28px; line-height: 1.45; }
+  th, td { text-align: left; padding: 12px 18px; border: 1px solid var(--rule-strong); }
+  th { background: var(--surface-subtle); font-weight: 600; }
+  th code { font-size: .85em; }
+  .projection-column-mark { background: var(--accent-soft); border-inline: 2px solid var(--accent); }
+  .projection-row-mark td { background: var(--seen-soft); }
+  .projection-row-mark .projection-column-mark { background: var(--accent-soft); box-shadow: inset 0 0 0 2px var(--accent); }
+  .projection-null { background: var(--ssms-null); }
+</style>

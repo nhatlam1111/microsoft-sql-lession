@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import type { NavEntry } from '../../lib/catalog';
 import type { AppendixNavEntry } from '../../lib/appendices';
+import { presentationsForLevel, type PresentationNavEntry } from '../../lib/presentations';
 import type { LevelDef } from '../../data/curriculum';
 import { iconOf } from '../../lib/progress';
 import { levelSummaries, menuOpenLevel } from '../../lib/roadmap';
-import { appendixUrl, lessonUrl, withBase } from '../../lib/paths';
+import { appendixUrl, lessonUrl, presentationUrl, withBase } from '../../lib/paths';
 import { useProgress } from './use-progress';
 import StatusIcon from './StatusIcon';
 
@@ -14,11 +15,12 @@ interface Props {
   /** The lesson on screen; the mindmap's menu has none. */
   currentNum?: string;
   appendices?: AppendixNavEntry[];
+  presentations?: PresentationNavEntry[];
   currentAppendixNum?: string;
   appendixActive?: boolean;
 }
 
-export default function SidebarNav({ catalog, levels, currentNum, appendices = [], currentAppendixNum, appendixActive = false }: Props) {
+export default function SidebarNav({ catalog, levels, currentNum, appendices = [], presentations = [], currentAppendixNum, appendixActive = false }: Props) {
   const { state } = useProgress(catalog.map(e => e.num));
   const currentLevel = menuOpenLevel(state, catalog, currentNum);
   const [open, setOpen] = useState<Set<number>>(() => new Set([currentLevel]));
@@ -56,6 +58,13 @@ export default function SidebarNav({ catalog, levels, currentNum, appendices = [
                       <StatusIcon icon={iconOf(state, e.num)} />
                       <span className="side-num">{e.num}</span>
                       <span className="side-lesson">{e.shortTitle}</span>
+                    </a>
+                  </li>
+                ))}
+                {presentationsForLevel(presentations, level.no).map(entry => (
+                  <li key={`presentation:${entry.slug}`}>
+                    <a href={presentationUrl(entry.slug)} aria-label={`Slide tổng hợp: ${entry.title}`}>
+                      <span className="side-lesson">Slide tổng hợp</span>
                     </a>
                   </li>
                 ))}

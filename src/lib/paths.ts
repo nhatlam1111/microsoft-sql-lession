@@ -15,6 +15,15 @@ export function appendixUrl(slug: string, base?: string): string {
   return withBase(`phu-luc/${slug}/`, base);
 }
 
+/** Lecture and presenter routes are separate from the numbered learning path. */
+export function presentationUrl(slug: string, base?: string): string {
+  return withBase(`bai-giang/${slug}/`, base);
+}
+
+export function presenterUrl(slug: string, base?: string): string {
+  return withBase(`bai-giang/${slug}/nguoi-giang/`, base);
+}
+
 /** True when `pathname` is the site page at `path`, ignoring a trailing slash. */
 export function isCurrentPage(pathname: string, path: string, base?: string): boolean {
   const trim = (p: string) => p.replace(/\/+$/, '');

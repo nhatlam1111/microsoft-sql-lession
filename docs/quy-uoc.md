@@ -213,6 +213,16 @@ Kiểm đường thực hành, kiến thức nền/thuật ngữ giữa các bà
 4. Giữ report và nguồn nhận xét gốc; lưu bản sao vào hồ sơ của lượt khi bàn giao, không sửa kết luận của reviewer thành lời xác nhận của tác giả. Ghi riêng kiểm nguồn, HTML, tương tác UI, SQL live, lỗi nền và giới hạn; phần nào chưa kiểm không báo đạt. Review tích hợp có mục để tác giả kết luận thì xử lý và ghi lý do trước khi bàn giao.
 5. Gửi người làm khóa học: bài đã sửa, đường dẫn report và ma trận xử lý, tóm tắt phần gộp/rút/để bài sau cùng kết quả kiểm thực tế. Không lấy kết luận Ready của reviewer làm quyền merge/push; thực hiện theo phạm vi người dùng đã đồng ý ở mục 5.
 
+### 4.7 Bài giảng trình chiếu (duyệt 01/11/2026)
+
+Mẫu MDX và cách thêm bộ mới tại [presentation-template.md](presentation-template.md).
+
+- Slide tổng hợp là biến thể riêng trong collection `presentations`, không thay bài đầy đủ và không ghi tiến độ. Mỗi bộ có metadata `sourceLessons`, mục tiêu/thời lượng, ID slide ổn định và ghi chú người giảng.
+- Màn chiếu giữ ít chữ, ưu tiên bảng trích/sơ đồ có nhãn đọc được. Điều kiện ảnh hưởng kết luận phải hiện cùng ví dụ, không chỉ nằm trong ghi chú. Hình mô phỏng công cụ phải ghi rõ mô phỏng.
+- Mỗi slide có ghi chú ý cần nói, hiểu nhầm thường gặp, giải thích, thời lượng và liên kết bài nguồn. Ghi chú không render vào trang chiếu cho lớp; trang người giảng vẫn là nội dung công khai của khóa học.
+- Câu hỏi cả lớp có đủ tiền đề trước khi hiện lời giải. Chế độ trình chiếu mở lời giải theo bước; bản không JavaScript dùng `details`. Không thêm câu ghi dữ liệu hoặc thực hành khi bộ slide chỉ ôn bài nền.
+- Nội dung giữ quy tắc chính xác, Excel, giá trị dẫn chứng và nguồn của bài gốc. Không ép slide theo cấu trúc bài đầy đủ hoặc giới hạn từ của bài nền. Review độc lập cả bộ như một bài giảng, thêm review tích hợp khi đổi khung chiếu.
+
 ## 5. Database của khóa học và thao tác ra ngoài
 
 - Database của khóa học dùng chung cho mọi học viên, dữ liệu không được đổi. Đọc bằng MCP `azure-sql` chỉ với `SELECT`, dù cấu hình báo cho phép ghi. Câu làm đổi dữ liệu chỉ chạy qua API bài tập hoặc `check:exercises`, trong giao dịch luôn hoàn tác; xong thì chạy `check:data`. Không chạy backup hay restore. Việc nào cần ghi thật thì dừng lại và hỏi.

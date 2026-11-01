@@ -22,6 +22,7 @@ import { loadCatalog } from '../lib/load-catalog';
 import { navEntries } from '../lib/catalog';
 import { withBase } from '../lib/paths';
 import { loadAppendices } from '../lib/load-appendices';
+import { loadPresentations } from '../lib/load-presentations';
 import { createSearchItems } from '../lib/search';
 
 interface Props {
@@ -29,7 +30,7 @@ interface Props {
   wide?: boolean;
 }
 const { title, wide = false } = Astro.props;
-const [catalog, appendices] = await Promise.all([loadCatalog(), loadAppendices()]);
+const [catalog, appendices, presentations] = await Promise.all([loadCatalog(), loadAppendices(), loadPresentations()]);
 const pageTitle = title === 'SQL Server' ? title : `${title} · SQL Server`;
 ---
 <!doctype html>
@@ -45,6 +46,6 @@ const pageTitle = title === 'SQL Server' ? title : `${title} · SQL Server`;
     <NarrowNotice />
     <slot />
     <RoadmapPopup client:only="react" catalog={navEntries(catalog)} levels={LEVELS} />
-    <SearchDialog client:only="react" items={createSearchItems(catalog, appendices, AREAS)} />
+    <SearchDialog client:only="react" items={createSearchItems(catalog, appendices, AREAS, presentations)} />
   </body>
 </html>
