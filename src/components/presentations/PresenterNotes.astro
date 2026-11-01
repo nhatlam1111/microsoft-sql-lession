@@ -1,0 +1,10 @@
+---
+import { loadCatalog } from '../../lib/load-catalog';
+import { lessonUrl } from '../../lib/paths';
+interface Props { source: string; minutes: number }
+const { source, minutes } = Astro.props;
+const mode = Astro.locals.presentationMode ?? 'audience';
+const catalog = mode === 'presenter' ? await loadCatalog() : [];
+const lesson = catalog.find(entry => entry.num === source);
+---
+{mode === 'presenter' && <div data-presenter-notes><p class="presentation-note-meta">{minutes} phút gợi ý · {lesson && <a href={lessonUrl(lesson.slug)}>Bài nguồn {source}</a>}</p><slot /></div>}

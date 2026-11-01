@@ -330,3 +330,5 @@
 .prose details[open] summary { margin-bottom: 10px; }
 .prose details p { margin: 0; }
 
+.lesson-slide-links { margin: 16px 0 24px; }
+.lesson-slide-links a:hover { color: var(--accent-hover); }

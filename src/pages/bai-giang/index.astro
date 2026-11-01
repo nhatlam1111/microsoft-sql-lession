@@ -1,0 +1,17 @@
+---
+import PresentationLayout from '../../layouts/PresentationLayout.astro';
+import { loadPresentations } from '../../lib/load-presentations';
+import { presentationUrl, presenterUrl, withBase } from '../../lib/paths';
+const presentations = await loadPresentations();
+---
+<PresentationLayout title="Bài giảng" description="Slide tổng hợp để ôn cùng lớp, có chế độ người giảng và liên kết về bài đầy đủ.">
+  <header class="presentation-index-top"><a class="presentation-brand" href={withBase('/')}>SQL Server</a><a href={withBase('/')}>Về khóa học</a></header>
+  <main class="presentation-index">
+    <p class="presentation-index-label">Ôn cùng lớp</p><h1>Bài giảng</h1>
+    <p class="presentation-index-intro">Slide tổng hợp giúp bạn ôn bằng bảng và sơ đồ. Mở chế độ người giảng để xem ghi chú riêng và điều khiển cửa sổ chiếu.</p>
+    <ol class="presentation-deck-list">{presentations.map(entry => <li>
+      <div><p>{entry.sourceLessons.join(' · ')} · {entry.minutes} phút</p><h2><a href={presentationUrl(entry.slug)}>{entry.title}</a></h2><p>{entry.summary}</p></div>
+      <div class="presentation-deck-actions"><a class="presentation-primary" href={presentationUrl(entry.slug)}>Xem slide</a><a href={presenterUrl(entry.slug)}>Chế độ người giảng →</a></div>
+    </li>)}</ol>
+  </main>
+</PresentationLayout>

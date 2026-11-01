@@ -6,6 +6,8 @@ import { LEVELS } from '../data/curriculum';
 import { navEntries, type CatalogEntry } from '../lib/catalog';
 import { appendixNavEntries, appendixNeighbors, type AppendixEntry } from '../lib/appendices';
 import { appendixUrl, lessonUrl, withBase } from '../lib/paths';
+import { loadPresentations } from '../lib/load-presentations';
+import { presentationNavEntries } from '../lib/presentations';
 
 interface Props {
   entry?: AppendixEntry;
@@ -17,12 +19,13 @@ const { entry, headings = [], catalog, appendices } = Astro.props;
 const toc = headings.filter(h => h.depth === 2);
 const related = entry?.relatedLessons.map(num => catalog.find(e => e.num === num)!).filter(Boolean) ?? [];
 const { prev, next } = entry ? appendixNeighbors(appendices, entry.num) : {};
+const presentations = await loadPresentations();
 ---
 <BaseLayout title={entry ? `${entry.num} ${entry.title}` : 'Phụ lục'}>
   <div class="lesson-layout appendix-layout">
     <aside class="lesson-side">
       <SidebarNav client:load catalog={navEntries(catalog)} levels={LEVELS}
-        appendices={appendixNavEntries(appendices)} currentAppendixNum={entry?.num} appendixActive />
+        appendices={appendixNavEntries(appendices)} presentations={presentationNavEntries(presentations)} currentAppendixNum={entry?.num} appendixActive />
     </aside>
     <main class="lesson-main">
       <article class="lesson-article appendix-article">

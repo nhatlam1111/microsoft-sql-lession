@@ -6,9 +6,11 @@ import SidebarNav from '../components/islands/SidebarNav';
 import LessonStatus, { CONCEPT_DONE_HINT } from '../components/islands/LessonStatus';
 import { LEVELS } from '../data/curriculum';
 import { navEntries, neighbors, type CatalogEntry } from '../lib/catalog';
-import { lessonUrl } from '../lib/paths';
+import { lessonUrl, presentationUrl } from '../lib/paths';
 import { loadAppendices } from '../lib/load-appendices';
 import { appendixNavEntries } from '../lib/appendices';
+import { loadPresentations } from '../lib/load-presentations';
+import { presentationNavEntries, presentationsForLesson } from '../lib/presentations';
 
 interface Props {
   entry: CatalogEntry;
@@ -21,16 +23,24 @@ const prerequisites = entry.prerequisites.map(p => catalog.find(e => e.num === p
 const { prev, next } = neighbors(catalog, entry.num);
 const nums = catalog.map(e => e.num);
 const toc = headings.filter(h => h.depth === 2);
-const appendices = await loadAppendices();
+const [appendices, presentations] = await Promise.all([loadAppendices(), loadPresentations()]);
+const relatedPresentations = presentationsForLesson(presentations, entry.num);
 ---
 <BaseLayout title={`${entry.num} ${entry.title}`}>
   <div class="lesson-layout">
     <aside class="lesson-side">
-      <SidebarNav client:load catalog={navEntries(catalog)} levels={LEVELS} currentNum={entry.num} appendices={appendixNavEntries(appendices)} />
+      <SidebarNav client:load catalog={navEntries(catalog)} levels={LEVELS} currentNum={entry.num} appendices={appendixNavEntries(appendices)} presentations={presentationNavEntries(presentations)} />
     </aside>
     <main class="lesson-main">
       <article class="lesson-article" style={`--lv: var(--lv${level.no});`}>
         <LessonHeader entry={entry} level={level} prerequisites={prerequisites} />
+        {relatedPresentations.length > 0 && (
+          <nav class="lesson-meta lesson-slide-links" aria-label="Bài giảng tổng hợp liên quan">
+            {relatedPresentations.map(presentation => (
+              <a href={presentationUrl(presentation.slug)}>Slide tổng hợp: {presentation.title}</a>
+            ))}
+          </nav>
+        )}
         <div class="prose">
           <slot />
         </div>

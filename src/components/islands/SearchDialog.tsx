@@ -42,10 +42,10 @@ export default function SearchDialog({ items }: Props) {
   }, [open]);
 
   const results = searchItems(items, query);
-  const activeSlug = results[active]?.slug;
+  const activeKey = results[active]?.key;
   useEffect(() => {
-    if (open && activeSlug) document.getElementById(`sd-${activeSlug}`)?.scrollIntoView({ block: 'nearest' });
-  }, [open, activeSlug]);
+    if (open && activeKey) document.getElementById(`sd-${activeKey}`)?.scrollIntoView({ block: 'nearest' });
+  }, [open, activeKey]);
 
   if (!open) return null;
 
@@ -67,13 +67,13 @@ export default function SearchDialog({ items }: Props) {
 
   return (
     <div className="sd-backdrop" onClick={event => { if (event.target === event.currentTarget) setOpen(false); }}>
-      <div ref={dialogRef} className="sd-box" role="dialog" aria-modal="true" aria-label="Tìm bài và phụ lục" onKeyDown={onKeyDown}>
+      <div ref={dialogRef} className="sd-box" role="dialog" aria-modal="true" aria-label="Tìm bài, phụ lục và slide" onKeyDown={onKeyDown}>
         <div className="sd-search-row">
           <input ref={inputRef} className="sd-input" type="search" role="combobox" value={query}
             aria-label="Tên bài, mã bài hoặc từ khóa" aria-autocomplete="list" aria-expanded="true"
             placeholder="Gõ tên bài, mã bài, kiểu dữ liệu hoặc hàm…"
             onChange={event => { setQuery(event.target.value); setActive(0); }}
-            aria-controls="sd-results" aria-activedescendant={results[active] ? `sd-${results[active].slug}` : undefined} />
+            aria-controls="sd-results" aria-activedescendant={results[active] ? `sd-${results[active].key}` : undefined} />
           {query !== '' && <button type="button" className="sd-clear" aria-label="Xóa tìm kiếm" onClick={clear}>×</button>}
         </div>
         {!query.trim() && <p className="sd-empty">Gõ không dấu cũng được, ví dụ: ket bang, TRY_CONVERT, PL.1</p>}
@@ -81,13 +81,14 @@ export default function SearchDialog({ items }: Props) {
         {query.trim() !== '' && results.length > 0 && <p className="visually-hidden" role="status">{results.length} kết quả tìm kiếm</p>}
         <ul className="sd-results" id="sd-results" role="listbox" aria-label="Kết quả tìm kiếm">
           {results.map((entry, index) => (
-            <li key={entry.slug} role="presentation">
-              <a id={`sd-${entry.slug}`} href={entry.href} role="option" tabIndex={-1} aria-selected={index === active}
+            <li key={entry.key} role="presentation">
+              <a id={`sd-${entry.key}`} href={entry.href} role="option" tabIndex={-1} aria-selected={index === active}
                 className={`sd-result${index === active ? ' is-active' : ''}`} onMouseEnter={() => setActive(index)}>
                 <span className="sd-num">{entry.num}</span>
                 <span className="sd-title">{entry.title}</span>
                 {entry.section === 'lesson' && <span className={`lvb lv${entry.level}`}>L{entry.level}</span>}
                 {entry.section === 'appendix' && <span className="sd-reference">Phụ lục</span>}
+                {entry.section === 'presentation' && <span className="sd-reference">Slide</span>}
                 <span className="sd-area">{entry.groupLabel}</span>
               </a>
             </li>

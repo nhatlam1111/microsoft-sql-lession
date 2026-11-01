@@ -1,0 +1,59 @@
+---
+import type { PresentationEntry } from '../../lib/presentations';
+import type { PresentationSlide } from '../../lib/presentation-outline';
+import { presentationUrl, presenterUrl, withBase } from '../../lib/paths';
+interface Props { entry: PresentationEntry; slides: PresentationSlide[]; mode: 'audience' | 'presenter' }
+const { entry, slides, mode } = Astro.props;
+---
+<main data-presentation data-deck={entry.slug} data-mode={mode} data-audience-url={presentationUrl(entry.slug)} class:list={['presentation-workspace', `presentation-${mode}`]}>
+  <header class="presentation-top">
+    <a class="presentation-brand" href={withBase('/bai-giang/')}>SQL Server <span>/ Bài giảng</span></a>
+    <span class="presentation-deck-title">{entry.title}</span>
+    <a class="presentation-link" href={mode === 'audience' ? presenterUrl(entry.slug) : presentationUrl(entry.slug)}>{mode === 'audience' ? 'Chế độ người giảng' : 'Tự xem slide'}</a>
+  </header>
+  <div class="presentation-main">
+    <div class="presentation-projection">
+      <div data-stage-frame class="presentation-stage-frame"><div data-stage class="presentation-stage"><slot /></div></div>
+      <div class="presentation-controls" data-enhanced-controls>
+        <button type="button" data-action="prev" aria-label="Bước trước" title="Phím trái hoặc Page Up">← Trước</button>
+        <span data-counter class="presentation-counter" aria-live="polite">1 / {slides.length}</span>
+        <button type="button" data-action="next" class="presentation-primary" title="Phím phải, Space hoặc Page Down">Tiếp →</button>
+        {mode === 'audience' ? <><span data-sync-status>Tự xem</span><button type="button" data-action="follow">Theo người giảng</button><button type="button" data-action="fullscreen">Toàn màn hình</button></> : <button type="button" data-action="open-audience" class="presentation-primary">Mở cửa sổ chiếu</button>}
+        <button type="button" data-action="copy-link">Chép liên kết slide</button>
+      </div>
+      <p data-message class="presentation-message" role="status" aria-live="polite"></p>
+      {mode === 'presenter' && <p class="presentation-window-help" data-enhanced-controls>Mở trong cùng trình duyệt. Kéo cửa sổ chiếu sang màn hình cho lớp. Nếu bị chặn, <a data-audience-link href={presentationUrl(entry.slug)} target="_blank">mở bằng liên kết này</a> hoặc bấm lại nút mở.</p>}
+    </div>
+    {mode === 'presenter' && <aside class="presentation-notes-panel" aria-label="Ghi chú người giảng" data-enhanced-controls>
+      <p class="presentation-note-label">Ghi chú người giảng</p>
+      <h1 data-current-title>{slides[0].title}</h1>
+      <div data-notes></div>
+      <p class="presentation-up-next">Tiếp theo <strong data-next-title>{slides[1]?.title ?? 'Kết thúc'}</strong></p>
+    </aside>}
+  </div>
+  <details class="presentation-outline"><summary>Mục lục · {slides.length} slide</summary>
+    <nav aria-label="Mục lục slide"><ol>{slides.map((slide, index) => <li><a href={`#${slide.id}`} data-slide-target={slide.id}><span>{String(index + 1).padStart(2, '0')}</span>{slide.title}</a></li>)}</ol></nav>
+  </details>
+  <p class="presentation-keyboard" data-enhanced-controls>Phím ← → hoặc Space đi từng bước · Home / End đến đầu / cuối · {entry.minutes} phút gồm hỏi đáp</p>
+  <noscript><p class="presentation-noscript">Bạn đang đọc bản liên tục. Mở “Lời giải” để xem đáp án. Bật JavaScript để chiếu từng slide và dùng hai cửa sổ.</p></noscript>
+</main>
+<script>
+  import '../../scripts/presentation';
+  const root = document.querySelector<HTMLElement>('[data-presentation]');
+  const frame = root?.querySelector<HTMLElement>('[data-stage-frame]');
+  if (frame && root) {
+    const resize = () => {
+      if (!root.classList.contains('is-enhanced')) return;
+      const availableHeight = root.dataset.mode === 'audience' ? Math.max(240, window.innerHeight - 220) : Number.POSITIVE_INFINITY;
+      const width = Math.min(frame.parentElement!.clientWidth, availableHeight * 16 / 9);
+      frame.style.width = `${width}px`;
+      frame.style.height = `${width * 9 / 16}px`;
+      frame.style.setProperty('--stage-scale', String(width / 1280));
+    };
+    const observer = new ResizeObserver(resize);
+    observer.observe(frame.parentElement!);
+    window.addEventListener('resize', resize);
+    document.addEventListener('fullscreenchange', resize);
+    resize();
+  }
+</script>

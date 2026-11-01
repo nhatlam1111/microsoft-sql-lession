@@ -1,0 +1,469 @@
+---
+title: Làm quen SQL Server
+summary: Ôn phần 1 trong một buổi bằng bảng HRM, sơ đồ quan hệ và bốn câu hỏi cả lớp.
+sourceLessons: ["1.1", "1.2", "1.3", "1.4", "1.5"]
+keywords: [slide, bài giảng, làm quen, database, SSMS, kiểu dữ liệu, khóa chính, khóa ngoại, ERD]
+minutes: 55
+---
+
+import Slide from '../../components/presentations/Slide.astro';
+import PresenterNotes from '../../components/presentations/PresenterNotes.astro';
+import ProjectionTable from '../../components/presentations/ProjectionTable.astro';
+import ProjectionRelation from '../../components/presentations/ProjectionRelation.astro';
+import { Image } from 'astro:assets';
+import databaseConcept from '../../assets/lessons/1-1-database.png';
+import { lessonUrl } from '../../lib/paths';
+
+<Slide id="lam-quen-sql-server" title="Làm quen SQL Server" source="1.1" minutes={1}>
+
+<div class="projection-grid">
+<div>
+<p class="projection-lead">Ôn phần 1 trong một buổi</p>
+<p>Nhận đúng nguồn dữ liệu, đọc đúng cấu trúc và tìm được đường lấy thông tin.</p>
+<p class="projection-caption">20 slide · 48 phút trao đổi · 7 phút hỏi đáp</p>
+</div>
+<figure class="projection-illustration">
+<Image src={databaseConcept} alt="Minh họa một database chứa nhiều bảng dữ liệu có dòng và cột." width={560} format="webp" />
+<figcaption>Hình khái niệm database</figcaption>
+</figure>
+</div>
+
+<PresenterNotes source="1.1" minutes={1}>
+
+**Ý cần nói:** Buổi này dành cho người đã học 1.1–1.5. Mục tiêu là đọc và giải thích dữ liệu trước khi viết câu lệnh. Giới thiệu bốn điểm dừng để cả lớp trả lời.
+
+**Hay hiểu nhầm:** Ôn tập là đọc lại toàn bộ năm bài. Chỉ đi sâu vào chỗ lớp còn lẫn, dùng bài nguồn tại chân slide để học viên đọc lại sau buổi.
+
+**Giải thích:** Năm điểm tự kiểm cuối buổi sẽ gom lại nguồn, dòng, kiểu, khóa và đường liên kết. Chưa yêu cầu viết SQL hay thao tác database.
+
+</PresenterNotes>
+</Slide>
+
+<Slide id="nguon-du-lieu-dung-chung" title="Nguồn dữ liệu dùng chung" source="1.1" minutes={2}>
+
+<ProjectionTable caption="Hai cách dùng dữ liệu công ty" columns={['Cách làm', 'Điểm cần kiểm']} rows={[
+  ['Mỗi phòng giữ một bản Excel', 'Bản nào đã được cập nhật?'],
+  ['Cùng đọc một database', 'Dữ liệu cập nhật ở một nguồn'],
+]} />
+
+<p class="projection-keyline">Nguồn chung giảm lệch bản sao. Dữ liệu vẫn cần đối chiếu.</p>
+<p class="projection-caption">Excel cũng có thể làm việc chung. Database còn kiểm quyền và luật đã khai báo.</p>
+
+<PresenterNotes source="1.1" minutes={2}>
+
+**Ý cần nói:** Khi mỗi phòng sửa một bản riêng, người nhận khó biết bản nào mới. Đọc cùng nguồn giúp mọi người có quyền đọc thấy thay đổi đã cập nhật.
+
+**Hay hiểu nhầm:** Excel không thể cộng tác, hoặc dữ liệu trong database mặc nhiên đúng. Workbook dùng chung cũng giúp cộng tác; một mã phòng có thật vẫn có thể bị gán nhầm.
+
+**Giải thích:** Quyền truy cập quyết định ai được đọc hay sửa. Luật dữ liệu kiểm những điều đã khai báo, còn người cập nhật phải kiểm nguồn nghiệp vụ. Đây là lý do phải biết nguồn trước khi tin một báo cáo.
+
+</PresenterNotes>
+</Slide>
+
+<Slide id="bon-ten-can-phan-biet" title="Database, SQL Server, SQL và SSMS" source="1.1" minutes={3}>
+
+<div class="projection-path" aria-label="SSMS gửi yêu cầu SQL tới SQL Server, SQL Server quản lý database">
+<div><strong>SSMS</strong><span>Công cụ làm việc</span></div>
+<span>→ SQL →</span>
+<div><strong>SQL Server</strong><span>Phần mềm quản lý</span></div>
+<span>→</span>
+<div><strong>Database</strong><span>Dữ liệu được lưu</span></div>
+</div>
+
+<p class="projection-keyline">SQL là ngôn ngữ gửi yêu cầu. SQL Server xử lý và trả kết quả về SSMS.</p>
+<p class="projection-caption">SQL Server thường chạy trên máy chủ do IT quản lý.</p>
+
+<PresenterNotes source="1.1" minutes={3}>
+
+**Ý cần nói:** Đọc hình từ trái sang phải, sau đó nói chiều trả kết quả. SSMS là cửa sổ làm việc, SQL là nội dung yêu cầu, SQL Server xử lý trên database.
+
+**Hay hiểu nhầm:** SQL Server là cửa sổ SSMS hoặc SQL là nơi chứa bảng. Dữ liệu được phần mềm trên máy chủ quản lý; công cụ chỉ kết nối tới đó.
+
+**Giải thích:** Phân biệt bốn tên giúp báo lỗi và xin quyền đúng nơi. Không cần giải thích cài đặt hay mạng trong buổi ôn này. Hình là sơ đồ khái niệm, không phải ảnh chụp hệ thống thật.
+
+</PresenterNotes>
+</Slide>
+
+<Slide id="dong-ssms-va-sua-file-xuat" title="Đóng SSMS và sửa file xuất" source="1.1" minutes={3}>
+
+<p class="projection-question">Bạn xuất danh sách sang Excel, đóng SSMS rồi sửa tên trong file.</p>
+<ol>
+<li>Dữ liệu trên máy chủ có mất khi đóng SSMS không?</li>
+<li>Tên trong database có đổi theo file Excel không?</li>
+</ol>
+
+<details data-answer>
+<summary>Lời giải</summary>
+<p><strong>Cả hai đều không.</strong> Dữ liệu ở máy chủ. File xuất là bản sao tại lúc lấy, sửa file không cập nhật nguồn.</p>
+</details>
+
+<PresenterNotes source="1.1" minutes={3}>
+
+**Ý cần nói:** Dừng trước khi hiện lời giải. Cho lớp chỉ ra nơi dữ liệu được lưu và nơi vừa thay đổi; có thể mời hai người trả lời hai câu.
+
+**Hay hiểu nhầm:** Đóng công cụ làm mất dữ liệu, hoặc mọi file Excel đều đồng bộ hai chiều với database. Đề đang nói file xuất thông thường, không có luồng nhập lại.
+
+**Giải thích:** SQL Server quản lý dữ liệu độc lập với cửa sổ SSMS. Bản xuất phản ánh thời điểm lấy; muốn đổi nguồn phải có thao tác cập nhật được cấp quyền. Không yêu cầu lớp thử cập nhật.
+
+</PresenterNotes>
+</Slide>
+
+<Slide id="bang-dong-cot" title="Bảng, dòng và cột" source="1.2" minutes={2}>
+
+<ProjectionTable caption="Trích bảng NhanVien · dòng NV005 tô vàng · cột HoTen tô xanh" columns={['MaNV', 'HoTen', 'MaPB']} rows={[
+  ['NV001', 'Trần Thị Mai', 'KT'],
+  ['NV005', 'Vũ Thị Lan', 'KT'],
+  ['NV021', 'Tôn Thất Long', 'IT'],
+]} markRow={1} markColumn={1} />
+
+<p><strong>Bảng</strong> lưu hồ sơ. <strong>Dòng</strong> là một hồ sơ. <strong>Cột</strong> là một chi tiết của các hồ sơ.</p>
+
+<PresenterNotes source="1.2" minutes={2}>
+
+**Ý cần nói:** Chỉ vào toàn khung bảng, toàn dòng NV005 và toàn cột HoTen. Dòng còn gọi là bản ghi. Các cột khác của NhanVien không được đưa vào hình trích.
+
+**Hay hiểu nhầm:** Một ô họ tên là một hồ sơ, hoặc dòng tiêu đề cũng là dữ liệu nhân viên. Một dòng gồm đủ chi tiết của hồ sơ theo thiết kế bảng; tên cột thuộc cấu trúc.
+
+**Giải thích:** Xác định đúng đơn vị của dòng trước khi lọc hoặc đếm. Đây là bảng trích dữ liệu mẫu, không phải toàn bộ NhanVien và không hứa thứ tự dòng cố định.
+
+</PresenterNotes>
+</Slide>
+
+<Slide id="cau-truc-cua-bang" title="Cấu trúc của bảng" source="1.2" minutes={2}>
+
+<ul class="projection-rules">
+<li>Tên cột thuộc thiết kế, không phải một dòng dữ liệu.</li>
+<li>Mọi dòng có cùng các cột, không gộp ô.</li>
+<li>Mỗi cột có một kiểu được khai báo.</li>
+</ul>
+
+<p class="projection-keyline">Nhắc một hồ sơ bằng <code>MaNV</code>, không bằng “dòng thứ 5”.</p>
+<p class="projection-caption">Muốn kết quả có thứ tự nhất định phải yêu cầu sắp xếp khi lấy dữ liệu.</p>
+
+<PresenterNotes source="1.2" minutes={2}>
+
+**Ý cần nói:** So với sheet, bảng cần cấu trúc nhất quán để công cụ hiểu tên cột và xử lý đúng dữ liệu. Thêm cột là đổi thiết kế, cần người có quyền.
+
+**Hay hiểu nhầm:** Cột tiêu đề là dòng đầu, hoặc bảng luôn giữ thứ tự đang nhìn thấy. Khi lấy dữ liệu không yêu cầu sắp xếp, thứ tự có thể khác.
+
+**Giải thích:** Dùng mã để nhận diện hồ sơ. Không thêm dòng tổng vào dữ liệu nhân viên; số tổng được tính khi lấy dữ liệu. Kiểu của cột được ôn ngay ở các slide sau, còn sắp xếp học ở bài 2.4.
+
+</PresenterNotes>
+</Slide>
+
+<Slide id="mot-ho-so-ba-hop-dong" title="Một hồ sơ, ba hợp đồng" source="1.2" minutes={2}>
+
+<div class="projection-grid">
+<ProjectionTable caption="NhanVien · riêng NV021" columns={['MaNV', 'HoTen']} rows={[
+  ['NV021', 'Tôn Thất Long'],
+]} />
+<ProjectionTable caption="HopDong · trích cột MaNV của ba hợp đồng" columns={['MaNV']} rows={[
+  ['NV021'],
+  ['NV021'],
+  ['NV021'],
+]} />
+</div>
+
+<p class="projection-keyline">Một dòng ở <code>HopDong</code> là một hợp đồng, không phải một người.</p>
+
+<PresenterNotes source="1.2" minutes={2}>
+
+**Ý cần nói:** Một hồ sơ NV021 có ba hợp đồng nên hai bảng có số dòng khác nhau cho cùng mã. Hình bên phải chỉ trích MaNV; từng hợp đồng còn có mã và chi tiết riêng.
+
+**Hay hiểu nhầm:** Ba lần xuất hiện của MaNV là ba hồ sơ trùng. Lặp mã tham chiếu giữa nhiều hợp đồng là bình thường.
+
+**Giải thích:** Tách bảng giúp họ tên và thông tin hồ sơ được giữ ở một nơi, tránh phải sửa lặp theo từng hợp đồng. Khi đọc bảng hoặc báo cáo, phải nói mỗi dòng đại diện cho gì.
+
+</PresenterNotes>
+</Slide>
+
+<Slide id="kieu-o-va-kieu-cot" title="Kiểu ô và kiểu cột" source="1.3" minutes={2}>
+
+<div class="projection-grid">
+<div class="projection-definition"><h3>Excel</h3><p>Mỗi ô có thể mang kiểu riêng.</p><p><strong>Format Cells</strong> đổi cách hiển thị, không tự đổi chữ thành ngày hay số.</p></div>
+<div class="projection-definition"><h3>Database</h3><p>Một kiểu được khai báo cho cả cột.</p><p><code>NgayVaoLam</code> là ngày, nên so sánh và sắp xếp theo ngày.</p></div>
+</div>
+
+<p class="projection-caption">Phía Excel đang xét sheet chưa đặt Data Validation.</p>
+
+<PresenterNotes source="1.3" minutes={2}>
+
+**Ý cần nói:** Trở lại sự khác nhau giữa giá trị và cách hiển thị. Đổi định dạng một ô đang là chữ không đủ biến ô đó thành ngày thật.
+
+**Hay hiểu nhầm:** Thấy giống ngày là đã có kiểu ngày, hoặc Excel hoàn toàn không kiểm được kiểu. Data Validation có thể giới hạn nhập; hình đang xét sheet chưa thiết lập luật đó.
+
+**Giải thích:** Ngày lưu thành chữ có thể sắp theo thứ tự chữ khác thứ tự thời gian. Database khai báo kiểu cho cả cột để các phép so sánh và tính toán có cùng ý nghĩa. Chuyển kiểu có thể thành công nhưng vẫn khác ý người nhập.
+
+</PresenterNotes>
+</Slide>
+
+<Slide id="doc-kieu-du-lieu-va-null" title="Đọc kiểu dữ liệu và NULL" source="1.3" minutes={3}>
+
+<figure class="projection-explorer">
+<figcaption>Mô phỏng Object Explorer · HopDong → Columns</figcaption>
+<p><code>LuongCoBan (decimal(18,0), not null)</code></p>
+<p><code>NgayKetThuc (date, null)</code></p>
+</figure>
+
+<p><code>decimal(18,0)</code>: tối đa 18 chữ số, không có phần lẻ.</p>
+<p><code>NULL</code>: chưa có hoặc chưa biết giá trị. <code>NOT NULL</code>: không nhận giá trị này.</p>
+
+<PresenterNotes source="1.3" minutes={3}>
+
+**Ý cần nói:** Đọc tên cột, kiểu, rồi khả năng nhận NULL theo thứ tự. Object Explorer là khung cây bảng và cột trong SSMS. Hình phóng to nhãn để chiếu, không phải ảnh chụp SSMS.
+
+**Hay hiểu nhầm:** NULL là số 0, hoặc NOT NULL bảo đảm đã nhập đầy đủ. Chuỗi rỗng và chuỗi toàn dấu cách vẫn có thể được lưu trong cột chữ NOT NULL nếu không có luật khác.
+
+**Giải thích:** date lưu ngày không kèm giờ. Trong dữ liệu mẫu, hợp đồng không xác định thời hạn để NgayKetThuc là NULL. Khả năng nhận NULL là thiết kế cột, khác với ý nghĩa của từng giá trị theo nghiệp vụ.
+
+</PresenterNotes>
+</Slide>
+
+<Slide id="chuyen-kieu-va-y-nghia" title="Chuyển kiểu và ý nghĩa giá trị" source="1.3" minutes={3}>
+
+<ProjectionTable caption="Chữ được chuyển sang kiểu của cột" columns={['Giá trị chữ', 'Kiểu đích', 'Kết quả']} rows={[
+  ['9610000', 'số', '9610000'],
+  ['01/02/2024', 'date', '2024-01-02'],
+  ['chưa rõ', 'date', 'Không chuyển được'],
+]} />
+
+<p class="projection-caption">Dòng ngày: cấu hình khóa học <code>us_english</code>, <code>DATEFORMAT mdy</code>, đọc tháng trước ngày sau.</p>
+<p class="projection-keyline">Lưu được chưa chắc đúng ý người nhập.</p>
+
+<PresenterNotes source="1.3" minutes={3}>
+
+**Ý cần nói:** Đây là ba khả năng đã học: giữ đúng giá trị, đổi khác ý và bị từ chối. SQL Server tự đổi kiểu khi cần gọi là chuyển kiểu ngầm.
+
+**Hay hiểu nhầm:** Chuỗi ngày có dấu gạch chéo luôn được đọc theo ngày/tháng. Với cấu hình đang ghi trên slide, 01/02/2024 thành ngày 2 tháng 1, dù người gửi có thể muốn ngày 1 tháng 2.
+
+**Giải thích:** Kiểu đích kiểm khả năng biểu diễn, không biết ý người nhập. Một ngày xa như 2099 vẫn có thể hợp lệ về kiểu nhưng sai hồ sơ. Chốt cách gửi ngày, số với người nhập; quy tắc và hàm chuyển đổi xem PL.2 khi cần, không mở rộng cú pháp trong buổi ôn.
+
+</PresenterNotes>
+</Slide>
+
+<Slide id="cccd-gom-toan-chu-so" title="CCCD gồm toàn chữ số" source="1.3" minutes={3}>
+
+<p class="projection-question"><code>SoCCCD</code> dùng <code>varchar(12)</code> dù chỉ gồm chữ số.</p>
+<p>Vì sao dùng kiểu chuỗi thay vì kiểu số?</p>
+
+<details data-answer>
+<summary>Lời giải</summary>
+<p>CCCD là <strong>mã định danh</strong>: cần giữ số <code>0</code> đầu, không dùng để cộng trừ.</p>
+<p>Kiểu được chọn theo ý nghĩa, không chỉ theo hình dạng giá trị.</p>
+</details>
+
+<PresenterNotes source="1.3" minutes={3}>
+
+**Ý cần nói:** Cho lớp nêu mục đích sử dụng trước khi hiện đáp án. Chuỗi là dữ liệu chữ; các ký tự của chuỗi có thể đều là chữ số.
+
+**Hay hiểu nhầm:** Cứ nhìn thấy chữ số thì phải lưu kiểu số. Mã định danh không phải đại lượng để tính toán; đổi sang số có thể làm mất các số 0 ở đầu.
+
+**Giải thích:** varchar(12) cho biết giới hạn chuỗi, không tự chứng nhận CCCD đúng hay duy nhất. Không mở rộng sang mọi giới hạn ký tự ở đây; PL.1 có chi tiết kiểu dữ liệu. Tiền đề của câu hỏi đã có ở slide 8–10 và phần chọn kiểu của bài 1.3.
+
+</PresenterNotes>
+</Slide>
+
+<Slide id="khoa-chinh" title="Khóa chính" source="1.4" minutes={2}>
+
+<p class="projection-lead">Khi <code>NhanVien.MaNV</code> được khai báo là khóa chính</p>
+
+<ProjectionTable caption="Luật kiểm mã của dòng, không xác minh danh tính người" columns={['Giá trị MaNV', 'Luật khóa chính']} rows={[
+  ['Hai dòng cùng NV001', 'Từ chối trùng mã'],
+  [null, 'Không nhận NULL'],
+]} />
+
+<p class="projection-caption"><strong>PK</strong> = primary key · Một người vẫn có thể bị tạo hai hồ sơ khác mã.</p>
+
+<PresenterNotes source="1.4" minutes={2}>
+
+**Ý cần nói:** Khóa chính là ràng buộc, nghĩa là luật đã khai báo. Nó xác định một dòng bằng mã, không chỉ là cột được đặt tên MaNV.
+
+**Hay hiểu nhầm:** Tên cột có chữ mã là tự cấm trùng, hoặc PK chặn mọi trường hợp trùng người. Phải có ràng buộc; hai mã khác nhau không vi phạm PK chỉ vì cùng một người.
+
+**Giải thích:** Dùng mã vì họ tên có thể trùng hoặc thay đổi. Các bảng khác dùng mã để nhắc đúng hồ sơ. Bảng trên mô tả luật, không phải kết quả chạy thao tác thêm dữ liệu.
+
+</PresenterNotes>
+</Slide>
+
+<Slide id="khoa-ngoai" title="Khóa ngoại" source="1.4" minutes={3}>
+
+<ProjectionRelation tables={[
+  { name: 'NhanVien', columns: ['MaNV', 'MaPB'] },
+  { name: 'PhongBan', columns: ['MaPB', 'TenPB'] },
+]} />
+
+<p><code>KT</code> có trong danh mục: nhận. <code>KT01</code> không có: từ chối.</p>
+<p class="projection-caption"><strong>FK</strong> = foreign key · Ở thiết kế này, MaPB không nhận NULL. Nhiều hồ sơ được dùng cùng mã phòng.</p>
+
+<PresenterNotes source="1.4" minutes={3}>
+
+**Ý cần nói:** Khóa ngoại buộc mã khác NULL phải có ở khóa được trỏ tới. Ở đây NhanVien.MaPB tham chiếu PhongBan.MaPB, nên tên phòng không cần chép vào từng hồ sơ.
+
+**Hay hiểu nhầm:** FK cũng cấm lặp như PK, hoặc chỉ là ô chọn trên giao diện. Nhiều nhân viên cùng thuộc KT là bình thường. FK là luật kiểm khi ghi dữ liệu, dù giao diện có ô chọn hay không.
+
+**Giải thích:** Trong thiết kế này, MaPB bắt buộc có giá trị; không suy thành mọi FK đều bắt buộc. MaQuanLy ở NhanVien là một FK khác nhưng nhận NULL. Ký hiệu một và nhiều sẽ được đọc kỹ ở slide 15.
+
+</PresenterNotes>
+</Slide>
+
+<Slide id="ghi-nham-ma-phong-co-that" title="Ghi nhầm một mã phòng có thật" source="1.4" minutes={3}>
+
+<p class="projection-question">Giả sử hồ sơ thuộc <code>KT</code> bị ghi nhầm sang <code>KD</code>. Cả hai mã đều có trong danh mục.</p>
+<p>PK và FK có tự phát hiện sai phòng không?</p>
+
+<details data-answer>
+<summary>Lời giải</summary>
+<p><strong>Không.</strong> Mã nhân viên vẫn duy nhất, mã phòng vẫn có thật.</p>
+<p>Phải đối chiếu nguồn nghiệp vụ. Hợp lệ về khóa chưa bảo đảm đúng hồ sơ.</p>
+</details>
+
+<PresenterNotes source="1.4" minutes={3}>
+
+**Ý cần nói:** Nêu rõ đây là giả định, không phải vừa sửa dữ liệu mẫu. Cho lớp áp từng luật: mã nhân viên có trùng không, mã phòng có tồn tại không.
+
+**Hay hiểu nhầm:** Database biết nhân viên thực sự làm ở phòng nào. Luật chỉ kiểm điều đã được mô tả, không thể tự đọc giấy tờ hoặc quyết định của công ty.
+
+**Giải thích:** PK kiểm định danh dòng, FK kiểm mã tham chiếu có thật. Câu hỏi không cần luật mới và không yêu cầu thực hành ghi. Quay lại kết luận ở slide 2: nguồn chung vẫn cần xác minh dữ liệu.
+
+</PresenterNotes>
+</Slide>
+
+<Slide id="ky-hieu-erd" title="Ký hiệu ERD" source="1.5" minutes={2}>
+
+<ProjectionRelation tables={[
+  { name: 'PhongBan', columns: ['MaPB', 'TenPB'] },
+  { name: 'NhanVien', columns: ['MaNV', 'MaPB'] },
+]} />
+
+<p><strong>ERD</strong> là sơ đồ quan hệ: hộp là bảng và cột, đường thể hiện khóa ngoại đã khai báo.</p>
+<p class="projection-caption"><code>1</code> phía một · <code>∞</code> phía nhiều · Không nói phòng nào cũng phải có người.</p>
+
+<PresenterNotes source="1.5" minutes={2}>
+
+**Ý cần nói:** ERD viết đầy đủ là Entity–Relationship Diagram. Chỉ từng hộp, tên cột, PK, FK và đường tham chiếu. Đọc PhongBan một dòng có thể được nhiều dòng NhanVien tham chiếu.
+
+**Hay hiểu nhầm:** Ký hiệu nhiều nghĩa là mọi phòng bắt buộc có nhiều người, hoặc ký hiệu một nghĩa là mọi FK đều bắt buộc. Ký hiệu thể hiện phía một–nhiều; khả năng NULL phải đọc từ thiết kế cột.
+
+**Giải thích:** Quan hệ ở đây được lấy từ schema chung của khóa học, chỉ phóng to các cột đang cần. Sơ đồ chỉ vẽ FK đã khai báo; không có đường trực tiếp chưa đủ kết luận hai bảng không liên quan.
+
+</PresenterNotes>
+</Slide>
+
+<Slide id="ten-phong-cua-nv001" title="Tên phòng của NV001" source="1.5" minutes={2}>
+
+<div class="projection-grid">
+<ProjectionTable caption="NhanVien · hồ sơ cần tra" columns={['MaNV', 'MaPB']} rows={[
+  ['NV001', 'KT'],
+]} markColumn={1} />
+<ProjectionTable caption="PhongBan · mã khớp trong danh mục" columns={['MaPB', 'TenPB']} rows={[
+  ['KT', 'Kế toán'],
+]} markColumn={0} />
+</div>
+
+<p class="projection-keyline"><code>NV001</code> → <code>KT</code> → <code>Kế toán</code></p>
+<p class="projection-caption">Tên phòng theo MaPB hiện lưu. Đi từ nhiều sang một không làm tăng số dòng hồ sơ ở thiết kế này.</p>
+
+<PresenterNotes source="1.5" minutes={2}>
+
+**Ý cần nói:** Bắt đầu ở NV001, đọc MaPB là KT, tìm KT trong khóa chính PhongBan rồi đọc TenPB. Đối chiếu đúng cặp NhanVien.MaPB với PhongBan.MaPB.
+
+**Hay hiểu nhầm:** Lấy họ tên hoặc vị trí dòng để dò, hoặc tên phòng này là lịch sử mọi thời điểm. Mã là liên kết, vị trí dòng không có ý nghĩa cố định.
+
+**Giải thích:** Mỗi MaPB trong PhongBan có một dòng và MaPB của hồ sơ không nhận NULL, nên mỗi hồ sơ tìm đúng một phòng trong thiết kế này. Công ty không lưu lịch sử chuyển phòng, vì vậy kết luận chỉ là phòng hiện lưu.
+
+</PresenterNotes>
+</Slide>
+
+<Slide id="mot-ho-so-nhieu-dong-ket-qua" title="Một hồ sơ trong nhiều dòng kết quả" source="1.5" minutes={2}>
+
+<ProjectionTable caption="Minh họa lấy NV021 kèm từng hợp đồng · chỉ trích mã và họ tên" columns={['MaNV', 'HoTen']} rows={[
+  ['NV021', 'Tôn Thất Long'],
+  ['NV021', 'Tôn Thất Long'],
+  ['NV021', 'Tôn Thất Long'],
+]} />
+
+<p class="projection-keyline">Một hồ sơ × ba hợp đồng → ba dòng kết quả.</p>
+<p class="projection-caption">Mỗi dòng lúc này theo một hợp đồng. Đếm dòng không phải đếm người.</p>
+
+<PresenterNotes source="1.5" minutes={2}>
+
+**Ý cần nói:** Trở lại NV021 ở slide 7. Dữ liệu hồ sơ không bị nhân thành ba hồ sơ nguồn; thông tin được lặp trong kết quả để đi cùng ba hợp đồng.
+
+**Hay hiểu nhầm:** Hễ thấy mã lặp là dữ liệu nguồn sai, hoặc đếm ba dòng được ba người. Trước khi đếm, phải xác định mức chi tiết của báo cáo.
+
+**Giải thích:** Từ một hồ sơ đi sang phía nhiều có thể tăng số dòng. Hình chỉ minh họa hai cột giống nhau trong kết quả có kèm từng hợp đồng, không phải toàn bộ kết quả truy vấn. Cú pháp kết bảng sẽ học ở bài 3.4 và 3.6.
+
+</PresenterNotes>
+</Slide>
+
+<Slide id="luong-kem-ten-phong" title="Lương kèm tên phòng" source="1.5" minutes={3}>
+
+<ProjectionRelation tables={[
+  { name: 'BangLuong', columns: ['KyLuong', 'MaNV'] },
+  { name: 'NhanVien', columns: ['MaNV', 'MaPB'] },
+  { name: 'PhongBan', columns: ['MaPB', 'TenPB'] },
+]} />
+
+<p>Khóa chính <code>BangLuong</code> là cả cặp <code>(KyLuong, MaNV)</code>: tối đa một dòng mỗi nhân viên, mỗi kỳ.</p>
+<p class="projection-caption">Tên phòng lấy theo hồ sơ hiện lưu, không phải phòng tại kỳ lương.</p>
+
+<PresenterNotes source="1.5" minutes={3}>
+
+**Ý cần nói:** Đi qua hai chặng: BangLuong.MaNV tới NhanVien.MaNV để biết MaPB, rồi NhanVien.MaPB tới PhongBan.MaPB để lấy TenPB. Không dò trực tiếp từ kỳ lương tới danh mục phòng.
+
+**Hay hiểu nhầm:** Một cột có nhãn PK trong khóa nhiều cột phải tự duy nhất, hoặc tên phòng được khôi phục theo kỳ. KyLuong có thể lặp giữa người, MaNV có thể lặp giữa kỳ; cả cặp mới không trùng.
+
+**Giải thích:** Khóa chính gồm nhiều cột còn gọi là khóa ghép. Mỗi dòng nguồn là lương của một mã trong một kỳ; đi qua các khóa duy nhất không làm tăng dòng của bảng lương. Công ty không lưu lịch sử chuyển phòng, nên báo cáo chỉ thêm được tên phòng hiện tại.
+
+</PresenterNotes>
+</Slide>
+
+<Slide id="hop-dong-kem-ten-phong" title="Hợp đồng kèm tên phòng" source="1.5" minutes={4}>
+
+<p class="projection-question">Từ một dòng hợp đồng, tìm tên phòng hiện lưu của hồ sơ.</p>
+<ProjectionRelation showLinks={false} tables={[
+  { name: 'HopDong', columns: ['MaHD', 'MaNV'] },
+  { name: 'NhanVien', columns: ['MaNV', 'MaPB'] },
+  { name: 'PhongBan', columns: ['MaPB', 'TenPB'] },
+]} />
+<p class="projection-caption">Chỉ đường đi, hai cặp cột và ý nghĩa của mỗi dòng kết quả.</p>
+
+<details data-answer>
+<summary>Lời giải</summary>
+<p><code>HopDong.MaNV</code> → <code>NhanVien.MaNV</code>, rồi <code>NhanVien.MaPB</code> → <code>PhongBan.MaPB</code>.</p>
+<p>Mỗi dòng theo một hợp đồng, kèm tên phòng hiện lưu của hồ sơ.</p>
+</details>
+
+<PresenterNotes source="1.5" minutes={4}>
+
+**Ý cần nói:** Cho lớp một phút tự chỉ đường, sau đó mời người khác nêu cặp cột. Câu thứ ba bắt buộc nói ý nghĩa mỗi dòng, không chỉ đọc tên bảng.
+
+**Hay hiểu nhầm:** Mỗi dòng là một người vì cuối cùng có tên phòng; hoặc tên phòng là phòng ở ngày ký hợp đồng. Báo cáo bắt đầu từ hợp đồng, và chỉ tra phòng đang lưu ở hồ sơ.
+
+**Giải thích:** Tiền đề đã có ở slide 13–18: FK, phía một–nhiều, cách dò mã và đường ba bảng. Đây là bài đọc sơ đồ, không yêu cầu cú pháp JOIN. Đi qua NhanVien rồi PhongBan đều tới khóa duy nhất nên một dòng hợp đồng vẫn có một dòng kết quả trong thiết kế này.
+
+</PresenterNotes>
+</Slide>
+
+<Slide id="nam-diem-tu-kiem" title="Năm điểm tự kiểm" source="1.5" minutes={1}>
+
+<ol class="projection-rules">
+<li><strong>Nguồn:</strong> dữ liệu nằm ở đâu?</li>
+<li><strong>Dòng:</strong> một dòng đại diện cho gì?</li>
+<li><strong>Kiểu:</strong> giá trị được lưu và hiểu thế nào?</li>
+<li><strong>Khóa:</strong> luật nào đang kiểm, kiểm được gì?</li>
+<li><strong>Đường liên kết:</strong> đi qua cặp cột nào, có tăng dòng không?</li>
+</ol>
+
+<p class="projection-caption">Tiếp theo: <a href={lessonUrl('2-1-chon-cot-dat-ten-cot')}>bài 2.1 · SELECT, chọn cột và đặt tiêu đề</a>. Dành 7 phút còn lại cho hỏi đáp.</p>
+
+<PresenterNotes source="1.5" minutes={1}>
+
+**Ý cần nói:** Dùng năm từ khóa để lớp tự tóm tắt, mỗi người chọn một điểm. Chuyển sang phần hỏi đáp bảy phút sau nhịp ôn 48 phút.
+
+**Hay hiểu nhầm:** Phải thuộc mọi kiểu dữ liệu và mọi câu lệnh trước khi đọc báo cáo. Buổi này cần đọc cấu trúc và đặt đúng câu hỏi, các bài sau cung cấp cú pháp khi cần.
+
+**Giải thích:** Nguồn liên hệ 1.1, dòng liên hệ 1.2, kiểu liên hệ 1.3, khóa liên hệ 1.4 và đường liên kết liên hệ 1.5. Mỗi slide có liên kết bài gốc để đọc lại. Câu SELECT đầu tiên sẽ chọn cột và đặt tiêu đề mà không sửa dữ liệu nguồn.
+
+</PresenterNotes>
+</Slide>

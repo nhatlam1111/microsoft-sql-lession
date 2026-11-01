@@ -1,0 +1,16 @@
+---
+import { getCollection, render } from 'astro:content';
+import PresentationLayout from '../../../layouts/PresentationLayout.astro';
+import PresentationShell from '../../../components/presentations/PresentationShell.astro';
+import { presentationOutline } from '../../../lib/presentation-outline';
+export async function getStaticPaths() {
+  return (await getCollection('presentations')).map(entry => ({ params: { slug: entry.id }, props: { entry } }));
+}
+const { entry } = Astro.props;
+Astro.locals.presentationMode = 'presenter';
+const slides = presentationOutline(entry.body ?? '');
+const { Content } = await render(entry);
+---
+<PresentationLayout title={`Người giảng · ${entry.data.title}`} description={entry.data.summary}>
+  <PresentationShell entry={{ ...entry.data, slug: entry.id }} slides={slides} mode="presenter"><Content /></PresentationShell>
+</PresentationLayout>

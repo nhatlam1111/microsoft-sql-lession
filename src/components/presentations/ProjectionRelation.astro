@@ -1,0 +1,56 @@
+---
+import { parseSchema } from '../../lib/db-schema';
+import schemaSql from '../../../database/HRM_Demo.sql?raw';
+
+interface Props {
+  tables: { name: string; columns: string[] }[];
+  showLinks?: boolean;
+}
+const { tables: selections, showLinks = true } = Astro.props;
+const schema = parseSchema(schemaSql);
+const tables = selections.map(selection => {
+  const table = schema.find(t => t.name === selection.name);
+  if (!table) throw new Error(`ProjectionRelation: không có bảng ${selection.name}`);
+  for (const name of selection.columns) {
+    if (!table.columns.some(c => c.name === name)) throw new Error(`ProjectionRelation: không có cột ${table.name}.${name}`);
+  }
+  return { ...table, columns: selection.columns };
+});
+const links = tables.slice(1).map((right, i) => {
+  const left = tables[i];
+  const forward = left.foreignKeys.find(fk => fk.refTable === right.name && left.columns.includes(fk.column) && right.columns.includes(fk.refColumn));
+  const backward = right.foreignKeys.find(fk => fk.refTable === left.name && right.columns.includes(fk.column) && left.columns.includes(fk.refColumn));
+  if (!forward && !backward) throw new Error(`ProjectionRelation: không có liên kết đã khai báo giữa ${left.name} và ${right.name}`);
+  const fk = (forward ?? backward)!;
+  return {
+    from: `${forward ? left.name : right.name}.${fk.column}`,
+    to: `${forward ? right.name : left.name}.${fk.refColumn}`,
+    symbol: forward ? '∞ → 1' : '1 ← ∞',
+  };
+});
+---
+<figure class="projection-relation">
+  <div class="relation-tables" style={`--relation-count: ${tables.length}`}>
+    {tables.map((table, i) => <>
+      {i > 0 && showLinks && <div class="relation-connector" aria-hidden="true">{links[i - 1].symbol}</div>}
+      <section class="relation-table" aria-label={`Bảng ${table.name}`}>
+        <h3>{table.name}</h3>
+        <ul>{table.columns.map(name => <li><code>{name}</code><span class="relation-keys">{[...(table.primaryKey.includes(name) ? ['PK'] : []), ...(table.foreignKeys.some(fk => fk.column === name) ? ['FK'] : [])].join(' · ')}</span></li>)}</ul>
+      </section>
+    </>)}
+  </div>
+  {showLinks && <figcaption>{links.map(link => <span><code>{link.from}</code> → <code>{link.to}</code></span>)}</figcaption>}
+</figure>
+<style>
+  .projection-relation { margin: 0; min-width: 0; }
+  .relation-tables { display: flex; align-items: center; gap: 16px; }
+  .relation-table { flex: 1; min-width: 0; border: 2px solid var(--accent); border-radius: 6px; overflow: hidden; }
+  .relation-table h3 { margin: 0; padding: 14px 18px; color: var(--accent); background: var(--accent-soft); font-size: 28px; line-height: 1.4; }
+  .relation-table ul { list-style: none; margin: 0; padding: 0; }
+  .relation-table li { display: flex; justify-content: space-between; gap: 10px; margin: 0; padding: 13px 18px; border-top: 1px solid var(--rule); font-size: 26px; }
+  .relation-table code { font-size: 1em; }
+  .relation-keys { color: var(--ink-2); font-size: 22px; white-space: nowrap; }
+  .relation-connector { flex: 0 0 auto; color: var(--accent); font-size: 24px; font-weight: 600; white-space: nowrap; }
+  figcaption { display: flex; flex-wrap: wrap; gap: 8px 28px; margin-top: 18px; color: var(--ink-2); font-size: 22px; line-height: 1.5; }
+  figcaption code { font-size: .9em; }
+</style>

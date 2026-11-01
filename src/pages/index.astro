@@ -5,12 +5,14 @@ import { AREAS, LEVELS } from '../data/curriculum';
 import { loadCatalog } from '../lib/load-catalog';
 import { loadAppendices } from '../lib/load-appendices';
 import { appendixNavEntries } from '../lib/appendices';
+import { loadPresentations } from '../lib/load-presentations';
+import { presentationNavEntries } from '../lib/presentations';
 
-const [catalog, appendices] = await Promise.all([loadCatalog(), loadAppendices()]);
+const [catalog, appendices, presentations] = await Promise.all([loadCatalog(), loadAppendices(), loadPresentations()]);
 ---
 <BaseLayout title="SQL Server" wide>
   <main class="home">
     <h1 class="visually-hidden">SQL Server: bản đồ kiến thức</h1>
-    <MindMap client:only="react" catalog={catalog} areas={AREAS} levels={LEVELS} appendices={appendixNavEntries(appendices)} />
+    <MindMap client:only="react" catalog={catalog} areas={AREAS} levels={LEVELS} appendices={appendixNavEntries(appendices)} presentations={presentationNavEntries(presentations)} />
   </main>
 </BaseLayout>
