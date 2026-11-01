@@ -1,0 +1,281 @@
+---
+num: PL.1
+title: Chi tiết các kiểu dữ liệu
+shortTitle: Chi tiết kiểu dữ liệu
+summary: Tra miền giá trị, độ dài, dung lượng và cách chọn mọi nhóm kiểu dữ liệu dựng sẵn của SQL Server 2025 và Azure SQL hiện hành.
+keywords: [kiểu dữ liệu, data type, bigint, int, smallint, tinyint, bit, decimal, numeric, money, smallmoney, float, real, date, time, datetime, datetime2, datetimeoffset, smalldatetime, char, varchar, nchar, nvarchar, binary, varbinary, text, ntext, image, uniqueidentifier, rowversion, timestamp, sql_variant, xml, json, vector, hierarchyid, geometry, geography, cursor, table, sysname]
+relatedLessons: ["1.3", "2.7", "2.8"]
+---
+
+Trang này giúp bạn đọc một khai báo kiểu, chọn kiểu phù hợp và tìm giới hạn khi dữ liệu bị đổi hoặc từ chối. Bạn cần biết cột, giá trị và `NULL` như bài 1.3. Trong các ví dụ, `SELECT` trả giá trị viết sau nó, `AS [Tên]` đặt tiêu đề kết quả; không có `FROM` vì không đọc bảng, xem thêm [bài 2.1](../../bai/2-1-chon-cot-dat-ten-cot/).
+
+Trong Excel, đổi Format Cells chỉ đổi cách nhìn. Trong SQL Server, **kiểu dữ liệu** quyết định giá trị có thể nhận và cách tính, so sánh; đổi kiểu có thể làm mất số `0` đầu, phần lẻ hoặc phần giờ.
+
+## Tra nhanh
+
+| Cần lưu | Nhóm nên tra | Lựa chọn thường gặp |
+|---|---|---|
+| Số lượng, cờ có/không, tiền cần chính xác | [Số chính xác](#so-chinh-xac) | `int`, `bit`, `decimal(p,s)` |
+| Số đo chấp nhận sai số rất nhỏ | [Số gần đúng](#so-gan-dung) | `float`, `real` |
+| Ngày, giờ, mốc có độ lệch UTC | [Ngày giờ](#ngay-gio) | `date`, `time`, `datetime2`, `datetimeoffset` |
+| Mã, tên, nội dung chữ | [Chuỗi](#chuoi) | `varchar(n)`, `nvarchar(n)` |
+| Byte của tệp hay dữ liệu nhị phân | [Nhị phân và kiểu cũ](#nhi-phan) | `varbinary(n)`, `varbinary(max)` |
+| GUID, XML, JSON, vector, dữ liệu không gian | [Kiểu đặc biệt](#kieu-dac-biet) | Chọn theo ý nghĩa, kiểm giới hạn riêng |
+| Tên kiểu khác tên trong bảng | [Tên đồng nghĩa và kiểu không dùng làm cột](#ten-dong-nghia) | `integer`, `timestamp`, `sysname`, `cursor`, `table` |
+
+Phạm vi là SQL Server 2025 và Azure SQL hiện hành; trạng thái tính năng mới được ghi riêng theo nền tảng. Ví dụ chạy được trong SSMS với quyền đọc; trang bài tập web có danh sách câu lệnh được phép riêng, nên có thể không nhận mọi ví dụ phụ lục.
+
+## Đọc giới hạn và dung lượng
+
+**Byte** là đơn vị dung lượng. Một ký tự có thể dùng nhiều byte, nên số byte và số ký tự không luôn bằng nhau. `n` trong tên kiểu có nghĩa khác nhau: số byte với `varchar(n)`, số cặp byte với `nvarchar(n)`, số chữ số phần lẻ với `datetime2(n)`.
+
+**Precision** là tổng số chữ số của số thập phân; **scale** là số chữ số sau dấu thập phân. Trong `decimal(8,2)`, tổng cộng tối đa `8` chữ số, gồm `2` chữ số phần lẻ và `6` chữ số phần nguyên. Dấu âm và dấu thập phân không tính vào precision.
+
+Các con số dung lượng dưới đây mô tả giá trị trong bảng lưu theo dòng chưa nén. Toàn bộ dòng còn có thông tin quản lý, dấu `NULL`, vị trí cột biến đổi và có thể có dữ liệu nằm ngoài dòng; nén và chỉ mục cũng đổi dung lượng thực tế. Không cộng các con số này rồi coi đó là kích thước chính xác của tệp database.
+
+`max` là giới hạn lớn của kiểu, không cấp sẵn hàng GB cho mỗi ô. **`DATALENGTH(x)`** trả số byte biểu diễn giá trị `x`, không đo toàn bộ chi phí vật lý; với `NULL` nó trả `NULL`. [Microsoft: dung lượng tối đa](https://learn.microsoft.com/en-us/sql/sql-server/maximum-capacity-specifications-for-sql-server?view=sql-server-ver17), [DATALENGTH](https://learn.microsoft.com/en-us/sql/t-sql/functions/datalength-transact-sql?view=sql-server-ver17).
+
+<span id="so-chinh-xac"></span>
+
+## Số chính xác
+
+Chọn nhóm này khi số lượng, số ngày hoặc tiền cần tính đúng theo đơn vị đã chốt. Số nguyên không giữ phần lẻ; `decimal` giữ số chữ số phần lẻ được khai báo. Kiểu chỉ quy định miền giá trị, nên cột tiền vẫn nhận số âm nếu không có luật khác chặn.
+
+| Kiểu | Miền giá trị | Dung lượng giá trị | Chọn khi |
+|---|---|---|---|
+| `tinyint` | `0` đến `255` | `1` byte | Mã số hoặc số lượng có giới hạn nhỏ |
+| `smallint` | `-32.768` đến `32.767` | `2` byte | Miền nhỏ hơn `int` nhưng có số âm |
+| `int` | `-2.147.483.648` đến `2.147.483.647` | `4` byte | Số nguyên thông thường |
+| `bigint` | `-9.223.372.036.854.775.808` đến `9.223.372.036.854.775.807` | `8` byte | Có thể vượt miền `int` |
+| `bit` | `0`, `1`; thêm `NULL` nếu được phép | `1`–`8` cột bit dùng chung `1` byte, `9`–`16` dùng `2` byte | Cờ có/không; số khác `0` chuyển thành `1` |
+| `decimal(p,s)`, `numeric(p,s)` | `p` từ `1` đến `38`, `s` từ `0` đến `p`; phần nguyên tối đa `p-s` chữ số | Theo bảng precision bên dưới | Tiền, tỷ lệ, số ngày cần độ chính xác đã chốt |
+| `money` | `-922.337.203.685.477,5808` đến `922.337.203.685.477,5807` | `8` byte | Nhận diện cột tiền đang có |
+| `smallmoney` | `-214.748,3648` đến `214.748,3647` | `4` byte | Nhận diện cột tiền miền nhỏ đang có |
+
+Trong bảng, dấu chấm phân nhóm nghìn và dấu phẩy chỉ phần lẻ theo cách đọc tiếng Việt. **Literal số trong SQL dùng dấu chấm cho phần lẻ**, không thêm dấu nhóm nghìn: `12345.678`.
+
+| Precision `p` của `decimal`/`numeric` | `1`–`9` | `10`–`19` | `20`–`28` | `29`–`38` |
+|---|---|---|---|---|
+| Dung lượng | `5` byte | `9` byte | `13` byte | `17` byte |
+
+`decimal` và `numeric` là cùng một kiểu. Bỏ `(p,s)` thì mặc định là `(18,0)`, nên không giữ phần lẻ. Với `(p,s)`, trị tuyệt đối lớn nhất là `(10 mũ p - 1) / 10 mũ s`; đây là công thức toán, không phải câu SQL. Chẳng hạn `decimal(5,2)` chứa từ `-999.99` đến `999.99`.
+
+**`CAST(giá_trị AS kiểu)`** tạo giá trị có kiểu đích trong kết quả, không đổi cột nguồn. Ví dụ sau đổi cùng một số sang tiền có hai chữ số lẻ và sang số nguyên:
+
+<Sql code={"SELECT CAST(12345.678 AS decimal(10,2)) AS [SoTien],\n\tCAST(12345.678 AS int) AS [SoNguyen];"} />
+
+<Result columns={['SoTien', 'SoNguyen']} rows={[[12345.68, 12345]]} />
+
+`decimal(10,2)` làm tròn thành `12345.68`; chuyển số thập phân sang `int` cắt phần lẻ, thành `12345`. Chuyển được không có nghĩa giữ nguyên giá trị; cách kiểm và xử lý lỗi ở [PL.2](../pl-2-chuyen-doi-kieu-du-lieu/#mat-gia-tri).
+
+`money` và `smallmoney` giữ bốn chữ số lẻ nhưng không giữ loại tiền tệ. Microsoft khuyên dùng `decimal` với scale phù hợp cho tính toán tiền, vì các bước tính với kiểu money có thể cắt phần lẻ. Số nguyên cũng có thể tràn trong phép tính; SQL Server không tự nâng mọi phép tính `int` lên `bigint`.
+
+Nguồn: [số nguyên](https://learn.microsoft.com/en-us/sql/t-sql/data-types/int-bigint-smallint-and-tinyint-transact-sql?view=sql-server-ver17), [bit](https://learn.microsoft.com/en-us/sql/t-sql/data-types/bit-transact-sql?view=sql-server-ver17), [decimal/numeric](https://learn.microsoft.com/en-us/sql/t-sql/data-types/decimal-and-numeric-transact-sql?view=sql-server-ver17), [money](https://learn.microsoft.com/en-us/sql/t-sql/data-types/money-and-smallmoney-transact-sql?view=sql-server-ver17).
+
+<span id="so-gan-dung"></span>
+
+## Số gần đúng
+
+`float` và `real` lưu một giá trị xấp xỉ vì dùng biểu diễn nhị phân. Chúng phù hợp số đo chấp nhận sai số, nhưng phép so bằng hoặc làm tròn tiền có thể cho kết quả ngoài dự tính. Chọn `decimal` khi cần một số chữ số thập phân chính xác.
+
+| Kiểu | Độ chính xác gần đúng | Miền số theo tài liệu | Dung lượng |
+|---|---|---|---|
+| `real`, `float(1)` đến `float(24)` | Khoảng `7` chữ số có nghĩa | Từ khoảng `-3,40E38` đến `-1,18E-38`, `0`, rồi `1,18E-38` đến `3,40E38` | `4` byte |
+| `float(25)` đến `float(53)` | Khoảng `15` chữ số có nghĩa | Từ khoảng `-1,79E308` đến `-2,23E-308`, `0`, rồi `2,23E-308` đến `1,79E308` | `8` byte |
+
+`E38` nghĩa là nhân với `10^38`. `n` trong `float(n)` là số **bit phần định trị**, phần quyết định độ chính xác, không phải số chữ số sau dấu thập phân. SQL Server thực tế dùng hai mức `24` hoặc `53`; bỏ `n` thì dùng `53`. [Microsoft: float và real](https://learn.microsoft.com/en-us/sql/t-sql/data-types/float-and-real-transact-sql?view=sql-server-ver17).
+
+<span id="ngay-gio"></span>
+
+## Ngày giờ
+
+Chọn `date` khi chỉ cần ngày; `time` khi chỉ cần giờ trong một ngày; `datetime2` khi cần cả hai. `datetimeoffset` giữ thêm độ lệch so với UTC, mốc giờ chuẩn dùng để đối chiếu các nơi. Độ lệch `+07:00` không lưu tên múi giờ hay tự mang theo luật đổi giờ mùa hè.
+
+| Kiểu | Miền ngày/giờ | Độ chính xác và dung lượng |
+|---|---|---|
+| `date` | `0001-01-01` đến `9999-12-31` | Một ngày; `3` byte |
+| `time(s)` | `00:00:00` đến `23:59:59.9999999` ở `s=7` | `s=0`–`7`, mặc định `7`; `3`/`4`/`5` byte |
+| `datetime2(s)` | Ngày từ năm `0001` đến `9999`, giờ như `time` | `s=0`–`7`, mặc định `7`; `6`/`7`/`8` byte |
+| `datetimeoffset(s)` | Miền ngày giờ như `datetime2`, độ lệch `-14:00` đến `+14:00` | `s=0`–`7`, mặc định `7`; `8`/`9`/`10` byte |
+| `datetime` | `1753-01-01` đến `9999-12-31 23:59:59.997` | `8` byte; làm tròn theo nhịp `.000`, `.003`, `.007` giây |
+| `smalldatetime` | `1900-01-01` đến `2079-06-06` | `4` byte; tới phút, giây được làm tròn |
+
+Với ba kiểu nhận `s`, các mức dung lượng lần lượt ứng với `s=0`–`2`, `3`–`4`, `5`–`7`. `s=7` biểu diễn tới `100` nano giây, tức một phần mười triệu giây. Độ chi tiết của kiểu không bảo đảm đồng hồ hay nguồn dữ liệu đo chính xác tới mức đó.
+
+`time` là giờ trong ngày, không lưu khoảng kéo dài như `27` giờ. `datetime` và `smalldatetime` vẫn được hỗ trợ, nhưng Microsoft khuyên các kiểu mới cho thiết kế mới; không gọi hai kiểu này là đã bị loại bỏ.
+
+Thay riêng kiểu đích có thể đổi cả ngày. **`CONVERT(varchar(27), giá_trị, 121)`** dưới đây chuyển mốc thành chuỗi theo mẫu năm-tháng-ngày và giờ để thấy phần lẻ; chi tiết style ở PL.2:
+
+<Sql code={"SELECT CONVERT(varchar(27), CAST('2026-10-31T23:59:59.999' AS datetime), 121) AS [Datetime],\n\tCONVERT(varchar(27), CAST('2026-10-31T23:59:59.999' AS datetime2(3)), 121) AS [Datetime2];"} />
+
+<Result columns={['Datetime', 'Datetime2']} rows={[
+  ['2026-11-01 00:00:00.000', '2026-10-31 23:59:59.999'],
+]} />
+
+`datetime` làm tròn lên nửa đêm ngày sau; `datetime2(3)` giữ đúng ba chữ số lẻ. Chuyển mốc có giờ sang `date` thì mất giờ; chuyển `datetimeoffset` sang `datetime2` thì mất độ lệch, không tự đổi thành giờ Việt Nam.
+
+Nguồn: [date](https://learn.microsoft.com/en-us/sql/t-sql/data-types/date-transact-sql?view=sql-server-ver17), [time](https://learn.microsoft.com/en-us/sql/t-sql/data-types/time-transact-sql?view=sql-server-ver17), [datetime2](https://learn.microsoft.com/en-us/sql/t-sql/data-types/datetime2-transact-sql?view=sql-server-ver17), [datetimeoffset](https://learn.microsoft.com/en-us/sql/t-sql/data-types/datetimeoffset-transact-sql?view=sql-server-ver17), [datetime](https://learn.microsoft.com/en-us/sql/t-sql/data-types/datetime-transact-sql?view=sql-server-ver17), [smalldatetime](https://learn.microsoft.com/en-us/sql/t-sql/data-types/smalldatetime-transact-sql?view=sql-server-ver17).
+
+<span id="chuoi"></span>
+
+## Chuỗi
+
+Mã như `00123` cần giữ số `0` đầu nên thường dùng chuỗi dù chỉ có chữ số. Tên tiếng Việt cần cách mã hóa giữ được dấu. **Collation** là quy tắc mã hóa/so sánh chữ của database hoặc biểu thức; `varchar` có giữ toàn bộ Unicode hay không phụ thuộc collation.
+
+UTF-8, UTF-16 và UCS-2 là các cách **mã hóa**, biến ký tự thành byte. Một đơn vị UTF-16 là một cặp `2` byte. **Ký tự bổ sung** nằm ngoài vùng Unicode cơ bản, chẳng hạn một số biểu tượng cảm xúc; UTF-16 cần hai đơn vị, tức `4` byte, để lưu một ký tự như vậy. Vì thế, số đơn vị không luôn bằng số ký tự.
+
+| Kiểu | Giới hạn khai báo | Dung lượng giá trị và cách dùng |
+|---|---|---|
+| `char(n)` | `n=1`–`8.000` byte | Cố định `n` byte, thêm dấu cách khi ngắn; hợp mã có độ dài ổn định |
+| `varchar(n)` | Tối đa `n=1`–`8.000` byte | Theo số byte nội dung; hợp mã/nội dung có độ dài thay đổi |
+| `varchar(max)` | Tối đa `2^31-1` byte | Nội dung dài; không cấp sẵn dung lượng tối đa |
+| `nchar(n)` | `n=1`–`4.000` cặp byte | Cố định `2n` byte; chuỗi Unicode có độ dài ổn định |
+| `nvarchar(n)` | Tối đa `n=1`–`4.000` cặp byte | Theo số byte nội dung; thường dùng cho họ tên, địa chỉ tiếng Việt |
+| `nvarchar(max)` | Tối đa `2^30-1` đơn vị UTF-16, khoảng `2` GB | Unicode dài; một ký tự bổ sung có thể dùng hai đơn vị |
+
+`varchar`/`nvarchar` còn có thông tin quản lý độ dài; với cột ngắn, công thức thông thường là số byte nội dung cộng `2` byte. `DATALENGTH` chỉ trả byte của giá trị, nên không cộng phần quản lý đó. Bỏ `n` trong khai báo thì mặc định `1`; trong `CAST`/`CONVERT` thì mặc định `30`. Hãy ghi độ dài rõ ràng.
+
+`char` và `varchar` với collation UTF-8 có thể lưu toàn bộ Unicode; collation khác chỉ giữ tập ký tự của bảng mã tương ứng. `nchar`/`nvarchar` dùng UTF-16 với collation hỗ trợ ký tự bổ sung, hoặc UCS-2 với collation cũ. Vì một ký tự có thể dùng nhiều đơn vị, không đọc `varchar(10)` hay `nvarchar(10)` thành lời hứa chứa đúng `10` ký tự bất kỳ.
+
+**`LEN(x)`** đếm ký tự nhưng bỏ dấu cách cuối. Ví dụ dưới cho thấy chuỗi `NV001` chiếm `5` byte nội dung; đổi sang `char(8)` thêm dấu cách để đủ `8` byte:
+
+<Sql code={"SELECT DATALENGTH(CAST('NV001' AS char(8))) AS [ByteChar],\n\tDATALENGTH(CAST('NV001' AS varchar(8))) AS [ByteVarchar],\n\tLEN(CAST('NV001' AS char(8))) AS [SoKyTu];"} />
+
+<Result columns={['ByteChar', 'ByteVarchar', 'SoKyTu']} rows={[[8, 5, 5]]} />
+
+Với tiếng Việt, đặt `N` trước chuỗi để đánh dấu Unicode. Giảm độ dài bằng `CAST` có thể cắt chữ mà không báo lỗi:
+
+<Sql code={"SELECT LEN(N'Hạnh') AS [SoKyTu],\n\tDATALENGTH(N'Hạnh') AS [SoByte],\n\tCAST(N'Hạnh' AS nvarchar(3)) AS [BiCat];"} />
+
+<Result columns={['SoKyTu', 'SoByte', 'BiCat']} rows={[[4, 8, 'Hạn']]} />
+
+`Hạnh` có `4` ký tự dùng `8` byte ở đây; `nvarchar(3)` chỉ giữ `Hạn`. Kiểm độ dài trước khi chuyển, thay vì coi câu chạy thành công là giữ đủ chữ. Cách xử lý chuỗi ở [PL.3](../pl-3-ham-xu-ly-chuoi/).
+
+Nguồn: [char/varchar](https://learn.microsoft.com/en-us/sql/t-sql/data-types/char-and-varchar-transact-sql?view=sql-server-ver17), [nchar/nvarchar](https://learn.microsoft.com/en-us/sql/t-sql/data-types/nchar-and-nvarchar-transact-sql?view=sql-server-ver17), [giới hạn dung lượng](https://learn.microsoft.com/en-us/sql/sql-server/maximum-capacity-specifications-for-sql-server?view=sql-server-ver17), [LEN](https://learn.microsoft.com/en-us/sql/t-sql/functions/len-transact-sql?view=sql-server-ver17).
+
+<span id="nhi-phan"></span>
+
+## Nhị phân và kiểu cũ
+
+Nhị phân là dãy byte, dùng cho nội dung tệp hoặc dữ liệu đã mã hóa theo quy ước riêng. Chuỗi hiển thị dạng `0x...` là cách viết byte bằng chữ số hệ mười sáu, không phải văn bản người dùng cần đọc.
+
+| Kiểu | Miền/giới hạn | Dung lượng giá trị và tình trạng |
+|---|---|---|
+| `binary(n)` | `n=1`–`8.000` byte | Cố định `n` byte |
+| `varbinary(n)` | `0` đến `n` byte; `n=1`–`8.000` | Theo nội dung; thêm thông tin độ dài như chuỗi biến đổi |
+| `varbinary(max)` | `0` đến `2^31-1` byte | Nhị phân lớn; `max` không phải cấp sẵn |
+| `text` | Tối đa `2^31-1` byte | Kiểu cũ, bị đánh dấu deprecated; thay bằng `varchar(max)` |
+| `ntext` | Tối đa `2^30-1` đơn vị UCS-2; nội dung dùng hai byte/đơn vị | Deprecated; thay bằng `nvarchar(max)` |
+| `image` | `0` đến `2^31-1` byte | Deprecated; thay bằng `varbinary(max)`; tên kiểu không có nghĩa chỉ lưu ảnh |
+
+**Deprecated** nghĩa là vẫn còn hỗ trợ nhưng Microsoft khuyên ngừng dùng cho thiết kế mới vì có thể bỏ trong phiên bản tương lai. Độ dài mặc định của `binary`/`varbinary` cũng là `1` trong khai báo, `30` trong `CAST`/`CONVERT`. Chuyển sang nhị phân quá ngắn có thể cắt byte; không dùng một phép chuyển thành công để chứng minh dữ liệu còn nguyên.
+
+Nguồn: [binary/varbinary](https://learn.microsoft.com/en-us/sql/t-sql/data-types/binary-and-varbinary-transact-sql?view=sql-server-ver17), [text/ntext/image](https://learn.microsoft.com/en-us/sql/t-sql/data-types/ntext-text-and-image-transact-sql?view=sql-server-ver17).
+
+<span id="kieu-dac-biet"></span>
+
+## Kiểu đặc biệt
+
+Các kiểu này biểu diễn cấu trúc hoặc giá trị có quy tắc riêng. Không thay kiểu thông thường chỉ để “linh hoạt hơn”: chọn theo việc cần làm, vì khả năng so sánh, tính toán và lập chỉ mục có thể bị giới hạn.
+
+| Kiểu | Lưu gì, dung lượng/giới hạn | Điều kiện sử dụng |
+|---|---|---|
+| `uniqueidentifier` | GUID, mã định danh `16` byte | Kiểu không tự tạo mã hoặc bảo đảm duy nhất; cần hàm tạo/ràng buộc tương ứng |
+| `rowversion` | Số nhị phân tự sinh `8` byte từ bộ đếm database | Theo dõi phiên bản dòng; không phải ngày giờ; mỗi bảng tối đa một cột |
+| `sql_variant` | Giá trị kèm kiểu gốc, tối đa `8.016` byte; phần giá trị tối đa `8.000` byte | Có thể trộn các kiểu được hỗ trợ; không chứa mọi kiểu; cần chuyển về kiểu gốc trước tính toán |
+| `xml` | Nội dung XML trong dạng lưu nội bộ tối đa `2` GB, tối đa `128` mức phần tử lồng nhau | Có thể gắn lược đồ kiểm cấu trúc; không tự so bằng/sắp xếp như chuỗi; không giữ nguyên mọi chi tiết văn bản nguồn |
+| `hierarchyid` | Vị trí trong cây; độ dài biến đổi, mã hóa tối đa `892` byte | Không tự bảo đảm cây đầy đủ hoặc quan hệ cha/con đúng |
+| `geometry` | Tọa độ/hình học trên mặt phẳng; dung lượng biến đổi | Dùng các phương thức không gian tương ứng |
+| `geography` | Tọa độ/hình học trên bề mặt Trái Đất; dung lượng biến đổi | Cần thống nhất hệ tọa độ; không CAST trực tiếp qua `geometry` |
+| `json` | Tài liệu JSON trong dạng nhị phân, tối đa `2` GB | Xem trạng thái phát hành và giới hạn bên dưới |
+| `vector(d[, base])` | Dãy số cố định `d` chiều, lưu nhị phân | Dùng tìm độ tương đồng; không cộng/so bằng như các số thông thường |
+
+`sql_variant` không nhận các kiểu `max`, `text`, `ntext`, `image`, `rowversion`, `xml`, `json`, `vector`, các kiểu không gian hay `hierarchyid`; nó cũng không lồng `sql_variant` khác. `datetimeoffset` được phép trên nền tảng hiện hành. `rowversion` đổi khi dòng được cập nhật, kể cả lệnh gán lại cùng giá trị; không dùng nó thay mã nhân viên ổn định.
+
+### JSON: cấu trúc hợp lệ vẫn có giới hạn
+
+**JSON** biểu diễn đối tượng bằng cặp tên/giá trị và mảng bằng danh sách. Kiểu `json` nhận đối tượng hoặc mảng ở ngoài cùng, như `{"MaNV":"NV001"}` hoặc `[1,2,3]`. Nó không nhận giá trị đơn ở ngoài cùng như `123`, `true` hay chuỗi JSON `"null"`; SQL `NULL` vẫn hợp lệ nếu cột cho phép.
+
+Theo tài liệu Microsoft hiện hành, `json` đã phát hành chính thức trên SQL Server 2025, Azure SQL Database và Azure SQL Managed Instance với chính sách cập nhật SQL Server 2025 hoặc Always-up-to-date. Kiểu dùng được ở mọi compatibility level, mức tương thích hành vi SQL của database; không cần bật preview chỉ để dùng kiểu này.
+
+| Giới hạn lưu của `json` | Mức tối đa |
+|---|---|
+| Dạng nhị phân của tài liệu | `2` GB |
+| Số tên khóa khác nhau | `32.000` |
+| Một tên khóa | `7.998` byte |
+| Một giá trị chuỗi | `536.870.911` byte |
+| Thuộc tính trong một đối tượng / phần tử trong một mảng | `65.535` mỗi loại |
+| Số mức lồng | `128` |
+
+Chuỗi bên trong được mã hóa UTF-8; không suy dung lượng từ số ký tự của văn bản JSON. Nếu cần giữ nguyên văn bản đầu vào, hãy lưu chuỗi nguồn: dạng `json` không phải bản sao nguyên văn. Có JSON functions trên cột `nvarchar` không tự chứng minh máy chủ hỗ trợ kiểu `json` bản địa.
+
+### Vector: số chiều và độ chính xác đi cùng nhau
+
+Trong `vector(d[, base])`, phần `[, base]` là tùy chọn; không gõ dấu ngoặc vuông vào khai báo. Hai dạng cụ thể là `vector(3)` và `vector(3, float16)`.
+
+`d` là số phần tử, tối thiểu `1`; `base` là cách lưu mỗi phần tử. Mặc định `float32` dùng `4` byte/phần tử, tối đa `1.998` chiều; `float16` dùng `2` byte/phần tử, tối đa `3.996` chiều, giảm độ chính xác và phạm vi số. Đây là dung lượng phần tử, chưa phải toàn bộ dung lượng cột có thông tin quản lý.
+
+`float16` đã phát hành chính thức trên Azure SQL Database/Managed Instance; riêng SQL Server 2025 vẫn là preview và cần cấu hình `PREVIEW_FEATURES` được bật bởi người quản trị. Tính năng vector trên Managed Instance cần chính sách Always-up-to-date. Phụ lục không yêu cầu đổi cấu hình database khóa học.
+
+Giá trị vào thường viết như mảng JSON gồm đúng `d` số. Hai vector muốn dùng cùng phép tính phải khớp số chiều và kiểu phần tử; hiện không CAST trực tiếp giữa float32 và float16. Giá trị float16 lớn hơn `65.504` về trị tuyệt đối bị từ chối. Không dùng kiểu này để lưu tiền chính xác.
+
+Nguồn: [uniqueidentifier](https://learn.microsoft.com/en-us/sql/t-sql/data-types/uniqueidentifier-transact-sql?view=sql-server-ver17), [rowversion](https://learn.microsoft.com/en-us/sql/t-sql/data-types/rowversion-transact-sql?view=sql-server-ver17), [sql_variant](https://learn.microsoft.com/en-us/sql/t-sql/data-types/sql-variant-transact-sql?view=sql-server-ver17), [XML](https://learn.microsoft.com/en-us/sql/relational-databases/xml/xml-data-type-and-columns-sql-server?view=sql-server-ver17), [hierarchyid](https://learn.microsoft.com/en-us/sql/t-sql/data-types/hierarchyid-data-type-method-reference?view=sql-server-ver17), [geometry](https://learn.microsoft.com/en-us/sql/t-sql/spatial-geometry/spatial-types-geometry-transact-sql?view=sql-server-ver17), [geography](https://learn.microsoft.com/en-us/sql/t-sql/spatial-geography/spatial-types-geography-transact-sql?view=sql-server-ver17), [JSON](https://learn.microsoft.com/en-us/sql/t-sql/data-types/json-data-type?view=sql-server-ver17), [vector](https://learn.microsoft.com/en-us/sql/t-sql/data-types/vector-data-type?view=sql-server-ver17), [float16](https://learn.microsoft.com/en-us/sql/t-sql/data-types/vector-data-type-half-precision-float?view=sql-server-ver17).
+
+<span id="ten-dong-nghia"></span>
+
+## Tên đồng nghĩa và kiểu không dùng làm cột
+
+Tên đồng nghĩa là cách viết khác cho cùng kiểu; không tạo thêm khả năng lưu trữ. Bảng dưới giúp đọc tài liệu hoặc cấu trúc cũ; khi viết mới, ưu tiên tên SQL Server quen dùng ở cột phải.
+
+| Tên có thể gặp | Tên tương ứng |
+|---|---|
+| `integer` | `int` |
+| `dec` | `decimal` |
+| `double precision` | `float(53)` |
+| `character` | `char` |
+| `char varying`, `character varying` | `varchar` |
+| `binary varying` | `varbinary` |
+| `national char`, `national character` | `nchar` |
+| `national char varying`, `national character varying` | `nvarchar` |
+| `national text` | `ntext`, đã deprecated |
+| `timestamp` | `rowversion`; cú pháp `timestamp` đã deprecated, không mang nghĩa ngày giờ |
+
+`sysname` là kiểu hệ thống dựa trên `nvarchar(128)`, dùng cho tên đối tượng database; mặc định của kiểu không nhận `NULL`. **Alias type** do người dùng tạo là tên kiểu riêng dựa trên kiểu có sẵn; đó không phải một mục built-in mới để liệt kê hết trong phụ lục.
+
+Hai kiểu còn lại trong danh mục Microsoft không phải lựa chọn cho một ô dữ liệu:
+
+| Kiểu | Dùng ở đâu |
+|---|---|
+| `cursor` | Biến hoặc tham số đầu ra giữ tham chiếu tới bộ duyệt từng dòng; không được dùng làm cột `CREATE TABLE` |
+| `table` | Biến/hàm giữ một tập dòng; kiểu bảng do người dùng định nghĩa còn dùng cho tham số bảng; không phải kiểu cột chứa “một bảng trong một ô” |
+
+Nguồn: [danh mục đầy đủ](https://learn.microsoft.com/en-us/sql/t-sql/data-types/data-types-transact-sql?view=sql-server-ver17), [tên đồng nghĩa](https://learn.microsoft.com/en-us/sql/t-sql/data-types/data-type-synonyms-transact-sql?view=sql-server-ver17), [sysname](https://learn.microsoft.com/en-us/sql/t-sql/data-types/nchar-and-nvarchar-transact-sql?view=sql-server-ver17), [cursor](https://learn.microsoft.com/en-us/sql/t-sql/data-types/cursor-transact-sql?view=sql-server-ver17), [table](https://learn.microsoft.com/en-us/sql/t-sql/data-types/table-transact-sql?view=sql-server-ver17).
+
+## Tự kiểm tra
+
+<details>
+<summary>Chọn kiểu cho mã có số 0 đầu, họ tên tiếng Việt, ngày sinh và số tiền có hai chữ số lẻ?</summary>
+
+Mã dùng chuỗi với độ dài đủ, thường là `varchar(n)`; họ tên thường dùng `nvarchar(n)`; ngày sinh dùng `date`; số tiền dùng `decimal(p,2)` với `p` đủ phần nguyên dự kiến. Chọn theo ý nghĩa và miền giá trị, không theo hình dạng ô Excel.
+
+</details>
+
+<Sql code={"SELECT CAST(12.345 AS decimal(5,2)) AS [GiaTri];"} />
+
+<details>
+<summary>Câu SQL trên giữ nguyên <code>12.345</code> hay đổi giá trị, và vì sao?</summary>
+
+Kết quả là `12.35`: kiểu đích chỉ có hai chữ số lẻ nên làm tròn. Tổng precision `5` không có nghĩa giữ năm chữ số sau dấu thập phân.
+
+</details>
+
+<details>
+<summary>Mã <code>00123</code> bị đổi thành <code>123</code> khi chuyển sang số. Sửa cách chọn kiểu thế nào?</summary>
+
+Giữ mã dưới dạng chuỗi, vì không dùng nó cộng trừ và cần giữ số `0` đầu. Hai phép chuyển sau cho `00123` và `123`:
+
+<Sql code={"SELECT CAST('00123' AS varchar(5)) AS [MaChu],\n\tCAST('00123' AS int) AS [MaSo];"} />
+
+Chuyển số `123` trở lại chuỗi không tự biết mã nguồn có bao nhiêu số `0` đầu. Cách chuyển có kiểm soát nằm ở [PL.2](../pl-2-chuyen-doi-kieu-du-lieu/).
+
+</details>

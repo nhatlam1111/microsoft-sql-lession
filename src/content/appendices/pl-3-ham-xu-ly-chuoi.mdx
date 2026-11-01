@@ -1,0 +1,200 @@
+---
+num: "PL.3"
+title: Hàm xử lý chuỗi
+shortTitle: Hàm chuỗi
+summary: Tra hàm đo, cắt, tìm, thay, nối, tách và gộp chuỗi; phân biệt ký tự với byte, NULL và thứ tự kết quả.
+keywords: [LEN, DATALENGTH, TRIM, LTRIM, RTRIM, LEFT, RIGHT, SUBSTRING, CHARINDEX, PATINDEX, REPLACE, STUFF, UPPER, LOWER, CONCAT, CONCAT_WS, STRING_SPLIT, STRING_AGG, FORMAT, Unicode, collation]
+relatedLessons: ["2.1", "2.7"]
+---
+
+Bài này giúp chọn hàm theo việc cần làm, rồi kiểm đầu vào và kết quả trước khi dùng với cột thật. Bạn chỉ cần biết `SELECT` và bí danh `AS`; các ví dụ dùng giá trị cố định để thấy riêng cơ chế của hàm, không sửa dữ liệu. Chuỗi tiếng Việt có tiền tố `N` để tạo chuỗi Unicode; xem [kiểu chuỗi ở PL.1](../pl-1-chi-tiet-kieu-du-lieu/).
+
+Cách đọc `SELECT` và `AS` có ở [bài 2.1](../../bai/2-1-chon-cot-dat-ten-cot/). Có thể chạy các câu chỉ đọc này trong SSMS; trang bài tập web có danh sách câu lệnh riêng nên không nhận mọi ví dụ của Phụ lục.
+
+## Tra nhanh
+
+| Cần làm | Công cụ | Đến phần |
+|---|---|---|
+| Đếm ký tự hoặc byte | `LEN(s)`, `DATALENGTH(s)` | [Độ dài](#len-datalength) |
+| Bỏ ký tự ở hai đầu | `TRIM`, `LTRIM`, `RTRIM` | [Khoảng trắng](#trim-ltrim-rtrim) |
+| Lấy đầu, cuối, đoạn giữa | `LEFT`, `RIGHT`, `SUBSTRING` | [Cắt chuỗi](#left-right-substring) |
+| Tìm vị trí chữ hoặc mẫu | `CHARINDEX`, `PATINDEX` | [Tìm kiếm](#charindex-patindex) |
+| Thay mọi chỗ khớp hoặc sửa theo vị trí | `REPLACE`, `STUFF` | [Thay thế](#replace-stuff) |
+| Đổi hoa, thường | `UPPER`, `LOWER` | [Hoa thường](#upper-lower) |
+| Nối các giá trị trong một dòng | `CONCAT`, `CONCAT_WS` | [Nối chuỗi](#concat-concat_ws) |
+| Tách một chuỗi thành nhiều dòng | `STRING_SPLIT` | [Tách](#string_split) |
+| Gộp nhiều dòng thành một chuỗi | `STRING_AGG` | [Gộp](#string_agg) |
+| Hiển thị số/ngày theo vùng | `FORMAT` | [Định dạng](#format) |
+
+Trong cú pháp, `s` là chuỗi đầu vào; dấu ngoặc vuông quanh tham số trong tài liệu Microsoft nghĩa là có thể bỏ tham số đó, không phải ký tự cần gõ. Nhiều hàm trả `NULL` khi chuỗi đầu vào là `NULL`; quy tắc riêng của nhóm tìm, nối, tách và gộp được nêu tại phần tương ứng.
+
+## LEN, DATALENGTH
+
+`LEN(s)` đếm ký tự nhưng **bỏ dấu cách ở cuối**. `DATALENGTH(s)` đếm byte của giá trị, gồm dấu cách cuối; đó không phải tổng dung lượng vật lý của cả dòng trong bảng. Cả hai trả `int`, hoặc `bigint` khi đầu vào là kiểu `max`; `DATALENGTH` còn nhận kiểu ngoài chuỗi.
+
+<Sql code={"SELECT LEN(N' An ') AS [SoKyTu],\n\tDATALENGTH(N' An ') AS [SoByte],\n\tLEN(TRIM(N' An ')) AS [SauTrim];"} />
+
+<Result columns={['SoKyTu', 'SoByte', 'SauTrim']} rows={[[3, 8, 2]]} />
+
+`SoKyTu = 3` gồm dấu cách đầu và hai chữ; dấu cách cuối không được đếm. Chuỗi này có bốn ký tự thuộc vùng Unicode cơ bản nên `nvarchar` dùng `8` byte cho giá trị. Không lấy `DATALENGTH / 2` làm công thức đếm mọi chuỗi: `varchar` có cách mã hóa khác, còn một ký tự Unicode bổ sung có thể dùng hai đơn vị UTF-16. Cách đếm của `LEN` với các ký tự bổ sung còn phụ thuộc collation hỗ trợ chúng.
+
+Nguồn: [LEN](https://learn.microsoft.com/en-us/sql/t-sql/functions/len-transact-sql?view=sql-server-ver17), [DATALENGTH](https://learn.microsoft.com/en-us/sql/t-sql/functions/datalength-transact-sql?view=sql-server-ver17).
+
+## TRIM, LTRIM, RTRIM
+
+`TRIM(s)` bỏ dấu cách thường (mã ký tự `32`) ở cả hai đầu; `LTRIM(s)` chỉ bỏ đầu, `RTRIM(s)` chỉ bỏ cuối. Chúng trả chuỗi theo đầu vào, không xóa khoảng trắng giữa các từ và không tự coi tab, xuống dòng hay dấu cách đặc biệt là dấu cách thường.
+
+<Sql code={"SELECT N'[' + TRIM(N'  An  Bình  ') + N']' AS [HaiDau],\n\tN'[' + LTRIM(N'  An  ') + N']' AS [Dau],\n\tN'[' + RTRIM(N'  An  ') + N']' AS [Cuoi],\n\tTRIM(N'.' FROM N'..An..') AS [BoDauCham];"} />
+
+<Result columns={['HaiDau', 'Dau', 'Cuoi', 'BoDauCham']} rows={[
+  ['[An  Bình]', '[An  ]', '[  An]', 'An'],
+]} />
+
+Hai dấu cách giữa `An` và `Bình` vẫn còn. `TRIM(characters FROM s)` bỏ từng ký tự thuộc tập `characters` ở hai đầu, không tìm một cụm chữ nguyên vẹn; muốn xử lý tab có thể đưa `NCHAR(9)` vào tập này. Đối số `characters` không nhận `varchar(max)` hoặc `nvarchar(max)`.
+
+SQL Server 2025 và Azure SQL có cú pháp chọn phía `TRIM(LEADING characters FROM s)`, `TRAILING`, `BOTH`; database cần compatibility level ít nhất `160` để dùng các từ khóa này. `LTRIM(s, characters)` và `RTRIM(s, characters)` cũng cần mức đó. Đây là thiết lập tương thích của từng database, nên phiên bản máy chủ mới chưa tự chứng minh database đã bật cú pháp; khi gặp lỗi, gửi câu lệnh cho IT kiểm thiết lập.
+
+Nguồn: [TRIM](https://learn.microsoft.com/en-us/sql/t-sql/functions/trim-transact-sql?view=sql-server-ver17), [LTRIM](https://learn.microsoft.com/en-us/sql/t-sql/functions/ltrim-transact-sql?view=sql-server-ver17), [RTRIM](https://learn.microsoft.com/en-us/sql/t-sql/functions/rtrim-transact-sql?view=sql-server-ver17).
+
+## LEFT, RIGHT, SUBSTRING
+
+`LEFT(s, n)` lấy tối đa `n` ký tự từ đầu; `RIGHT(s, n)` lấy từ cuối. `SUBSTRING(s, start, length)` lấy từ vị trí `start`, đếm từ `1`, tối đa `length` ký tự; SQL Server 2025 và Azure SQL cho phép bỏ `length` để lấy đến cuối. Với đầu vào ký tự, các hàm trả `varchar` hoặc `nvarchar` tương ứng; dùng chuỗi Unicode để giữ tiếng Việt.
+
+<Sql code={"SELECT LEFT(N'NV047', 2) AS [Dau],\n\tRIGHT(N'NV047', 3) AS [Cuoi],\n\tSUBSTRING(N'NV047', 3, 2) AS [Giua],\n\tSUBSTRING(N'NV047', 3) AS [DenCuoi];"} />
+
+<Result columns={['Dau', 'Cuoi', 'Giua', 'DenCuoi']} rows={[
+  ['NV', '047', '04', '047'],
+]} />
+
+`SUBSTRING` trả chuỗi rỗng khi bắt đầu sau cuối chuỗi. Độ dài âm gây lỗi; vị trí `start` nhỏ hơn `1` có quy tắc giảm số ký tự trả về, nên khi cắt theo vị trí tìm được hãy kiểm vị trí hợp lệ trước. Mã `047` vẫn là chữ và giữ số `0` đầu, còn ép sang số sẽ mất nó; xem [PL.2](../pl-2-chuyen-doi-kieu-du-lieu/).
+
+Nguồn: [LEFT](https://learn.microsoft.com/en-us/sql/t-sql/functions/left-transact-sql?view=sql-server-ver17), [RIGHT](https://learn.microsoft.com/en-us/sql/t-sql/functions/right-transact-sql?view=sql-server-ver17), [SUBSTRING](https://learn.microsoft.com/en-us/sql/t-sql/functions/substring-transact-sql?view=sql-server-ver17).
+
+## CHARINDEX, PATINDEX
+
+`CHARINDEX(chuoiCanTim, s, viTriBatDau)` tìm cụm ký tự được viết trực tiếp, không dùng ký tự đại diện; tham số cuối có thể bỏ và mặc định tìm từ đầu. `PATINDEX(mau, s)` tìm mẫu với ký tự đại diện: `%` là không hoặc nhiều ký tự, `_` là một ký tự, `[0-9]` là một ký tự trong khoảng. Cả hai trả vị trí đầu tiên từ `1`, không thấy thì `0`; kiểu kết quả thường là `int`, với chuỗi `max` là `bigint`.
+
+<Sql code={"SELECT CHARINDEX(N'@', N'an@example.com') AS [ViTri],\n\tCHARINDEX(N'@', N'khong-co-at') AS [KhongThay],\n\tPATINDEX(N'%[0-9]%', N'NV047') AS [ChuSoDau];"} />
+
+<Result columns={['ViTri', 'KhongThay', 'ChuSoDau']} rows={[[3, 0, 3]]} />
+
+Khi lấy phần trước `@`, dùng `CHARINDEX(...) - 1` ngay sẽ thành độ dài `-1` nếu không thấy ký tự đó. Kiểm vị trí lớn hơn `0` bằng `CASE` trước khi cắt, hoặc đưa dòng không đạt vào danh sách đối chiếu. `CHARINDEX` trả `NULL` nếu một đối số chuỗi là `NULL`.
+
+`PATINDEX` trả `NULL` khi mẫu là `NULL`. Với chuỗi cần tìm là `NULL`, tài liệu Microsoft ghi báo lỗi, còn Azure SQL của khóa học hiện trả `NULL`; không dựa vào nhánh này để dùng chung giữa các môi trường. Nếu nghiệp vụ coi thiếu như chuỗi rỗng, dùng `PATINDEX(mau, COALESCE(s,N''))` để thay `NULL` bằng chuỗi rỗng trước khi tìm. Kết quả không thấy mẫu không chứng minh nguồn đã đầy đủ.
+
+**Collation** là bộ quy tắc so sánh và sắp xếp chữ, gồm việc phân biệt hoa thường, dấu và một số cách đếm ký tự. Vì vậy, tìm `a` trong `ABC` có thể thấy hoặc không tùy collation. Ví dụ dùng quy tắc nhị phân `Latin1_General_100_BIN2` để buộc hai chữ khác nhau:
+
+<Sql code={"SELECT CHARINDEX(N'a', N'ABC' COLLATE Latin1_General_100_BIN2) AS [ViTri];"} />
+
+<Result columns={['ViTri']} rows={[[0]]} />
+
+`COLLATE` ở đây chỉ chọn quy tắc cho biểu thức, không đổi chữ nguồn. Mẫu của `PATINDEX` không phải biểu thức chính quy; chức năng regex là nhóm hàm khác ngoài phạm vi tra cứu này.
+
+Nguồn: [CHARINDEX](https://learn.microsoft.com/en-us/sql/t-sql/functions/charindex-transact-sql?view=sql-server-ver17), [PATINDEX](https://learn.microsoft.com/en-us/sql/t-sql/functions/patindex-transact-sql?view=sql-server-ver17).
+
+## REPLACE, STUFF
+
+`REPLACE(s, chuoiCu, chuoiMoi)` thay **mọi** chỗ khớp theo collation. `STUFF(s, start, length, chuoiMoi)` xóa `length` ký tự từ vị trí `start` rồi chèn chữ mới; `length = 0` chỉ chèn. Chọn `REPLACE` khi biết chữ cần thay, chọn `STUFF` khi biết vị trí.
+
+<Sql code={"SELECT REPLACE(N'09-2026-09', N'-', N'/') AS [ThayTatCa],\n\tSTUFF(N'NV047', 3, 3, N'***') AS [TheoViTri];"} />
+
+<Result columns={['ThayTatCa', 'TheoViTri']} rows={[
+  ['09/2026/09', 'NV***'],
+]} />
+
+`REPLACE` trả `nvarchar` nếu có đối số `nvarchar`, còn lại là `varchar`; có đối số `NULL` thì trả `NULL`. Nếu chuỗi đầu không phải kiểu `max`, kết quả bị giới hạn `8.000` byte; cần chuỗi dài thì ép chính chuỗi đầu sang `nvarchar(max)` hoặc `varchar(max)` trước khi thay. `STUFF` trả dữ liệu ký tự hoặc nhị phân theo đầu vào, và trả `NULL` khi vị trí bắt đầu không dương, vượt cuối chuỗi hoặc độ dài âm.
+
+Nguồn: [REPLACE](https://learn.microsoft.com/en-us/sql/t-sql/functions/replace-transact-sql?view=sql-server-ver17), [STUFF](https://learn.microsoft.com/en-us/sql/t-sql/functions/stuff-transact-sql?view=sql-server-ver17).
+
+## UPPER, LOWER
+
+`UPPER(s)` đổi chữ thành hoa, `LOWER(s)` đổi thành thường theo quy tắc collation; chúng trả `varchar` hoặc `nvarchar`. Dùng để tạo nhãn hiển thị, không dùng làm bằng chứng hai chuỗi gốc giống nhau hay đã bỏ dấu.
+
+<Sql code={"SELECT UPPER(N'Hà Nội') AS [Hoa], LOWER(N'Hà Nội') AS [Thuong];"} />
+
+<Result columns={['Hoa', 'Thuong']} rows={[
+  ['HÀ NỘI', 'hà nội'],
+]} />
+
+Nguồn: [UPPER](https://learn.microsoft.com/en-us/sql/t-sql/functions/upper-transact-sql?view=sql-server-ver17), [LOWER](https://learn.microsoft.com/en-us/sql/t-sql/functions/lower-transact-sql?view=sql-server-ver17).
+
+## CONCAT, CONCAT_WS
+
+`CONCAT(a, b, ...)` nối từ `2` đến `254` giá trị, tự chuyển số thành chữ và coi `NULL` là chuỗi rỗng. `CONCAT_WS(dauNgan, a, b, ...)` thêm dấu ngăn giữa các giá trị **khác `NULL`**, nên tiện làm địa chỉ hoặc nhãn có phần thiếu. Chuỗi rỗng vẫn là một giá trị, vì vậy vẫn tạo dấu ngăn.
+
+<Sql code={"SELECT CONCAT(N'NV', 47, NULL) AS [Noi],\n\tCONCAT_WS(N' - ', N'NV047', NULL, N'Nhân sự') AS [BoNull],\n\tCONCAT_WS(N' - ', N'NV047', N'', N'Nhân sự') AS [GiuRong];"} />
+
+<Result columns={['Noi', 'BoNull', 'GiuRong']} rows={[
+  ['NV47', 'NV047 - Nhân sự', 'NV047 -  - Nhân sự'],
+]} />
+
+`47` không tự được đệm thành `047`. Kiểu và độ dài chuỗi trả về phụ thuộc toàn bộ đối số: có đầu vào `nvarchar(max)` thì trả `nvarchar(max)`, chỉ có `varchar(max)` và không có Unicode thì trả `varchar(max)`; các trường hợp hữu hạn chịu giới hạn kiểu chuỗi. Khi dự kiến nhãn dài, đưa một đối số về kiểu `max` trước khi nối. Toàn bộ giá trị đều `NULL` thì các hàm trả chuỗi rỗng, nên không dùng kết quả đó để suy ra dữ liệu nguồn đầy đủ.
+
+Nguồn: [CONCAT](https://learn.microsoft.com/en-us/sql/t-sql/functions/concat-transact-sql?view=sql-server-ver17), [CONCAT_WS](https://learn.microsoft.com/en-us/sql/t-sql/functions/concat-ws-transact-sql?view=sql-server-ver17).
+
+## STRING_SPLIT
+
+`STRING_SPLIT(s, dauNgan, 1)` trả **bảng nhiều dòng**, dùng sau `FROM`; dấu ngăn phải là một ký tự. Đối số hằng `1` bật cột `ordinal` kiểu `bigint`, ghi vị trí phần tử từ `1`. Cột `value` là `nvarchar` nếu chuỗi hoặc dấu ngăn là Unicode, còn lại là `varchar`; độ dài khai báo bằng độ dài của chuỗi đầu vào.
+
+<Sql code={"SELECT value AS [GiaTri], ordinal AS [ViTri]\nFROM STRING_SPLIT(N'IT,,KT', N',', 1)\nORDER BY ordinal;"} />
+
+<Result columns={['GiaTri', 'ViTri']} rows={[
+  ['IT', '1'], ['', '2'], ['KT', '3'],
+]} />
+
+Hai dấu phẩy cạnh nhau tạo phần tử rỗng. Dùng `WHERE value <> N''` nếu muốn loại phần tử ấy; `NULL` đầu vào trả bảng không có dòng. Cột `ordinal` không tự sắp xếp kết quả: luôn thêm `ORDER BY ordinal` khi cần đúng thứ tự đầu vào. Hàm cần compatibility level ít nhất `130` trong cấu hình thông thường; cột `ordinal` có trên SQL Server 2025 và Azure SQL.
+
+Nguồn: [STRING_SPLIT](https://learn.microsoft.com/en-us/sql/t-sql/functions/string-split-transact-sql?view=sql-server-ver17).
+
+## STRING_AGG
+
+`STRING_AGG(bieuThuc, dauNgan)` gộp giá trị của nhiều dòng thành một chuỗi; thêm `WITHIN GROUP (ORDER BY cot)` để chọn thứ tự bên trong chuỗi. `NULL` bị bỏ qua cùng dấu ngăn của nó, còn chuỗi rỗng vẫn được giữ. Muốn hiện nhãn cho phần thiếu, thay `NULL` trước khi gộp bằng `ISNULL` hoặc `COALESCE` ở [PL.6](../pl-6-null-va-dieu-kien/).
+
+Ví dụ dưới dùng **bảng dẫn xuất**: `VALUES` dựng các dòng tạm ngay trong câu `SELECT`, không tạo bảng lưu; `v(ThuTu, Ma)` đặt bí danh bảng là `v` và tên hai cột.
+
+<Sql code={"SELECT STRING_AGG(CAST(Ma AS nvarchar(max)), N', ')\n\tWITHIN GROUP (ORDER BY ThuTu) AS [DanhSach]\nFROM (VALUES (2, N'KT'), (1, N'IT'), (3, NULL)) AS v(ThuTu, Ma);"} />
+
+<Result columns={['DanhSach']} rows={[
+  ['IT, KT'],
+]} />
+
+Kiểu trả về do **biểu thức được gộp** quyết định: `nvarchar(max)` → `nvarchar(max)`, `varchar(max)` → `varchar(max)`, `nvarchar(n)` → `nvarchar(4000)`, `varchar(n)` → `varchar(8000)`; số và nhiều kiểu không phải chuỗi chuyển thành `nvarchar(4000)`. Ép `CAST` bên ngoài kết quả không cứu được lỗi vượt giới hạn lúc gộp; ép biểu thức bên trong như ví dụ. Với đầu vào `varchar`, dấu ngăn không được là `nvarchar`; `WITHIN GROUP` cần compatibility level ít nhất `110`.
+
+Nguồn: [STRING_AGG](https://learn.microsoft.com/en-us/sql/t-sql/functions/string-agg-transact-sql?view=sql-server-ver17).
+
+## FORMAT
+
+`FORMAT(giaTri, mau, culture)` nhận số hoặc ngày giờ và trả chữ `nvarchar` theo mẫu .NET; `culture` chọn quy ước vùng. Dùng khi cần nhãn hiển thị theo vùng; giữ giá trị kiểu số/ngày cho tính toán, lọc và sắp xếp. Chuyển kiểu thông thường dùng `CAST` hoặc `CONVERT` ở [PL.2](../pl-2-chuyen-doi-kieu-du-lieu/).
+
+<Sql code={"SELECT FORMAT(CAST(1234.5 AS decimal(10, 2)), N'N2', 'vi-VN') AS [HienThi];"} />
+
+<Result columns={['HienThi']} rows={[
+  ['1.234,50'],
+]} />
+
+`N2` nghĩa là có dấu phân nhóm và hai số lẻ; kết quả `1.234,50` là chữ, không phải số mới. Bỏ `culture` sẽ phụ thuộc ngôn ngữ phiên kết nối. Với báo cáo nhiều dòng, cân nhắc để phần mềm nhận dữ liệu hiển thị định dạng và SQL chỉ gửi giá trị thật, tránh định dạng từng dòng trên database.
+
+Nguồn: [FORMAT](https://learn.microsoft.com/en-us/sql/t-sql/functions/format-transact-sql?view=sql-server-ver17).
+
+## Tự kiểm tra
+
+<details>
+<summary>Cần đếm byte của tên có dấu, gồm dấu cách cuối. Chọn <code>LEN</code> hay <code>DATALENGTH</code>?</summary>
+
+Chọn `DATALENGTH`, vì nó đo byte và giữ dấu cách cuối; `LEN` đo ký tự và bỏ dấu cách cuối. Số byte còn phụ thuộc kiểu và cách mã hóa chuỗi.
+
+</details>
+
+<details>
+<summary><code>{"CONCAT_WS(N'/', N'A', NULL, N'')"}</code> trả gì?</summary>
+
+Trả `A/`: `NULL` bị bỏ qua, còn chuỗi rỗng được giữ nên vẫn có một dấu `/` giữa hai giá trị còn lại.
+
+</details>
+
+<details>
+<summary>Đã bật <code>ordinal</code> cho <code>STRING_SPLIT</code> nhưng kết quả đảo vị trí. Sửa thế nào?</summary>
+
+Thêm `ORDER BY ordinal`. Cột vị trí cung cấp thông tin để sắp xếp, không bảo đảm thứ tự các dòng khi chưa có `ORDER BY`.
+
+</details>

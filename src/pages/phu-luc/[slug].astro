@@ -1,0 +1,21 @@
+---
+import { getCollection, render } from 'astro:content';
+import AppendixLayout from '../../layouts/AppendixLayout.astro';
+import ReferenceTable from '../../components/lesson/ReferenceTable.astro';
+import { lessonComponents } from '../../components/lesson';
+import { loadCatalog } from '../../lib/load-catalog';
+import { loadAppendices } from '../../lib/load-appendices';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('appendices');
+  return entries.map(entry => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content, headings } = await render(entry);
+const [catalog, appendices] = await Promise.all([loadCatalog(), loadAppendices()]);
+const current = appendices.find(e => e.slug === entry.id)!;
+---
+<AppendixLayout entry={current} headings={headings} catalog={catalog} appendices={appendices}>
+  <Content components={{ ...lessonComponents, table: ReferenceTable }} />
+</AppendixLayout>

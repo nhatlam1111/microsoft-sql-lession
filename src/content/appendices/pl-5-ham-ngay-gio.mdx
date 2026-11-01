@@ -1,0 +1,201 @@
+---
+num: "PL.5"
+title: Hàm ngày giờ
+shortTitle: Hàm ngày giờ
+summary: Tra cách tạo mốc, tách phần ngày, cộng thời gian, tính ranh giới, gom kỳ, lấy giờ hiện tại và đổi múi giờ.
+keywords: [DATEFROMPARTS, YEAR, MONTH, DAY, DATEPART, DATENAME, DATEADD, DATEDIFF, DATEDIFF_BIG, EOMONTH, DATETRUNC, DATE_BUCKET, GETDATE, CURRENT_TIMESTAMP, SYSDATETIME, SYSUTCDATETIME, SYSDATETIMEOFFSET, AT TIME ZONE, UTC, khoảng nửa mở]
+relatedLessons: ["2.1", "2.8", "2.9", "4.3"]
+---
+
+Bài này giúp chọn đúng mốc và đúng đơn vị thời gian cho câu truy vấn. Bạn cần biết `SELECT`, `AS`, `WHERE` ở các bài 2.1–2.2; `date` chứa ngày, `datetime2` chứa ngày và giờ, `datetimeoffset` thêm độ lệch so với **UTC**, mốc giờ chung để so thời điểm giữa các vùng. Chi tiết miền giá trị và độ chính xác có ở [PL.1](../pl-1-chi-tiet-kieu-du-lieu/).
+
+Trong ví dụ trên giá trị cố định, `SELECT` tính giá trị mà không cần `FROM`, `AS` đặt tiêu đề kết quả. Các câu chỉ đọc có thể chạy trong SSMS; trang bài tập web không nhận mọi cú pháp của Phụ lục.
+
+`CONVERT(kiểu_chuỗi, giá_trị, style)` tạo chữ để hiển thị: `23` là năm-tháng-ngày, `126` là ngày và giờ ngăn bởi `T`, giữ độ lệch khi đầu vào là `datetimeoffset`. Kết quả ngoài cùng lúc này là chuỗi, còn hàm ngày ở bên trong vẫn có kiểu riêng; xem [PL.2](../pl-2-chuyen-doi-kieu-du-lieu/) để tra quy tắc chuyển đầy đủ.
+
+## Tra nhanh
+
+| Cần làm | Công cụ | Đến phần |
+|---|---|---|
+| Tạo ngày từ ba số | `DATEFROMPARTS(nam, thang, ngay)` | [Tạo ngày](#datefromparts) |
+| Lấy năm/tháng/ngày, quý, giờ | `YEAR`, `MONTH`, `DAY`, `DATEPART` | [Đọc thành phần](#year-month-day-datepart-datename) |
+| Lấy tên tháng/thứ | `DATENAME` | [Ngôn ngữ kết quả](#year-month-day-datepart-datename) |
+| Cộng/trừ ngày, tháng, năm | `DATEADD(donVi, soLuong, moc)` | [Dịch mốc](#dateadd) |
+| Đếm ranh giới giữa hai mốc | `DATEDIFF`, `DATEDIFF_BIG` | [Chênh lệch](#datediff-datediff_big) |
+| Lấy ngày cuối tháng | `EOMONTH(moc, soThang)` | [Cuối tháng](#eomonth) |
+| Đưa về đầu một đơn vị lịch | `DATETRUNC(donVi, moc)` | [Đầu kỳ](#datetrunc) |
+| Chia các khoảng đều từ mốc gốc | `DATE_BUCKET` | [Khoảng thời gian](#date_bucket) |
+| Lấy thời điểm hiện tại | `GETDATE`, `SYS...`, `CURRENT_TIMESTAMP` | [Đồng hồ hệ thống](#getdate-current_timestamp-sysdatetime) |
+| Gắn hoặc chuyển múi giờ | `AT TIME ZONE` | [Múi giờ](#at-time-zone) |
+| Lọc cả ngày/tháng có phần giờ | `>= dauKy AND < dauKySau` | [Khoảng nửa mở](#where) |
+
+## DATEFROMPARTS
+
+`DATEFROMPARTS(year, month, day)` nhận ba số nguyên và trả `date`. Dùng khi đã có riêng năm, tháng, ngày để tránh ghép thành chuỗi có thể bị hiểu khác theo thiết lập ngày/tháng.
+
+<Sql code={"SELECT CONVERT(char(10), DATEFROMPARTS(2026, 10, 21), 23) AS [Ngay];"} />
+
+<Result columns={['Ngay']} rows={[
+  ['2026-10-21'],
+]} />
+
+Ngày không tồn tại như `DATEFROMPARTS(2026,2,29)` gây lỗi, không tự chuyển sang tháng 3. Có tham số bắt buộc là `NULL` thì hàm trả `NULL`; với dữ liệu đầu vào chưa chắc hợp lệ, cần đối chiếu hoặc dùng luồng chuyển đổi có kiểm lỗi ở PL.2.
+
+Nguồn: [DATEFROMPARTS](https://learn.microsoft.com/en-us/sql/t-sql/functions/datefromparts-transact-sql?view=sql-server-ver17).
+
+## YEAR, MONTH, DAY, DATEPART, DATENAME
+
+`YEAR(moc)`, `MONTH(moc)`, `DAY(moc)` trả số `int`. `DATEPART(donVi, moc)` cũng trả `int` và chọn được quý, giờ, phút, tuần…; `DATENAME(donVi, moc)` trả chữ `nvarchar`. Đơn vị là từ khóa như `month`, không đặt trong nháy và không thay bằng một tên cột.
+
+<Sql code={"SELECT YEAR(DATEFROMPARTS(2026, 10, 21)) AS [Nam],\n\tMONTH(DATEFROMPARTS(2026, 10, 21)) AS [Thang],\n\tDAY(DATEFROMPARTS(2026, 10, 21)) AS [Ngay],\n\tDATEPART(quarter, DATEFROMPARTS(2026, 10, 21)) AS [Quy],\n\tDATENAME(month, DATEFROMPARTS(2026, 10, 21)) AS [TenThang];"} />
+
+<Result columns={['Nam', 'Thang', 'Ngay', 'Quy', 'TenThang']} rows={[
+  [2026, 10, 21, 4, 'October'],
+]} />
+
+`October` là kết quả trên phiên dùng `us_english` của database khóa học; tên tháng có thể khác ở phiên khác. `DATEPART(weekday, ...)`, `DATEPART(week, ...)` còn phụ thuộc ngày đầu tuần được cấu hình. Khi cần tuần ISO, chọn `iso_week`; khi cần khóa tháng để tổng hợp qua nhiều năm, dùng một mốc đầu/cuối tháng, vì chỉ `MONTH` sẽ trộn cùng tháng của các năm.
+
+Nguồn: [DATEPART](https://learn.microsoft.com/en-us/sql/t-sql/functions/datepart-transact-sql?view=sql-server-ver17), [DATENAME](https://learn.microsoft.com/en-us/sql/t-sql/functions/datename-transact-sql?view=sql-server-ver17), [YEAR](https://learn.microsoft.com/en-us/sql/t-sql/functions/year-transact-sql?view=sql-server-ver17).
+
+## DATEADD
+
+`DATEADD(donVi, soLuong, moc)` tạo mốc mới bằng cách cộng số đơn vị; số âm để lùi. Với đầu vào đã có kiểu ngày giờ, kết quả giữ kiểu đó; truyền trực tiếp chuỗi ngày thì hàm trả `datetime`, nên dùng `date`/`datetime2` tường minh khi cần kiểm kiểu. Phần lẻ của `soLuong` bị cắt, không làm tròn.
+
+<Sql code={"SELECT CONVERT(char(10), DATEADD(day, 7, DATEFROMPARTS(2026, 10, 21)), 23) AS [Sau7Ngay],\n\tCONVERT(char(10), DATEADD(month, 1, DATEFROMPARTS(2026, 1, 31)), 23) AS [Sau1Thang];"} />
+
+<Result columns={['Sau7Ngay', 'Sau1Thang']} rows={[
+  ['2026-10-28', '2026-02-28'],
+]} />
+
+Tháng đích không có ngày `31` nên cộng một tháng cho `2026-01-31` trả ngày cuối tháng 2. Vì thế cộng rồi trừ cùng số tháng chưa chắc về đúng ngày ban đầu. Hàm chỉ dịch lịch, không tự trừ thứ Bảy, Chủ nhật hay ngày lễ; tính ngày làm việc cần lịch làm việc được quy định riêng. Chuẩn SQL Server 2025 và Azure SQL hiện hành nhận `bigint` cho `soLuong`, nhưng ngày kết quả vẫn phải vừa miền của kiểu ngày giờ.
+
+Nguồn: [DATEADD](https://learn.microsoft.com/en-us/sql/t-sql/functions/dateadd-transact-sql?view=sql-server-ver17).
+
+## DATEDIFF, DATEDIFF_BIG
+
+`DATEDIFF(donVi, batDau, ketThuc)` đếm **số ranh giới của đơn vị đã đi qua**, trả `int` có dấu. `DATEDIFF_BIG` có cùng ý nghĩa nhưng trả `bigint`, dùng khi số ranh giới có thể vượt miền `int`, chẳng hạn đếm mili giây của khoảng dài.
+
+<Sql code={"SELECT DATEDIFF(year, DATEFROMPARTS(2025, 12, 31), DATEFROMPARTS(2026, 1, 1)) AS [RanhGioiNam],\n\tDATEDIFF(day, DATEFROMPARTS(2025, 12, 31), DATEFROMPARTS(2026, 1, 1)) AS [RanhGioiNgay],\n\tDATEDIFF_BIG(millisecond, DATEFROMPARTS(2026, 1, 1), DATEFROMPARTS(2027, 1, 1)) AS [MiliGiay];"} />
+
+<Result columns={['RanhGioiNam', 'RanhGioiNgay', 'MiliGiay']} rows={[[1, 1, '31536000000']]} />
+
+Một ngày đi qua giao thừa vẫn cho chênh lệch năm `1`, không phải đã đủ một năm tròn. Muốn kiểm đã đủ `n` năm, so mốc `DATEADD(year, n, batDau)` với ngày chốt, như bài 2.9; ngày sinh/vào làm `29/2` cần thống nhất quy tắc kỷ niệm. Đổi `DATEDIFF` sang `DATEDIFF_BIG` chỉ mở miền số, không đổi phép đếm thành số đơn vị trọn vẹn.
+
+Nguồn: [DATEDIFF](https://learn.microsoft.com/en-us/sql/t-sql/functions/datediff-transact-sql?view=sql-server-ver17), [DATEDIFF_BIG](https://learn.microsoft.com/en-us/sql/t-sql/functions/datediff-big-transact-sql?view=sql-server-ver17).
+
+## EOMONTH
+
+`EOMONTH(moc, soThang)` trả `date` là ngày cuối tháng chứa `moc`, sau khi dịch thêm `soThang`; bỏ đối số cuối thì dùng tháng hiện tại của mốc. Dùng làm nhãn kỳ hoặc tính hạn cuối tháng, không cần tự liệt kê tháng có `28`, `29`, `30` hay `31` ngày.
+
+<Sql code={"SELECT CONVERT(char(10), EOMONTH(DATEFROMPARTS(2026, 1, 15)), 23) AS [ThangNay],\n\tCONVERT(char(10), EOMONTH(DATEFROMPARTS(2026, 1, 15), 1), 23) AS [ThangSau];"} />
+
+<Result columns={['ThangNay', 'ThangSau']} rows={[
+  ['2026-01-31', '2026-02-28'],
+]} />
+
+Ngày cuối tháng là một giá trị `date`, không phải thời điểm cuối cùng của ngày đó. Khi lọc cột có cả giờ, dùng đầu tháng sau làm cận trên loại trừ ở [WHERE](#where).
+
+Nguồn: [EOMONTH](https://learn.microsoft.com/en-us/sql/t-sql/functions/eomonth-transact-sql?view=sql-server-ver17).
+
+## DATETRUNC
+
+`DATETRUNC(donVi, moc)` đưa mốc về đầu đơn vị lịch: đầu năm, quý, tháng, ngày, giờ… Kết quả giữ kiểu và độ chính xác phần giây của đầu vào đã có kiểu; chuỗi đầu vào được hiểu thành `datetime2(7)`. Dùng để tạo khóa nhóm, chẳng hạn tất cả thời điểm trong tháng 10 cùng về một mốc đầu tháng.
+
+<Sql code={"SELECT CONVERT(varchar(33), DATETRUNC(month, CAST('2026-10-21T14:35:42' AS datetime2(0))), 126) AS [DauThang],\n\tCONVERT(varchar(33), DATETRUNC(hour, CAST('2026-10-21T14:35:42' AS datetime2(0))), 126) AS [DauGio];"} />
+
+<Result columns={['DauThang', 'DauGio']} rows={[
+  ['2026-10-01T00:00:00', '2026-10-21T14:00:00'],
+]} />
+
+`week` phụ thuộc cấu hình ngày đầu tuần; `iso_week` luôn lấy thứ Hai theo tuần ISO. Hàm không nhận `weekday`, `tzoffset` hoặc `nanosecond`; nếu cắt tới mili giây/micro giây, kiểu đầu vào phải có đủ scale tương ứng. `DATETRUNC` không tự chuyển múi giờ trước khi tìm đầu ngày, nên chuyển về múi giờ báo cáo trước nếu dữ liệu đang lưu UTC.
+
+Nguồn: [DATETRUNC](https://learn.microsoft.com/en-us/sql/t-sql/functions/datetrunc-transact-sql?view=sql-server-ver17).
+
+## DATE_BUCKET
+
+`DATE_BUCKET(donVi, doRong, moc, goc)` trả đầu khoảng chứa mốc, dùng để gom các khoảng như mỗi `15` phút. `doRong` là số nguyên dương; `goc` là điểm đặt lưới các khoảng, mặc định `1900-01-01 00:00:00`. `moc` phải có kiểu ngày giờ tường minh, không truyền chuỗi trực tiếp; `goc` nếu có phải cùng kiểu với `moc`.
+
+<Sql code={"SELECT CONVERT(varchar(33),\n\tDATE_BUCKET(minute, 15, CAST('2026-10-21T10:17:00' AS datetime2(0)),\n\t\tCAST('2026-10-21T00:00:00' AS datetime2(0))), 126) AS [DauKhoang];"} />
+
+<Result columns={['DauKhoang']} rows={[
+  ['2026-10-21T10:15:00'],
+]} />
+
+Kết quả giữ kiểu của `moc`. Đổi gốc có thể dịch toàn bộ các khoảng, nên một báo cáo phải thống nhất gốc và độ rộng; `DATETRUNC(minute, ...)` chỉ bỏ phần giây, không thay được khoảng `15` phút này. SQL Server 2025 và Azure SQL hỗ trợ cả `DATE_BUCKET` lẫn `DATETRUNC`, không cần cách mô phỏng bằng các hàm cũ.
+
+Nguồn: [DATE_BUCKET](https://learn.microsoft.com/en-us/sql/t-sql/functions/date-bucket-transact-sql?view=sql-server-ver17).
+
+## GETDATE, CURRENT_TIMESTAMP, SYSDATETIME
+
+Các hàm sau không có đầu vào; chúng đọc đồng hồ hệ thống của dịch vụ database, nên kết quả đổi theo lúc chạy. Độ lệch `+07:00` nghĩa là giờ hiển thị nhanh hơn UTC bảy giờ.
+
+| Cách viết | Kiểu trả về | Dùng khi |
+|---|---|---|
+| `GETDATE()` | `datetime` | Cần mốc hiện tại theo giờ hệ thống/cấu hình |
+| `CURRENT_TIMESTAMP` | `datetime` | Cùng mục đích với `GETDATE`, viết không có `()` |
+| `SYSDATETIME()` | `datetime2(7)` | Cần nhiều chữ số phần giây hơn |
+| `SYSUTCDATETIME()` | `datetime2(7)` | Cần mốc UTC tường minh |
+| `SYSDATETIMEOFFSET()` | `datetimeoffset(7)` | Cần mốc hiện tại kèm độ lệch |
+
+Ví dụ kiểm kiểu trả về thay vì gắn một ngày cố định cho hàm lấy giờ hiện tại. `SQL_VARIANT_PROPERTY(giaTri, 'BaseType')` đọc tên kiểu nền của giá trị; đây là hàm kiểm metadata, không đổi giá trị.
+
+<Sql code={"SELECT SQL_VARIANT_PROPERTY(GETDATE(), 'BaseType') AS [GetDate],\n\tSQL_VARIANT_PROPERTY(CURRENT_TIMESTAMP, 'BaseType') AS [CurrentTimestamp],\n\tSQL_VARIANT_PROPERTY(SYSDATETIME(), 'BaseType') AS [SysDateTime],\n\tSQL_VARIANT_PROPERTY(SYSUTCDATETIME(), 'BaseType') AS [Utc],\n\tSQL_VARIANT_PROPERTY(SYSDATETIMEOFFSET(), 'BaseType') AS [CoDoLech];"} />
+
+<Result columns={['GetDate', 'CurrentTimestamp', 'SysDateTime', 'Utc', 'CoDoLech']} rows={[
+  ['datetime', 'datetime', 'datetime2', 'datetime2', 'datetimeoffset'],
+]} />
+
+Kiểu không kèm độ lệch không cho biết riêng giá trị ấy thuộc múi giờ nào. Azure SQL Database của khóa học dùng UTC; SQL Server cài riêng lấy giờ hệ thống từ máy chủ, nên xác nhận quy ước của hệ thống thay vì lấy múi giờ máy người dùng. Muốn hiển thị UTC theo giờ Việt Nam, dùng `AT TIME ZONE` ở phần sau. Với báo cáo cần chạy lại đúng số cũ, truyền ngày chốt cố định thay cho “hôm nay”; nhiều chữ số phần giây cũng không bảo đảm đồng hồ chính xác tới mức đó.
+
+Nguồn: [GETDATE](https://learn.microsoft.com/en-us/sql/t-sql/functions/getdate-transact-sql?view=sql-server-ver17), [CURRENT_TIMESTAMP](https://learn.microsoft.com/en-us/sql/t-sql/functions/current-timestamp-transact-sql?view=sql-server-ver17), [SYSDATETIMEOFFSET](https://learn.microsoft.com/en-us/sql/t-sql/functions/sysdatetimeoffset-transact-sql?view=sql-server-ver17).
+
+## AT TIME ZONE
+
+`moc AT TIME ZONE tenMuiGio` trả `datetimeoffset`. Đầu vào chưa có độ lệch thì câu này **gắn cách hiểu** rằng mốc đang là giờ của vùng được chỉ định; đầu vào đã có độ lệch thì nó **chuyển cùng thời điểm** sang vùng đích. Danh sách tên được database hỗ trợ có trong `sys.time_zone_info`.
+
+<Sql code={"SELECT CONVERT(varchar(40),\n\tCAST('2026-10-21T08:00:00' AS datetime2(0))\n\t\tAT TIME ZONE 'SE Asia Standard Time', 126) AS [GanGioVietNam],\n\tCONVERT(varchar(40),\n\tCAST('2026-10-21T08:00:00' AS datetime2(0))\n\t\tAT TIME ZONE 'UTC' AT TIME ZONE 'SE Asia Standard Time', 126) AS [TuUtcSangVietNam];"} />
+
+<Result columns={['GanGioVietNam', 'TuUtcSangVietNam']} rows={[
+  ['2026-10-21T08:00:00+07:00', '2026-10-21T15:00:00+07:00'],
+]} />
+
+Cột đầu coi `08:00` là giờ Việt Nam; cột sau coi `08:00` là UTC rồi đổi thành `15:00` ở Việt Nam. Gắn sai vùng nguồn sẽ đổi ý nghĩa thời điểm dù câu vẫn chạy. Vùng có đổi giờ mùa hè có thể có giờ bị lặp hoặc không tồn tại, được xử lý theo quy tắc múi giờ; vì vậy giữ UTC hoặc độ lệch nguồn và tên vùng khi nghiệp vụ cần truy vết, không chỉ lưu chữ giờ địa phương.
+
+Nguồn: [AT TIME ZONE](https://learn.microsoft.com/en-us/sql/t-sql/queries/at-time-zone-transact-sql?view=sql-server-ver17).
+
+## WHERE
+
+**Khoảng nửa mở** gồm đầu kỳ và không gồm đầu kỳ tiếp theo: `moc >= dauKy AND moc < dauKySau`. Cách này giữ mọi thời điểm trong kỳ mà không phải đoán chữ số giây cuối cùng. Ví dụ `VALUES` dựng các dòng tạm trong câu đọc; `v(Moc)` đặt bí danh bảng `v` và tên cột `Moc`, không tạo bảng lưu.
+
+<Sql code={"SELECT CONVERT(varchar(33), Moc, 126) AS [MocTrongThang9]\nFROM (VALUES\n\t(CAST('2026-09-30T23:59:59.9999999' AS datetime2(7))),\n\t(CAST('2026-10-01T00:00:00' AS datetime2(7)))\n) AS v(Moc)\nWHERE Moc >= DATEFROMPARTS(2026, 9, 1)\n\tAND Moc < DATEFROMPARTS(2026, 10, 1);"} />
+
+<Result columns={['MocTrongThang9']} rows={[
+  ['2026-09-30T23:59:59.9999999'],
+]} />
+
+`BETWEEN` gồm cả hai đầu; dùng ngày `2026-09-30` làm cận cuối trên cột có giờ chỉ tới đầu ngày ấy, dễ bỏ phần còn lại của ngày. Giữ cột `Moc` nguyên trong điều kiện và tính mốc biên ở phía giá trị còn giúp database có cơ hội dùng chỉ mục để tìm phạm vi; không phải cam kết mọi truy vấn đều chạy nhanh hơn. Nếu lưu UTC nhưng báo cáo theo ngày Việt Nam, xác định hai biên theo ngày Việt Nam rồi đổi chúng sang UTC để so cùng hệ quy chiếu.
+
+Nguồn: [BETWEEN](https://learn.microsoft.com/en-us/sql/t-sql/language-elements/between-transact-sql?view=sql-server-ver17), [hướng dẫn chỉ mục](https://learn.microsoft.com/en-us/sql/relational-databases/sql-server-index-design-guide?view=sql-server-ver17).
+
+## Tự kiểm tra
+
+<details>
+<summary>Cần nhóm mỗi <code>15</code> phút từ một mốc gốc. Chọn <code>DATETRUNC</code> hay <code>DATE_BUCKET</code>?</summary>
+
+Chọn `DATE_BUCKET(minute,15,moc,goc)`, vì hàm nhận cả độ rộng và mốc gốc. `DATETRUNC(minute,moc)` chỉ đưa về đầu từng phút.
+
+</details>
+
+<details>
+<summary>Qua <code>2025-12-31</code> đến <code>2026-01-01</code>, <code>DATEDIFF(year,...)</code> bằng bao nhiêu; đã đủ một năm chưa?</summary>
+
+Bằng `1`, vì đi qua một ranh giới năm. Chưa đủ một năm tròn; cần so ngày kỷ niệm tạo bằng `DATEADD` với ngày chốt.
+
+</details>
+
+<details>
+<summary>Lọc hết tháng 9 trên cột có giờ bằng <code>{"BETWEEN '20260901' AND '20260930'"}</code> bị thiếu dòng. Sửa cận thế nào?</summary>
+
+Dùng `>= '20260901' AND < '20261001'`. Cận trên là đầu tháng sau và bị loại, nên giữ được cả các thời điểm cuối ngày `30/9` ở mọi độ chính xác phần giây của cột.
+
+</details>

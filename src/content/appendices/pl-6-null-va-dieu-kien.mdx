@@ -1,0 +1,162 @@
+---
+num: "PL.6"
+title: NULL và điều kiện
+shortTitle: NULL, điều kiện
+summary: Tra cách kiểm và thay NULL, phân biệt UNKNOWN với sai, chọn CASE/IIF/CHOOSE và kiểm kiểu của toàn bộ kết quả.
+keywords: ["NULL", UNKNOWN, "TRUE", "FALSE", IS NULL, IS NOT NULL, ISNULL, COALESCE, NULLIF, CASE, IIF, CHOOSE, ba giá trị, chuỗi rỗng, ưu tiên kiểu, điều kiện chồng nhau]
+relatedLessons: ["2.1", "2.3", "2.5", "2.9", "3.1"]
+---
+
+Bài này giúp đọc điều kiện có giá trị thiếu và chọn cách trả nhãn hoặc số thay thế. Bạn cần biết `SELECT`, `AS`, `WHERE` ở các bài 2.1–2.2; **biểu thức** là phần tính ra một giá trị, như `10 + 2` hoặc một `CASE`. Các ví dụ chỉ đọc, có thể chạy trong SSMS; trang bài tập web không nhận mọi cú pháp của Phụ lục.
+
+Với ví dụ trên giá trị cố định, `SELECT` trả giá trị tính được mà không cần `FROM` vì không đọc bảng; `AS` đặt tiêu đề cột kết quả.
+
+`NULL` biểu thị chưa có giá trị; lý do có thể là chưa biết, không áp dụng hoặc chưa nhập, tùy quy ước của cột. Nó khác `0`, chuỗi rỗng `N''` và chữ `N'NULL'`: ba trường hợp sau đều là giá trị đã có. Trong Excel, một ô nhìn trống cũng có thể chứa công thức trả chuỗi rỗng; sang SQL phải kiểm đúng loại giá trị đang lưu.
+
+## Tra nhanh
+
+| Cần làm | Công cụ | Đến phần |
+|---|---|---|
+| Chọn dòng thiếu/đã có giá trị | `IS NULL`, `IS NOT NULL` | [NULL và UNKNOWN](#null-unknown) |
+| Thay `NULL` bằng một giá trị | `ISNULL(a, b)` | [Thay phần thiếu](#isnull-coalesce) |
+| Chọn giá trị đầu tiên khác `NULL` | `COALESCE(a, b, ...)` | [Thay phần thiếu](#isnull-coalesce) |
+| Đổi giá trị đặc biệt thành `NULL` | `NULLIF(a, b)` | [Chuẩn hóa đầu vào](#nullif) |
+| Chọn kết quả theo nhiều điều kiện | `CASE WHEN ... THEN ... END` | [CASE](#case) |
+| Chọn một trong hai giá trị | `IIF(dieuKien, dung, conLai)` | [IIF](#iif) |
+| Chọn theo số thứ tự từ `1` | `CHOOSE(viTri, a, b, ...)` | [CHOOSE](#choose) |
+
+## NULL, UNKNOWN
+
+Điều kiện SQL có ba kết quả: `TRUE` là đúng, `FALSE` là sai, **`UNKNOWN`** là chưa đủ thông tin để kết luận. Phép so sánh `=`, `<>`, `>`… với `NULL`, kể cả `NULL = NULL`, cho `UNKNOWN`. `WHERE` chỉ giữ dòng có kết quả `TRUE`, nên viết `= NULL` không tìm được các dòng thiếu giá trị.
+
+Ví dụ dùng **bảng dẫn xuất**: `VALUES` dựng các dòng tạm trong câu đọc, không tạo bảng lưu; `v(X)` đặt bí danh bảng là `v` và tên cột `X`. `CAST(NULL AS int)` nói rõ đây là giá trị thiếu thuộc kiểu số nguyên.
+
+<Sql code={"SELECT X\nFROM (VALUES (1), (CAST(NULL AS int))) AS v(X)\nWHERE X = NULL;"} />
+
+<Result columns={['X']} rows={[]} />
+
+Kết quả không có dòng vì cả hai phép so sánh đều không cho `TRUE`. Đổi thành `IS NULL` để kiểm chính trạng thái chưa có giá trị; dùng `IS NOT NULL` để kiểm trạng thái đã có:
+
+<Sql code={"SELECT X\nFROM (VALUES (1), (CAST(NULL AS int))) AS v(X)\nWHERE X IS NULL;"} />
+
+<Result columns={['X']} rows={[[null]]} />
+
+`UNKNOWN` cũng tham gia `AND`, `OR`, `NOT`. Khi một phía đã quyết định được toàn bộ điều kiện, kết quả vẫn có thể là đúng hoặc sai:
+
+| Điều kiện | Kết quả |
+|---|---|
+| `TRUE AND UNKNOWN` | `UNKNOWN` |
+| `FALSE AND UNKNOWN` | `FALSE` |
+| `TRUE OR UNKNOWN` | `TRUE` |
+| `FALSE OR UNKNOWN` | `UNKNOWN` |
+| `NOT UNKNOWN` | `UNKNOWN` |
+
+Các dòng trên mô tả logic, không phải cú pháp `SELECT TRUE` để chạy trong T-SQL. Vì `NOT UNKNOWN` vẫn chưa biết, đổi `X = 1` thành `X <> 1` không tự lấy thêm dòng có `NULL`. Muốn lấy cả giá trị khác `1` và phần thiếu, viết rõ `X <> 1 OR X IS NULL`.
+
+Nguồn: [NULL và UNKNOWN](https://learn.microsoft.com/en-us/sql/t-sql/language-elements/null-and-unknown-transact-sql?view=sql-server-ver17).
+
+## ISNULL, COALESCE
+
+`ISNULL(a, b)` trả `a` nếu đã có giá trị, còn thiếu thì trả `b`. `COALESCE(a, b, ...)` trả giá trị đầu tiên khác `NULL` từ trái sang phải; dùng khi có nhiều nguồn dự phòng. Cả hai chỉ tạo giá trị kết quả, không điền vào cột nguồn khi nằm trong `SELECT`.
+
+| Công cụ | Kiểu trả về và giới hạn |
+|---|---|
+| `ISNULL(a, b)` | Thường giữ kiểu **và độ dài của `a`**; `b` phải chuyển được về kiểu đó và có thể bị cắt. Nếu `a` là hằng `NULL` chưa có kiểu, hàm lấy kiểu của `b`. |
+| `COALESCE(a, b, ...)` | Chọn kiểu có ưu tiên cao nhất trong các đối số, không chỉ kiểu của giá trị được chọn. Nếu tất cả đều `NULL`, ít nhất một đối số phải có kiểu rõ. |
+
+<Sql code={"SELECT ISNULL(CAST(NULL AS nvarchar(3)), N'Chưa có') AS [IsNull],\n\tCOALESCE(CAST(NULL AS nvarchar(3)), N'Chưa có') AS [Coalesce],\n\tCOALESCE(N'', N'Dự phòng') AS [ChuoiRong];"} />
+
+<Result columns={['IsNull', 'Coalesce', 'ChuoiRong']} rows={[
+  ['Chư', 'Chưa có', ''],
+]} />
+
+`ISNULL` cắt nhãn xuống ba ký tự của `nvarchar(3)`; sửa bằng cách chọn kiểu đầu vào đủ dài trước khi gọi. `COALESCE` giữ nhãn đầy đủ ở đây vì hai đầu vào đều là Unicode và đầu vào thứ hai dài hơn. Nó vẫn giữ chuỗi rỗng: giá trị ấy khác `NULL`, nên không chọn `Dự phòng`.
+
+Trộn chữ và số có thể gây lỗi chuyển kiểu, vì `int` ưu tiên hơn `nvarchar`: `COALESCE(N'Chưa có', 0)` cố đổi chữ thành số. Muốn cột nhãn thì dùng toàn chuỗi, chẳng hạn `COALESCE(N'Chưa có', N'0')`; muốn cột số thì giữ toàn số. Các quy tắc chuyển kiểu có ở [PL.2](../pl-2-chuyen-doi-kieu-du-lieu/).
+
+`COALESCE` được SQL Server xử lý theo dạng `CASE`, nên biểu thức đầu vào có thể được đánh giá nhiều lần; với truy vấn con hoặc hàm có kết quả thay đổi, không suy rằng chỉ đọc nguồn một lần.
+
+Nguồn: [ISNULL](https://learn.microsoft.com/en-us/sql/t-sql/functions/isnull-transact-sql?view=sql-server-ver17), [COALESCE](https://learn.microsoft.com/en-us/sql/t-sql/language-elements/coalesce-transact-sql?view=sql-server-ver17).
+
+## NULLIF
+
+`NULLIF(a, b)` trả `NULL` khi `a` bằng `b`, còn lại trả `a`; kết quả giữ kiểu của `a`. Dùng để đổi một giá trị đặc biệt thành “không có”, chẳng hạn mẫu số bằng `0`, hoặc chuỗi chỉ có dấu cách nếu quy ước nghiệp vụ coi nó là thiếu.
+
+<Sql code={"SELECT NULLIF(TRIM(N'   '), N'') AS [ChuoiThieu],\n\t10.0 / NULLIF(0, 0) AS [TyLe],\n\tNULLIF(5, 0) AS [GiuSo];"} />
+
+<Result columns={['ChuoiThieu', 'TyLe', 'GiuSo']} rows={[[null, null, 5]]} />
+
+`TRIM` bỏ dấu cách ở hai đầu, rồi `NULLIF` đổi chuỗi rỗng thành `NULL`; tab hoặc dấu cách đặc biệt không tự bị loại, xem [PL.3](../pl-3-ham-xu-ly-chuoi/#trim-ltrim-rtrim). Mẫu số `0` trở thành `NULL`, nên tỷ lệ chưa xác định thay vì gây lỗi chia cho không. Không tự đổi `0` thành thiếu ở mọi cột, vì `0` có thể là giá trị đúng; và không đặt hàm thay đổi theo thời điểm trong `NULLIF` nếu cần bảo đảm một lần đánh giá.
+
+Nguồn: [NULLIF](https://learn.microsoft.com/en-us/sql/t-sql/language-elements/nullif-transact-sql?view=sql-server-ver17).
+
+## CASE
+
+**`CASE` là biểu thức chọn một giá trị**, không phải hàm và không phải lệnh điều khiển việc chạy các câu SQL. Dạng `CASE WHEN dieuKien THEN giaTri ... ELSE giaTri END` dùng được cho điều kiện bất kỳ; dạng `CASE bieuThuc WHEN giaTri THEN ... END` chỉ so bằng. `ELSE` có thể bỏ; khi không có nhánh đúng và không có `ELSE`, kết quả là `NULL`.
+
+<Sql code={"SELECT Diem,\n\tCASE\n\t\tWHEN Diem IS NULL THEN N'Chưa có'\n\t\tWHEN Diem >= 80 THEN N'Tốt'\n\t\tWHEN Diem >= 50 THEN N'Đạt'\n\t\tELSE N'Chưa đạt'\n\tEND AS [XepLoai]\nFROM (VALUES (85), (65), (40), (CAST(NULL AS int))) AS v(Diem)\nORDER BY Diem;"} />
+
+<Result columns={['Diem', 'XepLoai']} rows={[
+  [null, 'Chưa có'], [40, 'Chưa đạt'], [65, 'Đạt'], [85, 'Tốt'],
+]} />
+
+`CASE` chọn **nhánh `WHEN` đúng đầu tiên**. Điểm `85` đạt cả hai điều kiện số nhưng nhận `Tốt` vì nhánh `>= 80` đứng trước. Đổi hai nhánh ấy cho nhau thì `85` nhận `Đạt`, nhánh `Tốt` không còn cơ hội được chọn. Điều kiện có `UNKNOWN` không được coi là đúng, nên nhánh thiếu điểm được kiểm riêng trước các nhãn điểm.
+
+Toàn bộ cột kết quả có một kiểu chung, lấy theo ưu tiên kiểu của mọi nhánh `THEN`/`ELSE`. `CASE WHEN 1 = 1 THEN N'Có' ELSE 0 END` vẫn lỗi chuyển chữ thành số: điều kiện đúng không biến kiểu chung thành chuỗi. Sửa `ELSE N'0'` nếu cần nhãn chữ, hoặc trả số ở tất cả nhánh nếu cần tính toán.
+
+Thứ tự chọn nhánh không bảo đảm mọi phép tính đều được trì hoãn tới nhánh đó. **Hàm tổng hợp** tính một kết quả từ nhiều dòng; `MAX` lấy giá trị lớn nhất. Những phép tính bên trong hàm này có thể được thực hiện trước khi `CASE` chọn nhánh.
+
+Ví dụ, `MAX(1 / X)` vẫn có thể chia cho không khi có dòng `X = 0`, dù một `WHEN` trước đã kiểm trường hợp ấy. Đặt `NULLIF(X,0)` ngay ở mẫu số của phép chia để nó an toàn từ đầu; chi tiết phép chia ở [PL.4](../pl-4-tinh-toan-va-lam-tron/#nullif).
+
+Nguồn: [CASE](https://learn.microsoft.com/en-us/sql/t-sql/language-elements/case-transact-sql?view=sql-server-ver17), [ưu tiên kiểu](https://learn.microsoft.com/en-us/sql/t-sql/data-types/data-type-precedence-transact-sql?view=sql-server-ver17).
+
+## IIF
+
+`IIF(dieuKien, giaTriDung, giaTriConLai)` là cách viết gọn theo `CASE` khi chỉ có hai lựa chọn. Điều kiện `TRUE` lấy giá trị thứ hai; `FALSE` hoặc `UNKNOWN` lấy giá trị thứ ba. Kiểu trả về theo ưu tiên của hai giá trị, nên vẫn cần tránh trộn chữ với số.
+
+<Sql code={"SELECT IIF(10 > 5, N'Đạt', N'Chưa đạt') AS [DieuKienDung],\n\tIIF(CAST(NULL AS int) > 5, N'Đạt', N'Chưa đạt') AS [DieuKienChuaBiet];"} />
+
+<Result columns={['DieuKienDung', 'DieuKienChuaBiet']} rows={[
+  ['Đạt', 'Chưa đạt'],
+]} />
+
+Nhãn `Chưa đạt` ở cột thứ hai gộp cả “sai” và “chưa biết”. Nếu cần phân biệt thiếu điểm với điểm thấp, dùng `CASE` có nhánh `IS NULL` như phần trước. `IIF` kế thừa các giới hạn đánh giá của `CASE`; dùng nhiều `IIF` lồng nhau còn làm thứ tự ưu tiên khó đọc hơn một danh sách `WHEN`.
+
+Nguồn: [IIF](https://learn.microsoft.com/en-us/sql/t-sql/functions/logical-functions-iif-transact-sql?view=sql-server-ver17).
+
+## CHOOSE
+
+`CHOOSE(viTri, giaTri1, giaTri2, ...)` chọn theo chỉ số từ `1`, tiện ánh xạ một danh sách ngắn đã cố định. Chỉ số được chuyển sang `int`; ngoài phạm vi hoặc `NULL` thì trả `NULL`. Kiểu trả về theo ưu tiên của toàn bộ danh sách giá trị.
+
+<Sql code={"SELECT CHOOSE(2, N'Thấp', N'Vừa', N'Cao') AS [TrongPhamVi],\n\tCHOOSE(0, N'Thấp', N'Vừa', N'Cao') AS [NgoaiPhamVi];"} />
+
+<Result columns={['TrongPhamVi', 'NgoaiPhamVi']} rows={[
+  ['Vừa', null],
+]} />
+
+`CHOOSE` không kiểm một tập điều kiện như `CASE`, và không tự biết mã `10`, `20`, `30` tương ứng ba vị trí. Với mã không liên tiếp, dùng `CASE` so bằng; với danh mục có nhiều giá trị hoặc thường đổi, lưu danh mục và kết bảng theo mã thay vì giữ một danh sách dài trong câu SQL.
+
+Nguồn: [CHOOSE](https://learn.microsoft.com/en-us/sql/t-sql/functions/logical-functions-choose-transact-sql?view=sql-server-ver17).
+
+## Tự kiểm tra
+
+<details>
+<summary>Cần chọn hồ sơ thiếu email rồi hiện nhãn. <code>IS NULL</code> và <code>COALESCE</code> làm hai việc gì?</summary>
+
+`IS NULL` trong `WHERE` kiểm trạng thái thiếu và chọn dòng; `COALESCE` trong `SELECT` chọn giá trị để hiện nhãn. Nhãn không được ghi vào cột nguồn chỉ vì câu đọc có `COALESCE`.
+
+</details>
+
+<details>
+<summary><code>{"COALESCE(N'', N'Dự phòng')"}</code> và <code>{"IIF(NULL = 1, N'A', N'B')"}</code> trả gì?</summary>
+
+Câu đầu trả chuỗi rỗng, vì đó là giá trị khác `NULL`. Câu sau trả `B`, vì `NULL = 1` là `UNKNOWN` và `IIF` chọn giá trị còn lại cho cả `FALSE` lẫn `UNKNOWN`.
+
+</details>
+
+<details>
+<summary>Trong ví dụ điểm, đặt nhánh <code>Diem &gt;= 50</code> trước <code>Diem &gt;= 80</code> khiến điểm <code>85</code> nhận <code>Đạt</code>. Sửa thế nào?</summary>
+
+Đưa nhánh `>= 80` lên trước `>= 50`, vì `CASE` lấy nhánh đúng đầu tiên. Giữ nhánh `IS NULL` riêng để phần thiếu không bị gộp vào nhãn điểm thấp.
+
+</details>

@@ -10,6 +10,8 @@ interface Props {
 const { catalog } = Astro.props;
 const nums = catalog.map(e => e.num);
 const current = (path: string) => (isCurrentPage(Astro.url.pathname, path) ? 'page' : undefined);
+const appendixPath = withBase('/phu-luc/');
+const inAppendix = Astro.url.pathname === appendixPath.slice(0, -1) || Astro.url.pathname.startsWith(appendixPath);
 ---
 <header class="topbar">
   <a class="brand" href={withBase('/')}>
@@ -25,6 +27,7 @@ const current = (path: string) => (isCurrentPage(Astro.url.pathname, path) ? 'pa
   <nav class="top-nav" aria-label="Điều hướng chính">
     <button type="button" class="top-btn top-btn-roadmap" data-action="roadmap">Lộ trình</button>
     <a class="top-btn" href={withBase('/')} aria-current={current('/')}>Mindmap</a>
+    <a class="top-btn" href={appendixPath} aria-current={inAppendix ? 'page' : undefined}>Phụ lục</a>
     <a class="top-btn" href={withBase('/gioi-thieu/')} aria-current={current('/gioi-thieu/')}>Giới thiệu</a>
   </nav>
   <TopProgress client:load nums={nums} />

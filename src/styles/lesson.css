@@ -160,6 +160,20 @@
 .prose table:not([class]) { width: 100%; border-collapse: collapse; font-family: var(--font-ui); font-size: 14.5px; line-height: 1.5; background: var(--surface); border: 1px solid var(--rule); }
 .prose table:not([class]) th, .prose table:not([class]) td { padding: 8px 12px; border-top: 1px solid var(--rule); text-align: left; vertical-align: top; }
 .prose table:not([class]) thead th { border-top: 0; background: var(--surface-subtle); font-size: 13px; font-weight: 650; }
+
+/* Appendix table overflow belongs to the table, never the document or lesson shell. */
+.appendix-article span[id] { display: block; scroll-margin-top: calc(var(--topbar) + 24px); }
+.reference-table { max-width: 100%; margin: 1.2em 0; overflow-x: auto; border-radius: var(--radius-s); }
+.reference-table:focus-visible { outline-offset: 3px; }
+.reference-table table { min-width: 540px; }
+.reference-table th, .reference-table td { overflow-wrap: anywhere; }
+.prose .appendix-index { list-style: none; padding: 0; margin: 28px 0 0; }
+.appendix-index li { padding: 20px 0; border-top: 1px solid var(--rule); scroll-margin-top: calc(var(--topbar) + 24px); }
+.appendix-index li > a { display: flex; align-items: baseline; gap: 16px; font-family: var(--font-ui); text-decoration: none; }
+.appendix-index li > a:hover strong { text-decoration: underline; }
+.appendix-index li > a:active { color: var(--accent-hover); }
+.appendix-index-num { flex: none; width: 44px; font-size: 13px; font-weight: 600; color: var(--ink-3); }
+.appendix-index li p { margin: 8px 0 0 60px; font-family: var(--font-ui); font-size: 14px; color: var(--ink-2); line-height: 1.7; }
 /* The editor and result blocks sit inside .prose; keep the inline-code look off them. */
 .prose .sql-code code, .prose .res code { background: none; padding: 0; border-radius: 0; font-size: inherit; }
 

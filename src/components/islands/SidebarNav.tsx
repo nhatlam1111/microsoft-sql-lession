@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import type { NavEntry } from '../../lib/catalog';
+import type { AppendixNavEntry } from '../../lib/appendices';
 import type { LevelDef } from '../../data/curriculum';
 import { iconOf } from '../../lib/progress';
 import { levelSummaries, menuOpenLevel } from '../../lib/roadmap';
-import { lessonUrl } from '../../lib/paths';
+import { appendixUrl, lessonUrl, withBase } from '../../lib/paths';
 import { useProgress } from './use-progress';
 import StatusIcon from './StatusIcon';
 
@@ -12,12 +13,16 @@ interface Props {
   levels: LevelDef[];
   /** The lesson on screen; the mindmap's menu has none. */
   currentNum?: string;
+  appendices?: AppendixNavEntry[];
+  currentAppendixNum?: string;
+  appendixActive?: boolean;
 }
 
-export default function SidebarNav({ catalog, levels, currentNum }: Props) {
+export default function SidebarNav({ catalog, levels, currentNum, appendices = [], currentAppendixNum, appendixActive = false }: Props) {
   const { state } = useProgress(catalog.map(e => e.num));
   const currentLevel = menuOpenLevel(state, catalog, currentNum);
   const [open, setOpen] = useState<Set<number>>(() => new Set([currentLevel]));
+  const [appendixOpen, setAppendixOpen] = useState(appendixActive || Boolean(currentAppendixNum));
   const summaries = levelSummaries(state, catalog, currentLevel);
 
   const toggle = (no: number) => setOpen(prev => {
@@ -59,6 +64,29 @@ export default function SidebarNav({ catalog, levels, currentNum }: Props) {
           </section>
         );
       })}
+      {appendices.length > 0 && (
+        <section className="side-group side-appendices">
+          <button type="button" className={`side-level${appendixActive ? ' is-current' : ''}`}
+            aria-expanded={appendixOpen} aria-controls="side-appendices" onClick={() => setAppendixOpen(value => !value)}>
+            <span className="side-badge">PL</span>
+            <span className="side-name">Phụ lục</span>
+            <span className="side-count">Tra cứu</span>
+          </button>
+          {appendixOpen && (
+            <ol className="side-lessons" id="side-appendices">
+              <li><a href={withBase('/phu-luc/')} aria-current={appendixActive && !currentAppendixNum ? 'page' : undefined}>Mục lục Phụ lục</a></li>
+              {appendices.map(entry => (
+                <li key={entry.num}>
+                  <a href={appendixUrl(entry.slug)} aria-current={entry.num === currentAppendixNum ? 'page' : undefined}>
+                    <span className="side-num">{entry.num}</span>
+                    <span className="side-lesson">{entry.shortTitle}</span>
+                  </a>
+                </li>
+              ))}
+            </ol>
+          )}
+        </section>
+      )}
     </nav>
   );
 }

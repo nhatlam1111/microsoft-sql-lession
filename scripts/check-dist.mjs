@@ -39,6 +39,34 @@ export function findLinkProblems(html, fileExists, base) {
   return [...problems];
 }
 
+/**
+ * Verify fragments in and into the reference chapter, including relative and encoded links.
+ * Missing pages are reported by findLinkProblems; this check owns existing HTML targets.
+ * @param {string} html @param {string} currentPath path relative to dist/
+ * @param {(path: string) => string | null} readHtml @param {string} base
+ * @returns {string[]}
+ */
+export function findAppendixFragmentProblems(html, currentPath, readHtml, base) {
+  const head = base.replace(/\/+$/, '');
+  const currentUrl = `https://built.invalid${head}/${currentPath.replace(/index\.html$/, '')}`;
+  const problems = new Set();
+  for (const [, href] of html.matchAll(/\shref\s*=\s*["']([^"']+)["']/gi)) {
+    if (!href.includes('#') || EXTERNAL.test(href)) continue;
+    let target;
+    try { target = new URL(unescape(href), currentUrl); } catch { continue; }
+    if (!target.hash || !target.pathname.startsWith(`${head}/`)) continue;
+    let path = target.pathname.slice(head.length + 1);
+    let fragment = target.hash.slice(1);
+    try { path = decodeURIComponent(path); fragment = decodeURIComponent(fragment); } catch { /* compare raw values */ }
+    if (!currentPath.startsWith('phu-luc/') && !path.startsWith('phu-luc/')) continue;
+    const targetHtml = candidates(path).map(readHtml).find(value => value !== null);
+    if (targetHtml === undefined) continue;
+    const ids = [...targetHtml.matchAll(/\s(?:id|name)\s*=\s*["']([^"']+)["']/gi)].map(match => unescape(match[1]));
+    if (!ids.includes(fragment)) problems.add(`không tồn tại fragment: ${href}`);
+  }
+  return [...problems];
+}
+
 // Built text is read back the way it was written: island props are HTML-escaped (sometimes twice),
 // bundles escape quotes and line breaks. Then spacing is squeezed so line breaks never hide a match.
 const ENTITIES = { '&#39;': "'", '&quot;': '"', '&lt;': '<', '&gt;': '>', '&amp;': '&' };
@@ -100,12 +128,14 @@ function main() {
     errors.push('dist/HRM_Demo.sql khác database/HRM_Demo.sql');
   }
   const isFile = p => existsSync(join(dist, p)) && statSync(join(dist, p)).isFile();
+  const readHtml = p => p.endsWith('.html') && isFile(p) ? readFileSync(join(dist, p), 'utf8') : null;
   const pages = existsSync(dist) ? walk(dist).filter(f => f.endsWith('.html')) : [];
   let links = 0;
   for (const page of pages) {
     const html = readFileSync(page, 'utf8');
     links += [...html.matchAll(ATTR)].length;
     for (const p of findLinkProblems(html, isFile, BASE)) errors.push(`${relative(dist, page).split(sep).join('/')}: ${p}`);
+    for (const p of findAppendixFragmentProblems(html, relative(dist, page).split(sep).join('/'), readHtml, BASE)) errors.push(`${relative(dist, page).split(sep).join('/')}: ${p}`);
     for (const code of findCodeTypographyProblems(html)) errors.push(`${relative(dist, page).split(sep).join('/')}: dấu nháy cong trong code tự kiểm tra: ${code}`);
   }
   const lessonDir = join('src', 'content', 'lessons');
@@ -115,6 +145,15 @@ function main() {
     ? readdirSync(baiDir).filter(d => existsSync(join(baiDir, d, 'index.html'))).length
     : 0;
   if (lessonPages !== lessons) errors.push(`có ${lessonPages} trang bài nhưng ${lessons} file bài`);
+
+  const appendixDir = join('src', 'content', 'appendices');
+  const appendices = existsSync(appendixDir) ? readdirSync(appendixDir).filter(file => file.endsWith('.mdx')) : [];
+  if (!isFile('phu-luc/index.html')) errors.push('thiếu dist/phu-luc/index.html');
+  if (appendices.length !== 6) errors.push(`có ${appendices.length} file phụ lục nhưng cần 6`);
+  for (const file of appendices) {
+    const path = `phu-luc/${file.replace(/\.mdx$/, '')}/index.html`;
+    if (!isFile(path)) errors.push(`thiếu dist/${path}`);
+  }
 
   const exerciseDir = join('src', 'content', 'exercises');
   const exerciseFiles = existsSync(exerciseDir)

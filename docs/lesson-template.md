@@ -210,6 +210,57 @@ Một câu.
 
 Bản tóm tắt không có khối `Sql`, `Result`, `Messages` hay `RunFlow`.
 
+## Biến thể phụ lục tra cứu
+
+Theo mục 2.7 của quy ước, đặt MDX trong `src/content/appendices/`, dùng schema riêng. Không thêm `level`, `area`, `kind`, `minutes` hoặc `noExercises` của bài chính.
+
+````mdx
+---
+num: "PL.3"
+title: Hàm xử lý chuỗi
+shortTitle: Hàm xử lý chuỗi
+summary: Tra theo việc cần làm, đọc cú pháp và hiểu kết quả trước khi dùng hàm.
+keywords: [LEN, DATALENGTH, CONCAT, STRING_SPLIT]
+relatedLessons: ["2.1", "2.7"]
+---
+
+Đọc cách tra và tiền đề tối thiểu ở đây; giải thích SELECT trên hằng số,
+AS hoặc VALUES trước khi ví dụ cần tới chúng. Nơi chạy là SSMS có quyền
+đọc database, không mặc định trang bài tập hỗ trợ mọi ví dụ.
+
+## Tra nhanh
+
+| Việc cần làm | Tên/cú pháp ngắn | Chi tiết |
+|---|---|---|
+| Mục đích cụ thể | `HAM(gia_tri)` | [Tên phần](#ten-phan) |
+
+## Tên phần
+
+Dùng khi nào, cách đọc tham số, đầu vào và kiểu trả về. Đặt ví dụ nhỏ
+cạnh lời giải; kết quả đã kiểm được giải thích vì sao. Giới hạn và cách
+sửa lỗi phổ biến ở ngay đây. Không ẩn lời giảng cốt lõi trong details.
+
+<Sql code={"SELECT LEN(N'Mai') AS SoKyTu;"} />
+
+<Result columns={['SoKyTu']} rows={[[3]]} />
+
+## Tự kiểm tra
+
+<details>
+<summary>Chọn cách dùng cho một việc đã được giảng?</summary>
+
+Đáp án và lý do ngắn. Thêm hai câu dự đoán kết quả và sửa cách dùng;
+không dạy khái niệm mới trong đáp án.
+
+</details>
+
+## Nguồn tham khảo
+
+Liên kết trực tiếp tài liệu Microsoft theo nhóm kiến thức.
+````
+
+Đặt h2/h3 theo tác vụ để đọc độc lập; PL.1 được dùng nhiều bảng nhỏ theo nhóm kiểu, ví dụ đại diện các nhóm thường dùng. Ghi đủ đơn vị/miền giá trị/dung lượng và tách payload với overhead. PL.2 sở hữu quy tắc chuyển kiểu chung; các bài hàm giữ cảnh báo cần thiết và dẫn về đó thay vì chép lại toàn bộ. SQL trong chuỗi MDX dùng `\n` và `\t` ở điểm xuống dòng/thụt lề như mục 2.4. Với tự kiểm tra, để câu SQL của đề trước `details`, hoặc đưa biểu thức ngắn vào `summary`; đóng đáp án vẫn phải đọc đủ đề để tự trả lời.
+
 ## Các khối dùng được
 
 Dùng thẳng trong MDX, không cần import.

@@ -21,13 +21,15 @@ import { AREAS, LEVELS } from '../data/curriculum';
 import { loadCatalog } from '../lib/load-catalog';
 import { navEntries } from '../lib/catalog';
 import { withBase } from '../lib/paths';
+import { loadAppendices } from '../lib/load-appendices';
+import { createSearchItems } from '../lib/search';
 
 interface Props {
   title: string;
   wide?: boolean;
 }
 const { title, wide = false } = Astro.props;
-const catalog = await loadCatalog();
+const [catalog, appendices] = await Promise.all([loadCatalog(), loadAppendices()]);
 const pageTitle = title === 'SQL Server' ? title : `${title} · SQL Server`;
 ---
 <!doctype html>
@@ -43,6 +45,6 @@ const pageTitle = title === 'SQL Server' ? title : `${title} · SQL Server`;
     <NarrowNotice />
     <slot />
     <RoadmapPopup client:only="react" catalog={navEntries(catalog)} levels={LEVELS} />
-    <SearchDialog client:only="react" catalog={catalog} areas={AREAS} levels={LEVELS} />
+    <SearchDialog client:only="react" items={createSearchItems(catalog, appendices, AREAS)} />
   </body>
 </html>

@@ -1,0 +1,462 @@
+[
+  {
+    "name": "pl-1-chi-tiet-kieu-du-lieu.mdx",
+    "sha256": "ceebb4a37634b422d7d93788011142e0bf0cf752c970ec55b193776ae317cec8",
+    "examples": [
+      {
+        "index": 1,
+        "query": "SELECT CAST(12345.678 AS decimal(10,2)) AS [SoTien],\n\tCAST(12345.678 AS int) AS [SoNguyen];",
+        "caseIds": [
+          "pl1-numeric"
+        ],
+        "resultCompared": true
+      },
+      {
+        "index": 2,
+        "query": "SELECT CONVERT(varchar(27), CAST('2026-10-31T23:59:59.999' AS datetime), 121) AS [Datetime],\n\tCONVERT(varchar(27), CAST('2026-10-31T23:59:59.999' AS datetime2(3)), 121) AS [Datetime2];",
+        "caseIds": [
+          "pl1-datetime"
+        ],
+        "resultCompared": true
+      },
+      {
+        "index": 3,
+        "query": "SELECT DATALENGTH(CAST('NV001' AS char(8))) AS [ByteChar],\n\tDATALENGTH(CAST('NV001' AS varchar(8))) AS [ByteVarchar],\n\tLEN(CAST('NV001' AS char(8))) AS [SoKyTu];",
+        "caseIds": [
+          "pl1-fixed-variable"
+        ],
+        "resultCompared": true
+      },
+      {
+        "index": 4,
+        "query": "SELECT LEN(N'Hạnh') AS [SoKyTu],\n\tDATALENGTH(N'Hạnh') AS [SoByte],\n\tCAST(N'Hạnh' AS nvarchar(3)) AS [BiCat];",
+        "caseIds": [
+          "pl1-unicode"
+        ],
+        "resultCompared": true
+      },
+      {
+        "index": 5,
+        "query": "SELECT CAST(12.345 AS decimal(5,2)) AS [GiaTri];",
+        "caseIds": [
+          "pl1-self-scale"
+        ],
+        "resultCompared": false
+      },
+      {
+        "index": 6,
+        "query": "SELECT CAST('00123' AS varchar(5)) AS [MaChu],\n\tCAST('00123' AS int) AS [MaSo];",
+        "caseIds": [
+          "pl1-self-code"
+        ],
+        "resultCompared": false
+      }
+    ]
+  },
+  {
+    "name": "pl-2-chuyen-doi-kieu-du-lieu.mdx",
+    "sha256": "fe02f620040e96f485437b4f5bfcb255df4c093e598a6f9a3def5ca09773bcbf",
+    "examples": [
+      {
+        "index": 1,
+        "query": "SELECT 100 + '20' AS [CongSo],\n\tCAST(100 AS varchar(3)) + '20' AS [NoiChu];",
+        "caseIds": [
+          "pl2-implicit"
+        ],
+        "resultCompared": true
+      },
+      {
+        "index": 2,
+        "query": "SELECT CAST('123.456' AS decimal(8,2)) AS [SoTien],\n\tTRY_CAST(N'chưa rõ' AS decimal(8,2)) AS [KhongDoiDuoc],\n\tTRY_CAST(NULL AS decimal(8,2)) AS [NguonNull];",
+        "caseIds": [
+          "pl2-cast-try"
+        ],
+        "resultCompared": true
+      },
+      {
+        "index": 3,
+        "query": "SELECT CONVERT(char(10), CONVERT(date, '01/02/2026', 103), 23) AS [Ngay],\n\tCONVERT(char(10), TRY_CONVERT(date, '31/02/2026', 103), 23) AS [NgaySai];",
+        "caseIds": [
+          "pl2-date-style"
+        ],
+        "resultCompared": true
+      },
+      {
+        "index": 4,
+        "query": "SELECT PARSE(N'1.234,56' AS decimal(10,2) USING 'vi-VN') AS [SoTien],\n\tCONVERT(char(10), PARSE(N'31/10/2026' AS date USING 'vi-VN'), 23) AS [Ngay],\n\tTRY_PARSE(N'không rõ' AS decimal(10,2) USING 'vi-VN') AS [SoSai];",
+        "caseIds": [
+          "pl2-parse-culture"
+        ],
+        "resultCompared": true
+      },
+      {
+        "index": 5,
+        "query": "SELECT CAST(N'NV001' AS nvarchar(3)) AS [MaBiCat],\n\tCAST(12.345 AS decimal(5,2)) AS [LamTron],\n\tTRY_CAST(1000 AS decimal(5,2)) AS [Tran];",
+        "caseIds": [
+          "pl2-loss"
+        ],
+        "resultCompared": true
+      },
+      {
+        "index": 6,
+        "query": "SELECT CAST(5 / 2 AS decimal(5,2)) AS [DoiSau],\n\tCAST(5 AS decimal(5,2)) / 2 AS [DoiTruoc];",
+        "caseIds": [
+          "pl2-divide"
+        ],
+        "resultCompared": true
+      },
+      {
+        "index": 7,
+        "query": "SELECT TRY_CAST(4 AS xml) AS [GiaTri];",
+        "caseIds": [
+          "pl2-try-forbidden"
+        ],
+        "resultCompared": false
+      },
+      {
+        "index": 8,
+        "query": "SELECT TRY_CAST(N'123.456' AS decimal(5,2)) AS [A],\n\tTRY_CAST(N'x' AS decimal(5,2)) AS [B];",
+        "caseIds": [
+          "pl2-self-try"
+        ],
+        "resultCompared": false
+      },
+      {
+        "index": 9,
+        "query": "SELECT N'NV' + 1 AS [Ma];",
+        "caseIds": [
+          "pl2-self-error"
+        ],
+        "resultCompared": false
+      },
+      {
+        "index": 10,
+        "query": "SELECT N'NV' + CAST(1 AS nvarchar(10)) AS [Ma];",
+        "caseIds": [
+          "pl2-self-fix"
+        ],
+        "resultCompared": false
+      }
+    ]
+  },
+  {
+    "name": "pl-3-ham-xu-ly-chuoi.mdx",
+    "sha256": "bffa6a611806cad64355e21247a1bd28dbc32fe9be6c5597e63e12ffb8d5f56b",
+    "examples": [
+      {
+        "index": 1,
+        "query": "SELECT LEN(N' An ') AS [SoKyTu],\n\tDATALENGTH(N' An ') AS [SoByte],\n\tLEN(TRIM(N' An ')) AS [SauTrim];",
+        "caseIds": [
+          "pl-3-source-1"
+        ],
+        "resultCompared": true
+      },
+      {
+        "index": 2,
+        "query": "SELECT N'[' + TRIM(N'  An  Bình  ') + N']' AS [HaiDau],\n\tN'[' + LTRIM(N'  An  ') + N']' AS [Dau],\n\tN'[' + RTRIM(N'  An  ') + N']' AS [Cuoi],\n\tTRIM(N'.' FROM N'..An..') AS [BoDauCham];",
+        "caseIds": [
+          "pl-3-source-2"
+        ],
+        "resultCompared": true
+      },
+      {
+        "index": 3,
+        "query": "SELECT LEFT(N'NV047', 2) AS [Dau],\n\tRIGHT(N'NV047', 3) AS [Cuoi],\n\tSUBSTRING(N'NV047', 3, 2) AS [Giua],\n\tSUBSTRING(N'NV047', 3) AS [DenCuoi];",
+        "caseIds": [
+          "pl-3-source-3"
+        ],
+        "resultCompared": true
+      },
+      {
+        "index": 4,
+        "query": "SELECT CHARINDEX(N'@', N'an@example.com') AS [ViTri],\n\tCHARINDEX(N'@', N'khong-co-at') AS [KhongThay],\n\tPATINDEX(N'%[0-9]%', N'NV047') AS [ChuSoDau];",
+        "caseIds": [
+          "pl-3-source-4"
+        ],
+        "resultCompared": true
+      },
+      {
+        "index": 5,
+        "query": "SELECT CHARINDEX(N'a', N'ABC' COLLATE Latin1_General_100_BIN2) AS [ViTri];",
+        "caseIds": [
+          "pl-3-source-5"
+        ],
+        "resultCompared": true
+      },
+      {
+        "index": 6,
+        "query": "SELECT REPLACE(N'09-2026-09', N'-', N'/') AS [ThayTatCa],\n\tSTUFF(N'NV047', 3, 3, N'***') AS [TheoViTri];",
+        "caseIds": [
+          "pl-3-source-6"
+        ],
+        "resultCompared": true
+      },
+      {
+        "index": 7,
+        "query": "SELECT UPPER(N'Hà Nội') AS [Hoa], LOWER(N'Hà Nội') AS [Thuong];",
+        "caseIds": [
+          "pl-3-source-7"
+        ],
+        "resultCompared": true
+      },
+      {
+        "index": 8,
+        "query": "SELECT CONCAT(N'NV', 47, NULL) AS [Noi],\n\tCONCAT_WS(N' - ', N'NV047', NULL, N'Nhân sự') AS [BoNull],\n\tCONCAT_WS(N' - ', N'NV047', N'', N'Nhân sự') AS [GiuRong];",
+        "caseIds": [
+          "pl-3-source-8"
+        ],
+        "resultCompared": true
+      },
+      {
+        "index": 9,
+        "query": "SELECT value AS [GiaTri], ordinal AS [ViTri]\nFROM STRING_SPLIT(N'IT,,KT', N',', 1)\nORDER BY ordinal;",
+        "caseIds": [
+          "pl-3-source-9"
+        ],
+        "resultCompared": true
+      },
+      {
+        "index": 10,
+        "query": "SELECT STRING_AGG(CAST(Ma AS nvarchar(max)), N', ')\n\tWITHIN GROUP (ORDER BY ThuTu) AS [DanhSach]\nFROM (VALUES (2, N'KT'), (1, N'IT'), (3, NULL)) AS v(ThuTu, Ma);",
+        "caseIds": [
+          "pl-3-source-10"
+        ],
+        "resultCompared": true
+      },
+      {
+        "index": 11,
+        "query": "SELECT FORMAT(CAST(1234.5 AS decimal(10, 2)), N'N2', 'vi-VN') AS [HienThi];",
+        "caseIds": [
+          "pl-3-source-11"
+        ],
+        "resultCompared": true
+      }
+    ]
+  },
+  {
+    "name": "pl-4-tinh-toan-va-lam-tron.mdx",
+    "sha256": "bfc5c03704e260c01523b6b705f3a69897c82d88ac7493e63d388c5bba1f0e70",
+    "examples": [
+      {
+        "index": 1,
+        "query": "SELECT 10 + 5 * 2 AS [KhongNgoac],\n\t(10 + 5) * 2 AS [CoNgoac],\n\t5 / 2 AS [ChiaNguyen],\n\t5 % 2 AS [PhanDu];",
+        "caseIds": [
+          "pl-4-source-1"
+        ],
+        "resultCompared": true
+      },
+      {
+        "index": 2,
+        "query": "SELECT CAST(5 / 2 AS decimal(10, 2)) AS [DoiSau],\n\tCAST(5 AS decimal(10, 2)) / 2 AS [DoiTruoc];",
+        "caseIds": [
+          "pl-4-source-2"
+        ],
+        "resultCompared": true
+      },
+      {
+        "index": 3,
+        "query": "SELECT ROUND(12.345, 2) AS [Duong],\n\tROUND(-12.345, 2) AS [Am],\n\tROUND(12.345, 2, 1) AS [CatBo],\n\tROUND(125.00, -1) AS [HangChuc];",
+        "caseIds": [
+          "pl-4-source-3"
+        ],
+        "resultCompared": true
+      },
+      {
+        "index": 4,
+        "query": "SELECT ROUND(CAST(748.58 AS decimal(6, 2)), -3) AS [KetQua];",
+        "caseIds": [
+          "pl-4-source-4"
+        ],
+        "resultCompared": true
+      },
+      {
+        "index": 5,
+        "query": "SELECT CEILING(2.1) AS [LenDuong], FLOOR(2.1) AS [XuongDuong],\n\tCEILING(-2.1) AS [LenAm], FLOOR(-2.1) AS [XuongAm],\n\tROUND(-2.1, 0, 1) AS [CatVeKhong];",
+        "caseIds": [
+          "pl-4-source-5"
+        ],
+        "resultCompared": true
+      },
+      {
+        "index": 6,
+        "query": "SELECT ABS(-12.5) AS [DoLon], POWER(2, 3) AS [LuyThua],\n\tPOWER(2, -1) AS [CoSoNguyen],\n\tPOWER(CAST(2 AS decimal(10, 2)), -1) AS [CoSoThapPhan],\n\t-5 % 2 AS [DuAm];",
+        "caseIds": [
+          "pl-4-source-6"
+        ],
+        "resultCompared": true
+      },
+      {
+        "index": 7,
+        "query": "SELECT 10.0 / NULLIF(0, 0) AS [KhongTinhDuoc],\n\t10.0 / NULLIF(4, 0) AS [TinhDuoc];",
+        "caseIds": [
+          "pl-4-source-7"
+        ],
+        "resultCompared": true
+      },
+      {
+        "index": 8,
+        "query": "SELECT CAST(50000 AS bigint) * 50000 AS [TichLon],\n\tABS(CAST(-2147483648 AS bigint)) AS [DoLon];",
+        "caseIds": [
+          "pl-4-source-8"
+        ],
+        "resultCompared": true
+      },
+      {
+        "index": 9,
+        "query": "SELECT SUM(ROUND(SoTien, 2)) AS [TronTungDong],\n\tROUND(SUM(SoTien), 2) AS [TronTong]\nFROM (VALUES (0.005), (0.005)) AS v(SoTien);",
+        "caseIds": [
+          "pl-4-source-9"
+        ],
+        "resultCompared": true
+      }
+    ]
+  },
+  {
+    "name": "pl-5-ham-ngay-gio.mdx",
+    "sha256": "acc56d00876a44a66cd0c8b06b1ada02c81a10656c3a151cd66a8da05ab7fcfe",
+    "examples": [
+      {
+        "index": 1,
+        "query": "SELECT CONVERT(char(10), DATEFROMPARTS(2026, 10, 21), 23) AS [Ngay];",
+        "caseIds": [
+          "pl-5-source-1"
+        ],
+        "resultCompared": true
+      },
+      {
+        "index": 2,
+        "query": "SELECT YEAR(DATEFROMPARTS(2026, 10, 21)) AS [Nam],\n\tMONTH(DATEFROMPARTS(2026, 10, 21)) AS [Thang],\n\tDAY(DATEFROMPARTS(2026, 10, 21)) AS [Ngay],\n\tDATEPART(quarter, DATEFROMPARTS(2026, 10, 21)) AS [Quy],\n\tDATENAME(month, DATEFROMPARTS(2026, 10, 21)) AS [TenThang];",
+        "caseIds": [
+          "pl-5-source-2"
+        ],
+        "resultCompared": true
+      },
+      {
+        "index": 3,
+        "query": "SELECT CONVERT(char(10), DATEADD(day, 7, DATEFROMPARTS(2026, 10, 21)), 23) AS [Sau7Ngay],\n\tCONVERT(char(10), DATEADD(month, 1, DATEFROMPARTS(2026, 1, 31)), 23) AS [Sau1Thang];",
+        "caseIds": [
+          "pl-5-source-3"
+        ],
+        "resultCompared": true
+      },
+      {
+        "index": 4,
+        "query": "SELECT DATEDIFF(year, DATEFROMPARTS(2025, 12, 31), DATEFROMPARTS(2026, 1, 1)) AS [RanhGioiNam],\n\tDATEDIFF(day, DATEFROMPARTS(2025, 12, 31), DATEFROMPARTS(2026, 1, 1)) AS [RanhGioiNgay],\n\tDATEDIFF_BIG(millisecond, DATEFROMPARTS(2026, 1, 1), DATEFROMPARTS(2027, 1, 1)) AS [MiliGiay];",
+        "caseIds": [
+          "pl-5-source-4"
+        ],
+        "resultCompared": true
+      },
+      {
+        "index": 5,
+        "query": "SELECT CONVERT(char(10), EOMONTH(DATEFROMPARTS(2026, 1, 15)), 23) AS [ThangNay],\n\tCONVERT(char(10), EOMONTH(DATEFROMPARTS(2026, 1, 15), 1), 23) AS [ThangSau];",
+        "caseIds": [
+          "pl-5-source-5"
+        ],
+        "resultCompared": true
+      },
+      {
+        "index": 6,
+        "query": "SELECT CONVERT(varchar(33), DATETRUNC(month, CAST('2026-10-21T14:35:42' AS datetime2(0))), 126) AS [DauThang],\n\tCONVERT(varchar(33), DATETRUNC(hour, CAST('2026-10-21T14:35:42' AS datetime2(0))), 126) AS [DauGio];",
+        "caseIds": [
+          "pl-5-source-6"
+        ],
+        "resultCompared": true
+      },
+      {
+        "index": 7,
+        "query": "SELECT CONVERT(varchar(33),\n\tDATE_BUCKET(minute, 15, CAST('2026-10-21T10:17:00' AS datetime2(0)),\n\t\tCAST('2026-10-21T00:00:00' AS datetime2(0))), 126) AS [DauKhoang];",
+        "caseIds": [
+          "pl-5-source-7"
+        ],
+        "resultCompared": true
+      },
+      {
+        "index": 8,
+        "query": "SELECT SQL_VARIANT_PROPERTY(GETDATE(), 'BaseType') AS [GetDate],\n\tSQL_VARIANT_PROPERTY(CURRENT_TIMESTAMP, 'BaseType') AS [CurrentTimestamp],\n\tSQL_VARIANT_PROPERTY(SYSDATETIME(), 'BaseType') AS [SysDateTime],\n\tSQL_VARIANT_PROPERTY(SYSUTCDATETIME(), 'BaseType') AS [Utc],\n\tSQL_VARIANT_PROPERTY(SYSDATETIMEOFFSET(), 'BaseType') AS [CoDoLech];",
+        "caseIds": [
+          "pl-5-source-8"
+        ],
+        "resultCompared": true
+      },
+      {
+        "index": 9,
+        "query": "SELECT CONVERT(varchar(40),\n\tCAST('2026-10-21T08:00:00' AS datetime2(0))\n\t\tAT TIME ZONE 'SE Asia Standard Time', 126) AS [GanGioVietNam],\n\tCONVERT(varchar(40),\n\tCAST('2026-10-21T08:00:00' AS datetime2(0))\n\t\tAT TIME ZONE 'UTC' AT TIME ZONE 'SE Asia Standard Time', 126) AS [TuUtcSangVietNam];",
+        "caseIds": [
+          "pl-5-source-9"
+        ],
+        "resultCompared": true
+      },
+      {
+        "index": 10,
+        "query": "SELECT CONVERT(varchar(33), Moc, 126) AS [MocTrongThang9]\nFROM (VALUES\n\t(CAST('2026-09-30T23:59:59.9999999' AS datetime2(7))),\n\t(CAST('2026-10-01T00:00:00' AS datetime2(7)))\n) AS v(Moc)\nWHERE Moc >= DATEFROMPARTS(2026, 9, 1)\n\tAND Moc < DATEFROMPARTS(2026, 10, 1);",
+        "caseIds": [
+          "pl-5-source-10"
+        ],
+        "resultCompared": true
+      }
+    ]
+  },
+  {
+    "name": "pl-6-null-va-dieu-kien.mdx",
+    "sha256": "a56ac93b7fb609f15fdd17034496c18e110ce2984c2a8212207f8385162ffda6",
+    "examples": [
+      {
+        "index": 1,
+        "query": "SELECT X\nFROM (VALUES (1), (CAST(NULL AS int))) AS v(X)\nWHERE X = NULL;",
+        "caseIds": [
+          "pl-6-source-1"
+        ],
+        "resultCompared": true
+      },
+      {
+        "index": 2,
+        "query": "SELECT X\nFROM (VALUES (1), (CAST(NULL AS int))) AS v(X)\nWHERE X IS NULL;",
+        "caseIds": [
+          "pl-6-source-2"
+        ],
+        "resultCompared": true
+      },
+      {
+        "index": 3,
+        "query": "SELECT ISNULL(CAST(NULL AS nvarchar(3)), N'Chưa có') AS [IsNull],\n\tCOALESCE(CAST(NULL AS nvarchar(3)), N'Chưa có') AS [Coalesce],\n\tCOALESCE(N'', N'Dự phòng') AS [ChuoiRong];",
+        "caseIds": [
+          "pl-6-source-3"
+        ],
+        "resultCompared": true
+      },
+      {
+        "index": 4,
+        "query": "SELECT NULLIF(TRIM(N'   '), N'') AS [ChuoiThieu],\n\t10.0 / NULLIF(0, 0) AS [TyLe],\n\tNULLIF(5, 0) AS [GiuSo];",
+        "caseIds": [
+          "pl-6-source-4"
+        ],
+        "resultCompared": true
+      },
+      {
+        "index": 5,
+        "query": "SELECT Diem,\n\tCASE\n\t\tWHEN Diem IS NULL THEN N'Chưa có'\n\t\tWHEN Diem >= 80 THEN N'Tốt'\n\t\tWHEN Diem >= 50 THEN N'Đạt'\n\t\tELSE N'Chưa đạt'\n\tEND AS [XepLoai]\nFROM (VALUES (85), (65), (40), (CAST(NULL AS int))) AS v(Diem)\nORDER BY Diem;",
+        "caseIds": [
+          "pl-6-source-5"
+        ],
+        "resultCompared": true
+      },
+      {
+        "index": 6,
+        "query": "SELECT IIF(10 > 5, N'Đạt', N'Chưa đạt') AS [DieuKienDung],\n\tIIF(CAST(NULL AS int) > 5, N'Đạt', N'Chưa đạt') AS [DieuKienChuaBiet];",
+        "caseIds": [
+          "pl-6-source-6"
+        ],
+        "resultCompared": true
+      },
+      {
+        "index": 7,
+        "query": "SELECT CHOOSE(2, N'Thấp', N'Vừa', N'Cao') AS [TrongPhamVi],\n\tCHOOSE(0, N'Thấp', N'Vừa', N'Cao') AS [NgoaiPhamVi];",
+        "caseIds": [
+          "pl-6-source-7"
+        ],
+        "resultCompared": true
+      }
+    ]
+  }
+]

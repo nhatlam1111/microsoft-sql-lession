@@ -10,6 +10,11 @@ export function lessonUrl(slug: string, base?: string): string {
   return withBase(`bai/${slug}/`, base);
 }
 
+/** URL of a reference article, outside the numbered learning path. */
+export function appendixUrl(slug: string, base?: string): string {
+  return withBase(`phu-luc/${slug}/`, base);
+}
+
 /** True when `pathname` is the site page at `path`, ignoring a trailing slash. */
 export function isCurrentPage(pathname: string, path: string, base?: string): boolean {
   const trim = (p: string) => p.replace(/\/+$/, '');

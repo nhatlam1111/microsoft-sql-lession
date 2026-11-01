@@ -1,8 +1,22 @@
 import { it, expect } from 'vitest';
-import { findLinkProblems, findAnswerLeaks, missingExerciseLinks, findCodeTypographyProblems } from '../scripts/check-dist.mjs';
+import { findLinkProblems, findAnswerLeaks, missingExerciseLinks, findCodeTypographyProblems, findAppendixFragmentProblems } from '../scripts/check-dist.mjs';
 
 const BASE = '/microsoft-sql-lession';
 const exists = (p: string) => p === 'bai/1-1-x/index.html' || p === 'HRM_Demo.sql';
+
+it('checks local, relative and encoded reference fragments while leaving unrelated old pages alone', () => {
+  const pages: Record<string, string> = {
+    'phu-luc/pl-1/index.html': '<h2 id="kiểu-dữ-liệu">Kiểu</h2>',
+    'phu-luc/pl-2/index.html': '<h2 id="convert">CONVERT</h2>',
+  };
+  const readHtml = (path: string) => pages[path] ?? null;
+  const html = '<a href="#ki%E1%BB%83u-d%E1%BB%AF-li%E1%BB%87u">x</a><a href="../pl-2/#convert">y</a>'
+    + '<a href="#missing">bad</a><a href="https://learn.microsoft.com/x#missing">external</a>';
+  expect(findAppendixFragmentProblems(html, 'phu-luc/pl-1/index.html', readHtml, BASE)).toEqual(['không tồn tại fragment: #missing']);
+  expect(findAppendixFragmentProblems('<a href="/microsoft-sql-lession/phu-luc/pl-2/#absent">x</a>', 'bai/2-1/index.html', readHtml, BASE))
+    .toEqual(['không tồn tại fragment: /microsoft-sql-lession/phu-luc/pl-2/#absent']);
+  expect(findAppendixFragmentProblems('<a href="#old">x</a>', 'bai/1-1-x/index.html', readHtml, BASE)).toEqual([]);
+});
 
 it('rejects typographic SQL quotes in self-check code, while allowing prose quotes', () => {
   expect(findCodeTypographyProblems('<summary>Tìm “Hà” bằng <code>LIKE N’%Hà%’</code>?</summary>'))
