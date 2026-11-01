@@ -11,4 +11,6 @@ Nguồn quyết định: [spec](../specs/2026-11-01-foundation-presentation-desi
 
 ## Trạng thái
 
-Đang triển khai song song metadata, nội dung và state. Chưa có kết quả kiểm hoặc review; ghi kết quả thực tế sau mỗi vòng sửa.
+Đã triển khai collection, điều hướng/tìm kiếm, 20 slide, hai cửa sổ và state/URL. Bản đầu commit `081a5a3` build được 139 trang. Review nội dung độc lập đã đọc đủ source/HTML, không có finding cần sửa; báo cáo tại `docs/reviews/2026-11-01-foundation-presentation/content-review.md`.
+
+Vòng tự kiểm giao diện: rút câu dẫn slide 19, giảm khoảng cách giữa câu hỏi và lời giải để không tràn canvas; giữ nguyên cỡ chữ. Đã xem 24 trạng thái (20 slide và 4 đáp án) ở viewport thực 1280×800, không tràn sau sửa. Kiểm hai cửa sổ đã có bằng chứng mở muộn, tải lại, tự xem/theo lại cùng revision. SQL đối chiếu 12/12 SELECT-only đạt, không thay đổi database. Đang hoàn thiện kiểm responsive/fallback và review tích hợp; chưa push.

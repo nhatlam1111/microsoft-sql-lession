@@ -27,7 +27,7 @@
 .projection-lead { font-size: 38px; line-height: 1.4; max-width: 28em; }
 .projection-keyline { border-left: 5px solid var(--lv1); padding: 12px 0 12px 24px; margin-top: 24px !important; }
 .projection-caption { font-size: 24px; color: var(--ink-2); margin-top: 16px !important; }
-.projection-question { font-size: 34px; line-height: 1.5; }
+.projection-question { font-size: 34px; line-height: 1.5; margin-bottom: 12px !important; }
 .projection-path { display: flex; align-items: center; gap: 20px; font-size: 30px; line-height: 1.6; }
 .projection-path > div { flex: 1; padding: 20px 0; border-top: 2px solid var(--accent); }
 .projection-path > div > strong, .projection-path > div > span { display: block; }
@@ -39,6 +39,7 @@
 .projection-rules { display: grid; gap: 18px; }
 .projection-definition { border-left: 3px solid var(--rule-strong); padding-left: 20px; }
 .projection-body figure { margin: 0; }
+.projection-body > .projection-table + p:not([class]) { margin-top: 24px; }
 .projection-body figcaption { font-size: 24px; margin-top: 12px; color: var(--ink-2); }
 .projection-body table { width: 100%; border-collapse: collapse; font-size: 28px; text-align: left; }
 .projection-body th, .projection-body td { padding: 12px 16px; border-bottom: 1px solid var(--rule); vertical-align: top; }
@@ -47,12 +48,12 @@
 .projection-body mark { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
 .projection-body td.is-highlighted, .projection-body .projection-highlight { background: var(--accent-soft); }
 .projection-body img { display: block; width: 100%; max-height: 350px; object-fit: contain; }
-.projection-body details[data-answer] { border-top: 1px solid var(--rule); margin-top: 24px; padding-top: 16px; }
+.projection-body details[data-answer] { border-top: 1px solid var(--rule); margin-top: 12px; padding-top: 16px; }
 .projection-body details[data-answer] summary { cursor: pointer; font-size: 24px; color: var(--accent); }
 .projection-body details[data-answer] summary:hover { color: var(--accent-hover); }
 .projection-body details[data-answer] > :last-child { margin-bottom: 0; }
-.projection-body details[data-answer][open] summary { margin-bottom: 12px; }
-.projection-body details[data-answer] p { font-size: 30px; margin-bottom: 12px; }
+.projection-body details[data-answer][open] summary { margin-bottom: 6px; }
+.projection-body details[data-answer] p { font-size: 30px; margin-bottom: 8px; }
 [data-enhanced-controls], .presentation-message { display: none; }
 .presentation-notes-panel { min-width: 0; }
 .presentation-outline { margin: 16px 32px 0; padding: 16px 0; border-top: 1px solid var(--rule); }
