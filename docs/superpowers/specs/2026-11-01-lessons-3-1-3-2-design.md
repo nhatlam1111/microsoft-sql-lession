@@ -1,6 +1,6 @@
 # Làm lại bài 3.1 và 3.2 theo mạch một câu lệnh
 
-Ngày: 01/11/2026. Trạng thái: đã qua builder check, chờ người dùng duyệt thiết kế; chưa sửa bài.
+Ngày: 01/11/2026. Trạng thái: người dùng đã duyệt thiết kế trong chat; đang triển khai theo [kế hoạch](../plans/2026-11-01-lessons-3-1-3-2.md).
 
 Nguồn khảo sát: `main` tại `a67c37a4872daaee7711dbab8bb794fbb8a1f681`. Quy ước và template hiện hành chi phối; spec 23/10 cho 3.1–3.3 chỉ là lịch sử.
 
@@ -13,7 +13,7 @@ Người làm khóa học đã chốt **giữ lại hai tình huống hiện có
 - **3.1:** chị Hạnh tổng hợp đơn nghỉ đã duyệt, bắt đầu trong tháng 9/2026: số đơn, tổng ngày, bình quân làm tròn hai số lẻ, ít nhất và nhiều nhất. Cộng toàn bộ SoNgay trên đơn đạt điều kiện, không phân bổ ngày thực nghỉ theo tháng.
 - **3.2:** chị Hạnh đếm hồ sơ đang làm theo MaPB hiện lưu, xếp số lượng giảm dần rồi mã tăng dần. Phạm vi và kết quả này tiếp tục làm nền cho 3.3.
 
-Các quyết định còn lại dưới đây là đề xuất của tác giả, chờ duyệt cùng thiết kế.
+Các quyết định còn lại dưới đây là đề xuất của tác giả, đã được duyệt cùng thiết kế.
 
 ## Các cách đã cân nhắc
 
@@ -123,5 +123,5 @@ Nguồn kỹ thuật đã đối chiếu khi thiết kế: [COUNT](https://learn
 - [x] Đọc quy ước/template, hồ sơ công ty, 2.1–2.9 và nguồn/bài tập/test của 3.1–3.2; kiểm điểm nối 3.3.
 - [x] Người dùng chốt giữ hai tình huống; viết bản thiết kế.
 - [x] Builder check bằng agent mới, ngữ cảnh mới, kế thừa model phiên, không đổi model/effort. [Report gốc](../../reviews/2026-11-01-design-3-1-3-2/builder-check.md): không còn câu hỏi quan trọng cần trả lời; không có mục cần sửa thiết kế hoặc hỏi thêm người dùng.
-- [ ] Người dùng duyệt thiết kế.
-- [ ] Sau khi duyệt: đọc skill writing-plans và viết kế hoạch triển khai.
+- [x] Người dùng duyệt thiết kế trong chat: “duyệt”.
+- [x] Sau khi duyệt: đọc skill writing-plans, viết và tự rà kế hoạch triển khai.
