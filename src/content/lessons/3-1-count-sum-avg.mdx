@@ -74,7 +74,7 @@ Trong Excel, `COUNTA(A2:A10)` đếm các mã đơn đã điền, còn `COUNT` t
 
 `SUM`, `AVG`, `MIN`, `MAX` bỏ qua `NULL`, còn số `0` vẫn tham gia. Giả định một cột `SoNgay` được phép thiếu có ba giá trị `2`, `NULL`, `0`: đếm dòng là `3`, đếm giá trị là `2`, bình quân là `(2 + 0) / 2 = 1`. **Mẫu số** là số giá trị khác `NULL`. Đây là minh họa giả định, không phải ba đơn trong bộ mẫu; thay `NULL` bằng `0` trước khi tính sẽ đổi mẫu số.
 
-`SoNgay` đang là số thập phân nên `AVG` giữ phần lẻ; `CAST` ở ngoài chỉ làm tròn kết quả, không sửa từng đơn. Trong `decimal(10,2)`, `10` là tổng chữ số tối đa, `2` là số chữ số sau dấu thập phân như bài 1.3. Nếu ép `SoNgay` sang `int` trước thì `AVG` trả `int`, mất phần lẻ; đổi kết quả đó lại sang `decimal` không lấy lại được phần đã mất.
+`SoNgay` đang là số thập phân nên `AVG` giữ phần lẻ; `CAST` ở ngoài chỉ làm tròn kết quả, không sửa từng đơn. Trong `decimal(10,2)`, `10` là tổng chữ số tối đa, `2` là số chữ số sau dấu thập phân như bài 1.3. Nếu ép `SoNgay` sang số nguyên `int` trước thì `AVG` trả `int`, mất phần lẻ; đổi kết quả đó lại sang `decimal` không lấy lại được phần đã mất.
 
 Khi không có dòng nào đạt `WHERE`, câu tổng hợp không `GROUP BY` vẫn trả một dòng: `COUNT(*)` và `COUNT(cột)` bằng `0`, bốn hàm còn lại trả `NULL`. Nếu có dòng nhưng cột được tính đều là `NULL`, các hàm đó cũng trả `NULL`. `SUM` và `AVG` dùng với số; `MIN`, `MAX` còn dùng được với ngày, như tìm `TuNgay` sớm nhất hoặc muộn nhất.
 
@@ -96,7 +96,7 @@ WHERE TrangThai = N'Đã duyệt'
     title: 'Lấy các đơn nghỉ đang lưu.',
     focus: 'FROM DonNghiPhep',
     input: 'Bảng `DonNghiPhep` trong database.',
-    meaning: '`FROM` chọn bảng này làm nguồn, chưa lọc đơn hoặc tính tổng hợp.',
+    meaning: '`FROM` chọn bảng này làm nguồn, chưa lọc đơn, chưa chọn cột kết quả hoặc tính tổng hợp.',
     detail: '`20` đơn. Hình trích năm đơn và bốn cột cần theo dõi, gồm cả đơn ngoài tháng và chưa duyệt.',
     sql: `SELECT MaDon, TuNgay, SoNgay, TrangThai
 FROM DonNghiPhep;`,

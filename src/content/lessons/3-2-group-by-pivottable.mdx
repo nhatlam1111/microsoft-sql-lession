@@ -73,7 +73,7 @@ Với cách nhóm theo cột đang học, **cột lấy trực tiếp trong `SEL
 
 `GROUP BY` không bảo đảm thứ tự dòng. `SoHoSo` là alias được đặt ở `SELECT`; `ORDER BY` xét sau nên dùng được tên đó như bài 2.4, rồi dùng `MaPB` để chốt thứ tự khi bằng số lượng. Chỉ lấy danh sách mã không trùng bằng `DISTINCT` của bài 2.6 thì thiếu chỉ tiêu số hồ sơ chị Hạnh cần.
 
-Ở bài này chỉ cần chọn khóa nhóm và tính riêng cho từng nhóm. Lọc nhóm theo số liệu đã tính học ở bài 3.3; lấy tên phòng từ danh mục bằng kết bảng học ở bài 3.4, giữ cả phòng không có hồ sơ ở bài 3.5.
+Ở bài này chỉ cần chọn khóa nhóm và tính riêng cho từng nhóm. Lọc nhóm theo số liệu đã tính học ở bài 3.3; lấy tên phòng từ danh mục bằng kết bảng học ở bài 3.4, giữ dòng chưa khớp khi kết bảng học ở bài 3.5.
 
 ### SQL Server chạy câu này thế nào
 
@@ -89,7 +89,7 @@ ORDER BY [SoHoSo] DESC, MaPB ASC;`} steps={[
     title: 'Lấy hồ sơ nhân viên đang lưu.',
     focus: 'FROM NhanVien',
     input: 'Bảng `NhanVien` trong database.',
-    meaning: '`FROM` chọn bảng hồ sơ làm nguồn, chưa lọc hoặc gom nhóm.',
+    meaning: '`FROM` chọn bảng hồ sơ làm nguồn, chưa lọc dòng, chưa chọn cột kết quả, chưa gom nhóm.',
     detail: '`48` hồ sơ. Hình trích năm hồ sơ và ba cột cần theo dõi; có cả hồ sơ đã nghỉ.',
     sql: `SELECT MaNV, MaPB, TrangThai
 FROM NhanVien;`,
@@ -154,7 +154,7 @@ GROUP BY MaPB;`,
     focus: 'SELECT MaPB, COUNT(*) AS [SoHoSo]',
     inputColumns: ['MaPB', 'Số hồ sơ trong nhóm'],
     meaning: '`SELECT` chọn mã phòng và giá trị `COUNT(*)` của từng nhóm; `AS` đặt tên cột số lượng là `SoHoSo`.',
-    detail: 'Vẫn `6` dòng, `2` cột: `MaPB`, `SoHoSo`. Alias có từ bước này; bảng đầu vào chỉ trích năm trong sáu nhóm.',
+    detail: 'Vẫn `6` dòng, `2` cột: `MaPB`, `SoHoSo`.',
     sql: `SELECT MaPB, COUNT(*) AS [SoHoSo]
 FROM NhanVien
 WHERE TrangThai = N'Đang làm'

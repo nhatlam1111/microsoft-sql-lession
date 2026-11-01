@@ -120,6 +120,8 @@ Nguồn kỹ thuật đã đối chiếu khi thiết kế: [COUNT](https://learn
 
 Triển khai: [hồ sơ kiểm](../../reviews/2026-11-01-lessons-3-1-3-2/verification.md). Đã chạy SELECT mới xác minh các số dự kiến và cơ chế NULL/nhóm; cả hai bài đã viết lại theo thiết kế, không đổi query chính hoặc YAML. Bảng GROUP BY của 3.2 dùng caption “Số hồ sơ trong nhóm” để tách nhãn minh họa khỏi alias SoHoSo chỉ được đặt ở SELECT; thuộc phần chọn nhãn của người triển khai, không đổi renderer. Các kết quả nguồn/HTML/UI/review được ghi riêng khi hoàn tất.
 
+Sau review từng bài: gọi int là số nguyên ngay lần đầu; FROM của hai bài nói rõ chưa chọn cột kết quả. Rút câu SELECT drawer lặp chú thích trích nhóm và sửa vế dẫn 3.5 về giữ dòng chưa khớp đúng nội dung bài sau. Không đổi thiết kế, câu chính, dữ liệu hoặc đề; [ma trận xử lý](../../reviews/2026-11-01-lessons-3-1-3-2/verification.md) giữ đầy đủ nhận xét và giới hạn độc lập của reviewer.
+
 ## Tiến trình thiết kế
 
 - [x] Đọc quy ước/template, hồ sơ công ty, 2.1–2.9 và nguồn/bài tập/test của 3.1–3.2; kiểm điểm nối 3.3.
