@@ -215,6 +215,8 @@ Kiểm đường thực hành, kiến thức nền/thuật ngữ giữa các bà
 
 ### 4.7 Bài giảng trình chiếu (duyệt 01/11/2026)
 
+Mẫu MDX và cách thêm bộ mới tại [presentation-template.md](presentation-template.md).
+
 - Slide tổng hợp là biến thể riêng trong collection `presentations`, không thay bài đầy đủ và không ghi tiến độ. Mỗi bộ có metadata `sourceLessons`, mục tiêu/thời lượng, ID slide ổn định và ghi chú người giảng.
 - Màn chiếu giữ ít chữ, ưu tiên bảng trích/sơ đồ có nhãn đọc được. Điều kiện ảnh hưởng kết luận phải hiện cùng ví dụ, không chỉ nằm trong ghi chú. Hình mô phỏng công cụ phải ghi rõ mô phỏng.
 - Mỗi slide có ghi chú ý cần nói, hiểu nhầm thường gặp, giải thích, thời lượng và liên kết bài nguồn. Ghi chú không render vào trang chiếu cho lớp; trang người giảng vẫn là nội dung công khai của khóa học.

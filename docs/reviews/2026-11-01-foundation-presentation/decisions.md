@@ -14,3 +14,5 @@ Nguồn nhận xét giữ nguyên: [content-review.md](content-review.md), [inte
 | Audit strict báo SqlEditor thiếu resize-none | **Không sửa ngoài phạm vi.** Đây là false positive đã có: `.ed-input` được định nghĩa `resize: none` trong `src/styles/exercise.css:27`; auditor chỉ nhìn markup. | Giữ nguyên JSON lỗi audit, không nới rule hoặc sửa editor cho đẹp báo cáo. Không có finding audit mới trong phần slide. |
 
 Tự rà bổ sung: rút câu dẫn slide 19 và giảm khoảng cách khối đáp án, giữ nguyên cỡ chữ để 24 trạng thái không cuộn trong canvas. Thêm khoảng cách sau bảng của slide 5. Không sửa dữ kiện hay bài đầy đủ 1.1–1.5.
+
+Tái kiểm tại [integration-followup.md](integration-followup.md): 26/26 test liên quan đạt, không còn finding cần sửa trong delta. Reviewer chỉ ra template mới cho ví dụ khớp mà chưa nói thành quy tắc; **Làm theo**, bổ sung câu bắt buộc `PresenterNotes.source/minutes` khớp `Slide.source/minutes`. Reviewer đã xác nhận câu đó; report gốc không bị sửa.

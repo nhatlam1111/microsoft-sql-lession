@@ -41,7 +41,7 @@ Chỉ dùng khối này cho câu hỏi đã có đủ tiền đề.
 </Slide>
 ```
 
-`id`, `title`, `source` dùng chuỗi literal, `minutes` là số nguyên literal. Mỗi ID duy nhất và giữ ổn định để liên kết chia sẻ không hỏng. `source` phải là bài có thật, thuộc phạm vi `sourceLessons`. Thời lượng metadata gồm phần giảng và hỏi đáp; ghi rõ cách phân bổ trong slide mở đầu. Mỗi slide tối đa một `details data-answer`.
+`id`, `title`, `source` dùng chuỗi literal, `minutes` là số nguyên literal. Mỗi ID duy nhất và giữ ổn định để liên kết chia sẻ không hỏng. `source` phải là bài có thật, thuộc phạm vi `sourceLessons`. `PresenterNotes.source` và `PresenterNotes.minutes` phải khớp `source` và `minutes` của `Slide` chứa nó. Thời lượng metadata gồm phần giảng và hỏi đáp; ghi rõ cách phân bổ trong slide mở đầu. Mỗi slide tối đa một `details data-answer`.
 
 Mục lục được lấy từ các thẻ `Slide` khi build. Một file mới tự có trang chiếu, trang người giảng, mục lục bài giảng, kết quả tìm kiếm và liên kết ở các bài nguồn/nhóm level tương ứng. Không chép controller hoặc thêm route riêng cho từng bộ.
 

@@ -5,6 +5,7 @@ Ngày 01/11/2026. Tác giả kiểm bằng PowerShell/Node/Vitest/Astro và brow
 ## Nguồn và build
 
 - Base `ff4bc95675724bcc54149e291a88914dbd3ba730`; nhánh `codex/foundation-presentation`.
+- Mốc sản phẩm cuối `1592f0fd6cd8f7c7f659e2e1c728f1731b542d6b`; source/test tree và SHA-256 ba HTML tại [source-build.json](source-build.json). Các commit bàn giao sau mốc này chỉ đổi hồ sơ/tài liệu.
 - Bản đầu `081a5a3`, vòng trình bày `95be5b7`; các sửa sau review gồm Follow fallback, kiểm bài nguồn, H1 header và tài liệu thêm deck. Nội dung giữ nguyên bản đã review, ngoài câu dẫn slide 19 đã được reviewer đọc lại.
 - Build cuối lúc 15:51:19 tại `dist/`, sau tất cả sửa sản phẩm. Sau khi lưu commit cuối chỉ thay hồ sơ bàn giao nếu có; không coi tài liệu là lý do dựng lại sản phẩm không đổi.
 - Log máy tại `temp/verification/2026-11-01-foundation-presentation/` gồm `tests-final.log`, `check-final.log`, `build-final.log`, `dist-final.log`, ảnh 24 trạng thái và số đo. Bộ kiểm cuối: **55 file / 411 test đạt**; Astro check **241 file, 0 error, 0 warning, 3 hint nền**; build **139 trang**; check:dist **2.780 link đạt**.
@@ -48,3 +49,5 @@ Server fixture chỉ đọc build ở port 4335, script `temp/verification/2026-
 Chưa kiểm máy chiếu/màn hình thứ hai vật lý, screen reader, Firefox/Safari, zoom 200%, forced colors và bản in. Đồng bộ chỉ trong cùng origin/profile trình duyệt, một người giảng mỗi run. Những giới hạn này không thay kết quả browser đã quan sát.
 
 Không merge, push hoặc deploy. Bản xem local và tài liệu `docs/presentation-template.md` dùng để bàn giao; các chương khác chỉ cần thêm MDX/metadata theo cùng khung.
+
+Tái kiểm độc lập delta sau sửa tại [integration-followup.md](integration-followup.md): 26/26 test liên quan đạt, xác nhận Follow/gate nguồn/H1 và xử lý đủ ma trận, không còn finding cần sửa trong phạm vi đã kiểm. Câu template khớp nguồn/phút được bổ sung sau mốc sản phẩm; không thay build. Server fixture 4335 đã dừng, các tab kiểm tạm đã đóng; giữ preview 4334 và hai trang bàn giao đang đồng bộ ở slide 1.
