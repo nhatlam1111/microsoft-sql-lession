@@ -87,4 +87,32 @@ Các sửa vòng này chỉ là lời văn, không đổi SQL/YAML/flow-data/ren
 - Mở lại bản build 21:21 ở 1280×800: nghĩa “số nguyên int” hiện ngay trong đoạn đầu dùng int; FROM cả hai bài hiện “chưa chọn cột kết quả”; vế 3.5 đúng về giữ dòng chưa khớp; SELECT 3.2 chỉ còn kết quả sáu dòng/hai cột. Đã bấm mở các drawer ấy, Escape/Đóng và điều hướng 3.1→3.2 hoạt động. Đã đóng tab tạm và reset viewport.
 - Hình/SQL/data/renderer không đổi, kiểm copy-paste và hai viewport ở build 665e91a được giữ với đúng nguồn phiên bản; không nói đã thử lại toàn bộ thao tác ấy ở build cuối. Chưa có bằng chứng mới cho SSMS, mobile, screen reader, xác thực/nộp production hoặc thời lượng.
 
-Đang chuẩn bị review tích hợp mới trên source/build sau sửa; không dùng kết luận review làm quyền merge/push.
+## Review tích hợp và quyết định cuối
+
+[Report tích hợp gốc](integration-review.md) của agent mới, fork_turns none, model kế thừa, kiểm source `4af339b667c442f38f934236887b51c212f8c84f` và build 21:21. Report được sao chép nguyên văn, tác giả đọc hết trước khi kết luận. Reviewer tự xác nhận diff đúng base/head, 7 source hash và 2 HTML hash khớp, hai câu chính không đổi; không có finding mới cần sửa. Sáu đề đủ tiền đề theo kiểm tĩnh, mạch 2.9→3.1→3.2→3.3 nối đúng. Không sửa sản phẩm sau lượt tích hợp.
+
+Giới hạn phương pháp tích hợp: reviewer thấy answer ngay lần trích YAML đầu do sai bộ lọc khoảng trắng. Đây là review tích hợp được phép đối chiếu evidence/answer, không lặp học thử mù; bảng tiền đề của report không được gọi là lời giải lập trước answer. Giới hạn của hai review từng bài vẫn giữ nguyên, không chuyển kiểm SQL/UI của tác giả thành việc reviewer đã thử.
+
+| Mục tích hợp để tác giả quyết định | Quyết định | Căn cứ và giới hạn giữ lại |
+|---|---|---|
+| Các phần Giữ được, không có finding mới | Làm theo | Giữ bản cuối, không tăng ví dụ phụ hoặc đổi đề. |
+| Mobile/drawer rộng 440px | Làm theo | Ghi giới hạn nền, không báo mobile đạt; để sửa responsive khi có phạm vi riêng. CSS/renderer không đổi. |
+| SSMS/auth/nộp production, screen reader/trình duyệt khác | Làm theo | Không ghi đạt hoặc tự mở rộng phép kiểm. Source bài không đổi các cơ chế này; báo đúng phần chưa thử. |
+| Phạm vi khôi phục nháp/clipboard | Làm theo | Chỉ xác nhận nội dung textbox/clipboard được khôi phục. Không chứng nhận toàn bộ storage hoặc giữ trạng thái tồn tại của khóa; ID/YAML/editor không đổi nên không có migration mới. |
+| Đồng hạng đề 3-2-2 nếu seed đổi | Làm theo | Giữ YAML/answer. Dữ liệu hiện tại KD13/1, VH8/2 không đồng hạng trong một phòng; xem lại tiêu chí nếu seed/phạm vi chấm thay đổi, không thêm tie-break ngoài yêu cầu. |
+| 3.3 còn khung cũ/caption trước SELECT | Làm theo | Ngoài scope. Giữ điểm nối và số liệu; chuyển caption/bố cục khi người dùng giao bài 3.3, không sửa hàng loạt hoặc dùng nó làm mẫu mới. |
+| Thời lượng 25/20 phút và tự học | Làm theo | Giữ là ước lượng metadata, không nói đã đo hoặc mọi học viên chắc chắn làm được. |
+| DB/runtime chưa do reviewer kiểm | Làm theo | Sử dụng bằng chứng SQL/runner/UI của tác giả với đúng phiên bản; hash và review tĩnh không thay phép chạy thật, không gọi review là lượt SQL mới. |
+
+## Các quyết định thực hiện và giới hạn
+
+- Tự triển khai trên checkout/branch hiện tại, không tạo worktree hoặc giao agent viết bài; có hai review độc lập và một review tích hợp theo AGENTS.md. Giữ nguyên worktree khác của người dùng. Rủi ro của workspace dùng chung được hạn chế bằng đối chiếu Git và hash nguồn trước/sau, không ghi đè thay đổi ngoài phạm vi.
+- Reviewer giữ model phiên và xử lý cả góp ý nhỏ theo AGENTS.md, không theo gợi ý đổi model/defer minor của skill chung. Không có góp ý có căn cứ bị bỏ mà không ghi quyết định.
+- SQL MCP không có nên dùng Node runner hiện hành như đã mô tả; không tuyên bố đã dùng MCP/SSMS. Bằng chứng chỉ áp dụng các SELECT/đáp án đã chạy, không xác nhận mọi truy vấn học viên có thể viết.
+- Ghi log/ledger bằng PowerShell trong temp thay các wrapper Bash của skill. Các lệnh kiểm có exit code và log; không xóa bằng chứng chỉ để dọn scratch. Hai bundle tác giả tạm trong api/dist đã được xóa đúng tên, helper nguồn và log giữ lại; không thay API tracked.
+- Thay test bắt query phụ bằng kiểm kiến thức/flow/data; không thêm test khóa cứng câu biên tập vì không bảo vệ hành vi mới. Phần ngôn ngữ được review và đối chiếu trên HTML/UI riêng; test xanh không tự chứng minh lời giảng đủ nghĩa.
+- Caption kích thước nhóm trước SELECT là nhãn minh họa có giải nghĩa, không phải cột lưu trong database. SQL kiểm và test bảo vệ giá trị/tên cột hiển thị; không sửa renderer để tạo cơ chế nhóm mới.
+
+## Trạng thái bàn giao
+
+Hoàn tất hai bài trên `codex/lessons-3-1-3-2-refresh`. Source sản phẩm cuối đã được review tại 4af339b; commit bàn giao tiếp theo chỉ đổi hồ sơ/spec/plan. Các kiểm cuối và UI ở trên áp dụng đúng sản phẩm đó. Giữ nhánh tại checkout hiện tại; không merge main, không push/deploy theo phạm vi thiết kế đã duyệt. Không dùng review làm quyền xuất bản.

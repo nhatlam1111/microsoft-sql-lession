@@ -1,6 +1,6 @@
 # Làm lại bài 3.1 và 3.2 theo mạch một câu lệnh
 
-Ngày: 01/11/2026. Trạng thái: người dùng đã duyệt thiết kế trong chat; đang triển khai theo [kế hoạch](../plans/2026-11-01-lessons-3-1-3-2.md).
+Ngày: 01/11/2026. Trạng thái: đã triển khai, kiểm và xử lý review từng bài cùng review tích hợp theo [kế hoạch](../plans/2026-11-01-lessons-3-1-3-2.md). Giữ trên nhánh `codex/lessons-3-1-3-2-refresh`, chưa merge/push.
 
 Nguồn khảo sát: `main` tại `a67c37a4872daaee7711dbab8bb794fbb8a1f681`. Quy ước và template hiện hành chi phối; spec 23/10 cho 3.1–3.3 chỉ là lịch sử.
 
@@ -121,6 +121,8 @@ Nguồn kỹ thuật đã đối chiếu khi thiết kế: [COUNT](https://learn
 Triển khai: [hồ sơ kiểm](../../reviews/2026-11-01-lessons-3-1-3-2/verification.md). Đã chạy SELECT mới xác minh các số dự kiến và cơ chế NULL/nhóm; cả hai bài đã viết lại theo thiết kế, không đổi query chính hoặc YAML. Bảng GROUP BY của 3.2 dùng caption “Số hồ sơ trong nhóm” để tách nhãn minh họa khỏi alias SoHoSo chỉ được đặt ở SELECT; thuộc phần chọn nhãn của người triển khai, không đổi renderer. Các kết quả nguồn/HTML/UI/review được ghi riêng khi hoàn tất.
 
 Sau review từng bài: gọi int là số nguyên ngay lần đầu; FROM của hai bài nói rõ chưa chọn cột kết quả. Rút câu SELECT drawer lặp chú thích trích nhóm và sửa vế dẫn 3.5 về giữ dòng chưa khớp đúng nội dung bài sau. Không đổi thiết kế, câu chính, dữ liệu hoặc đề; [ma trận xử lý](../../reviews/2026-11-01-lessons-3-1-3-2/verification.md) giữ đầy đủ nhận xét và giới hạn độc lập của reviewer.
+
+Review tích hợp cuối trên 4af339b/build21:21 không có finding mới cần sửa; bảy mục để tác giả quyết định đã được ghi đủ trong ma trận. 3.3, mobile, SSMS/xác thực và thời lượng thực đo giữ ngoài phạm vi, không báo đã đạt. Các giới hạn cách đọc spec/answer của reviewer được giữ trung thực trong report gốc. Không đổi sản phẩm sau review tích hợp.
 
 ## Tiến trình thiết kế
 
