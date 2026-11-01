@@ -54,4 +54,5 @@ Sáu reviewer mới độc lập học từng bài theo §4.5; sau đó một re
 - Kiểm cuối:385tests/51files; check0errors/0warnings và3hints nền; build136trang10:44:38; check:dist2.502link.53SELECT/47Result khớp live evidence, thêm9probe ngưỡng sau review. UI tại1280/1024/1440, tìm kiếm/bàn phím/details/copy/resume đã kiểm; giữ50bài và tiến độ độc lập.
 - Giữ rõ giới hạn tài liệu/live theo nền tảng, PATINDEX có khác biệt, audit tĩnh editor nền và những phép kiểm chưa làm. Origin thử riêng xác nhận resume3.1 quaPL/reload/Back/Forward; không đổi progress owner hoặc tự mở nhóm chính theo snapshot mới trên trangPL.
 - Đã chốt triển khai local; không merge/push/deploy trong phạm vi này. Bằng chứng và ma trận ở `docs/reviews/2026-11-01-appendix-reference/`.
+- Sau bàn giao local, người làm khóa học đã yêu cầu đẩy lên main ngày01/11/2026. Phạm vi lượt đăng mới gồm merge/push và kiểm Pages/public routes; không thay nội dung đã duyệt hoặc API. Snapshot trước push lưu cùng hồ sơ review, kết quả đăng chỉ kết luận sau kiểm run đúng SHA.
 - Evidence và kết quả thực tế sẽ ghi trong `docs/reviews/2026-11-01-appendix-reference/`.
