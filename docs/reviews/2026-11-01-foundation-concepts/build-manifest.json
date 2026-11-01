@@ -1,0 +1,45 @@
+{
+  "base": "b2e4c3cd0d9c2d1a22a05b6820affc5c07295e75",
+  "sourceCommit": "4a685c2bf1368f216f11aeab7eb9f44e5a5bb155",
+  "buildCompletedLocal": "2026-11-01T17:20:35+07:00",
+  "buildLog": "build-final.log",
+  "reviewedSource": "9c3411511c13453bcc70566ef427b3210f4aa592",
+  "postReviewChanges": [
+    "I1: generic no-JS copy",
+    "I2: opening 48+7 minutes and assertion"
+  ],
+  "files": [
+    {
+      "path": "src/components/presentations/ConceptFigure.astro",
+      "sha256": "3336361938009d1cb161aff5e88cc0d077493bd7e01283696495ffa72d42953a"
+    },
+    {
+      "path": "src/components/presentations/PresentationShell.astro",
+      "sha256": "f0b9563cedde2348d06a4e15a99a683f533436f8b310c5811f197a01ff7e22ed"
+    },
+    {
+      "path": "src/content/presentations/lam-quen.mdx",
+      "sha256": "4c3ba2f8da63b383e4c2459719fa51efb2976d88e59380361ff92bb9b2c0f73d"
+    },
+    {
+      "path": "src/styles/presentation.css",
+      "sha256": "464161fe36da17984e1a1035cc46e19bccfaec9be825e1898bafa63badfbeb42"
+    },
+    {
+      "path": "tests/presentation-content.test.ts",
+      "sha256": "636bf3a5fa41868a111433cc852a1f71b9554872d2ebb0bbd811bb1dab78d9ff"
+    },
+    {
+      "path": "tests/presentation-outline.test.ts",
+      "sha256": "e1ba06707be5441ccc8ceacc5e610292454717d85193e2e35abbe85b20c4868c"
+    },
+    {
+      "path": "dist/bai-giang/lam-quen/index.html",
+      "sha256": "af7409b8ff386e9be838ae3c0e0896ac68805875f70dc87b231f7ac9e7fbcdcd"
+    },
+    {
+      "path": "dist/bai-giang/lam-quen/nguoi-giang/index.html",
+      "sha256": "2d2c2fb85c75f531cb5eef0cf89238a652a0a1c4ce81c7f83d7c1b430e4e8581"
+    }
+  ]
+}
