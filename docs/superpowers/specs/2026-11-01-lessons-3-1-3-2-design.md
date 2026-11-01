@@ -118,6 +118,8 @@ Chọn câu chữ/tiêu đề phần chính, dòng trích và mark cụ thể, b
 
 Nguồn kỹ thuật đã đối chiếu khi thiết kế: [COUNT](https://learn.microsoft.com/en-us/sql/t-sql/functions/count-transact-sql?view=sql-server-ver17), [AVG](https://learn.microsoft.com/en-us/sql/t-sql/functions/avg-transact-sql?view=sql-server-ver17), [GROUP BY](https://learn.microsoft.com/en-us/sql/t-sql/queries/select-group-by-transact-sql?view=sql-server-ver17). Đây là kiểm tài liệu; chưa phải SQL live hay kiểm sản phẩm của lượt mới.
 
+Triển khai: [hồ sơ kiểm](../../reviews/2026-11-01-lessons-3-1-3-2/verification.md). Đã chạy SELECT mới xác minh các số dự kiến và cơ chế NULL/nhóm; 3.1 đã viết lại theo thiết kế, không đổi query chính hoặc YAML. Các kết quả nguồn/HTML/UI/review được ghi riêng khi hoàn tất.
+
 ## Tiến trình thiết kế
 
 - [x] Đọc quy ước/template, hồ sơ công ty, 2.1–2.9 và nguồn/bài tập/test của 3.1–3.2; kiểm điểm nối 3.3.

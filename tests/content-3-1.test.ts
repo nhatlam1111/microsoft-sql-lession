@@ -3,7 +3,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { parse } from 'yaml';
 import { lessonBlocks } from './helpers/lesson-blocks';
 import { leaveStartingIn, seedRows } from './helpers/hrm-seed';
-import { checkFlow } from '../src/lib/run-flow';
+import { checkFlow, inputPreview } from '../src/lib/run-flow';
 
 const slug = '3-1-count-sum-avg';
 const exercisePath = `src/content/exercises/${slug}.yaml`;
@@ -34,13 +34,46 @@ it('3.1 filters approved forms by start month, then aggregates all nine rows int
   expect(lesson.query).not.toMatch(/GROUP BY|\bJOIN\b|\bDenNgay\b/);
 });
 
-it('3.1 contrasts profile count with non-NULL email count without filtering away missing values', () => {
+it('3.1 teaches non-NULL counts and the empty aggregate on its own scenario before the recap', () => {
   const lesson = lessonBlocks(slug);
-  const people = seedRows('NhanVien');
-  const expected = [[people.length, people.filter(r => r.Email !== null).length]];
-  expect(expected).toEqual([[48, 46]]);
-  expect(lesson.results.some(r => JSON.stringify(r.rows) === JSON.stringify(expected))).toBe(true);
-  expect(lesson.body).toMatch(/COUNT\(\*\) AS \[?SoHoSo\]?, COUNT\(Email\) AS \[?SoEmail\]?\s+FROM NhanVien;/);
+  const teaching = lesson.body.split('## Hay nhầm ở đâu')[0];
+  expect(teaching).toContain('COUNT(SoNgay)');
+  expect(teaching).toContain('NOT NULL');
+  expect(teaching).toMatch(/giả định/);
+  expect(teaching).toContain('NULL');
+  expect(teaching).toMatch(/không có dòng|không giữ dòng/);
+  expect(teaching).toMatch(/mẫu số/);
+  expect(teaching.match(/<Sql\b/g)).toHaveLength(1);
+  expect(teaching).not.toContain('FROM NhanVien');
+  // Cross-table transfer still needs to distinguish the two counts in exercise 1.
+  const active = seedRows('NhanVien').filter(r => r.TrangThai === 'Đang làm');
+  expect([active.length, active.filter(r => r.Email !== null).length]).toEqual([45, 43]);
+});
+
+it('3.1 checks each date bound and status on visible source rows, then aggregates all nine rows', () => {
+  const { steps, query } = lessonBlocks(slug);
+  const [from, where, select] = steps;
+  const source = seedRows('DonNghiPhep');
+  expect(from.input).toContain('`DonNghiPhep`');
+  expect(where.checks?.conditions).toHaveLength(3);
+  expect(where.checks?.totals).toEqual([
+    source.filter(r => r.TrangThai === 'Đã duyệt').length,
+    source.filter(r => String(r.TuNgay) >= '2026-09-01').length,
+    source.filter(r => String(r.TuNgay) < '2026-10-01').length,
+    9,
+  ]);
+  const input = inputPreview(where, from);
+  expect(input.columns).toEqual(expect.arrayContaining(['MaDon', 'TrangThai', 'TuNgay']));
+  expect(where.checks?.rows.some(r => r.slice(1).every(v => v === true))).toBe(true);
+  expect(where.checks?.rows.some(r => r.slice(1).some(v => v === false))).toBe(true);
+  for (const row of where.checks?.rows ?? []) {
+    const record = source.find(r => r.MaDon === row[0])!;
+    expect(row.slice(1)).toEqual([record.TrangThai === 'Đã duyệt', String(record.TuNgay) >= '2026-09-01', String(record.TuNgay) < '2026-10-01']);
+  }
+  expect(inputPreview(select, where).columns).toContain('SoNgay');
+  expect(where.total).toBe(9);
+  expect(select.total).toBe(1);
+  expect(checkFlow(steps, query)).toEqual([]);
 });
 
 it('3.1 exercises cover a different scope, decimal average and a genuine empty aggregate', () => {

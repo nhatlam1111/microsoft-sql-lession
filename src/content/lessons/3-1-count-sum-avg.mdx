@@ -27,7 +27,7 @@ Giả định: lấy bảng `DonNghiPhep` đang lưu; một dòng là một đơ
 
 ## Từ danh sách đơn nghỉ đến một dòng tổng hợp
 
-### Từ một cột số đến các hàm tổng hợp
+### Từ công thức Excel đến các hàm tổng hợp
 
 Trong Excel, bạn có thể đưa các đơn đạt điều kiện sang một sheet riêng rồi tính trên cột số ngày. Hình minh họa `9` đơn đó, đánh dấu hai đầu vùng `C2:C10` và ô tổng `C11`. Nếu chỉ ẩn dòng bằng bộ lọc trên sheet gốc, `SUM` thông thường vẫn cộng cả dòng bị lọc; cần tách vùng như trên hoặc dùng hàm cho dữ liệu đã lọc như `SUBTOTAL`.
 
@@ -45,40 +45,7 @@ Trong Excel, bạn có thể đưa các đơn đạt điều kiện sang một s
   ['Tổng', '', 16],
 ]} />
 
-Trong SQL, **hàm tổng hợp** tính một giá trị từ nhiều dòng. Bạn viết `WHERE` để xác định các dòng được tính, rồi đặt hàm trong `SELECT`. Với truy vấn tổng hợp không chia nhóm bằng `GROUP BY` như bài này, kết quả là một dòng cho cả phạm vi, thay vì một dòng cho từng đơn.
-
-| Việc cần làm trên chín đơn | Công thức Excel | Biểu thức SQL |
-|---|---|---|
-| Đếm đơn | `COUNTA(A2:A10)` đếm các mã đã điền | `COUNT(*)` đếm dòng |
-| Cộng số ngày | `SUM(C2:C10)` | `SUM(SoNgay)` |
-| Tính bình quân số ngày mỗi đơn | `AVERAGE(C2:C10)` | `AVG(SoNgay)` |
-| Tìm số ngày ít nhất | `MIN(C2:C10)` | `MIN(SoNgay)` |
-| Tìm số ngày nhiều nhất | `MAX(C2:C10)` | `MAX(SoNgay)` |
-
-`COUNT` trong Excel chỉ đếm giá trị số, nên không dùng nó để đếm các mã dạng chữ ở `A2:A10`. Trong SQL, dấu `*` của `COUNT(*)` mang nghĩa đếm dòng, không phải chọn tất cả cột như `SELECT *`. `SUM` và `AVG` dùng với số; `MIN` và `MAX` còn dùng được với ngày, chẳng hạn tìm ngày vào làm sớm nhất và muộn nhất.
-
-### Chọn đúng mẫu số và xử lý giá trị thiếu
-
-**Đếm dòng khác đếm giá trị đã có.** `COUNT(cột)` chỉ đếm các dòng mà cột đó khác `NULL`. Xem lại cột `Email` đã học ở bài 2.5 trên toàn bộ hồ sơ, gồm cả người đã nghỉ:
-
-<Sql code={`SELECT COUNT(*) AS [SoHoSo], COUNT(Email) AS [SoEmail]
-FROM NhanVien;`} />
-
-<Result columns={['SoHoSo', 'SoEmail']} rows={[
-  [48, 46],
-]} />
-
-Có `48` hồ sơ và `46` giá trị email khác `NULL`; `NV044`, `NV045` thiếu email. `COUNT(Email)` vẫn đếm chuỗi rỗng hoặc chuỗi khoảng trắng nếu có, nên con số này không xác nhận email hợp lệ.
-
-`SUM`, `AVG`, `MIN`, `MAX` bỏ qua `NULL`, còn số `0` vẫn được tính. Với ba giá trị minh họa `2`, `NULL`, `0`, bình quân là `(2 + 0) / 2 = 1`: mẫu số là số giá trị khác `NULL`, không phải số dòng. Trong bảng mẫu, `SoNgay` được khai báo `decimal(4,1) NOT NULL`, nên mọi đơn đạt điều kiện đều tham gia bình quân.
-
-Khi không có dòng nào đạt `WHERE`, truy vấn tổng hợp không `GROUP BY` vẫn trả một dòng: `COUNT(*)` và `COUNT(cột)` bằng `0`; bốn hàm còn lại trả `NULL`. Nếu có dòng nhưng cột được tổng hợp đều là `NULL`, bốn hàm đó cũng trả `NULL`. Không tự thay giá trị thiếu bằng `0` trước khi tính trung bình, vì như vậy đổi cả mẫu số và ý nghĩa báo cáo.
-
-Ở bài này chỉ cần tính cho cả phạm vi đã lọc. Tổng hợp từng nhóm học ở bài 3.2; lọc nhóm theo số liệu đã tính học ở bài 3.3.
-
-### Câu lệnh cho tình huống
-
-`SoNgay` đã là số thập phân nên `AVG(SoNgay)` giữ phần lẻ. `CAST(... AS decimal(10,2))` chuyển kết quả bình quân sang số có hai chữ số thập phân, làm tròn ở kết quả; không sửa số ngày trên từng đơn. `10` là tổng số chữ số tối đa, `2` là số chữ số sau dấu thập phân (xem kiểu số ở bài 1.3).
+Trong SQL, **hàm tổng hợp** tính một giá trị từ nhiều dòng. Bạn lọc đúng các đơn bằng `WHERE`, rồi dùng các hàm trong `SELECT` để tính năm con số chị Hạnh cần:
 
 <Sql code={`SELECT COUNT(*) AS [SoDon],
 \tSUM(SoNgay) AS [TongNgay],
@@ -88,15 +55,34 @@ FROM DonNghiPhep
 WHERE TrangThai = N'Đã duyệt'
 \tAND TuNgay >= '20260901' AND TuNgay < '20261001';`} />
 
-<Result columns={['SoDon', 'TongNgay', 'BinhQuan', 'ItNhat', 'NhieuNhat']} rows={[
-  [9, '16.0', '1.78', '1.0', '3.0'],
+Từng phần của câu:
+
+<LineMap rows={[
+  ['COUNT(*) AS [SoDon]', 'Đếm dòng sau lọc, không lấy mọi cột như dấu * ở bài 2.1. Ví dụ: chín dòng đơn cho SoDon bằng 9.'],
+  ['SUM(SoNgay) AS [TongNgay]', 'Cộng số ngày, tương tự SUM(C2:C10) trong hình Excel. Ví dụ: chín đơn có tổng 16.0 ngày.'],
+  ['CAST(AVG(SoNgay) AS decimal(10,2))', 'AVG tính bình quân, tương tự AVERAGE của Excel; CAST đổi kết quả sang số có hai chữ số thập phân. Ví dụ: 16.0 chia 9 rồi làm tròn được 1.78.'],
+  ['MIN(SoNgay), MAX(SoNgay)', 'Tìm số ngày nhỏ nhất và lớn nhất, như MIN/MAX của Excel. Ví dụ: DP002 có 1.0 ngày, DP003 có 3.0 ngày, là hai mức đầu cuối.'],
+  ['FROM DonNghiPhep', 'Chỉ bảng nguồn, mỗi dòng là một đơn. Ví dụ: bắt đầu từ 20 đơn đang lưu.'],
+  ["WHERE TrangThai = N'Đã duyệt'", 'Giữ đơn đã duyệt như cách lọc ở bài 2.2. Ví dụ: DP010 bị loại vì có trạng thái Từ chối.'],
+  ["AND TuNgay >= '20260901'", 'AND yêu cầu thêm ngày bắt đầu không trước 01/09. Ví dụ: DP018 bắt đầu 31/08 nên bị loại.'],
+  ["AND TuNgay < '20261001'", 'Chặn trước 01/10, không lấy ngày đầu tháng sau. Ví dụ: DP008 bắt đầu 12/10 không đạt điều kiện này.'],
 ]} />
 
-Chị Hạnh có `9` đơn đạt điều kiện, tổng `16.0` ngày, bình quân `1.78` ngày mỗi đơn sau làm tròn; ít nhất `1.0`, nhiều nhất `3.0` ngày. Đây là tổng trên các đơn bắt đầu tháng 9, không phải số người nghỉ hoặc tổng số ngày thực nghỉ trong tháng. `DP018` bắt đầu `2026-08-31`, kết thúc `2026-09-04`, nên không thuộc phạm vi này.
+**Đếm dòng khác đếm giá trị đã có.** `COUNT(cột)` chỉ đếm các dòng mà cột đó khác `NULL`; thay cột bằng `SoNgay` thì viết `COUNT(SoNgay)`. Trong bộ mẫu, `SoNgay` là `decimal(4,1) NOT NULL`, nên cả `9` đơn đều có số ngày và hai cách đếm bằng nhau. Đếm giá trị đã có không xác nhận giá trị ấy đúng; với cột chữ, chuỗi rỗng vẫn được đếm vì khác `NULL`.
+
+Trong Excel, `COUNTA(A2:A10)` đếm các mã đơn đã điền, còn `COUNT` trên sheet chỉ đếm giá trị số nên không đếm được các mã chữ đó. `COUNT(*)` của SQL đếm dòng, không phụ thuộc mã là chữ hay số. Câu này không chia nhóm bằng `GROUP BY` như bài 3.2, nên các hàm tính cho cả phạm vi đã lọc và trả một dòng chung.
+
+`SUM`, `AVG`, `MIN`, `MAX` bỏ qua `NULL`, còn số `0` vẫn tham gia. Giả định một cột `SoNgay` được phép thiếu có ba giá trị `2`, `NULL`, `0`: đếm dòng là `3`, đếm giá trị là `2`, bình quân là `(2 + 0) / 2 = 1`. **Mẫu số** là số giá trị khác `NULL`. Đây là minh họa giả định, không phải ba đơn trong bộ mẫu; thay `NULL` bằng `0` trước khi tính sẽ đổi mẫu số.
+
+`SoNgay` đang là số thập phân nên `AVG` giữ phần lẻ; `CAST` ở ngoài chỉ làm tròn kết quả, không sửa từng đơn. Trong `decimal(10,2)`, `10` là tổng chữ số tối đa, `2` là số chữ số sau dấu thập phân như bài 1.3. Nếu ép `SoNgay` sang `int` trước thì `AVG` trả `int`, mất phần lẻ; đổi kết quả đó lại sang `decimal` không lấy lại được phần đã mất.
+
+Khi không có dòng nào đạt `WHERE`, câu tổng hợp không `GROUP BY` vẫn trả một dòng: `COUNT(*)` và `COUNT(cột)` bằng `0`, bốn hàm còn lại trả `NULL`. Nếu có dòng nhưng cột được tính đều là `NULL`, các hàm đó cũng trả `NULL`. `SUM` và `AVG` dùng với số; `MIN`, `MAX` còn dùng được với ngày, như tìm `TuNgay` sớm nhất hoặc muộn nhất.
+
+Ở bài này chỉ cần tổng hợp cả phạm vi đã lọc. Tính riêng từng nhóm học ở bài 3.2, lọc nhóm theo số liệu đã tính học ở bài 3.3.
 
 ### SQL Server chạy câu này thế nào
 
-Theo thứ tự logic, câu này lấy bảng, lọc đơn, rồi tổng hợp ra một dòng. Thẻ `FROM` hiện `3` đơn và ghi `+17 dòng`: tổng vẫn là `20`. Mở thẻ, bảng chi tiết trích `10` trong `20` đơn; bảng ở bước `WHERE` hiện đủ `9` đơn. Câu chưa có `ORDER BY` thì thứ tự dòng có thể khác hình. Sơ đồ không mô tả thứ tự đọc dữ liệu vật lý của SQL Server.
+Sơ đồ là **thứ tự xử lý logic**, không phải cách SQL Server đọc dữ liệu. Bấm từng bước để thấy `20` đơn còn `9`, rồi các hàm tổng hợp đưa chín dòng thành một. Trước bước tổng hợp, thứ tự dòng có thể khác hình vì câu không yêu cầu sắp xếp:
 
 <RunFlow query={`SELECT COUNT(*) AS [SoDon],
 \tSUM(SoNgay) AS [TongNgay],
@@ -109,32 +95,34 @@ WHERE TrangThai = N'Đã duyệt'
     clause: 'FROM',
     title: 'Lấy các đơn nghỉ đang lưu.',
     focus: 'FROM DonNghiPhep',
-    meaning: '`FROM` xác định bảng cung cấp các dòng cho truy vấn.',
-    detail: '`FROM` lấy `DonNghiPhep`: `20` đơn, chưa lọc tháng hoặc trạng thái. Bảng dưới chỉ hiện `4` cột của `10` đơn, gồm cả `DP008` chờ duyệt và `DP010` từ chối.',
+    input: 'Bảng `DonNghiPhep` trong database.',
+    meaning: '`FROM` chọn bảng này làm nguồn, chưa lọc đơn hoặc tính tổng hợp.',
+    detail: '`20` đơn. Hình trích năm đơn và bốn cột cần theo dõi, gồm cả đơn ngoài tháng và chưa duyệt.',
     sql: `SELECT MaDon, TuNgay, SoNgay, TrangThai
 FROM DonNghiPhep;`,
     columns: ['MaDon', 'TuNgay', 'SoNgay', 'TrangThai'],
     rows: [
       ['DP001', '2026-09-07', '2.0', 'Đã duyệt'],
-      ['DP002', '2026-09-15', '1.0', 'Đã duyệt'],
-      ['DP003', '2026-09-21', '3.0', 'Đã duyệt'],
-      ['DP004', '2026-09-10', '1.0', 'Đã duyệt'],
-      ['DP005', '2026-08-17', '5.0', 'Đã duyệt'],
-      ['DP006', '2026-08-24', '2.0', 'Đã duyệt'],
-      ['DP007', '2026-08-05', '2.0', 'Đã duyệt'],
-      ['DP008', '2026-10-12', '2.0', 'Chờ duyệt'],
-      ['DP009', '2026-10-20', '1.0', 'Chờ duyệt'],
       ['DP010', '2026-09-28', '3.0', 'Từ chối'],
+      ['DP018', '2026-08-31', '3.0', 'Đã duyệt'],
+      ['DP008', '2026-10-12', '2.0', 'Chờ duyệt'],
+      ['DP005', '2026-08-17', '5.0', 'Đã duyệt'],
     ],
     total: 20,
-    preview: ['MaDon', 'SoNgay', 'TrangThai'],
+    preview: ['MaDon', 'TuNgay', 'TrangThai'],
   },
   {
     clause: 'WHERE',
     title: 'Giữ đơn đã duyệt bắt đầu tháng 9.',
     focus: "WHERE TrangThai = N'Đã duyệt'\n\tAND TuNgay >= '20260901' AND TuNgay < '20261001'",
-    meaning: '`WHERE` chọn từng dòng đạt điều kiện trước khi tính các hàm tổng hợp.',
-    detail: '`WHERE` giữ `9` trong `20` đơn: đã duyệt và bắt đầu trong tháng 9. `DP010` bị loại vì từ chối; `DP018` bị loại vì bắt đầu trong tháng 8 dù kết thúc trong tháng 9.',
+    inputColumns: ['MaDon', 'TrangThai', 'TuNgay'],
+    meaning: '`WHERE` xét từng đơn; `AND` yêu cầu trạng thái và cả hai mốc ngày đều đúng trước khi đưa đơn vào phép tính.',
+    detail: 'Còn `9` đơn, vẫn bốn cột đang theo dõi. Chưa tính số đơn hay tổng ngày.',
+    checks: {
+      conditions: ["TrangThai = N'Đã duyệt'", "TuNgay >= '20260901'", "TuNgay < '20261001'"],
+      rows: [['DP001', true, true, true], ['DP010', false, true, true], ['DP018', true, false, true], ['DP008', false, true, false], ['DP005', true, false, true]],
+      totals: [14, 15, 16, 9],
+    },
     sql: `SELECT MaDon, TuNgay, SoNgay, TrangThai
 FROM DonNghiPhep
 WHERE TrangThai = N'Đã duyệt'
@@ -158,8 +146,9 @@ WHERE TrangThai = N'Đã duyệt'
     clause: 'SELECT',
     title: 'Tính năm con số cho cả phạm vi.',
     focus: "SELECT COUNT(*) AS [SoDon],\n\tSUM(SoNgay) AS [TongNgay],\n\tCAST(AVG(SoNgay) AS decimal(10,2)) AS [BinhQuan],\n\tMIN(SoNgay) AS [ItNhat], MAX(SoNgay) AS [NhieuNhat]",
-    meaning: '`SELECT` ở câu tổng hợp này trả các giá trị tính trên toàn bộ những dòng qua `WHERE`; `AS` đặt tên cột kết quả.',
-    detail: '`SELECT` biến `9` dòng chi tiết thành `1` dòng gồm `5` chỉ tiêu. Tổng số ngày là `16.0`; chia cho `9` đơn rồi làm tròn hai chữ số thập phân được `1.78` ngày mỗi đơn.',
+    inputColumns: ['MaDon', 'SoNgay'],
+    meaning: '`SELECT` dùng các hàm tổng hợp trên cả `9` đơn qua `WHERE`, không chỉ năm dòng đầu vào đang trích; `AS` đặt tên năm cột. `AVG` chia tổng ngày cho số giá trị `SoNgay`, ở đây là chín.',
+    detail: 'Còn `1` dòng, `5` cột để trả lời chị Hạnh. Các dòng đơn đã được tổng hợp, không còn mỗi đơn một dòng.',
     sql: `SELECT COUNT(*) AS [SoDon],
 \tSUM(SoNgay) AS [TongNgay],
 \tCAST(AVG(SoNgay) AS decimal(10,2)) AS [BinhQuan],
@@ -173,13 +162,19 @@ WHERE TrangThai = N'Đã duyệt'
   },
 ]} />
 
+<Result columns={['SoDon', 'TongNgay', 'BinhQuan', 'ItNhat', 'NhieuNhat']} rows={[
+  [9, '16.0', '1.78', '1.0', '3.0'],
+]} />
+
+Bạn có thể trả lời chị Hạnh: có `9` đơn đạt điều kiện, tổng `16.0` ngày, bình quân `1.78` ngày mỗi đơn sau làm tròn; ít nhất `1.0`, nhiều nhất `3.0` ngày. Đây là số liệu trên đơn bắt đầu tháng 9, không phải số người nghỉ hoặc tổng ngày thực nghỉ trong tháng. `DP018` bắt đầu `2026-08-31`, kết thúc `2026-09-04`, nên bị loại dù kéo sang tháng 9.
+
 ## Hay nhầm ở đâu
 
 <Mistakes>
 
 1. **Đếm đơn rồi gọi là số người.** Một người có thể có nhiều đơn; báo cáo có thể đếm thừa người nếu cứ dùng số dòng làm số người khác nhau.
 2. **Tính trước rồi mới nhớ đến điều kiện.** Bỏ lọc trạng thái hoặc tháng sẽ cộng cả đơn từ chối hay đơn ngoài phạm vi, dù phép cộng vẫn chạy được.
-3. **Dùng `AVG` trên số nguyên rồi mong có phần lẻ.** `AVG` nhận đầu vào `int` trả về `int`, nên có thể mất phần lẻ. Nếu cần phần lẻ, chuyển đầu vào sang `decimal` trước khi tính, như `AVG(CAST(cột_số_nguyên AS decimal(10,2)))`; chuyển kết quả đã mất phần lẻ thì không lấy lại được.
+3. **Đổi `SoNgay` sang số nguyên trước khi tính bình quân.** `AVG` lúc đó trả số nguyên; dù đổi kết quả sang hai chữ số thập phân, phần lẻ đã mất vẫn không lấy lại được.
 
 </Mistakes>
 
@@ -203,6 +198,13 @@ WHERE TrangThai = N'Đã duyệt'
 ]} />
 
 **Tự kiểm tra:**
+
+<details>
+<summary>Với các đơn đã lọc, <code>COUNT(*)</code> và <code>COUNT(SoNgay)</code> có bằng nhau không?</summary>
+
+Có, đều bằng `9` vì `SoNgay` là `NOT NULL` trong bộ mẫu. `COUNT(*)` đếm dòng, còn `COUNT(SoNgay)` đếm giá trị khác `NULL`; hai cách đếm có thể khác nhau với cột được phép thiếu.
+
+</details>
 
 <details>
 <summary>Với các giá trị minh họa <code>2</code>, <code>NULL</code>, <code>0</code>, đếm dòng, đếm giá trị và tính bình quân khác nhau thế nào?</summary>
