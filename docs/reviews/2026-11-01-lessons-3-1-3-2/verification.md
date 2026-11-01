@@ -19,10 +19,18 @@ Chưa gọi đây là bằng chứng exact SQL từng bước của MDX cuối, 
 ## Task 1 — 3.1
 
 - Test trước sửa: 3 lỗi đúng kỳ vọng (COUNT(SoNgay)/input còn thiếu, bài cũ bốn tiểu mục). Log `task1-red.log`.
-- Sau sửa: nhóm test content-3-1/content-flow-checks/content đạt 92/92 trước khi thêm hai trường hợp 3.1 vào bảng kiểm dùng chung; lần kiểm kế tiếp ghi tại nhật ký.
+- Sau sửa: nhóm test content-3-1/content-flow-checks/content đạt 94/94, gồm hai trường hợp 3.1 thêm vào bảng kiểm dùng chung. Log `task1-green.log`.
 - Bỏ query/result NhanVien, gộp lý thuyết về SoNgay, giữ kiến thức COUNT(cột), NULL/0, tập rỗng và AVG int. Ba câu ôn nằm sau Memo; câu chính giữ nguyên.
 - FROM trích năm đơn để soi ba điều kiện; WHERE checks 14/15/16/9; SELECT có MaDon/SoNgay, nhắc tổng hợp đủ chín dòng dù đầu vào chỉ trích năm.
 
+## Task 2 — 3.2
+
+- Test trước sửa: ba lỗi đúng kỳ vọng (query phụ, thiếu input/checks và bốn tiểu mục). Log `task2-red.log`.
+- Sau sửa: content-3-2/content-flow-checks/content đạt 96/96, log `task2-green.log`.
+- Bỏ query/result tổng 45 và KD/trạng thái; giữ lời giải nhóm nhiều cột trên phạm vi đang làm và tiền đề đề mọi trạng thái. Câu chính và YAML giữ nguyên.
+- FROM có hồ sơ đang làm/đã nghỉ trong năm dòng đầu; WHERE checks 45/45. Bước GROUP BY nhận các mã lặp, hiện sáu nhóm. Cột đếm có nhãn minh họa “Số hồ sơ trong nhóm”; SELECT mới đặt alias SoHoSo. SQL kiểm của GROUP BY dùng cùng caption để bảng không làm người đọc hiểu alias câu chính đã có trước SELECT.
+- Hồ sơ công ty thay mô tả ví dụ phụ cũ bằng việc thêm TrangThai trong cùng phạm vi không sinh thêm nhóm; sự việc chính không đổi.
+
 ## Các phần còn lại
 
-Đang triển khai 3.2, kiểm bản build và review theo kế hoạch. Không coi test tĩnh là chứng minh SQL hoặc thao tác UI.
+Đang kiểm source/build cuối và review theo kế hoạch. Không coi test tĩnh là chứng minh SQL hoặc thao tác UI.

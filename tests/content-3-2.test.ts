@@ -3,7 +3,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { parse } from 'yaml';
 import { lessonBlocks } from './helpers/lesson-blocks';
 import { countsBy, seedRows } from './helpers/hrm-seed';
-import { checkFlow } from '../src/lib/run-flow';
+import { checkFlow, inputPreview } from '../src/lib/run-flow';
 
 const slug = '3-2-group-by-pivottable';
 const active = seedRows('NhanVien').filter(r => r.TrangThai === 'Đang làm');
@@ -28,13 +28,42 @@ it('3.2 groups the 45 active profiles before selecting and ordering the six resu
   expect(departments.reduce((n, r) => n + Number(r[1]), 0)).toBe(45);
 });
 
-it('3.2 changes the grain when the current KD profiles are split by status', () => {
+it('3.2 teaches multiple grouping keys without changing the scenario to a second query', () => {
   const lesson = lessonBlocks(slug);
+  const teaching = lesson.body.split('## Hay nhầm ở đâu')[0];
+  const activePairs = countsBy(active, ['MaPB', 'TrangThai']);
+  expect(activePairs).toHaveLength(6);
+  expect(activePairs.reduce((n, r) => n + Number(r[2]), 0)).toBe(45);
   const kd = seedRows('NhanVien').filter(r => r.MaPB === 'KD');
   const groups = countsBy(kd, ['MaPB', 'TrangThai']).sort((a, b) => Number(b[2]) - Number(a[2]));
   expect(groups).toEqual([['KD', 'Đang làm', 13], ['KD', 'Đã nghỉ', 1]]);
-  expect(lesson.results.some(r => JSON.stringify(r.rows) === JSON.stringify(groups))).toBe(true);
-  expect(lesson.body).toMatch(/WHERE MaPB = 'KD'\s+GROUP BY MaPB, TrangThai\s+ORDER BY \[?SoHoSo\]? DESC;/);
+  expect(teaching).toContain('GROUP BY MaPB, TrangThai');
+  expect(teaching.match(/<Sql\b/g)).toHaveLength(1);
+  expect(teaching).not.toContain("WHERE MaPB = 'KD'");
+});
+
+it('3.2 shows the filter decision and grouping inputs before creating the output alias', () => {
+  const { steps, query } = lessonBlocks(slug);
+  const [from, where, group, select, order] = steps;
+  expect(from.input).toContain('`NhanVien`');
+  expect(where.checks?.totals).toEqual([45, 45]);
+  expect(where.checks?.rows.some(r => r[1] === false)).toBe(true);
+  const filterInput = inputPreview(where, from);
+  expect(filterInput.columns).toContain('TrangThai');
+  for (const row of where.checks?.rows ?? []) {
+    expect(row[1]).toBe(seedRows('NhanVien').find(r => r.MaNV === row[0])!.TrangThai === 'Đang làm');
+  }
+  const groupingInput = inputPreview(group, where);
+  expect(groupingInput.columns).toEqual(expect.arrayContaining(['MaNV', 'MaPB']));
+  const departmentIndex = groupingInput.columns.indexOf('MaPB');
+  expect(new Set(groupingInput.rows.map(r => r[departmentIndex])).size).toBeLessThan(groupingInput.rows.length);
+  // The group-size caption is a teaching label, not SELECT's alias already available to GROUP BY.
+  expect(group.columns).toEqual(['MaPB', 'Số hồ sơ trong nhóm']);
+  expect(inputPreview(select, group).columns).toEqual(group.columns);
+  expect(select.columns).toEqual(['MaPB', 'SoHoSo']);
+  expect(inputPreview(order, select).columns).toEqual(['MaPB', 'SoHoSo']);
+  expect(select.rows).not.toEqual(order.rows);
+  expect(checkFlow(steps, query)).toEqual([]);
 });
 
 it('3.2 exercises distinguish title groups, department/status groups and leave-day sums', () => {

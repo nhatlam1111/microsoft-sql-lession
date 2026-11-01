@@ -13,6 +13,7 @@ it.each([
   ['2-8-ham-ngay-tham-nien', [20, 13, 3], ['NgayKetThuc', 'NgayKetThuc']],
   ['2-9-case-when-ham-if', [45, 48, 45], ['TrangThai', 'NgayVaoLam']],
   ['3-1-count-sum-avg', [14, 15, 16, 9], ['TrangThai', 'TuNgay', 'TuNgay']],
+  ['3-2-group-by-pivottable', [45, 45], ['TrangThai']],
 ])('%s checks each record against each condition, on columns its input shows', (slug, totals, columns) => {
   const { steps } = lessonBlocks(slug);
   const at = steps.findIndex(s => s.clause === 'WHERE');
@@ -30,6 +31,7 @@ it.each([
   ['2-4-sap-xep-va-top', 'HoTen'], ['2-5-null-o-trong', 'HoTen'], ['2-6-distinct-bo-dong-trung', 'MaPB'], ['2-7-ham-chuoi-tieng-viet', 'HoTen'],
   ['2-8-ham-ngay-tham-nien', 'NgayKetThuc', 'HopDong'], ['2-9-case-when-ham-if', 'NgayVaoLam'],
   ['3-1-count-sum-avg', 'SoNgay', 'DonNghiPhep'],
+  ['3-2-group-by-pivottable', 'MaPB'],
 ])('%s explains every step in its own words and shows where SELECT takes its columns from', (slug, column, source = 'NhanVien') => {
   const { steps } = lessonBlocks(slug);
   expect(steps[0].input).toContain(`\`${source}\``);

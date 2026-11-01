@@ -44,42 +44,7 @@ Hình dưới minh họa phần kết quả sau khi sắp số lượng giảm d
   ['Grand Total', 45],
 ]} />
 
-Trong SQL, **`GROUP BY`** chia các dòng đã qua `WHERE` thành các nhóm theo cột bạn chọn. `GROUP BY MaPB` gom những hồ sơ cùng mã phòng; `COUNT(*)` đếm trong từng nhóm. `MaPB` là **khóa nhóm**: giá trị dùng để xác định hồ sơ nào thuộc cùng một nhóm. Nếu nhóm theo một cột có `NULL`, các dòng mang `NULL` được gom thành một nhóm.
-
-Bạn viết `GROUP BY` sau `WHERE` và trước `ORDER BY`. Cột nằm sau `GROUP BY` giống trường đặt vào Rows; các hàm như `COUNT`, `SUM`, `AVG` giống phép tính chọn trong Values.
-
-`GROUP BY MaPB` chỉ trả các mã có hồ sơ trong phạm vi đã lọc; nó không tự tạo một dòng số `0` cho phòng không có hồ sơ phù hợp. PivotTable có thể bật tổng cộng như `B8`; câu `GROUP BY` thông thường dưới đây chỉ có các dòng phòng, không tự thêm dòng tổng cộng. Để kiểm tổng chung, áp dụng `COUNT(*)` đã học trên đúng phạm vi đang làm:
-
-<Sql code={`SELECT COUNT(*) AS [SoHoSoDangLam]
-FROM NhanVien
-WHERE TrangThai = N'Đang làm';`} />
-
-<Result columns={['SoHoSoDangLam']} rows={[[45]]} />
-
-### Mỗi tổ hợp khóa là một dòng kết quả
-
-**Thêm khóa nhóm là đổi độ chi tiết.** Ví dụ sau chỉ lấy các hồ sơ hiện mang mã phòng `KD`, gồm cả người đã nghỉ, rồi chia tiếp theo `TrangThai`. Đây là phạm vi khác với tình huống đang làm ở đầu bài:
-
-<Sql code={`SELECT MaPB, TrangThai, COUNT(*) AS [SoHoSo]
-FROM NhanVien
-WHERE MaPB = 'KD'
-GROUP BY MaPB, TrangThai
-ORDER BY [SoHoSo] DESC;`} />
-
-<Result columns={['MaPB', 'TrangThai', 'SoHoSo']} rows={[
-  ['KD', 'Đang làm', 13],
-  ['KD', 'Đã nghỉ', 1],
-]} />
-
-Chỉ nhóm theo `MaPB` trên phạm vi này thì có một nhóm `KD` với `14` hồ sơ; nhóm thêm `TrangThai` cho hai tổ hợp, nên thành hai dòng `13` và `1`. Trong PivotTable, điều này giống đặt cả mã phòng và trạng thái vào Rows. Các con số được tính lại cho từng tổ hợp, không sao chép tổng phòng vào mọi dòng.
-
-Với cách nhóm theo cột trong bài này, **cột lấy trực tiếp từ bảng trong `SELECT`, nếu không nằm trong hàm tổng hợp, phải có trong `GROUP BY`**. Câu trên lấy cả `MaPB` và `TrangThai`, nên nhóm theo cả hai. Không đưa tùy ý `HoTen` vào một dòng đại diện cả phòng, vì một phòng có nhiều họ tên mà câu lệnh chưa nói phải chọn tên nào.
-
-Ở bài này chỉ cần chọn khóa nhóm và chỉ tiêu cho từng nhóm. Điều kiện loại nhóm theo số liệu đã tính học ở bài 3.3; lấy thêm tên phòng từ danh mục bằng kết bảng học ở bài 3.4.
-
-### Câu lệnh cho tình huống
-
-Trở lại yêu cầu đầu bài, chỉ nhóm theo `MaPB` sau khi lọc đang làm. `SoHoSo` là alias của `COUNT(*)`; `ORDER BY` dùng alias này để xếp số lượng giảm dần, rồi dùng `MaPB` tăng dần khi bằng số lượng.
+Trong SQL, **`GROUP BY`** chia các dòng đã qua `WHERE` thành những nhóm cùng giá trị để các hàm tổng hợp tính riêng từng nhóm. Với báo cáo của chị Hạnh, câu lệnh là:
 
 <Sql code={`SELECT MaPB, COUNT(*) AS [SoHoSo]
 FROM NhanVien
@@ -87,20 +52,32 @@ WHERE TrangThai = N'Đang làm'
 GROUP BY MaPB
 ORDER BY [SoHoSo] DESC, MaPB ASC;`} />
 
-<Result columns={['MaPB', 'SoHoSo']} rows={[
-  ['KD', 13],
-  ['IT', 10],
-  ['VH', 8],
-  ['KT', 7],
-  ['NS', 5],
-  ['BGD', 2],
+Từng phần của câu:
+
+<LineMap rows={[
+  ['SELECT MaPB', 'Chọn mã phòng để biết mỗi dòng đang nói về nhóm nào. Ví dụ: KD là dòng của phòng Kinh doanh.'],
+  ['COUNT(*) AS [SoHoSo]', 'Đếm dòng trong từng nhóm như bài 3.1, đặt tên kết quả bằng AS. Ví dụ: nhóm KD có SoHoSo bằng 13.'],
+  ['FROM NhanVien', 'Chỉ bảng hồ sơ nguồn, chưa lọc hoặc gom. Ví dụ: bắt đầu từ 48 hồ sơ.'],
+  ["WHERE TrangThai = N'Đang làm'", 'Lọc từng hồ sơ trước khi nhóm, như trường đặt ở Filters. Ví dụ: NV020 đã nghỉ bị loại khỏi phòng KD.'],
+  ['GROUP BY MaPB', 'Gom các dòng cùng mã, như đặt mã phòng vào Rows. Ví dụ: NV002 và NV003 cùng mã KD nên được đếm trong một nhóm.'],
+  ['ORDER BY [SoHoSo] DESC, MaPB ASC', 'Xếp số lượng giảm dần; bằng nhau thì xét mã tăng dần như bài 2.4. Ví dụ: KD có 13 hồ sơ đứng trước IT có 10.'],
 ]} />
 
-Chị Hạnh nhận `6` dòng phòng; `KD` có nhiều hồ sơ đang làm nhất với `13`. Cộng sáu số lượng được `45`, đúng phạm vi đang làm, không gồm ba hồ sơ đã nghỉ.
+`MaPB` là **khóa nhóm**: giá trị quyết định hồ sơ nào thuộc cùng một nhóm. Mỗi mã xuất hiện sau `WHERE` cho một dòng kết quả; `COUNT(*)` tính trên các hồ sơ của riêng mã đó. `GROUP BY` đặt sau `WHERE` và trước `ORDER BY`, tương ứng chọn Rows rồi chọn phép đếm ở Values; các hàm `SUM`, `AVG` của bài 3.1 cũng tính riêng trong từng nhóm khi được dùng ở `SELECT`.
+
+Với cách nhóm theo cột đang học, **cột lấy trực tiếp trong `SELECT`, nếu không nằm trong hàm tổng hợp, phải có trong `GROUP BY`**. Vì vậy câu này nhóm theo `MaPB`, còn `COUNT(*)` là phép tính cho mỗi nhóm. Một dòng kết quả đại diện cả phòng, không còn là một hồ sơ cụ thể.
+
+**Nhóm nhiều cột** thì liệt kê các cột cách nhau bằng dấu phẩy: `GROUP BY MaPB, TrangThai` tạo một nhóm cho mỗi cặp giá trị. Vẫn lọc đang làm như tình huống thì không tách thêm nhóm, vì mọi hồ sơ cùng trạng thái; khi đề yêu cầu mọi trạng thái, các cặp phòng/trạng thái có hồ sơ sẽ thành những nhóm riêng. Trong PivotTable, đó là đặt thêm trạng thái vào Rows; số lượng được tính cho từng tổ hợp, không lặp nguyên tổng phòng.
+
+`GROUP BY MaPB` không tự tạo một dòng số `0` cho phòng không có hồ sơ qua `WHERE`, cũng không tự thêm **Grand Total** (tổng cộng) như ô `B8` trong hình Excel. Nhóm từ các dòng còn lại, nên không có dòng thì không có nhóm. Nếu cột nhóm có giá trị `NULL`, các dòng `NULL` của cột đó cùng thuộc một nhóm; các hồ sơ trong tình huống này đều có mã phòng.
+
+`GROUP BY` không bảo đảm thứ tự dòng. `SoHoSo` là alias được đặt ở `SELECT`; `ORDER BY` xét sau nên dùng được tên đó như bài 2.4, rồi dùng `MaPB` để chốt thứ tự khi bằng số lượng. Chỉ lấy danh sách mã không trùng bằng `DISTINCT` của bài 2.6 thì thiếu chỉ tiêu số hồ sơ chị Hạnh cần.
+
+Ở bài này chỉ cần chọn khóa nhóm và tính riêng cho từng nhóm. Lọc nhóm theo số liệu đã tính học ở bài 3.3; lấy tên phòng từ danh mục bằng kết bảng học ở bài 3.4, giữ cả phòng không có hồ sơ ở bài 3.5.
 
 ### SQL Server chạy câu này thế nào
 
-Theo thứ tự logic, lọc hồ sơ trước, gom nhóm sau, rồi chọn cột kết quả và sắp xếp. Bấm từng bước để xem dữ liệu ở mốc đó. Trước `ORDER BY`, thứ tự dòng có thể khác hình; sơ đồ không mô tả cách thực thi vật lý.
+Sơ đồ là **thứ tự xử lý logic**, không phải cách SQL Server đọc dữ liệu. Bấm từng bước để thấy `48` hồ sơ còn `45`, rồi thành `6` nhóm phòng. Trước `ORDER BY`, thứ tự dòng có thể khác hình:
 
 <RunFlow query={`SELECT MaPB, COUNT(*) AS [SoHoSo]
 FROM NhanVien
@@ -111,22 +88,18 @@ ORDER BY [SoHoSo] DESC, MaPB ASC;`} steps={[
     clause: 'FROM',
     title: 'Lấy hồ sơ nhân viên đang lưu.',
     focus: 'FROM NhanVien',
-    meaning: '`FROM` xác định bảng cung cấp các dòng trước khi lọc hoặc gom nhóm.',
-    detail: '`FROM` lấy `48` hồ sơ. Bảng dưới chỉ hiện `3` cột của `10` hồ sơ để theo dõi phòng và trạng thái; `NV020`, `NV033`, `NV041` vẫn còn ở bước này.',
+    input: 'Bảng `NhanVien` trong database.',
+    meaning: '`FROM` chọn bảng hồ sơ làm nguồn, chưa lọc hoặc gom nhóm.',
+    detail: '`48` hồ sơ. Hình trích năm hồ sơ và ba cột cần theo dõi; có cả hồ sơ đã nghỉ.',
     sql: `SELECT MaNV, MaPB, TrangThai
 FROM NhanVien;`,
     columns: ['MaNV', 'MaPB', 'TrangThai'],
     rows: [
       ['NV001', 'KT', 'Đang làm'],
       ['NV002', 'KD', 'Đang làm'],
-      ['NV003', 'KD', 'Đang làm'],
-      ['NV004', 'BGD', 'Đang làm'],
-      ['NV005', 'KT', 'Đang làm'],
-      ['NV006', 'KD', 'Đang làm'],
-      ['NV007', 'IT', 'Đang làm'],
       ['NV020', 'KD', 'Đã nghỉ'],
+      ['NV003', 'KD', 'Đang làm'],
       ['NV033', 'VH', 'Đã nghỉ'],
-      ['NV041', 'VH', 'Đã nghỉ'],
     ],
     total: 48,
   },
@@ -134,8 +107,14 @@ FROM NhanVien;`,
     clause: 'WHERE',
     title: 'Giữ hồ sơ đang làm.',
     focus: "WHERE TrangThai = N'Đang làm'",
-    meaning: '`WHERE` lọc từng dòng nguồn trước khi hình thành các nhóm.',
-    detail: '`WHERE` giữ `45` trong `48` hồ sơ; loại `3` hồ sơ đã nghỉ. Vì vậy các con số của từng phòng chỉ đếm hồ sơ có trạng thái đang làm.',
+    inputColumns: ['MaNV', 'MaPB', 'TrangThai'],
+    meaning: '`WHERE` xét từng hồ sơ, chỉ đưa dòng có trạng thái `Đang làm` vào bước nhóm và đếm.',
+    detail: 'Còn `45` hồ sơ, vẫn ba cột đang theo dõi. Chưa có dòng tổng hợp theo phòng.',
+    checks: {
+      conditions: ["TrangThai = N'Đang làm'"],
+      rows: [['NV001', true], ['NV002', true], ['NV020', false], ['NV003', true], ['NV033', false]],
+      totals: [45, 45],
+    },
     sql: `SELECT MaNV, MaPB, TrangThai
 FROM NhanVien
 WHERE TrangThai = N'Đang làm';`,
@@ -158,13 +137,14 @@ WHERE TrangThai = N'Đang làm';`,
     clause: 'GROUP BY',
     title: 'Gom theo mã phòng và đếm từng nhóm.',
     focus: 'GROUP BY MaPB',
-    meaning: '`GROUP BY` xác định nhóm theo các cột đã chọn; hàm tổng hợp tính riêng trên các dòng thuộc mỗi nhóm.',
-    detail: '`GROUP BY` chia `45` hồ sơ thành `6` nhóm mã phòng. Bảng trích hiện kích thước nhóm: `KD` có `13`, `VH` có `8` hồ sơ đang làm; chưa yêu cầu thứ tự các nhóm.',
-    sql: `SELECT MaPB, COUNT(*) AS [SoHoSo]
+    inputColumns: ['MaNV', 'MaPB', 'TrangThai'],
+    meaning: '`GROUP BY` gom các hồ sơ cùng `MaPB`; `COUNT(*)` đếm trong từng nhóm. Trong năm dòng trích đầu vào, `NV002` và `NV003` cùng nhóm `KD`, còn `NV001` và `NV005` cùng nhóm `KT`.',
+    detail: 'Còn `6` nhóm từ `45` hồ sơ. Bảng hai cột đối chiếu mã và kích thước nhóm; “Số hồ sơ trong nhóm” là nhãn minh họa, chưa phải alias `SoHoSo` ở câu chính.',
+    sql: `SELECT MaPB, COUNT(*) AS [Số hồ sơ trong nhóm]
 FROM NhanVien
 WHERE TrangThai = N'Đang làm'
 GROUP BY MaPB;`,
-    columns: ['MaPB', 'SoHoSo'],
+    columns: ['MaPB', 'Số hồ sơ trong nhóm'],
     rows: [['KT', 7], ['KD', 13], ['BGD', 2], ['IT', 10], ['VH', 8], ['NS', 5]],
     total: 6,
   },
@@ -172,8 +152,9 @@ GROUP BY MaPB;`,
     clause: 'SELECT',
     title: 'Đưa mã phòng và số lượng ra kết quả.',
     focus: 'SELECT MaPB, COUNT(*) AS [SoHoSo]',
-    meaning: '`SELECT` chọn khóa nhóm, giá trị tổng hợp cần trả về và đặt tên cột bằng `AS`.',
-    detail: '`SELECT` trả `6` dòng, mỗi dòng `2` cột: `MaPB` và số lượng đặt tên `SoHoSo`. Trong câu gốc, alias này được tạo ở đây, nên chỉ các bước logic sau đó mới dùng được nó.',
+    inputColumns: ['MaPB', 'Số hồ sơ trong nhóm'],
+    meaning: '`SELECT` chọn mã phòng và giá trị `COUNT(*)` của từng nhóm; `AS` đặt tên cột số lượng là `SoHoSo`.',
+    detail: 'Vẫn `6` dòng, `2` cột: `MaPB`, `SoHoSo`. Alias có từ bước này; bảng đầu vào chỉ trích năm trong sáu nhóm.',
     sql: `SELECT MaPB, COUNT(*) AS [SoHoSo]
 FROM NhanVien
 WHERE TrangThai = N'Đang làm'
@@ -186,8 +167,9 @@ GROUP BY MaPB;`,
     clause: 'ORDER BY',
     title: 'Đưa phòng đông nhất lên đầu.',
     focus: 'ORDER BY [SoHoSo] DESC, MaPB ASC',
-    meaning: '`ORDER BY` sắp các dòng kết quả sau khi tổng hợp; không thay đổi hồ sơ thuộc nhóm nào.',
-    detail: '`ORDER BY` giữ `6` dòng, xếp số hồ sơ giảm dần: `KD` `13` đứng trước `IT` `10`. Nếu số lượng bằng nhau thì `MaPB` tăng dần; có thể dùng `SoHoSo` vì bước này sau `SELECT`.',
+    inputColumns: ['MaPB', 'SoHoSo'],
+    meaning: '`ORDER BY` sắp số hồ sơ giảm dần, bằng nhau thì mã tăng dần. Bước này sau `SELECT` nên dùng được alias `SoHoSo`.',
+    detail: 'Vẫn `6` dòng, `2` cột theo đúng thứ tự chị Hạnh cần; không đổi số hồ sơ trong từng nhóm.',
     sql: `SELECT MaPB, COUNT(*) AS [SoHoSo]
 FROM NhanVien
 WHERE TrangThai = N'Đang làm'
@@ -198,6 +180,17 @@ ORDER BY [SoHoSo] DESC, MaPB ASC;`,
     total: 6,
   },
 ]} />
+
+<Result columns={['MaPB', 'SoHoSo']} rows={[
+  ['KD', 13],
+  ['IT', 10],
+  ['VH', 8],
+  ['KT', 7],
+  ['NS', 5],
+  ['BGD', 2],
+]} />
+
+Bạn có thể trả lời chị Hạnh: có `6` dòng phòng; `KD` đứng đầu với `13` hồ sơ đang làm. Cộng sáu số lượng được `45`, không gồm ba hồ sơ đã nghỉ. Đây là phân bố theo mã phòng hiện lưu, không phải phòng của nhân viên tại một thời điểm trong quá khứ.
 
 ## Hay nhầm ở đâu
 
@@ -232,9 +225,9 @@ ORDER BY [SoHoSo] DESC, MaPB ASC;`,
 **Tự kiểm tra:**
 
 <details>
-<summary>Vì sao cùng các hồ sơ <code>KD</code>, thêm <code>TrangThai</code> lại thành hai dòng?</summary>
+<summary>Vẫn lọc đang làm, thêm <code>TrangThai</code> vào khóa nhóm có tách thêm nhóm không?</summary>
 
-Khóa nhóm đổi từ mã phòng sang cặp mã phòng và trạng thái. `KD` có cả đang làm và đã nghỉ, nên tạo hai tổ hợp riêng.
+Không trong phạm vi này: mọi dòng đều cùng trạng thái nên mỗi mã phòng vẫn chỉ có một tổ hợp. Nếu lấy mọi trạng thái thì mỗi cặp phòng/trạng thái xuất hiện mới là một nhóm riêng.
 
 </details>
 
