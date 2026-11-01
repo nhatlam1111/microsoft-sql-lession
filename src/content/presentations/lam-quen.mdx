@@ -34,7 +34,7 @@ import sqlConcept from '../../assets/lessons/1-1-sql-language.png';
 <Slide id="du-lieu-trong-database" title="Dữ liệu bên trong database nhân sự" source="1.1" minutes={2}>
 
 <ConceptFigure kind="database" />
-<p>Trong hình trích này, <code>NhanVien</code> giữ hồ sơ, <code>PhongBan</code> giữ danh mục phòng và <code>HopDong</code> giữ hợp đồng.</p><p>Các bảng cùng nằm trong một database và liên quan với nhau qua mã.</p>
+<p><code>NhanVien</code> lưu hồ sơ, <code>PhongBan</code> lưu danh mục phòng và <code>HopDong</code> lưu hợp đồng.</p><p>Các bảng cùng thuộc một database và liên quan với nhau qua mã.</p>
 
 <PresenterNotes source="1.1" minutes={2}>
 
@@ -132,7 +132,7 @@ import sqlConcept from '../../assets/lessons/1-1-sql-language.png';
 <Slide id="thong-tin-o-nhieu-bang" title="Thông tin ở nhiều bảng" source="1.2" minutes={3}>
 
 <ConceptFigure kind="split" />
-<p><code>NV021</code> có một dòng hồ sơ và ba dòng hợp đồng; các hợp đồng ghi cùng mã nhân viên để tham chiếu hồ sơ đó.</p><p>Tách bảng giúp họ tên và thông tin hồ sơ được giữ ở một nơi, giảm việc lặp và sửa sót ở từng hợp đồng.</p>
+<p>Ba hợp đồng cùng ghi <code>MaNV = NV021</code> để nhắc tới hồ sơ.</p><p>Thông tin hồ sơ được giữ ở một nơi, giảm việc lặp và sửa sót ở từng hợp đồng.</p>
 
 <PresenterNotes source="1.2" minutes={3}>
 
@@ -148,7 +148,7 @@ import sqlConcept from '../../assets/lessons/1-1-sql-language.png';
 <Slide id="nhan-dien-mot-ho-so" title="Nhận diện một hồ sơ" source="1.4" minutes={2}>
 
 <ConceptFigure kind="identity" />
-<p>Họ tên có thể trùng hoặc thay đổi, nên cần một mã để nhắc đúng hồ sơ, như <code>MaNV = NV001</code>.</p><p>Chỉ đặt tên cột là <code>MaNV</code> chưa tạo luật cấm mã trùng; muốn phần mềm kiểm điều đó phải khai báo ràng buộc.</p>
+<p>Họ tên có thể trùng hoặc thay đổi, nên cần một mã để nhắc đúng hồ sơ, như <code>MaNV = NV001</code>.</p><p>Tên <code>MaNV</code> không tự cấm mã trùng; cần khai báo <strong>ràng buộc</strong>, tức luật để SQL Server kiểm dữ liệu.</p>
 
 <PresenterNotes source="1.4" minutes={2}>
 
@@ -164,7 +164,7 @@ import sqlConcept from '../../assets/lessons/1-1-sql-language.png';
 <Slide id="khoa-chinh" title="Khóa chính" source="1.4" minutes={3}>
 
 <ConceptFigure kind="pk" />
-<p>Khi <code>NhanVien.MaNV</code> được khai báo là <strong>khóa chính</strong> (<strong>PK</strong>), SQL Server kiểm mã không trùng và không nhận <code>NULL</code>, tức chưa có giá trị.</p><p>PK xác định một dòng theo mã; nó không tự phát hiện một người bị tạo hai hồ sơ khác mã.</p>
+<p>Khi cột <code>MaNV</code> của bảng <code>NhanVien</code> (<code>NhanVien.MaNV</code>) được khai báo là <strong>khóa chính</strong> (<strong>PK</strong>), mã không được trùng hoặc là <code>NULL</code> (chưa có giá trị).</p><p>PK xác định dòng theo mã; không tự phát hiện một người có hai hồ sơ khác mã.</p>
 
 <PresenterNotes source="1.4" minutes={3}>
 
@@ -216,7 +216,7 @@ import sqlConcept from '../../assets/lessons/1-1-sql-language.png';
 <Slide id="khoa-ngoai" title="Khóa ngoại" source="1.4" minutes={3}>
 
 <ConceptFigure kind="fk" />
-<p><strong>Khóa ngoại</strong> (<strong>FK</strong>) ở <code>NhanVien.MaPB</code> tham chiếu <code>PhongBan.MaPB</code>: khi FK đang bật, lúc ghi dữ liệu mã khác <code>NULL</code> phải có trong danh mục.</p><p>Nhiều hồ sơ được dùng cùng mã phòng; FK kiểm mã có thật, không biết hồ sơ có bị gán nhầm sang một mã phòng có thật khác.</p>
+<p><strong>Khóa ngoại</strong> (<strong>FK</strong>) <code>NhanVien.MaPB</code> tham chiếu <code>PhongBan.MaPB</code>: khi FK đang bật, mã khác <code>NULL</code> phải có trong danh mục lúc ghi.</p><p>Việc nhận <code>NULL</code> do thiết kế cột; <code>MaPB</code> ở đây không nhận <code>NULL</code>. FK cho phép lặp mã phòng nhưng không phát hiện gán nhầm mã có thật.</p>
 
 <PresenterNotes source="1.4" minutes={3}>
 
@@ -268,7 +268,7 @@ import sqlConcept from '../../assets/lessons/1-1-sql-language.png';
 <ProjectionRelation tables={[
 {name:'PhongBan',columns:['MaPB','TenPB']},{name:'NhanVien',columns:['MaNV','MaPB']},
 ]} />
-<p><code>PK</code> đánh dấu khóa chính, <code>FK</code> đánh dấu khóa ngoại; <code>1</code> ở phía một và <code>∞</code> ở phía nhiều.</p><p>Một phòng có thể được nhiều hồ sơ tham chiếu; ký hiệu không bắt mọi phòng phải có người.</p>
+<p><code>PK</code> đánh dấu khóa chính, <code>FK</code> đánh dấu khóa ngoại; <code>1</code> ở phía một và <code>∞</code> ở phía nhiều.</p><p>Ở mẫu này, mỗi hồ sơ có một phòng; một phòng có thể có nhiều hồ sơ hoặc chưa có người.</p>
 
 <PresenterNotes source="1.5" minutes={3}>
 
@@ -317,4 +317,3 @@ import sqlConcept from '../../assets/lessons/1-1-sql-language.png';
 
 </PresenterNotes>
 </Slide>
-

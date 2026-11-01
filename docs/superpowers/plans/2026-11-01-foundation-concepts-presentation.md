@@ -57,3 +57,5 @@ Ruling: người dùng đã duyệt để triển khai; thực hiện native tro
 Pre-flight: Task2 đọc đúng MDX/ConceptFigure/CSS Task1; route/controller là owner cũ. Không đổi interface liên subsystem.
 
 Task1: RED đã quan sát3test fail trên20slide cũ (tests-red.log); bộ18slide/hình/notes đã viết. Ruling: test hình phải nhận cả native figure có chú thích, không giới hạn component riêng — tiêu chí là hình có nội dung, không phải tên tag. Sau sửa test,14/14 test của3file liên quan đạt. Đang kiểm browser/build trước chốt nội dung.
+
+Vòng review nội dung: đọc trọn report gốc trước khi sửa. Làm theo F1 (NULL do thiết kế cột, mẫu không NULL trên slide 13; đọc hai phía ở slide 16) và F2 (đọc bảng.cột tại slide 10). Test bảo vệ các tiền đề hiển thị, không tính notes thay lời giảng. Kiểm SELECT bổ sung xác nhận bốn cột khóa liên quan đều không nhận NULL; tổng bảy nhóm kiểm chỉ đọc đạt. Giữ layout và cỡ chữ; tái kiểm slide 8/9/10/13/16 sau rút lời.

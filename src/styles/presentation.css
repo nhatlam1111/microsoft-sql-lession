@@ -70,7 +70,7 @@
 .concept-outcome.is-valid { background: var(--done-soft); color: var(--done); }
 .concept-outcome.is-rejected { background: var(--flag-soft); color: var(--flag); }
 .concept-outcome.is-caution { background: var(--seen-soft); color: var(--seen); }
-.concept-trace { display: flex; gap: 20px; margin: 20px 0; font-size: 28px; color: var(--accent); }
+.concept-trace { display: flex; gap: 20px; margin: 16px 0; font-size: 28px; color: var(--accent); }
 .concept-trace + p { margin-top: 20px; }
 .projection-body figcaption { font-size: 24px; margin-top: 12px; color: var(--ink-2); }
 .projection-body table { width: 100%; border-collapse: collapse; font-size: 28px; text-align: left; }
@@ -161,3 +161,5 @@
   .projection-slide, .projection-slide[hidden] { display: block !important; width: auto !important; height: auto !important; break-after: page; font-size: 22px; }
   [data-presenter-notes] { display: none !important; }
 }
+
+.concept-split .concept-data-row { padding: 8px 0; }

@@ -73,6 +73,8 @@ Mở slide không ghi tiến độ và không đổi tổng 50 bài. Ghi chú ch
 
 ## Nguồn quyết định và kỹ thuật
 
+Vòng triển khai đã hoàn tất 18 slide. Sau review nội dung độc lập, slide 10 giải nghĩa cách đọc `NhanVien.MaNV` tại chỗ; slide 13 đưa luật nhận NULL của cột và điều kiện mẫu không NULL ra màn chiếu; slide 16 đọc hai phía theo chính thiết kế mẫu. Các hình giả định giữ điều kiện không có luật khác. Chữ được rút để giữ cỡ chiếu, không chuyển điều kiện về notes. Báo cáo, ma trận và bằng chứng được lưu trong `docs/reviews/2026-11-01-foundation-concepts/`; kiểm tích hợp và bàn giao được ghi tiếp trong plan.
+
 Builder check độc lập đã đọc thiết kế, kết quả nguyên văn: “nothing important left”. Đây là kiểm mức rõ ràng để lập kế hoạch, không thay review nội dung/SQL/browser khi triển khai. Hai làm rõ thuật ngữ nhỏ sau lượt đọc: gọi tên truy vấn tại slide 4 và ghi rõ FK kiểm mã khác NULL tại slide 13. Chưa sửa sản phẩm hoặc đăng web trong vòng thiết kế này.
 
 - Yêu cầu mới ngày 01/11/2026 và lựa chọn cách tiếp cận của người làm khóa học trong chat này.
