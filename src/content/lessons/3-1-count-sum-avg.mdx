@@ -147,7 +147,22 @@ WHERE TrangThai = N'Đã duyệt'
     title: 'Tính năm con số cho cả phạm vi.',
     focus: "SELECT COUNT(*) AS [SoDon],\n\tSUM(SoNgay) AS [TongNgay],\n\tCAST(AVG(SoNgay) AS decimal(10,2)) AS [BinhQuan],\n\tMIN(SoNgay) AS [ItNhat], MAX(SoNgay) AS [NhieuNhat]",
     inputColumns: ['MaDon', 'SoNgay'],
-    meaning: '`SELECT` dùng các hàm tổng hợp trên cả `9` đơn qua `WHERE`, không chỉ năm dòng đầu vào đang trích; `AS` đặt tên năm cột. `AVG` chia tổng ngày cho số giá trị `SoNgay`, ở đây là chín.',
+    meaning: '`SELECT` tính trên cả `9` đơn qua `WHERE`, không chỉ năm dòng đầu vào đang trích. Mỗi biểu thức tạo một ô trong cùng dòng kết quả; `AS` đặt tên cột chứa ô đó.',
+    examples: [{
+      title: 'Từ số ngày của chín đơn đến năm ô kết quả',
+      note: 'Minh họa đối chiếu cả `9` đơn bằng số lần xuất hiện của từng giá trị `SoNgay`, không liệt kê lại từng đơn hoặc tạo thêm bảng trong database.',
+      table: {
+        columns: ['SoNgay', 'Số đơn có giá trị này'],
+        rows: [['1.0', 4], ['2.0', 3], ['3.0', 2]],
+      },
+      calculations: [
+        { expression: 'COUNT(*)', explanation: 'Đếm mỗi đơn một lần: `4 + 3 + 2 = 9` đơn.', column: 'SoDon', value: 9 },
+        { expression: 'SUM(SoNgay)', explanation: 'Cộng số ngày của các đơn: `4 × 1.0 + 3 × 2.0 + 2 × 3.0 = 16.0` ngày.', column: 'TongNgay', value: '16.0' },
+        { expression: 'CAST(AVG(SoNgay) AS decimal(10,2))', explanation: 'Cả `9` số ngày đều khác `NULL`. `AVG` lấy tổng `16.0` chia `9`, được khoảng `1.777…`; `CAST` làm tròn kết quả tới hai chữ số thập phân.', column: 'BinhQuan', value: '1.78' },
+        { expression: 'MIN(SoNgay)', explanation: 'So các giá trị số ngày trong phạm vi; nhỏ nhất là `1.0`.', column: 'ItNhat', value: '1.0' },
+        { expression: 'MAX(SoNgay)', explanation: 'So các giá trị số ngày trong phạm vi; lớn nhất là `3.0`.', column: 'NhieuNhat', value: '3.0' },
+      ],
+    }],
     detail: 'Còn `1` dòng, `5` cột để trả lời chị Hạnh. Các dòng đơn đã được tổng hợp, không còn mỗi đơn một dòng.',
     sql: `SELECT COUNT(*) AS [SoDon],
 \tSUM(SoNgay) AS [TongNgay],

@@ -9,6 +9,32 @@ const slug = '3-2-group-by-pivottable';
 const active = seedRows('NhanVien').filter(r => r.TrangThai === 'Đang làm');
 const departments = countsBy(active, ['MaPB']).sort((a, b) => Number(b[1]) - Number(a[1]) || String(a[0]).localeCompare(String(b[0])));
 
+it('3.2 illustrates only two representative groups, with complete membership of those sample groups', () => {
+  const { steps } = lessonBlocks(slug);
+  for (const step of steps.slice(2, 4)) {
+    expect(step.examples).toHaveLength(2);
+    expect(step.examples?.map(e => e.table?.rows[0][1])).toEqual(['BGD', 'NS']);
+    for (const e of step.examples ?? []) {
+      const group = e.table!.rows[0][1];
+      const members = active.filter(r => r.MaPB === group).map(r => [r.MaNV, r.MaPB]);
+      expect(e.table?.columns).toEqual(['MaNV', 'MaPB']);
+      expect(e.table?.rows).toEqual(members);
+      expect(e.table!.rows.length).toBeLessThanOrEqual(5);
+    }
+  }
+  expect(steps[2].examples?.every(e => !e.calculations)).toBe(true);
+});
+
+it('3.2 maps each sample group to its own two SELECT cells and highlights the corresponding result rows', () => {
+  const select = lessonBlocks(slug).steps[3];
+  expect(select.examples?.map(e => e.calculations?.map(c => [c.expression, c.column, c.value]))).toEqual([
+    [['MaPB', 'MaPB', 'BGD'], ['COUNT(*)', 'SoHoSo', 2]],
+    [['MaPB', 'MaPB', 'NS'], ['COUNT(*)', 'SoHoSo', 5]],
+  ]);
+  expect(select.examples?.map(e => e.calculations?.[1].value)).toEqual(select.examples?.map(e => e.table?.rows.length));
+  expect(select.mark?.map(n => select.rows[n - 1])).toEqual([['BGD', 2], ['NS', 5]]);
+});
+
 it('3.2 groups the 45 active profiles before selecting and ordering the six results', () => {
   const lesson = lessonBlocks(slug);
   expect(departments).toEqual([['KD', 13], ['IT', 10], ['VH', 8], ['KT', 7], ['NS', 5], ['BGD', 2]]);

@@ -9,6 +9,27 @@ const slug = '3-1-count-sum-avg';
 const exercisePath = `src/content/exercises/${slug}.yaml`;
 const exercises = () => parse(readFileSync(exercisePath, 'utf8')).exercises;
 
+it('3.1 derives every SELECT cell from a compact illustration of all nine forms, not five excerpt rows', () => {
+  const { steps } = lessonBlocks(slug);
+  const [example] = steps[2].examples ?? [];
+  expect(example).toBeDefined();
+  expect(steps[2].examples).toHaveLength(1);
+  const frequency = new Map<string, number>();
+  for (const form of leaveStartingIn('2026-09')) {
+    const days = Number(form.SoNgay).toFixed(1);
+    frequency.set(days, (frequency.get(days) ?? 0) + 1);
+  }
+  expect(example.table?.rows).toEqual([...frequency.entries()].sort());
+  expect(example.table?.rows.reduce((n, row) => n + Number(row[1]), 0)).toBe(9);
+  expect(example.calculations?.map(c => [c.column, c.value])).toEqual([
+    ['SoDon', 9], ['TongNgay', '16.0'], ['BinhQuan', '1.78'], ['ItNhat', '1.0'], ['NhieuNhat', '3.0'],
+  ]);
+  expect(example.calculations?.map(c => c.expression)).toEqual([
+    'COUNT(*)', 'SUM(SoNgay)', 'CAST(AVG(SoNgay) AS decimal(10,2))', 'MIN(SoNgay)', 'MAX(SoNgay)',
+  ]);
+  expect(inputPreview(steps[2], steps[1]).rows).toHaveLength(5);
+});
+
 it('3.1 filters approved forms by start month, then aggregates all nine rows into one', () => {
   const lesson = lessonBlocks(slug);
   const source = seedRows('DonNghiPhep');

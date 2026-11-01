@@ -135,10 +135,24 @@ WHERE TrangThai = N'Đang làm';`,
   },
   {
     clause: 'GROUP BY',
-    title: 'Gom theo mã phòng và đếm từng nhóm.',
+    title: 'Gom hồ sơ có cùng mã phòng.',
     focus: 'GROUP BY MaPB',
     inputColumns: ['MaNV', 'MaPB', 'TrangThai'],
-    meaning: '`GROUP BY` gom các hồ sơ cùng `MaPB`; `COUNT(*)` đếm trong từng nhóm. Trong năm dòng trích đầu vào, `NV002` và `NV003` cùng nhóm `KD`, còn `NV001` và `NV005` cùng nhóm `KT`.',
+    meaning: '`GROUP BY` theo `MaPB` gom các hồ sơ có cùng mã phòng vào cùng một nhóm. Hai hình sau minh họa thành viên nhóm trong cả `45` hồ sơ, gồm cả những dòng ngoài bảng trích; không phải bảng mới được lưu.',
+    examples: [
+      {
+        title: 'Nhóm BGD',
+        note: 'Đủ `2` hồ sơ của riêng nhóm mẫu `BGD`.',
+        table: { columns: ['MaNV', 'MaPB'], rows: [['NV004', 'BGD'], ['NV009', 'BGD']] },
+        conclusion: '`NV004` và `NV009` cùng mã `BGD` nên vào cùng nhóm.',
+      },
+      {
+        title: 'Nhóm NS',
+        note: 'Đủ `5` hồ sơ của riêng nhóm mẫu `NS`.',
+        table: { columns: ['MaNV', 'MaPB'], rows: [['NV010', 'NS'], ['NV012', 'NS'], ['NV022', 'NS'], ['NV030', 'NS'], ['NV047', 'NS']] },
+        conclusion: 'Các hồ sơ này cùng mã `NS`, khác mã `BGD`, nên thuộc một nhóm riêng. Các mã phòng còn lại được gom tương tự.',
+      },
+    ],
     detail: 'Còn `6` nhóm từ `45` hồ sơ. Bảng hai cột đối chiếu mã và kích thước nhóm; “Số hồ sơ trong nhóm” là nhãn minh họa, chưa phải alias `SoHoSo` ở câu chính.',
     sql: `SELECT MaPB, COUNT(*) AS [Số hồ sơ trong nhóm]
 FROM NhanVien
@@ -153,8 +167,30 @@ GROUP BY MaPB;`,
     title: 'Đưa mã phòng và số lượng ra kết quả.',
     focus: 'SELECT MaPB, COUNT(*) AS [SoHoSo]',
     inputColumns: ['MaPB', 'Số hồ sơ trong nhóm'],
-    meaning: '`SELECT` chọn mã phòng và giá trị `COUNT(*)` của từng nhóm; `AS` đặt tên cột số lượng là `SoHoSo`.',
-    detail: 'Vẫn `6` dòng, `2` cột: `MaPB`, `SoHoSo`.',
+    meaning: '`SELECT` áp dụng cùng hai biểu thức cho từng nhóm. `MaPB` lấy mã chung; `COUNT(*)` đếm hồ sơ trong riêng nhóm đó. `AS [SoHoSo]` đặt tên cột số đếm. Chỉ theo dõi hai nhóm mẫu dưới đây; các nhóm khác làm tương tự.',
+    examples: [
+      {
+        title: 'Một nhóm BGD tạo một dòng',
+        note: 'Minh họa đủ `2` hồ sơ của nhóm mẫu `BGD` sau `WHERE` và `GROUP BY`.',
+        table: { columns: ['MaNV', 'MaPB'], rows: [['NV004', 'BGD'], ['NV009', 'BGD']] },
+        calculations: [
+          { expression: 'MaPB', explanation: 'Lấy mã chung `BGD` của các hồ sơ trong nhóm.', column: 'MaPB', value: 'BGD' },
+          { expression: 'COUNT(*)', explanation: '`NV004` góp `1`, `NV009` góp `1`: `1 + 1 = 2`. Số đếm chỉ thuộc nhóm `BGD`.', column: 'SoHoSo', value: 2 },
+        ],
+        conclusion: 'Ghép hai ô theo thứ tự `MaPB`, `SoHoSo` thành dòng `BGD | 2`.',
+      },
+      {
+        title: 'Một nhóm NS tạo một dòng',
+        note: 'Minh họa đủ `5` hồ sơ của nhóm mẫu `NS`.',
+        table: { columns: ['MaNV', 'MaPB'], rows: [['NV010', 'NS'], ['NV012', 'NS'], ['NV022', 'NS'], ['NV030', 'NS'], ['NV047', 'NS']] },
+        calculations: [
+          { expression: 'MaPB', explanation: 'Lấy mã chung `NS` của các hồ sơ trong nhóm.', column: 'MaPB', value: 'NS' },
+          { expression: 'COUNT(*)', explanation: 'Đếm mỗi dòng của nhóm một lần: `1 + 1 + 1 + 1 + 1 = 5` hồ sơ.', column: 'SoHoSo', value: 5 },
+        ],
+        conclusion: 'Ghép hai ô thành dòng `NS | 5`. Mỗi nhóm có số đếm riêng, không lấy tổng `45` hồ sơ cho mọi nhóm.',
+      },
+    ],
+    detail: 'Vẫn `6` dòng, `2` cột: `MaPB`, `SoHoSo`. Hai dòng của nhóm mẫu `BGD` và `NS` được đánh dấu.',
     sql: `SELECT MaPB, COUNT(*) AS [SoHoSo]
 FROM NhanVien
 WHERE TrangThai = N'Đang làm'
@@ -162,6 +198,7 @@ GROUP BY MaPB;`,
     columns: ['MaPB', 'SoHoSo'],
     rows: [['KT', 7], ['KD', 13], ['BGD', 2], ['IT', 10], ['VH', 8], ['NS', 5]],
     total: 6,
+    mark: [3, 6],
   },
   {
     clause: 'ORDER BY',
