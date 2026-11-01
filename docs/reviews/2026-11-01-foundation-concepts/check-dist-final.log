@@ -1,0 +1,5 @@
+
+> microsoft-sql-lession@0.1.0 check:dist
+> node scripts/check-dist.mjs
+
+check-dist: OK (139 trang, 2771 link)

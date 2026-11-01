@@ -35,7 +35,7 @@ const { entry, slides, mode } = Astro.props;
     <nav aria-label="Mục lục slide"><ol>{slides.map((slide, index) => <li><a href={`#${slide.id}`} data-slide-target={slide.id}><span>{String(index + 1).padStart(2, '0')}</span>{slide.title}</a></li>)}</ol></nav>
   </details>
   <p class="presentation-keyboard" data-enhanced-controls>Phím ← → hoặc Space đi từng bước · Home / End đến đầu / cuối · {entry.minutes} phút gồm hỏi đáp</p>
-  <noscript><p class="presentation-noscript">Bạn đang đọc bản liên tục. Mở “Lời giải” để xem đáp án. Bật JavaScript để chiếu từng slide và dùng hai cửa sổ.</p></noscript>
+  <noscript><p class="presentation-noscript">Bạn đang đọc bản liên tục. Bật JavaScript để chiếu từng slide và dùng hai cửa sổ.</p></noscript>
 </main>
 <script>
   import '../../scripts/presentation';

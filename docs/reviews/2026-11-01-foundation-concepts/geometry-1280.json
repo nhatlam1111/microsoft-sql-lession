@@ -1,0 +1,92 @@
+[
+  {
+    "gap": 115.5720672607422,
+    "id": "database-la-gi",
+    "overflow": 0
+  },
+  {
+    "gap": 26.063064575195312,
+    "id": "du-lieu-trong-database",
+    "overflow": 0
+  },
+  {
+    "gap": 115.5720672607422,
+    "id": "sql-server-la-gi",
+    "overflow": 0
+  },
+  {
+    "gap": 94.12413024902344,
+    "id": "sql-la-gi",
+    "overflow": 0
+  },
+  {
+    "gap": 117.50202941894533,
+    "id": "bon-ten-can-phan-biet",
+    "overflow": 0
+  },
+  {
+    "gap": 34.97453308105469,
+    "id": "bang-trong-database",
+    "overflow": 0
+  },
+  {
+    "gap": 72.34895324707031,
+    "id": "bang-dong-cot",
+    "overflow": 0
+  },
+  {
+    "gap": 34.46269226074219,
+    "id": "thong-tin-o-nhieu-bang",
+    "overflow": 0
+  },
+  {
+    "gap": 34.97453308105469,
+    "id": "nhan-dien-mot-ho-so",
+    "overflow": 0
+  },
+  {
+    "gap": 15.918075561523438,
+    "id": "khoa-chinh",
+    "overflow": 0
+  },
+  {
+    "gap": 15.918075561523438,
+    "id": "bang-khong-co-khoa-chinh",
+    "overflow": 0
+  },
+  {
+    "gap": 77.87873840332031,
+    "id": "ma-phong-trong-ho-so",
+    "overflow": 0
+  },
+  {
+    "gap": 15.918075561523438,
+    "id": "khoa-ngoai",
+    "overflow": 0
+  },
+  {
+    "gap": 15.918075561523438,
+    "id": "bang-khong-co-khoa-ngoai",
+    "overflow": 0
+  },
+  {
+    "gap": 22.23667907714844,
+    "id": "so-do-quan-he-erd",
+    "overflow": 0
+  },
+  {
+    "gap": 22.23667907714844,
+    "id": "ky-hieu-erd",
+    "overflow": 0
+  },
+  {
+    "gap": 17.243942260742188,
+    "id": "ten-phong-cua-nv001",
+    "overflow": 0
+  },
+  {
+    "gap": 22.23667907714844,
+    "id": "hop-dong-kem-ten-phong",
+    "overflow": 0
+  }
+]

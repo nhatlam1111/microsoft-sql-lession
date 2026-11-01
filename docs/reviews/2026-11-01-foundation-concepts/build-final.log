@@ -1,0 +1,218 @@
+
+> microsoft-sql-lession@0.1.0 build
+> astro build
+
+17:20:29 [content] Syncing content
+17:20:29 [content] Synced content
+17:20:29 [types] Generated 628ms
+17:20:29 [build] output: "static"
+17:20:29 [build] mode: "static"
+17:20:29 [build] directory: E:\Projects\SQL Lession\dist\
+17:20:29 [build] Collecting build info...
+17:20:29 [build] ✓ Completed in 648ms.
+17:20:29 [build] Building static entrypoints...
+17:20:33 [vite] ✓ built in 3.16s
+17:20:33 [build] ✓ Completed in 3.19s.
+
+ building client (vite) 
+17:20:33 [vite] transforming...
+17:20:33 [vite] ✓ 250 modules transformed.
+17:20:34 [vite] rendering chunks...
+17:20:34 [vite] computing gzip size...
+17:20:34 [vite] dist/_astro/MindMap.BnuhLJ6X.css                                                 15.87 kB │ gzip:  2.67 kB
+17:20:34 [vite] dist/_astro/focus-trap.DyWlSvGd.js                                                0.08 kB │ gzip:  0.09 kB
+17:20:34 [vite] dist/_astro/events.gOvHKwzg.js                                                    0.14 kB │ gzip:  0.13 kB
+17:20:34 [vite] dist/_astro/TopBar.astro_astro_type_script_index_0_lang.BCIXDJZX.js               0.24 kB │ gzip:  0.16 kB
+17:20:34 [vite] dist/_astro/StatusIcon.COkR29yI.js                                                0.26 kB │ gzip:  0.24 kB
+17:20:34 [vite] dist/_astro/paths.Bse3Lc9d.js                                                     0.28 kB │ gzip:  0.18 kB
+17:20:34 [vite] dist/_astro/Exercises.astro_astro_type_script_index_0_lang.ZZAYB3Ry.js            0.39 kB │ gzip:  0.32 kB
+17:20:34 [vite] dist/_astro/TopProgress.DJ3_SFny.js                                               0.56 kB │ gzip:  0.37 kB
+17:20:34 [vite] dist/_astro/jsx-runtime.D_zvdyIk.js                                               0.73 kB │ gzip:  0.46 kB
+17:20:34 [vite] dist/_astro/LessonStatus.B_gikPXz.js                                              1.64 kB │ gzip:  0.76 kB
+17:20:34 [vite] dist/_astro/roadmap.DKk8XL5v.js                                                   2.21 kB │ gzip:  1.26 kB
+17:20:34 [vite] dist/_astro/use-progress.CryjcDJn.js                                              2.32 kB │ gzip:  0.97 kB
+17:20:34 [vite] dist/_astro/SidebarNav.BjuHbxLR.js                                                2.79 kB │ gzip:  1.09 kB
+17:20:34 [vite] dist/_astro/progress.C_2NEmCF.js                                                  2.85 kB │ gzip:  1.25 kB
+17:20:34 [vite] dist/_astro/ProgressMenu.B-fL6lFx.js                                              3.02 kB │ gzip:  1.42 kB
+17:20:34 [vite] dist/_astro/index.CXPNb1tz.js                                                     4.21 kB │ gzip:  1.58 kB
+17:20:34 [vite] dist/_astro/RoadmapPopup.A1x1MCNd.js                                              4.77 kB │ gzip:  2.03 kB
+17:20:34 [vite] dist/_astro/SearchDialog.CTDSXyVL.js                                              4.81 kB │ gzip:  2.24 kB
+17:20:34 [vite] dist/_astro/PresentationShell.astro_astro_type_script_index_0_lang.DpC8vPOf.js    8.19 kB │ gzip:  3.35 kB
+17:20:34 [vite] dist/_astro/index.DKe3m8gR.js                                                     8.33 kB │ gzip:  3.22 kB
+17:20:34 [vite] dist/_astro/ExerciseWorkspace.CZWKYhR_.js                                        15.55 kB │ gzip:  7.05 kB
+17:20:34 [vite] dist/_astro/presentations.CX_S7iKp.js                                            53.23 kB │ gzip: 12.23 kB
+17:20:34 [vite] dist/_astro/MindMap.C7vpOGk5.js                                                 190.63 kB │ gzip: 62.75 kB
+17:20:34 [vite] dist/_astro/client.CYwmpaq4.js                                                  211.37 kB │ gzip: 66.06 kB
+17:20:34 [vite] ✓ built in 963ms
+
+ generating static routes 
+17:20:34 ▶ src/pages/404.astro
+17:20:34   └─ /404.html (+20ms) 
+17:20:34 λ src/pages/HRM_Demo.sql.ts
+17:20:34   └─ /HRM_Demo.sql (+1ms) 
+17:20:34 ▶ src/pages/bai-giang/[slug]/index.astro
+17:20:34   └─ /bai-giang/lam-quen/index.html (+28ms) 
+17:20:34 ▶ src/pages/bai-giang/[slug]/nguoi-giang.astro
+17:20:34   └─ /bai-giang/lam-quen/nguoi-giang/index.html (+18ms) 
+17:20:34 ▶ src/pages/bai-giang/index.astro
+17:20:34   └─ /bai-giang/index.html (+2ms) 
+17:20:34 ▶ src/pages/bai/[slug]/bai-tap/[n].astro
+17:20:34   ├─ /bai/2-1-chon-cot-dat-ten-cot/bai-tap/1/index.html (+8ms) 
+17:20:34   ├─ /bai/2-1-chon-cot-dat-ten-cot/bai-tap/2/index.html (+6ms) 
+17:20:34   ├─ /bai/2-1-chon-cot-dat-ten-cot/bai-tap/3/index.html (+5ms) 
+17:20:34   ├─ /bai/2-1-chon-cot-dat-ten-cot/bai-tap/4/index.html (+6ms) 
+17:20:34   ├─ /bai/2-2-where-loc-nhu-autofilter/bai-tap/1/index.html (+6ms) 
+17:20:34   ├─ /bai/2-2-where-loc-nhu-autofilter/bai-tap/2/index.html (+6ms) 
+17:20:34   ├─ /bai/2-2-where-loc-nhu-autofilter/bai-tap/3/index.html (+8ms) 
+17:20:34   ├─ /bai/2-5-null-o-trong/bai-tap/1/index.html (+5ms) 
+17:20:34   ├─ /bai/2-5-null-o-trong/bai-tap/2/index.html (+4ms) 
+17:20:34   ├─ /bai/2-5-null-o-trong/bai-tap/3/index.html (+5ms) 
+17:20:34   ├─ /bai/2-7-ham-chuoi-tieng-viet/bai-tap/1/index.html (+5ms) 
+17:20:34   ├─ /bai/2-7-ham-chuoi-tieng-viet/bai-tap/2/index.html (+5ms) 
+17:20:34   ├─ /bai/2-7-ham-chuoi-tieng-viet/bai-tap/3/index.html (+5ms) 
+17:20:34   ├─ /bai/2-3-and-or-in-between-like/bai-tap/1/index.html (+5ms) 
+17:20:34   ├─ /bai/2-3-and-or-in-between-like/bai-tap/2/index.html (+8ms) 
+17:20:34   ├─ /bai/2-3-and-or-in-between-like/bai-tap/3/index.html (+6ms) 
+17:20:34   ├─ /bai/2-3-and-or-in-between-like/bai-tap/4/index.html (+4ms) 
+17:20:34   ├─ /bai/2-6-distinct-bo-dong-trung/bai-tap/1/index.html (+8ms) 
+17:20:34   ├─ /bai/2-6-distinct-bo-dong-trung/bai-tap/2/index.html (+6ms) 
+17:20:34   ├─ /bai/2-6-distinct-bo-dong-trung/bai-tap/3/index.html (+4ms) 
+17:20:34   ├─ /bai/2-8-ham-ngay-tham-nien/bai-tap/1/index.html (+5ms) 
+17:20:34   ├─ /bai/2-8-ham-ngay-tham-nien/bai-tap/2/index.html (+5ms) 
+17:20:34   ├─ /bai/2-8-ham-ngay-tham-nien/bai-tap/3/index.html (+5ms) 
+17:20:34   ├─ /bai/2-4-sap-xep-va-top/bai-tap/1/index.html (+4ms) 
+17:20:34   ├─ /bai/2-4-sap-xep-va-top/bai-tap/2/index.html (+4ms) 
+17:20:34   ├─ /bai/2-4-sap-xep-va-top/bai-tap/3/index.html (+4ms) 
+17:20:34   ├─ /bai/3-1-count-sum-avg/bai-tap/1/index.html (+4ms) 
+17:20:34   ├─ /bai/3-1-count-sum-avg/bai-tap/2/index.html (+4ms) 
+17:20:34   ├─ /bai/3-1-count-sum-avg/bai-tap/3/index.html (+4ms) 
+17:20:34   ├─ /bai/2-9-case-when-ham-if/bai-tap/1/index.html (+4ms) 
+17:20:34   ├─ /bai/2-9-case-when-ham-if/bai-tap/2/index.html (+7ms) 
+17:20:34   ├─ /bai/2-9-case-when-ham-if/bai-tap/3/index.html (+4ms) 
+17:20:34   ├─ /bai/3-10-dem-co-dieu-kien/bai-tap/1/index.html (+4ms) 
+17:20:34   ├─ /bai/3-10-dem-co-dieu-kien/bai-tap/2/index.html (+4ms) 
+17:20:34   ├─ /bai/3-10-dem-co-dieu-kien/bai-tap/3/index.html (+4ms) 
+17:20:34   ├─ /bai/3-2-group-by-pivottable/bai-tap/1/index.html (+5ms) 
+17:20:34   ├─ /bai/3-2-group-by-pivottable/bai-tap/2/index.html (+4ms) 
+17:20:34   ├─ /bai/3-2-group-by-pivottable/bai-tap/3/index.html (+4ms) 
+17:20:34   ├─ /bai/3-3-having-loc-sau-khi-gop/bai-tap/1/index.html (+6ms) 
+17:20:34   ├─ /bai/3-3-having-loc-sau-khi-gop/bai-tap/2/index.html (+5ms) 
+17:20:34   ├─ /bai/3-3-having-loc-sau-khi-gop/bai-tap/3/index.html (+5ms) 
+17:20:34   ├─ /bai/3-4-inner-join-vlookup/bai-tap/1/index.html (+6ms) 
+17:20:34   ├─ /bai/3-4-inner-join-vlookup/bai-tap/2/index.html (+4ms) 
+17:20:34   ├─ /bai/3-4-inner-join-vlookup/bai-tap/3/index.html (+5ms) 
+17:20:34   ├─ /bai/3-6-ket-nhieu-bang/bai-tap/1/index.html (+4ms) 
+17:20:34   ├─ /bai/3-6-ket-nhieu-bang/bai-tap/2/index.html (+5ms) 
+17:20:34   ├─ /bai/3-6-ket-nhieu-bang/bai-tap/3/index.html (+8ms) 
+17:20:34   ├─ /bai/3-5-left-join/bai-tap/1/index.html (+5ms) 
+17:20:34   ├─ /bai/3-5-left-join/bai-tap/2/index.html (+4ms) 
+17:20:34   ├─ /bai/3-5-left-join/bai-tap/3/index.html (+5ms) 
+17:20:34   ├─ /bai/3-7-self-join-quan-ly/bai-tap/1/index.html (+4ms) 
+17:20:34   ├─ /bai/3-7-self-join-quan-ly/bai-tap/2/index.html (+4ms) 
+17:20:34   ├─ /bai/3-7-self-join-quan-ly/bai-tap/3/index.html (+4ms) 
+17:20:34   ├─ /bai/3-9-subquery/bai-tap/1/index.html (+5ms) 
+17:20:34   ├─ /bai/3-9-subquery/bai-tap/2/index.html (+6ms) 
+17:20:34   ├─ /bai/3-9-subquery/bai-tap/3/index.html (+5ms) 
+17:20:34   ├─ /bai/3-8-union-gop-danh-sach/bai-tap/1/index.html (+5ms) 
+17:20:34   ├─ /bai/3-8-union-gop-danh-sach/bai-tap/2/index.html (+5ms) 
+17:20:34   ├─ /bai/3-8-union-gop-danh-sach/bai-tap/3/index.html (+5ms) 
+17:20:34   ├─ /bai/4-1-cte-tung-buoc/bai-tap/1/index.html (+5ms) 
+17:20:34   ├─ /bai/4-1-cte-tung-buoc/bai-tap/2/index.html (+5ms) 
+17:20:34   ├─ /bai/4-1-cte-tung-buoc/bai-tap/3/index.html (+4ms) 
+17:20:34   ├─ /bai/4-2-xep-hang-row-number-rank/bai-tap/1/index.html (+6ms) 
+17:20:34   ├─ /bai/4-2-xep-hang-row-number-rank/bai-tap/2/index.html (+4ms) 
+17:20:34   ├─ /bai/4-2-xep-hang-row-number-rank/bai-tap/3/index.html (+4ms) 
+17:20:34   ├─ /bai/4-4-pivot-xoay-bang/bai-tap/1/index.html (+4ms) 
+17:20:34   ├─ /bai/4-4-pivot-xoay-bang/bai-tap/2/index.html (+4ms) 
+17:20:34   ├─ /bai/4-4-pivot-xoay-bang/bai-tap/3/index.html (+4ms) 
+17:20:34   ├─ /bai/4-6-soi-chat-luong-du-lieu/bai-tap/1/index.html (+5ms) 
+17:20:34   ├─ /bai/4-6-soi-chat-luong-du-lieu/bai-tap/2/index.html (+4ms) 
+17:20:34   ├─ /bai/4-6-soi-chat-luong-du-lieu/bai-tap/3/index.html (+5ms) 
+17:20:34   ├─ /bai/4-3-luy-ke-so-thang-truoc/bai-tap/1/index.html (+5ms) 
+17:20:34   ├─ /bai/4-3-luy-ke-so-thang-truoc/bai-tap/2/index.html (+4ms) 
+17:20:34   ├─ /bai/4-3-luy-ke-so-thang-truoc/bai-tap/3/index.html (+5ms) 
+17:20:34   ├─ /bai/6-5-update-quen-where/bai-tap/1/index.html (+4ms) 
+17:20:34   └─ /bai/6-5-update-quen-where/bai-tap/2/index.html (+4ms) 
+17:20:34 ▶ src/pages/bai/[slug].astro
+17:20:34   ├─ /bai/1-2-bang-dong-cot/index.html (+10ms) 
+17:20:34   ├─ /bai/1-1-database-la-gi/index.html (+9ms) 
+17:20:34   ├─ /bai/1-5-doc-so-do-erd/index.html (+10ms) 
+17:20:34   ├─ /bai/1-3-kieu-du-lieu/index.html (+8ms) 
+17:20:34   ├─ /bai/1-4-khoa-chinh-khoa-ngoai/index.html (+8ms) 
+17:20:34   ├─ /bai/2-2-where-loc-nhu-autofilter/index.html (+13ms) 
+17:20:34   ├─ /bai/2-1-chon-cot-dat-ten-cot/index.html (+11ms) 
+17:20:34   ├─ /bai/2-3-and-or-in-between-like/index.html (+10ms) 
+17:20:34   ├─ /bai/2-4-sap-xep-va-top/index.html (+11ms) 
+17:20:34   ├─ /bai/2-5-null-o-trong/index.html (+9ms) 
+17:20:34   ├─ /bai/2-6-distinct-bo-dong-trung/index.html (+12ms) 
+17:20:34   ├─ /bai/2-9-case-when-ham-if/index.html (+11ms) 
+17:20:34   ├─ /bai/2-8-ham-ngay-tham-nien/index.html (+10ms) 
+17:20:34   ├─ /bai/3-10-dem-co-dieu-kien/index.html (+12ms) 
+17:20:34   ├─ /bai/3-2-group-by-pivottable/index.html (+11ms) 
+17:20:34   ├─ /bai/2-7-ham-chuoi-tieng-viet/index.html (+10ms) 
+17:20:34   ├─ /bai/3-1-count-sum-avg/index.html (+9ms) 
+17:20:34   ├─ /bai/3-4-inner-join-vlookup/index.html (+9ms) 
+17:20:34   ├─ /bai/3-3-having-loc-sau-khi-gop/index.html (+13ms) 
+17:20:34   ├─ /bai/3-5-left-join/index.html (+10ms) 
+17:20:34   ├─ /bai/3-6-ket-nhieu-bang/index.html (+10ms) 
+17:20:34   ├─ /bai/3-9-subquery/index.html (+9ms) 
+17:20:34   ├─ /bai/3-8-union-gop-danh-sach/index.html (+11ms) 
+17:20:34   ├─ /bai/3-7-self-join-quan-ly/index.html (+10ms) 
+17:20:34   ├─ /bai/4-1-cte-tung-buoc/index.html (+9ms) 
+17:20:34   ├─ /bai/4-10-viet-yeu-cau-bao-cao/index.html (+7ms) 
+17:20:34   ├─ /bai/4-2-xep-hang-row-number-rank/index.html (+13ms) 
+17:20:34   ├─ /bai/4-3-luy-ke-so-thang-truoc/index.html (+9ms) 
+17:20:34   ├─ /bai/4-4-pivot-xoay-bang/index.html (+8ms) 
+17:20:34   ├─ /bai/4-5-view-bao-cao-luu-san/index.html (+12ms) 
+17:20:34   ├─ /bai/4-7-doi-soat-cham-cong-luong/index.html (+8ms) 
+17:20:34   ├─ /bai/4-6-soi-chat-luong-du-lieu/index.html (+9ms) 
+17:20:34   ├─ /bai/4-8-doc-hieu-stored-procedure/index.html (+8ms) 
+17:20:34   ├─ /bai/5-2-rang-buoc-du-lieu/index.html (+7ms) 
+17:20:34   ├─ /bai/5-4-transaction/index.html (+7ms) 
+17:20:34   ├─ /bai/5-3-insert-update-delete-an-toan/index.html (+8ms) 
+17:20:34   ├─ /bai/5-1-thiet-ke-bang-chuan-hoa/index.html (+8ms) 
+17:20:34   ├─ /bai/4-9-power-query-excel/index.html (+7ms) 
+17:20:34   ├─ /bai/5-6-index-truy-van-cham/index.html (+7ms) 
+17:20:34   ├─ /bai/5-5-import-du-lieu-tu-excel/index.html (+7ms) 
+17:20:34   ├─ /bai/5-7-execution-plan/index.html (+8ms) 
+17:20:34   ├─ /bai/5-8-lock-blocking-deadlock/index.html (+7ms) 
+17:20:34   ├─ /bai/6-2-dev-uat-production/index.html (+7ms) 
+17:20:34   ├─ /bai/5-9-trigger-nhat-ky/index.html (+7ms) 
+17:20:35   ├─ /bai/6-3-backup-restore/index.html (+6ms) 
+17:20:35   ├─ /bai/6-1-du-lieu-nhay-cam-phan-quyen/index.html (+8ms) 
+17:20:35   ├─ /bai/6-4-point-in-time-restore/index.html (+7ms) 
+17:20:35   ├─ /bai/6-6-temporal-table/index.html (+6ms) 
+17:20:35   ├─ /bai/6-5-update-quen-where/index.html (+8ms) 
+17:20:35   └─ /bai/6-7-checklist-production/index.html (+7ms) 
+17:20:35 ▶ src/pages/gioi-thieu.astro
+17:20:35   └─ /gioi-thieu/index.html (+5ms) 
+17:20:35 ▶ src/pages/index.astro
+17:20:35   └─ /index.html (+5ms) 
+17:20:35 ▶ src/pages/phu-luc/[slug].astro
+17:20:35   ├─ /phu-luc/pl-3-ham-xu-ly-chuoi/index.html (+10ms) 
+17:20:35   ├─ /phu-luc/pl-2-chuyen-doi-kieu-du-lieu/index.html (+12ms) 
+17:20:35   ├─ /phu-luc/pl-1-chi-tiet-kieu-du-lieu/index.html (+14ms) 
+17:20:35   ├─ /phu-luc/pl-6-null-va-dieu-kien/index.html (+8ms) 
+17:20:35   ├─ /phu-luc/pl-4-tinh-toan-va-lam-tron/index.html (+9ms) 
+17:20:35   └─ /phu-luc/pl-5-ham-ngay-gio/index.html (+11ms) 
+17:20:35 ▶ src/pages/phu-luc/index.astro
+17:20:35   └─ /phu-luc/index.html (+5ms) 
+17:20:35 ✓ Completed in 1.02s.
+
+ generating optimized images 
+17:20:35   ▶ /_astro/1-1-database.Buu88_5x_Z1ePjl7.webp (reused cache entry) (+1ms) (1/12)
+17:20:35   ▶ /_astro/1-1-sql-server.BhnjVbxY_QjIe6.webp (reused cache entry) (+1ms) (2/12)
+17:20:35   ▶ /_astro/1-1-sql-language.CeqF0asP_2oBJh8.webp (reused cache entry) (+1ms) (3/12)
+17:20:35   ▶ /_astro/1-2-database-table.DPWQpJ1b_1A0tVF.webp (reused cache entry) (+1ms) (4/12)
+17:20:35   ▶ /_astro/1-1-sql-language.CeqF0asP_TIBRK.webp (reused cache entry) (+1ms) (5/12)
+17:20:35   ▶ /_astro/1-1-sql-server.BhnjVbxY_ZguObX.webp (reused cache entry) (+1ms) (6/12)
+17:20:35   ▶ /_astro/1-1-database.Buu88_5x_1VLkYR.webp (reused cache entry) (+1ms) (7/12)
+17:20:35   ▶ /_astro/1-2-database-table.DPWQpJ1b_Z1t2AYY.webp (reused cache entry) (+1ms) (8/12)
+17:20:35   ▶ /_astro/1-1-database.Buu88_5x_Z2c7S0v.webp (reused cache entry) (+1ms) (9/12)
+17:20:35   ▶ /_astro/1-1-sql-language.CeqF0asP_ZagpQC.webp (reused cache entry) (+1ms) (10/12)
+17:20:35   ▶ /_astro/1-2-database-table.DPWQpJ1b_Z13LLWx.webp (reused cache entry) (+1ms) (11/12)
+17:20:35   ▶ /_astro/1-1-sql-server.BhnjVbxY_1HuQ0E.webp (reused cache entry) (+1ms) (12/12)
+17:20:35 ✓ Completed in 4ms.
+
+17:20:35 [build] 139 page(s) built in 5.93s
+17:20:35 [build] Complete!

@@ -1,0 +1,27 @@
+
+> microsoft-sql-lession@0.1.0 check
+> astro check
+
+17:20:34 [content] Syncing content
+17:20:34 [content] Synced content
+17:20:34 [types] Generated 365ms
+17:20:34 [check] Getting diagnostics for Astro files in E:\Projects\SQL Lession...
+[96msrc/components/islands/ExerciseWorkspace.tsx[0m:[93m73[0m:[93m26[0m - [93mwarning[0m[90m ts(6385): [0m'FormEvent' is deprecated.
+
+[7m73[0m   const submitCode = (e: FormEvent) => {
+[7m  [0m [93m                         ~~~~~~~~~[0m
+[96msrc/components/islands/ExerciseWorkspace.tsx[0m:[93m1[0m:[93m48[0m - [93mwarning[0m[90m ts(6385): [0m'FormEvent' is deprecated.
+
+[7m1[0m import { useEffect, useMemo, useRef, useState, type FormEvent, type KeyboardEvent } from 'react';
+[7m [0m [93m                                               ~~~~~~~~~~~~~~[0m
+
+[96msrc/components/islands/SqlEditor.tsx[0m:[93m30[0m:[93m20[0m - [93mwarning[0m[90m ts(6387): [0mThe signature '(commandId: string, showUI?: boolean | undefined, value?: string | undefined): boolean' of 'document.execCommand' is deprecated.
+
+[7m30[0m       if (document.execCommand('insertText', false, edit.insert)) {
+[7m  [0m [93m                   ~~~~~~~~~~~[0m
+
+Result (245 files): 
+- 0 errors
+- 0 warnings
+- 3 hints
+

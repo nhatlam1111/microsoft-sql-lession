@@ -17,6 +17,7 @@ describe('concept-led foundation lecture', () => {
     expect(metadata.sourceLessons).toEqual(['1.1', '1.2', '1.4', '1.5']);
     expect(outline.reduce((sum, slide) => sum + slide.minutes, 0)).toBe(48);
     expect(metadata.minutes).toBe(55);
+    expect(withoutNotes(slides[0])).toMatch(/48 phút giảng.*7 phút hỏi đáp/);
     expect(raw).not.toContain('data-answer');
     for (const slide of slides) { expect(withoutNotes(slide)).toMatch(/<(Image|ConceptFigure|ProjectionTable|ProjectionRelation|figure)\b/); expect(withoutNotes(slide)).toContain('<p'); }
     for (const slide of slides) {

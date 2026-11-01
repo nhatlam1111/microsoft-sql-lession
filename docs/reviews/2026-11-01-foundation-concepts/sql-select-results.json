@@ -1,0 +1,372 @@
+[
+  {
+    "id": "sample-employees-and-current-departments",
+    "query": "SELECT nv.MaNV, nv.HoTen, nv.MaPB, pb.TenPB\nFROM dbo.NhanVien AS nv\nJOIN dbo.PhongBan AS pb ON pb.MaPB = nv.MaPB\nWHERE nv.MaNV IN ('NV001', 'NV005', 'NV021')\nORDER BY nv.MaNV",
+    "rows": [
+      {
+        "MaNV": "NV001",
+        "HoTen": "Trần Thị Mai",
+        "MaPB": "KT",
+        "TenPB": "Kế toán"
+      },
+      {
+        "MaNV": "NV005",
+        "HoTen": "Vũ Thị Lan",
+        "MaPB": "KT",
+        "TenPB": "Kế toán"
+      },
+      {
+        "MaNV": "NV021",
+        "HoTen": "Tôn Thất Long",
+        "MaPB": "IT",
+        "TenPB": "IT"
+      }
+    ]
+  },
+  {
+    "id": "nv021-three-contracts",
+    "query": "SELECT MaHD, MaNV, LoaiHD,\n    CONVERT(varchar(10), NgayBatDau, 23) AS NgayBatDau,\n    CONVERT(varchar(10), NgayKetThuc, 23) AS NgayKetThuc\nFROM dbo.HopDong\nWHERE MaNV = 'NV021'\nORDER BY NgayBatDau, MaHD",
+    "rows": [
+      {
+        "MaHD": "HD2021-001",
+        "MaNV": "NV021",
+        "LoaiHD": "Thử việc",
+        "NgayBatDau": "2021-07-01",
+        "NgayKetThuc": "2021-08-31"
+      },
+      {
+        "MaHD": "HD2021-002",
+        "MaNV": "NV021",
+        "LoaiHD": "Xác định thời hạn",
+        "NgayBatDau": "2021-09-01",
+        "NgayKetThuc": "2024-08-31"
+      },
+      {
+        "MaHD": "HD2024-005",
+        "MaNV": "NV021",
+        "LoaiHD": "Không xác định thời hạn",
+        "NgayBatDau": "2024-09-01",
+        "NgayKetThuc": null
+      }
+    ]
+  },
+  {
+    "id": "kt-kd-exist-kt01-absent",
+    "query": "SELECT MaPB, TenPB\nFROM dbo.PhongBan\nWHERE MaPB IN ('KT', 'KD', 'KT01')\nORDER BY MaPB",
+    "rows": [
+      {
+        "MaPB": "KD",
+        "TenPB": "Kinh doanh"
+      },
+      {
+        "MaPB": "KT",
+        "TenPB": "Kế toán"
+      }
+    ]
+  },
+  {
+    "id": "declared-primary-keys-and-column-order",
+    "query": "SELECT t.name AS TableName, kc.name AS ConstraintName,\n    c.name AS ColumnName, ic.key_ordinal AS KeyOrdinal\nFROM sys.key_constraints AS kc\nJOIN sys.tables AS t ON t.object_id = kc.parent_object_id\nJOIN sys.schemas AS s ON s.schema_id = t.schema_id\nJOIN sys.index_columns AS ic ON ic.object_id = t.object_id AND ic.index_id = kc.unique_index_id\nJOIN sys.columns AS c ON c.object_id = t.object_id AND c.column_id = ic.column_id\nWHERE s.name = 'dbo' AND kc.type = 'PK'\nORDER BY t.name, ic.key_ordinal",
+    "rows": [
+      {
+        "TableName": "BangLuong",
+        "ConstraintName": "PK_BangLuong",
+        "ColumnName": "KyLuong",
+        "KeyOrdinal": 1
+      },
+      {
+        "TableName": "BangLuong",
+        "ConstraintName": "PK_BangLuong",
+        "ColumnName": "MaNV",
+        "KeyOrdinal": 2
+      },
+      {
+        "TableName": "ChamCong",
+        "ConstraintName": "PK_ChamCong",
+        "ColumnName": "MaNV",
+        "KeyOrdinal": 1
+      },
+      {
+        "TableName": "ChamCong",
+        "ConstraintName": "PK_ChamCong",
+        "ColumnName": "Ngay",
+        "KeyOrdinal": 2
+      },
+      {
+        "TableName": "ChucDanh",
+        "ConstraintName": "PK_ChucDanh",
+        "ColumnName": "MaCD",
+        "KeyOrdinal": 1
+      },
+      {
+        "TableName": "DonNghiPhep",
+        "ConstraintName": "PK_DonNghiPhep",
+        "ColumnName": "MaDon",
+        "KeyOrdinal": 1
+      },
+      {
+        "TableName": "HopDong",
+        "ConstraintName": "PK_HopDong",
+        "ColumnName": "MaHD",
+        "KeyOrdinal": 1
+      },
+      {
+        "TableName": "NhanVien",
+        "ConstraintName": "PK_NhanVien",
+        "ColumnName": "MaNV",
+        "KeyOrdinal": 1
+      },
+      {
+        "TableName": "PhongBan",
+        "ConstraintName": "PK_PhongBan",
+        "ColumnName": "MaPB",
+        "KeyOrdinal": 1
+      }
+    ]
+  },
+  {
+    "id": "declared-foreign-keys-and-enabled-state",
+    "query": "SELECT t.name AS TableName, c.name AS ColumnName,\n    rt.name AS ReferencedTable, rc.name AS ReferencedColumn,\n    fk.name AS ConstraintName, fk.is_disabled AS IsDisabled,\n    fk.is_not_trusted AS IsNotTrusted\nFROM sys.foreign_keys AS fk\nJOIN sys.foreign_key_columns AS fkc ON fkc.constraint_object_id = fk.object_id\nJOIN sys.tables AS t ON t.object_id = fkc.parent_object_id\nJOIN sys.schemas AS s ON s.schema_id = t.schema_id\nJOIN sys.columns AS c ON c.object_id = t.object_id AND c.column_id = fkc.parent_column_id\nJOIN sys.tables AS rt ON rt.object_id = fkc.referenced_object_id\nJOIN sys.columns AS rc ON rc.object_id = rt.object_id AND rc.column_id = fkc.referenced_column_id\nWHERE s.name = 'dbo'\nORDER BY t.name, c.name",
+    "rows": [
+      {
+        "TableName": "BangLuong",
+        "ColumnName": "MaNV",
+        "ReferencedTable": "NhanVien",
+        "ReferencedColumn": "MaNV",
+        "ConstraintName": "FK_BangLuong_NhanVien",
+        "IsDisabled": false,
+        "IsNotTrusted": false
+      },
+      {
+        "TableName": "ChamCong",
+        "ColumnName": "MaNV",
+        "ReferencedTable": "NhanVien",
+        "ReferencedColumn": "MaNV",
+        "ConstraintName": "FK_ChamCong_NhanVien",
+        "IsDisabled": false,
+        "IsNotTrusted": false
+      },
+      {
+        "TableName": "DonNghiPhep",
+        "ColumnName": "MaNV",
+        "ReferencedTable": "NhanVien",
+        "ReferencedColumn": "MaNV",
+        "ConstraintName": "FK_DonNghiPhep_NhanVien",
+        "IsDisabled": false,
+        "IsNotTrusted": false
+      },
+      {
+        "TableName": "HopDong",
+        "ColumnName": "MaNV",
+        "ReferencedTable": "NhanVien",
+        "ReferencedColumn": "MaNV",
+        "ConstraintName": "FK_HopDong_NhanVien",
+        "IsDisabled": false,
+        "IsNotTrusted": false
+      },
+      {
+        "TableName": "NhanVien",
+        "ColumnName": "MaCD",
+        "ReferencedTable": "ChucDanh",
+        "ReferencedColumn": "MaCD",
+        "ConstraintName": "FK_NhanVien_ChucDanh",
+        "IsDisabled": false,
+        "IsNotTrusted": false
+      },
+      {
+        "TableName": "NhanVien",
+        "ColumnName": "MaPB",
+        "ReferencedTable": "PhongBan",
+        "ReferencedColumn": "MaPB",
+        "ConstraintName": "FK_NhanVien_PhongBan",
+        "IsDisabled": false,
+        "IsNotTrusted": false
+      },
+      {
+        "TableName": "NhanVien",
+        "ColumnName": "MaQuanLy",
+        "ReferencedTable": "NhanVien",
+        "ReferencedColumn": "MaNV",
+        "ConstraintName": "FK_NhanVien_QuanLy",
+        "IsDisabled": false,
+        "IsNotTrusted": false
+      }
+    ]
+  },
+  {
+    "id": "illustrated-select",
+    "query": "SELECT HoTen FROM NhanVien;",
+    "rows": [
+      {
+        "HoTen": "Trần Thị Mai"
+      },
+      {
+        "HoTen": "Lê Văn Hùng"
+      },
+      {
+        "HoTen": "Nguyễn Thu Hà"
+      },
+      {
+        "HoTen": "Hoàng Minh Tuấn"
+      },
+      {
+        "HoTen": "Vũ Thị Lan"
+      },
+      {
+        "HoTen": "Đặng Quốc Bảo"
+      },
+      {
+        "HoTen": "Bùi Thanh Sơn"
+      },
+      {
+        "HoTen": "Phan Văn Lợi"
+      },
+      {
+        "HoTen": "Ngô Thị Thu Trang"
+      },
+      {
+        "HoTen": "Đỗ Thị Hồng"
+      },
+      {
+        "HoTen": "Lý Minh Khoa"
+      },
+      {
+        "HoTen": "Trịnh Thị Ngọc"
+      },
+      {
+        "HoTen": "Mai Đức Anh"
+      },
+      {
+        "HoTen": "Hồ Thị Bích"
+      },
+      {
+        "HoTen": "Dương Văn Nam"
+      },
+      {
+        "HoTen": "Lâm Thị Kim"
+      },
+      {
+        "HoTen": "Cao Minh Trí"
+      },
+      {
+        "HoTen": "Tạ Thị Yến"
+      },
+      {
+        "HoTen": "Châu Văn Phúc"
+      },
+      {
+        "HoTen": "Kiều Thị Hạnh"
+      },
+      {
+        "HoTen": "Tôn Thất Long"
+      },
+      {
+        "HoTen": "Quách Thị Nga"
+      },
+      {
+        "HoTen": "Lưu Văn Thắng"
+      },
+      {
+        "HoTen": "Võ Thị Thanh"
+      },
+      {
+        "HoTen": "Huỳnh Văn Tài"
+      },
+      {
+        "HoTen": "Phùng Thị Mỹ"
+      },
+      {
+        "HoTen": "Đinh Công Hậu"
+      },
+      {
+        "HoTen": "La Thị Diệu"
+      },
+      {
+        "HoTen": "Mạc Văn Đông"
+      },
+      {
+        "HoTen": "Nghiêm Thị Hoa"
+      },
+      {
+        "HoTen": "Ông Văn Tú"
+      },
+      {
+        "HoTen": "Từ Thị Hương"
+      },
+      {
+        "HoTen": "Khúc Văn Hải"
+      },
+      {
+        "HoTen": "Văn Thị Ly"
+      },
+      {
+        "HoTen": "Thái Minh Hiếu"
+      },
+      {
+        "HoTen": "Doãn Thị Thảo"
+      },
+      {
+        "HoTen": "Giang Văn Bình"
+      },
+      {
+        "HoTen": "Ninh Thị Hà"
+      },
+      {
+        "HoTen": "Âu Văn Kiên"
+      },
+      {
+        "HoTen": "Lục Thị Xuân"
+      },
+      {
+        "HoTen": "Hà Văn Quý"
+      },
+      {
+        "HoTen": "Bạch Thị Tuyết"
+      },
+      {
+        "HoTen": "Đàm Văn Khánh"
+      },
+      {
+        "HoTen": "Lã Thị Oanh"
+      },
+      {
+        "HoTen": "Ung Văn Lực"
+      },
+      {
+        "HoTen": "Hứa Thị Phương"
+      },
+      {
+        "HoTen": "Phạm Ngọc Ánh"
+      },
+      {
+        "HoTen": "Đỗ Minh Quân"
+      }
+    ]
+  },
+  {
+    "id": "key-nullability",
+    "query": "SELECT OBJECT_NAME(c.object_id) AS TableName, c.name AS ColumnName, c.is_nullable AS IsNullable FROM sys.columns AS c WHERE (c.object_id=OBJECT_ID('dbo.NhanVien') AND c.name IN ('MaNV','MaPB')) OR (c.object_id=OBJECT_ID('dbo.PhongBan') AND c.name='MaPB') OR (c.object_id=OBJECT_ID('dbo.HopDong') AND c.name='MaNV') ORDER BY TableName,ColumnName;",
+    "rows": [
+      {
+        "TableName": "HopDong",
+        "ColumnName": "MaNV",
+        "IsNullable": false
+      },
+      {
+        "TableName": "NhanVien",
+        "ColumnName": "MaNV",
+        "IsNullable": false
+      },
+      {
+        "TableName": "NhanVien",
+        "ColumnName": "MaPB",
+        "IsNullable": false
+      },
+      {
+        "TableName": "PhongBan",
+        "ColumnName": "MaPB",
+        "IsNullable": false
+      }
+    ]
+  }
+]
