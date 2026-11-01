@@ -1,0 +1,188 @@
+[
+  {
+    "id": "varchar-8000",
+    "query": "SELECT DATALENGTH(x) AS Bytes, TRY_CAST(x AS int) AS Value FROM (VALUES (REPLICATE(CAST(' ' AS varchar(max)),7999)+'1')) AS v(x);",
+    "rows": [
+      {
+        "Bytes": "8000",
+        "Value": 1
+      }
+    ],
+    "columns": {
+      "Bytes": {
+        "index": 0,
+        "name": "Bytes",
+        "length": 8,
+        "nullable": true,
+        "caseSensitive": false,
+        "identity": false,
+        "readOnly": true
+      },
+      "Value": {
+        "index": 1,
+        "name": "Value",
+        "length": 4,
+        "nullable": true,
+        "caseSensitive": false,
+        "identity": false,
+        "readOnly": true
+      }
+    }
+  },
+  {
+    "id": "varchar-8001",
+    "query": "SELECT DATALENGTH(x) AS Bytes, TRY_CAST(x AS int) AS Value FROM (VALUES (REPLICATE(CAST(' ' AS varchar(max)),8000)+'1')) AS v(x);",
+    "error": {
+      "code": "EREQUEST",
+      "number": 8152,
+      "message": "String or binary data would be truncated."
+    }
+  },
+  {
+    "id": "nvarchar-4000",
+    "query": "SELECT DATALENGTH(x) AS Bytes, TRY_CAST(x AS int) AS Value FROM (VALUES (REPLICATE(CAST(N' ' AS nvarchar(max)),3999)+N'1')) AS v(x);",
+    "rows": [
+      {
+        "Bytes": "8000",
+        "Value": 1
+      }
+    ],
+    "columns": {
+      "Bytes": {
+        "index": 0,
+        "name": "Bytes",
+        "length": 8,
+        "nullable": true,
+        "caseSensitive": false,
+        "identity": false,
+        "readOnly": true
+      },
+      "Value": {
+        "index": 1,
+        "name": "Value",
+        "length": 4,
+        "nullable": true,
+        "caseSensitive": false,
+        "identity": false,
+        "readOnly": true
+      }
+    }
+  },
+  {
+    "id": "nvarchar-4001",
+    "query": "SELECT DATALENGTH(x) AS Bytes, TRY_CAST(x AS int) AS Value FROM (VALUES (REPLICATE(CAST(N' ' AS nvarchar(max)),4000)+N'1')) AS v(x);",
+    "error": {
+      "code": "EREQUEST",
+      "number": 8152,
+      "message": "String or binary data would be truncated."
+    }
+  },
+  {
+    "id": "utf8-8000",
+    "query": "SELECT DATALENGTH(x) AS Bytes, TRY_CAST(x AS int) AS Value FROM (VALUES (CAST(REPLICATE(CAST(N'á' COLLATE Latin1_General_100_BIN2_UTF8 AS nvarchar(max)),4000) AS varchar(max)))) AS v(x);",
+    "rows": [
+      {
+        "Bytes": "8000",
+        "Value": null
+      }
+    ],
+    "columns": {
+      "Bytes": {
+        "index": 0,
+        "name": "Bytes",
+        "length": 8,
+        "nullable": true,
+        "caseSensitive": false,
+        "identity": false,
+        "readOnly": true
+      },
+      "Value": {
+        "index": 1,
+        "name": "Value",
+        "length": 4,
+        "nullable": true,
+        "caseSensitive": false,
+        "identity": false,
+        "readOnly": true
+      }
+    }
+  },
+  {
+    "id": "utf8-8002",
+    "query": "SELECT DATALENGTH(x) AS Bytes, TRY_CAST(x AS int) AS Value FROM (VALUES (CAST(REPLICATE(CAST(N'á' COLLATE Latin1_General_100_BIN2_UTF8 AS nvarchar(max)),4001) AS varchar(max)))) AS v(x);",
+    "error": {
+      "code": "EREQUEST",
+      "number": 8152,
+      "message": "String or binary data would be truncated."
+    }
+  },
+  {
+    "id": "supplementary-4000-units",
+    "query": "SELECT DATALENGTH(x) AS Bytes, LEN(x) AS Characters, TRY_CAST(x AS int) AS Value FROM (VALUES (REPLICATE(CAST(NCHAR(0xD83D)+NCHAR(0xDE00) AS nvarchar(max)),2000) COLLATE Latin1_General_100_CI_AS_SC)) AS v(x);",
+    "rows": [
+      {
+        "Bytes": "8000",
+        "Characters": "2000",
+        "Value": null
+      }
+    ],
+    "columns": {
+      "Bytes": {
+        "index": 0,
+        "name": "Bytes",
+        "length": 8,
+        "nullable": true,
+        "caseSensitive": false,
+        "identity": false,
+        "readOnly": true
+      },
+      "Characters": {
+        "index": 1,
+        "name": "Characters",
+        "length": 8,
+        "nullable": true,
+        "caseSensitive": false,
+        "identity": false,
+        "readOnly": true
+      },
+      "Value": {
+        "index": 2,
+        "name": "Value",
+        "length": 4,
+        "nullable": true,
+        "caseSensitive": false,
+        "identity": false,
+        "readOnly": true
+      }
+    }
+  },
+  {
+    "id": "supplementary-4002-units",
+    "query": "SELECT TRY_CAST(x AS int) AS Value FROM (VALUES (REPLICATE(CAST(NCHAR(0xD83D)+NCHAR(0xDE00) AS nvarchar(max)),2001) COLLATE Latin1_General_100_CI_AS_SC)) AS v(x);",
+    "error": {
+      "code": "EREQUEST",
+      "number": 8152,
+      "message": "String or binary data would be truncated."
+    }
+  },
+  {
+    "id": "parse-typed-null",
+    "query": "SELECT PARSE(CAST(NULL AS nvarchar(4000)) AS int) AS Value;",
+    "rows": [
+      {
+        "Value": null
+      }
+    ],
+    "columns": {
+      "Value": {
+        "index": 0,
+        "name": "Value",
+        "length": 4,
+        "nullable": true,
+        "caseSensitive": false,
+        "identity": false,
+        "readOnly": true
+      }
+    }
+  }
+]

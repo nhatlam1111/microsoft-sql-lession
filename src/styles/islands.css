@@ -210,19 +210,29 @@
 
 /* ---------- Search dialog ---------- */
 .sd-backdrop { position: fixed; inset: 0; z-index: 60; display: grid; justify-items: center; align-items: start; padding: 96px 24px 24px; background: var(--scrim); }
-.sd-box { width: min(640px, 100%); background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius-l); box-shadow: var(--shadow-l); overflow: hidden; }
-.sd-input { width: 100%; border: 0; border-bottom: 1px solid var(--rule); padding: 20px 22px; font: inherit; font-size: 17px; background: var(--surface-subtle); color: var(--ink); }
+.sd-box { width: min(640px, 100%); max-height: calc(100dvh - 120px); display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius-l); box-shadow: var(--shadow-l); overflow: hidden; }
+.sd-search-row { position: relative; flex: none; }
+.sd-input { width: 100%; border: 0; border-bottom: 1px solid var(--rule); padding: 20px 58px 20px 22px; font: inherit; font-size: 17px; background: var(--surface-subtle); color: var(--ink); }
 .sd-input:focus { outline: none; box-shadow: inset 0 -2px var(--accent); }
 .sd-input::placeholder { color: var(--ink-3); opacity: 1; }
+.sd-input::-webkit-search-cancel-button { display: none; }
+.sd-clear { position: absolute; right: 14px; top: 14px; width: 36px; height: 36px; border: 0; border-radius: var(--radius-s); background: none; color: var(--ink-2); font-size: 24px; cursor: pointer; }
+.sd-clear:hover, .sd-close:hover { background: var(--surface-hover); color: var(--ink); }
+.sd-clear:active, .sd-close:active { background: var(--accent-soft); color: var(--accent); }
 .sd-empty { margin: 0; padding: 20px 22px; font-size: 14px; color: var(--ink-3); }
-.sd-results { list-style: none; margin: 0; padding: 8px; max-height: min(60vh, 460px); overflow-y: auto; }
-.sd-results li { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; grid-template-areas: 'num title lvl' 'num area lvl'; column-gap: 12px; row-gap: 3px; padding: 12px 14px; border-radius: var(--radius-m); cursor: pointer; }
-.sd-results li:hover { background: var(--surface-hover); }
-.sd-results li.is-active { background: var(--accent-soft); box-shadow: inset 3px 0 var(--accent); }
+.sd-results { list-style: none; margin: 0; padding: 8px; min-height: 0; max-height: min(60vh, 460px); overflow-y: auto; }
+.sd-results:empty { padding: 0; }
+.sd-result { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; grid-template-areas: 'num title lvl' 'num area lvl'; column-gap: 12px; row-gap: 3px; padding: 12px 14px; border-radius: var(--radius-m); text-decoration: none; cursor: pointer; }
+.sd-result:hover { background: var(--surface-hover); }
+.sd-result.is-active { background: var(--accent-soft); box-shadow: inset 3px 0 var(--accent); }
+.sd-result:active { background: var(--accent-line); }
 .sd-num { grid-area: num; font-size: 13px; font-weight: 600; color: var(--ink-3); font-variant-numeric: tabular-nums; padding-top: 1px; }
 .sd-title { grid-area: title; font-size: 14.5px; font-weight: 600; }
 .sd-results li .lvb { grid-area: lvl; align-self: center; }
+.sd-reference { grid-area: lvl; align-self: center; color: var(--accent); background: var(--accent-soft); padding: 3px 7px; border-radius: var(--radius-s); font-size: 12px; font-weight: 600; }
 .sd-area { grid-area: area; font-size: 12.5px; color: var(--ink-3); }
+.sd-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 14px 8px 22px; flex: none; border-top: 1px solid var(--rule); font-size: 12px; color: var(--ink-3); }
+.sd-close { min-height: 36px; border: 0; border-radius: var(--radius-s); background: none; padding: 6px 12px; font-size: 13px; font-weight: 600; cursor: pointer; }
 
 /* ---------- Database diagram popup (exercise page) ---------- */
 .dbd-backdrop { position: fixed; inset: 0; z-index: 55; display: grid; place-items: center; padding: 24px; background: var(--scrim); }

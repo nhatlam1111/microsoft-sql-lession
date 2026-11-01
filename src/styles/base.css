@@ -128,6 +128,9 @@ button { font: inherit; color: inherit; }
 .side-num { width: 26px; flex: none; font-size: 12px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
 .side-lessons a[aria-current='page'] .side-num { color: var(--accent); }
 .side-lesson { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.side-appendices { margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--rule); }
+.side-appendices .side-num { width: 34px; }
+.side-appendices .side-lesson { white-space: normal; overflow: visible; }
 
 /* ---------- Lesson header ---------- */
 .lesson-head { margin-bottom: 8px; }
@@ -140,6 +143,20 @@ button { font: inherit; color: inherit; }
 .lesson-meta a:hover { text-decoration: underline; }
 .lesson-goal { margin: 22px 0 0; padding: 14px 18px; font-size: 15px; line-height: 1.65; background: var(--done-soft); border: 1px solid transparent; border-left: 3px solid var(--done); border-radius: 0 var(--radius-m) var(--radius-m) 0; }
 .lesson-goal strong { color: var(--done); font-weight: 650; }
+
+/* Reference articles share the reading shell but have no completion state or level color. */
+.appendix-article { --lv: var(--accent); }
+.appendix-head { margin-bottom: 28px; }
+.appendix-tag { font-weight: 700; color: var(--accent); background: var(--accent-soft); border-radius: var(--radius-s); padding: 4px 9px; text-decoration: none; }
+a.appendix-tag:hover { background: var(--accent-line); }
+a.appendix-tag:active { color: var(--accent-hover); }
+.appendix-intro { margin: 0; color: var(--ink-2); font-size: 15px; line-height: 1.7; }
+.appendix-layout .rail-inner { max-height: calc(100vh - var(--topbar)); overflow-y: auto; }
+.appendix-related { margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--rule); font-size: 14px; }
+.appendix-related ul { margin: 0; padding-left: 20px; }
+.appendix-related li + li { margin-top: 8px; }
+.appendix-related a { color: var(--accent); text-decoration: none; }
+.appendix-related a:hover { text-decoration: underline; }
 
 /* ---------- Done and flag buttons ---------- */
 .btn-done, .btn-flag, .done-badge {

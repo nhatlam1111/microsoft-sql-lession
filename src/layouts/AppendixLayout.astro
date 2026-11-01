@@ -1,0 +1,63 @@
+---
+import type { MarkdownHeading } from 'astro';
+import BaseLayout from './BaseLayout.astro';
+import SidebarNav from '../components/islands/SidebarNav';
+import { LEVELS } from '../data/curriculum';
+import { navEntries, type CatalogEntry } from '../lib/catalog';
+import { appendixNavEntries, appendixNeighbors, type AppendixEntry } from '../lib/appendices';
+import { appendixUrl, lessonUrl, withBase } from '../lib/paths';
+
+interface Props {
+  entry?: AppendixEntry;
+  headings?: MarkdownHeading[];
+  catalog: CatalogEntry[];
+  appendices: AppendixEntry[];
+}
+const { entry, headings = [], catalog, appendices } = Astro.props;
+const toc = headings.filter(h => h.depth === 2);
+const related = entry?.relatedLessons.map(num => catalog.find(e => e.num === num)!).filter(Boolean) ?? [];
+const { prev, next } = entry ? appendixNeighbors(appendices, entry.num) : {};
+---
+<BaseLayout title={entry ? `${entry.num} ${entry.title}` : 'Phụ lục'}>
+  <div class="lesson-layout appendix-layout">
+    <aside class="lesson-side">
+      <SidebarNav client:load catalog={navEntries(catalog)} levels={LEVELS}
+        appendices={appendixNavEntries(appendices)} currentAppendixNum={entry?.num} appendixActive />
+    </aside>
+    <main class="lesson-main">
+      <article class="lesson-article appendix-article">
+        <header class="lesson-head appendix-head">
+          <p class="lesson-crumbs">
+            {entry ? <a class="appendix-tag" href={withBase('/phu-luc/')}>Phụ lục</a> : <span class="appendix-tag">Phụ lục</span>}
+            {entry && <span class="lesson-no">{entry.num}</span>}
+          </p>
+          <h1 class="lesson-title">{entry?.title ?? 'Tra cứu SQL Server'}</h1>
+          <p class="appendix-intro">{entry?.summary ?? 'Chọn chủ đề cần tra: kiểu dữ liệu, chuyển kiểu, hàm chuỗi, tính toán, ngày giờ, NULL và điều kiện.'}</p>
+        </header>
+        <div class="prose"><slot /></div>
+        {related.length > 0 && (
+          <nav class="appendix-related" aria-label="Bài học liên quan">
+            <p class="rail-title">Đọc cùng bài học</p>
+            <ul>{related.map(lesson => <li><a href={lessonUrl(lesson.slug)}>{lesson.num} {lesson.title}</a></li>)}</ul>
+          </nav>
+        )}
+        {entry && (
+          <nav class="pn" aria-label="Phụ lục trước và sau">
+            {prev ? <a class="pn-prev" href={appendixUrl(prev.slug)}><small>← Phụ lục trước</small>{prev.num} {prev.title}</a> : <span />}
+            {next ? <a class="pn-next" href={appendixUrl(next.slug)}><small>Phụ lục sau →</small>{next.num} {next.title}</a> : <span />}
+          </nav>
+        )}
+      </article>
+    </main>
+    <aside class="lesson-rail">
+      <div class="rail-inner">
+        <p class="rail-title">{entry ? 'Trong phụ lục này' : 'Trong chương này'}</p>
+        <ol class="toc">
+          {entry
+            ? toc.map(h => <li><a href={`#${h.slug}`}>{h.text}</a></li>)
+            : appendices.map(a => <li><a href={`#${a.num.toLowerCase().replace('.', '-')}`}>{a.num} {a.shortTitle}</a></li>)}
+        </ol>
+      </div>
+    </aside>
+  </div>
+</BaseLayout>

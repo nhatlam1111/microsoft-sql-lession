@@ -2,6 +2,7 @@ import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { lessonSchema } from './lib/lesson-schema';
 import { exerciseFileSchema } from './lib/exercises';
+import { appendixSchema } from './lib/appendices';
 
 const lessons = defineCollection({
   loader: glob({ pattern: '*.mdx', base: './src/content/lessons' }),
@@ -13,4 +14,9 @@ const exercises = defineCollection({
   schema: exerciseFileSchema,
 });
 
-export const collections = { lessons, exercises };
+const appendices = defineCollection({
+  loader: glob({ pattern: '*.mdx', base: './src/content/appendices' }),
+  schema: appendixSchema,
+});
+
+export const collections = { lessons, exercises, appendices };

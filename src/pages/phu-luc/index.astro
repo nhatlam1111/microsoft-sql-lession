@@ -1,0 +1,20 @@
+---
+import AppendixLayout from '../../layouts/AppendixLayout.astro';
+import { loadCatalog } from '../../lib/load-catalog';
+import { loadAppendices } from '../../lib/load-appendices';
+import { appendixUrl } from '../../lib/paths';
+
+const [catalog, appendices] = await Promise.all([loadCatalog(), loadAppendices()]);
+---
+<AppendixLayout catalog={catalog} appendices={appendices}>
+  <p>Các bài tra cứu giải thích cú pháp, ví dụ và những chỗ dễ dùng sai trên SQL Server 2025 và Azure SQL. Bạn có thể mở thẳng phần đang cần; không phải đọc lần lượt.</p>
+  <p>Dùng ô tìm kiếm đầu trang để tìm tên kiểu hoặc hàm, chẳng hạn <code>decimal</code>, <code>TRY_CONVERT</code>, <code>DATE_BUCKET</code>. Mỗi bài có ba câu tự kiểm tra kèm lời giải.</p>
+  <ol class="appendix-index">
+    {appendices.map(entry => (
+      <li id={entry.num.toLowerCase().replace('.', '-')}>
+        <a href={appendixUrl(entry.slug)}><span class="appendix-index-num">{entry.num}</span><strong>{entry.title}</strong></a>
+        <p>{entry.summary}</p>
+      </li>
+    ))}
+  </ol>
+</AppendixLayout>

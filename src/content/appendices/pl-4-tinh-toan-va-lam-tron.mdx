@@ -1,0 +1,160 @@
+---
+num: "PL.4"
+title: Tính toán và làm tròn
+shortTitle: Tính toán, làm tròn
+summary: Tra phép toán và hàm số; giữ phần lẻ, chọn thời điểm làm tròn, xử lý chia cho không và tránh tràn kiểu kết quả.
+keywords: [ROUND, CEILING, FLOOR, ABS, POWER, NULLIF, SUM, decimal, numeric, precision, scale, chia nguyên, chia cho không, làm tròn, overflow, phép chia dư]
+relatedLessons: ["1.3", "2.1", "3.1"]
+---
+
+Bài này giúp tính đúng giá trị trước khi chọn cách hiển thị nó. Bạn cần biết `SELECT`, bí danh `AS` và rằng một biểu thức trả về một giá trị có kiểu dữ liệu. Ví dụ dùng số cố định; nếu chưa quen `decimal(p, s)`, `p` là tổng số chữ số tối đa, `s` là số chữ số sau dấu thập phân, xem [PL.1](../pl-1-chi-tiet-kieu-du-lieu/).
+
+`SELECT` trả giá trị tính từ các hằng số mà không cần `FROM` vì không đọc bảng; `AS` đặt tiêu đề cột kết quả, xem [bài 2.1](../../bai/2-1-chon-cot-dat-ten-cot/). Có thể chạy các câu chỉ đọc này trong SSMS; trang bài tập web có danh sách câu lệnh riêng nên không nhận mọi ví dụ của Phụ lục.
+
+## Tra nhanh
+
+| Cần làm | Công cụ | Đến phần |
+|---|---|---|
+| Cộng, trừ, nhân, chia | `+`, `-`, `*`, `/`, ngoặc `()` | [Phép toán](#phép-toán) |
+| Giữ phần lẻ khi chia | Chuyển đầu vào sang `decimal` | [Chia nguyên](#decimal) |
+| Làm tròn hoặc cắt phần lẻ | `ROUND(x, soViTri, cach)` | [ROUND](#round) |
+| Lấy số nguyên theo hướng lên/xuống | `CEILING(x)`, `FLOOR(x)` | [CEILING, FLOOR](#ceiling-floor) |
+| Độ lớn, lũy thừa, phần dư | `ABS(x)`, `POWER(x, y)`, `%` | [Các phép tính khác](#abs-power) |
+| Mẫu số có thể bằng không | `NULLIF(mauSo, 0)` | [Chia an toàn](#nullif) |
+| Kết quả vượt miền kiểu | Chuyển kiểu trước phép tính | [Tràn số](#overflow) |
+| Cộng số đã làm tròn hay làm tròn tổng | Quy tắc nghiệp vụ | [Thời điểm](#sum-round) |
+
+## Phép toán
+
+Các toán tử nhận số ở hai phía và trả số; nhân, chia, lấy dư được tính trước cộng, trừ. Dùng ngoặc để chỉ rõ nhóm cần tính trước. Khi hai phía khác kiểu, SQL Server chọn theo quy tắc ưu tiên kiểu, không theo việc kết quả có cần phần lẻ hay không; xem [chuyển kiểu ngầm ở PL.2](../pl-2-chuyen-doi-kieu-du-lieu/).
+
+<Sql code={"SELECT 10 + 5 * 2 AS [KhongNgoac],\n\t(10 + 5) * 2 AS [CoNgoac],\n\t5 / 2 AS [ChiaNguyen],\n\t5 % 2 AS [PhanDu];"} />
+
+<Result columns={['KhongNgoac', 'CoNgoac', 'ChiaNguyen', 'PhanDu']} rows={[[20, 30, 2, 1]]} />
+
+`5 / 2` có hai đầu vào `int`, nên kết quả là `int` và mất phần lẻ. `5 % 2` trả phần dư `1`, không phải tỷ lệ phần trăm. Các phép tính số với `NULL` thường trả `NULL`, vì chưa biết một đầu vào thì chưa xác định được kết quả.
+
+Nguồn: [Toán tử số học](https://learn.microsoft.com/en-us/sql/t-sql/language-elements/arithmetic-operators-transact-sql?view=sql-server-ver17), [thứ tự toán tử](https://learn.microsoft.com/en-us/sql/t-sql/language-elements/operator-precedence-transact-sql?view=sql-server-ver17), [phép chia](https://learn.microsoft.com/en-us/sql/t-sql/language-elements/divide-transact-sql?view=sql-server-ver17).
+
+## decimal
+
+`CAST(x AS kiểu)` tạo giá trị của kiểu đích trong kết quả. Muốn phần lẻ, chuyển ít nhất một **đầu vào** của phép chia sang `decimal` trước khi chia. Chuyển kết quả sau khi đã chia nguyên chỉ đổi kiểu của số `2`, không lấy lại phần `0.5` đã mất.
+
+<Sql code={"SELECT CAST(5 / 2 AS decimal(10, 2)) AS [DoiSau],\n\tCAST(5 AS decimal(10, 2)) / 2 AS [DoiTruoc];"} />
+
+<Result columns={['DoiSau', 'DoiTruoc']} rows={[[2, 2.5]]} />
+
+`decimal` tính theo chữ số thập phân, phù hợp số tiền và tỷ lệ cần kiểm chữ số; `float` là số gần đúng nên không dùng nó chỉ để chữa chia nguyên. Giá trị `decimal` vẫn có giới hạn: tối đa `38` chữ số, không phải độ chính xác vô hạn. Số `0` cuối có thể được công cụ hiển thị khác nhau; điều quan trọng ở đây là giá trị `2` so với `2.5`.
+
+Với hai đầu vào `decimal(p1, s1)` và `decimal(p2, s2)`, SQL Server tính kiểu kết quả theo bảng dưới. Đây là công thức toán: `max(a,b)` chọn số lớn hơn trong hai số, không phải cú pháp hàm SQL `MAX` tổng hợp nhiều dòng.
+
+| Phép toán | Precision trước giới hạn `38` | Scale trước giới hạn `38` |
+|---|---|---|
+| Cộng hoặc trừ | `max(s1,s2) + max(p1-s1,p2-s2) + 1` | `max(s1,s2)` |
+| Nhân | `p1 + p2 + 1` | `s1 + s2` |
+| Chia | `p1 - s1 + s2 + max(6,s1+p2+1)` | `max(6,s1+p2+1)` |
+
+Khi precision tính ra vượt `38`, SQL Server giảm scale theo quy tắc của từng phép toán; có thể làm tròn phần lẻ hoặc báo tràn nếu phần nguyên vẫn không vừa. Vì vậy, tăng mọi đầu vào thành `decimal(38, s)` chưa chắc giữ được nhiều số lẻ hơn. Chọn kiểu đủ cho đầu vào và kết quả dự kiến, rồi kiểm trường hợp số lớn nhất của công việc.
+
+Nguồn: [Precision, scale và độ dài](https://learn.microsoft.com/en-us/sql/t-sql/data-types/precision-scale-and-length-transact-sql?view=sql-server-ver17), [decimal và numeric](https://learn.microsoft.com/en-us/sql/t-sql/data-types/decimal-and-numeric-transact-sql?view=sql-server-ver17).
+
+## ROUND
+
+`ROUND(x, length, function)` nhận số `x`; `length` dương chọn số vị trí sau dấu thập phân, `0` chọn hàng đơn vị, số âm chọn hàng chục, trăm… Bỏ `function` hoặc ghi `0` thì làm tròn; giá trị khác `0` thì cắt bỏ phần phía sau vị trí đó. Khi đúng giữa hai mức, SQL Server làm tròn **ra xa số không**.
+
+<Sql code={"SELECT ROUND(12.345, 2) AS [Duong],\n\tROUND(-12.345, 2) AS [Am],\n\tROUND(12.345, 2, 1) AS [CatBo],\n\tROUND(125.00, -1) AS [HangChuc];"} />
+
+<Result columns={['Duong', 'Am', 'CatBo', 'HangChuc']} rows={[[12.35, -12.35, 12.34, 130]]} />
+
+`ROUND` không tự đổi scale khai báo: đầu vào `decimal(p, s)` vẫn trả `decimal(p, s)`, dù đã làm tròn tới ít vị trí hơn. `tinyint`, `smallint`, `int` trả `int`; `bigint` trả `bigint`; `money`/`smallmoney` trả `money`; `float`/`real` trả `float`. Muốn cột kết quả có đúng hai số lẻ theo kiểu, dùng `CAST(... AS decimal(p, 2))` với `p` đủ lớn.
+
+Làm tròn có thể tăng số chữ số phần nguyên. `ROUND(748.58, -3)` cần trả `1000.00` nhưng hằng `748.58` mặc định là `decimal(5,2)`, chỉ chứa được ba chữ số phần nguyên, nên báo tràn số. Tăng kiểu trước khi làm tròn:
+
+<Sql code={"SELECT ROUND(CAST(748.58 AS decimal(6, 2)), -3) AS [KetQua];"} />
+
+<Result columns={['KetQua']} rows={[[1000]]} />
+
+Nguồn: [ROUND](https://learn.microsoft.com/en-us/sql/t-sql/functions/round-transact-sql?view=sql-server-ver17).
+
+## CEILING, FLOOR
+
+`CEILING(x)` lấy số nguyên nhỏ nhất lớn hơn hoặc bằng `x`; dùng khi `2.1` đơn vị cần đủ `3` đơn vị đóng gói. `FLOOR(x)` lấy số nguyên lớn nhất nhỏ hơn hoặc bằng `x`; với số âm nó đi về phía âm, khác cắt phần lẻ về phía không.
+
+<Sql code={"SELECT CEILING(2.1) AS [LenDuong], FLOOR(2.1) AS [XuongDuong],\n\tCEILING(-2.1) AS [LenAm], FLOOR(-2.1) AS [XuongAm],\n\tROUND(-2.1, 0, 1) AS [CatVeKhong];"} />
+
+<Result columns={['LenDuong', 'XuongDuong', 'LenAm', 'XuongAm', 'CatVeKhong']} rows={[[3, 2, -2, -3, -2]]} />
+
+Trên chuẩn SQL Server 2025/Azure SQL hiện hành, hai hàm nhận `decimal(p,s)` trả `decimal(p,0)`; các kiểu nguyên nhỏ trả `int`, `bigint` giữ `bigint`, `money`/`smallmoney` trả `money`, `float`/`real` và `bit` trả `float`. Giá trị không có phần lẻ chưa có nghĩa kiểu của nó là `int`. Kết quả vẫn có thể báo tràn nếu không chứa được trong kiểu trả về.
+
+Nguồn: [CEILING](https://learn.microsoft.com/en-us/sql/t-sql/functions/ceiling-transact-sql?view=sql-server-ver17), [FLOOR](https://learn.microsoft.com/en-us/sql/t-sql/functions/floor-transact-sql?view=sql-server-ver17).
+
+## ABS, POWER, %
+
+`ABS(x)` lấy giá trị tuyệt đối, dùng khi chỉ quan tâm độ lớn chênh lệch. `POWER(x, y)` tính `x` lũy thừa `y`; kiểu của **cơ số `x`** ảnh hưởng kiểu kết quả. `%` nhận số nguyên, số tiền hoặc `decimal`/`numeric` để lấy phần dư, không nhận `float`/`real`.
+
+<Sql code={"SELECT ABS(-12.5) AS [DoLon], POWER(2, 3) AS [LuyThua],\n\tPOWER(2, -1) AS [CoSoNguyen],\n\tPOWER(CAST(2 AS decimal(10, 2)), -1) AS [CoSoThapPhan],\n\t-5 % 2 AS [DuAm];"} />
+
+<Result columns={['DoLon', 'LuyThua', 'CoSoNguyen', 'CoSoThapPhan', 'DuAm']} rows={[[12.5, 8, 0, 0.5, -1]]} />
+
+`POWER(2,-1)` có cơ số `int`, trả `int` nên không giữ `0.5`. Với `decimal(p,s)`, `ABS` và `POWER` trả `decimal(38,s)`; đầu vào `int`/`smallint`/`tinyint` trả `int`, `bigint` trả `bigint`, `money`/`smallmoney` trả `money`, `float`/`real` trả `float`. Phần dư âm như `-1` là kết quả hợp lệ của `%`; khi chia nhóm theo chu kỳ, kiểm cả số âm nếu dữ liệu có thể chứa chúng.
+
+Nguồn: [ABS](https://learn.microsoft.com/en-us/sql/t-sql/functions/abs-transact-sql?view=sql-server-ver17), [POWER](https://learn.microsoft.com/en-us/sql/t-sql/functions/power-transact-sql?view=sql-server-ver17), [%](https://learn.microsoft.com/en-us/sql/t-sql/language-elements/modulo-transact-sql?view=sql-server-ver17).
+
+## NULLIF
+
+Chia cho `0` gây lỗi trong thiết lập thông thường của database khóa học. `NULLIF(a, b)` trả `NULL` khi hai giá trị bằng nhau, còn lại trả `a`, giữ kiểu của `a`. Đặt `NULLIF(mauSo, 0)` ở mẫu số để biến trường hợp không tính được thành kết quả thiếu.
+
+<Sql code={"SELECT 10.0 / NULLIF(0, 0) AS [KhongTinhDuoc],\n\t10.0 / NULLIF(4, 0) AS [TinhDuoc];"} />
+
+<Result columns={['KhongTinhDuoc', 'TinhDuoc']} rows={[[null, 2.5]]} />
+
+Không tự thay kết quả `NULL` bằng `0`: `0%` có nghĩa đã tính được và tỷ lệ bằng không, còn mẫu số bằng không là không có cơ sở tính tỷ lệ. Khi cần nhãn, xử lý ở phần hiển thị và giữ trạng thái ấy rõ ràng; xem [NULLIF và CASE ở PL.6](../pl-6-null-va-dieu-kien/). Cách này không sửa được tràn số hoặc chia nguyên; vẫn phải chọn kiểu đầu vào phù hợp.
+
+Nguồn: [NULLIF](https://learn.microsoft.com/en-us/sql/t-sql/language-elements/nullif-transact-sql?view=sql-server-ver17).
+
+## Overflow
+
+**Overflow (tràn số)** xảy ra khi giá trị không vừa kiểu đang tính hoặc kiểu đích. Hai đầu vào `int` không tự được nâng thành `bigint` chỉ vì tích lớn: đổi kiểu sau phép nhân là quá muộn. Chuyển một đầu vào trước để phép nhân dùng kiểu rộng hơn.
+
+<Sql code={"SELECT CAST(50000 AS bigint) * 50000 AS [TichLon],\n\tABS(CAST(-2147483648 AS bigint)) AS [DoLon];"} />
+
+<Result columns={['TichLon', 'DoLon']} rows={[['2500000000', '2147483648']]} />
+
+`50000 * 50000` với hai đầu vào `int` gây tràn. `ABS` cũng có thể tràn: `int` chứa `-2147483648` nhưng không chứa số dương `2147483648`, nên chuyển đầu vào sang `bigint` trước như ví dụ. Với phép tính nhiều bước, kiểm từng bước trung gian, vì kiểu đủ cho kết quả cuối chưa bảo đảm mọi phép tính trước đó đều vừa.
+
+Nguồn: [int, bigint và các kiểu nguyên](https://learn.microsoft.com/en-us/sql/t-sql/data-types/int-bigint-smallint-and-tinyint-transact-sql?view=sql-server-ver17), [ABS và tràn số](https://learn.microsoft.com/en-us/sql/t-sql/functions/abs-transact-sql?view=sql-server-ver17).
+
+## SUM, ROUND
+
+**Thời điểm làm tròn** là một phần của quy tắc nghiệp vụ. Làm tròn từng khoản rồi cộng có thể khác cộng giá trị đầy đủ rồi làm tròn tổng. `SUM` cộng nhiều dòng; trong ví dụ, `VALUES` dựng bảng tạm trong câu đọc, `v(SoTien)` đặt bí danh bảng `v` và tên cột `SoTien`, không tạo bảng lưu.
+
+<Sql code={"SELECT SUM(ROUND(SoTien, 2)) AS [TronTungDong],\n\tROUND(SUM(SoTien), 2) AS [TronTong]\nFROM (VALUES (0.005), (0.005)) AS v(SoTien);"} />
+
+<Result columns={['TronTungDong', 'TronTong']} rows={[[0.02, 0.01]]} />
+
+Mỗi dòng `0.005` làm tròn thành `0.01`, cộng thành `0.02`; tổng chưa làm tròn là `0.010`, làm tròn tổng được `0.01`. Chọn theo quy định của báo cáo hoặc chứng từ và dùng nhất quán, không chọn cách chỉ vì số cuối nhìn thuận mắt. Định dạng thành chữ bằng `FORMAT` chỉ phục vụ hiển thị, không thay quy tắc tính.
+
+Nguồn: [SUM](https://learn.microsoft.com/en-us/sql/t-sql/functions/sum-transact-sql?view=sql-server-ver17), [ROUND](https://learn.microsoft.com/en-us/sql/t-sql/functions/round-transact-sql?view=sql-server-ver17).
+
+## Tự kiểm tra
+
+<details>
+<summary>Cần tỷ lệ <code>5 / 2</code> bằng <code>2.5</code>. Đổi kiểu trước hay sau phép chia?</summary>
+
+Đổi ít nhất một đầu vào sang `decimal` trước khi chia. `CAST(5 / 2 AS decimal(10,2))` vẫn bằng `2` vì phép chia nguyên đã bỏ phần lẻ.
+
+</details>
+
+<details>
+<summary><code>FLOOR(-2.1)</code> và <code>ROUND(-2.1, 0, 1)</code> có cùng bằng <code>-2</code> không?</summary>
+
+Không. `FLOOR(-2.1) = -3`, vì lấy số nguyên phía dưới; `ROUND(-2.1,0,1) = -2`, vì cắt phần lẻ về phía không.
+
+</details>
+
+<details>
+<summary>Tích <code>50000 * 50000</code> bị tràn. Bọc cả tích bằng <code>CAST(... AS bigint)</code> đã sửa được chưa?</summary>
+
+Chưa. Phép nhân `int` tràn trước khi chuyển kết quả. Chuyển một đầu vào: `CAST(50000 AS bigint) * 50000`, được `2500000000`.
+
+</details>

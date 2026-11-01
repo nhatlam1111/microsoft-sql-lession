@@ -7,6 +7,8 @@ import LessonStatus, { CONCEPT_DONE_HINT } from '../components/islands/LessonSta
 import { LEVELS } from '../data/curriculum';
 import { navEntries, neighbors, type CatalogEntry } from '../lib/catalog';
 import { lessonUrl } from '../lib/paths';
+import { loadAppendices } from '../lib/load-appendices';
+import { appendixNavEntries } from '../lib/appendices';
 
 interface Props {
   entry: CatalogEntry;
@@ -19,11 +21,12 @@ const prerequisites = entry.prerequisites.map(p => catalog.find(e => e.num === p
 const { prev, next } = neighbors(catalog, entry.num);
 const nums = catalog.map(e => e.num);
 const toc = headings.filter(h => h.depth === 2);
+const appendices = await loadAppendices();
 ---
 <BaseLayout title={`${entry.num} ${entry.title}`}>
   <div class="lesson-layout">
     <aside class="lesson-side">
-      <SidebarNav client:load catalog={navEntries(catalog)} levels={LEVELS} currentNum={entry.num} />
+      <SidebarNav client:load catalog={navEntries(catalog)} levels={LEVELS} currentNum={entry.num} appendices={appendixNavEntries(appendices)} />
     </aside>
     <main class="lesson-main">
       <article class="lesson-article" style={`--lv: var(--lv${level.no});`}>

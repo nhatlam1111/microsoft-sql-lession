@@ -1,0 +1,221 @@
+---
+num: PL.2
+title: Chuyển đổi kiểu dữ liệu
+shortTitle: Chuyển kiểu dữ liệu
+summary: Chọn CAST, CONVERT, TRY_CAST, TRY_CONVERT, PARSE và TRY_PARSE; đọc hướng chuyển kiểu, kiểm style/culture, mất dữ liệu và lỗi.
+keywords: [chuyển kiểu, chuyển đổi kiểu dữ liệu, implicit conversion, explicit conversion, data type precedence, CAST, CONVERT, TRY_CAST, TRY_CONVERT, PARSE, TRY_PARSE, style, culture, tràn số, cắt chuỗi, làm tròn, Unicode]
+relatedLessons: ["1.3", "2.2", "2.7", "2.8"]
+---
+
+Trang này giúp bạn chọn cách đổi chuỗi, số và ngày sang kiểu cần dùng, rồi kiểm kết quả còn đúng ý hay không. Nếu cần đọc độ dài, precision/scale hoặc miền giá trị, tra [PL.1](../pl-1-chi-tiet-kieu-du-lieu/) trước. Trong Excel, đổi Format Cells khác với đổi giá trị chữ thành số/ngày; SQL cũng cần tách hai việc này.
+
+Trong ví dụ, `SELECT` trả giá trị viết sau nó; `AS [Tên]` đặt tiêu đề cho cột kết quả. Không có `FROM` vì câu dùng giá trị cố định, không đọc bảng; xem [bài 2.1](../../bai/2-1-chon-cot-dat-ten-cot/). Các câu chỉ đọc, chạy trong SSMS với quyền đọc; trang bài tập web có danh sách cho phép riêng nên có thể không nhận mọi ví dụ phụ lục.
+
+## Tra nhanh
+
+| Việc cần làm | Chọn | Lý do và giới hạn |
+|---|---|---|
+| Đổi kiểu thông thường, muốn câu dễ đọc | [`CAST`](#cast-try-cast) | Ghi kiểu đích sau `AS`; không nhận style |
+| Đọc/xuất ngày theo mẫu xác định, hoặc đổi định dạng số/nhị phân được hỗ trợ | [`CONVERT`](#convert-try-convert) | Có tham số `style`; mỗi hướng chuyển có bộ style riêng |
+| Dữ liệu có thể sai, muốn giá trị không chuyển được thành `NULL` | [`TRY_CAST`](#cast-try-cast), [`TRY_CONVERT`](#convert-try-convert) | Không che mọi lỗi và không phát hiện mọi mất dữ liệu |
+| Đọc chuỗi số/ngày theo quy ước ngôn ngữ-vùng | [`PARSE`, `TRY_PARSE`](#parse-try-parse) | Có `culture`; chỉ nhận các kiểu số/ngày được hỗ trợ, có chi phí xử lý thêm |
+| Biết một cặp kiểu có chuyển được không | [Bảng hướng chuyển](#huong-chuyen) | Tách cho phép chuyển với giá trị cụ thể có hợp lệ không |
+| Câu chạy được nhưng mất chữ, phần lẻ hoặc giờ | [Kiểm mất giá trị](#mat-gia-tri) | So giá trị nguồn/đích, không chỉ nhìn có lỗi hay không |
+
+## Chuyển ngầm và chuyển tường minh
+
+**Chuyển kiểu tường minh** là bạn viết rõ kiểu đích bằng hàm như `CAST` hoặc `CONVERT`. **Chuyển kiểu ngầm** là SQL Server tự chuyển khi biểu thức gặp các kiểu khác nhau. Một phép chuyển được hỗ trợ vẫn có thể thất bại vì giá trị sai dạng hoặc vượt giới hạn.
+
+Trong phép toán hoặc so sánh, kiểu có **độ ưu tiên** thấp hơn thường chuyển sang kiểu cao hơn. Ví dụ, `int` ưu tiên hơn `varchar`, nên dấu `+` ở cột đầu dưới đây thực hiện phép cộng; đổi cả hai bên thành chuỗi thì nó nối chữ:
+
+<Sql code={"SELECT 100 + '20' AS [CongSo],\n\tCAST(100 AS varchar(3)) + '20' AS [NoiChu];"} />
+
+<Result columns={['CongSo', 'NoiChu']} rows={[[120, '10020']]} />
+
+`'20'` là chuỗi vì có nháy; `100` là số nguyên. Ở cột `CongSo`, SQL Server đổi `'20'` thành `20`; ở cột `NoiChu`, `CAST` tạo chuỗi `'100'` trước khi nối. Nếu chuỗi không phải số, hướng chuyển ngầm đó có thể báo lỗi.
+
+Khi **gán vào biến/cột đã khai báo**, kiểu đích là kiểu của biến/cột, không phải kiểu ưu tiên cao nhất. Cột `nvarchar` nhận một số có thể đổi số thành chữ; điều này không mâu thuẫn với ví dụ phép cộng. Một `SELECT` có `CAST` chỉ đổi giá trị kết quả, không đổi khai báo cột nguồn.
+
+Thứ tự thường gặp là `datetimeoffset` → `datetime2` → `datetime` → `smalldatetime` → `date` → `time` → `float` → `real` → `decimal` → `money` → `smallmoney` → `bigint` → `int` → `smallint` → `tinyint` → `bit`, sau đó mới tới các kiểu chuỗi. Mũi tên ở đây đi từ ưu tiên cao xuống thấp, **không phải danh sách các phép chuyển được phép**. [Microsoft: chuyển kiểu](https://learn.microsoft.com/en-us/sql/t-sql/data-types/data-type-conversion-database-engine?view=sql-server-ver17), [toàn bộ thứ tự ưu tiên](https://learn.microsoft.com/en-us/sql/t-sql/data-types/data-type-precedence-transact-sql?view=sql-server-ver17).
+
+<span id="cu-phap"></span>
+
+## Cú pháp và kiểu trả về của sáu hàm
+
+Trong bảng cú pháp, `x` là giá trị hoặc biểu thức đầu vào; `s` là chuỗi đầu vào; `type` là kiểu đích như `int`, `decimal(10,2)`, `nvarchar(50)`. Phần trong dấu `[...]` là tùy chọn, không chép nguyên dấu ngoặc này. Kiểu kết quả là `type`; các hàm TRY vẫn giữ kiểu đó khi trả `NULL`.
+
+| Hàm | Cú pháp để đọc | Lúc dùng |
+|---|---|---|
+| `CAST` | `CAST(x AS type)` | Đổi kiểu thông thường, cú pháp chuẩn SQL |
+| `CONVERT` | `CONVERT(type, x [, style])` | Đổi kiểu có style phù hợp |
+| `TRY_CAST` | `TRY_CAST(x AS type)` | Như CAST, trả `NULL` khi giá trị không chuyển được trong hướng được phép |
+| `TRY_CONVERT` | `TRY_CONVERT(type, x [, style])` | Như CONVERT, có xử lý giá trị sai bằng `NULL` |
+| `PARSE` | `PARSE(s AS type [USING culture])` | Đọc chuỗi theo ngôn ngữ-vùng |
+| `TRY_PARSE` | `TRY_PARSE(s AS type [USING culture])` | Như PARSE, chuỗi sai thường trả `NULL` |
+
+Ghi đủ độ dài cho kiểu chuỗi và `(p,s)` cho decimal. `CAST`/`CONVERT` bỏ độ dài chuỗi thì mặc định `30`; `decimal` bỏ tham số thì thành `decimal(18,0)`, có thể làm tròn mất phần lẻ. Kiểu alias do người dùng tạo không được dùng làm kiểu đích của `CAST`/`CONVERT`; dùng kiểu nền phù hợp.
+
+<span id="cast-try-cast"></span>
+
+### CAST và TRY_CAST
+
+`CAST` nhận một biểu thức và đổi sang kiểu đích; giá trị sai làm câu báo lỗi. Dùng `TRY_CAST` khi bạn muốn tách các giá trị không đổi được để xử lý tiếp, nhưng phải giữ dấu hiệu nguồn có sẵn `NULL` nếu cần phân biệt hai trường hợp:
+
+<Sql code={"SELECT CAST('123.456' AS decimal(8,2)) AS [SoTien],\n\tTRY_CAST(N'chưa rõ' AS decimal(8,2)) AS [KhongDoiDuoc],\n\tTRY_CAST(NULL AS decimal(8,2)) AS [NguonNull];"} />
+
+<Result columns={['SoTien', 'KhongDoiDuoc', 'NguonNull']} rows={[[123.46, null, null]]} />
+
+Cột đầu làm tròn thành `123.46`. Hai cột sau đều `NULL`, nhưng cột giữa do chuỗi không phải số, cột cuối do nguồn vốn là `NULL`. Đổi mọi lỗi thành `0` sẽ xóa mất sự khác nhau giữa “không đọc được” và số không thật.
+
+Tài liệu giới hạn đầu vào `TRY_CAST` ở `8.000` byte với `varchar(max)`, hoặc `4.000` đơn vị UTF-16 với `nvarchar(max)`, tương ứng `8.000` byte. Đo bằng `DATALENGTH`, gồm cả dấu cách cuối; không lấy số ký tự làm số byte. Vượt ngưỡng này có thể báo lỗi ngay cả với TRY. Kiểm độ dài theo đặc tả trước khi đổi, không cắt nguồn chỉ để làm câu chạy được.
+
+<span id="convert-try-convert"></span>
+
+### CONVERT và TRY_CONVERT: style phải đúng hướng
+
+`style` là một mã số chọn cách đọc hoặc xuất trong những phép chuyển hỗ trợ nó. Với chuỗi ngày, `103` đọc ngày/tháng/năm; `23` xuất ngày theo năm-tháng-ngày. Hai hướng được dùng cùng nhau để kết quả dưới đây không phụ thuộc cách lưới hiển thị kiểu ngày:
+
+<Sql code={"SELECT CONVERT(char(10), CONVERT(date, '01/02/2026', 103), 23) AS [Ngay],\n\tCONVERT(char(10), TRY_CONVERT(date, '31/02/2026', 103), 23) AS [NgaySai];"} />
+
+<Result columns={['Ngay', 'NgaySai']} rows={[["2026-02-01", null]]} />
+
+`01/02/2026` được đọc là ngày `1` tháng `2`; `31/02/2026` không phải ngày hợp lệ nên TRY trả `NULL`. `CONVERT` ngoài cùng chỉ tạo chuỗi để trình bày, vì vậy kết quả `Ngay` lúc này là `char(10)`, không còn kiểu `date`.
+
+| Style ngày thường tra | Dạng chuỗi |
+|---|---|
+| `103` | `dd/MM/yyyy` |
+| `112` | `yyyyMMdd` |
+| `23` | `yyyy-MM-dd` |
+| `120` | `yyyy-MM-dd HH:mm:ss` |
+| `121` | `yyyy-MM-dd HH:mm:ss.fff` với phần giây lẻ |
+| `126` | `yyyy-MM-ddTHH:mm:ss.fff`, chữ `T` ngăn ngày và giờ |
+
+`dd`, `MM`, `yyyy` lần lượt là ngày, tháng, năm; `HH`, `mm`, `ss` là giờ, phút, giây. Độ dài kiểu chuỗi đích phải đủ phần cần xuất. Không suy rằng mọi style đều áp dụng cho mọi kiểu hoặc giữ đầy đủ độ lệch múi giờ; tra đúng bảng Microsoft khi đổi `datetimeoffset` hay nhị phân.
+
+Thiếu style, chuỗi ngày mơ hồ có thể phụ thuộc ngôn ngữ và `DATEFORMAT` của phiên. Dùng mẫu rõ như `yyyyMMdd`, hoặc ngày giờ ISO với `T`, thay vì đoán từ hình dạng chuỗi. Với `CONVERT`/`TRY_CONVERT`, truyền `NULL` làm style cho kết quả `NULL`.
+
+<span id="parse-try-parse"></span>
+
+### PARSE và TRY_PARSE: đọc số/ngày theo vùng
+
+**Culture** là mã quy ước ngôn ngữ-vùng, chẳng hạn `vi-VN`; nó quyết định cách hiểu dấu nhóm nghìn, dấu phần lẻ và ngày trong chuỗi. `PARSE`/`TRY_PARSE` nhận chuỗi `nvarchar(4000)`, chỉ chuyển sang các kiểu số và ngày giờ trong bảng sau:
+
+| Nhóm đích hỗ trợ | Các kiểu |
+|---|---|
+| Số | `tinyint`, `smallint`, `int`, `bigint`, `decimal`, `numeric`, `real`, `float`, `smallmoney`, `money` |
+| Ngày giờ | `date`, `time`, `smalldatetime`, `datetime`, `datetime2`, `datetimeoffset` |
+
+Chúng không phải công cụ chuyển chung sang `bit`, GUID, nhị phân, XML, JSON, vector hay chuỗi. Ví dụ đọc giá trị theo quy ước Việt Nam:
+
+<Sql code={"SELECT PARSE(N'1.234,56' AS decimal(10,2) USING 'vi-VN') AS [SoTien],\n\tCONVERT(char(10), PARSE(N'31/10/2026' AS date USING 'vi-VN'), 23) AS [Ngay],\n\tTRY_PARSE(N'không rõ' AS decimal(10,2) USING 'vi-VN') AS [SoSai];"} />
+
+<Result columns={['SoTien', 'Ngay', 'SoSai']} rows={[[1234.56, '2026-10-31', null]]} />
+
+Chuỗi `1.234,56` được đọc thành số `1234.56`; sau khi thành số, nó không còn mang dấu nhóm nghìn của chuỗi nguồn. Culture phải khớp quy ước của file, không chọn theo máy của người mở file. Bỏ culture thì hàm dùng ngôn ngữ phiên; culture không hợp lệ vẫn báo lỗi kể cả với `TRY_PARSE`.
+
+Hai hàm dùng bộ xử lý .NET CLR nên có chi phí phân tích thêm và không chuyển lời gọi sang máy chủ từ xa. Với định dạng đã thống nhất và `CONVERT` xử lý được, ưu tiên cách đơn giản đó. Riêng `PARSE`, viết trực tiếp `NULL` làm đầu vào gây lỗi; đầu vào `NULL` đã có kiểu chuỗi, như `CAST(NULL AS nvarchar(4000))`, thì trả `NULL`. Không suy mọi hàm chuyển kiểu có cùng quy tắc NULL.
+
+Nguồn cú pháp và giới hạn: [CAST/CONVERT](https://learn.microsoft.com/en-us/sql/t-sql/functions/cast-and-convert-transact-sql?view=sql-server-ver17), [TRY_CAST](https://learn.microsoft.com/en-us/sql/t-sql/functions/try-cast-transact-sql?view=sql-server-ver17), [TRY_CONVERT](https://learn.microsoft.com/en-us/sql/t-sql/functions/try-convert-transact-sql?view=sql-server-ver17), [PARSE](https://learn.microsoft.com/en-us/sql/t-sql/functions/parse-transact-sql?view=sql-server-ver17), [TRY_PARSE](https://learn.microsoft.com/en-us/sql/t-sql/functions/try-parse-transact-sql?view=sql-server-ver17).
+
+<span id="huong-chuyen"></span>
+
+## Bảng hướng chuyển thường gặp
+
+Đọc theo **dòng nguồn → cột đích**. `N/T` nghĩa là có hỗ trợ chuyển ngầm và tường minh; `—` là không có phép chuyển trực tiếp; `=` là cùng kiểu, nhưng đổi tham số như độ dài hoặc scale vẫn có thể mất dữ liệu. Bảng chỉ xét năm kiểu ghi tên, không gộp mọi kiểu số/ngày thành một ô.
+
+| Nguồn → đích | `int` | `decimal(p,s)` | `nvarchar(n)` | `date` | `datetime2(s)` |
+|---|---|---|---|---|---|
+| `int` | `=` | `N/T` | `N/T` | `—` | `—` |
+| `decimal(p,s)` | `N/T` | `=` | `N/T` | `—` | `—` |
+| `nvarchar(n)` | `N/T` | `N/T` | `=` | `N/T` | `N/T` |
+| `date` | `—` | `—` | `N/T` | `=` | `N/T` |
+| `datetime2(s)` | `—` | `—` | `N/T` | `N/T` | `=` |
+
+`N/T` không bảo đảm một chuỗi cụ thể là số/ngày, đủ chỗ hoặc đúng quy ước. Chuyển ngầm chỉ xảy ra khi ngữ cảnh chọn hướng đó; bảng không ra lệnh cho phép cộng bỏ qua độ ưu tiên kiểu. Muốn đổi số kiểu `20261031` thành ngày, cần chủ động biểu diễn nó thành chuỗi theo quy ước năm-tháng-ngày, không CAST trực tiếp `int` sang `date`.
+
+| Cặp kiểu ngoài bảng | Hướng và điều kiện quan trọng |
+|---|---|
+| Kiểu hợp lệ → `sql_variant` | Có chuyển ngầm; chiều từ variant ra cần tường minh; các kiểu bị loại xem PL.1 |
+| Chuỗi → `json` | Ngầm/tường minh; giá trị ngoài cùng phải là đối tượng hoặc mảng |
+| `json` → chuỗi | Phải tường minh; đích quá ngắn báo lỗi, không cắt như chuỗi thông thường |
+| Chuỗi/`json` ↔ `vector` | Có ngầm/tường minh, nhưng phải đủ số chiều và giá trị số; vector ưu tiên thấp hơn chuỗi |
+| `vector` → `vector` | Chỉ khi khớp số chiều và base type; không CAST trực tiếp float32↔float16 |
+| Chuỗi/nhị phân → `geometry`/`geography` | Có ngầm/tường minh; chiều ra phải tường minh; dạng nhị phân lưu nội bộ khác chuẩn trao đổi WKB |
+| `geometry` ↔ `geography` | Không CAST trực tiếp; dùng phương thức WKT/WKB theo đúng hệ tọa độ |
+| `hierarchyid` | Có phương thức `ToString()` để lấy đường dẫn; không suy nó là chuỗi thông thường |
+
+Các kiểu cũ, XML, nhị phân và kiểu người dùng định nghĩa có quy tắc riêng; bảng trên không liệt kê mọi cặp. Tra [biểu đồ và điều kiện chuyển đầy đủ của Microsoft](https://learn.microsoft.com/en-us/sql/t-sql/functions/cast-and-convert-transact-sql?view=sql-server-ver17#implicit-conversions), rồi đọc trang [JSON](https://learn.microsoft.com/en-us/sql/t-sql/data-types/json-data-type?view=sql-server-ver17), [vector](https://learn.microsoft.com/en-us/sql/t-sql/data-types/vector-data-type?view=sql-server-ver17), [geometry](https://learn.microsoft.com/en-us/sql/t-sql/spatial-geometry/spatial-types-geometry-transact-sql?view=sql-server-ver17), [geography](https://learn.microsoft.com/en-us/sql/t-sql/spatial-geography/spatial-types-geography-transact-sql?view=sql-server-ver17) hoặc [hierarchyid](https://learn.microsoft.com/en-us/sql/t-sql/data-types/hierarchyid-data-type-method-reference?view=sql-server-ver17) cho cặp đang dùng.
+
+<span id="mat-gia-tri"></span>
+
+## Chạy thành công vẫn có thể mất giá trị
+
+Kiểm cả ba chuyện: hướng chuyển có được hỗ trợ, giá trị có nằm trong miền đích, và đích có giữ ý nghĩa cần dùng. Các hàm TRY chỉ giúp một phần ở bước kiểm giá trị; cắt chuỗi và làm tròn có thể là một phép chuyển thành công:
+
+<Sql code={"SELECT CAST(N'NV001' AS nvarchar(3)) AS [MaBiCat],\n\tCAST(12.345 AS decimal(5,2)) AS [LamTron],\n\tTRY_CAST(1000 AS decimal(5,2)) AS [Tran];"} />
+
+<Result columns={['MaBiCat', 'LamTron', 'Tran']} rows={[["NV0", 12.35, null]]} />
+
+`nvarchar(3)` cắt mất `01`; `decimal(5,2)` làm tròn phần lẻ; `1000` cần bốn chữ số nguyên nhưng đích chỉ có ba nên tràn. Đổi hai `CAST` đầu thành `TRY_CAST` không tự phát hiện việc mất chữ hay làm tròn. Muốn giữ mã thì tăng độ dài; muốn giữ phần lẻ thì chọn scale từ đặc tả.
+
+| Chuyển gì | Phần có thể mất | Cách quyết định |
+|---|---|---|
+| Chuỗi → số | Số `0` đầu, dấu/cách viết nguồn | Mã định danh thường giữ kiểu chuỗi |
+| Unicode → `varchar` không dùng UTF-8 | Ký tự không có trong bảng mã | Giữ Unicode hoặc thống nhất collation phù hợp |
+| Số thập phân → số nguyên | Phần lẻ bị cắt; money→int có quy tắc làm tròn khác | Chốt yêu cầu làm tròn trước khi đổi |
+| Ngày giờ → `date` | Giờ, phút, giây | Chỉ đổi khi báo cáo cần ngày |
+| `datetimeoffset` → `datetime2` | Độ lệch UTC | Chốt mốc giờ cần biểu diễn trước khi bỏ độ lệch |
+| Chuỗi GUID → `uniqueidentifier` | Phần dư sau chuỗi GUID có thể bị cắt | Kiểm cấu trúc/độ dài nguồn, không chỉ dùng TRY |
+
+Thời điểm chuyển cũng quan trọng. Nếu chia hai số nguyên trước, phần lẻ đã mất rồi mới được đổi kiểu:
+
+<Sql code={"SELECT CAST(5 / 2 AS decimal(5,2)) AS [DoiSau],\n\tCAST(5 AS decimal(5,2)) / 2 AS [DoiTruoc];"} />
+
+<Result columns={['DoiSau', 'DoiTruoc']} rows={[[2, 2.5]]} />
+
+Chuyển một toán hạng trước phép chia để giữ kết quả `2.5`; đổi kết quả `5 / 2` sau đó chỉ tạo số thập phân có giá trị `2`. Quy tắc precision/scale và làm tròn phép tính được giải thích tiếp ở [PL.4](../pl-4-tinh-toan-va-lam-tron/).
+
+Nguồn: [cắt/làm tròn khi chuyển](https://learn.microsoft.com/en-us/sql/t-sql/functions/cast-and-convert-transact-sql?view=sql-server-ver17#truncating-and-rounding-results), [precision/scale](https://learn.microsoft.com/en-us/sql/t-sql/data-types/precision-scale-and-length-transact-sql?view=sql-server-ver17), [GUID](https://learn.microsoft.com/en-us/sql/t-sql/data-types/uniqueidentifier-transact-sql?view=sql-server-ver17).
+
+## Khi TRY vẫn báo lỗi
+
+Nếu hai kiểu không được phép chuyển trực tiếp, `TRY_CAST`/`TRY_CONVERT` vẫn báo lỗi. Ví dụ chỉ để đọc dưới đây yêu cầu chuyển `int` sang `xml`, hướng không được hỗ trợ:
+
+<Sql copy={false} code={"SELECT TRY_CAST(4 AS xml) AS [GiaTri];"} />
+
+<Messages lines={['Explicit conversion from data type int to xml is not allowed.']} />
+
+Đây là lỗi `529` đã kiểm trên database khóa học. Đổi tên hàm sang `TRY_CONVERT(xml, 4)` vẫn lỗi; cần chọn đúng nguồn và kiểu đích, không thêm TRY để bỏ qua quy tắc kiểu. Với `TRY_PARSE`, culture sai cũng gây lỗi vì hàm chưa có quy tắc đúng để đọc chuỗi.
+
+Khi rà dữ liệu, giữ giá trị gốc cạnh giá trị đã chuyển, phân biệt nguồn `NULL` với chuyển thất bại và kiểm các giá trị biên. Chọn kiểu đích theo yêu cầu rồi mới chọn hàm; sửa định dạng nguồn khi nó sai quy ước. Câu chuyển kiểu không thay cho việc xác nhận ngày, mã hay số tiền đúng hồ sơ.
+
+## Tự kiểm tra
+
+<details>
+<summary>File dùng ngày/tháng/năm, có dòng ghi ngày không hợp lệ. Chọn hàm và style nào để rà?</summary>
+
+Dùng `TRY_CONVERT` sang `date` với style `103`, giữ chuỗi nguồn để biết dòng nào cần sửa. `NULL` đích có thể do nguồn vốn `NULL` hoặc ngày không hợp lệ; không tự đổi thành một ngày mặc định. Nếu cần ngày để tính toán thì giữ kiểu `date`, chỉ đổi thành chuỗi khi trình bày.
+
+</details>
+
+<Sql code={"SELECT TRY_CAST(N'123.456' AS decimal(5,2)) AS [A],\n\tTRY_CAST(N'x' AS decimal(5,2)) AS [B];"} />
+
+<details>
+<summary>Hai cột của câu SQL trên trả gì; TRY có giữ nguyên ba chữ số phần lẻ không?</summary>
+
+`A` là `123.46`, `B` là `NULL`. Chuyển `123.456` sang scale `2` thành công bằng cách làm tròn; TRY không biến việc làm tròn thành lỗi. Nếu cần giữ ba chữ số lẻ thì chọn scale `3` và precision đủ phần nguyên.
+
+</details>
+
+<Sql copy={false} code={"SELECT N'NV' + 1 AS [Ma];"} />
+
+<details>
+<summary>Câu nối mã trên lỗi. Sửa hướng chuyển kiểu thế nào?</summary>
+
+`int` ưu tiên hơn `nvarchar`, nên SQL Server cố chuyển `NV` thành số và báo lỗi. Muốn nối chữ, chuyển số thành chuỗi đủ dài trước dấu `+`:
+
+<Sql code={"SELECT N'NV' + CAST(1 AS nvarchar(10)) AS [Ma];"} />
+
+Kết quả là `NV1`. Đặt `AS [Ma]` chỉ đặt tiêu đề, không sửa được hướng chuyển hay biến phép cộng thành nối chữ.
+
+</details>
