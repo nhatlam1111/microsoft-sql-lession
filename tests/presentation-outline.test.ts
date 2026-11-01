@@ -8,6 +8,8 @@ describe('presentation outline', () => {
     expect(() => presentationOutline(slide + slide)).toThrow();
     expect(() => presentationOutline('<Slide id="mot" title="Một">')).toThrow();
     expect(() => presentationOutline('')).toThrow();
+    expect(() => presentationOutline(slide, ['1.2'])).toThrow(/sourceLessons/);
+    expect(presentationOutline(slide, ['1.1'])).toHaveLength(1);
   });
   it('uses the authored deck as the single outline', () => {
     const body = readFileSync('src/content/presentations/lam-quen.mdx', 'utf8');

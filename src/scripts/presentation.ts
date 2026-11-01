@@ -63,7 +63,8 @@ function initPresentation(root: HTMLElement) {
     if (status) status.textContent = presenter ? 'Người giảng' : following ? 'Theo người giảng' : 'Tự xem';
     root.querySelectorAll<HTMLButtonElement>('[data-action="follow"]').forEach(button => {
       button.hidden = presenter || !run;
-      button.disabled = following;
+      button.disabled = following || !channel;
+      button.title = channel ? 'Đồng bộ với cửa sổ người giảng của phiên này' : 'Trình duyệt chưa cho đồng bộ hai cửa sổ; bạn vẫn có thể tự xem';
     });
     root.querySelectorAll<HTMLButtonElement>('[data-action="prev"]').forEach(button => { button.disabled = index === 0 && state.step === 0; });
     root.querySelectorAll<HTMLButtonElement>('[data-action="next"]').forEach(button => {

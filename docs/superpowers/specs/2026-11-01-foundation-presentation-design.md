@@ -27,3 +27,11 @@
 Unit test state/protocol/URL/schema/search và nội dung. Browser 1280/1440/1920, cả 20 slide và đáp án, bàn phím, hai cửa sổ/reload/theo lại/phiên khác, fullscreen và fallback. Kiểm tiến độ không bị ghi từ các route mới. Chạy test/check/build/check:dist, kiểm thiết kế, review nội dung độc lập và review tích hợp. Evidence/ma trận trong `docs/reviews/2026-11-01-foundation-presentation/`.
 
 Nhánh `codex/foundation-presentation`. Chưa merge/push/deploy; chờ yêu cầu riêng sau bàn giao local.
+
+## Kết quả triển khai và làm rõ sau kiểm
+
+Đã có 20 slide, bốn câu hỏi, ghi chú tách khỏi HTML audience, collection/routes/navigation/search và controller dùng lại. Audience có H1 tên deck trên header, từng slide là H2. Build từ chối source slide không tồn tại hoặc ngoài `sourceLessons`; các cặp ghi chú của bộ hiện tại được test đối chiếu nguồn/phút. Template thêm bộ tại `docs/presentation-template.md`.
+
+Audience có run xin theo lại khi reload, kể cả trước reload đã Tự xem; muốn đọc độc lập dùng link chia sẻ sạch. Khi channel không khả dụng, Follow bị disable có giải thích và vẫn tự điều hướng. Vòng sửa bố cục rút câu dẫn 19/giảm khoảng cách khối đáp án, giữ cỡ chữ.
+
+Đã có review nội dung độc lập, review tích hợp, 12 ca SQL SELECT-only và bằng chứng browser/kiểm máy. Chi tiết kết quả thực, lỗi nền và phần chưa kiểm tại `docs/reviews/2026-11-01-foundation-presentation/verification.md`; quyết định từng nhận xét tại `decisions.md`. Không nhận bằng chứng browser thành đã thử máy chiếu vật lý/AT và không nhận review thành quyền push.

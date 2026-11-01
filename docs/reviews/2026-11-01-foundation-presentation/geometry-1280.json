@@ -1,0 +1,146 @@
+[
+  {
+    "gap": 152.61083984375,
+    "id": "lam-quen-sql-server",
+    "overflow": 0,
+    "step": "0"
+  },
+  {
+    "gap": 99.7378387451172,
+    "id": "nguon-du-lieu-dung-chung",
+    "overflow": 0,
+    "step": "0"
+  },
+  {
+    "gap": 182.5841827392578,
+    "id": "bon-ten-can-phan-biet",
+    "overflow": 0,
+    "step": "0"
+  },
+  {
+    "gap": 227.9638214111328,
+    "id": "dong-ssms-va-sua-file-xuat",
+    "overflow": 0,
+    "step": "0"
+  },
+  {
+    "gap": 153.0471649169922,
+    "id": "dong-ssms-va-sua-file-xuat",
+    "overflow": 0,
+    "step": "1"
+  },
+  {
+    "gap": 133.1935577392578,
+    "id": "bang-dong-cot",
+    "overflow": 0,
+    "step": "0"
+  },
+  {
+    "gap": 128.77976989746094,
+    "id": "cau-truc-cua-bang",
+    "overflow": 0,
+    "step": "0"
+  },
+  {
+    "gap": 84.86021423339844,
+    "id": "mot-ho-so-ba-hop-dong",
+    "overflow": 0,
+    "step": "0"
+  },
+  {
+    "gap": 138.84922790527344,
+    "id": "kieu-o-va-kieu-cot",
+    "overflow": 0,
+    "step": "0"
+  },
+  {
+    "gap": 132.3712615966797,
+    "id": "doc-kieu-du-lieu-va-null",
+    "overflow": 0,
+    "step": "0"
+  },
+  {
+    "gap": 53.61140441894531,
+    "id": "chuyen-kieu-va-y-nghia",
+    "overflow": 0,
+    "step": "0"
+  },
+  {
+    "gap": 266.94935607910156,
+    "id": "cccd-gom-toan-chu-so",
+    "overflow": 0,
+    "step": "0"
+  },
+  {
+    "gap": 185.5882568359375,
+    "id": "cccd-gom-toan-chu-so",
+    "overflow": 0,
+    "step": "1"
+  },
+  {
+    "gap": 120.0361785888672,
+    "id": "khoa-chinh",
+    "overflow": 0,
+    "step": "0"
+  },
+  {
+    "gap": 125.66667175292967,
+    "id": "khoa-ngoai",
+    "overflow": 0,
+    "step": "0"
+  },
+  {
+    "gap": 225.8660125732422,
+    "id": "ghi-nham-ma-phong-co-that",
+    "overflow": 0,
+    "step": "0"
+  },
+  {
+    "gap": 144.5049285888672,
+    "id": "ghi-nham-ma-phong-co-that",
+    "overflow": 0,
+    "step": "1"
+  },
+  {
+    "gap": 88.29222106933594,
+    "id": "ky-hieu-erd",
+    "overflow": 0,
+    "step": "0"
+  },
+  {
+    "gap": 142.64207458496094,
+    "id": "ten-phong-cua-nv001",
+    "overflow": 0,
+    "step": "0"
+  },
+  {
+    "gap": 47.16694641113281,
+    "id": "mot-ho-so-nhieu-dong-ket-qua",
+    "overflow": 0,
+    "step": "0"
+  },
+  {
+    "gap": 88.29222106933594,
+    "id": "luong-kem-ten-phong",
+    "overflow": 0,
+    "step": "0"
+  },
+  {
+    "gap": 99.0330047607422,
+    "id": "hop-dong-kem-ten-phong",
+    "overflow": 0,
+    "step": "0"
+  },
+  {
+    "gap": 17.671859741210938,
+    "id": "hop-dong-kem-ten-phong",
+    "overflow": 0,
+    "step": "1"
+  },
+  {
+    "gap": 84.96092224121094,
+    "id": "nam-diem-tu-kiem",
+    "overflow": 0,
+    "step": "0"
+  }
+]

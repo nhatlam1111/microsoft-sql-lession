@@ -1,7 +1,7 @@
 export interface PresentationSlide { id: string; title: string; source: string; minutes: number }
 
 /** Literal Slide attributes are the deck's single outline, checked at build time. */
-export function presentationOutline(body: string): PresentationSlide[] {
+export function presentationOutline(body: string, sourceLessons?: string[]): PresentationSlide[] {
   const slides = [...body.matchAll(/<Slide\s+([^>]+)>/g)].map(([, attributes]) => {
     const value = (key: string) => attributes.match(new RegExp(`\\b${key}="([^"]+)"`))?.[1] ?? '';
     const minutes = Number(attributes.match(/\bminutes=\{(\d+)\}/)?.[1]);
@@ -13,6 +13,7 @@ export function presentationOutline(body: string): PresentationSlide[] {
       throw new Error(`Slide metadata không hợp lệ: ${JSON.stringify(slide)}`);
     }
     ids.add(slide.id);
+    if (sourceLessons && !sourceLessons.includes(slide.source)) throw new Error(`Slide ${slide.id}: bài nguồn ${slide.source} không thuộc sourceLessons.`);
   }
   if (!slides.length) throw new Error('Bài giảng phải có ít nhất một Slide.');
   return slides;

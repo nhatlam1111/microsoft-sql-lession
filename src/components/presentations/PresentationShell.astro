@@ -8,7 +8,7 @@ const { entry, slides, mode } = Astro.props;
 <main data-presentation data-deck={entry.slug} data-mode={mode} data-audience-url={presentationUrl(entry.slug)} class:list={['presentation-workspace', `presentation-${mode}`]}>
   <header class="presentation-top">
     <a class="presentation-brand" href={withBase('/bai-giang/')}>SQL Server <span>/ Bài giảng</span></a>
-    <span class="presentation-deck-title">{entry.title}</span>
+    {mode === 'audience' ? <h1 class="presentation-deck-title">{entry.title}</h1> : <span class="presentation-deck-title">{entry.title}</span>}
     <a class="presentation-link" href={mode === 'audience' ? presenterUrl(entry.slug) : presentationUrl(entry.slug)}>{mode === 'audience' ? 'Chế độ người giảng' : 'Tự xem slide'}</a>
   </header>
   <div class="presentation-main">
