@@ -215,6 +215,8 @@ Kiểm đường thực hành, kiến thức nền/thuật ngữ giữa các bà
 
 ### 4.7 Bài giảng trình chiếu (duyệt 01/11/2026)
 
+- Biến thể giảng lại khái niệm: mỗi slide có hình mang ý nghĩa và2–3 câu diễn giải cốt lõi luôn hiện, không dùng câu hỏi/ghi chú để dạy bù định nghĩa. Hình so sánh có/không ràng buộc phải ghi rõ giả định và điều kiện không có luật khác; sơ đồ schema thật không được giả là đã bỏ khóa. Số slide/câu hỏi theo thiết kế từng bộ, không giữ cố định20slide hoặc4câu của bản ôn cũ.
+
 Mẫu MDX và cách thêm bộ mới tại [presentation-template.md](presentation-template.md).
 
 - Slide tổng hợp là biến thể riêng trong collection `presentations`, không thay bài đầy đủ và không ghi tiến độ. Mỗi bộ có metadata `sourceLessons`, mục tiêu/thời lượng, ID slide ổn định và ghi chú người giảng.

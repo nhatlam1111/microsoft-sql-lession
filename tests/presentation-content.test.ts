@@ -10,15 +10,15 @@ const metadata = parse(raw.match(/^---\r?\n([\s\S]*?)\r?\n---/)![1]);
 const outline = presentationOutline(raw);
 const slides = [...raw.matchAll(/<Slide\b[^>]*>([\s\S]*?)<\/Slide>/g)].map(match => match[1]);
 const withoutNotes = (text: string) => text.replace(/<PresenterNotes\b[^>]*>[\s\S]*?<\/PresenterNotes>/g, '');
-const prompt = (text: string) => withoutNotes(text).replace(/<details\s+data-answer>[\s\S]*?<\/details>/g, '');
 
-describe('foundation recap teaching contract', () => {
-  it('keeps the agreed scope, 48-minute teaching rhythm and four class questions', () => {
-    expect(slides).toHaveLength(20);
-    expect(metadata.sourceLessons).toEqual(['1.1', '1.2', '1.3', '1.4', '1.5']);
+describe('concept-led foundation lecture', () => {
+  it('keeps18 concept slides with visible explanations and no quiz prerequisite', () => {
+    expect(slides).toHaveLength(18);
+    expect(metadata.sourceLessons).toEqual(['1.1', '1.2', '1.4', '1.5']);
     expect(outline.reduce((sum, slide) => sum + slide.minutes, 0)).toBe(48);
     expect(metadata.minutes).toBe(55);
-    expect(slides.flatMap((slide, i) => slide.includes('<details data-answer>') ? [i + 1] : [])).toEqual([4, 11, 14, 19]);
+    expect(raw).not.toContain('data-answer');
+    for (const slide of slides) { expect(withoutNotes(slide)).toMatch(/<(Image|ConceptFigure|ProjectionTable|ProjectionRelation|figure)\b/); expect(withoutNotes(slide)).toContain('<p'); }
     for (const slide of slides) {
       expect(slide).not.toMatch(/<(Sql|Result|Messages|Exercises|RunFlow|Chat)\b/);
     }
@@ -37,34 +37,24 @@ describe('foundation recap teaching contract', () => {
     }
   });
 
-  it('keeps material qualifications visible rather than only in presenter notes', () => {
-    expect(withoutNotes(slides[7])).toContain('chưa đặt Data Validation');
-    expect(withoutNotes(slides[8])).toContain('Mô phỏng Object Explorer');
-    expect(withoutNotes(slides[9])).toContain('us_english');
-    expect(withoutNotes(slides[9])).toContain('DATEFORMAT mdy');
-    expect(withoutNotes(slides[11])).toMatch(/được khai báo.*khóa chính/);
-    expect(withoutNotes(slides[12])).toContain('MaPB không nhận NULL');
-    expect(withoutNotes(slides[14])).toContain('Không nói phòng nào cũng phải có người');
-    expect(withoutNotes(slides[17])).toContain('(KyLuong, MaNV)');
-    expect(withoutNotes(slides[17])).toContain('không phải phòng tại kỳ lương');
-  });
-
-  it('shows each question and required inputs before the answer is revealed', () => {
-    const closing = prompt(slides[3]);
-    expect(closing).toContain('đóng SSMS');
-    expect(closing).toContain('sửa tên trong file');
-    expect(closing).toContain('máy chủ');
-    const id = prompt(slides[10]);
-    expect(id).toContain('varchar(12)');
-    expect(id).toContain('chỉ gồm chữ số');
-    const wrongRoom = prompt(slides[13]);
-    expect(wrongRoom).toContain('KT');
-    expect(wrongRoom).toContain('KD');
-    expect(wrongRoom).toContain('Cả hai mã đều có trong danh mục');
-    const path = prompt(slides[18]);
-    for (const name of ['HopDong', 'NhanVien', 'PhongBan', 'MaNV', 'MaPB', 'TenPB']) expect(path).toContain(name);
-    expect(path).toContain('showLinks={false}');
-    expect(path).toContain('ý nghĩa của mỗi dòng');
+  it('explains optional constraints and marks hypothetical examples', () => {
+    const visible = (id: string) => withoutNotes(slides[outline.findIndex(s => s.id === id)] ?? '');
+    expect(visible('sql-la-gi')).toContain('truy vấn');
+    expect(visible('sql-la-gi')).toContain('SELECT HoTen FROM NhanVien;');
+    expect(visible('khoa-chinh')).toContain('khai báo');
+    expect(visible('khoa-chinh')).toContain('NULL');
+    expect(visible('bang-khong-co-khoa-chinh')).toMatch(/vẫn.*(lưu|đọc)/);
+    expect(visible('bang-khong-co-khoa-chinh')).toContain('luật khác');
+    expect(visible('bang-khong-co-khoa-chinh')).toContain('giả định');
+    expect(visible('khoa-ngoai')).toContain('NULL');
+    expect(visible('khoa-ngoai')).toContain('đang bật');
+    expect(visible('bang-khong-co-khoa-ngoai')).toContain('giả định');
+    expect(visible('bang-khong-co-khoa-ngoai')).toContain('luật kiểm khác');
+    expect(visible('bang-khong-co-khoa-ngoai')).toContain('vẫn có thể kết bảng');
+    expect(visible('ky-hieu-erd')).toContain('không bắt');
+    const last = visible('hop-dong-kem-ten-phong');
+    for (const value of ['HopDong','NhanVien','PhongBan','MaNV','MaPB','hợp đồng','hiện lưu']) expect(last).toContain(value);
+    expect(last).not.toContain('showLinks={false}');
   });
 
   it('preserves concise prose and course terminology', () => {

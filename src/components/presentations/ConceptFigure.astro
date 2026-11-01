@@ -1,0 +1,38 @@
+---
+import ProjectionTable from './ProjectionTable.astro';
+interface Props { kind: 'database' | 'split' | 'identity' | 'pk' | 'no-pk' | 'fk' | 'no-fk' }
+const { kind } = Astro.props;
+---
+{kind === 'database' && <figure class="concept-database">
+  <figcaption>Database nhân sự · mở ra ba bảng đang dùng</figcaption>
+  <div class="concept-three">
+    <section><h3><code>NhanVien</code></h3><p>Hồ sơ nhân viên</p><div class="concept-data-row">NV001 · Trần Thị Mai</div><div class="concept-data-row">NV021 · Tôn Thất Long</div></section>
+    <section><h3><code>PhongBan</code></h3><p>Danh mục phòng</p><div class="concept-data-row">KT · Kế toán</div><div class="concept-data-row">IT · IT</div></section>
+    <section><h3><code>HopDong</code></h3><p>Các hợp đồng</p><div class="concept-data-row">HD2021-001 · NV021</div><div class="concept-data-row">HD2021-002 · NV021</div></section>
+  </div>
+</figure>}
+{kind === 'split' && <figure>
+  <figcaption>Trích dữ liệu NV021 · một hồ sơ được ba hợp đồng tham chiếu</figcaption>
+  <div class="concept-split">
+    <div><h3>Hồ sơ <code>NhanVien</code></h3><div class="concept-profile"><strong>NV021</strong><span>Tôn Thất Long</span><span>Mã phòng IT</span></div></div>
+    <div class="concept-reference" aria-label="Các hợp đồng cùng tham chiếu mã NV021">← <code>MaNV</code></div>
+    <div><h3>Hợp đồng <code>HopDong</code></h3><div class="concept-data-row">HD2021-001 · NV021</div><div class="concept-data-row">HD2021-002 · NV021</div><div class="concept-data-row">HD2024-005 · NV021</div></div>
+  </div>
+</figure>}
+{kind === 'identity' && <ProjectionTable caption="Trích NhanVien · mã dùng để nhắc đúng hồ sơ" columns={['MaNV','HoTen','MaPB']} rows={[
+  ['NV001','Trần Thị Mai','KT'],['NV021','Tôn Thất Long','IT'],
+]} markColumn={0} />}
+{(kind === 'pk' || kind === 'no-pk') && <figure>
+  <figcaption>{kind === 'pk' ? 'Minh họa luật PK · giả sử NV001 đã có trong bảng' : 'Minh họa giả định · cùng một mã được gửi thêm lần nữa'}</figcaption>
+  <div class="concept-comparison">
+    <section><h3>{kind === 'pk' ? 'Mã chưa có trong bảng' : 'Có khai báo PK'}</h3><div class="concept-token">{kind === 'pk' ? 'Một mã mới' : 'NV001 · NV001'}</div><div class:list={['concept-outcome',kind==='pk'?'is-valid':'is-rejected']}>{kind === 'pk' ? 'Qua luật duy nhất của PK' : 'PK chặn mã trùng'}</div></section>
+    <section><h3>{kind === 'pk' ? 'Mã đã có trong bảng' : 'Không khai báo PK'}</h3><div class="concept-token">NV001 · NV001</div><div class:list={['concept-outcome',kind==='pk'?'is-rejected':'is-caution']}>{kind === 'pk' ? 'PK từ chối mã trùng' : 'Mã trùng có thể lọt vào'}</div></section>
+  </div>
+</figure>}
+{(kind === 'fk' || kind === 'no-fk') && <figure>
+  <figcaption>{kind === 'fk' ? 'Minh họa luật FK · danh mục có KT, không có KT01' : 'Minh họa giả định · danh mục không có mã KT01'}</figcaption>
+  <div class="concept-comparison">
+    <section><h3>{kind === 'fk' ? 'Mã có trong danh mục' : 'Có khai báo FK đang bật'}</h3><div class="concept-token">{kind === 'fk' ? 'KT → KT / Kế toán' : 'KT01 → không tìm thấy'}</div><div class:list={['concept-outcome',kind==='fk'?'is-valid':'is-rejected']}>{kind === 'fk' ? 'Qua luật tham chiếu của FK' : 'FK chặn mã không có thật'}</div></section>
+    <section><h3>{kind === 'fk' ? 'Mã không có trong danh mục' : 'Không khai báo FK'}</h3><div class="concept-token">KT01 → không tìm thấy</div><div class:list={['concept-outcome',kind==='fk'?'is-rejected':'is-caution']}>{kind === 'fk' ? 'FK từ chối mã này' : 'Mã không có thật có thể lọt vào'}</div></section>
+  </div>
+</figure>}

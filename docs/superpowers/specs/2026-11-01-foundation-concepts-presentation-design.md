@@ -1,6 +1,6 @@
 # Thiết kế lại bài giảng Làm quen theo khái niệm
 
-Trạng thái: người làm khóa học đã chọn cách tiếp cận ví dụ nhân sự được mở dần; thiết kế chi tiết dưới đây chờ duyệt trước khi sửa sản phẩm. Base `b2e4c3cd0d9c2d1a22a05b6820affc5c07295e75`.
+Trạng thái: người làm khóa học đã duyệt thiết kế và triển khai ngày 01/11/2026. Base `b2e4c3cd0d9c2d1a22a05b6820affc5c07295e75`.
 
 ## Mục đích và kết quả cần đạt
 
