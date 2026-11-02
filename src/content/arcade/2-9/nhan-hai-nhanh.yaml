@@ -3,9 +3,9 @@ chapter: '2-9'
 order: 1
 title: Nhãn đủ điều kiện
 difficulty: de
-lessons: [ 2-5-null-o-trong, 2-8-ham-ngay-tham-nien, 2-9-case-when-ham-if ]
+lessons: [ 2-9-case-when-ham-if ]
 prompt: >-
-  Từ bảng DanhGia, lấy mã nhân viên và một cột nhãn cho mọi dòng: điểm từ 8 trở lên ghi Đạt, còn lại ghi Chưa đạt. Điểm trong bảng luôn có giá trị.
+  Từ bảng DanhGia, lấy mã nhân viên và một cột nhãn cho mọi dòng: điểm từ 8 trở lên ghi “Đạt”, còn lại ghi “Chưa đạt”. Điểm trong bảng luôn có giá trị.
 columns: [ MaNV, Nhãn ]
 ordered: false
 tables:

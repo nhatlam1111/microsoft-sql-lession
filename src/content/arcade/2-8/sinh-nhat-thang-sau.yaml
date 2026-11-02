@@ -3,7 +3,7 @@ chapter: '2-8'
 order: 6
 title: Sinh nhật tháng sau
 difficulty: kho
-lessons: [ 2-3-and-or-in-between-like, 2-4-sap-xep-va-top, 2-8-ham-ngay-tham-nien ]
+lessons: [ 2-4-sap-xep-va-top, 2-8-ham-ngay-tham-nien ]
 prompt: >-
   Tại mốc cố định 15/12/2026, phòng nhân sự chuẩn bị quà cho người có sinh nhật trong tháng ngay sau tháng của mốc, bất kể năm sinh. Từ bảng NhanSu, lấy mã nhân viên, ngày sinh và số ranh giới tháng đã qua tính từ ngày vào làm đến mốc (dùng DATEDIFF với đơn vị month). Xếp mã tăng dần.
 columns: [ MaNV, NgaySinh, Số tháng ]
@@ -31,11 +31,11 @@ tests:
         - [ "NV506", "1999-01-11", "2025-12-31" ]
     expected: [ [ "NV506", "1999-01-11", 12 ] ]
   - id: 3
-    catches: "SELECT MaNV, NgaySinh, DATEDIFF(month, NgayVaoLam, CAST('20261215' AS date)) FROM NhanSu WHERE NgaySinh >= '19850101' AND MONTH(NgaySinh) = 1 ORDER BY MaNV ASC"
+    catches: "SELECT MaNV, NgaySinh, DATEDIFF(month, NgayVaoLam, CAST('20261215' AS date)) FROM NhanSu WHERE MONTH(NgaySinh) = 1"
     rows:
       NhanSu:
-        - [ "NV511", "1975-01-15", "2020-05-05" ]
         - [ "NV512", "1994-01-02", "2022-07-07" ]
+        - [ "NV511", "1975-01-15", "2020-05-05" ]
     expected: [ [ "NV511", "1975-01-15", 79 ], [ "NV512", "1994-01-02", 53 ] ]
   - id: 4
     catches: "SELECT MaNV, NgaySinh, DATEDIFF(month, NgayVaoLam, CAST('20261215' AS date)) FROM NhanSu WHERE MONTH(NgaySinh) = 1 AND DAY(NgaySinh) >= 2 ORDER BY MaNV ASC"

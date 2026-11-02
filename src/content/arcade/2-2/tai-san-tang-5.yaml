@@ -5,7 +5,7 @@ title: Tài sản đang ở tầng 5
 difficulty: vua
 lessons: [ 2-2-where-loc-nhu-autofilter ]
 prompt: >-
-  Sau đợt chuyển chỗ, phòng hành chính cần biết tài sản nào hiện đang đặt ở Tầng 5. Từ bảng TaiSan, lấy mã và tên tài sản.
+  Sau đợt chuyển chỗ, phòng hành chính cần biết tài sản nào hiện đang đặt ở “Tầng 5”. Từ bảng TaiSan, lấy mã và tên tài sản.
 columns: [ Mã tài sản, Tên tài sản ]
 ordered: false
 tables:

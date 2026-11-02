@@ -3,7 +3,7 @@ chapter: '2-6'
 order: 2
 title: Các cặp phòng và chức danh
 difficulty: de
-lessons: [ 2-2-where-loc-nhu-autofilter, 2-4-sap-xep-va-top, 2-6-distinct-bo-dong-trung ]
+lessons: [ 2-6-distinct-bo-dong-trung ]
 prompt: >-
   Nhân sự cần biết những cặp phòng và chức danh đang có. Từ bảng NhanSu, lấy mã phòng và mã chức danh, mỗi cặp khác nhau một dòng.
 columns: [ MaPB, MaCD ]

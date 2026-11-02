@@ -1,11 +1,11 @@
-id: mot-thang-sau
+id: hai-thang-thu-viec
 chapter: '2-8'
 order: 1
 title: Ngày hết thử việc
 difficulty: de
-lessons: [ 2-3-and-or-in-between-like, 2-4-sap-xep-va-top, 2-8-ham-ngay-tham-nien ]
+lessons: [ 2-8-ham-ngay-tham-nien ]
 prompt: >-
-  Thử việc kéo dài đúng hai tháng tính từ ngày bắt đầu. Từ bảng ThuViec, lấy mã nhân viên và ngày sau ngày bắt đầu hai tháng cho mọi dòng.
+  Ngày hết thử việc được ghi là ngày sau ngày bắt đầu đúng hai tháng, ví dụ bắt đầu 10/03/2026 thì ghi 10/05/2026. Từ bảng ThuViec, lấy mã nhân viên và ngày hết thử việc cho mọi dòng.
 columns: [ MaNV, Ngày hết thử việc ]
 ordered: false
 tables:
@@ -46,7 +46,7 @@ tests:
     catches: "SELECT MaNV, DATEADD(month, 2, NgayBatDau) FROM ThuViec WHERE NgayBatDau >= '20260301' AND NgayBatDau <= '20261031'"
     rows:
       ThuViec:
-        - [ "NV131", "2026-11-05" ]
+        - [ "NV131", "2026-12-31" ]
         - [ "NV132", "2026-07-07" ]
-    expected: [ [ "NV131", "2027-01-05" ], [ "NV132", "2026-09-07" ] ]
+    expected: [ [ "NV131", "2027-02-28" ], [ "NV132", "2026-09-07" ] ]
 resultTypes: [ "varchar", "date" ]

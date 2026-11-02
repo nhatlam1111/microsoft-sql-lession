@@ -3,7 +3,7 @@ chapter: '2-7'
 order: 1
 title: Tên in trên thẻ
 difficulty: de
-lessons: [ 2-3-and-or-in-between-like, 2-4-sap-xep-va-top, 2-7-ham-chuoi-tieng-viet ]
+lessons: [ 2-7-ham-chuoi-tieng-viet ]
 prompt: >-
   Thẻ nhân viên in họ tên chữ hoa. Từ bảng NhanSu, lấy mã nhân viên và họ tên đã đổi thành chữ hoa cho mọi dòng.
 columns: [ MaNV, Họ tên ]
@@ -36,12 +36,12 @@ tests:
         - [ "NV112", "Cù Đình Phong" ]
     expected: [ [ "NV211", "TĂNG MỸ LINH" ], [ "NV112", "CÙ ĐÌNH PHONG" ] ]
   - id: 4
-    catches: "SELECT MaNV, UPPER(TRIM(HoTen)) FROM NhanSu"
+    catches: "SELECT MaNV, UPPER(LEFT(HoTen, 20)) FROM NhanSu"
     rows:
       NhanSu:
-        - [ "NV121", " Giáp Thị Vân" ]
+        - [ "NV121", "Nghiêm Thị Thu Hiền Anh" ]
         - [ "NV122", "Âu Dương Khải" ]
-    expected: [ [ "NV121", " GIÁP THỊ VÂN" ], [ "NV122", "ÂU DƯƠNG KHẢI" ] ]
+    expected: [ [ "NV121", "NGHIÊM THỊ THU HIỀN ANH" ], [ "NV122", "ÂU DƯƠNG KHẢI" ] ]
   - id: 5
     catches: "SELECT TOP (1) MaNV, UPPER(HoTen) FROM NhanSu UNION ALL SELECT MaNV, UPPER(HoTen) FROM NhanSu WHERE MaNV LIKE '%2' OR MaNV LIKE '%6'"
     rows:

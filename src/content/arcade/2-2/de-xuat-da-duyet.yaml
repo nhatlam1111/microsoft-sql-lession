@@ -5,7 +5,7 @@ title: Đề xuất mua hàng đã duyệt
 difficulty: de
 lessons: [ 2-2-where-loc-nhu-autofilter ]
 prompt: >-
-  Phòng mua hàng cần các đề xuất đã được chấp thuận. Từ bảng DeXuatMua, lấy mã đề xuất, tên hàng và số tiền của các dòng có TrangThai là Đã duyệt.
+  Phòng mua hàng cần các đề xuất đã được chấp thuận. Từ bảng DeXuatMua, lấy mã đề xuất, tên hàng và số tiền của các dòng có TrangThai là “Đã duyệt”.
 columns: [ MaDX, TenHang, SoTien ]
 ordered: false
 tables:

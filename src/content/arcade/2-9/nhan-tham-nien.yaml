@@ -3,9 +3,9 @@ chapter: '2-9'
 order: 5
 title: Nhóm thâm niên tại mốc
 difficulty: kho
-lessons: [ 2-5-null-o-trong, 2-8-ham-ngay-tham-nien, 2-9-case-when-ham-if ]
+lessons: [ 2-4-sap-xep-va-top, 2-8-ham-ngay-tham-nien, 2-9-case-when-ham-if ]
 prompt: >-
-  Tại mốc cố định 21/10/2026, chia người trong bảng NhanSu theo ngày kỷ niệm: đã đủ 3 năm thì ghi Từ 3 năm, đã đủ 1 năm thì ghi Từ 1 năm, còn lại ghi Dưới 1 năm. Đủ năm tính cả đúng ngày kỷ niệm. Lấy mã nhân viên và nhóm, xếp mã tăng dần.
+  Tại mốc cố định 21/10/2026, chia người trong bảng NhanSu theo ngày kỷ niệm: đã đủ 3 năm thì ghi “Từ 3 năm”, đã đủ 1 năm thì ghi “Từ 1 năm”, còn lại ghi “Dưới 1 năm”. Đủ năm tính cả đúng ngày kỷ niệm. Lấy mã nhân viên và nhóm, xếp mã tăng dần.
 columns: [ MaNV, Nhóm ]
 ordered: true
 tables:
@@ -50,4 +50,11 @@ tests:
         - [ "NV431", "2025-12-20" ]
         - [ "NV432", "2024-12-20" ]
     expected: [ [ "NV431", "Dưới 1 năm" ], [ "NV432", "Từ 1 năm" ] ]
+  - id: 6
+    catches: "SELECT MaNV, CASE WHEN DATEADD(year, 3, NgayVaoLam) <= '20261021' THEN N'Từ 3 năm' WHEN DATEADD(year, 1, NgayVaoLam) <= '20261021' THEN N'Từ 1 năm' ELSE N'Dưới 1 năm' END FROM NhanSu"
+    rows:
+      NhanSu:
+        - [ "NV442", "2022-02-02" ]
+        - [ "NV441", "2025-02-02" ]
+    expected: [ [ "NV441", "Từ 1 năm" ], [ "NV442", "Từ 3 năm" ] ]
 resultTypes: [ "varchar", "nvarchar" ]

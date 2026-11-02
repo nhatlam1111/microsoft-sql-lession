@@ -5,7 +5,7 @@ title: Khóa học quý 4
 difficulty: kho
 lessons: [ 2-2-where-loc-nhu-autofilter, 2-3-and-or-in-between-like ]
 prompt: >-
-  Phòng đào tạo cần danh sách khóa còn nhận đăng ký trong quý 4/2026. Từ bảng KhoaHoc, lấy mã và tên các khóa thỏa cả ba ý: ngày mở từ 01/10/2026 đến hết 31/12/2026; trạng thái Mở đăng ký; và hoặc thuộc nhóm Kỹ năng, hoặc có tên chứa chữ An toàn.
+  Phòng đào tạo cần danh sách khóa còn nhận đăng ký trong quý 4/2026. Từ bảng KhoaHoc, lấy mã và tên các khóa thỏa cả ba ý: ngày mở từ 01/10/2026 đến hết 31/12/2026; trạng thái “Mở đăng ký”; và hoặc thuộc nhóm “Kỹ năng”, hoặc có tên chứa chữ “An toàn”.
 columns: [ MaKH, TenKH ]
 ordered: false
 tables:

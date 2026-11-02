@@ -3,7 +3,7 @@ chapter: '2-8'
 order: 2
 title: Số ngày chờ duyệt
 difficulty: vua
-lessons: [ 2-3-and-or-in-between-like, 2-4-sap-xep-va-top, 2-8-ham-ngay-tham-nien ]
+lessons: [ 2-8-ham-ngay-tham-nien ]
 prompt: >-
   Từ bảng DeXuat, lấy mã đề xuất và số ngày tính từ ngày nộp đến ngày duyệt của mọi dòng; duyệt ngay trong ngày thì ra 0.
 columns: [ MaDX, Số ngày ]

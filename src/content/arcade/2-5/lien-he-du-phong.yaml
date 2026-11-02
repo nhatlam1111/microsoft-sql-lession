@@ -5,7 +5,7 @@ title: Số liên hệ dự phòng
 difficulty: kho
 lessons: [ 2-3-and-or-in-between-like, 2-4-sap-xep-va-top, 2-5-null-o-trong ]
 prompt: >-
-  Lễ tân cần số liên hệ của các nhà cung cấp đang hợp tác (TrangThai là Đang hợp tác). Từ bảng NhaCungCap, lấy mã và một cột liên hệ: ưu tiên DiDong, không có thì dùng CoDinh, cả hai đều không có thì ghi đúng chữ “(chưa có số)”, gồm cả hai dấu ngoặc. Xếp mã tăng dần.
+  Lễ tân cần số liên hệ của các nhà cung cấp đang hợp tác (TrangThai là “Đang hợp tác”). Từ bảng NhaCungCap, lấy mã và một cột liên hệ: ưu tiên DiDong, không có thì dùng CoDinh, cả hai đều không có thì ghi đúng chữ “(chưa có số)”, gồm cả hai dấu ngoặc. Xếp mã tăng dần.
 columns: [ MaNCC, Liên hệ ]
 ordered: true
 tables:

@@ -5,7 +5,7 @@ title: Hai ứng viên điểm cao nhất
 difficulty: kho
 lessons: [ 2-2-where-loc-nhu-autofilter, 2-3-and-or-in-between-like, 2-4-sap-xep-va-top ]
 prompt: >-
-  Từ bảng UngVien, trong những hồ sơ ứng tuyển vị trí KT và có trạng thái Đạt vòng 1, lấy tối đa hai hồ sơ có điểm cao nhất. Lấy mã, họ tên và điểm, xếp điểm giảm dần; cùng điểm thì ngày nộp sớm hơn lên trước; vẫn trùng thì mã tăng dần.
+  Từ bảng UngVien, trong những hồ sơ ứng tuyển vị trí KT và có trạng thái “Đạt vòng 1”, lấy tối đa hai hồ sơ có điểm cao nhất. Lấy mã, họ tên và điểm, xếp điểm giảm dần; cùng điểm thì ngày nộp sớm hơn lên trước; vẫn trùng thì mã tăng dần.
 columns: [ MaUV, HoTen, Diem ]
 ordered: true
 tables:

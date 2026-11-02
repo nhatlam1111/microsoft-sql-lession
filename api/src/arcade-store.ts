@@ -19,10 +19,25 @@ export interface Store {
 // A second tab waits on the primary key, then gets this error instead of paying or charging twice.
 const isDuplicate = (e: unknown) => (e as { number?: number })?.number === 2627;
 
+/** A paused serverless database refuses logins while it wakes, for up to about a minute; the page shows a waiting note meanwhile. */
+export async function retryWhileWaking<T>(
+  connect: () => Promise<T>,
+  { tries = 15, wait = () => new Promise<void>(done => { setTimeout(done, 5000); }) }: { tries?: number; wait?: () => Promise<void> } = {},
+): Promise<T> {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return await connect();
+    } catch (e) {
+      if (attempt >= tries || !/not currently available/i.test(String((e as Error)?.message))) throw e;
+      await wait();
+    }
+  }
+}
+
 export function createStore(config: sql.config): Store & { close(): Promise<void> } {
   let poolPromise: Promise<sql.ConnectionPool> | undefined;
   const getPool = () => {
-    poolPromise ??= new sql.ConnectionPool(config).connect().catch(e => { poolPromise = undefined; throw e; });
+    poolPromise ??= retryWhileWaking(() => new sql.ConnectionPool(config).connect()).catch(e => { poolPromise = undefined; throw e; });
     return poolPromise;
   };
 

@@ -3,7 +3,7 @@ chapter: '2-8'
 order: 5
 title: Đủ ba năm công tác
 difficulty: kho
-lessons: [ 2-3-and-or-in-between-like, 2-4-sap-xep-va-top, 2-8-ham-ngay-tham-nien ]
+lessons: [ 2-4-sap-xep-va-top, 2-8-ham-ngay-tham-nien ]
 prompt: >-
   Tại mốc cố định 21/10/2026, công ty tặng quà cho người đã đủ ba năm tính từ ngày vào làm, tức ngày kỷ niệm ba năm không muộn hơn mốc đó, gồm cả đúng ngày đó. Từ bảng NhanSu, lấy mã nhân viên và ngày vào làm, xếp ngày vào làm tăng dần, cùng ngày thì mã tăng dần.
 columns: [ MaNV, NgayVaoLam ]

@@ -3,9 +3,9 @@ chapter: '2-8'
 order: 4
 title: Hợp đồng sắp hết hạn
 difficulty: vua
-lessons: [ 2-3-and-or-in-between-like, 2-4-sap-xep-va-top, 2-8-ham-ngay-tham-nien ]
+lessons: [ 2-2-where-loc-nhu-autofilter, 2-3-and-or-in-between-like, 2-4-sap-xep-va-top, 2-8-ham-ngay-tham-nien ]
 prompt: >-
-  Tại mốc cố định 21/10/2026, nhân sự cần các hợp đồng có ngày kết thúc từ chính mốc đó đến hết 30 ngày sau mốc, gồm cả hai đầu. Từ bảng HopDong, lấy mã hợp đồng và ngày kết thúc, xếp ngày kết thúc tăng dần, cùng ngày thì mã tăng dần.
+  Tại mốc cố định 21/10/2026, nhân sự cần các hợp đồng có ngày kết thúc từ chính mốc đó đến ngày cách mốc đúng 30 ngày, gồm cả hai đầu. Từ bảng HopDong, lấy mã hợp đồng và ngày kết thúc, xếp ngày kết thúc tăng dần, cùng ngày thì mã tăng dần.
 columns: [ MaHD, NgayKetThuc ]
 ordered: true
 tables:
@@ -52,4 +52,11 @@ tests:
         - [ "HD32", "NV332", "2026-10-28" ]
         - [ "HD33", "NV333", null ]
     expected: [ [ "HD31", "2026-10-21" ], [ "HD32", "2026-10-28" ] ]
+  - id: 6
+    catches: "SELECT MaHD, NgayKetThuc FROM HopDong WHERE NgayKetThuc >= CAST('20261021' AS date) AND NgayKetThuc <= DATEADD(day, 30, CAST('20261021' AS date)) ORDER BY NgayKetThuc ASC, MaHD DESC"
+    rows:
+      HopDong:
+        - [ "HD42", "NV342", "2026-11-01" ]
+        - [ "HD41", "NV341", "2026-11-01" ]
+    expected: [ [ "HD41", "2026-11-01" ], [ "HD42", "2026-11-01" ] ]
 resultTypes: [ "varchar", "date" ]

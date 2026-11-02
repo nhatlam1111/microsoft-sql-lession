@@ -8,6 +8,7 @@ import { sortChallenges } from '../../src/lib/arcade-play';
 import type { Challenge } from '../../src/lib/arcade-types';
 import { checkOne, fillExpected } from './arcade-check';
 import { arcadeServices } from './arcade-config';
+import { retryWhileWaking } from './arcade-store';
 import { localEnv } from './local-config';
 
 const DIR = new URL('../../src/content/arcade/', import.meta.url);
@@ -26,7 +27,7 @@ const files = (readdirSync(DIR, { recursive: true }) as string[])
 const services = arcadeServices(localEnv())();
 
 async function tablesLeft(): Promise<number> {
-  const pool = await services.pool();
+  const pool = await retryWhileWaking(() => services.pool());
   const r = await pool.request().query("SELECT COUNT(*) AS n FROM sys.tables WHERE schema_id = SCHEMA_ID('dbo')");
   return (r.recordset[0] as { n: number }).n;
 }

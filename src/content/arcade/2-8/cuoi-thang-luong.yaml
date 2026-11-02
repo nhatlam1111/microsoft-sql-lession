@@ -1,18 +1,18 @@
 id: cuoi-thang-luong
 chapter: '2-8'
 order: 3
-title: Ngày chốt lương
+title: Kỳ lương đầu tiên
 difficulty: vua
-lessons: [ 2-3-and-or-in-between-like, 2-4-sap-xep-va-top, 2-8-ham-ngay-tham-nien ]
+lessons: [ 2-8-ham-ngay-tham-nien ]
 prompt: >-
-  Lương chốt vào ngày cuối của tháng chứa ngày vào làm. Từ bảng NhanSu, lấy mã nhân viên và ngày cuối tháng đó cho mọi dòng.
-columns: [ MaNV, Ngày chốt ]
+  Kỳ lương đầu tiên của người mới kết thúc vào ngày cuối của tháng họ vào làm. Từ bảng NhanSu, lấy mã nhân viên và ngày cuối tháng đó cho mọi dòng.
+columns: [ MaNV, Cuối kỳ lương đầu ]
 ordered: false
 tables:
   NhanSu:
     MaNV: varchar(10) NOT NULL
     NgayVaoLam: date NOT NULL
-answer: "SELECT MaNV, EOMONTH(NgayVaoLam) AS [Ngày chốt] FROM NhanSu"
+answer: "SELECT MaNV, EOMONTH(NgayVaoLam) AS [Cuối kỳ lương đầu] FROM NhanSu"
 tests:
   - id: 1
     visible: true

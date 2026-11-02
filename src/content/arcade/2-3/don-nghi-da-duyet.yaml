@@ -5,7 +5,7 @@ title: Đơn phép năm đã duyệt
 difficulty: de
 lessons: [ 2-2-where-loc-nhu-autofilter, 2-3-and-or-in-between-like ]
 prompt: >-
-  Nhân sự cần các đơn có loại nghỉ là Phép năm và trạng thái là Đã duyệt; đơn phải đạt cả hai điều kiện. Từ bảng DonNghi, lấy mã đơn, mã nhân viên và số ngày.
+  Nhân sự cần các đơn có loại nghỉ là “Phép năm” và trạng thái là “Đã duyệt”; đơn phải đạt cả hai điều kiện. Từ bảng DonNghi, lấy mã đơn, mã nhân viên và số ngày.
 columns: [ MaDon, MaNV, SoNgay ]
 ordered: false
 tables:

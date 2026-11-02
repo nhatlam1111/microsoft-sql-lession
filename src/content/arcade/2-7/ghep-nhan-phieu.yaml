@@ -3,9 +3,9 @@ chapter: '2-7'
 order: 4
 title: Nhãn phiếu lương
 difficulty: vua
-lessons: [ 2-3-and-or-in-between-like, 2-4-sap-xep-va-top, 2-7-ham-chuoi-tieng-viet ]
+lessons: [ 2-5-null-o-trong, 2-7-ham-chuoi-tieng-viet ]
 prompt: >-
-  Phiếu lương có nhãn gồm mã nhân viên, dấu cách, dấu gạch ngang, dấu cách rồi họ tên, như NV101 - Lê Ánh. Từ bảng NhanSu, lấy mã phòng và nhãn đó cho mọi dòng. Người chưa có mã phòng vẫn phải có nhãn.
+  Phiếu lương có nhãn gồm mã nhân viên, dấu cách, dấu gạch ngang, dấu cách rồi họ tên, như “NV101 - Lê Ánh”. Từ bảng NhanSu, lấy mã phòng và nhãn đó cho mọi dòng. Người chưa có mã phòng vẫn phải có nhãn, còn ô mã phòng của họ giữ nguyên NULL.
 columns: [ MaPB, Nhãn ]
 ordered: false
 tables:

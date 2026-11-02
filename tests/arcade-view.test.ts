@@ -121,3 +121,14 @@ it('gives a locked test no data', () => {
 it('does not list an opened test twice when it is also a unit test id', () => {
   expect(testRows(challenge, [unitTest(1)], null, null).filter(r => r.id === 1)).toHaveLength(1);
 });
+
+it('marks spaces at the ends of a text, which a table would swallow', () => {
+  const html = renderToStaticMarkup(createElement(ArcadeTable, { columns: ['a'], rows: [['  An '], ['B C']] }));
+  expect(html).toContain('<td><span class="ac-space" title="dấu cách">··</span>An<span class="ac-space" title="dấu cách">·</span></td>');
+  expect(html).toContain('<td>B C</td>');
+});
+
+it('shows an empty string apart from an empty cell', () => {
+  const html = renderToStaticMarkup(createElement(ArcadeTable, { columns: ['a'], rows: [['']] }));
+  expect(html).toContain('<td><span class="ac-space">(chuỗi rỗng)</span></td>');
+});

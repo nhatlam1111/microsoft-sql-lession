@@ -71,6 +71,7 @@ a.ac-stop:hover .ac-dot { box-shadow: 0 0 0 5px var(--surface-hover); }
 .ac-trio .res-grid { font-family: var(--font-tool); font-size: 13px; color: #1F1F1F; }
 .ac-trio .res-messages { margin: 0; padding: 8px; font-family: var(--font-tool); font-size: 13px; white-space: pre-wrap; }
 .ac-trio .res-null { font-style: italic; }
+.ac-space { color: var(--flag); font-weight: 600; }
 .ac-hint { margin: 0; font-size: 13.5px; color: var(--ink-3); }
 .ac-lock { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 14px; border: 1px solid var(--seen-line); border-radius: var(--radius-s); background: var(--seen-soft); font-size: 14px; }
 .ac-lock p { margin: 2px 0 0; }
