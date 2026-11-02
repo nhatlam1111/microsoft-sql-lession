@@ -77,3 +77,13 @@ it('finds a hidden value in a built page, however it was escaped', () => {
   expect(findHiddenLeaks('<astro-island props="[&quot;BAT-MAT&quot;]">', ['BAT-MAT'])).toEqual(['BAT-MAT']);
   expect(findHiddenLeaks('<p>không có</p>', ['BAT-MAT'])).toEqual([]);
 });
+
+it('looks for hidden values only in the main part of a page', () => {
+  expect(findHiddenLeaks('<header>Excel</header><main><p>đề</p></main><footer>Excel</footer>', ['Excel'])).toEqual([]);
+  expect(findHiddenLeaks('<header>x</header><main><p>Excel</p></main>', ['Excel'])).toEqual(['Excel']);
+});
+
+it('does not take part of a longer value for a hidden value', () => {
+  expect(findHiddenLeaks('<main>[&quot;5000000&quot;]</main>', ['500000'])).toEqual([]);
+  expect(findHiddenLeaks('<main>[&quot;500000&quot;]</main>', ['500000'])).toEqual(['500000']);
+});

@@ -109,13 +109,18 @@ export function hiddenOnlyValues(challenge) {
 }
 
 /**
- * The values that made it into a built page.
+ * The values that made it into the main part of a built page; the site-wide menus around it may share a word by chance.
+ * A value counts only as a whole, so 500000 is not found inside 5000000.
  * @param {string} html @param {string[]} values
  * @returns {string[]}
  */
 export function findHiddenLeaks(html, values) {
-  const hay = squeeze(html);
-  return values.filter(v => hay.includes(squeeze(v)));
+  const main = html.match(/<main\b[\s\S]*<\/main>/)?.[0] ?? html;
+  const hay = squeeze(main);
+  return values.filter(v => {
+    const needle = squeeze(v).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return new RegExp(`(?<![\\p{L}\\p{N}])${needle}(?![\\p{L}\\p{N}])`, 'u').test(hay);
+  });
 }
 
 /**
