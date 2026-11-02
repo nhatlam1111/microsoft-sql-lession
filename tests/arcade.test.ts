@@ -215,3 +215,38 @@ it('refuses when the rate limit is reached', async () => {
   const { deps } = world();
   expect((await handleMe('abc', { ...deps, allow: () => false })).status).toBe(429);
 });
+
+it('leaves nothing behind when saving the result fails', async () => {
+  const { deps, submissions, state, store } = world();
+  const broken = { ...store, submit: async () => { throw new Error('connection lost'); } };
+  const failing: ArcadeDeps = { ...deps, services: () => ({ store: broken, run: deps.services().run }) };
+  expect((await handleSubmit(asked(), 'abc', failing)).status).toBe(503);
+  expect(submissions).toEqual([]);
+  expect(state.coins).toBe(20);
+});
+
+it('reports the balance the store saved, not the one read before running', async () => {
+  const { deps, store } = world();
+  const raced = { ...store, submit: async () => ({ paid: 10, coins: 70 }) };
+  const other: ArcadeDeps = { ...deps, services: () => ({ store: raced, run: deps.services().run }) };
+  expect((await handleSubmit(asked(), 'abc', other)).body).toMatchObject({ reward: 10, coins: 70 });
+});
+
+it('reads the balance again after opening, as another tab may have paid first', async () => {
+  const { deps, store } = world({ opened: [] });
+  let reads = 0;
+  const raced = {
+    ...store,
+    load: async (learner: string) => ({ ...(await store.load(learner)), coins: ++reads === 1 ? 20 : 10 }),
+    open: async () => 'already' as const,
+  };
+  const other: ArcadeDeps = { ...deps, services: () => ({ store: raced, run: deps.services().run }) };
+  expect(((await handleOpen({ challenge: 'a', test: 3 }, 'abc', other)).body as OpenResponse).coins).toBe(10);
+});
+
+it('does not call a busy database a used-up allowance', async () => {
+  const { deps, store } = world();
+  const busy = { ...store, load: async () => { throw new Error('The request limit for the database is 30 and has been reached.'); } };
+  const broken: ArcadeDeps = { ...deps, services: () => ({ store: busy, run: deps.services().run }) };
+  expect(await handleMe('abc', broken)).toEqual({ status: 503, body: { ok: false, kind: 'unavailable' } });
+});

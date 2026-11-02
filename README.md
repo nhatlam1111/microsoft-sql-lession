@@ -160,7 +160,7 @@ Dữ liệu hidden test nằm trong repo public, nên ai đọc repo cũng thấ
 | Workflow | Khi nào chạy | Làm gì |
 |---|---|---|
 | `deploy.yml` | Mọi lần push vào `main`, hoặc bấm tay | `npm ci`, `npm run check`, `npm test`, build (đọc `PUBLIC_EXERCISE_API`), `check:dist`, đẩy lên GitHub Pages |
-| `deploy-api.yml` | Push vào `main` có đổi `api/`, bài tập, `src/lib/sql-guard.ts`, `grade.ts`, `exercise-types.ts`; hoặc bấm "Run workflow" | Test, `typecheck`, build API, đăng nhập Azure bằng OIDC, deploy lên Function App, rồi gọi thử `/api/ping` không kèm mã (phải ra 401) |
+| `deploy-api.yml` | Push vào `main` có đổi `api/`, bài tập, bài luyện (`src/content/arcade/`), `src/data/arcade.ts`, `src/lib/arcade-*.ts`, `src/lib/sql-guard.ts`, `grade.ts`, `exercise-types.ts`; hoặc bấm "Run workflow" | Test, `typecheck`, build API, đăng nhập Azure bằng OIDC, deploy lên Function App, rồi gọi thử `/api/ping` và `/api/arcade/me` không kèm mã (phải ra 401) |
 
 Cấu hình cần có (giá trị do người phụ trách tự điền, không nằm trong repo):
 
@@ -173,7 +173,7 @@ Cấu hình cần có (giá trị do người phụ trách tự điền, không 
 - API dùng user `hrm_practice`, chỉ có `SELECT`, `INSERT`, `UPDATE`, `DELETE` trên 7 bảng (`database/practice-user.sql`).
 - Bộ chặn lệnh chạy trước khi câu lệnh tới database. Câu phải bắt đầu bằng `SELECT`, `WITH`, `INSERT`, `UPDATE` hoặc `DELETE`. Các lệnh như `DROP`, `COMMIT`, `EXEC`, `SET` hay `SELECT … INTO` bị chặn, và mỗi lần chỉ chạy một câu.
 - Mỗi lần chạy là một transaction có `XACT_ABORT`, `LOCK_TIMEOUT 3000` và `ROWCOUNT 5001`, và luôn `ROLLBACK`. Câu lệnh chạy quá 10 giây thì bị dừng. Mỗi mã truy cập gọi tối đa 30 lần mỗi phút.
-- Database `arcade` dùng hai user: `arcade_runner` chạy câu của học viên, chỉ có quyền trên schema `dbo` luôn rỗng; `arcade_store` lưu coin và tiến độ ở schema `arcade`. Mỗi test tạo bảng và dữ liệu trong transaction rồi `ROLLBACK`.
+- Database `arcade` dùng hai user: `arcade_runner` chạy câu của học viên, chỉ có quyền trên schema `dbo` luôn rỗng; `arcade_store` lưu coin và tiến độ ở schema `arcade`. Mỗi test tạo bảng và dữ liệu trong transaction rồi `ROLLBACK`. Luyện SQL chỉ nhận câu `SELECT` hoặc `WITH`, mỗi test chạy tối đa 5 giây.
 - Mọi đầu gọi của API đều cần mã truy cập, thiếu hoặc sai mã thì trả 401. Trình duyệt chỉ gọi được API từ web này và từ `localhost:4321` (CORS).
 - Nếu `npm --prefix api run check:data` báo lệch, dừng thao tác ghi và báo người phụ trách. Chỉ chạy lại script trên database dùng chung sau khi được đồng ý theo [quy ước an toàn dữ liệu](docs/quy-uoc.md).
 - Không commit mật khẩu, mã truy cập hay secret. `.env` và `api/local.settings.json` đã nằm trong `.gitignore`.

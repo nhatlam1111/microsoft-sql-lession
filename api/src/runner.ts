@@ -1,5 +1,6 @@
 /** Runs statements on the database: one transaction per run, always rolled back. */
 import sql from 'mssql';
+import { isTransientSqlError } from './arcade-sql';
 import type { RunOutcome } from './core';
 import { shapeOf, type RecordsetLike } from './shape';
 
@@ -83,6 +84,8 @@ export function createRunner(config: sql.config) {
       if (err.number === undefined && (err.code === 'ESOCKET' || err.code === 'ECONNCLOSED')) {
         return empty(Date.now() - started, { errorKind: connectionKind(e) });
       }
+      // Arcade counts a failed statement as a wrong answer, so a passing database fault must not look like one.
+      if (setup && isTransientSqlError(err.number)) return empty(Date.now() - started, { errorKind: 'unavailable' });
       return empty(Date.now() - started, { error: err.message ?? String(e) });
     } finally {
       // With XACT_ABORT an error has already rolled the transaction back; rollback then throws and is ignored.

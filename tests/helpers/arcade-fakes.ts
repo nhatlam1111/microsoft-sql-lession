@@ -31,16 +31,13 @@ export function fakeStore(initial: Partial<LearnerState> = {}) {
       const last = submissions.filter(s => s.challenge === challenge).at(-1);
       return last ? { sql: last.sql, failed: last.failed } : null;
     },
-    async recordSubmission(learner, s) {
+    async submit(learner, s, reward) {
       learners.push(learner);
       submissions.push(s);
-    },
-    async complete(learner, challenge, reward) {
-      learners.push(learner);
-      if (state.completed.includes(challenge)) return 0;
-      state.completed.push(challenge);
+      if (!s.accepted || state.completed.includes(s.challenge)) return { paid: 0, coins: state.coins };
+      state.completed.push(s.challenge);
       state.coins += reward;
-      return reward;
+      return { paid: reward, coins: state.coins };
     },
     async open(learner, challenge, test, cost) {
       learners.push(learner);

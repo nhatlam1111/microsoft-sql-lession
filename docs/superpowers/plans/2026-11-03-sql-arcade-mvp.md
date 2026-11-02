@@ -947,3 +947,15 @@ Liệt kê cho người làm khóa học: năm biến `ARCADE_*` cần điền t
 - [ ] **Step 7: Kiểm sau khi deploy**
 
 Gọi `/api/arcade/me` không kèm mã, expected 401. Làm một bài trên web thật với mã của học viên hoặc mã thử do người làm khóa học cấp. Chạy lại `check:data`. Expected: không bảng nào lệch.
+
+## Sai khác so với plan
+
+Plan được làm hết 15 task. Những chỗ làm khác:
+
+- Task 1: `arcade-setup.sql` dùng `EXEC` cho `CREATE SCHEMA` thay `GO`, và do người dựng áp dụng theo đề nghị của người làm khóa học. Spike 1,09 giây một vòng vượt ngưỡng 600 ms; đo riêng thấy gần như toàn bộ là độ trễ mạng từ máy phát triển nên vẫn làm tiếp, số thật đo sau deploy.
+- Task 8: chạy API ở máy qua cấu hình `.claude/launch.json` thay vì `curl` sau `npm run dev`.
+- Task 10: chụp mockup bằng Playwright qua server cục bộ.
+- Task 12: số coin nằm ở thanh công cụ của khung làm bài, không ở breadcrumb; bước xác nhận mở test nằm ngay trong khung khóa, không phải hộp thoại.
+- Task 13: thay bài 4 và 5 của chương 1 thay vì thêm câu vào bài 2.1.
+- Task 14: mỗi reviewer đọc hai chương liền nhau thay vì một chương; review tích hợp nội dung gộp vào review cuối. Bảng từ khóa hẹp lại theo đúng những gì bài học dạy. Thêm `check:arcade -- <chương>` và `--write` để điền `expected`.
+- Task 15: thêm `retryWhileWaking` khi `check:arcade` gặp database đang ngủ; `check:dist` chỉ quét `<main>` và khớp nguyên giá trị. Review cuối dẫn tới `Store.submit`, xem [hồ sơ xử lý](../../reviews/2026-11-03-arcade-tich-hop-disposition.md).

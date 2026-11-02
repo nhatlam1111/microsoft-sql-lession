@@ -97,7 +97,8 @@ const textCells = tests => tests
 
 /**
  * Text that sits in a challenge's hidden tests and nowhere the learner may see it.
- * Short values are left out: they turn up in any page by chance.
+ * Short values and numbers are left out: they turn up in any page by chance. So this is a second line of defence;
+ * the first is publicChallenge, which never hands hidden tests to a page.
  * @param {{ title: string; prompt: string; tests: { visible?: boolean; rows?: object; expected?: unknown[][] }[] }} challenge
  * @returns {string[]}
  */

@@ -41,7 +41,7 @@ async function guarded<T>(work: () => Promise<Reply<T>>): Promise<Reply<T>> {
   } catch (e) {
     const message = String((e as Error)?.message ?? '');
     console.error(`Arcade call failed: ${message}`);
-    return fail(/free|limit/i.test(message) ? 'quota' : 'unavailable');
+    return fail(/free/i.test(message) ? 'quota' : 'unavailable');
   }
 }
 
@@ -158,9 +158,9 @@ export function handleSubmit(body: unknown, code: string | null, deps: ArcadeDep
     if (!Array.isArray(results)) return results;
     const failed = results.filter(r => !r.passed).map(r => r.id);
     const accepted = failed.length === 0;
-    await store.recordSubmission(learner, { challenge: challenge.id, sql, passed: results.length - failed.length, total: results.length, accepted, failed });
-    const reward = accepted ? await store.complete(learner, challenge.id, ARCADE_RULES.reward[challenge.difficulty], sql) : 0;
-    return { status: 200, body: { ok: true, tests: results, accepted, reward, coins: state.coins + reward } };
+    const record = { challenge: challenge.id, sql, passed: results.length - failed.length, total: results.length, accepted, failed };
+    const { paid, coins } = await store.submit(learner, record, ARCADE_RULES.reward[challenge.difficulty]);
+    return { status: 200, body: { ok: true, tests: results, accepted, reward: paid, coins } };
   });
 }
 
@@ -180,7 +180,8 @@ export function handleOpen(body: unknown, code: string | null, deps: ArcadeDeps)
     if (!unlocked(deps, state, challenge.id)) return fail('locked');
     const outcome = await store.open(learner, challenge.id, test.id, ARCADE_RULES.openCost);
     if (outcome === 'not-enough-coins') return fail('not-enough-coins');
-    const coins = outcome === 'opened' ? state.coins - ARCADE_RULES.openCost : state.coins;
+    // Read again: another tab may have opened this test or spent coins since the first read.
+    const { coins } = await store.load(learner);
     return { status: 200, body: { ok: true, coins, test: publicTest(test) } };
   });
 }

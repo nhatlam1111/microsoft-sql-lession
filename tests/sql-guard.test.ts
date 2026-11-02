@@ -48,3 +48,8 @@ it('keeps the shared Arcade refusals of the exercise guard', () => {
   expect(guardArcade('SELECT 1 COMMIT')).toEqual({ ok: false, reason: 'Lệnh COMMIT không dùng được trong bài tập.' });
   expect(guardArcade('SELECT MaNV INTO X FROM NhanVien').ok).toBe(false);
 });
+
+it('refuses a cursor in Arcade, which could outlive the rollback on a pooled connection', () => {
+  expect(guardArcade('SELECT 1 AS a DECLARE c CURSOR STATIC FOR SELECT 1 OPEN c')).toEqual({ ok: false, reason: 'Bài luyện chỉ nhận câu truy vấn.' });
+  expect(guardArcade("SELECT N'declare' AS a").ok).toBe(true);
+});

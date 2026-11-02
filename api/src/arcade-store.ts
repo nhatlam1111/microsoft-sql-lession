@@ -10,9 +10,8 @@ export interface Store {
   /** Creates the learner on the first call. */
   load(learner: string): Promise<LearnerState>;
   lastSubmission(learner: string, challenge: string): Promise<{ sql: string; failed: number[] } | null>;
-  recordSubmission(learner: string, s: SubmissionRecord): Promise<void>;
-  /** The coins actually paid: 0 when the challenge was done before. */
-  complete(learner: string, challenge: string, reward: number, sql: string): Promise<number>;
+  /** Saves a submission and pays a first pass in one transaction, so a failure leaves neither. `paid` is 0 unless this pass was the first. */
+  submit(learner: string, s: SubmissionRecord, reward: number): Promise<{ paid: number; coins: number }>;
   open(learner: string, challenge: string, test: number, cost: number): Promise<'opened' | 'already' | 'not-enough-coins'>;
 }
 
@@ -86,24 +85,28 @@ export function createStore(config: sql.config): Store & { close(): Promise<void
     return row ? { sql: row.Sql, failed: row.FailedTests.split(',').filter(Boolean).map(Number) } : null;
   }
 
-  async function recordSubmission(learner: string, s: SubmissionRecord) {
-    await (await getPool()).request()
-      .input('id', sql.Char(64), learner).input('challenge', sql.VarChar(100), s.challenge)
-      .input('sql', sql.NVarChar(sql.MAX), s.sql).input('passed', sql.Int, s.passed).input('total', sql.Int, s.total)
-      .input('accepted', sql.Bit, s.accepted).input('failed', sql.VarChar(100), s.failed.join(','))
-      .query(`INSERT INTO arcade.Submission (LearnerId, ChallengeId, Sql, Passed, Total, Accepted, FailedTests)
-              VALUES (@id, @challenge, @sql, @passed, @total, @accepted, @failed)`);
-  }
-
-  function complete(learner: string, challenge: string, reward: number, text: string) {
-    return inTransaction(0, async tx => {
-      await new sql.Request(tx)
-        .input('id', sql.Char(64), learner).input('challenge', sql.VarChar(100), challenge)
-        .input('reward', sql.Int, reward).input('sql', sql.NVarChar(sql.MAX), text)
-        .query(`INSERT INTO arcade.Completion (LearnerId, ChallengeId, Reward, Sql) VALUES (@id, @challenge, @reward, @sql);
-                UPDATE arcade.Learner SET Coins = Coins + @reward WHERE LearnerId = @id;`);
-      return reward;
+  async function submit(learner: string, s: SubmissionRecord, reward: number): Promise<{ paid: number; coins: number }> {
+    const saved = await inTransaction<{ paid: number; coins: number } | null>(null, async tx => {
+      const r = await new sql.Request(tx)
+        .input('id', sql.Char(64), learner).input('challenge', sql.VarChar(100), s.challenge)
+        .input('sql', sql.NVarChar(sql.MAX), s.sql).input('passed', sql.Int, s.passed).input('total', sql.Int, s.total)
+        .input('accepted', sql.Bit, s.accepted).input('failed', sql.VarChar(100), s.failed.join(','))
+        .input('reward', sql.Int, reward)
+        .query(`DECLARE @paid int = 0;
+                INSERT INTO arcade.Submission (LearnerId, ChallengeId, Sql, Passed, Total, Accepted, FailedTests)
+                  VALUES (@id, @challenge, @sql, @passed, @total, @accepted, @failed);
+                IF @accepted = 1 AND NOT EXISTS (SELECT 1 FROM arcade.Completion WITH (UPDLOCK, HOLDLOCK) WHERE LearnerId = @id AND ChallengeId = @challenge)
+                BEGIN
+                  INSERT INTO arcade.Completion (LearnerId, ChallengeId, Reward, Sql) VALUES (@id, @challenge, @reward, @sql);
+                  UPDATE arcade.Learner SET Coins = Coins + @reward WHERE LearnerId = @id;
+                  SET @paid = @reward;
+                END
+                SELECT @paid AS Paid, Coins FROM arcade.Learner WHERE LearnerId = @id;`);
+      const row = r.recordset[0] as { Paid: number; Coins: number };
+      return { paid: row.Paid, coins: row.Coins };
     });
+    // A clash rolled everything back, so the next try finds the challenge done and pays nothing.
+    return saved ?? submit(learner, s, reward);
   }
 
   function open(learner: string, challenge: string, test: number, cost: number) {
@@ -121,5 +124,5 @@ export function createStore(config: sql.config): Store & { close(): Promise<void
     if (poolPromise) await (await poolPromise).close();
   }
 
-  return { load, lastSubmission, recordSubmission, complete, open, close };
+  return { load, lastSubmission, submit, open, close };
 }

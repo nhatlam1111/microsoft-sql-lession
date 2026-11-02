@@ -101,5 +101,5 @@ export function guardExercise(text: string): GuardResult {
 export function guardArcade(text: string): GuardResult {
   const seen = inspect(text, ['select', 'with'], 'Bài luyện chỉ nhận câu bắt đầu bằng SELECT hoặc WITH.');
   if (typeof seen !== 'string') return seen;
-  return /\b(insert|update|delete)\b/i.test(seen) ? refuse('Bài luyện chỉ nhận câu truy vấn.') : { ok: true };
+  return /\b(insert|update|delete|declare|cursor)\b/i.test(seen) ? refuse('Bài luyện chỉ nhận câu truy vấn.') : { ok: true };
 }

@@ -148,8 +148,9 @@ export default function ArcadeHome({ chapters, cards, apiBase }: Props) {
       )}
       {slow && <p className="ws-wait" role="status">{WAITING}</p>}
       {failure && <p className="ws-fail" role="alert">{failure}</p>}
-      <RouteMap view={view} />
-      <RouteList view={view} />
+      {/* With a code, the map waits for the real progress rather than showing an empty one that looks lost. */}
+      {(!code || me) && <RouteMap view={view} />}
+      {(!code || me) && <RouteList view={view} />}
     </>
   );
 }

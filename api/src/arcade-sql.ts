@@ -14,6 +14,11 @@ export function sqlLiteral(value: Cell, columnType: string): string {
   return /^n(var)?char\b/i.test(columnType.trim()) ? `N${quote(value)}` : quote(value);
 }
 
+// Throttling, used-up resources, a database going to sleep and deadlocks say nothing about the statement that met them.
+const TRANSIENT_ERRORS = new Set([1205, 10928, 10929, 40501, 40613]);
+
+export const isTransientSqlError = (number?: number) => number !== undefined && TRANSIENT_ERRORS.has(number);
+
 /** `reverse` inserts the rows backwards, to show that a result does not depend on the order they went in. */
 export function buildSetup(tables: TableDefs, rows: TableRows, { reverse = false }: { reverse?: boolean } = {}): string {
   const statements: string[] = [];

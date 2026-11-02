@@ -1,5 +1,5 @@
 import { it, expect } from 'vitest';
-import { buildSetup, sqlLiteral } from '../api/src/arcade-sql';
+import { buildSetup, isTransientSqlError, sqlLiteral } from '../api/src/arcade-sql';
 
 it('writes values the way their column needs', () => {
   expect(sqlLiteral(null, 'int NULL')).toBe('NULL');
@@ -38,4 +38,9 @@ it('reverses the rows on request', () => {
 it('splits inserts above the 1000 rows one VALUES list may hold', () => {
   const rows = Array.from({ length: 1001 }, (_, i) => [i]);
   expect(buildSetup({ T: { a: 'int' } }, { T: rows }).match(/INSERT INTO/g)).toHaveLength(2);
+});
+
+it('tells a passing database fault from a mistake in the statement', () => {
+  for (const number of [40501, 40613, 10928, 10929, 1205]) expect(isTransientSqlError(number), String(number)).toBe(true);
+  for (const number of [207, 208, 245, 102, undefined]) expect(isTransientSqlError(number), String(number)).toBe(false);
 });

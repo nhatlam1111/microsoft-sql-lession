@@ -67,3 +67,10 @@ jobs:
           done
           echo "::error::$API/ping did not answer 401; the functions may not have loaded."
           exit 1
+      - name: Check that the Arcade routes loaded
+        env:
+          API: ${{ vars.PUBLIC_EXERCISE_API }}
+        run: |
+          code=$(curl -s -o /dev/null -w '%{http_code}' -m 60 "$API/arcade/me" || true)
+          echo "arcade/me without a code: $code"
+          test "$code" = "401"

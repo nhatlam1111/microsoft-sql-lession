@@ -239,7 +239,7 @@ Client `arcade/*` khởi tạo kết nối khi cần. Thiếu biến môi trư�
 ### 9.6 Đóng gói và web
 
 - `api/build.mjs` gộp YAML thành `dist/arcade.json`. Thêm `src/content/arcade/**` vào `paths` của `deploy-api.yml`.
-- Astro đọc YAML qua collection mới, hàm `publicChallenges()` chỉ giữ dữ liệu công khai: bỏ `answer`, `catches`, bỏ `rows`, `expected` của hidden test, giữ số lượng hidden test.
+- Astro đọc YAML qua collection mới, hàm `publicChallenge()` chỉ giữ dữ liệu công khai: bỏ `answer`, `catches`, bỏ `rows`, `expected` của hidden test, giữ số lượng hidden test.
 - `check:dist` thêm kiểm: không có `answer`, `catches` hay dữ liệu hidden test trong `dist/`.
 - React island mới cho trang chủ Arcade và trang làm bài, dùng lại `SqlEditor`, `editor-keys`, bảng kết quả, `exercise-storage` cho mã truy cập. `ExerciseWorkspace` giữ nguyên.
 
@@ -289,3 +289,17 @@ Không làm thêm gì cho cấp Nâng cao trong MVP.
 - Một test mẫu 10 dòng chạy đúng trong transaction: cả `NhanVien` lẫn `dbo.NhanVien` đều đọc được, `Hà` giữ nguyên, sau `ROLLBACK` schema `dbo` rỗng.
 - `arcade_runner` bị lỗi 229 khi đọc hoặc ghi `arcade.Learner`. `arcade_store` đọc ghi được schema `arcade`, không tạo được bảng (lỗi 262).
 - Từ máy phát triển, một vòng mất khoảng 1,09 giây, vượt ngưỡng 600 ms của plan. Đo riêng thì mỗi lệnh khoảng 155 ms bất kể nặng nhẹ, `CREATE TABLE` cộng `INSERT` 10 dòng chỉ hơn một lệnh `SET` khoảng 6 ms, nên gần như toàn bộ là độ trễ mạng. Function App và database cùng ở Australia East nên con số này không đại diện cho API thật. Thời gian thật đo lại ở bước kiểm sau khi deploy.
+
+## 15. Hiện trạng (2026-11-03)
+
+Toàn bộ MVP đã xong trên nhánh `feat/arcade-mvp`, chưa merge, chưa deploy. Việc còn lại và kết quả kiểm ở [ghi chú bàn giao](../../reviews/2026-11-03-arcade-mvp-ban-giao.md).
+
+Những điểm đi xa hơn hoặc khác phần trên:
+
+- Lưu lần nộp và trả thưởng là một thao tác `Store.submit` trong một transaction, để lỗi giữa chừng không để lại lần nộp "đạt" chưa được tính.
+- Số coin trả về là số đọc từ database sau khi ghi, không tính từ số đọc đầu lượt, để hai tab không thấy số dư cũ.
+- Lỗi tạm thời có mã SQL (1205, 10928, 10929, 40501, 40613) trên đường Arcade được báo là dịch vụ, không tính là câu sai.
+- `guardArcade` còn chặn `DECLARE` và `CURSOR`, vì con trỏ có thể sống qua `ROLLBACK` trên kết nối trong pool.
+- Kết nối tới database Arcade tự thử lại khi database đang dậy, khoảng 70 giây, thay vì báo lỗi.
+- Bảng từ khóa ở `docs/quy-uoc.md` 2.8 hẹp hơn plan: chương 2 chỉ dùng `=` và `>=`, `<=` từ chương 8, không dùng `<>`.
+- Bảng kết quả hiện dấu cách ở hai đầu giá trị bằng dấu `·` và chuỗi rỗng bằng `(chuỗi rỗng)`, vì câu trả lời đúng hay sai ở chương 2-7 phụ thuộc vào chúng.

@@ -35,12 +35,14 @@ export default function ArcadeWorkspace({ challenge, apiBase, nextId }: Props) {
   const [slow, setSlow] = useState(false);
   const [failure, setFailure] = useState<string | null>(null);
   const [results, setResults] = useState<TestResult[] | null>(null);
+  const [ranSql, setRanSql] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState<SubmitResponse | null>(null);
   const [selected, setSelected] = useState(challenge.tests[0]?.id ?? 1);
   const [opening, setOpening] = useState(false);
 
   const refuse = (r: ApiFailure) => {
     if (r.kind === 'bad-code') { saveAccessCode(null); setCode(null); setState(null); }
+    if (r.kind === 'locked') setState(old => old && { ...old, unlocked: false });
     setFailure(r.kind === 'blocked' ? r.reason ?? '' : MESSAGES[r.kind]);
   };
 
@@ -59,7 +61,7 @@ export default function ArcadeWorkspace({ challenge, apiBase, nextId }: Props) {
     return () => { live = false; };
   }, [client, id, code]);
 
-  const change = (text: string) => { setSql(text); saveArcadeDraft(id, text); };
+  const change = (text: string) => { setSql(text); setSubmitted(null); saveArcadeDraft(id, text); };
 
   async function go(action: Action) {
     if (busy) return;
@@ -70,6 +72,7 @@ export default function ArcadeWorkspace({ challenge, apiBase, nextId }: Props) {
     setBusy(null); setSlow(false);
     if (!r.ok) { refuse(r); return; }
     setResults(r.tests);
+    setRanSql(sql);
     const wrong = r.tests.find(t => !t.passed);
     if (wrong) setSelected(wrong.id);
     if (action === 'submit') {
@@ -132,6 +135,7 @@ export default function ArcadeWorkspace({ challenge, apiBase, nextId }: Props) {
           {submitted.accepted && <>{' '}<a href={arcadeUrl(nextId ?? undefined)}>{nextId ? 'Sang bài kế' : 'Về trang Luyện SQL'}</a></>}
         </p>
       )}
+      {results && ranSql !== sql && <p className="ac-hint ac-stale" role="status">Kết quả dưới đây của câu đã chạy trước khi bạn sửa.</p>}
       <ArcadeTests
         challenge={challenge} rows={rows} selected={selected} onSelect={setSelected}
         coins={state?.coins ?? null} opening={opening} onOpen={id => void open(id)}
