@@ -1,0 +1,17 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArcadeHome from '../../components/islands/ArcadeHome';
+import { ARCADE_CHAPTERS } from '../../data/arcade';
+import { sortChallenges } from '../../lib/arcade-play';
+
+const challenges = sortChallenges((await getCollection('arcade')).map(e => e.data));
+// Only what the map shows: the challenge files also hold the answers and the hidden tests.
+const cards = challenges.map(({ id, chapter, order, title, difficulty }) => ({ id, chapter, order, title, difficulty }));
+const apiBase = import.meta.env.PUBLIC_EXERCISE_API ?? '';
+---
+<BaseLayout title="Luyện SQL" wide>
+  <main class="ex-page ac-page">
+    <ArcadeHome client:only="react" chapters={ARCADE_CHAPTERS} cards={cards} apiBase={apiBase} />
+  </main>
+</BaseLayout>

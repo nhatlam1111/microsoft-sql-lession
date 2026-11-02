@@ -1,0 +1,58 @@
+/* ---------- SQL Arcade (spec 2026-11-03-sql-arcade-mvp-design, section 7) ---------- */
+.ac-page { max-width: 1240px; }
+.ac-coin { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+.ac-coin::before { content: ''; width: 18px; height: 18px; border: 3px solid var(--seen); border-radius: 50%; background: var(--seen-soft); }
+
+/* Home */
+.ac-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 28px; margin-bottom: 24px; }
+.ac-head h1 { margin: 0; font-size: 28px; line-height: 1.25; letter-spacing: -0.015em; }
+.ac-head p { margin: 4px 0 0; color: var(--ink-2); }
+.ac-stats { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.ac-go { display: inline-flex; align-items: center; text-decoration: none; }
+
+/* The route: the geometry matches MAP in src/lib/arcade-view.ts */
+.ac-map { position: relative; padding: 12px 28px 28px; background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius-l); box-shadow: var(--shadow-s); box-sizing: border-box; }
+.ac-line { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.ac-line path { fill: none; stroke: var(--rule); stroke-width: 4; stroke-linecap: round; }
+.ac-line path.is-done { stroke: var(--done); }
+.ac-row { position: relative; height: 172px; }
+.ac-row h2 { position: absolute; top: 14px; left: calc(9% - 16px); margin: 0; font-size: 15px; font-weight: 600; }
+.ac-row.is-flip h2 { left: auto; right: calc(9% - 16px); }
+.ac-row h2 span, .ac-list h2 span { margin-left: 10px; color: var(--ink-3); font-weight: 400; font-variant-numeric: tabular-nums; }
+.ac-stop { position: absolute; top: 52px; width: 136px; margin-left: -68px; color: var(--ink); text-align: center; text-decoration: none; }
+.ac-stop strong { display: block; font-size: 13px; font-weight: 500; line-height: 1.35; }
+.ac-stop small { display: block; margin-top: 2px; font-size: 12px; color: var(--ink-3); }
+.ac-dot { display: grid; place-items: center; width: 40px; height: 40px; margin: 0 auto 8px; border: 2px solid var(--rule-strong); border-radius: 50%; background: var(--surface); color: var(--ink-3); font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; box-sizing: border-box; transition: box-shadow var(--motion-fast) var(--ease-ui); }
+a.ac-stop:hover .ac-dot { box-shadow: 0 0 0 5px var(--surface-hover); }
+.ac-stop.is-done .ac-dot { border-color: var(--done); background: var(--done); color: #FFF; }
+.ac-stop.is-done small { color: var(--done); }
+.ac-stop.is-current .ac-dot { border-color: var(--accent); background: var(--accent); color: #FFF; box-shadow: 0 0 0 5px var(--accent-soft); }
+.ac-stop.is-current strong { font-weight: 600; }
+.ac-stop.is-current small { color: var(--accent); font-weight: 600; }
+.ac-stop.is-locked strong { color: var(--ink-2); }
+.ac-stop:focus-visible, .ac-list a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: var(--radius-s); }
+
+/* The route as a list, for narrow screens */
+.ac-list { display: none; }
+.ac-list h2 { margin: 20px 0 8px; font-size: 15px; }
+.ac-list ol { margin: 0; padding: 0; list-style: none; border: 1px solid var(--rule); border-radius: var(--radius-m); background: var(--surface); overflow: hidden; }
+.ac-list li + li { border-top: 1px solid var(--rule); }
+.ac-list a, .ac-list li > div { display: flex; align-items: center; gap: 12px; padding: 9px 12px; color: var(--ink); text-decoration: none; font-size: 14px; }
+.ac-list span { flex: 1; min-width: 0; }
+.ac-list small { color: var(--ink-3); white-space: nowrap; }
+.ac-list .is-done small { color: var(--done); }
+.ac-list .is-current small { color: var(--accent); font-weight: 600; }
+
+/* Challenge page */
+.ac-tag { margin: 6px 0 0; font-size: 14px; color: var(--ink-2); }
+.ac-table-name { margin: 20px 0 8px; font-size: 14px; font-weight: 600; }
+.ac-schema { width: 100%; border-collapse: collapse; font-size: 13px; }
+.ac-schema td { padding: 4px 0; border-top: 1px solid var(--rule); }
+.ac-schema td:last-child { color: var(--ink-3); font-family: var(--font-code); font-size: 12px; text-align: right; }
+
+@media (max-width: 1100px) {
+  .ac-map { display: none; }
+  .ac-list { display: block; }
+  .ac-page .ex-cols { grid-template-columns: minmax(0, 1fr); }
+  .ac-page .ex-brief { position: static; }
+}

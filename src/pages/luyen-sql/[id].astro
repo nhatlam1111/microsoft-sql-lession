@@ -1,0 +1,59 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { ARCADE_CHAPTERS, ARCADE_RULES, DIFFICULTY_LABEL } from '../../data/arcade';
+import { publicChallenge, sortChallenges } from '../../lib/arcade-play';
+import type { PublicChallenge } from '../../lib/arcade-types';
+import { arcadeUrl } from '../../lib/arcade-view';
+import { loadCatalog } from '../../lib/load-catalog';
+import { lessonUrl } from '../../lib/paths';
+
+export async function getStaticPaths() {
+  const list = sortChallenges((await getCollection('arcade')).map(e => e.data));
+  return list.map((c, i) => ({
+    params: { id: c.id },
+    props: { challenge: publicChallenge(c), n: i + 1, total: list.length, nextId: list[i + 1]?.id ?? null },
+  }));
+}
+
+interface Props { challenge: PublicChallenge; n: number; total: number; nextId: string | null }
+const { challenge, n, total } = Astro.props;
+const catalog = await loadCatalog();
+const lessons = challenge.lessons.map(slug => catalog.find(e => e.slug === slug)!);
+const chapterNumber = ARCADE_CHAPTERS.findIndex(c => c.id === challenge.chapter) + 1;
+---
+<BaseLayout title={`Bài ${n} · ${challenge.title}`} wide>
+  <main class="ex-page ac-page">
+    <nav class="ex-crumbs" aria-label="Đường dẫn">
+      <a href={arcadeUrl()}>Luyện SQL</a>
+      <span aria-hidden="true">›</span>
+      <span>Chương {chapterNumber}</span>
+      <span aria-hidden="true">›</span>
+      <span>Bài {n}/{total}</span>
+    </nav>
+    <div class="ex-cols">
+      <section class="ex-brief" aria-labelledby="ex-title">
+        <h1 id="ex-title">{challenge.title}</h1>
+        <p class="ac-tag">{DIFFICULTY_LABEL[challenge.difficulty]}, thưởng {ARCADE_RULES.reward[challenge.difficulty]} coin</p>
+        <p class="ex-prompt">{challenge.prompt}</p>
+        <dl class="ex-meta">
+          <dt>Kết quả cần</dt><dd>{challenge.columns.length} cột: {challenge.columns.join(', ')}</dd>
+          <dt>Thứ tự dòng</dt><dd>{challenge.ordered ? 'có chấm, theo yêu cầu trong đề' : 'không chấm'}</dd>
+          <dt>Bài cần biết</dt>
+          <dd>{lessons.map((l, i) => <>{i > 0 && ', '}<a href={lessonUrl(l.slug)}>{l.num} {l.shortTitle}</a></>)}</dd>
+        </dl>
+        {Object.entries(challenge.tables).map(([table, columns]) => (
+          <>
+            <p class="ac-table-name">Bảng {table}</p>
+            <table class="ac-schema">
+              <tbody>
+                {Object.entries(columns).map(([column, type]) => <tr><td>{column}</td><td>{type}</td></tr>)}
+              </tbody>
+            </table>
+          </>
+        ))}
+      </section>
+      <section class="ex-work" aria-label="Khung làm bài"></section>
+    </div>
+  </main>
+</BaseLayout>
