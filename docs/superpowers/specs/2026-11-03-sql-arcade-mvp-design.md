@@ -102,6 +102,8 @@ Lấy wireframe P1, P2, P3, P5 trong [nghiên cứu](../../research/codefights-a
 - **Xong bài:** báo số coin nhận được, nút sang bài kế.
 - **Khi database đang ngủ:** dùng lại thông báo chờ của trang bài tập.
 
+Mockup được duyệt ngày 2026-11-03: bản đồ là một đường liền chạy qua lại 50 bài, mỗi hàng một chương, mỗi bài có số, tên và trạng thái; phần đã xong màu xanh lá, bài đang làm màu xanh dương. Trang làm bài có một hàng tab test, mỗi tab ghi đạt hoặc chưa đạt; chi tiết test là ba bảng kiểu SSMS: dữ liệu vào, kết quả mong đợi, kết quả của bạn.
+
 Nháp lưu ở trình duyệt với khóa riêng `sqlserver-course:arcade:draft:<id>`. Mở trên máy khác không có nháp thì editor điền câu nộp gần nhất lấy từ server.
 
 ## 8. Nội dung
