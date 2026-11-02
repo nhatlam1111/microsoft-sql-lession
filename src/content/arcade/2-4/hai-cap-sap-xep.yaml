@@ -1,0 +1,56 @@
+id: hai-cap-sap-xep
+chapter: '2-4'
+order: 3
+title: Xếp theo phòng rồi theo ngày
+difficulty: vua
+lessons: [ 2-4-sap-xep-va-top ]
+prompt: >-
+  Từ bảng NhanSu, lấy mã phòng, ngày vào làm và mã nhân viên của mọi dòng. Xếp mã phòng tăng dần; trong cùng phòng, người vào làm gần đây nhất lên trước; cùng ngày thì mã nhân viên tăng dần.
+columns: [ MaPB, NgayVaoLam, MaNV ]
+ordered: true
+tables:
+  NhanSu:
+    MaNV: varchar(10) NOT NULL
+    MaPB: varchar(10) NOT NULL
+    NgayVaoLam: date NOT NULL
+answer: "SELECT MaPB, NgayVaoLam, MaNV FROM NhanSu ORDER BY MaPB ASC, NgayVaoLam DESC, MaNV ASC"
+tests:
+  - id: 1
+    visible: true
+    rows:
+      NhanSu:
+        - [ "NV101", "IT", "2025-06-01" ]
+        - [ "NV102", "KD", "2024-10-01" ]
+        - [ "NV103", "IT", "2025-02-01" ]
+    expected: [ [ "IT", "2025-06-01", "NV101" ], [ "IT", "2025-02-01", "NV103" ], [ "KD", "2024-10-01", "NV102" ] ]
+  - id: 2
+    visible: true
+    rows:
+      NhanSu:
+        - [ "NV105", "KT", "2023-02-01" ]
+        - [ "NV106", "KD", "2024-07-15" ]
+    expected: [ [ "KD", "2024-07-15", "NV106" ], [ "KT", "2023-02-01", "NV105" ] ]
+  - id: 3
+    catches: "SELECT MaPB, NgayVaoLam, MaNV FROM NhanSu ORDER BY MaPB ASC, NgayVaoLam DESC"
+    rows:
+      NhanSu:
+        - [ "NV112", "IT", "2025-03-01" ]
+        - [ "NV111", "IT", "2025-03-01" ]
+        - [ "NV113", "KD", "2024-01-01" ]
+    expected: [ [ "IT", "2025-03-01", "NV111" ], [ "IT", "2025-03-01", "NV112" ], [ "KD", "2024-01-01", "NV113" ] ]
+  - id: 4
+    catches: "SELECT MaPB, NgayVaoLam, MaNV FROM NhanSu ORDER BY NgayVaoLam DESC, MaPB ASC, MaNV ASC"
+    rows:
+      NhanSu:
+        - [ "NV121", "KD", "2026-01-05" ]
+        - [ "NV122", "IT", "2024-05-01" ]
+        - [ "NV123", "KD", "2025-02-02" ]
+    expected: [ [ "IT", "2024-05-01", "NV122" ], [ "KD", "2026-01-05", "NV121" ], [ "KD", "2025-02-02", "NV123" ] ]
+  - id: 5
+    catches: "SELECT MaPB, NgayVaoLam, MaNV FROM NhanSu ORDER BY MaPB ASC, MaNV ASC"
+    rows:
+      NhanSu:
+        - [ "NV131", "IT", "2024-09-09" ]
+        - [ "NV132", "IT", "2025-09-09" ]
+    expected: [ [ "IT", "2025-09-09", "NV132" ], [ "IT", "2024-09-09", "NV131" ] ]
+resultTypes: [ "varchar", "date", "varchar" ]

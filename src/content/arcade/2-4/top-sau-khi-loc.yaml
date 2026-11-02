@@ -1,0 +1,62 @@
+id: top-sau-khi-loc
+chapter: '2-4'
+order: 5
+title: Hai ứng viên điểm cao nhất
+difficulty: kho
+lessons: [ 2-4-sap-xep-va-top ]
+prompt: >-
+  Từ bảng UngVien, trong những hồ sơ ứng tuyển vị trí KT và đã có trạng thái Đạt vòng 1, lấy tối đa hai hồ sơ có điểm cao nhất. Lấy mã, họ tên và điểm, xếp điểm giảm dần; cùng điểm thì ngày nộp sớm hơn lên trước; vẫn trùng thì mã tăng dần.
+columns: [ MaUV, HoTen, Diem ]
+ordered: true
+tables:
+  UngVien:
+    MaUV: varchar(10) NOT NULL
+    HoTen: nvarchar(100) NOT NULL
+    MaViTri: varchar(10) NOT NULL
+    Diem: decimal(4,1) NOT NULL
+    NgayNop: date NOT NULL
+    TrangThai: nvarchar(20) NOT NULL
+answer: "SELECT TOP (2) MaUV, HoTen, Diem FROM UngVien WHERE MaViTri = 'KT' AND TrangThai = N'Đạt vòng 1' ORDER BY Diem DESC, NgayNop ASC, MaUV ASC"
+tests:
+  - id: 1
+    visible: true
+    rows:
+      UngVien:
+        - [ "UV01", "Phạm Gia Linh", "KT", 8.5, "2026-09-01", "Đạt vòng 1" ]
+        - [ "UV02", "Trần Quốc Việt", "KT", 9, "2026-09-02", "Đạt vòng 1" ]
+        - [ "UV03", "Lê Thảo Nhi", "KT", 7, "2026-09-03", "Đạt vòng 1" ]
+        - [ "UV04", "Hà An", "IT", 6, "2026-09-04", "Đạt vòng 1" ]
+    expected: [ [ "UV02", "Trần Quốc Việt", "9.0" ], [ "UV01", "Phạm Gia Linh", "8.5" ] ]
+  - id: 2
+    visible: true
+    rows:
+      UngVien:
+        - [ "UV11", "Đoàn Minh Khôi", "KT", 6.5, "2026-09-05", "Đạt vòng 1" ]
+        - [ "UV12", "Vương Hải Yến", "KT", 8, "2026-09-06", "Đạt vòng 1" ]
+        - [ "UV13", "Bùi Lan", "KT", 5, "2026-09-07", "Đạt vòng 1" ]
+    expected: [ [ "UV12", "Vương Hải Yến", "8.0" ], [ "UV11", "Đoàn Minh Khôi", "6.5" ] ]
+  - id: 3
+    catches: "SELECT TOP (2) MaUV, HoTen, Diem FROM UngVien WHERE MaViTri = 'KT' ORDER BY Diem DESC, NgayNop ASC, MaUV ASC"
+    rows:
+      UngVien:
+        - [ "UV21", "Chu Bảo Ngọc", "KT", 9.5, "2026-09-01", "Loại" ]
+        - [ "UV22", "Tô Hoài Nam", "KT", 8, "2026-09-02", "Đạt vòng 1" ]
+        - [ "UV23", "Hồ Tâm", "KT", 7, "2026-09-03", "Đạt vòng 1" ]
+    expected: [ [ "UV22", "Tô Hoài Nam", "8.0" ], [ "UV23", "Hồ Tâm", "7.0" ] ]
+  - id: 4
+    catches: "SELECT TOP (2) MaUV, HoTen, Diem FROM UngVien WHERE TrangThai = N'Đạt vòng 1' ORDER BY Diem DESC, NgayNop ASC, MaUV ASC"
+    rows:
+      UngVien:
+        - [ "UV31", "Mai Thảo", "IT", 9.5, "2026-09-01", "Đạt vòng 1" ]
+        - [ "UV32", "Ngô Thịnh", "KT", 8, "2026-09-02", "Đạt vòng 1" ]
+        - [ "UV33", "Lý Hòa", "KT", 7, "2026-09-03", "Đạt vòng 1" ]
+    expected: [ [ "UV32", "Ngô Thịnh", "8.0" ], [ "UV33", "Lý Hòa", "7.0" ] ]
+  - id: 5
+    catches: "SELECT TOP (2) MaUV, HoTen, Diem FROM UngVien WHERE MaViTri = 'KT' AND TrangThai = N'Đạt vòng 1' ORDER BY Diem DESC, MaUV ASC"
+    rows:
+      UngVien:
+        - [ "UV41", "Giáp Vân", "KT", 8, "2026-09-20", "Đạt vòng 1" ]
+        - [ "UV42", "Âu Khải", "KT", 8, "2026-09-10", "Đạt vòng 1" ]
+        - [ "UV43", "Sầm Hiền", "KT", 8, "2026-09-05", "Đạt vòng 1" ]
+    expected: [ [ "UV43", "Sầm Hiền", "8.0" ], [ "UV42", "Âu Khải", "8.0" ] ]
+resultTypes: [ "varchar", "nvarchar", "decimal" ]

@@ -1,0 +1,55 @@
+id: da-co-quan-ly
+chapter: '2-5'
+order: 2
+title: Hồ sơ đã có quản lý
+difficulty: de
+lessons: [ 2-5-null-o-trong ]
+prompt: >-
+  Từ bảng NhanSu, lấy mã nhân viên và mã quản lý của những dòng đã có giá trị ở ô MaQuanLy.
+columns: [ MaNV, MaQuanLy ]
+ordered: false
+tables:
+  NhanSu:
+    MaNV: varchar(10) NOT NULL
+    HoTen: nvarchar(100) NOT NULL
+    MaQuanLy: varchar(10) NULL
+    NgayNghiViec: date NULL
+answer: "SELECT MaNV, MaQuanLy FROM NhanSu WHERE MaQuanLy IS NOT NULL"
+tests:
+  - id: 1
+    visible: true
+    rows:
+      NhanSu:
+        - [ "NV101", "Lê Ngọc Ánh", "NV100", null ]
+        - [ "NV102", "Trịnh Văn Dũng", null, null ]
+    expected: [ [ "NV101", "NV100" ] ]
+  - id: 2
+    visible: true
+    rows:
+      NhanSu:
+        - [ "NV105", "Phan Thùy Dương", "NV100", null ]
+        - [ "NV106", "Hà Quang Minh", null, null ]
+        - [ "NV107", "Tăng Mỹ Linh", "NV105", null ]
+    expected: [ [ "NV105", "NV100" ], [ "NV107", "NV105" ] ]
+  - id: 3
+    catches: "SELECT MaNV, MaQuanLy FROM NhanSu WHERE MaQuanLy IS NOT NULL AND NgayNghiViec IS NULL"
+    rows:
+      NhanSu:
+        - [ "NV111", "Cù Đình Phong", "NV100", "2026-05-01" ]
+        - [ "NV112", "Giáp Thị Vân", "NV100", null ]
+    expected: [ [ "NV111", "NV100" ], [ "NV112", "NV100" ] ]
+  - id: 4
+    catches: "SELECT MaNV, MaQuanLy FROM NhanSu WHERE MaQuanLy = 'NV100' OR MaQuanLy = 'NV105'"
+    rows:
+      NhanSu:
+        - [ "NV121", "Âu Dương Khải", "NV120", null ]
+        - [ "NV122", "Sầm Thu Hiền", null, null ]
+    expected: [ [ "NV121", "NV120" ] ]
+  - id: 5
+    catches: "SELECT MaNV, MaQuanLy FROM NhanSu WHERE MaQuanLy LIKE 'NV%'"
+    rows:
+      NhanSu:
+        - [ "NV131", "Từ Anh Khoa", "GD01", null ]
+        - [ "NV132", "Nghiêm Hoa", "NV100", null ]
+    expected: [ [ "NV131", "GD01" ], [ "NV132", "NV100" ] ]
+resultTypes: [ "varchar", "varchar" ]

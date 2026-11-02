@@ -1,0 +1,56 @@
+id: lien-he-du-phong
+chapter: '2-5'
+order: 5
+title: Số liên hệ dự phòng
+difficulty: kho
+lessons: [ 2-5-null-o-trong ]
+prompt: >-
+  Lễ tân cần số liên hệ của các nhà cung cấp đang hợp tác (TrangThai là Đang hợp tác). Từ bảng NhaCungCap, lấy mã và một cột liên hệ: ưu tiên DiDong, không có thì dùng CoDinh, cả hai đều không có thì ghi (chưa có số). Xếp mã tăng dần.
+columns: [ MaNCC, Liên hệ ]
+ordered: true
+tables:
+  NhaCungCap:
+    MaNCC: varchar(10) NOT NULL
+    TenNCC: nvarchar(100) NOT NULL
+    DiDong: varchar(20) NULL
+    CoDinh: varchar(20) NULL
+    TrangThai: nvarchar(20) NOT NULL
+answer: "SELECT MaNCC, COALESCE(DiDong, CoDinh, N'(chưa có số)') AS [Liên hệ] FROM NhaCungCap WHERE TrangThai = N'Đang hợp tác' ORDER BY MaNCC ASC"
+tests:
+  - id: 1
+    visible: true
+    rows:
+      NhaCungCap:
+        - [ "C03", "Văn phòng phẩm An", "0901", null, "Đang hợp tác" ]
+        - [ "C01", "In ấn Bình", "0902", null, "Đang hợp tác" ]
+        - [ "C02", "Nước uống Chi", null, "0243", "Đang hợp tác" ]
+    expected: [ [ "C01", "0902" ], [ "C02", "0243" ], [ "C03", "0901" ] ]
+  - id: 2
+    visible: true
+    rows:
+      NhaCungCap:
+        - [ "C05", "Vận tải Đông", null, "0244", "Đang hợp tác" ]
+        - [ "C06", "Thiết bị Hoa", "0905", null, "Đang hợp tác" ]
+    expected: [ [ "C05", "0244" ], [ "C06", "0905" ] ]
+  - id: 3
+    catches: "SELECT MaNCC, COALESCE(CoDinh, DiDong, N'(chưa có số)') FROM NhaCungCap WHERE TrangThai = N'Đang hợp tác' ORDER BY MaNCC ASC"
+    rows:
+      NhaCungCap:
+        - [ "C12", "Cơ khí Lan", "0912", "0251", "Đang hợp tác" ]
+        - [ "C11", "Bao bì Mai", null, "0252", "Đang hợp tác" ]
+    expected: [ [ "C11", "0252" ], [ "C12", "0912" ] ]
+  - id: 4
+    catches: "SELECT MaNCC, COALESCE(DiDong, CoDinh) FROM NhaCungCap WHERE TrangThai = N'Đang hợp tác' ORDER BY MaNCC ASC"
+    rows:
+      NhaCungCap:
+        - [ "C21", "Điện lạnh Nam", null, null, "Đang hợp tác" ]
+        - [ "C22", "Nội thất Oanh", "0922", null, "Đang hợp tác" ]
+    expected: [ [ "C21", "(chưa có số)" ], [ "C22", "0922" ] ]
+  - id: 5
+    catches: "SELECT MaNCC, COALESCE(DiDong, CoDinh, N'(chưa có số)') FROM NhaCungCap ORDER BY MaNCC ASC"
+    rows:
+      NhaCungCap:
+        - [ "C31", "May mặc Phúc", "0931", null, "Ngừng" ]
+        - [ "C32", "Vệ sinh Quý", "0932", null, "Đang hợp tác" ]
+    expected: [ [ "C32", "0932" ] ]
+resultTypes: [ "varchar", "nvarchar" ]
