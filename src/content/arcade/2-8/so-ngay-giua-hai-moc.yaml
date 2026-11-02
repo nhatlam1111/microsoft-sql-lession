@@ -1,0 +1,54 @@
+id: so-ngay-giua-hai-moc
+chapter: '2-8'
+order: 2
+title: Số ngày chờ duyệt
+difficulty: vua
+lessons: [ 2-3-and-or-in-between-like, 2-4-sap-xep-va-top, 2-8-ham-ngay-tham-nien ]
+prompt: >-
+  Từ bảng DeXuat, lấy mã đề xuất và số ngày tính từ ngày nộp đến ngày duyệt của mọi dòng; duyệt ngay trong ngày thì ra 0.
+columns: [ MaDX, Số ngày ]
+ordered: false
+tables:
+  DeXuat:
+    MaDX: varchar(10) NOT NULL
+    NgayTao: date NOT NULL
+    NgayNop: date NOT NULL
+    NgayDuyet: date NOT NULL
+answer: "SELECT MaDX, DATEDIFF(day, NgayNop, NgayDuyet) AS [Số ngày] FROM DeXuat"
+tests:
+  - id: 1
+    visible: true
+    rows:
+      DeXuat:
+        - [ "DX01", "2026-09-01", "2026-09-01", "2026-09-04" ]
+        - [ "DX02", "2026-09-02", "2026-09-02", "2026-09-10" ]
+    expected: [ [ "DX01", 3 ], [ "DX02", 8 ] ]
+  - id: 2
+    visible: true
+    rows:
+      DeXuat:
+        - [ "DX05", "2026-09-05", "2026-09-05", "2026-09-06" ]
+        - [ "DX06", "2026-09-08", "2026-09-08", "2026-09-20" ]
+    expected: [ [ "DX05", 1 ], [ "DX06", 12 ] ]
+  - id: 3
+    catches: "SELECT MaDX, DATEDIFF(day, NgayTao, NgayDuyet) FROM DeXuat"
+    rows:
+      DeXuat:
+        - [ "DX11", "2026-09-01", "2026-09-03", "2026-09-08" ]
+        - [ "DX12", "2026-09-02", "2026-09-02", "2026-09-09" ]
+    expected: [ [ "DX11", 5 ], [ "DX12", 7 ] ]
+  - id: 4
+    catches: "SELECT MaDX, DAY(NgayDuyet) - DAY(NgayNop) FROM DeXuat"
+    rows:
+      DeXuat:
+        - [ "DX21", "2026-09-28", "2026-09-28", "2026-10-02" ]
+        - [ "DX22", "2026-09-10", "2026-09-10", "2026-09-12" ]
+    expected: [ [ "DX21", 4 ], [ "DX22", 2 ] ]
+  - id: 5
+    catches: "SELECT MaDX, DATEDIFF(day, NgayNop, NgayDuyet) FROM DeXuat WHERE NgayDuyet > NgayNop"
+    rows:
+      DeXuat:
+        - [ "DX31", "2026-09-15", "2026-09-15", "2026-09-15" ]
+        - [ "DX32", "2026-09-16", "2026-09-16", "2026-09-18" ]
+    expected: [ [ "DX31", 0 ], [ "DX32", 2 ] ]
+resultTypes: [ "varchar", "int" ]

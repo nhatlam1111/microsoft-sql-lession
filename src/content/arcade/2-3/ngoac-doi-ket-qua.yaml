@@ -3,7 +3,7 @@ chapter: '2-3'
 order: 4
 title: Hai phòng cùng một điều kiện
 difficulty: vua
-lessons: [ 2-3-and-or-in-between-like ]
+lessons: [ 2-2-where-loc-nhu-autofilter, 2-3-and-or-in-between-like ]
 prompt: >-
   Từ bảng NhanSu, lấy mã và họ tên của những người thuộc phòng KD hoặc phòng IT, và đang có trạng thái Đang làm. Điều kiện trạng thái áp dụng cho cả hai phòng.
 columns: [ MaNV, HoTen ]

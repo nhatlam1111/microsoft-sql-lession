@@ -3,7 +3,7 @@ chapter: '2-7'
 order: 5
 title: Mã phòng trong mã hồ sơ
 difficulty: kho
-lessons: [ 2-7-ham-chuoi-tieng-viet ]
+lessons: [ 2-3-and-or-in-between-like, 2-4-sap-xep-va-top, 2-7-ham-chuoi-tieng-viet ]
 prompt: >-
   Mã hồ sơ có dạng HS, hai chữ số năm, mã phòng hai ký tự rồi số thứ tự, như HS26KD014. Từ bảng HoSo, lấy mã hồ sơ, mã phòng lấy từ vị trí 5 và 6 của mã hồ sơ, và số ký tự của tiêu đề hồ sơ, chỉ với những hồ sơ có mã phòng đó là KD.
 columns: [ MaHS, Mã phòng, Số ký tự tiêu đề ]

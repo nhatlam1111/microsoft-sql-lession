@@ -3,7 +3,7 @@ chapter: '2-6'
 order: 4
 title: Danh mục địa điểm đã đi
 difficulty: kho
-lessons: [ 2-6-distinct-bo-dong-trung ]
+lessons: [ 2-2-where-loc-nhu-autofilter, 2-4-sap-xep-va-top, 2-6-distinct-bo-dong-trung ]
 prompt: >-
   Kế toán cần danh mục nơi đến của các chuyến công tác đã thanh toán (TrangThai là Đã thanh toán) có ngày đi từ 01/07/2026 trở đi, gồm cả ngày đó. Từ bảng CongTacPhi, lấy nơi đến và mã phòng, mỗi cặp một dòng, xếp nơi đến tăng dần, cùng nơi đến thì mã phòng tăng dần.
 columns: [ NoiDen, MaPB ]

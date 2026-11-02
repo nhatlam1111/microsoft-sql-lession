@@ -1,0 +1,53 @@
+id: nhan-tham-nien
+chapter: '2-9'
+order: 5
+title: Nhóm thâm niên tại mốc
+difficulty: kho
+lessons: [ 2-5-null-o-trong, 2-8-ham-ngay-tham-nien, 2-9-case-when-ham-if ]
+prompt: >-
+  Tại mốc cố định 21/10/2026, chia người trong bảng NhanSu theo ngày kỷ niệm: đã đủ 3 năm thì ghi Từ 3 năm, đã đủ 1 năm thì ghi Từ 1 năm, còn lại ghi Dưới 1 năm. Đủ năm tính cả đúng ngày kỷ niệm. Lấy mã nhân viên và nhóm, xếp mã tăng dần.
+columns: [ MaNV, Nhóm ]
+ordered: true
+tables:
+  NhanSu:
+    MaNV: varchar(10) NOT NULL
+    NgayVaoLam: date NOT NULL
+answer: "SELECT MaNV, CASE WHEN DATEADD(year, 3, NgayVaoLam) <= '20261021' THEN N'Từ 3 năm' WHEN DATEADD(year, 1, NgayVaoLam) <= '20261021' THEN N'Từ 1 năm' ELSE N'Dưới 1 năm' END AS [Nhóm] FROM NhanSu ORDER BY MaNV ASC"
+tests:
+  - id: 1
+    visible: true
+    rows:
+      NhanSu:
+        - [ "NV401", "2020-05-05" ]
+        - [ "NV402", "2024-05-05" ]
+        - [ "NV403", "2026-03-03" ]
+    expected: [ [ "NV401", "Từ 3 năm" ], [ "NV402", "Từ 1 năm" ], [ "NV403", "Dưới 1 năm" ] ]
+  - id: 2
+    visible: true
+    rows:
+      NhanSu:
+        - [ "NV405", "2022-01-01" ]
+        - [ "NV406", "2025-09-09" ]
+    expected: [ [ "NV405", "Từ 3 năm" ], [ "NV406", "Từ 1 năm" ] ]
+  - id: 3
+    catches: "SELECT MaNV, CASE WHEN DATEDIFF(year, NgayVaoLam, '20261021') >= 3 THEN N'Từ 3 năm' WHEN DATEADD(year, 1, NgayVaoLam) <= '20261021' THEN N'Từ 1 năm' ELSE N'Dưới 1 năm' END FROM NhanSu ORDER BY MaNV ASC"
+    rows:
+      NhanSu:
+        - [ "NV411", "2023-11-01" ]
+        - [ "NV412", "2021-02-02" ]
+    expected: [ [ "NV411", "Từ 1 năm" ], [ "NV412", "Từ 3 năm" ] ]
+  - id: 4
+    catches: "SELECT MaNV, CASE WHEN DATEADD(year, 3, NgayVaoLam) <= '20261020' THEN N'Từ 3 năm' WHEN DATEADD(year, 1, NgayVaoLam) <= '20261020' THEN N'Từ 1 năm' ELSE N'Dưới 1 năm' END FROM NhanSu ORDER BY MaNV ASC"
+    rows:
+      NhanSu:
+        - [ "NV421", "2023-10-21" ]
+        - [ "NV422", "2025-10-21" ]
+    expected: [ [ "NV421", "Từ 3 năm" ], [ "NV422", "Từ 1 năm" ] ]
+  - id: 5
+    catches: "SELECT MaNV, CASE WHEN DATEADD(year, 3, NgayVaoLam) <= '20261021' THEN N'Từ 3 năm' WHEN DATEDIFF(year, NgayVaoLam, '20261021') >= 1 THEN N'Từ 1 năm' ELSE N'Dưới 1 năm' END FROM NhanSu ORDER BY MaNV ASC"
+    rows:
+      NhanSu:
+        - [ "NV431", "2025-12-20" ]
+        - [ "NV432", "2024-12-20" ]
+    expected: [ [ "NV431", "Dưới 1 năm" ], [ "NV432", "Từ 1 năm" ] ]
+resultTypes: [ "varchar", "nvarchar" ]

@@ -3,7 +3,7 @@ chapter: '2-5'
 order: 2
 title: Hồ sơ đã có quản lý
 difficulty: de
-lessons: [ 2-5-null-o-trong ]
+lessons: [ 2-3-and-or-in-between-like, 2-4-sap-xep-va-top, 2-5-null-o-trong ]
 prompt: >-
   Từ bảng NhanSu, lấy mã nhân viên và mã quản lý của những dòng đã có giá trị ở ô MaQuanLy.
 columns: [ MaNV, MaQuanLy ]

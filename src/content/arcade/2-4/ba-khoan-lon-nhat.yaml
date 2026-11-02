@@ -3,7 +3,7 @@ chapter: '2-4'
 order: 4
 title: Ba khoản chi lớn nhất
 difficulty: vua
-lessons: [ 2-4-sap-xep-va-top ]
+lessons: [ 2-2-where-loc-nhu-autofilter, 2-3-and-or-in-between-like, 2-4-sap-xep-va-top ]
 prompt: >-
   Kế toán cần tối đa ba khoản có số tiền lớn nhất trong bảng KhoanChi. Lấy mã khoản và số tiền, xếp số tiền giảm dần; cùng số tiền thì mã khoản tăng dần. Bảng có ít hơn ba dòng thì lấy hết.
 columns: [ MaKC, SoTien ]

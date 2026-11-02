@@ -3,7 +3,7 @@ chapter: '2-6'
 order: 3
 title: Danh sách nơi làm việc
 difficulty: vua
-lessons: [ 2-6-distinct-bo-dong-trung ]
+lessons: [ 2-2-where-loc-nhu-autofilter, 2-4-sap-xep-va-top, 2-6-distinct-bo-dong-trung ]
 prompt: >-
   Từ bảng NhanSu, lấy danh sách chi nhánh đang được ghi, mỗi giá trị một dòng, xếp tăng dần. Những người chưa được phân chi nhánh (ô NULL) cũng phải hiện thành một dòng trong kết quả.
 columns: [ ChiNhanh ]

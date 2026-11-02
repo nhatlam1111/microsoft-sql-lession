@@ -1,0 +1,52 @@
+id: nhan-hai-nhanh
+chapter: '2-9'
+order: 1
+title: Nhãn đủ điều kiện
+difficulty: de
+lessons: [ 2-5-null-o-trong, 2-8-ham-ngay-tham-nien, 2-9-case-when-ham-if ]
+prompt: >-
+  Từ bảng DanhGia, lấy mã nhân viên và một cột nhãn cho mọi dòng: điểm từ 8 trở lên ghi Đạt, còn lại ghi Chưa đạt. Điểm trong bảng luôn có giá trị.
+columns: [ MaNV, Nhãn ]
+ordered: false
+tables:
+  DanhGia:
+    MaNV: varchar(10) NOT NULL
+    Diem: decimal(4,1) NOT NULL
+answer: "SELECT MaNV, CASE WHEN Diem >= 8 THEN N'Đạt' ELSE N'Chưa đạt' END AS [Nhãn] FROM DanhGia"
+tests:
+  - id: 1
+    visible: true
+    rows:
+      DanhGia:
+        - [ "NV101", 9 ]
+        - [ "NV102", 6.5 ]
+    expected: [ [ "NV101", "Đạt" ], [ "NV102", "Chưa đạt" ] ]
+  - id: 2
+    visible: true
+    rows:
+      DanhGia:
+        - [ "NV105", 7 ]
+        - [ "NV106", 8.5 ]
+    expected: [ [ "NV105", "Chưa đạt" ], [ "NV106", "Đạt" ] ]
+  - id: 3
+    catches: "SELECT MaNV, CASE WHEN Diem >= 8.5 THEN N'Đạt' ELSE N'Chưa đạt' END FROM DanhGia"
+    rows:
+      DanhGia:
+        - [ "NV111", 8 ]
+        - [ "NV112", 9 ]
+    expected: [ [ "NV111", "Đạt" ], [ "NV112", "Đạt" ] ]
+  - id: 4
+    catches: "SELECT MaNV, CASE WHEN Diem >= 7.5 THEN N'Đạt' ELSE N'Chưa đạt' END FROM DanhGia"
+    rows:
+      DanhGia:
+        - [ "NV121", 7.9 ]
+        - [ "NV122", 9.5 ]
+    expected: [ [ "NV121", "Chưa đạt" ], [ "NV122", "Đạt" ] ]
+  - id: 5
+    catches: "SELECT MaNV, CASE WHEN Diem >= 8 THEN N'Đạt' WHEN Diem >= 6 THEN N'Chưa đạt' END FROM DanhGia"
+    rows:
+      DanhGia:
+        - [ "NV131", 4 ]
+        - [ "NV132", 8 ]
+    expected: [ [ "NV131", "Chưa đạt" ], [ "NV132", "Đạt" ] ]
+resultTypes: [ "varchar", "nvarchar" ]

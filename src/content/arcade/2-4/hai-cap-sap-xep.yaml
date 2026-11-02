@@ -3,7 +3,7 @@ chapter: '2-4'
 order: 3
 title: Xếp theo phòng rồi theo ngày
 difficulty: vua
-lessons: [ 2-4-sap-xep-va-top ]
+lessons: [ 2-2-where-loc-nhu-autofilter, 2-3-and-or-in-between-like, 2-4-sap-xep-va-top ]
 prompt: >-
   Từ bảng NhanSu, lấy mã phòng, ngày vào làm và mã nhân viên của mọi dòng. Xếp mã phòng tăng dần; trong cùng phòng, người vào làm gần đây nhất lên trước; cùng ngày thì mã nhân viên tăng dần.
 columns: [ MaPB, NgayVaoLam, MaNV ]

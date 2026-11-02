@@ -3,9 +3,9 @@ chapter: '2-3'
 order: 5
 title: Tìm theo họ
 difficulty: vua
-lessons: [ 2-3-and-or-in-between-like ]
+lessons: [ 2-2-where-loc-nhu-autofilter, 2-3-and-or-in-between-like ]
 prompt: >-
-  Bộ phận tuyển dụng nhớ ứng viên mang họ Nguyễn, tức họ tên bắt đầu bằng chữ Nguyễn. Từ bảng UngVien, lấy mã và họ tên của các hồ sơ đó.
+  Bộ phận tuyển dụng cần các ứng viên mang họ Nguyễn, tức họ tên bắt đầu bằng chữ Nguyễn. Từ bảng UngVien, lấy mã và họ tên của các hồ sơ đó.
 columns: [ MaUV, HoTen ]
 ordered: false
 tables:
@@ -38,12 +38,12 @@ tests:
         - [ "UV12", "Nguyễn An", "an@mail.test" ]
     expected: [ [ "UV12", "Nguyễn An" ] ]
   - id: 4
-    catches: "SELECT MaUV, HoTen FROM UngVien WHERE HoTen LIKE N'Nguyễn %' AND HoTen LIKE N'% %'"
+    catches: "SELECT MaUV, HoTen FROM UngVien WHERE HoTen LIKE N'Nguyễn %'"
     rows:
       UngVien:
-        - [ "UV21", "Nguyễn", "motten@mail.test" ]
+        - [ "UV21", "Nguyễn-Trần Mai", "mai@mail.test" ]
         - [ "UV22", "Phan Tuấn", "tuan@mail.test" ]
-    expected: [ [ "UV21", "Nguyễn" ] ]
+    expected: [ [ "UV21", "Nguyễn-Trần Mai" ] ]
   - id: 5
     catches: "SELECT MaUV, HoTen FROM UngVien WHERE HoTen LIKE N'Ng%'"
     rows:

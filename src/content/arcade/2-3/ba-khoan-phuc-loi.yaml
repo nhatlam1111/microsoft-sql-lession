@@ -3,7 +3,7 @@ chapter: '2-3'
 order: 2
 title: Ba khoản phúc lợi
 difficulty: de
-lessons: [ 2-3-and-or-in-between-like ]
+lessons: [ 2-2-where-loc-nhu-autofilter, 2-3-and-or-in-between-like ]
 prompt: >-
   Kế toán cần các dòng phúc lợi thuộc một trong ba loại: Ăn trưa, Đi lại, Điện thoại. Từ bảng PhucLoi, lấy mã nhân viên, loại phúc lợi và mức hỗ trợ.
 columns: [ MaNV, Loai, MucHoTro ]

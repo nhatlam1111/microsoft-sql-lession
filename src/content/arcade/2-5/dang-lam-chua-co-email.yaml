@@ -1,9 +1,9 @@
 id: dang-lam-chua-co-email
 chapter: '2-5'
-order: 4
+order: 3
 title: Người đang làm thiếu email
 difficulty: vua
-lessons: [ 2-5-null-o-trong ]
+lessons: [ 2-3-and-or-in-between-like, 2-4-sap-xep-va-top, 2-5-null-o-trong ]
 prompt: >-
   Từ bảng NhanSu, lấy mã và họ tên của những người chưa nghỉ việc và chưa có email, tức cả NgayNghiViec lẫn Email đều là NULL. Xếp mã nhân viên tăng dần.
 columns: [ MaNV, HoTen ]

@@ -3,7 +3,7 @@ chapter: '2-7'
 order: 3
 title: Tên nhập có khoảng trắng
 difficulty: vua
-lessons: [ 2-7-ham-chuoi-tieng-viet ]
+lessons: [ 2-3-and-or-in-between-like, 2-4-sap-xep-va-top, 2-7-ham-chuoi-tieng-viet ]
 prompt: >-
   File nhập từ hệ thống cũ làm họ tên có thể thừa dấu cách ở đầu hoặc cuối. Từ bảng ImportNV, lấy mã và họ tên đã bỏ dấu cách ở hai đầu, kèm số ký tự của họ tên sau khi bỏ.
 columns: [ MaNV, Họ tên, Số ký tự ]
@@ -32,8 +32,8 @@ tests:
     catches: "SELECT MaNV, TRIM(HoTen), LEN(TRIM(HoTen)) FROM ImportNV WHERE LEN(HoTen) >= 5"
     rows:
       ImportNV:
-        - [ "NV211", "  Yên" ]
-        - [ "NV212", "Cù Phong" ]
+        - [ "NV211", "Yên" ]
+        - [ "NV212", "  Cù Phong" ]
     expected: [ [ "NV211", "Yên", 3 ], [ "NV212", "Cù Phong", 8 ] ]
   - id: 4
     catches: "SELECT MaNV, TRIM(HoTen), LEN(HoTen) FROM ImportNV"

@@ -3,7 +3,7 @@ chapter: '2-7'
 order: 1
 title: Tên in trên thẻ
 difficulty: de
-lessons: [ 2-7-ham-chuoi-tieng-viet ]
+lessons: [ 2-3-and-or-in-between-like, 2-4-sap-xep-va-top, 2-7-ham-chuoi-tieng-viet ]
 prompt: >-
   Thẻ nhân viên in họ tên chữ hoa. Từ bảng NhanSu, lấy mã nhân viên và họ tên đã đổi thành chữ hoa cho mọi dòng.
 columns: [ MaNV, Họ tên ]

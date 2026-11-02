@@ -1,11 +1,11 @@
 id: thay-o-trong
 chapter: '2-5'
-order: 3
+order: 4
 title: Nhãn cho ô chưa có giảng viên
 difficulty: vua
-lessons: [ 2-5-null-o-trong ]
+lessons: [ 2-3-and-or-in-between-like, 2-4-sap-xep-va-top, 2-5-null-o-trong ]
 prompt: >-
-  Phòng đào tạo in danh sách khóa học. Từ bảng KhoaHoc, lấy mã khóa và giảng viên của mọi dòng; ô chưa có giảng viên thì hiện chữ (chưa phân công). Ô đã có giá trị giữ nguyên, kể cả chuỗi rỗng.
+  Phòng đào tạo in danh sách khóa học. Từ bảng KhoaHoc, lấy mã khóa và giảng viên của mọi dòng; ô chưa có giảng viên thì hiện đúng chữ “(chưa phân công)”, gồm cả hai dấu ngoặc. Ô đã có giá trị giữ nguyên, kể cả chuỗi rỗng.
 columns: [ MaKH, Giảng viên ]
 ordered: false
 tables:

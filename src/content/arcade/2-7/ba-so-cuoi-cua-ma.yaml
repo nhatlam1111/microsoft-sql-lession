@@ -3,7 +3,7 @@ chapter: '2-7'
 order: 2
 title: Ba số cuối của mã
 difficulty: de
-lessons: [ 2-7-ham-chuoi-tieng-viet ]
+lessons: [ 2-3-and-or-in-between-like, 2-4-sap-xep-va-top, 2-7-ham-chuoi-tieng-viet ]
 prompt: >-
   Mã hợp đồng có dạng năm, dấu gạch và ba số, như 2026-007. Từ bảng HopDong, lấy mã hợp đồng và ba ký tự cuối của mã, giữ nguyên các số 0 ở đầu.
 columns: [ MaHD, Số thứ tự ]

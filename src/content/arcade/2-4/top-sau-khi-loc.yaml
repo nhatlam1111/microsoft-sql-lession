@@ -3,9 +3,9 @@ chapter: '2-4'
 order: 5
 title: Hai ứng viên điểm cao nhất
 difficulty: kho
-lessons: [ 2-4-sap-xep-va-top ]
+lessons: [ 2-2-where-loc-nhu-autofilter, 2-3-and-or-in-between-like, 2-4-sap-xep-va-top ]
 prompt: >-
-  Từ bảng UngVien, trong những hồ sơ ứng tuyển vị trí KT và đã có trạng thái Đạt vòng 1, lấy tối đa hai hồ sơ có điểm cao nhất. Lấy mã, họ tên và điểm, xếp điểm giảm dần; cùng điểm thì ngày nộp sớm hơn lên trước; vẫn trùng thì mã tăng dần.
+  Từ bảng UngVien, trong những hồ sơ ứng tuyển vị trí KT và có trạng thái Đạt vòng 1, lấy tối đa hai hồ sơ có điểm cao nhất. Lấy mã, họ tên và điểm, xếp điểm giảm dần; cùng điểm thì ngày nộp sớm hơn lên trước; vẫn trùng thì mã tăng dần.
 columns: [ MaUV, HoTen, Diem ]
 ordered: true
 tables:
@@ -59,4 +59,12 @@ tests:
         - [ "UV42", "Âu Khải", "KT", 8, "2026-09-10", "Đạt vòng 1" ]
         - [ "UV43", "Sầm Hiền", "KT", 8, "2026-09-05", "Đạt vòng 1" ]
     expected: [ [ "UV43", "Sầm Hiền", "8.0" ], [ "UV42", "Âu Khải", "8.0" ] ]
+  - id: 6
+    catches: "SELECT TOP (2) MaUV, HoTen, Diem FROM UngVien WHERE MaViTri = 'KT' AND TrangThai = N'Đạt vòng 1' ORDER BY Diem DESC, NgayNop ASC, MaUV DESC"
+    rows:
+      UngVien:
+        - [ "UV53", "Lục Xuân", "KT", 8, "2026-09-05", "Đạt vòng 1" ]
+        - [ "UV51", "Ninh Hà", "KT", 8, "2026-09-05", "Đạt vòng 1" ]
+        - [ "UV52", "Doãn Thảo", "KT", 8, "2026-09-05", "Đạt vòng 1" ]
+    expected: [ [ "UV51", "Ninh Hà", "8.0" ], [ "UV52", "Doãn Thảo", "8.0" ] ]
 resultTypes: [ "varchar", "nvarchar", "decimal" ]

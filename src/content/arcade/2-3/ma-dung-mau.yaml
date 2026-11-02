@@ -3,7 +3,7 @@ chapter: '2-3'
 order: 6
 title: Mã lớp đúng mẫu
 difficulty: vua
-lessons: [ 2-3-and-or-in-between-like ]
+lessons: [ 2-2-where-loc-nhu-autofilter, 2-3-and-or-in-between-like ]
 prompt: >-
   Mã lớp đào tạo năm 2026 có đúng sáu ký tự: hai ký tự đầu là 26, ký tự thứ ba là mã nhóm bất kỳ, ba ký tự cuối là số thứ tự. Phòng đào tạo cần các lớp có số thứ tự 001. Từ bảng LopHoc, lấy mã lớp và tên lớp có mã đúng mẫu đó.
 columns: [ MaLop, TenLop ]

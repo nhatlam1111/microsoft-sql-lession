@@ -3,7 +3,7 @@ chapter: '2-4'
 order: 1
 title: Danh mục khóa theo tên
 difficulty: de
-lessons: [ 2-4-sap-xep-va-top ]
+lessons: [ 2-2-where-loc-nhu-autofilter, 2-3-and-or-in-between-like, 2-4-sap-xep-va-top ]
 prompt: >-
   Phòng đào tạo in danh mục khóa học. Từ bảng KhoaHoc, lấy tên khóa và số buổi của mọi dòng, xếp theo tên khóa tăng dần. Tên khóa trong bảng không trùng nhau.
 columns: [ TenKH, SoBuoi ]

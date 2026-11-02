@@ -1,0 +1,54 @@
+id: ba-muc-thuong
+chapter: '2-9'
+order: 2
+title: Ba mức thưởng
+difficulty: vua
+lessons: [ 2-5-null-o-trong, 2-8-ham-ngay-tham-nien, 2-9-case-when-ham-if ]
+prompt: >-
+  Từ bảng DoanhSo, lấy mã nhân viên và mức thưởng cho mọi dòng: doanh số từ 500 trở lên thưởng A, từ 300 đến dưới 500 thưởng B, còn lại thưởng C. Doanh số luôn có giá trị.
+columns: [ MaNV, Mức thưởng ]
+ordered: false
+tables:
+  DoanhSo:
+    MaNV: varchar(10) NOT NULL
+    DoanhSo: decimal(10,0) NOT NULL
+answer: "SELECT MaNV, CASE WHEN DoanhSo >= 500 THEN 'A' WHEN DoanhSo >= 300 THEN 'B' ELSE 'C' END AS [Mức thưởng] FROM DoanhSo"
+tests:
+  - id: 1
+    visible: true
+    rows:
+      DoanhSo:
+        - [ "NV201", 700 ]
+        - [ "NV202", 400 ]
+        - [ "NV203", 100 ]
+    expected: [ [ "NV201", "A" ], [ "NV202", "B" ], [ "NV203", "C" ] ]
+  - id: 2
+    visible: true
+    rows:
+      DoanhSo:
+        - [ "NV205", 450 ]
+        - [ "NV206", 900 ]
+        - [ "NV207", 50 ]
+    expected: [ [ "NV205", "B" ], [ "NV206", "A" ], [ "NV207", "C" ] ]
+  - id: 3
+    catches: "SELECT MaNV, CASE WHEN DoanhSo >= 501 THEN 'A' WHEN DoanhSo >= 300 THEN 'B' ELSE 'C' END FROM DoanhSo"
+    rows:
+      DoanhSo:
+        - [ "NV211", 500 ]
+        - [ "NV212", 800 ]
+    expected: [ [ "NV211", "A" ], [ "NV212", "A" ] ]
+  - id: 4
+    catches: "SELECT MaNV, CASE WHEN DoanhSo >= 500 THEN 'A' WHEN DoanhSo >= 301 THEN 'B' ELSE 'C' END FROM DoanhSo"
+    rows:
+      DoanhSo:
+        - [ "NV221", 300 ]
+        - [ "NV222", 350 ]
+    expected: [ [ "NV221", "B" ], [ "NV222", "B" ] ]
+  - id: 5
+    catches: "SELECT MaNV, CASE WHEN DoanhSo >= 500 THEN 'A' WHEN DoanhSo >= 200 THEN 'B' ELSE 'C' END FROM DoanhSo"
+    rows:
+      DoanhSo:
+        - [ "NV231", 250 ]
+        - [ "NV232", 120 ]
+    expected: [ [ "NV231", "C" ], [ "NV232", "C" ] ]
+resultTypes: [ "varchar", "varchar" ]

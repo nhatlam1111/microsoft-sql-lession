@@ -3,7 +3,7 @@ chapter: '2-5'
 order: 1
 title: Hồ sơ chưa có email
 difficulty: de
-lessons: [ 2-5-null-o-trong ]
+lessons: [ 2-3-and-or-in-between-like, 2-4-sap-xep-va-top, 2-5-null-o-trong ]
 prompt: >-
   Bộ phận tuyển dụng cần các hồ sơ chưa có giá trị ở ô email. Từ bảng UngVien, lấy mã và họ tên của các dòng có Email là NULL. Ô chứa chuỗi rỗng hoặc chữ NULL không tính là ô trống.
 columns: [ MaUV, HoTen ]

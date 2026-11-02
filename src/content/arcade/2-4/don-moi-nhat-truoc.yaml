@@ -3,7 +3,7 @@ chapter: '2-4'
 order: 2
 title: Đơn mới nhất lên đầu
 difficulty: de
-lessons: [ 2-4-sap-xep-va-top ]
+lessons: [ 2-2-where-loc-nhu-autofilter, 2-3-and-or-in-between-like, 2-4-sap-xep-va-top ]
 prompt: >-
   Nhân sự muốn xem đơn nghỉ theo ngày nộp, đơn mới nhất lên đầu. Từ bảng DonNghi, lấy mã đơn và ngày nộp của mọi dòng, xếp ngày nộp giảm dần. Ngày nộp của các đơn không trùng nhau.
 columns: [ MaDon, NgayNop ]

@@ -5,7 +5,7 @@ title: Khoản thực chi từ hai triệu
 difficulty: vua
 lessons: [ 2-2-where-loc-nhu-autofilter ]
 prompt: >-
-  Kế toán soát các chuyến công tác có số tiền thực chi từ 2.000.000 đồng trở lên, gồm cả đúng 2.000.000 đồng. Từ bảng CongTacPhi, lấy ba cột theo thứ tự: nơi đến, số tiền thực chi, mã nhân viên.
+  Kế toán soát các chuyến công tác có số tiền thực chi từ 2000000 đồng trở lên, gồm cả đúng 2000000 đồng. Từ bảng CongTacPhi, lấy ba cột theo thứ tự: nơi đến, số tiền thực chi, mã nhân viên.
 columns: [ Nơi đến, Số tiền thực chi, Mã nhân viên ]
 ordered: false
 tables:

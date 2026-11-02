@@ -1,0 +1,53 @@
+id: o-trong-trong-nhanh
+chapter: '2-9'
+order: 4
+title: Tình trạng ngày nghỉ việc
+difficulty: vua
+lessons: [ 2-5-null-o-trong, 2-8-ham-ngay-tham-nien, 2-9-case-when-ham-if ]
+prompt: >-
+  Từ bảng NhanSu, lấy mã nhân viên và một cột tình trạng cho mọi dòng: NgayNghiViec là NULL thì ghi Đang làm, có ngày thì ghi Đã nghỉ.
+columns: [ MaNV, Tình trạng ]
+ordered: false
+tables:
+  NhanSu:
+    MaNV: varchar(10) NOT NULL
+    NgayVaoLam: date NOT NULL
+    NgayNghiViec: date NULL
+answer: "SELECT MaNV, CASE WHEN NgayNghiViec IS NULL THEN N'Đang làm' ELSE N'Đã nghỉ' END AS [Tình trạng] FROM NhanSu"
+tests:
+  - id: 1
+    visible: true
+    rows:
+      NhanSu:
+        - [ "NV301", "2024-01-01", null ]
+        - [ "NV302", "2022-05-01", "2026-02-28" ]
+    expected: [ [ "NV301", "Đang làm" ], [ "NV302", "Đã nghỉ" ] ]
+  - id: 2
+    visible: true
+    rows:
+      NhanSu:
+        - [ "NV305", "2025-03-03", null ]
+        - [ "NV306", "2021-09-09", "2025-12-31" ]
+    expected: [ [ "NV305", "Đang làm" ], [ "NV306", "Đã nghỉ" ] ]
+  - id: 3
+    catches: "SELECT MaNV, CASE WHEN NgayNghiViec IS NULL AND NgayVaoLam >= '20240101' THEN N'Đang làm' ELSE N'Đã nghỉ' END FROM NhanSu"
+    rows:
+      NhanSu:
+        - [ "NV311", "2020-01-01", null ]
+        - [ "NV312", "2024-06-06", null ]
+    expected: [ [ "NV311", "Đang làm" ], [ "NV312", "Đang làm" ] ]
+  - id: 4
+    catches: "SELECT MaNV, CASE WHEN NgayNghiViec <= '20261031' THEN N'Đã nghỉ' ELSE N'Đang làm' END FROM NhanSu"
+    rows:
+      NhanSu:
+        - [ "NV321", "2023-01-01", "2026-12-31" ]
+        - [ "NV322", "2023-02-02", null ]
+    expected: [ [ "NV321", "Đã nghỉ" ], [ "NV322", "Đang làm" ] ]
+  - id: 5
+    catches: "SELECT MaNV, CASE WHEN NgayNghiViec >= '20250101' THEN N'Đã nghỉ' ELSE N'Đang làm' END FROM NhanSu"
+    rows:
+      NhanSu:
+        - [ "NV331", "2019-01-01", "2024-06-30" ]
+        - [ "NV332", "2020-02-02", "2026-01-01" ]
+    expected: [ [ "NV331", "Đã nghỉ" ], [ "NV332", "Đã nghỉ" ] ]
+resultTypes: [ "varchar", "nvarchar" ]

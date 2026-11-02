@@ -3,9 +3,9 @@ chapter: '2-3'
 order: 3
 title: Mức lương trong khoảng
 difficulty: de
-lessons: [ 2-3-and-or-in-between-like ]
+lessons: [ 2-2-where-loc-nhu-autofilter, 2-3-and-or-in-between-like ]
 prompt: >-
-  Nhân sự cần các vị trí có mức lương đề xuất từ 10.000.000 đến 15.000.000 đồng, gồm cả hai mức đó. Từ bảng ViTriTuyen, lấy mã vị trí, tên vị trí và mức lương đề xuất.
+  Nhân sự cần các vị trí có mức lương đề xuất từ 10000000 đến 15000000 đồng, gồm cả hai mức đó. Từ bảng ViTriTuyen, lấy mã vị trí, tên vị trí và mức lương đề xuất.
 columns: [ MaVT, TenVT, LuongDeXuat ]
 ordered: false
 tables:

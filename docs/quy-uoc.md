@@ -100,6 +100,7 @@ Mọi quy ước khi viết bài, review bài và làm việc với database c�
 - Bối cảnh là nhân sự và các mảng gần như tuyển dụng, đào tạo, tài sản, công tác phí, phúc lợi. Mỗi bài tự khai bảng riêng, chỉ gồm vài cột cần thiết. Dữ liệu đều giả; đề tự soạn, không chép đề hoặc dữ liệu của nền tảng khác.
 - Chỉ dùng từ khóa đã dạy tới hết chương đó, xem bảng dưới. Một bài được trộn kiến thức các chương trước. Bài có phép tính số, `<>`, `>`, `<`, `NOT IN`, `NOT LIKE`, `PERCENT`, `WITH TIES`, `YEAR()`, `REPLACE`, `CHARINDEX`, `FORMAT` chỉ được dùng khi đọc lại bài học thấy đã dạy.
 - Đề nói rõ cột, thứ tự cột, thứ tự dòng và phạm vi dòng. Bộ chấm không so tiêu đề cột, nên không ra bài mà mục tiêu duy nhất là đặt tiêu đề. `ordered: true` thì sắp xếp phải có tiêu chí phụ để không hòa. Đề không phụ thuộc ngày hiện tại: dùng mốc cố định, không dùng `GETDATE()` trong đáp án. Không gợi ý trong đề.
+- Số trong đề viết liền như sẽ gõ trong câu lệnh, không có dấu chấm ngăn cách hàng nghìn. Nhãn học viên phải ghi đúng từng chữ thì đặt trong dấu nháy “…”.
 - Chuỗi tiếng Việt trong SQL có `N`. Ngày trong YAML phải có dấu nháy. Kiểu cột ở cấp Cơ bản chỉ dùng `varchar`, `nvarchar`, `date`, `decimal`, là bốn kiểu bài 1.3 đã dạy.
 - `columns` có thể là tiêu đề nghiệp vụ tiếng Việt để người học tự tìm cột trong bảng. Tên cột trong bảng không chứa khoảng trắng: bài 2.1 chỉ dạy ngoặc vuông cho tiêu đề sau `AS`.
 - Mỗi bài có ít nhất 2 unit test và 3 hidden test. Mỗi hidden test bắt một lỗi cụ thể, ghi thành `catches`: một câu sai qua hết unit test nhưng trượt test đó. Ưu tiên lỗi người học chương đó có thể mắc, như nhầm hai cột gần tên: unit test để hai cột trùng giá trị, hidden test mới khác nhau. Hidden test không đòi kiến thức ngoài đề; đề đã nói phạm vi thì dữ liệu ẩn chỉ kiểm phạm vi đó.
@@ -253,6 +254,7 @@ Mẫu MDX và cách thêm bộ mới tại [presentation-template.md](presentati
 ## 5. Database của khóa học và thao tác ra ngoài
 
 - Database của khóa học dùng chung cho mọi học viên, dữ liệu không được đổi. Đọc bằng MCP `azure-sql` chỉ với `SELECT`, dù cấu hình báo cho phép ghi. Câu làm đổi dữ liệu chỉ chạy qua API bài tập hoặc `check:exercises`, trong giao dịch luôn hoàn tác; xong thì chạy `check:data`. Không chạy backup hay restore. Việc nào cần ghi thật thì dừng lại và hỏi.
+- Database `arcade` tách khỏi database khóa học. Schema `dbo` luôn rỗng và chỉ được ghi trong transaction hoàn tác; schema `arcade` giữ coin và tiến độ thật của học viên, chỉ đổi qua API hoặc khi người làm khóa học yêu cầu.
 - Không gõ, in hay commit mật khẩu SQL, mã truy cập hay secret nào; người làm khóa học tự điền.
 - Push lên GitHub chỉ khi người làm khóa học đồng ý: push lên `main` là đăng bài lên web. Lệnh `az` tạo hay sửa tài nguyên thì đưa lệnh ra và chờ đồng ý trước; lệnh chỉ đọc thì không cần.
 - Sau mỗi vòng sửa: sửa cả các mục nhỏ; cập nhật spec, plan và ghi chú cho khớp với những gì đã làm.
