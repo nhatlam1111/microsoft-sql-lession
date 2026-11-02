@@ -1,0 +1,55 @@
+id: ket-thuc-thu-viec
+chapter: '2-2'
+order: 6
+title: Người sắp hết thử việc
+difficulty: vua
+lessons: [ 2-2-where-loc-nhu-autofilter ]
+prompt: >-
+  Nhân sự cần danh sách những người có ngày kết thúc thử việc từ 15/10/2026 trở đi, gồm cả đúng ngày đó, kể cả người chưa có kết quả đánh giá. Từ bảng ThuViec, lấy ba cột theo thứ tự: họ tên, ngày kết thúc thử việc, kết quả đánh giá.
+columns: [ Họ tên, Ngày kết thúc, Kết quả ]
+ordered: false
+tables:
+  ThuViec:
+    MaNV: varchar(10) NOT NULL
+    HoTen: nvarchar(100) NOT NULL
+    NgayBatDau: date NOT NULL
+    NgayKetThuc: date NOT NULL
+    KetQua: nvarchar(30) NULL
+answer: "SELECT HoTen, NgayKetThuc, KetQua FROM ThuViec WHERE NgayKetThuc >= '20261015'"
+tests:
+  - id: 1
+    visible: true
+    rows:
+      ThuViec:
+        - [ "NV301", "Lê Ngọc Ánh", "2026-08-20", "2026-10-20", "Đạt" ]
+        - [ "NV302", "Trịnh Văn Dũng", "2026-07-01", "2026-09-30", "Đạt" ]
+    expected: [ [ "Lê Ngọc Ánh", "2026-10-20", "Đạt" ] ]
+  - id: 2
+    visible: true
+    rows:
+      ThuViec:
+        - [ "NV305", "Phan Thùy Dương", "2026-09-01", "2026-11-01", "Đạt" ]
+        - [ "NV306", "Hà Quang Minh", "2026-06-15", "2026-08-15", "Không đạt" ]
+    expected: [ [ "Phan Thùy Dương", "2026-11-01", "Đạt" ] ]
+  - id: 3
+    catches: "SELECT HoTen, NgayKetThuc, KetQua FROM ThuViec WHERE NgayKetThuc >= '20261016'"
+    rows:
+      ThuViec:
+        - [ "NV311", "Tăng Mỹ Linh", "2026-08-15", "2026-10-15", "Đạt" ]
+        - [ "NV312", "Cù Đình Phong", "2026-06-01", "2026-08-01", "Đạt" ]
+    expected: [ [ "Tăng Mỹ Linh", "2026-10-15", "Đạt" ] ]
+  - id: 4
+    catches: "SELECT HoTen, NgayKetThuc, KetQua FROM ThuViec WHERE NgayKetThuc >= '20261015' AND KetQua IS NOT NULL"
+    rows:
+      ThuViec:
+        - [ "NV321", "Giáp Thị Vân", "2026-09-01", "2026-11-01", null ]
+        - [ "NV322", "Âu Dương Khải", "2026-09-05", "2026-11-05", "Đạt" ]
+    expected: [ [ "Giáp Thị Vân", "2026-11-01", null ], [ "Âu Dương Khải", "2026-11-05", "Đạt" ] ]
+  - id: 5
+    catches: "SELECT HoTen, NgayKetThuc, KetQua FROM ThuViec WHERE NgayBatDau >= '20260815'"
+    rows:
+      ThuViec:
+        - [ "NV331", "Sầm Thu Hiền", "2026-09-10", "2026-11-10", "Đạt" ]
+        - [ "NV332", "Từ Anh Khoa", "2026-07-01", "2026-10-25", "Đạt" ]
+    expected: [ [ "Sầm Thu Hiền", "2026-11-10", "Đạt" ], [ "Từ Anh Khoa", "2026-10-25", "Đạt" ] ]
+resultTypes: [ "nvarchar", "date", "nvarchar" ]

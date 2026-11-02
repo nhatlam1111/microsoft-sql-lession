@@ -1,0 +1,55 @@
+id: de-xuat-da-duyet
+chapter: '2-2'
+order: 2
+title: Đề xuất mua hàng đã duyệt
+difficulty: de
+lessons: [ 2-2-where-loc-nhu-autofilter ]
+prompt: >-
+  Phòng mua hàng cần các đề xuất đã được chấp thuận. Từ bảng DeXuatMua, lấy mã đề xuất, tên hàng và số tiền của các dòng có TrangThai là Đã duyệt.
+columns: [ MaDX, TenHang, SoTien ]
+ordered: false
+tables:
+  DeXuatMua:
+    MaDX: varchar(10) NOT NULL
+    TenHang: nvarchar(100) NOT NULL
+    SoTien: decimal(12,0) NOT NULL
+    TrangThai: nvarchar(20) NOT NULL
+answer: "SELECT MaDX, TenHang, SoTien FROM DeXuatMua WHERE TrangThai = N'Đã duyệt'"
+tests:
+  - id: 1
+    visible: true
+    rows:
+      DeXuatMua:
+        - [ "DX01", "Giấy in", 1200000, "Đã duyệt" ]
+        - [ "DX02", "Bàn phím", 900000, "Từ chối" ]
+    expected: [ [ "DX01", "Giấy in", "1200000" ] ]
+  - id: 2
+    visible: true
+    rows:
+      DeXuatMua:
+        - [ "DX05", "Mực máy in", 2500000, "Đã duyệt" ]
+        - [ "DX06", "Ghế xoay", 800000, "Từ chối" ]
+        - [ "DX07", "Tủ hồ sơ", 3100000, "Đã duyệt" ]
+    expected: [ [ "DX05", "Mực máy in", "2500000" ], [ "DX07", "Tủ hồ sơ", "3100000" ] ]
+  - id: 3
+    catches: "SELECT MaDX, TenHang, SoTien FROM DeXuatMua WHERE TrangThai LIKE N'%duyệt'"
+    rows:
+      DeXuatMua:
+        - [ "DX11", "Máy scan", 7000000, "Chờ duyệt" ]
+        - [ "DX12", "Bút bi", 1100000, "Đã duyệt" ]
+    expected: [ [ "DX12", "Bút bi", "1100000" ] ]
+  - id: 4
+    catches: "SELECT MaDX, TenHang, SoTien FROM DeXuatMua WHERE SoTien >= 1000000"
+    rows:
+      DeXuatMua:
+        - [ "DX21", "Kẹp giấy", 150000, "Đã duyệt" ]
+        - [ "DX22", "Máy chiếu", 18000000, "Từ chối" ]
+    expected: [ [ "DX21", "Kẹp giấy", "150000" ] ]
+  - id: 5
+    catches: "SELECT MaDX, TenHang, SoTien FROM DeXuatMua WHERE TrangThai LIKE N'Đ%'"
+    rows:
+      DeXuatMua:
+        - [ "DX31", "Bảng trắng", 1400000, "Đã duyệt" ]
+        - [ "DX32", "Quạt đứng", 1300000, "Đang xét" ]
+    expected: [ [ "DX31", "Bảng trắng", "1400000" ] ]
+resultTypes: [ "varchar", "nvarchar", "decimal" ]

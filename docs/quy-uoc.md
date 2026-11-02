@@ -98,7 +98,7 @@ Mọi quy ước khi viết bài, review bài và làm việc với database c�
 
 - Mỗi bài là một file `src/content/arcade/<chương>/<id>.yaml`. Bài luyện tách khỏi bài học, không tính vào tiến độ bài học và không kể tiếp câu chuyện ở `docs/ho-so-cong-ty.md`.
 - Bối cảnh là nhân sự và các mảng gần như tuyển dụng, đào tạo, tài sản, công tác phí, phúc lợi. Mỗi bài tự khai bảng riêng, chỉ gồm vài cột cần thiết. Dữ liệu đều giả; đề tự soạn, không chép đề hoặc dữ liệu của nền tảng khác.
-- Chỉ dùng từ khóa đã dạy tới hết chương đó, xem bảng dưới. Một bài được trộn kiến thức các chương trước. Bài có phép tính số, `NOT IN`, `NOT LIKE`, `PERCENT`, `WITH TIES`, `YEAR()`, `REPLACE`, `CHARINDEX`, `FORMAT` chỉ được dùng khi đọc lại bài học thấy đã dạy.
+- Chỉ dùng từ khóa đã dạy tới hết chương đó, xem bảng dưới. Một bài được trộn kiến thức các chương trước. Bài có phép tính số, `<>`, `>`, `<`, `NOT IN`, `NOT LIKE`, `PERCENT`, `WITH TIES`, `YEAR()`, `REPLACE`, `CHARINDEX`, `FORMAT` chỉ được dùng khi đọc lại bài học thấy đã dạy.
 - Đề nói rõ cột, thứ tự cột, thứ tự dòng và phạm vi dòng. Bộ chấm không so tiêu đề cột, nên không ra bài mà mục tiêu duy nhất là đặt tiêu đề. `ordered: true` thì sắp xếp phải có tiêu chí phụ để không hòa. Đề không phụ thuộc ngày hiện tại: dùng mốc cố định, không dùng `GETDATE()` trong đáp án. Không gợi ý trong đề.
 - Chuỗi tiếng Việt trong SQL có `N`. Ngày trong YAML phải có dấu nháy. Kiểu cột ở cấp Cơ bản chỉ dùng `varchar`, `nvarchar`, `date`, `decimal`, là bốn kiểu bài 1.3 đã dạy.
 - `columns` có thể là tiêu đề nghiệp vụ tiếng Việt để người học tự tìm cột trong bảng. Tên cột trong bảng không chứa khoảng trắng: bài 2.1 chỉ dạy ngoặc vuông cho tiêu đề sau `AS`.
@@ -109,13 +109,13 @@ Mọi quy ước khi viết bài, review bài và làm việc với database c�
 | Chương | Bài (Dễ/Vừa/Khó) | Từ khóa thêm ở chương | Bẫy chính của hidden test |
 |---|---|---|---|
 | 2-1 | 5 (4/1/0) | `SELECT`, `*`, `AS`, `FROM` | Nhầm cột gần tên, thêm dòng, ô `NULL` trong cột được chọn, dòng trùng phải giữ |
-| 2-2 | 6 (3/3/0) | `WHERE`, `=`, `<>`, `>`, `>=`, `<`, `<=`, `N'…'` | Giá trị ở biên, mã gần giống, không có dòng nào đạt |
+| 2-2 | 6 (3/3/0) | `WHERE`, `=`, `>=`, `N'…'`, ngày dạng `yyyymmdd` | Giá trị ở biên, mã gần giống, không có dòng nào đạt |
 | 2-3 | 7 (3/3/1) | `AND`, `OR`, ngoặc, `IN`, `BETWEEN`, `LIKE`, `%`, `_` | Thiếu ngoặc, hai đầu `BETWEEN`, nhầm `_` với `%`, tiền tố gần giống |
 | 2-4 | 5 (2/2/1) | `ORDER BY`, `ASC`, `DESC`, `TOP` | Thiếu tiêu chí phụ, ít hơn n dòng, đảo thứ tự chèn |
 | 2-5 | 5 (2/2/1) | `IS NULL`, `IS NOT NULL`, `COALESCE`, `ISNULL` | Chuỗi rỗng, chữ `NULL`, `<>` bỏ mất dòng `NULL` |
 | 2-6 | 4 (2/1/1) | `DISTINCT` | Trùng trên nhiều cột, nhiều `NULL` gộp một dòng, sai phạm vi cột |
 | 2-7 | 6 (2/2/2) | `UPPER`, `LOWER`, `LEN`, `LEFT`, `RIGHT`, `SUBSTRING`, `TRIM`, `CONCAT`, `COLLATE` | Khoảng trắng đầu cuối, chuỗi ngắn hơn độ dài cắt, ô `NULL`, có dấu và không dấu |
-| 2-8 | 6 (1/3/2) | `CAST`, `DATEADD`, `DATEDIFF`, `EOMONTH` | Biên tháng, năm nhuận, `DATEDIFF` đếm ranh giới |
+| 2-8 | 6 (1/3/2) | `CAST`, `DATEADD`, `DATEDIFF`, `EOMONTH`, `MONTH`, `<=` | Biên tháng, năm nhuận, `DATEDIFF` đếm ranh giới |
 | 2-9 | 6 (1/3/2) | `CASE`, `WHEN`, `ELSE` | Thứ tự nhánh, thiếu `ELSE` ra `NULL`, ô `NULL`, giá trị ở biên |
 
 ## 3. Số liệu và hình

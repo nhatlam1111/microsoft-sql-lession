@@ -1,0 +1,57 @@
+id: thuc-chi-tu-muc
+chapter: '2-2'
+order: 4
+title: Khoản thực chi từ hai triệu
+difficulty: vua
+lessons: [ 2-2-where-loc-nhu-autofilter ]
+prompt: >-
+  Kế toán soát các chuyến công tác có số tiền thực chi từ 2.000.000 đồng trở lên, gồm cả đúng 2.000.000 đồng. Từ bảng CongTacPhi, lấy ba cột theo thứ tự: nơi đến, số tiền thực chi, mã nhân viên.
+columns: [ Nơi đến, Số tiền thực chi, Mã nhân viên ]
+ordered: false
+tables:
+  CongTacPhi:
+    MaCT: varchar(10) NOT NULL
+    MaNV: varchar(10) NOT NULL
+    NoiDen: nvarchar(50) NOT NULL
+    SoTienDuKien: decimal(12,0) NOT NULL
+    SoTienThucChi: decimal(12,0) NOT NULL
+answer: "SELECT NoiDen, SoTienThucChi, MaNV FROM CongTacPhi WHERE SoTienThucChi >= 2000000"
+tests:
+  - id: 1
+    visible: true
+    rows:
+      CongTacPhi:
+        - [ "CT01", "NV101", "Đà Nẵng", 3500000, 3500000 ]
+        - [ "CT02", "NV104", "Hải Phòng", 900000, 900000 ]
+    expected: [ [ "Đà Nẵng", "3500000", "NV101" ] ]
+  - id: 2
+    visible: true
+    rows:
+      CongTacPhi:
+        - [ "CT05", "NV107", "Cần Thơ", 2800000, 2800000 ]
+        - [ "CT06", "NV109", "Huế", 700000, 700000 ]
+        - [ "CT07", "NV110", "Nha Trang", 4200000, 4200000 ]
+    expected: [ [ "Cần Thơ", "2800000", "NV107" ], [ "Nha Trang", "4200000", "NV110" ] ]
+  - id: 3
+    catches: "SELECT NoiDen, SoTienThucChi, MaNV FROM CongTacPhi WHERE SoTienDuKien >= 2000000"
+    rows:
+      CongTacPhi:
+        - [ "CT11", "NV101", "Vinh", 2500000, 1900000 ]
+        - [ "CT12", "NV112", "Đà Lạt", 1800000, 2100000 ]
+    expected: [ [ "Đà Lạt", "2100000", "NV112" ] ]
+  - id: 4
+    catches: "SELECT NoiDen, SoTienThucChi, MaNV FROM CongTacPhi WHERE SoTienThucChi >= 2000001"
+    rows:
+      CongTacPhi:
+        - [ "CT21", "NV104", "Quy Nhơn", 2000000, 2000000 ]
+        - [ "CT22", "NV107", "Huế", 800000, 800000 ]
+    expected: [ [ "Quy Nhơn", "2000000", "NV104" ] ]
+  - id: 5
+    catches: "SELECT NoiDen, SoTienThucChi, MaNV FROM CongTacPhi WHERE SoTienThucChi >= 1000000"
+    rows:
+      CongTacPhi:
+        - [ "CT31", "NV109", "Bắc Ninh", 1500000, 1500000 ]
+        - [ "CT32", "NV110", "Hà Nam", 1000000, 1000000 ]
+        - [ "CT33", "NV112", "Vũng Tàu", 2300000, 2300000 ]
+    expected: [ [ "Vũng Tàu", "2300000", "NV112" ] ]
+resultTypes: [ "nvarchar", "decimal", "varchar" ]

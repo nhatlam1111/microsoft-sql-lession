@@ -1,0 +1,55 @@
+id: lop-mo-tu-ngay
+chapter: '2-2'
+order: 3
+title: Lớp mở từ tháng 10
+difficulty: de
+lessons: [ 2-2-where-loc-nhu-autofilter ]
+prompt: >-
+  Phòng đào tạo cần các lớp có ngày khai giảng từ 01/10/2026 trở đi, gồm cả đúng ngày 01/10/2026. Từ bảng LopHoc, lấy mã lớp, tên lớp và ngày khai giảng.
+columns: [ MaLop, TenLop, NgayKhaiGiang ]
+ordered: false
+tables:
+  LopHoc:
+    MaLop: varchar(10) NOT NULL
+    TenLop: nvarchar(100) NOT NULL
+    NgayDangKy: date NOT NULL
+    NgayKhaiGiang: date NOT NULL
+answer: "SELECT MaLop, TenLop, NgayKhaiGiang FROM LopHoc WHERE NgayKhaiGiang >= '20261001'"
+tests:
+  - id: 1
+    visible: true
+    rows:
+      LopHoc:
+        - [ "L01", "Kỹ năng thuyết trình", "2026-10-05", "2026-10-20" ]
+        - [ "L02", "Excel nâng cao", "2026-07-01", "2026-07-15" ]
+    expected: [ [ "L01", "Kỹ năng thuyết trình", "2026-10-20" ] ]
+  - id: 2
+    visible: true
+    rows:
+      LopHoc:
+        - [ "L05", "Viết email", "2026-08-01", "2026-08-10" ]
+        - [ "L06", "Quản lý thời gian", "2026-11-02", "2026-11-16" ]
+        - [ "L07", "An toàn lao động", "2026-10-12", "2026-10-26" ]
+    expected: [ [ "L06", "Quản lý thời gian", "2026-11-16" ], [ "L07", "An toàn lao động", "2026-10-26" ] ]
+  - id: 3
+    catches: "SELECT MaLop, TenLop, NgayKhaiGiang FROM LopHoc WHERE NgayKhaiGiang >= '20261002'"
+    rows:
+      LopHoc:
+        - [ "L11", "Sơ cấp cứu", "2026-09-20", "2026-10-01" ]
+        - [ "L12", "Giao tiếp", "2026-09-01", "2026-09-30" ]
+    expected: [ [ "L11", "Sơ cấp cứu", "2026-10-01" ] ]
+  - id: 4
+    catches: "SELECT MaLop, TenLop, NgayKhaiGiang FROM LopHoc WHERE NgayDangKy >= '20261001'"
+    rows:
+      LopHoc:
+        - [ "L21", "Thuyết trình cơ bản", "2026-09-25", "2026-10-08" ]
+        - [ "L22", "Pháp luật lao động", "2026-10-02", "2026-10-30" ]
+    expected: [ [ "L21", "Thuyết trình cơ bản", "2026-10-08" ], [ "L22", "Pháp luật lao động", "2026-10-30" ] ]
+  - id: 5
+    catches: "SELECT MaLop, TenLop, NgayKhaiGiang FROM LopHoc WHERE NgayKhaiGiang >= '20260901'"
+    rows:
+      LopHoc:
+        - [ "L31", "Tin học văn phòng", "2026-08-15", "2026-09-14" ]
+        - [ "L32", "Phỏng vấn tuyển dụng", "2026-08-20", "2026-09-21" ]
+    expected: []
+resultTypes: [ "varchar", "nvarchar", "date" ]

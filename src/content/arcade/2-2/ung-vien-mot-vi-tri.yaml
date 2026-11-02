@@ -1,0 +1,55 @@
+id: ung-vien-mot-vi-tri
+chapter: '2-2'
+order: 1
+title: Hồ sơ ứng tuyển vị trí kế toán
+difficulty: de
+lessons: [ 2-2-where-loc-nhu-autofilter ]
+prompt: >-
+  Bộ phận tuyển dụng đang xem hồ sơ cho vị trí có mã KT. Từ bảng UngVien, lấy mã và họ tên của các hồ sơ có MaViTri là KT.
+columns: [ MaUV, HoTen ]
+ordered: false
+tables:
+  UngVien:
+    MaUV: varchar(10) NOT NULL
+    HoTen: nvarchar(100) NOT NULL
+    MaViTri: varchar(10) NOT NULL
+    ViTriDuPhong: varchar(10) NULL
+answer: "SELECT MaUV, HoTen FROM UngVien WHERE MaViTri = 'KT'"
+tests:
+  - id: 1
+    visible: true
+    rows:
+      UngVien:
+        - [ "UV01", "Phạm Gia Linh", "KT", null ]
+        - [ "UV02", "Trần Quốc Việt", "IT", null ]
+        - [ "UV03", "Lê Thảo Nhi", "KT", null ]
+    expected: [ [ "UV01", "Phạm Gia Linh" ], [ "UV03", "Lê Thảo Nhi" ] ]
+  - id: 2
+    visible: true
+    rows:
+      UngVien:
+        - [ "UV05", "Đoàn Minh Khôi", "BH", null ]
+        - [ "UV06", "Vương Hải Yến", "KT", null ]
+    expected: [ [ "UV06", "Vương Hải Yến" ] ]
+  - id: 3
+    catches: "SELECT MaUV, HoTen FROM UngVien WHERE MaViTri >= 'KT'"
+    rows:
+      UngVien:
+        - [ "UV11", "Chu Bảo Ngọc", "KT", null ]
+        - [ "UV12", "Tô Hoài Nam", "NS", null ]
+    expected: [ [ "UV11", "Chu Bảo Ngọc" ] ]
+  - id: 4
+    catches: "SELECT MaUV, HoTen FROM UngVien WHERE MaViTri LIKE 'KT%'"
+    rows:
+      UngVien:
+        - [ "UV21", "Hồ Thanh Tâm", "KT", null ]
+        - [ "UV22", "Bùi Gia Hân", "KTT", null ]
+    expected: [ [ "UV21", "Hồ Thanh Tâm" ] ]
+  - id: 5
+    catches: "SELECT MaUV, HoTen FROM UngVien WHERE MaViTri = 'KT' OR ViTriDuPhong = 'KT'"
+    rows:
+      UngVien:
+        - [ "UV31", "Mai Phương Thảo", "IT", "KT" ]
+        - [ "UV32", "Ngô Đức Thịnh", "KT", "IT" ]
+    expected: [ [ "UV32", "Ngô Đức Thịnh" ] ]
+resultTypes: [ "varchar", "nvarchar" ]
