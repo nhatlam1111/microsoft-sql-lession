@@ -9,6 +9,9 @@ on:
       - 'src/lib/grade.ts'
       - 'src/lib/exercise-types.ts'
       - 'src/content/exercises/**'
+      - 'src/content/arcade/**'
+      - 'src/data/arcade.ts'
+      - 'src/lib/arcade-*.ts'
       - '.github/workflows/deploy-api.yml'
   workflow_dispatch:
 
