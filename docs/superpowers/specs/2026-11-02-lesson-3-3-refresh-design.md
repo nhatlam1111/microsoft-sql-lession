@@ -61,6 +61,8 @@ Lưu spec/plan/evidence mới cho 3.3, giữ report gốc; không tự sửa h�
 
 ## Tiến trình triển khai
 
-Task 1: đã viết lại 3.3 thành hai tiểu mục, đưa câu chính trước LineMap và Result/câu trả lời sau RunFlow. Bổ sung checks WHERE/HAVING, hai nhóm KD/IT trích5/13 và5/10, SELECT KD trích5/13 nối đúng hai ô, đổi caption trước SELECT và giữ query chính. YAML chỉ đổi leading indentation của AND trong3-3-2, metadata/prompt/SQL sau chuẩn hóa leading whitespace giữ nguyên.
+Task 1: đã viết lại 3.3 thành hai tiểu mục, đưa câu chính trước LineMap và Result/câu trả lời sau RunFlow. Bổ sung checks WHERE/HAVING, hai nhóm KD/IT trích 5/13 và 5/10, SELECT KD trích 5/13 nối đúng hai ô, đổi caption trước SELECT và giữ query chính. YAML chỉ đổi leading indentation của AND trong 3-3-2, metadata/prompt/SQL sau chuẩn hóa leading whitespace giữ nguyên.
 
-Đã thấy năm test mới/khung thất bại trước sửa, sau sửa nhóm99 và full suite451/451 đạt. Tác giả chạy mới chín case preflight và bảy câu MDX (cả câu chính/từng bước), đều đạt kỳ vọng; hai case SQL sai được xác nhận có lỗi đúng phạm vi chứ không phải lỗi kết nối. Chưa gọi UI/review đạt khi chưa có build được kiểm và report của lượt này.
+Đã thấy năm test mới/khung thất bại trước sửa, sau sửa nhóm 99 và full suite 451/451 đạt. Tác giả chạy mới chín case preflight và bảy câu MDX (cả câu chính/từng bước), đều đạt kỳ vọng; hai case SQL sai được xác nhận có lỗi đúng phạm vi chứ không phải lỗi kết nối.
+
+Task 2 hoàn tất kiểm/review ngày 03/11: check0 errors/0 warnings/3 hint nền; build139/dist2801; API typecheck/build76/check:exercises76/check:data đạt. UI IAB kiểm ở1280/1440/1024, WHERE/GROUP BY/HAVING/SELECT/ORDER BY, các giới hạn điều hướng và Excel mark; reset viewport. Reviewer mới xác nhận12 hash, đủ tiền đề ba đề trước answer và không có finding cần sửa. Đã xử lý toàn bộ Giữ được/giới hạn trong [verification](../../reviews/2026-11-02-lesson-3-3/verification.md), giữ false positive static audit riêng và không đổi source sản phẩm sau0b4527e. Lần merge/push3.3 tiếp theo theo yêu cầu phát hành được theo dõi bằng receipt/CI riêng, không nhận là đã đạt trước khi có kết quả thật.

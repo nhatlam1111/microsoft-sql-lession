@@ -45,11 +45,13 @@
 
 **Interfaces:** source commit đã chốt và dist khớp; reviewer fork none/model kế thừa, chỉ ghi report, không seed/SQL/DB/API/secret/browser. Gói/lời dặn đúng §4.5; không cấp report/kết luận tác giả cũ cho reviewer từng bài; đọc ba đề HTML và ghi cách làm trước answer YAML.
 
-- [ ] npm run check/build/check:dist; npm --prefix api run typecheck/build/check:exercises/check:data; static UI audit theo skill, ghi false positive có căn cứ nếu còn. Expected: các kiểm repo PASS với ba hint nền, không nới kiểm; lưu kết quả thật.
-- [ ] IAB trên đúng build ở desktop/1024, WHERE giữ/loại, GROUP BY trích2 nhóm, HAVING KD13/IT10 và totals6→1, SELECT một nhóm13→hai ô, ORDER BY một dòng; next/prev/Escape/Tab/mũi tên, query highlight/tab4 và chép/dán nếu kiểm thì bảo toàn clipboard/nháp. Expected: đọc được, đúng phạm vi, không suy mọi câu từ screenshot.
-- [ ] Giao reviewer mới theo §4.5, đủ nguồn/build/tiền đề/quyết định. Đọc hết report, xử lý mọi mục theo §4.6 và giữ bản gốc. Có sửa thì thêm kiểm đúng lỗi và chạy lại §4.4; không cần review tích hợp thứ hai nếu không đổi công cụ và chỉ chuyển một bài.
-- [ ] Commit hồ sơ và bàn giao kết quả/thay đổi/giới hạn. Giữ branch3.3; phần merge/push đã được yêu cầu trước đó có receipt/CI riêng, không lẫn trạng thái hai lượt.
+- [x] npm run check/build/check:dist; npm --prefix api run typecheck/build/check:exercises/check:data; static UI audit theo skill, ghi false positive có căn cứ nếu còn. Expected: các kiểm repo PASS với ba hint nền, không nới kiểm; lưu kết quả thật.
+- [x] IAB trên đúng build ở desktop/1024, WHERE giữ/loại, GROUP BY trích2 nhóm, HAVING KD13/IT10 và totals6→1, SELECT một nhóm13→hai ô, ORDER BY một dòng; next/prev/Escape/Tab/mũi tên, query highlight/tab4 và chép/dán nếu kiểm thì bảo toàn clipboard/nháp. Expected: đọc được, đúng phạm vi, không suy mọi câu từ screenshot.
+- [x] Giao reviewer mới theo §4.5, đủ nguồn/build/tiền đề/quyết định. Đọc hết report, xử lý mọi mục theo §4.6 và giữ bản gốc. Có sửa thì thêm kiểm đúng lỗi và chạy lại §4.4; không cần review tích hợp thứ hai nếu không đổi công cụ và chỉ chuyển một bài.
+- [x] Chốt hồ sơ sửa/kiểm/review và chuẩn bị bàn giao. Giữ branch tham chiếu3.3; áp dụng yêu cầu merge/push main của người dùng cho bài đã hoàn tất, ghi receipt/CI riêng sau kết quả thật và không lẫn với lần phát hành ebaa187 trước đó.
 
 ## Tự rà kế hoạch
 
 Hai task phủ thiết kế: Task1 toàn bộ nội dung/dữ liệu/formatting/di chuyển khung; Task2 build/UI/review/giới hạn. Interface caption/checks/examples thống nhất, không có thay đổi shared schema hoặc dependency dự kiến. Cách triển khai trực tiếp đã có trong phiên và thiết kế đã duyệt; không thêm vòng hỏi phương pháp hoặc quyền cho các bước cần thiết. Phát hiện cần đổi công cụ thì cập nhật thiết kế/phạm vi trước khi làm.
+
+Đã hoàn tất biên tập/kiểm/review ngày03/11, source sản phẩm0b4527e. 451 test,16 case SQL (gồm2 lỗi cố ý), build139/dist2801 và API76/data đã kiểm; reviewer mới không có finding cần sửa. Không thay đổi công cụ hoặc sửa sản phẩm sau review; chỉ chốt hồ sơ nên không lặp các kiểm đã đạt. Chi tiết Giữ được/giới hạn và false positive audit ở verification.md. Phát hành là bước tiếp theo theo yêu cầu đã có, kết quả Git/CI được ghi riêng khi thực hiện.
