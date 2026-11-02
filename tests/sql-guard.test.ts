@@ -1,5 +1,5 @@
 import { it, expect } from 'vitest';
-import { guardExercise } from '../src/lib/sql-guard';
+import { guardArcade, guardExercise } from '../src/lib/sql-guard';
 
 const blocked = (s: string) => { const g = guardExercise(s); return g.ok ? null : g.reason; };
 
@@ -32,4 +32,19 @@ it('refuses a SET that is not part of an UPDATE', () => {
   expect(blocked('SELECT 1 AS a SET ROWCOUNT 1')).toBe('Lệnh SET không dùng được trong bài tập.');
   expect(blocked('UPDATE BangLuong SET PhuCap = 1 SET NOCOUNT ON')).toBe('Lệnh SET không dùng được trong bài tập.');
   expect(blocked('UPDATE BangLuong SET PhuCap = 1, ThueTNCN = 0 WHERE KyLuong = N\'2026-09\'')).toBeNull();
+});
+
+it('takes SELECT and WITH for Arcade, nothing that changes data', () => {
+  expect(guardArcade('SELECT MaNV FROM NhanVien').ok).toBe(true);
+  expect(guardArcade('WITH t AS (SELECT 1 AS a) SELECT a FROM t').ok).toBe(true);
+  expect(guardArcade("SELECT N'update' AS a").ok).toBe(true);
+  expect(guardArcade('UPDATE NhanVien SET HoTen = 1')).toEqual({ ok: false, reason: 'Bài luyện chỉ nhận câu bắt đầu bằng SELECT hoặc WITH.' });
+  expect(guardArcade('WITH t AS (SELECT 1 AS a) DELETE FROM t')).toEqual({ ok: false, reason: 'Bài luyện chỉ nhận câu truy vấn.' });
+});
+
+it('keeps the shared Arcade refusals of the exercise guard', () => {
+  expect(guardArcade('')).toEqual({ ok: false, reason: 'Chưa có câu lệnh nào.' });
+  expect(guardArcade('SELECT 1; SELECT 2')).toEqual({ ok: false, reason: 'Mỗi lần chỉ chạy một câu lệnh.' });
+  expect(guardArcade('SELECT 1 COMMIT')).toEqual({ ok: false, reason: 'Lệnh COMMIT không dùng được trong bài tập.' });
+  expect(guardArcade('SELECT MaNV INTO X FROM NhanVien').ok).toBe(false);
 });
