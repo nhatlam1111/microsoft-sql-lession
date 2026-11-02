@@ -1,0 +1,652 @@
+diff --git a/DESIGN.md b/DESIGN.md
+index 1121dcd..953a488 100644
+--- a/DESIGN.md
++++ b/DESIGN.md
+@@ -160,6 +160,8 @@ Lesson illustrations use native `figure`/`figcaption` and Astro `Image`; the pre
+ 
+ Define hover, visible keyboard focus, pressed, selected, disabled and busy appearances through existing state classes and native attributes. Avoid moving controls during feedback. Preserve the app's existing loading, empty, success and error messages and behavior.
+ 
++Lecture model illustrations retain their original content with Vietnamese HTML captions and visible source/license credits; notes carry full provenance. They do not represent the HRM_Demo schema. `ProjectionRelation` owns both introductory `overview` (neutral links without key/cardinality symbols) and default `detail` views; both validate against the same schema. Department, employee and contract stay in that relative order. The `concept-erd-lesson` presentation variant uses 28px explanatory text and tighter schema padding, retaining 26px column labels; it does not change navigation or lesson reading styles.
++
+ ### Buttons and navigation
+ 
+ Primary action uses blue with white text; completion uses green; secondary controls use neutral boundaries; review actions use red. Normal action controls are 38–40px high where space allows. Current sidebar entries use a blue inset marker and soft fill, without changing labels or targets.
+diff --git a/src/components/presentations/ConceptFigure.astro b/src/components/presentations/ConceptFigure.astro
+index a4cb9cf..728ae6d 100644
+--- a/src/components/presentations/ConceptFigure.astro
++++ b/src/components/presentations/ConceptFigure.astro
+@@ -4,10 +4,10 @@ interface Props { kind: 'database' | 'split' | 'identity' | 'pk' | 'no-pk' | 'fk
+ const { kind } = Astro.props;
+ ---
+ {kind === 'database' && <figure class="concept-database">
+-  <figcaption>Database nhân sự · mở ra ba bảng đang dùng</figcaption>
++  <figcaption>Database nhân sự · trích dữ liệu từ ba bảng</figcaption>
+   <div class="concept-three">
+-    <section><h3><code>NhanVien</code></h3><p>Hồ sơ nhân viên</p><div class="concept-data-row">NV001 · Trần Thị Mai</div><div class="concept-data-row">NV021 · Tôn Thất Long</div></section>
+     <section><h3><code>PhongBan</code></h3><p>Danh mục phòng</p><div class="concept-data-row">KT · Kế toán</div><div class="concept-data-row">IT · IT</div></section>
++    <section><h3><code>NhanVien</code></h3><p>Hồ sơ nhân viên</p><div class="concept-data-row">NV001 · Trần Thị Mai</div><div class="concept-data-row">NV021 · Tôn Thất Long</div></section>
+     <section><h3><code>HopDong</code></h3><p>Các hợp đồng</p><div class="concept-data-row">HD2021-001 · NV021</div><div class="concept-data-row">HD2021-002 · NV021</div></section>
+   </div>
+ </figure>}
+diff --git a/src/components/presentations/ProjectionRelation.astro b/src/components/presentations/ProjectionRelation.astro
+index ed25e23..1d88f4c 100644
+--- a/src/components/presentations/ProjectionRelation.astro
++++ b/src/components/presentations/ProjectionRelation.astro
+@@ -5,8 +5,9 @@ import schemaSql from '../../../database/HRM_Demo.sql?raw';
+ interface Props {
+   tables: { name: string; columns: string[] }[];
+   showLinks?: boolean;
++  variant?: 'overview' | 'detail';
+ }
+-const { tables: selections, showLinks = true } = Astro.props;
++const { tables: selections, showLinks = true, variant = 'detail' } = Astro.props;
+ const schema = parseSchema(schemaSql);
+ const tables = selections.map(selection => {
+   const table = schema.find(t => t.name === selection.name);
+@@ -29,17 +30,17 @@ const links = tables.slice(1).map((right, i) => {
+   };
+ });
+ ---
+-<figure class="projection-relation">
++<figure class="projection-relation" data-variant={variant}>
+   <div class="relation-tables" style={`--relation-count: ${tables.length}`}>
+     {tables.map((table, i) => <>
+-      {i > 0 && showLinks && <div class="relation-connector" aria-hidden="true">{links[i - 1].symbol}</div>}
++      {i > 0 && showLinks && <div class="relation-connector" aria-hidden="true">{variant === 'overview' ? '—' : links[i - 1].symbol}</div>}
+       <section class="relation-table" aria-label={`Bảng ${table.name}`}>
+         <h3>{table.name}</h3>
+-        <ul>{table.columns.map(name => <li><code>{name}</code><span class="relation-keys">{[...(table.primaryKey.includes(name) ? ['PK'] : []), ...(table.foreignKeys.some(fk => fk.column === name) ? ['FK'] : [])].join(' · ')}</span></li>)}</ul>
++        <ul>{table.columns.map(name => <li><code>{name}</code>{variant === 'detail' && <span class="relation-keys">{[...(table.primaryKey.includes(name) ? ['PK'] : []), ...(table.foreignKeys.some(fk => fk.column === name) ? ['FK'] : [])].join(' · ')}</span>}</li>)}</ul>
+       </section>
+     </>)}
+   </div>
+-  {showLinks && <figcaption>{links.map(link => <span><code>{link.from}</code> → <code>{link.to}</code></span>)}</figcaption>}
++  {showLinks && variant === 'detail' && <figcaption>{links.map(link => <span><code>{link.from}</code> → <code>{link.to}</code></span>)}</figcaption>}
+ </figure>
+ <style>
+   .projection-relation { margin: 0; min-width: 0; }
+diff --git a/src/content/presentations/lam-quen.mdx b/src/content/presentations/lam-quen.mdx
+index 730c91e..d693199 100644
+--- a/src/content/presentations/lam-quen.mdx
++++ b/src/content/presentations/lam-quen.mdx
+@@ -1,8 +1,8 @@
+ ---
+ title: Làm quen SQL Server
+-summary: Giới thiệu lại database, SQL Server, SQL, bảng, khóa và cách đọc ERD qua cùng ví dụ nhân sự.
++summary: Từ các dạng database và Excel đến SQL Server, phóng vào bảng và khóa rồi đọc ERD nhân sự.
+ sourceLessons: ["1.1", "1.2", "1.4", "1.5"]
+-keywords: [slide, bài giảng, làm quen, khái niệm, database, SQL Server, SQL, SSMS, bảng, dòng, cột, khóa chính, khóa ngoại, ERD]
++keywords: [slide, bài giảng, làm quen, database, quan hệ, NoSQL, Excel, SQL Server, SQL, SSMS, bảng, dòng, cột, khóa chính, khóa ngoại, ERD]
+ minutes: 55
+ ---
+ 
+@@ -15,305 +15,362 @@ import { Image } from 'astro:assets';
+ import databaseConcept from '../../assets/lessons/1-1-database.png';
+ import serverConcept from '../../assets/lessons/1-1-sql-server.png';
+ import sqlConcept from '../../assets/lessons/1-1-sql-language.png';
++import relationalModel from '../../assets/presentations/relational-database-terms.svg?url';
++import graphModel from '../../assets/presentations/graph-database-property-graph.png';
+ 
+ <Slide id="database-la-gi" title="Database là gì" source="1.1" minutes={2}>
+ 
+-<div class="concept-image-layout"><figure><Image src={databaseConcept} alt="Hình khái niệm database chứa các bảng dữ liệu." width={560} format="webp" /><figcaption>Hình khái niệm: dữ liệu được tổ chức thành các bảng</figcaption></figure><div><p><strong>Database</strong> là tập dữ liệu có cấu trúc, được phần mềm quản lý để nhiều người cùng dùng theo quyền được cấp.</p><p>Ví dụ, database nhân sự lưu hồ sơ, phòng ban và hợp đồng ở một nguồn chung. Buổi học gồm 48 phút giảng và 7 phút hỏi đáp.</p></div></div>
++<div class="concept-image-layout"><figure><Image src={databaseConcept} alt="Ví dụ database quan hệ với các bảng dữ liệu, một trong những cách tổ chức sẽ được giới thiệu." width={560} format="webp" /><figcaption>Ví dụ dạng quan hệ: dữ liệu được tổ chức thành các bảng</figcaption></figure><div><p><strong>Database</strong> (cơ sở dữ liệu) là tập dữ liệu được tổ chức để phần mềm lưu trữ, tra cứu và cập nhật.</p><p>Database nhân sự giữ thông tin hồ sơ, phòng ban và hợp đồng ở một nguồn chung.</p><p class="projection-caption">Buổi học: 48 phút giảng và 7 phút hỏi đáp.</p></div></div>
+ 
+ <PresenterNotes source="1.1" minutes={2}>
+ 
+-**Ý cần nói:** Bắt đầu bằng hình, chỉ vào phần chứa dữ liệu. Nhắc nguồn chung giúp giảm lệch bản sao.
++**Ý cần nói:** Định nghĩa database trước, rồi chỉ hình như một ví dụ, chưa kết luận mọi database đều chứa bảng. Các bên có quyền cùng đọc một nguồn sẽ giảm lệch bản sao.
+ 
+-**Hay hiểu nhầm:** Database là một cửa sổ ứng dụng hoặc là mọi file Excel đặt chung một thư mục.
++**Hay hiểu nhầm:** Database là một cửa sổ ứng dụng, hay cứ dữ liệu nào cũng phải được lưu thành bảng.
+ 
+-**Giải thích:** Excel cũng làm việc chung được. Điểm đang xét là dữ liệu có cấu trúc được phần mềm quản lý, không tự bảo đảm nội dung đúng.
++**Giải thích:** Database là dữ liệu, có nhiều cách tổ chức. Slide sau đặt cách tổ chức quen thuộc này cạnh một cách khác, rồi thu hẹp về dạng khóa học dùng; database không tự bảo đảm dữ liệu đúng nghiệp vụ.
+ 
+ </PresenterNotes>
+ </Slide>
+ 
+-<Slide id="du-lieu-trong-database" title="Dữ liệu bên trong database nhân sự" source="1.1" minutes={2}>
++<Slide id="cac-mo-hinh-luu-tru" title="Dữ liệu có nhiều cách tổ chức" source="1.1" minutes={2}>
+ 
+-<ConceptFigure kind="database" />
+-<p><code>NhanVien</code> lưu hồ sơ, <code>PhongBan</code> lưu danh mục phòng và <code>HopDong</code> lưu hợp đồng.</p><p>Các bảng cùng thuộc một database và liên quan với nhau qua mã.</p>
++<div class="concept-models"><figure><h3>Dạng quan hệ: bảng</h3><img src={relationalModel} alt="Ảnh minh họa một bảng gồm các dòng và cột; các nhãn chỉ một dòng, một cột và toàn bộ bảng." width="984" height="460" /><figcaption>Quan sát cách dữ liệu xếp thành dòng và cột.</figcaption><div class="projection-credit"><a href="https://commons.wikimedia.org/wiki/File:Relational_database_terms.svg">Booyabazooka · Wikimedia Commons</a><span>Public domain · dùng tự do</span></div></figure><figure><h3>Một dạng NoSQL: đồ thị</h3><Image src={graphModel} alt="Ảnh database đồ thị: các điểm đại diện cho đối tượng, các đường có nhãn thể hiện liên hệ giữa chúng." width={616} height={436} format="webp" /><figcaption>Ví dụ: người và nhóm có liên hệ.</figcaption><div class="projection-credit"><a href="https://commons.wikimedia.org/wiki/File:GraphDatabase_PropertyGraph.png">Achim Friedland · Wikimedia Commons</a><a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0 · dùng tự do</a></div></figure></div>
++<p>Database <strong>quan hệ</strong> dùng bảng; đồ thị là một mô hình <strong>NoSQL</strong> (phi quan hệ).</p><p>Điểm là đối tượng; đường là liên hệ giữa các đối tượng.</p>
+ 
+ <PresenterNotes source="1.1" minutes={2}>
+ 
+-**Ý cần nói:** Mở hình database thành ba vùng có tên và nhãn tiếng Việt. Đọc một giá trị cụ thể ở mỗi vùng.
++**Ý cần nói:** Chỉ cấu trúc lớn trong hai ảnh, không bắt lớp đọc các nhãn tiếng Anh. Tài liệu gom thông tin thành một bản có thể lồng chi tiết; khóa–giá trị tra một giá trị theo mã; đồ thị nhấn vào đối tượng và liên hệ.
++
++**Hay hiểu nhầm:** NoSQL chỉ có đồ thị, hoặc các đường trên ERD sắp học nghĩa là database nhân sự cũng là database đồ thị.
++
++**Giải thích:** Ảnh là ví dụ mô hình lưu dữ liệu. ERD về sau là bản đồ cấu trúc của database quan hệ. Phân loại bổ sung theo [Microsoft Learn — Understand data models](https://learn.microsoft.com/en-us/azure/architecture/data-guide/technology-choices/understand-data-store-models), không yêu cầu học thao tác NoSQL.
++
++**Nguồn ảnh:** [Relational database terms](https://commons.wikimedia.org/wiki/File:Relational_database_terms.svg), Booyabazooka, public domain; [GraphDatabase PropertyGraph](https://commons.wikimedia.org/wiki/File:GraphDatabase_PropertyGraph.png), Achim Friedland (Ahzf), [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/). Tải ngày 02/11/2026, giữ nội dung ảnh gốc, chú thích tiếng Việt là HTML bên ngoài ảnh.
++
++</PresenterNotes>
++</Slide>
++
++<Slide id="so-sanh-cac-dang-database" title="Hai nhóm database phổ biến" source="1.1" minutes={3}>
++
++<figure class="concept-database-comparison"><table><thead><tr><th scope="col">Tiêu chí</th><th scope="col">Quan hệ</th><th scope="col">NoSQL</th></tr></thead><tbody><tr><th scope="row">Cách tổ chức</th><td>Bảng, dòng, cột; tham chiếu bằng mã</td><td>Tài liệu: gom chi tiết thành một bản; khóa–giá trị: tra giá trị theo mã; đồ thị: điểm và liên hệ</td></tr><tr><th scope="row">Nhu cầu ví dụ</th><td>Quản lý hồ sơ, phòng ban, hợp đồng</td><td>Lưu tài liệu; tra giỏ hàng theo mã; tìm liên hệ</td></tr><tr><th scope="row">Phần mềm ví dụ</th><td><strong>SQL Server</strong>, PostgreSQL</td><td>MongoDB, Redis, Neo4j</td></tr><tr><th scope="row">Trong khóa học</th><td>SQL Server: dữ liệu nhân sự</td><td>Nhận diện, không học thao tác</td></tr></tbody></table></figure>
++<p>Đây là hai nhóm theo cách tổ chức dữ liệu, không phải xếp hạng hơn–kém.</p><p>Từ đây, ta tập trung vào <strong>database quan hệ</strong> trong SQL Server.</p>
++
++<PresenterNotes source="1.1" minutes={3}>
++
++**Ý cần nói:** Đọc hàng cách tổ chức rồi tới nhu cầu; tên phần mềm là ví dụ hệ quản lý, không phải bản thân dữ liệu. Một sản phẩm có thể hỗ trợ thêm mô hình khác; bảng chỉ nêu cách dùng tiêu biểu.
++
++**Hay hiểu nhầm:** NoSQL không có cấu trúc, không có quan hệ, không dùng được SQL hoặc luôn nhanh hơn database quan hệ.
++
++**Giải thích:** Cấu trúc, luật dữ liệu, ngôn ngữ và hiệu năng phụ thuộc sản phẩm và cách dùng. Không dạy lựa chọn kiến trúc ở đây; mục đích là định vị mô hình khóa học đang dùng. [Nguồn phân loại và ví dụ: Microsoft Learn](https://learn.microsoft.com/en-us/azure/architecture/data-guide/technology-choices/understand-data-store-models).
++
++</PresenterNotes>
++</Slide>
++
++<Slide id="tu-excel-den-database-quan-he" title="Từ Excel đến database quan hệ" source="1.2" minutes={3}>
+ 
+-**Hay hiểu nhầm:** Hình đang liệt kê hết database hoặc một dòng hợp đồng là một nhân viên mới.
++<figure class="concept-excel-map"><table><thead><tr><th scope="col">Điểm quen trong Excel</th><th scope="col">Giúp hình dung trong database</th></tr></thead><tbody><tr><td><strong>Workbook</strong>: một file Excel</td><td>Database <code>HRM_Demo</code></td></tr><tr><td><strong>Sheet</strong>: một trang tính</td><td>Bảng <code>NhanVien</code></td></tr><tr><td>Một dòng dữ liệu nhân viên</td><td>Một bản ghi, như hồ sơ <code>NV001</code></td></tr></tbody></table></figure>
++<p>Đây là phép so sánh để hình dung: Excel là <strong>phần mềm bảng tính</strong>, còn SQL Server là phần mềm quản lý database quan hệ.</p><p>Trong mô hình sắp học, các bảng có cột được thiết kế sẵn và dùng mã để tham chiếu nhau.</p>
+ 
+-**Giải thích:** Đây chỉ là ba bảng và vài dòng trích, không phải toàn bộ hệ thống. Chưa cần học các loại đối tượng khác như view.
++<PresenterNotes source="1.2" minutes={3}>
++
++**Ý cần nói:** Giải thích workbook và sheet tại chỗ, không mặc định biết hàm dò tìm. Từ file/trang tính quen thuộc dẫn sang database/bảng, rồi mới gọi phần mềm quản lý ở slide kế tiếp.
++
++**Hay hiểu nhầm:** Workbook chính là database quan hệ, mọi sheet tự thành bảng chuẩn, hoặc Excel không làm việc chung và kiểm dữ liệu được.
++
++**Giải thích:** Excel cũng chia sẻ và kiểm dữ liệu nhập được khi thiết lập phù hợp; một sheet có thể chứa ô gộp, ghi chú hoặc nhiều vùng. Bảng đang học có cột nhất quán cho các dòng và luật đã khai báo do SQL Server kiểm. Phép so sánh không phải hướng dẫn tự nhập hay đồng bộ file Excel.
+ 
+ </PresenterNotes>
+ </Slide>
+ 
+ <Slide id="sql-server-la-gi" title="SQL Server là gì" source="1.1" minutes={2}>
+ 
+-<div class="concept-image-layout"><figure><Image src={serverConcept} alt="Hình khái niệm phần mềm SQL Server quản lý các database." width={560} format="webp" /><figcaption>SQL Server là phần mềm; hình chỉ minh họa việc quản lý</figcaption></figure><div><p><strong>SQL Server</strong> là phần mềm của Microsoft quản lý việc lưu trữ, đọc và cập nhật database.</p><p>Phần mềm thường chạy trên <strong>máy chủ</strong>, máy cung cấp dữ liệu qua mạng; nó kiểm quyền truy cập và kiểm luật dữ liệu đã khai báo khi ghi.</p></div></div>
++<div class="concept-image-layout"><figure><Image src={serverConcept} alt="Hình khái niệm phần mềm SQL Server quản lý các database." width={560} format="webp" /><figcaption>SQL Server là phần mềm; hình chỉ minh họa việc quản lý</figcaption></figure><div><p><strong>SQL Server</strong> là phần mềm của Microsoft quản lý việc lưu trữ, đọc và cập nhật database.</p><p>Phần mềm thường chạy trên <strong>máy chủ</strong>, máy cung cấp dữ liệu qua mạng; nó kiểm quyền và luật dữ liệu đã khai báo khi ghi.</p></div></div>
+ 
+ <PresenterNotes source="1.1" minutes={2}>
+ 
+-**Ý cần nói:** Tách ba tên: máy chủ là nơi phần mềm chạy, SQL Server là phần mềm, database là dữ liệu được quản lý.
++**Ý cần nói:** Liên hệ với bảng so sánh vừa xem: SQL Server là phần mềm được dùng để làm việc với dữ liệu quan hệ trong buổi học. Tách máy chủ, phần mềm và dữ liệu.
+ 
+ **Hay hiểu nhầm:** SQL Server chính là máy chủ vật lý hoặc cửa sổ SSMS.
+ 
+-**Giải thích:** Một SQL Server có thể quản lý nhiều database. IT quản trị hệ thống và cấp quyền; buổi này không cần đi vào cài đặt hay cấu hình.
++**Giải thích:** Một SQL Server có thể quản lý nhiều database. IT quản trị hệ thống và cấp quyền; không đi vào cài đặt, cấu hình hoặc mô hình khác mà sản phẩm có hỗ trợ.
+ 
+ </PresenterNotes>
+ </Slide>
+ 
+-<Slide id="sql-la-gi" title="SQL là gì" source="1.1" minutes={3}>
++<Slide id="sql-la-gi" title="SQL diễn đạt yêu cầu lấy dữ liệu" source="1.1" minutes={2}>
+ 
+ <div class="concept-sql-layout"><figure><Image src={sqlConcept} alt="Minh họa yêu cầu SQL gửi tới hệ thống và nhận kết quả dạng bảng." width={480} format="webp" /><figcaption>Hình khái niệm gửi yêu cầu và nhận kết quả</figcaption></figure><div><p><strong>SQL</strong> là ngôn ngữ diễn đạt yêu cầu đọc hoặc thay đổi dữ liệu; yêu cầu lấy dữ liệu gọi là <strong>truy vấn</strong>.</p><div class="concept-query"><span>Lấy họ tên nhân viên</span><pre><code>SELECT HoTen FROM NhanVien;</code></pre><span>Kết quả trích: Trần Thị Mai · Vũ Thị Lan · Tôn Thất Long</span></div><p class="projection-caption">SQL Server xử lý câu này rồi trả cột họ tên; thứ tự dòng có thể khác hình.</p></div></div>
+ 
+-<PresenterNotes source="1.1" minutes={3}>
++<PresenterNotes source="1.1" minutes={2}>
+ 
+-**Ý cần nói:** Đọc yêu cầu tiếng Việt trước, chỉ câu SQL tương ứng rồi phần kết quả trích. Chỉ minh họa vai trò ngôn ngữ, không phân tích cú pháp.
++**Ý cần nói:** Phần mềm cần biết ta muốn lấy gì: đọc yêu cầu tiếng Việt, câu SQL, rồi phần kết quả trích. Không phân tích cú pháp.
+ 
+-**Hay hiểu nhầm:** SQL là tên ứng dụng hoặc nơi chứa dữ liệu.
++**Hay hiểu nhầm:** SQL là tên phần mềm hoặc nơi chứa dữ liệu.
+ 
+-**Giải thích:** Câu minh họa chỉ đọc, lấy họ tên từ bảng nhân viên. Không yêu cầu chạy hay nhớ cú pháp; bài 2.1 dạy viết SELECT. SQL còn diễn đạt yêu cầu thay đổi nhưng không thực hành ghi ở đây.
++**Giải thích:** Đây là câu chỉ đọc đã có trong bộ slide, không yêu cầu chạy hay nhớ; bài 2.1 dạy SELECT. Ba tên là phần trích minh họa, không phải toàn bộ kết quả hay thứ tự được bảo đảm.
+ 
+ </PresenterNotes>
+ </Slide>
+ 
+-<Slide id="bon-ten-can-phan-biet" title="Database, SQL Server và SQL" source="1.1" minutes={3}>
++<Slide id="bon-ten-can-phan-biet" title="Bốn tên, bốn vai trò" source="1.1" minutes={2}>
+ 
+-<figure><div class="projection-path concept-request"><div><strong>SSMS</strong><span>Công cụ gửi yêu cầu</span></div><span>→ SQL →</span><div><strong>SQL Server</strong><span>Kiểm quyền và xử lý</span></div><span>→</span><div><strong>Database</strong><span>Dữ liệu được lưu</span></div></div><figcaption>Yêu cầu đi tới dữ liệu; kết quả được trả ngược về công cụ</figcaption></figure>
+-<p><strong>SSMS</strong> là công cụ kết nối tới SQL Server để gửi câu SQL và xem kết quả.</p><p>Database giữ dữ liệu, SQL Server quản lý và xử lý, còn SQL diễn đạt yêu cầu; đóng SSMS không làm mất dữ liệu trên máy chủ.</p>
++<figure><div class="projection-path concept-request"><div><strong>SSMS</strong><span>Công cụ gửi yêu cầu</span></div><span>→ SQL →</span><div><strong>SQL Server</strong><span>Phần mềm xử lý</span></div><span>→</span><div><strong>Database</strong><span>Dữ liệu được lưu</span></div></div><figcaption>Yêu cầu đi tới dữ liệu; kết quả được trả ngược về công cụ</figcaption></figure>
++<p><strong>SSMS</strong> là công cụ kết nối tới SQL Server để gửi câu SQL và xem kết quả; đóng SSMS không làm mất dữ liệu trên máy chủ.</p><p>Tiếp theo, ta mở database quan hệ <code>HRM_Demo</code> để nhìn các bảng nhân sự và bản đồ liên hệ của chúng.</p>
+ 
+-<PresenterNotes source="1.1" minutes={3}>
++<PresenterNotes source="1.1" minutes={2}>
+ 
+-**Ý cần nói:** Đọc sơ đồ từ trái sang phải rồi đọc chiều trả kết quả. Cho lớp gọi đúng tên của từng phần bằng lời.
++**Ý cần nói:** Đọc sơ đồ và gọi đúng bốn tên: công cụ, ngôn ngữ, phần mềm quản lý, dữ liệu. Sau đó chuyển từ cách gửi yêu cầu sang cấu trúc dữ liệu cần đọc.
+ 
+-**Hay hiểu nhầm:** Dữ liệu nằm trong cửa sổ đang mở hoặc câu SQL tự xử lý dữ liệu mà không qua hệ quản lý.
++**Hay hiểu nhầm:** Dữ liệu nằm trong cửa sổ SSMS, hoặc SQL tự xử lý mà không qua hệ quản lý.
+ 
+-**Giải thích:** Công cụ có thể đóng trong khi dữ liệu vẫn được quản lý ở máy chủ. Tới đây lớp cần phân biệt được dữ liệu, phần mềm quản lý, ngôn ngữ và công cụ.
++**Giải thích:** SSMS là SQL Server Management Studio. Người dùng gửi SQL; SQL Server kiểm quyền và xử lý trên database rồi trả kết quả. Từ slide sau chỉ dùng ba bảng của HRM_Demo, không phải toàn bộ hệ thống.
+ 
+ </PresenterNotes>
+ </Slide>
+ 
+-<Slide id="bang-trong-database" title="Bảng trong database" source="1.2" minutes={2}>
++<Slide id="du-lieu-trong-database" title="Mở database nhân sự ra xem" source="1.1" minutes={2}>
++
++<ConceptFigure kind="database" />
++<p>Ba nhóm thông tin được lưu riêng, cùng thuộc một database.</p><p>Sơ đồ ở slide sau biểu diễn cấu trúc và liên hệ giữa các bảng này.</p>
++
++<PresenterNotes source="1.1" minutes={2}>
++
++**Ý cần nói:** Đọc một giá trị cụ thể ở mỗi vùng; phân biệt thông tin về một phòng, một hồ sơ và một hợp đồng. Mã được dùng lại để nhắc tới thông tin liên quan.
++
++**Hay hiểu nhầm:** Hình liệt kê hết database hoặc một dòng hợp đồng là một nhân viên mới.
++
++**Giải thích:** Đây là ba bảng và vài dòng trích, không phải toàn bộ database. Chưa đi vào view hay đối tượng khác; các tên này sẽ xuất hiện lại ở đúng vị trí trên ERD.
++
++</PresenterNotes>
++</Slide>
++
++<Slide id="so-do-quan-he-erd" title="ERD là bản đồ cấu trúc" source="1.5" minutes={2}>
++
++<div class="concept-erd-lesson">
++<ProjectionRelation variant="overview" tables={[
++{name:'PhongBan',columns:['MaPB','TenPB']},{name:'NhanVien',columns:['MaNV','HoTen','MaPB']},{name:'HopDong',columns:['MaHD','MaNV']},
++]} />
++<p><strong>ERD</strong> (sơ đồ quan hệ) dùng hộp để thể hiện bảng và các cột, đường để thể hiện liên hệ giữa các bảng.</p><p>Đây là cấu trúc, không phải các dòng hồ sơ; ta sẽ phóng vào <code>NhanVien</code>, hiểu bảng và khóa rồi quay lại đọc các đường này.</p>
++</div>
++
++<PresenterNotes source="1.5" minutes={2}>
++
++**Ý cần nói:** Đọc ERD là Entity–Relationship Diagram, chỉ tên bảng và các cột mà chưa phân tích đường đi. Hộp giữa là nơi phần tiếp theo phóng vào.
++
++**Hay hiểu nhầm:** HoTen trong hộp là tên một người, ERD là bảng kết quả hoặc mọi nét nối đều là luồng xử lý.
++
++**Giải thích:** Các đường trong sơ đồ khóa học lấy từ quan hệ khóa ngoại đã khai báo. Chế độ tổng quan tạm chưa hiện ký hiệu khóa và một–nhiều; sau phần khóa, cùng bố trí này hiện đầy đủ ký hiệu. ERD không biến database quan hệ thành database đồ thị.
++
++</PresenterNotes>
++</Slide>
++
++<Slide id="bang-trong-database" title="Phóng vào bảng NhanVien" source="1.2" minutes={2}>
+ 
+ <ProjectionTable caption="Trích bảng NhanVien · ba cột và hai hồ sơ" columns={['MaNV','HoTen','MaPB']} rows={[
+ ['NV001','Trần Thị Mai','KT'],['NV021','Tôn Thất Long','IT'],
+ ]} />
+-<p><strong>Bảng</strong> tổ chức dữ liệu cùng loại thành dòng và cột, như <code>NhanVien</code> lưu các hồ sơ nhân viên.</p><p>Khung tên cột thuộc thiết kế bảng; đó không phải một dòng dữ liệu nhân viên.</p>
++<p><strong>Bảng</strong> tổ chức dữ liệu cùng loại thành dòng và cột, như <code>NhanVien</code> lưu các hồ sơ nhân viên.</p><p>Khung tên cột thuộc thiết kế bảng, không phải một dòng dữ liệu nhân viên.</p>
+ 
+ <PresenterNotes source="1.2" minutes={2}>
+ 
+-**Ý cần nói:** Phóng to đúng bảng NhanVien đã thấy trong database. Chỉ toàn khung trước, chưa đi vào một ô.
++**Ý cần nói:** Nối hộp NhanVien trên bản đồ với phần dữ liệu đang mở. Chỉ toàn khung trước, sau đó mới tới dòng và cột ở slide kế.
+ 
+ **Hay hiểu nhầm:** Tên cột là hồ sơ đầu tiên hoặc bảng là bất kỳ hình chữ nhật có ô.
+ 
+-**Giải thích:** Bảng có các cột được thiết kế nhất quán cho mọi dòng, không dùng ô gộp như sheet. Các cột không đưa vào hình vẫn tồn tại trong bảng nguồn.
++**Giải thích:** Mọi dòng có cùng các cột đã thiết kế; bảng không gộp ô như sheet. Những cột không trích trong hình vẫn tồn tại trong bảng nguồn.
+ 
+ </PresenterNotes>
+ </Slide>
+ 
+-<Slide id="bang-dong-cot" title="Dòng và cột" source="1.2" minutes={3}>
++<Slide id="bang-dong-cot" title="Dòng và cột trong bảng" source="1.2" minutes={2}>
+ 
+ <ProjectionTable caption="Trích NhanVien · dòng NV001 tô vàng · cột HoTen tô xanh" columns={['MaNV','HoTen','MaPB']} rows={[
+ ['NV001','Trần Thị Mai','KT'],['NV021','Tôn Thất Long','IT'],
+ ]} markRow={0} markColumn={1} />
+ <p>Một <strong>dòng</strong>, còn gọi là bản ghi, đại diện cho một hồ sơ trong <code>NhanVien</code>; một <strong>cột</strong> là một thuộc tính như họ tên hoặc mã phòng.</p><p>Ý nghĩa dòng tùy bảng: ở <code>HopDong</code>, mỗi dòng là một hợp đồng.</p>
+ 
+-<PresenterNotes source="1.2" minutes={3}>
++<PresenterNotes source="1.2" minutes={2}>
+ 
+-**Ý cần nói:** Chỉ toàn dòng NV001 và toàn cột HoTen, không chỉ một ô. Đọc tên thuộc tính rồi một giá trị.
++**Ý cần nói:** Chỉ cả dòng NV001 và cả cột HoTen, không chỉ một ô; đọc tên thuộc tính rồi một giá trị. Việc cùng gọi là dòng không làm mọi bảng lưu cùng một loại thông tin.
+ 
+-**Hay hiểu nhầm:** Mọi dòng ở mọi bảng đều là một người.
++**Hay hiểu nhầm:** Mọi dòng ở mọi bảng đều là một người, hoặc bảng có thứ tự dòng cố định như số dòng của Excel.
+ 
+-**Giải thích:** Đơn vị của dòng do bảng đang lưu thông tin gì quyết định. Xác định đúng đơn vị trước khi đếm hoặc đọc kết quả qua nhiều bảng.
++**Giải thích:** Xác định mỗi dòng đại diện cho gì trước khi đếm. Database không bảo đảm thứ tự hiển thị nếu yêu cầu chưa có sắp xếp; mã giúp gọi đúng hồ sơ thay vì nói dòng thứ hai.
+ 
+ </PresenterNotes>
+ </Slide>
+ 
+-<Slide id="thong-tin-o-nhieu-bang" title="Thông tin ở nhiều bảng" source="1.2" minutes={3}>
++<Slide id="thong-tin-o-nhieu-bang" title="Tách thông tin thành nhiều bảng" source="1.2" minutes={2}>
+ 
+ <ConceptFigure kind="split" />
+-<p>Ba hợp đồng cùng ghi <code>MaNV = NV021</code> để nhắc tới hồ sơ.</p><p>Thông tin hồ sơ được giữ ở một nơi, giảm việc lặp và sửa sót ở từng hợp đồng.</p>
++<p>Ba hợp đồng cùng ghi <code>MaNV = NV021</code> để nhắc tới một hồ sơ.</p><p>Tách thông tin hồ sơ ra một nơi giúp giảm việc chép lại và sửa sót ở từng hợp đồng.</p>
+ 
+-<PresenterNotes source="1.2" minutes={3}>
++<PresenterNotes source="1.2" minutes={2}>
+ 
+-**Ý cần nói:** Giữ NV021 ở giữa câu chuyện: một hồ sơ nhưng ba sự kiện hợp đồng. Danh mục phòng cũng tách riêng để tên phòng không phải chép vào từng hồ sơ.
++**Ý cần nói:** Một hồ sơ NV021 đi với ba dòng hợp đồng, mỗi hợp đồng có mã riêng. Danh mục phòng tách riêng cũng giúp tên phòng không phải chép vào từng hồ sơ.
+ 
+-**Hay hiểu nhầm:** Lặp MaNV ở hợp đồng chứng tỏ đã tạo ba hồ sơ nhân viên.
++**Hay hiểu nhầm:** Lặp MaNV trong hợp đồng nghĩa là đã có ba hồ sơ nhân viên.
+ 
+-**Giải thích:** Các hợp đồng có mã riêng và dùng MaNV để nhắc hồ sơ. Trước khi dạy khóa, người học đã thấy nhu cầu nhắc đúng một dòng và giữ các mã có nghĩa.
++**Giải thích:** Tách bảng tạo nhu cầu dùng mã để nhắc đúng một dòng ở bảng khác. Vì vậy phần khóa tiếp theo giải thích cả nhận diện một dòng và giữ mã tham chiếu có thật.
+ 
+ </PresenterNotes>
+ </Slide>
+ 
+-<Slide id="nhan-dien-mot-ho-so" title="Nhận diện một hồ sơ" source="1.4" minutes={2}>
++<Slide id="nhan-dien-mot-ho-so" title="Cần một mã để nhắc đúng hồ sơ" source="1.4" minutes={1}>
+ 
+ <ConceptFigure kind="identity" />
+ <p>Họ tên có thể trùng hoặc thay đổi, nên cần một mã để nhắc đúng hồ sơ, như <code>MaNV = NV001</code>.</p><p>Tên <code>MaNV</code> không tự cấm mã trùng; cần khai báo <strong>ràng buộc</strong>, tức luật để SQL Server kiểm dữ liệu.</p>
+ 
+-<PresenterNotes source="1.4" minutes={2}>
++<PresenterNotes source="1.4" minutes={1}>
+ 
+-**Ý cần nói:** Dùng hai hồ sơ thật để chỉ vai trò mã. Không tuyên bố bộ mẫu có hai người trùng tên.
++**Ý cần nói:** Dùng hai hồ sơ thật để chỉ mã và tên. Không tuyên bố bộ mẫu có hai người trùng tên; chỉ nói vì sao họ tên nói chung không đủ để định danh.
+ 
+-**Hay hiểu nhầm:** Cột có tên mã tự động duy nhất, hoặc mã cho biết toàn bộ danh tính của người thật.
++**Hay hiểu nhầm:** Cứ đặt tên cột là mã thì các giá trị tự trở nên duy nhất.
+ 
+-**Giải thích:** Ràng buộc là luật dữ liệu khai báo cho SQL Server kiểm. Sau nhu cầu định danh, slide tiếp giới thiệu chính luật đó.
++**Giải thích:** Nhu cầu nhận diện dòng dẫn tới luật khóa chính ở slide kế tiếp. Mã của hồ sơ không tự xác nhận danh tính người thật.
+ 
+ </PresenterNotes>
+ </Slide>
+ 
+-<Slide id="khoa-chinh" title="Khóa chính" source="1.4" minutes={3}>
++<Slide id="khoa-chinh" title="Khóa chính giữ mã nhận diện dòng" source="1.4" minutes={3}>
+ 
+ <ConceptFigure kind="pk" />
+ <p>Khi cột <code>MaNV</code> của bảng <code>NhanVien</code> (<code>NhanVien.MaNV</code>) được khai báo là <strong>khóa chính</strong> (<strong>PK</strong>), mã không được trùng hoặc là <code>NULL</code> (chưa có giá trị).</p><p>PK xác định dòng theo mã; không tự phát hiện một người có hai hồ sơ khác mã.</p>
+ 
+ <PresenterNotes source="1.4" minutes={3}>
+ 
+-**Ý cần nói:** Đọc PK là primary key. Hình mô tả riêng luật duy nhất, không hứa mã mới sẽ qua mọi luật khác.
++**Ý cần nói:** PK là primary key. Quay về nhu cầu của hợp đồng: khi dùng MaNV để nhắc hồ sơ, mã duy nhất giúp chỉ đúng một dòng.
+ 
+-**Hay hiểu nhầm:** Khóa chính tự sinh mã hoặc chặn mọi hồ sơ trùng người.
++**Hay hiểu nhầm:** PK tự sinh mã, hoặc mã mới chắc chắn qua mọi luật dữ liệu.
+ 
+-**Giải thích:** Một mã mới chỉ qua được luật duy nhất, còn những cột và luật khác vẫn phải hợp lệ. NULL không phải số 0; việc khai báo PK mới tạo luật, tên cột không làm thay.
++**Giải thích:** Hình chỉ xét luật duy nhất của PK; cột và luật khác vẫn cần hợp lệ. NULL không phải số 0; phải khai báo PK mới tạo luật. PK cũng có thể gồm nhiều cột, nhưng ví dụ này chỉ cần một cột MaNV.
+ 
+ </PresenterNotes>
+ </Slide>
+ 
+-<Slide id="bang-khong-co-khoa-chinh" title="Bảng không khai báo khóa chính" source="1.4" minutes={3}>
++<Slide id="bang-khong-co-khoa-chinh" title="Nếu không khai báo khóa chính" source="1.4" minutes={2}>
+ 
+ <ConceptFigure kind="no-pk" />
+ <p>Trong minh họa giả định này, bảng không có PK vẫn lưu và đọc được dữ liệu.</p><p>Nếu không có luật khác chặn, mã trùng có thể lọt vào, khiến việc dùng mã để chỉ đúng một dòng khó hơn.</p>
+ 
+-<PresenterNotes source="1.4" minutes={3}>
++<PresenterNotes source="1.4" minutes={2}>
+ 
+-**Ý cần nói:** Nêu rõ đây là đối chiếu giả định, không phải vừa bỏ PK của database mẫu. Cùng hai giá trị mã được xem dưới hai bộ luật.
++**Ý cần nói:** Đây là đối chiếu giả định, không phải đã bỏ PK trong database mẫu. Nối hậu quả mã trùng với việc bảng hợp đồng cần nhắc một hồ sơ xác định.
+ 
+-**Hay hiểu nhầm:** Không PK thì bảng không tồn tại được, hoặc chắc chắn dữ liệu đang trùng.
++**Hay hiểu nhầm:** Bảng không PK không tồn tại được hoặc chắc chắn dữ liệu đang trùng.
+ 
+-**Giải thích:** Bảng thông thường không bắt buộc khai báo PK. Tính duy nhất có thể được kiểm bằng luật khác; ở đây chỉ kết luận thiếu luật PK, không phủ nhận mọi cách kiểm khác.
++**Giải thích:** Bảng thông thường không bắt buộc có PK; luật khác vẫn có thể giữ tính duy nhất. Hình chỉ xét trường hợp không có luật khác chặn, không phủ nhận mọi cách kiểm khác.
+ 
+ </PresenterNotes>
+ </Slide>
+ 
+-<Slide id="ma-phong-trong-ho-so" title="Mã phòng trong hồ sơ" source="1.4" minutes={2}>
++<Slide id="ma-phong-trong-ho-so" title="Từ mã phòng đến tên phòng" source="1.4" minutes={2}>
+ 
+-<div class="projection-grid"><ProjectionTable caption="NhanVien · hồ sơ cần tra" columns={['MaNV','MaPB']} rows={[
+-['NV001','KT'],
+-]} markColumn={1} /><ProjectionTable caption="PhongBan · dòng có mã khớp" columns={['MaPB','TenPB']} rows={[
++<div class="projection-grid"><ProjectionTable caption="PhongBan · dòng có mã khớp" columns={['MaPB','TenPB']} rows={[
+ ['KT','Kế toán'],
+-]} markColumn={0} /></div>
+-<p>Hồ sơ <code>NV001</code> ghi mã phòng <code>KT</code>; dò cùng mã ở danh mục <code>PhongBan</code> thì biết tên <code>Kế toán</code>.</p><p>Nếu mã không có trong danh mục, đường dò này không tìm được tên phòng tương ứng.</p>
++]} markColumn={0} /><ProjectionTable caption="NhanVien · hồ sơ cần tra" columns={['MaNV','MaPB']} rows={[
++['NV001','KT'],
++]} markColumn={1} /></div>
++<p>Hồ sơ <code>NV001</code> ghi mã phòng <code>KT</code>; dò cùng mã ở <code>PhongBan</code> thì biết tên <code>Kế toán</code>.</p><p>Nếu mã không có trong danh mục, đường dò này không tìm được tên phòng tương ứng.</p>
+ 
+ <PresenterNotes source="1.4" minutes={2}>
+ 
+-**Ý cần nói:** Dò giá trị KT qua hai bảng, tên bảng và cột đều có nhãn. Đặt nhu cầu giữ mã tham chiếu có thật trước khi định nghĩa FK.
++**Ý cần nói:** Bắt đầu ở hồ sơ bên phải rồi dò sang danh mục bên trái. Hướng tìm phụ thuộc thông tin cần lấy, không phụ thuộc hình đặt bảng ở phía nào.
+ 
+-**Hay hiểu nhầm:** Phải chép tên phòng vào hồ sơ mới đọc được hoặc tên cột giống nhau tự tạo luật liên kết.
++**Hay hiểu nhầm:** Phải chép tên phòng vào hồ sơ, hoặc hai cột cùng tên thì tự có luật giữ mã tham chiếu hợp lệ.
+ 
+-**Giải thích:** Mã dùng để tra thông tin, nhưng muốn kiểm khi ghi rằng mã có thật thì cần luật. Việc hai cột cùng tên không tự khai báo luật đó.
++**Giải thích:** Mã dùng để tra thông tin; muốn kiểm khi ghi rằng mã có thật thì cần luật khóa ngoại. MaPB của danh mục là duy nhất, còn nhiều hồ sơ có thể dùng cùng một mã phòng.
+ 
+ </PresenterNotes>
+ </Slide>
+ 
+-<Slide id="khoa-ngoai" title="Khóa ngoại" source="1.4" minutes={3}>
++<Slide id="khoa-ngoai" title="Khóa ngoại kiểm mã tham chiếu" source="1.4" minutes={3}>
+ 
+ <ConceptFigure kind="fk" />
+ <p><strong>Khóa ngoại</strong> (<strong>FK</strong>) <code>NhanVien.MaPB</code> tham chiếu <code>PhongBan.MaPB</code>: khi FK đang bật, mã khác <code>NULL</code> phải có trong danh mục lúc ghi.</p><p>Việc nhận <code>NULL</code> do thiết kế cột; <code>MaPB</code> ở đây không nhận <code>NULL</code>. FK cho phép lặp mã phòng nhưng không phát hiện gán nhầm mã có thật.</p>
+ 
+ <PresenterNotes source="1.4" minutes={3}>
+ 
+-**Ý cần nói:** Đọc FK là foreign key. Hình kiểm KT và KT01 theo danh mục hiện tại; đây là mô tả luật, không thử ghi.
++**Ý cần nói:** FK là foreign key. Dùng lại KT từ ví dụ vừa dò và đối chiếu KT01 không có trong danh mục; đây là hình mô tả luật, không thử ghi.
+ 
+-**Hay hiểu nhầm:** FK cấm lặp như PK, tự lấy tên phòng, hoặc là ô chọn trên màn hình.
++**Hay hiểu nhầm:** FK cấm lặp như PK, tự lấy tên phòng hoặc tự biết nhân viên thực sự thuộc phòng nào.
+ 
+-**Giải thích:** Luật nhận NULL thuộc thiết kế cột; MaPB trong bộ mẫu không nhận NULL. Một FK khác có thể nhận NULL. Việc hiển thị tên phòng do yêu cầu lấy dữ liệu quyết định.
++**Giải thích:** PK giữ một mã ở danh mục, FK cho nhiều hồ sơ nhắc tới mã đó. Luật nhận NULL thuộc thiết kế cột; một FK khác có thể nhận NULL. FK là luật kiểm khi ghi, việc lấy tên phòng cần yêu cầu đọc qua bảng danh mục.
+ 
+ </PresenterNotes>
+ </Slide>
+ 
+-<Slide id="bang-khong-co-khoa-ngoai" title="Bảng không khai báo khóa ngoại" source="1.4" minutes={3}>
++<Slide id="bang-khong-co-khoa-ngoai" title="Nếu không khai báo khóa ngoại" source="1.4" minutes={2}>
+ 
+ <ConceptFigure kind="no-fk" />
+ <p>Trong minh họa giả định, nếu không có FK và không có luật kiểm khác, mã phòng không có thật có thể lọt vào hồ sơ.</p><p>Ta vẫn có thể kết bảng, tức lấy thông tin qua nhiều bảng theo điều kiện so khớp; FK là luật kiểm dữ liệu, không phải điều kiện bắt buộc để kết bảng.</p>
+ 
+-<PresenterNotes source="1.4" minutes={3}>
++<PresenterNotes source="1.4" minutes={2}>
+ 
+-**Ý cần nói:** Tách hai việc: giữ mã hợp lệ khi ghi và tìm thông tin khi đọc. Không có FK không khiến phép so khớp hai cột biến mất.
++**Ý cần nói:** Tách giữ mã hợp lệ khi ghi với tìm thông tin khi đọc; không có FK không làm phép so khớp hai cột biến mất.
+ 
+-**Hay hiểu nhầm:** Thiếu FK thì không viết được yêu cầu lấy dữ liệu qua hai bảng, hoặc sơ đồ không có đường nghĩa là không liên quan.
++**Hay hiểu nhầm:** Thiếu FK thì không lấy dữ liệu qua hai bảng được, hoặc mọi quan hệ nghiệp vụ đều chắc chắn được vẽ trên sơ đồ.
+ 
+-**Giải thích:** Các hệ thống có thể kiểm bằng cách khác, nên hình chỉ xét giả định không có luật khác. Không dạy cú pháp JOIN; cần hiểu quan hệ có thể có về mặt nghiệp vụ dù chưa được khai báo thành FK.
++**Giải thích:** Hình chỉ xét giả định không có luật khác; không đổi schema thật. Sau khi hiểu khóa, quay về ERD: sơ đồ khóa học chỉ vẽ các FK được khai báo, nên nó không liệt kê hết mọi liên hệ có thể có về nghiệp vụ.
+ 
+ </PresenterNotes>
+ </Slide>
+ 
+-<Slide id="so-do-quan-he-erd" title="Sơ đồ quan hệ ERD" source="1.5" minutes={2}>
++<Slide id="ky-hieu-erd" title="Quay lại ERD: đọc từ cả hai phía" source="1.5" minutes={3}>
+ 
+-<ProjectionRelation tables={[
+-{name:'NhanVien',columns:['MaNV','MaPB']},{name:'PhongBan',columns:['MaPB','TenPB']},
++<div class="concept-erd-lesson"><ProjectionRelation tables={[
++{name:'PhongBan',columns:['MaPB','TenPB']},{name:'NhanVien',columns:['MaNV','MaPB']},{name:'HopDong',columns:['MaHD','MaNV']},
+ ]} />
+-<p><strong>ERD</strong> là sơ đồ quan hệ: hộp thể hiện bảng và các cột, đường thể hiện quan hệ giữa các bảng.</p><p>Sơ đồ của khóa học vẽ các FK đã khai báo, giúp tìm đường lấy thông tin; nó mô tả cấu trúc, không phải kết quả chứa hồ sơ.</p>
++<p><code>PK</code> là khóa chính, <code>FK</code> là khóa ngoại; <code>1</code> ở phía một, <code>∞</code> ở phía nhiều, không phải số dòng thực có.</p><p>Phòng có thể có nhiều hồ sơ hoặc chưa có người; mỗi hồ sơ có một phòng.</p><p><code>HopDong.MaNV</code> không nhận <code>NULL</code>, FK đang bật: mỗi hợp đồng có một hồ sơ; một hồ sơ có thể có 0 hoặc nhiều hợp đồng.</p>
++</div>
+ 
+-<PresenterNotes source="1.5" minutes={2}>
++<PresenterNotes source="1.5" minutes={3}>
+ 
+-**Ý cần nói:** Gọi tên đầy đủ Entity–Relationship Diagram trong lời giảng, rồi dùng tên tiếng Việt. Chỉ hộp, tên cột và đường thay cho các giá trị hồ sơ đã thấy.
++**Ý cần nói:** Chỉ lại bản đồ đã thấy trước phần bảng, nay có ký hiệu khóa. Đọc cả hai phía từng đường: một phòng có thể có nhiều hồ sơ, mỗi hồ sơ có một phòng; một hồ sơ có thể có nhiều hợp đồng, mỗi hợp đồng thuộc một hồ sơ.
+ 
+-**Hay hiểu nhầm:** ERD là ảnh chụp kết quả hoặc mọi quan hệ nghiệp vụ đều đã được vẽ.
++**Hay hiểu nhầm:** Vô cực là số dòng đang có, phía một bắt buộc phải có nhiều dòng ở phía kia, hoặc mũi tên quy định SQL chạy từ trái sang phải.
+ 
+-**Giải thích:** Sơ đồ khóa học dựa trên các FK được khai báo. Một sơ đồ thiết kế khác có thể trình bày quan hệ dự kiến; luôn biết mình đang đọc loại sơ đồ nào.
++**Giải thích:** MaPB ở NhanVien và MaNV ở HopDong không nhận NULL, FK đang bật, nên mỗi dòng phía nhiều tìm được một dòng được tham chiếu. Chiều mũi tên là FK tới PK; hướng tìm thông tin có thể ngược lại. Số tối thiểu và bắt buộc cần đọc từ thiết kế, không chỉ từ ký hiệu một–nhiều.
+ 
+ </PresenterNotes>
+ </Slide>
+ 
+-<Slide id="ky-hieu-erd" title="Ký hiệu trên sơ đồ" source="1.5" minutes={3}>
++<Slide id="ten-phong-cua-nv001" title="Tìm tên phòng của NV001" source="1.5" minutes={3}>
+ 
+-<ProjectionRelation tables={[
++<div class="concept-erd-lesson"><ProjectionRelation tables={[
+ {name:'PhongBan',columns:['MaPB','TenPB']},{name:'NhanVien',columns:['MaNV','MaPB']},
+ ]} />
+-<p><code>PK</code> đánh dấu khóa chính, <code>FK</code> đánh dấu khóa ngoại; <code>1</code> ở phía một và <code>∞</code> ở phía nhiều.</p><p>Ở mẫu này, mỗi hồ sơ có một phòng; một phòng có thể có nhiều hồ sơ hoặc chưa có người.</p>
++<ol class="concept-reading-path"><li>Mục tiêu: tên phòng cho mỗi hồ sơ</li><li>Bảng bắt đầu: <code>NhanVien</code>, với <code>NV001 → MaPB = KT</code></li><li>Cặp mã: <code>NhanVien.MaPB → PhongBan.MaPB</code>; đọc <code>TenPB</code></li></ol>
++<p><code>NV001</code> dẫn tới <code>Kế toán</code>; vị trí trái–phải không quyết định hướng dò.</p><p>Đó là tên phòng hiện lưu, không phải lịch sử chuyển phòng.</p>
++</div>
+ 
+ <PresenterNotes source="1.5" minutes={3}>
+ 
+-**Ý cần nói:** Đọc từ hai đầu đường liên kết, nhãn một ở phòng và nhiều ở hồ sơ. Quay về hai luật đã giảng để giải thích ký hiệu.
++**Ý cần nói:** Đọc yêu cầu, chốt mỗi dòng một hồ sơ rồi mới chỉ bảng bắt đầu và cặp cột. Từ hộp bên phải đi sang bên trái để lớp thấy vị trí không quyết định hướng.
+ 
+-**Hay hiểu nhầm:** Ký hiệu vô cực là số người thực có trong phòng hoặc mọi phòng bắt buộc có nhiều người.
++**Hay hiểu nhầm:** Dò bằng họ tên hoặc số thứ tự dòng, hoặc coi phòng hiện lưu là phòng khi vào làm.
+ 
+-**Giải thích:** Ở mẫu, MaPB không nhận NULL và FK hợp lệ nên mỗi hồ sơ tìm được một phòng. Ký hiệu một–nhiều không tự nói cột bắt buộc hay nhận NULL; điều đó đọc từ thiết kế.
++**Giải thích:** Trình tự đọc: cần thông tin gì → mỗi dòng đại diện cho gì → bắt đầu từ bảng nào → đi qua cặp cột nào → đọc thuộc tính nào. MaPB của danh mục là duy nhất nên hồ sơ tìm một phòng. Công ty không lưu lịch sử chuyển phòng.
+ 
+ </PresenterNotes>
+ </Slide>
+ 
+-<Slide id="ten-phong-cua-nv001" title="Đọc đường nhân viên và phòng ban" source="1.5" minutes={3}>
++<Slide id="hop-dong-kem-ten-phong" title="Lần đường qua ba bảng" source="1.5" minutes={3}>
+ 
+-<ProjectionRelation tables={[
+-{name:'NhanVien',columns:['MaNV','MaPB']},{name:'PhongBan',columns:['MaPB','TenPB']},
++<div class="concept-erd-lesson"><ProjectionRelation tables={[
++{name:'PhongBan',columns:['MaPB','TenPB']},{name:'NhanVien',columns:['MaNV','MaPB']},{name:'HopDong',columns:['MaHD','MaNV']},
+ ]} />
+-<div class="concept-trace"><span>① <code>NV001</code></span><span>→ ② <code>MaPB = KT</code></span><span>→ ③ <code>TenPB = Kế toán</code></span></div>
+-<p>Bắt đầu ở <code>NhanVien</code>, lấy <code>MaPB</code> dò sang <code>PhongBan.MaPB</code>, rồi đọc <code>TenPB</code>.</p><p>Kết quả là tên phòng hiện lưu của hồ sơ, không tự khôi phục phòng ở một thời điểm quá khứ.</p>
++<p>Cần tên phòng cho mỗi hợp đồng: từ <code>HopDong.MaNV → NhanVien.MaNV</code>, rồi <code>NhanVien.MaPB → PhongBan.MaPB</code> để đọc <code>TenPB</code>.</p><p>Mỗi dòng là một hợp đồng kèm phòng hiện lưu: ba hợp đồng của <code>NV021</code> vẫn là ba dòng hợp đồng.</p><p>Đi từ một hồ sơ sang phía nhiều hợp đồng có thể tăng số dòng.</p>
++</div>
+ 
+ <PresenterNotes source="1.5" minutes={3}>
+ 
+-**Ý cần nói:** Lần từng bước và chỉ đúng cột trên sơ đồ. Các giá trị dưới hình là dữ liệu thật đang được dùng để lần đường, không phải cột mới.
+-
+-**Hay hiểu nhầm:** Dò qua tên người hoặc vị trí dòng thay vì cặp mã, hoặc tự suy đây là phòng tại ngày vào làm.
+-
+-**Giải thích:** Mỗi mã phòng trong danh mục là duy nhất. Theo luật đang có, mỗi hồ sơ tìm đúng một phòng. Công ty không lưu lịch sử chuyển phòng nên chỉ kết luận về phòng hiện lưu.
+-
+-</PresenterNotes>
+-</Slide>
+-
+-<Slide id="hop-dong-kem-ten-phong" title="Đường đi qua ba bảng" source="1.5" minutes={4}>
+-
+-<ProjectionRelation tables={[
+-{name:'HopDong',columns:['MaHD','MaNV']},{name:'NhanVien',columns:['MaNV','MaPB']},{name:'PhongBan',columns:['MaPB','TenPB']},
+-]} />
+-<p>Từ <code>HopDong.MaNV</code>, tìm <code>NhanVien.MaNV</code>; tiếp tục dùng <code>NhanVien.MaPB</code> dò <code>PhongBan.MaPB</code> để đọc tên phòng.</p><p>Mỗi dòng bắt đầu từ một hợp đồng, kèm tên phòng hiện lưu của hồ sơ; ba hợp đồng của <code>NV021</code> vẫn là ba dòng hợp đồng.</p>
+-
+-<PresenterNotes source="1.5" minutes={4}>
+-
+-**Ý cần nói:** Chốt cách đọc bằng bốn việc: cần thông tin gì, bắt đầu bảng nào, đi qua cặp cột nào, mỗi dòng có nghĩa gì. Sau đó dành bảy phút hỏi đáp.
++**Ý cần nói:** Áp dụng lại cùng trình tự đọc: cần tên phòng, mỗi dòng một hợp đồng, bắt đầu ở HopDong, lần hai cặp cột rồi đọc TenPB. Sau phần này dành bảy phút hỏi đáp trên chính bản đồ.
+ 
+-**Hay hiểu nhầm:** Đi qua nhân viên làm mỗi dòng trở thành một người, hoặc phòng được tra là phòng vào ngày ký hợp đồng.
++**Hay hiểu nhầm:** Đi qua NhanVien làm mỗi dòng thành một người, phòng được tra là phòng vào ngày ký, hoặc chỉ được đọc theo một hướng cố định.
+ 
+-**Giải thích:** Cùng ví dụ cho thấy database chứa bảng, khóa giữ mã, ERD chỉ đường. Hai chặng đi tới khóa duy nhất nên một hợp đồng có một phòng theo thiết kế hiện tại. Đây là đọc sơ đồ, chưa yêu cầu viết JOIN.
++**Giải thích:** Hai chặng đi tới khóa duy nhất giữ một hợp đồng với một phòng theo thiết kế hiện tại. Ngược lại, đọc một hồ sơ kèm hợp đồng có thể thấy mã hồ sơ lặp theo số hợp đồng, như NV021 có ba dòng. Đây là đọc cấu trúc và dữ liệu trích, chưa yêu cầu viết JOIN.
+ 
+ </PresenterNotes>
+ </Slide>
+diff --git a/src/styles/presentation.css b/src/styles/presentation.css
+index 2ccbd01..49f9d53 100644
+--- a/src/styles/presentation.css
++++ b/src/styles/presentation.css
+@@ -72,6 +72,28 @@
+ .concept-outcome.is-caution { background: var(--seen-soft); color: var(--seen); }
+ .concept-trace { display: flex; gap: 20px; margin: 16px 0; font-size: 28px; color: var(--accent); }
+ .concept-trace + p { margin-top: 20px; }
++/* Model images and schema lessons keep the established projection type scale. */
++.concept-models { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 20px; }
++.concept-models h3 { font-size: 28px; margin-bottom: 8px; }
++.projection-body .concept-models img { height: 190px; max-height: none; object-fit: contain; }
++.projection-body .concept-models figcaption { font-size: 24px; line-height: 1.35; margin-top: 8px; }
++.projection-credit { display: flex; flex-direction: column; gap: 2px; margin-top: 8px; font-size: 18px; line-height: 1.4; color: var(--ink-2); }
++.projection-credit a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
++.concept-models ~ p { font-size: 28px; margin-bottom: 14px; }
++.projection-body .concept-database-comparison table { font-size: 26px; line-height: 1.3; }
++.concept-database-comparison th:first-child { width: 20%; }
++.concept-database-comparison th:nth-child(2) { width: 34%; }
++.projection-body .concept-database-comparison th, .projection-body .concept-database-comparison td { padding: 7px 14px; }
++.concept-database-comparison ~ p { font-size: 28px; margin-bottom: 14px; }
++.projection-body > .concept-database-comparison + p { margin-top: 16px; }
++.concept-excel-map { margin-bottom: 20px !important; }
++.concept-reading-path { display: grid; gap: 8px; margin: 18px 0 !important; font-size: 28px; }
++.concept-reading-path li + li { margin-top: 0; }
++.projection-body .concept-erd-lesson .projection-relation .relation-table h3 { padding: 10px 14px; }
++.projection-body .concept-erd-lesson .projection-relation .relation-table li { padding: 8px 14px; }
++.projection-body .concept-erd-lesson > p { font-size: 28px; margin-bottom: 14px; }
++.projection-body .concept-erd-lesson > p:last-child { margin-bottom: 0; }
++.concept-erd-lesson .projection-relation + p { margin-top: 18px; }
+ .projection-body figcaption { font-size: 24px; margin-top: 12px; color: var(--ink-2); }
+ .projection-body table { width: 100%; border-collapse: collapse; font-size: 28px; text-align: left; }
+ .projection-body th, .projection-body td { padding: 12px 16px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+diff --git a/tests/presentation-content.test.ts b/tests/presentation-content.test.ts
+index 80daee5..90f9bd1 100644
+--- a/tests/presentation-content.test.ts
++++ b/tests/presentation-content.test.ts
+@@ -12,8 +12,8 @@ const slides = [...raw.matchAll(/<Slide\b[^>]*>([\s\S]*?)<\/Slide>/g)].map(match
+ const withoutNotes = (text: string) => text.replace(/<PresenterNotes\b[^>]*>[\s\S]*?<\/PresenterNotes>/g, '');
+ 
+ describe('concept-led foundation lecture', () => {
+-  it('keeps18 concept slides with visible explanations and no quiz prerequisite', () => {
+-    expect(slides).toHaveLength(18);
++  it('keeps 21 concept slides with visible explanations and no quiz prerequisite', () => {
++    expect(slides).toHaveLength(21);
+     expect(metadata.sourceLessons).toEqual(['1.1', '1.2', '1.4', '1.5']);
+     expect(outline.reduce((sum, slide) => sum + slide.minutes, 0)).toBe(48);
+     expect(metadata.minutes).toBe(55);
+@@ -67,4 +67,11 @@ describe('concept-led foundation lecture', () => {
+     for (const phrase of BANNED_PHRASES) expect(raw.toLowerCase()).not.toContain(phrase);
+     expect(raw).not.toMatch(/[😀-🙏]/u);
+   });
++
++  it('shows the mandatory contract reference condition to the audience, not only in notes', () => {
++    const relationship = withoutNotes(slides[outline.findIndex(slide => slide.id === 'ky-hieu-erd')]);
++    expect(relationship).toMatch(/HopDong\.MaNV[\s\S]*không nhận[\s\S]*NULL/);
++    expect(relationship).toContain('đang bật');
++    expect(relationship).toMatch(/một hồ sơ có thể[\s\S]*nhiều hợp đồng/);
++  });
+ });
+diff --git a/tests/presentation-outline.test.ts b/tests/presentation-outline.test.ts
+index 6c539fb..f3bc39c 100644
+--- a/tests/presentation-outline.test.ts
++++ b/tests/presentation-outline.test.ts
+@@ -14,7 +14,29 @@ describe('presentation outline', () => {
+   it('uses the authored deck as the single outline', () => {
+     const body = readFileSync('src/content/presentations/lam-quen.mdx', 'utf8');
+     const outline = presentationOutline(body);
+-    expect(outline).toHaveLength(18);
++    expect(outline.map(({ id, minutes }) => [id, minutes])).toEqual([
++      ['database-la-gi', 2],
++      ['cac-mo-hinh-luu-tru', 2],
++      ['so-sanh-cac-dang-database', 3],
++      ['tu-excel-den-database-quan-he', 3],
++      ['sql-server-la-gi', 2],
++      ['sql-la-gi', 2],
++      ['bon-ten-can-phan-biet', 2],
++      ['du-lieu-trong-database', 2],
++      ['so-do-quan-he-erd', 2],
++      ['bang-trong-database', 2],
++      ['bang-dong-cot', 2],
++      ['thong-tin-o-nhieu-bang', 2],
++      ['nhan-dien-mot-ho-so', 1],
++      ['khoa-chinh', 3],
++      ['bang-khong-co-khoa-chinh', 2],
++      ['ma-phong-trong-ho-so', 2],
++      ['khoa-ngoai', 3],
++      ['bang-khong-co-khoa-ngoai', 2],
++      ['ky-hieu-erd', 3],
++      ['ten-phong-cua-nv001', 3],
++      ['hop-dong-kem-ten-phong', 3],
++    ]);
+     expect(outline.reduce((sum, slide) => sum + slide.minutes, 0)).toBe(48);
+     expect(new Set(outline.map(slide => slide.source))).toEqual(new Set(['1.1','1.2','1.4','1.5']));
+   });

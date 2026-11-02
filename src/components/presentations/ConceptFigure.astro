@@ -4,10 +4,10 @@ interface Props { kind: 'database' | 'split' | 'identity' | 'pk' | 'no-pk' | 'fk
 const { kind } = Astro.props;
 ---
 {kind === 'database' && <figure class="concept-database">
-  <figcaption>Database nhân sự · mở ra ba bảng đang dùng</figcaption>
+  <figcaption>Database nhân sự · trích dữ liệu từ ba bảng</figcaption>
   <div class="concept-three">
-    <section><h3><code>NhanVien</code></h3><p>Hồ sơ nhân viên</p><div class="concept-data-row">NV001 · Trần Thị Mai</div><div class="concept-data-row">NV021 · Tôn Thất Long</div></section>
     <section><h3><code>PhongBan</code></h3><p>Danh mục phòng</p><div class="concept-data-row">KT · Kế toán</div><div class="concept-data-row">IT · IT</div></section>
+    <section><h3><code>NhanVien</code></h3><p>Hồ sơ nhân viên</p><div class="concept-data-row">NV001 · Trần Thị Mai</div><div class="concept-data-row">NV021 · Tôn Thất Long</div></section>
     <section><h3><code>HopDong</code></h3><p>Các hợp đồng</p><div class="concept-data-row">HD2021-001 · NV021</div><div class="concept-data-row">HD2021-002 · NV021</div></section>
   </div>
 </figure>}

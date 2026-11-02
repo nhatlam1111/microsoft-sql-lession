@@ -5,8 +5,9 @@ import schemaSql from '../../../database/HRM_Demo.sql?raw';
 interface Props {
   tables: { name: string; columns: string[] }[];
   showLinks?: boolean;
+  variant?: 'overview' | 'detail';
 }
-const { tables: selections, showLinks = true } = Astro.props;
+const { tables: selections, showLinks = true, variant = 'detail' } = Astro.props;
 const schema = parseSchema(schemaSql);
 const tables = selections.map(selection => {
   const table = schema.find(t => t.name === selection.name);
@@ -29,17 +30,17 @@ const links = tables.slice(1).map((right, i) => {
   };
 });
 ---
-<figure class="projection-relation">
+<figure class="projection-relation" data-variant={variant}>
   <div class="relation-tables" style={`--relation-count: ${tables.length}`}>
     {tables.map((table, i) => <>
-      {i > 0 && showLinks && <div class="relation-connector" aria-hidden="true">{links[i - 1].symbol}</div>}
+      {i > 0 && showLinks && <div class="relation-connector" aria-hidden="true">{variant === 'overview' ? '—' : links[i - 1].symbol}</div>}
       <section class="relation-table" aria-label={`Bảng ${table.name}`}>
         <h3>{table.name}</h3>
-        <ul>{table.columns.map(name => <li><code>{name}</code><span class="relation-keys">{[...(table.primaryKey.includes(name) ? ['PK'] : []), ...(table.foreignKeys.some(fk => fk.column === name) ? ['FK'] : [])].join(' · ')}</span></li>)}</ul>
+        <ul>{table.columns.map(name => <li><code>{name}</code>{variant === 'detail' && <span class="relation-keys">{[...(table.primaryKey.includes(name) ? ['PK'] : []), ...(table.foreignKeys.some(fk => fk.column === name) ? ['FK'] : [])].join(' · ')}</span>}</li>)}</ul>
       </section>
     </>)}
   </div>
-  {showLinks && <figcaption>{links.map(link => <span><code>{link.from}</code> → <code>{link.to}</code></span>)}</figcaption>}
+  {showLinks && variant === 'detail' && <figcaption>{links.map(link => <span><code>{link.from}</code> → <code>{link.to}</code></span>)}</figcaption>}
 </figure>
 <style>
   .projection-relation { margin: 0; min-width: 0; }

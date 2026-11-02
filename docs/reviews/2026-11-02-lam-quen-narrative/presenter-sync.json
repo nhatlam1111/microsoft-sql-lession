@@ -1,0 +1,22 @@
+[
+  {
+    "slide": "so-sanh-cac-dang-database",
+    "status": "Theo người giảng",
+    "step": "presenter-next"
+  },
+  {
+    "slide": "tu-excel-den-database-quan-he",
+    "status": "Tự xem",
+    "step": "manual-stays-independent"
+  },
+  {
+    "slide": "sql-server-la-gi",
+    "status": "Theo người giảng",
+    "step": "follow-current"
+  },
+  {
+    "slide": "sql-server-la-gi",
+    "status": "Theo người giảng",
+    "step": "reload-follow"
+  }
+]

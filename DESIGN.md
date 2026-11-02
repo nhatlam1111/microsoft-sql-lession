@@ -160,6 +160,8 @@ Lesson illustrations use native `figure`/`figcaption` and Astro `Image`; the pre
 
 Define hover, visible keyboard focus, pressed, selected, disabled and busy appearances through existing state classes and native attributes. Avoid moving controls during feedback. Preserve the app's existing loading, empty, success and error messages and behavior.
 
+Lecture model illustrations retain their original content with Vietnamese HTML captions and visible source/license credits; notes carry full provenance. They do not represent the HRM_Demo schema. `ProjectionRelation` owns both introductory `overview` (neutral links without key/cardinality symbols) and default `detail` views; both validate against the same schema. Department, employee and contract stay in that relative order. The `concept-erd-lesson` presentation variant uses 28px explanatory text and tighter schema padding, retaining 26px column labels; it does not change navigation or lesson reading styles.
+
 ### Buttons and navigation
 
 Primary action uses blue with white text; completion uses green; secondary controls use neutral boundaries; review actions use red. Normal action controls are 38–40px high where space allows. Current sidebar entries use a blue inset marker and soft fill, without changing labels or targets.

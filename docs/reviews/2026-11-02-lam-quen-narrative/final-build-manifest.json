@@ -1,0 +1,29 @@
+{
+  "baseCommit": "a67c37a4872daaee7711dbab8bb794fbb8a1f681",
+  "branch": "codex/lam-quen-narrative",
+  "state": "final uncommitted local changes; reviewed predecessor is build-manifest.json",
+  "capturedAtUTC": "2026-11-02T05:09:44.481328+00:00",
+  "source": {
+    "src/content/presentations/lam-quen.mdx": "809509f0764db7fbf2b2f1c313919ce1e50fd7a3de0a1ed50ee0f1cfdd6677be",
+    "src/components/presentations/ProjectionRelation.astro": "931ed3fce520770d3c67ecac4549df8feb79dada5882a634f6cd7708c49f8f66",
+    "src/components/presentations/ConceptFigure.astro": "356ebcfb0e29e0e1b5ac6d26be127c28185662cbef89aee5fcc8af18908e32fe",
+    "src/styles/presentation.css": "535c8bc8f310c231d45db559471dde5f2c6f2e62603e73655045f72f0ea208da",
+    "src/assets/presentations/relational-database-terms.svg": "576314e29cc7565463281c59b3cb596a73ffc201dab2cbfad4c1c409774caf5a",
+    "src/assets/presentations/graph-database-property-graph.png": "a7e3445cb70756d849a845c044aea3bff030b748082386331018427cb87a31e8",
+    "src/assets/presentations/SOURCES.md": "72f2c46d37b62d0ba66b975bfc06476cf29ae9d09d2cdc5567bf2355281cf117",
+    "tests/projection-relation.test.ts": "4ca578183c11d8e5b930f97e650c4ad1f7dca7bc1c9c21b0751f1d0cc31fc96a",
+    "tests/presentation-content.test.ts": "c4d82af8a894297fc701a275155752e15bea4d3f42c123ecea47eae9edd8817d",
+    "tests/presentation-outline.test.ts": "b165b4cdb99a070b543b919b13e8df8d4a9592f42722826dbec9bb0c08989b02",
+    "DESIGN.md": "71edd6289209715677e9836f8551887b5cde4da543f665354396f971efc347dd"
+  },
+  "build": {
+    "dist/bai-giang/lam-quen/index.html": {
+      "sha256": "7235389867bdba2af9988829cd4cd98adf6e9aa72de4d25ce8cbf84ff343ac1d",
+      "modifiedAtUTC": "2026-11-02T05:03:53.215444+00:00"
+    },
+    "dist/bai-giang/lam-quen/nguoi-giang/index.html": {
+      "sha256": "308a70eae7b6ca580b479decf7ce00935537d047c9f114baf5a1e119d1d1396d",
+      "modifiedAtUTC": "2026-11-02T05:03:53.245646+00:00"
+    }
+  }
+}

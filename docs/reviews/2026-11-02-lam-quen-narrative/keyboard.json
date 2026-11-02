@@ -1,0 +1,30 @@
+[
+  {
+    "key": "Home",
+    "slide": "database-la-gi"
+  },
+  {
+    "key": "Space",
+    "slide": "cac-mo-hinh-luu-tru"
+  },
+  {
+    "key": "ArrowRight",
+    "slide": "so-sanh-cac-dang-database"
+  },
+  {
+    "key": "ArrowLeft",
+    "slide": "cac-mo-hinh-luu-tru"
+  },
+  {
+    "key": "PageUp",
+    "slide": "database-la-gi"
+  },
+  {
+    "key": "End",
+    "slide": "hop-dong-kem-ten-phong"
+  },
+  {
+    "key": "ArrowRight",
+    "slide": "hop-dong-kem-ten-phong"
+  }
+]
