@@ -58,3 +58,9 @@ Trước viết: chạy SELECT mới kiểm câu chính/từng bước, checks/t
 Test bảo vệ các tổng/nhóm/ngưỡng, input/checks và ví dụ trích so với toàn nhóm, caption/alias, đủ tiền đề ba đề; không khóa nguyên câu văn. Kiểm theo §4.4: API build/check:exercises qua runner hoàn tác rồi check:data; npm test/check/build/check:dist; UI đúng build, highlight/tab/đổi bước và màn hẹp. Review độc lập một bài theo §4.5, model kế thừa/ngữ cảnh mới/report-only, đọc đề trước answer; tác giả xử lý hết nhận xét theo §4.6. Nếu phải sửa công cụ ngoài khối hiện có thì cập nhật thiết kế và thêm review tích hợp.
 
 Lưu spec/plan/evidence mới cho 3.3, giữ report gốc; không tự sửa hồ sơ research hoặc triển khai Arcade. Phần lựa chọn câu chữ/dòng trích/mark và bố trí ví dụ giao tác giả quyết định trong giới hạn trên. Triển khai trực tiếp trong phiên theo [kế hoạch](../plans/2026-11-02-lesson-3-3-refresh.md), giữ cách làm đã dùng cho 3.1–3.2; reviewer là agent mới theo quy ước repo.
+
+## Tiến trình triển khai
+
+Task 1: đã viết lại 3.3 thành hai tiểu mục, đưa câu chính trước LineMap và Result/câu trả lời sau RunFlow. Bổ sung checks WHERE/HAVING, hai nhóm KD/IT trích5/13 và5/10, SELECT KD trích5/13 nối đúng hai ô, đổi caption trước SELECT và giữ query chính. YAML chỉ đổi leading indentation của AND trong3-3-2, metadata/prompt/SQL sau chuẩn hóa leading whitespace giữ nguyên.
+
+Đã thấy năm test mới/khung thất bại trước sửa, sau sửa nhóm99 và full suite451/451 đạt. Tác giả chạy mới chín case preflight và bảy câu MDX (cả câu chính/từng bước), đều đạt kỳ vọng; hai case SQL sai được xác nhận có lỗi đúng phạm vi chứ không phải lỗi kết nối. Chưa gọi UI/review đạt khi chưa có build được kiểm và report của lượt này.

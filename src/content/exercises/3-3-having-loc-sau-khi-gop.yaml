@@ -37,7 +37,7 @@ exercises:
       SELECT LoaiNghi, COUNT(*) AS [SoDon], SUM(SoNgay) AS [TongNgay]
       FROM DonNghiPhep
       WHERE TrangThai = N'Đã duyệt'
-      AND TuNgay >= '20260901' AND TuNgay < '20261001'
+          AND TuNgay >= '20260901' AND TuNgay < '20261001'
       GROUP BY LoaiNghi
       HAVING SUM(SoNgay) >= 5
       ORDER BY [TongNgay] DESC, LoaiNghi ASC;

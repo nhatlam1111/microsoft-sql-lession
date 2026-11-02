@@ -33,11 +33,11 @@
 
 **Interfaces:** lessonBlocks giữ sáu bước FROM48/WHERE45/GROUP BY6/HAVING1/SELECT1/ORDER BY1. GROUP BY/HAVING dùng ['MaPB','Số hồ sơ trong nhóm'], SELECT/ORDER BY dùng ['MaPB','SoHoSo']; output cuối [['KD',13]]. WHERE checks totals[45,45]; HAVING conditions['COUNT(*) > 10'], rows[['KT',false],['KD',true],['BGD',false],['IT',false],['VH',false]], totals[1,1]. GROUP BY examples KD/IT mỗi table trích ≤5; SELECT một example KD nối MaPB='KD'/COUNT(*)=13 và mark[1].
 
-- [ ] Chạy SELECT mới kiểm nguồn/active/nhóm/câu chính/>=10/bỏ WHERE/thành viên KD/IT và hai lỗi COUNT trong WHERE/alias trong HAVING. Expected: nguồn48/active45/nhóm6, >10 chỉ KD13, >=10 thêm IT10, bỏ WHERE KD14; truy vấn sai có error, không errorKind kết nối. Lưu log/JSON, không đọc/in .env.
-- [ ] Thêm test input/checks caption/alias, đối chiếu từng boolean với seed groups, ví dụ KD/IT là trích thành viên đúng nhóm, COUNT SELECT=13 và mark đúng dòng. Thêm 3.3 vào hai bảng kiểm flow chung và gỡ khỏi danh sách chờ hai tiểu mục, giữ mọi kiểm ngưỡng/bài tập cũ.
-- [ ] Run npx vitest run tests/content-3-3.test.ts tests/content-flow-checks.test.ts tests/content.test.ts. Expected: FAIL vì bài cũ chưa có input/checks/examples/LineMap/hai tiểu mục.
-- [ ] Viết lại MDX theo spec: Excel→Sql→LineMap, chỉ tình huống; phần sau RunFlow→Result→câu trả lời; hai drawer nhóm mẫu trích rõ, HAVING soi nhóm, SELECT giải hai ô. Giữ ba đề, chỉ sửa indent AND của3-3-2; thêm câu ôn thứ ba và rút ý lặp/ngoài tình huống.
-- [ ] Run nhóm test PASS; kiểm SQL live mỗi step của MDX mới và so query/YAML với base (YAML chỉ khác leading whitespace của answer). Run npm test Expected: full suite PASS. Cập nhật spec/plan và commit bài.
+- [x] Chạy SELECT mới kiểm nguồn/active/nhóm/câu chính/>=10/bỏ WHERE/thành viên KD/IT và hai lỗi COUNT trong WHERE/alias trong HAVING. Expected: nguồn48/active45/nhóm6, >10 chỉ KD13, >=10 thêm IT10, bỏ WHERE KD14; truy vấn sai có error, không errorKind kết nối. Lưu log/JSON, không đọc/in .env.
+- [x] Thêm test input/checks caption/alias, đối chiếu từng boolean với seed groups, ví dụ KD/IT là trích thành viên đúng nhóm, COUNT SELECT=13 và mark đúng dòng. Thêm 3.3 vào hai bảng kiểm flow chung và gỡ khỏi danh sách chờ hai tiểu mục, giữ mọi kiểm ngưỡng/bài tập cũ.
+- [x] Run npx vitest run tests/content-3-3.test.ts tests/content-flow-checks.test.ts tests/content.test.ts. Expected: FAIL vì bài cũ chưa có input/checks/examples/LineMap/hai tiểu mục.
+- [x] Viết lại MDX theo spec: Excel→Sql→LineMap, chỉ tình huống; phần sau RunFlow→Result→câu trả lời; hai drawer nhóm mẫu trích rõ, HAVING soi nhóm, SELECT giải hai ô. Giữ ba đề, chỉ sửa indent AND của3-3-2; thêm câu ôn thứ ba và rút ý lặp/ngoài tình huống.
+- [x] Run nhóm test PASS; kiểm SQL live mỗi step của MDX mới và so query/YAML với base (YAML chỉ khác leading whitespace của answer). Run npm test Expected: full suite PASS. Cập nhật spec/plan và commit bài.
 
 ### Task 2: Kiểm bản build và review độc lập
 

@@ -3,11 +3,59 @@ import { existsSync, readFileSync } from 'node:fs';
 import { parse } from 'yaml';
 import { lessonBlocks } from './helpers/lesson-blocks';
 import { countsBy, leaveStartingIn, seedRows } from './helpers/hrm-seed';
-import { checkFlow } from '../src/lib/run-flow';
+import { checkFlow, inputPreview } from '../src/lib/run-flow';
 
 const slug = '3-3-having-loc-sau-khi-gop';
 const active = seedRows('NhanVien').filter(r => r.TrangThai === 'Đang làm');
 const grouped = countsBy(active, ['MaPB']);
+
+it('3.3 filters visible profiles first, then checks group counts without using the SELECT alias early', () => {
+  const { steps, query } = lessonBlocks(slug);
+  const [from, where, group, having, select] = steps;
+  expect(from.input).toContain('`NhanVien`');
+  expect(where.checks?.totals).toEqual([45, 45]);
+  for (const row of where.checks?.rows ?? []) {
+    expect(row[1]).toBe(seedRows('NhanVien').find(r => r.MaNV === row[0])!.TrangThai === 'Đang làm');
+  }
+  expect(where.checks?.rows.some(r => r[1] === false)).toBe(true);
+  expect(group.columns).toEqual(['MaPB', 'Số hồ sơ trong nhóm']);
+  expect(having.columns).toEqual(group.columns);
+  expect(inputPreview(having, group)).toMatchObject({ columns: group.columns, moreRows: 1 });
+  expect(having.checks?.conditions).toEqual(['COUNT(*) > 10']);
+  expect(having.checks?.totals).toEqual([1, 1]);
+  expect(having.checks?.rows).toContainEqual(['KD', true]);
+  expect(having.checks?.rows).toContainEqual(['IT', false]);
+  const counts = new Map(grouped.map(r => [r[0], Number(r[1])]));
+  for (const row of having.checks?.rows ?? []) expect(row[1]).toBe(counts.get(row[0])! > 10);
+  expect(having.rows).toEqual([['KD', 13]]);
+  expect(inputPreview(select, having).columns).toEqual(group.columns);
+  expect(select.columns).toEqual(['MaPB', 'SoHoSo']);
+  expect(checkFlow(steps, query)).toEqual([]);
+});
+
+it('3.3 uses bounded KD and IT excerpts and maps the retained group to its two SELECT cells', () => {
+  const { steps } = lessonBlocks(slug);
+  const groupExamples = steps[2].examples ?? [];
+  expect(groupExamples).toHaveLength(2);
+  expect(groupExamples.map(e => e.table?.rows[0][1])).toEqual(['KD', 'IT']);
+  for (const e of [...groupExamples, ...(steps[4].examples ?? [])]) {
+    const department = e.table!.rows[0][1];
+    const members = active.filter(r => r.MaPB === department);
+    expect(e.table?.columns).toEqual(['MaNV', 'MaPB']);
+    expect(e.table!.rows.length).toBeGreaterThan(0);
+    expect(e.table!.rows.length).toBeLessThanOrEqual(5);
+    expect(e.table!.rows.length).toBeLessThan(members.length);
+    for (const row of e.table!.rows) expect(members.some(m => m.MaNV === row[0] && m.MaPB === row[1])).toBe(true);
+    expect(e.note).toMatch(/trích/i);
+    expect(e.note).toContain(String(members.length));
+  }
+  const select = steps[4];
+  expect(select.examples).toHaveLength(1);
+  expect(select.examples?.[0].calculations?.map(c => [c.expression, c.column, c.value])).toEqual([
+    ['MaPB', 'MaPB', 'KD'], ['COUNT(*)', 'SoHoSo', 13],
+  ]);
+  expect(select.mark?.map(n => select.rows[n - 1])).toEqual([['KD', 13]]);
+});
 
 it('3.3 filters rows before grouping, and groups before assigning the SELECT alias', () => {
   const lesson = lessonBlocks(slug);

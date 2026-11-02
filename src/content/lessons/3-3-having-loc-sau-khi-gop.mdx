@@ -29,33 +29,14 @@ Giả định: vẫn đọc `NhanVien` đang lưu, chọn `TrangThai = N'Đang l
 
 ### Từ Value Filters đến HAVING
 
-Trong PivotTable ở bài 3.2, **Value Filters** là bộ lọc theo giá trị đã tổng hợp: chọn `Count of MaNV` lớn hơn `10` để giữ những nhãn phòng đạt ngưỡng. Hình dưới minh họa phần kết quả còn lại; ô `B2` được chọn là số lượng của mã phòng `KD` ở `A2`.
+Trong PivotTable ở bài 3.2, **Value Filters** là bộ lọc theo giá trị đã tổng hợp. Bạn chọn `Count of MaNV` lớn hơn `10` để giữ các nhãn phòng đạt ngưỡng. Hình minh họa kết quả còn lại, đánh dấu mã phòng `KD` ở `A2` và số lượng của nhóm ở `B2`.
 
 <Excel sheets="PivotTable · Count of MaNV > 10" cell="B2" formula="13" selected="B2" mark={['A2', 'B2']} rows={[
   ['Mã phòng', 'Count of MaNV'],
   ['KD', 13],
 ]} />
 
-Trong SQL, **`HAVING`** đặt điều kiện lên các nhóm sau khi `GROUP BY` hình thành nhóm và tính số liệu tổng hợp. `HAVING COUNT(*) > 10` giữ những nhóm có hơn `10` dòng; trong phạm vi đầu bài, đó là số hồ sơ đang làm của mỗi phòng. `WHERE` vẫn cần để quyết định những hồ sơ nào được đem đi đếm.
-
-| Điều kiện | Đối tượng được xét | Trong tình huống |
-|---|---|---|
-| `WHERE TrangThai = N'Đang làm'` | Từng dòng hồ sơ, trước khi nhóm | Từ `48` hồ sơ giữ `45` |
-| `HAVING COUNT(*) > 10` | Từng nhóm phòng đã tổng hợp | Từ `6` nhóm giữ `1` |
-
-`HAVING` loại cả nhóm không đạt điều kiện khỏi kết quả, không chọn lại từng hồ sơ trong nhóm. Phòng còn lại vẫn mang số lượng được tính từ toàn bộ hồ sơ đã qua `WHERE`.
-
-### Đặt điều kiện mà không đổi ý nghĩa báo cáo
-
-**Điều kiện chọn dòng đặt ở `WHERE`; điều kiện trên chỉ tiêu nhóm đặt ở `HAVING`.** Với báo cáo đơn nghỉ theo loại, `WHERE SoNgay >= 2` chỉ đưa các đơn ít nhất `2` ngày vào phép tính. Nếu không lọc trước theo `SoNgay`, `HAVING SUM(SoNgay) >= 2` giữ loại nghỉ có tổng ít nhất `2` ngày, kể cả các đơn `1` ngày trong nhóm. Chọn nhầm chỗ lọc có thể đổi cả tổng và những nhóm xuất hiện.
-
-Bạn viết các mệnh đề theo thứ tự `SELECT` → `FROM` → `WHERE` → `GROUP BY` → `HAVING` → `ORDER BY`. Tuy nhiên, theo thứ tự logic, `HAVING` đứng trước `SELECT`: alias `SoHoSo` tạo trong `SELECT` chưa dùng được ở `HAVING` của cùng câu. Vì vậy viết `HAVING COUNT(*) > 10`; ở `ORDER BY`, sau `SELECT`, bạn dùng được `[SoHoSo]`.
-
-Ở bài này chỉ cần phân biệt lọc dòng và lọc nhóm. Đếm theo nhiều điều kiện trong cùng báo cáo học ở bài 3.10; lấy thêm tên phòng từ danh mục bằng kết bảng học ở bài 3.4.
-
-### Câu lệnh cho tình huống
-
-Giữ nguyên phạm vi và khóa nhóm của bài 3.2, thêm điều kiện `HAVING` trước `ORDER BY`:
+Trong SQL, bạn giữ bộ lọc trạng thái và khóa nhóm của bài 3.2, rồi thêm **`HAVING`** để chỉ lấy những nhóm đạt ngưỡng số lượng. Câu lệnh cho chị Hạnh là:
 
 <Sql code={`SELECT MaPB, COUNT(*) AS [SoHoSo]
 FROM NhanVien
@@ -64,15 +45,31 @@ GROUP BY MaPB
 HAVING COUNT(*) > 10
 ORDER BY [SoHoSo] DESC, MaPB ASC;`} />
 
-<Result columns={['MaPB', 'SoHoSo']} rows={[
-  ['KD', 13],
+Từng phần của câu:
+
+<LineMap rows={[
+  ['SELECT MaPB', 'Lấy mã chung để nhận ra nhóm phòng trong mỗi dòng kết quả. Ví dụ: nhóm KD trả mã KD.'],
+  ['COUNT(*) AS [SoHoSo]', 'Đếm các hồ sơ bên trong từng nhóm, đặt tiêu đề cột số đếm. Ví dụ: nhóm KD có SoHoSo bằng 13.'],
+  ['FROM NhanVien', 'Chọn bảng hồ sơ nguồn. Ví dụ: bắt đầu từ 48 hồ sơ đang lưu.'],
+  ["WHERE TrangThai = N'Đang làm'", 'Chọn từng hồ sơ được tính trước khi nhóm. Ví dụ: NV020 đã nghỉ nên không được đếm vào KD.'],
+  ['GROUP BY MaPB', 'Gom các hồ sơ cùng mã phòng để tính riêng từng nhóm. Ví dụ: NV002 và NV003 cùng thuộc nhóm KD.'],
+  ['HAVING COUNT(*) > 10', 'Chọn nhóm theo số hồ sơ đã tính. Ví dụ: KD có 13 được giữ, IT đúng 10 bị loại.'],
+  ['ORDER BY [SoHoSo] DESC, MaPB ASC', 'Xếp số đếm giảm dần rồi mã tăng dần như yêu cầu. Ví dụ: chỉ còn KD nên lần này không đổi vị trí.'],
 ]} />
 
-Chị Hạnh nhận một dòng: `KD` có `13` hồ sơ đang làm theo phòng hiện lưu. `IT` có đúng `10` nên không qua điều kiện “trên `10`”; đổi sang `>= 10` thì phòng này cũng được giữ. Kết quả chỉ trả lời tiêu chí số lượng, không tự kết luận phòng nào đang thiếu người.
+**`WHERE` lọc dòng; `HAVING` lọc nhóm.** `WHERE` kiểm từng hồ sơ trước khi nhóm, nên chỉ hồ sơ đang làm được đưa vào phép đếm. `HAVING` xét từng nhóm đã hình thành và số liệu tổng hợp của nhóm; nhóm đạt điều kiện vẫn giữ số đếm từ toàn bộ hồ sơ đã qua `WHERE`.
+
+Ở bước `WHERE` của câu này chưa có nhóm để đếm, nên không đặt `COUNT(*) > 10` vào bộ lọc hồ sơ. `HAVING` cũng không thay bộ lọc trạng thái: nó chỉ giữ hoặc loại cả nhóm khỏi kết quả, không chọn lại từng hồ sơ trong nhóm.
+
+`HAVING` cần so đúng **chỉ tiêu tổng hợp** mà đề yêu cầu: báo cáo này dùng `COUNT(*)`; đề hỏi tổng thì so `SUM` đã học ở bài 3.1. Bạn có thể nối nhiều điều kiện nhóm bằng `AND` hoặc `OR` như ở `WHERE`. Khi nhóm nhiều cột như bài 3.2, điều kiện được xét riêng cho mỗi tổ hợp khóa nhóm.
+
+Theo thứ tự logic, `HAVING` được xét trước `SELECT`, nên alias `SoHoSo` của cùng câu chưa dùng được ở `HAVING`. Viết lại biểu thức `COUNT(*)` tại đó; sang `ORDER BY`, sau `SELECT`, bạn dùng được `[SoHoSo]`.
+
+Ở bài này chỉ cần phân biệt lọc dòng và lọc nhóm. Lấy thêm tên phòng từ danh mục bằng kết bảng học ở bài 3.4; đếm theo nhiều điều kiện trong cùng báo cáo học ở bài 3.10.
 
 ### SQL Server chạy câu này thế nào
 
-Sơ đồ đi theo thứ tự logic: lấy hồ sơ, lọc dòng, gom nhóm, lọc nhóm, chọn cột rồi sắp xếp. Bấm từng bước để xem dữ liệu ở mỗi mốc. Thứ tự trước `ORDER BY` có thể khác hình; đây không phải thứ tự thực thi vật lý.
+Sơ đồ là **thứ tự xử lý logic**, không phải cách SQL Server đọc dữ liệu. Bấm `WHERE` và `HAVING` để đối chiếu việc lọc `48` hồ sơ còn `45`, rồi lọc `6` nhóm còn `1`. Trước `ORDER BY`, thứ tự dòng có thể khác hình:
 
 <RunFlow query={`SELECT MaPB, COUNT(*) AS [SoHoSo]
 FROM NhanVien
@@ -84,22 +81,18 @@ ORDER BY [SoHoSo] DESC, MaPB ASC;`} steps={[
     clause: 'FROM',
     title: 'Lấy hồ sơ nhân viên đang lưu.',
     focus: 'FROM NhanVien',
-    meaning: '`FROM` xác định các dòng nguồn để những bước sau lọc và tổng hợp.',
-    detail: '`FROM` lấy `48` hồ sơ. Bảng dưới chỉ hiện `3` cột của `10` hồ sơ để theo dõi phòng và trạng thái, gồm cả `3` hồ sơ đã nghỉ.',
+    input: 'Bảng `NhanVien` trong database.',
+    meaning: '`FROM` chọn bảng hồ sơ làm nguồn, chưa lọc dòng, chưa chọn cột kết quả hoặc gom nhóm.',
+    detail: '`48` hồ sơ. Hình trích năm dòng và ba cột cần theo dõi, có cả hồ sơ đang làm và đã nghỉ.',
     sql: `SELECT MaNV, MaPB, TrangThai
 FROM NhanVien;`,
     columns: ['MaNV', 'MaPB', 'TrangThai'],
     rows: [
       ['NV001', 'KT', 'Đang làm'],
       ['NV002', 'KD', 'Đang làm'],
-      ['NV003', 'KD', 'Đang làm'],
-      ['NV004', 'BGD', 'Đang làm'],
-      ['NV005', 'KT', 'Đang làm'],
-      ['NV006', 'KD', 'Đang làm'],
-      ['NV007', 'IT', 'Đang làm'],
       ['NV020', 'KD', 'Đã nghỉ'],
       ['NV033', 'VH', 'Đã nghỉ'],
-      ['NV041', 'VH', 'Đã nghỉ'],
+      ['NV003', 'KD', 'Đang làm'],
     ],
     total: 48,
   },
@@ -107,8 +100,14 @@ FROM NhanVien;`,
     clause: 'WHERE',
     title: 'Chọn hồ sơ được tính vào các nhóm.',
     focus: "WHERE TrangThai = N'Đang làm'",
+    inputColumns: ['MaNV', 'MaPB', 'TrangThai'],
     meaning: '`WHERE` kiểm từng dòng trước khi gom nhóm, không kiểm số lượng của nhóm.',
-    detail: '`WHERE` giữ `45` hồ sơ đang làm và loại `3` đã nghỉ. Ở bước này vẫn là từng hồ sơ, chưa phải một dòng cho mỗi phòng.',
+    detail: 'Còn `45` hồ sơ đang làm, vẫn ba cột đang theo dõi. Mỗi dòng còn là một hồ sơ, chưa phải một dòng cho mỗi phòng.',
+    checks: {
+      conditions: ["TrangThai = N'Đang làm'"],
+      rows: [['NV001', true], ['NV002', true], ['NV020', false], ['NV033', false], ['NV003', true]],
+      totals: [45, 45],
+    },
     sql: `SELECT MaNV, MaPB, TrangThai
 FROM NhanVien
 WHERE TrangThai = N'Đang làm';`,
@@ -131,13 +130,26 @@ WHERE TrangThai = N'Đang làm';`,
     clause: 'GROUP BY',
     title: 'Gom hồ sơ theo mã phòng.',
     focus: 'GROUP BY MaPB',
-    meaning: '`GROUP BY` chia những dòng đã lọc thành nhóm; `COUNT(*)` tính số dòng trong từng nhóm.',
-    detail: '`GROUP BY` tạo `6` nhóm từ `45` hồ sơ đang làm. Bảng trích hiện kích thước mỗi nhóm: `KD` có `13`, `IT` có `10`; chưa loại nhóm theo ngưỡng.',
-    sql: `SELECT MaPB, COUNT(*) AS [SoHoSo]
+    inputColumns: ['MaNV', 'MaPB'],
+    meaning: '`GROUP BY` gom các hồ sơ cùng `MaPB` vào cùng nhóm. Minh họa hai nhóm `KD` và `IT` để theo dõi bước lọc sau; các bảng thành viên chỉ là trích, không phải bảng mới được lưu.',
+    examples: [
+      {
+        title: 'Nhóm KD',
+        note: 'Trích `5` trong `13` hồ sơ của nhóm `KD` đã qua `WHERE`.',
+        table: { columns: ['MaNV', 'MaPB'], rows: [['NV002', 'KD'], ['NV003', 'KD'], ['NV006', 'KD'], ['NV013', 'KD'], ['NV016', 'KD']] },
+      },
+      {
+        title: 'Nhóm IT',
+        note: 'Trích `5` trong `10` hồ sơ của nhóm `IT` đã qua `WHERE`.',
+        table: { columns: ['MaNV', 'MaPB'], rows: [['NV007', 'IT'], ['NV011', 'IT'], ['NV017', 'IT'], ['NV021', 'IT'], ['NV029', 'IT']] },
+      },
+    ],
+    detail: 'Còn `6` nhóm từ `45` hồ sơ. Bảng đối chiếu mã và kích thước nhóm chưa lọc theo ngưỡng; “Số hồ sơ trong nhóm” là nhãn minh họa, chưa phải alias `SoHoSo` của câu chính.',
+    sql: `SELECT MaPB, COUNT(*) AS [Số hồ sơ trong nhóm]
 FROM NhanVien
 WHERE TrangThai = N'Đang làm'
 GROUP BY MaPB;`,
-    columns: ['MaPB', 'SoHoSo'],
+    columns: ['MaPB', 'Số hồ sơ trong nhóm'],
     rows: [['KT', 7], ['KD', 13], ['BGD', 2], ['IT', 10], ['VH', 8], ['NS', 5]],
     total: 6,
   },
@@ -145,14 +157,20 @@ GROUP BY MaPB;`,
     clause: 'HAVING',
     title: 'Giữ nhóm có trên 10 hồ sơ.',
     focus: 'HAVING COUNT(*) > 10',
-    meaning: '`HAVING` kiểm điều kiện trên nhóm và giá trị tổng hợp, sau khi các dòng đã được gom nhóm.',
-    detail: '`HAVING` giữ `1` trong `6` nhóm: `KD` có `13` hồ sơ. `IT` có đúng `10` và bốn phòng ít hơn đều bị loại; không xóa hay đổi các hồ sơ nguồn.',
-    sql: `SELECT MaPB, COUNT(*) AS [SoHoSo]
+    inputColumns: ['MaPB', 'Số hồ sơ trong nhóm'],
+    meaning: '`HAVING` kiểm số hồ sơ trong từng nhóm: `KD` có `13` nên `13 > 10` đúng; `IT` có `10` nên `10 > 10` sai. Mỗi dòng đầu vào đối chiếu một nhóm; hàng tổng xét cả `6` nhóm.',
+    detail: 'Còn `1` nhóm `KD` với đủ `13` hồ sơ đã qua `WHERE`. Các nhóm không đạt bị loại khỏi báo cáo, không xóa hồ sơ nguồn.',
+    checks: {
+      conditions: ['COUNT(*) > 10'],
+      rows: [['KT', false], ['KD', true], ['BGD', false], ['IT', false], ['VH', false]],
+      totals: [1, 1],
+    },
+    sql: `SELECT MaPB, COUNT(*) AS [Số hồ sơ trong nhóm]
 FROM NhanVien
 WHERE TrangThai = N'Đang làm'
 GROUP BY MaPB
 HAVING COUNT(*) > 10;`,
-    columns: ['MaPB', 'SoHoSo'],
+    columns: ['MaPB', 'Số hồ sơ trong nhóm'],
     rows: [['KD', 13]],
     total: 1,
   },
@@ -160,8 +178,19 @@ HAVING COUNT(*) > 10;`,
     clause: 'SELECT',
     title: 'Đưa mã phòng và số lượng ra báo cáo.',
     focus: 'SELECT MaPB, COUNT(*) AS [SoHoSo]',
-    meaning: '`SELECT` chọn các cột và đặt alias cho kết quả sau khi đã lọc nhóm.',
-    detail: '`SELECT` đưa `1` nhóm còn lại ra `2` cột: `MaPB` và `SoHoSo`. Alias của câu gốc được tạo ở đây, nên không dùng nó ở `HAVING` trước đó.',
+    inputColumns: ['MaPB', 'Số hồ sơ trong nhóm'],
+    meaning: '`SELECT` áp dụng hai biểu thức lên nhóm còn lại; mỗi biểu thức tạo một ô của dòng báo cáo. `AS [SoHoSo]` đặt tiêu đề cho cột số đếm.',
+    examples: [{
+      title: 'Từ nhóm KD đến hai ô kết quả',
+      note: 'Trích `5` trong `13` hồ sơ của nhóm `KD` còn được tính sau `HAVING`.',
+      table: { columns: ['MaNV', 'MaPB'], rows: [['NV002', 'KD'], ['NV003', 'KD'], ['NV006', 'KD'], ['NV013', 'KD'], ['NV016', 'KD']] },
+      calculations: [
+        { expression: 'MaPB', explanation: 'Lấy mã chung `KD` của các hồ sơ trong nhóm.', column: 'MaPB', value: 'KD' },
+        { expression: 'COUNT(*)', explanation: 'Đếm cả `13` hồ sơ trong nhóm đã hình thành từ các dòng qua `WHERE`, không đếm `1` dòng bảng đối chiếu hoặc chỉ `5` hồ sơ trích.', column: 'SoHoSo', value: 13 },
+      ],
+      conclusion: 'Ghép hai ô theo thứ tự `MaPB`, `SoHoSo` thành dòng `KD | 13`.',
+    }],
+    detail: '`1` dòng, `2` cột: `MaPB`, `SoHoSo`. Alias của câu chính có từ bước này, sau `HAVING`.',
     sql: `SELECT MaPB, COUNT(*) AS [SoHoSo]
 FROM NhanVien
 WHERE TrangThai = N'Đang làm'
@@ -170,13 +199,15 @@ HAVING COUNT(*) > 10;`,
     columns: ['MaPB', 'SoHoSo'],
     rows: [['KD', 13]],
     total: 1,
+    mark: [1],
   },
   {
     clause: 'ORDER BY',
     title: 'Sắp các nhóm đạt ngưỡng.',
     focus: 'ORDER BY [SoHoSo] DESC, MaPB ASC',
+    inputColumns: ['MaPB', 'SoHoSo'],
     meaning: '`ORDER BY` sắp các dòng sau khi chọn cột; lúc này dùng được alias đã tạo ở `SELECT`.',
-    detail: '`ORDER BY` giữ `1` dòng `KD`, nên lần này không đổi vị trí. Vẫn viết thứ tự yêu cầu để câu lệnh tiếp tục đúng khi dữ liệu có thêm phòng vượt ngưỡng.',
+    detail: 'Vẫn `1` dòng, `2` cột. Chỉ có `KD` nên không đổi vị trí; câu lệnh giữ tiêu chí sắp mà chị Hạnh yêu cầu.',
     sql: `SELECT MaPB, COUNT(*) AS [SoHoSo]
 FROM NhanVien
 WHERE TrangThai = N'Đang làm'
@@ -189,13 +220,19 @@ ORDER BY [SoHoSo] DESC, MaPB ASC;`,
   },
 ]} />
 
+<Result columns={['MaPB', 'SoHoSo']} rows={[
+  ['KD', 13],
+]} />
+
+Bạn có thể trả lời chị Hạnh: chỉ `KD` có trên `10` hồ sơ đang làm, với số lượng `13` theo mã phòng hiện lưu. `IT` có đúng `10` nên không qua ngưỡng; đổi sang `>= 10` thì phòng này cũng được giữ. Kết quả chỉ trả lời tiêu chí số lượng, không tự kết luận phòng nào đang thiếu người.
+
 ## Hay nhầm ở đâu
 
 <Mistakes>
 
 1. **Đặt `COUNT(*) > 10` vào `WHERE` của câu trên.** SQL Server không cho dùng phép tổng hợp nhóm ở chỗ đang lọc từng hồ sơ này; câu bị lỗi trước khi có báo cáo.
 2. **Bỏ `WHERE` vì đã có `HAVING`.** `KD` vẫn qua ngưỡng, nhưng số lượng thành `14` do tính thêm hồ sơ đã nghỉ, sai yêu cầu đang làm.
-3. **Dùng nhầm chỉ tiêu trong `HAVING`.** Lọc bằng `COUNT(*)` khi yêu cầu theo tổng số ngày sẽ chọn nhóm theo số đơn; nhóm nhiều đơn ngắn có thể qua, còn nhóm ít đơn dài bị loại sai.
+3. **Dùng `SoHoSo` ở `HAVING` của cùng câu.** Alias chưa có ở bước này nên câu báo lỗi; phải viết biểu thức `COUNT(*)` như câu chính.
 
 </Mistakes>
 
@@ -231,6 +268,13 @@ ORDER BY [SoHoSo] DESC, MaPB ASC;`,
 <summary>Đổi ngưỡng từ <code>&gt; 10</code> sang <code>&gt;= 10</code> có giữ thêm nhóm nào trong tình huống?</summary>
 
 Có. Nhóm `IT` có đúng `10` hồ sơ đang làm sẽ được giữ thêm; điều kiện ban đầu chỉ giữ `KD` có `13`.
+
+</details>
+
+<details>
+<summary>Vì sao <code>ORDER BY</code> dùng được <code>SoHoSo</code>, còn <code>HAVING</code> trong câu chính viết <code>COUNT(*)</code>?</summary>
+
+Theo thứ tự logic, `HAVING` đứng trước `SELECT` nên chưa dùng được alias do `SELECT` đặt. `ORDER BY` đứng sau nên dùng được `SoHoSo`.
 
 </details>
 
