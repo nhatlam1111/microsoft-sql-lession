@@ -1,0 +1,58 @@
+id: dao-thu-tu-cot
+chapter: '2-1'
+order: 2
+title: Sổ kiểm kê tài sản
+difficulty: de
+lessons: [ 2-1-chon-cot-dat-ten-cot ]
+prompt: >-
+  Biểu kiểm kê ghi tên tài sản ở cột đầu và mã tài sản ở cột thứ hai. Từ bảng TaiSan, lấy hai cột theo đúng thứ tự đó cho mọi tài sản đang lưu.
+columns: [ TenTS, MaTS ]
+ordered: false
+tables:
+  TaiSan:
+    MaTS: varchar(10) NOT NULL
+    TenTS: nvarchar(100) NOT NULL
+    NgayMua: date NULL
+    GiaTri: decimal(14,0) NOT NULL
+answer: SELECT TenTS, MaTS FROM TaiSan
+tests:
+  - id: 1
+    visible: true
+    rows:
+      TaiSan:
+        - [ "TS01", "Máy in văn phòng", "2024-02-15", 6500000 ]
+        - [ "TS02", "Bàn họp 8 chỗ", "2023-07-01", 12000000 ]
+    expected: [ [ "Máy in văn phòng", "TS01" ], [ "Bàn họp 8 chỗ", "TS02" ] ]
+  - id: 2
+    visible: true
+    rows:
+      TaiSan:
+        - [ "TS10", "Máy chiếu", "2025-03-20", 18000000 ]
+        - [ "TS11", "Tủ hồ sơ", "2022-11-05", 4200000 ]
+        - [ "TS12", "Máy lạnh phòng họp", "2024-06-30", 15000000 ]
+    expected: [ [ "Máy chiếu", "TS10" ], [ "Tủ hồ sơ", "TS11" ], [ "Máy lạnh phòng họp", "TS12" ] ]
+  - id: 3
+    catches: SELECT TOP 3 TenTS, MaTS FROM TaiSan
+    rows:
+      TaiSan:
+        - [ "TS21", "Laptop kế toán", "2025-01-10", 21000000 ]
+        - [ "TS22", "Laptop nhân sự", "2025-01-10", 21000000 ]
+        - [ "TS23", "Máy hủy giấy", "2023-09-12", 3500000 ]
+        - [ "TS24", "Ghế xoay", "2024-04-02", 1800000 ]
+        - [ "TS25", "Bảng trắng", "2021-05-18", 900000 ]
+    expected: [ [ "Laptop kế toán", "TS21" ], [ "Laptop nhân sự", "TS22" ], [ "Máy hủy giấy", "TS23" ], [ "Ghế xoay", "TS24" ], [ "Bảng trắng", "TS25" ] ]
+  - id: 4
+    catches: SELECT TenTS, MaTS FROM TaiSan WHERE NgayMua IS NOT NULL
+    rows:
+      TaiSan:
+        - [ "TS31", "Bộ bàn ghế được tặng", null, 5000000 ]
+        - [ "TS32", "Máy scan", "2024-08-08", 7200000 ]
+    expected: [ [ "Bộ bàn ghế được tặng", "TS31" ], [ "Máy scan", "TS32" ] ]
+  - id: 5
+    catches: SELECT TenTS, MaTS FROM TaiSan WHERE GiaTri > 0
+    rows:
+      TaiSan:
+        - [ "TS41", "Máy fax cũ", "2015-03-01", 0 ]
+        - [ "TS42", "Tủ sắt", "2019-10-10", 3000000 ]
+    expected: [ [ "Máy fax cũ", "TS41" ], [ "Tủ sắt", "TS42" ] ]
+resultTypes: [ "nvarchar", "varchar" ]

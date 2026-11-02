@@ -1,0 +1,56 @@
+id: cot-co-khoang-trang
+chapter: '2-1'
+order: 5
+title: Bảng phúc lợi có tên cột dài
+difficulty: vua
+lessons: [ 2-1-chon-cot-dat-ten-cot ]
+prompt: >-
+  Bảng PhucLoi được nhập từ file nên có tên cột chứa khoảng trắng. Lấy hai cột theo thứ tự: Loại phúc lợi rồi Mức hỗ trợ, cho mọi dòng trong bảng. Giữ cả dòng chưa có mức hỗ trợ và các dòng giống nhau.
+columns: [ Loại phúc lợi, Mức hỗ trợ ]
+ordered: false
+tables:
+  PhucLoi:
+    Mã nhân viên: varchar(10) NOT NULL
+    Loại phúc lợi: nvarchar(50) NOT NULL
+    Mức hỗ trợ: decimal(12,0) NULL
+    Ngày áp dụng: date NOT NULL
+answer: SELECT [Loại phúc lợi], [Mức hỗ trợ] FROM PhucLoi
+tests:
+  - id: 1
+    visible: true
+    rows:
+      PhucLoi:
+        - [ "NV201", "Ăn trưa", 730000, "2026-01-01" ]
+        - [ "NV202", "Đi lại", 500000, "2026-01-01" ]
+    expected: [ [ "Ăn trưa", "730000" ], [ "Đi lại", "500000" ] ]
+  - id: 2
+    visible: true
+    rows:
+      PhucLoi:
+        - [ "NV205", "Điện thoại", 300000, "2026-03-01" ]
+        - [ "NV206", "Nhà ở", 1500000, "2026-04-01" ]
+    expected: [ [ "Điện thoại", "300000" ], [ "Nhà ở", "1500000" ] ]
+  - id: 3
+    catches: SELECT [Loại phúc lợi], [Mức hỗ trợ] FROM PhucLoi WHERE [Mức hỗ trợ] IS NOT NULL
+    rows:
+      PhucLoi:
+        - [ "NV211", "Khám sức khỏe", null, "2026-05-01" ]
+        - [ "NV212", "Ăn trưa", 730000, "2026-05-01" ]
+    expected: [ [ "Khám sức khỏe", null ], [ "Ăn trưa", "730000" ] ]
+  - id: 4
+    catches: SELECT DISTINCT [Loại phúc lợi], [Mức hỗ trợ] FROM PhucLoi
+    rows:
+      PhucLoi:
+        - [ "NV221", "Ăn trưa", 730000, "2026-01-01" ]
+        - [ "NV222", "Ăn trưa", 730000, "2026-01-01" ]
+        - [ "NV223", "Đi lại", 500000, "2026-01-01" ]
+    expected: [ [ "Ăn trưa", "730000" ], [ "Ăn trưa", "730000" ], [ "Đi lại", "500000" ] ]
+  - id: 5
+    catches: SELECT TOP 2 [Loại phúc lợi], [Mức hỗ trợ] FROM PhucLoi
+    rows:
+      PhucLoi:
+        - [ "NV231", "Đi lại", 500000, "2026-02-01" ]
+        - [ "NV232", "Điện thoại", 300000, "2026-02-01" ]
+        - [ "NV233", "Nhà ở", 1500000, "2026-02-01" ]
+    expected: [ [ "Đi lại", "500000" ], [ "Điện thoại", "300000" ], [ "Nhà ở", "1500000" ] ]
+resultTypes: [ "nvarchar", "decimal" ]
