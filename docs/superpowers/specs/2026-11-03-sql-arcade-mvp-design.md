@@ -279,3 +279,11 @@ Không làm thêm gì cho cấp Nâng cao trong MVP.
 - Cách sinh literal SQL theo kiểu cột, miễn có test.
 - Cách tách bảng kết quả dùng chung, miễn `ExerciseWorkspace` không đổi hành vi.
 - Số dòng dữ liệu mỗi test, số unit test và hidden test vượt mức tối thiểu.
+
+## 14. Kết quả spike (2026-11-03)
+
+- Database `arcade` tạo được trên server `sql-lession` bằng gói miễn phí: `useFreeLimit: true`, `AutoPause`, `GP_S_Gen5`, 2 vCore, tối thiểu 0,5, collation `SQL_Latin1_General_CP1_CI_AS`.
+- `database/arcade-setup.sql` được người dựng áp dụng theo đề nghị của người làm khóa học, lấy mật khẩu từ `.env`, không in và không ghi vào file. Script dùng `EXEC` cho `CREATE SCHEMA` nên không cần `GO`.
+- Một test mẫu 10 dòng chạy đúng trong transaction: cả `NhanVien` lẫn `dbo.NhanVien` đều đọc được, `Hà` giữ nguyên, sau `ROLLBACK` schema `dbo` rỗng.
+- `arcade_runner` bị lỗi 229 khi đọc hoặc ghi `arcade.Learner`. `arcade_store` đọc ghi được schema `arcade`, không tạo được bảng (lỗi 262).
+- Từ máy phát triển, một vòng mất khoảng 1,09 giây, vượt ngưỡng 600 ms của plan. Đo riêng thì mỗi lệnh khoảng 155 ms bất kể nặng nhẹ, `CREATE TABLE` cộng `INSERT` 10 dòng chỉ hơn một lệnh `SET` khoảng 6 ms, nên gần như toàn bộ là độ trễ mạng. Function App và database cùng ở Australia East nên con số này không đại diện cho API thật. Thời gian thật đo lại ở bước kiểm sau khi deploy.
