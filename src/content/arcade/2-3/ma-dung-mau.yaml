@@ -1,0 +1,54 @@
+id: ma-dung-mau
+chapter: '2-3'
+order: 6
+title: Mã lớp đúng mẫu
+difficulty: vua
+lessons: [ 2-3-and-or-in-between-like ]
+prompt: >-
+  Mã lớp đào tạo năm 2026 có đúng sáu ký tự: hai ký tự đầu là 26, ký tự thứ ba là mã nhóm bất kỳ, ba ký tự cuối là số thứ tự. Phòng đào tạo cần các lớp có số thứ tự 001. Từ bảng LopHoc, lấy mã lớp và tên lớp có mã đúng mẫu đó.
+columns: [ MaLop, TenLop ]
+ordered: false
+tables:
+  LopHoc:
+    MaLop: varchar(10) NOT NULL
+    TenLop: nvarchar(100) NOT NULL
+    SiSo: decimal(3,0) NOT NULL
+answer: "SELECT MaLop, TenLop FROM LopHoc WHERE MaLop LIKE '26_001'"
+tests:
+  - id: 1
+    visible: true
+    rows:
+      LopHoc:
+        - [ "26A001", "Viết email", 20 ]
+        - [ "26A002", "Thuyết trình", 15 ]
+        - [ "26A003", "Excel", 18 ]
+    expected: [ [ "26A001", "Viết email" ] ]
+  - id: 2
+    visible: true
+    rows:
+      LopHoc:
+        - [ "26B001", "Quản lý thời gian", 12 ]
+        - [ "26C014", "An toàn lao động", 30 ]
+    expected: [ [ "26B001", "Quản lý thời gian" ] ]
+  - id: 3
+    catches: "SELECT MaLop, TenLop FROM LopHoc WHERE MaLop LIKE '26%001'"
+    rows:
+      LopHoc:
+        - [ "26AB001", "Lớp ghép khóa cũ", 10 ]
+        - [ "26D001", "Giao tiếp", 16 ]
+    expected: [ [ "26D001", "Giao tiếp" ] ]
+  - id: 4
+    catches: "SELECT MaLop, TenLop FROM LopHoc WHERE MaLop LIKE '26A001' OR MaLop LIKE '26B001'"
+    rows:
+      LopHoc:
+        - [ "26E001", "Pháp luật lao động", 25 ]
+        - [ "26E002", "Phỏng vấn", 14 ]
+    expected: [ [ "26E001", "Pháp luật lao động" ] ]
+  - id: 5
+    catches: "SELECT MaLop, TenLop FROM LopHoc WHERE MaLop LIKE '%001'"
+    rows:
+      LopHoc:
+        - [ "24C001", "Sơ cấp cứu", 22 ]
+        - [ "26F001", "Tin học văn phòng", 19 ]
+    expected: [ [ "26F001", "Tin học văn phòng" ] ]
+resultTypes: [ "varchar", "nvarchar" ]

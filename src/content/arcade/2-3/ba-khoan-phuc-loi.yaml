@@ -1,0 +1,55 @@
+id: ba-khoan-phuc-loi
+chapter: '2-3'
+order: 2
+title: Ba khoản phúc lợi
+difficulty: de
+lessons: [ 2-3-and-or-in-between-like ]
+prompt: >-
+  Kế toán cần các dòng phúc lợi thuộc một trong ba loại: Ăn trưa, Đi lại, Điện thoại. Từ bảng PhucLoi, lấy mã nhân viên, loại phúc lợi và mức hỗ trợ.
+columns: [ MaNV, Loai, MucHoTro ]
+ordered: false
+tables:
+  PhucLoi:
+    MaNV: varchar(10) NOT NULL
+    Loai: nvarchar(30) NOT NULL
+    MucHoTro: decimal(12,0) NOT NULL
+answer: "SELECT MaNV, Loai, MucHoTro FROM PhucLoi WHERE Loai IN (N'Ăn trưa', N'Đi lại', N'Điện thoại')"
+tests:
+  - id: 1
+    visible: true
+    rows:
+      PhucLoi:
+        - [ "NV201", "Điện thoại", 300000 ]
+        - [ "NV202", "Nhà ở", 1500000 ]
+        - [ "NV203", "Đi lại", 500000 ]
+    expected: [ [ "NV201", "Điện thoại", "300000" ], [ "NV203", "Đi lại", "500000" ] ]
+  - id: 2
+    visible: true
+    rows:
+      PhucLoi:
+        - [ "NV205", "Điện thoại", 300000 ]
+        - [ "NV206", "Khám sức khỏe", 2000000 ]
+        - [ "NV207", "Đi lại", 400000 ]
+    expected: [ [ "NV205", "Điện thoại", "300000" ], [ "NV207", "Đi lại", "400000" ] ]
+  - id: 3
+    catches: "SELECT MaNV, Loai, MucHoTro FROM PhucLoi WHERE Loai IN (N'Đi lại', N'Điện thoại')"
+    rows:
+      PhucLoi:
+        - [ "NV211", "Ăn trưa", 730000 ]
+        - [ "NV212", "Nhà ở", 1500000 ]
+    expected: [ [ "NV211", "Ăn trưa", "730000" ] ]
+  - id: 4
+    catches: "SELECT MaNV, Loai, MucHoTro FROM PhucLoi WHERE Loai LIKE N'Đ%' OR Loai LIKE N'Ă%'"
+    rows:
+      PhucLoi:
+        - [ "NV221", "Đào tạo", 1000000 ]
+        - [ "NV222", "Ăn trưa", 730000 ]
+    expected: [ [ "NV222", "Ăn trưa", "730000" ] ]
+  - id: 5
+    catches: "SELECT MaNV, Loai, MucHoTro FROM PhucLoi WHERE MucHoTro BETWEEN 300000 AND 730000"
+    rows:
+      PhucLoi:
+        - [ "NV231", "Thai sản", 500000 ]
+        - [ "NV232", "Điện thoại", 900000 ]
+    expected: [ [ "NV232", "Điện thoại", "900000" ] ]
+resultTypes: [ "varchar", "nvarchar", "decimal" ]

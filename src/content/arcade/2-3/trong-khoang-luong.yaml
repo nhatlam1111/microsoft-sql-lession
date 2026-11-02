@@ -1,0 +1,54 @@
+id: trong-khoang-luong
+chapter: '2-3'
+order: 3
+title: Mức lương trong khoảng
+difficulty: de
+lessons: [ 2-3-and-or-in-between-like ]
+prompt: >-
+  Nhân sự cần các vị trí có mức lương đề xuất từ 10.000.000 đến 15.000.000 đồng, gồm cả hai mức đó. Từ bảng ViTriTuyen, lấy mã vị trí, tên vị trí và mức lương đề xuất.
+columns: [ MaVT, TenVT, LuongDeXuat ]
+ordered: false
+tables:
+  ViTriTuyen:
+    MaVT: varchar(10) NOT NULL
+    TenVT: nvarchar(100) NOT NULL
+    LuongToiDa: decimal(12,0) NOT NULL
+    LuongDeXuat: decimal(12,0) NOT NULL
+answer: "SELECT MaVT, TenVT, LuongDeXuat FROM ViTriTuyen WHERE LuongDeXuat BETWEEN 10000000 AND 15000000"
+tests:
+  - id: 1
+    visible: true
+    rows:
+      ViTriTuyen:
+        - [ "VT01", "Kế toán viên", 12000000, 12000000 ]
+        - [ "VT02", "Lễ tân", 8000000, 8000000 ]
+    expected: [ [ "VT01", "Kế toán viên", "12000000" ] ]
+  - id: 2
+    visible: true
+    rows:
+      ViTriTuyen:
+        - [ "VT05", "Chuyên viên tuyển dụng", 14000000, 14000000 ]
+        - [ "VT06", "Trưởng nhóm", 25000000, 25000000 ]
+    expected: [ [ "VT05", "Chuyên viên tuyển dụng", "14000000" ] ]
+  - id: 3
+    catches: "SELECT MaVT, TenVT, LuongDeXuat FROM ViTriTuyen WHERE LuongDeXuat BETWEEN 10000001 AND 15000000"
+    rows:
+      ViTriTuyen:
+        - [ "VT11", "Nhân viên kho", 11000000, 10000000 ]
+        - [ "VT12", "Bảo vệ", 7000000, 7000000 ]
+    expected: [ [ "VT11", "Nhân viên kho", "10000000" ] ]
+  - id: 4
+    catches: "SELECT MaVT, TenVT, LuongDeXuat FROM ViTriTuyen WHERE LuongDeXuat BETWEEN 10000000 AND 14999999"
+    rows:
+      ViTriTuyen:
+        - [ "VT21", "Lập trình viên", 18000000, 15000000 ]
+        - [ "VT22", "Tạp vụ", 6000000, 6000000 ]
+    expected: [ [ "VT21", "Lập trình viên", "15000000" ] ]
+  - id: 5
+    catches: "SELECT MaVT, TenVT, LuongDeXuat FROM ViTriTuyen WHERE LuongToiDa BETWEEN 10000000 AND 15000000"
+    rows:
+      ViTriTuyen:
+        - [ "VT31", "Kỹ thuật viên", 16000000, 13000000 ]
+        - [ "VT32", "Thư ký", 12000000, 9000000 ]
+    expected: [ [ "VT31", "Kỹ thuật viên", "13000000" ] ]
+resultTypes: [ "varchar", "nvarchar", "decimal" ]

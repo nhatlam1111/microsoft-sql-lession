@@ -1,0 +1,54 @@
+id: ngoac-doi-ket-qua
+chapter: '2-3'
+order: 4
+title: Hai phòng cùng một điều kiện
+difficulty: vua
+lessons: [ 2-3-and-or-in-between-like ]
+prompt: >-
+  Từ bảng NhanSu, lấy mã và họ tên của những người thuộc phòng KD hoặc phòng IT, và đang có trạng thái Đang làm. Điều kiện trạng thái áp dụng cho cả hai phòng.
+columns: [ MaNV, HoTen ]
+ordered: false
+tables:
+  NhanSu:
+    MaNV: varchar(10) NOT NULL
+    HoTen: nvarchar(100) NOT NULL
+    MaPB: varchar(10) NOT NULL
+    TrangThai: nvarchar(20) NOT NULL
+answer: "SELECT MaNV, HoTen FROM NhanSu WHERE (MaPB = 'KD' OR MaPB = 'IT') AND TrangThai = N'Đang làm'"
+tests:
+  - id: 1
+    visible: true
+    rows:
+      NhanSu:
+        - [ "NV301", "Lê Ngọc Ánh", "KD", "Đang làm" ]
+        - [ "NV302", "Trịnh Văn Dũng", "KT", "Đã nghỉ" ]
+    expected: [ [ "NV301", "Lê Ngọc Ánh" ] ]
+  - id: 2
+    visible: true
+    rows:
+      NhanSu:
+        - [ "NV305", "Phan Thùy Dương", "IT", "Đang làm" ]
+        - [ "NV306", "Hà Quang Minh", "NS", "Đã nghỉ" ]
+    expected: [ [ "NV305", "Phan Thùy Dương" ] ]
+  - id: 3
+    catches: "SELECT MaNV, HoTen FROM NhanSu WHERE MaPB = 'KD' OR MaPB = 'IT' AND TrangThai = N'Đang làm'"
+    rows:
+      NhanSu:
+        - [ "NV311", "Tăng Mỹ Linh", "KD", "Đã nghỉ" ]
+        - [ "NV312", "Cù Đình Phong", "IT", "Đang làm" ]
+    expected: [ [ "NV312", "Cù Đình Phong" ] ]
+  - id: 4
+    catches: "SELECT MaNV, HoTen FROM NhanSu WHERE MaPB = 'IT' OR MaPB = 'KD' AND TrangThai = N'Đang làm'"
+    rows:
+      NhanSu:
+        - [ "NV321", "Giáp Thị Vân", "IT", "Đã nghỉ" ]
+        - [ "NV322", "Âu Dương Khải", "KD", "Đang làm" ]
+    expected: [ [ "NV322", "Âu Dương Khải" ] ]
+  - id: 5
+    catches: "SELECT MaNV, HoTen FROM NhanSu WHERE TrangThai = N'Đang làm' AND MaPB IN ('KD', 'IT', 'KT')"
+    rows:
+      NhanSu:
+        - [ "NV331", "Sầm Thu Hiền", "KT", "Đang làm" ]
+        - [ "NV332", "Từ Anh Khoa", "KD", "Đang làm" ]
+    expected: [ [ "NV332", "Từ Anh Khoa" ] ]
+resultTypes: [ "varchar", "nvarchar" ]

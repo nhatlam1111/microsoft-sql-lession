@@ -1,0 +1,57 @@
+id: khoa-hoc-quy-4
+chapter: '2-3'
+order: 7
+title: Khóa học quý 4
+difficulty: kho
+lessons: [ 2-3-and-or-in-between-like ]
+prompt: >-
+  Phòng đào tạo cần danh sách khóa còn nhận đăng ký trong quý 4/2026. Từ bảng KhoaHoc, lấy mã và tên các khóa có ngày mở từ 01/10/2026 đến hết 31/12/2026, thuộc nhóm Kỹ năng hoặc Chuyên môn, và có trạng thái Mở đăng ký.
+columns: [ MaKH, TenKH ]
+ordered: false
+tables:
+  KhoaHoc:
+    MaKH: varchar(10) NOT NULL
+    TenKH: nvarchar(100) NOT NULL
+    Nhom: nvarchar(30) NOT NULL
+    NgayMo: date NOT NULL
+    TrangThai: nvarchar(30) NOT NULL
+answer: "SELECT MaKH, TenKH FROM KhoaHoc WHERE NgayMo BETWEEN '20261001' AND '20261231' AND Nhom IN (N'Kỹ năng', N'Chuyên môn') AND TrangThai = N'Mở đăng ký'"
+tests:
+  - id: 1
+    visible: true
+    rows:
+      KhoaHoc:
+        - [ "K01", "Viết email", "Kỹ năng", "2026-10-05", "Mở đăng ký" ]
+        - [ "K02", "Kế toán thuế", "Chuyên môn", "2026-11-02", "Mở đăng ký" ]
+        - [ "K03", "Văn hóa công ty", "Hội nhập", "2026-08-04", "Đã kết thúc" ]
+    expected: [ [ "K01", "Viết email" ], [ "K02", "Kế toán thuế" ] ]
+  - id: 2
+    visible: true
+    rows:
+      KhoaHoc:
+        - [ "K05", "Thuyết trình", "Kỹ năng", "2026-12-07", "Mở đăng ký" ]
+        - [ "K06", "Nội quy", "Hội nhập", "2026-07-01", "Đã kết thúc" ]
+    expected: [ [ "K05", "Thuyết trình" ] ]
+  - id: 3
+    catches: "SELECT MaKH, TenKH FROM KhoaHoc WHERE NgayMo BETWEEN '20261001' AND '20261231' AND Nhom IN (N'Kỹ năng', N'Chuyên môn')"
+    rows:
+      KhoaHoc:
+        - [ "K11", "Excel", "Kỹ năng", "2026-10-12", "Đã hủy" ]
+        - [ "K12", "Sơ cấp cứu", "Kỹ năng", "2026-10-19", "Mở đăng ký" ]
+    expected: [ [ "K12", "Sơ cấp cứu" ] ]
+  - id: 4
+    catches: "SELECT MaKH, TenKH FROM KhoaHoc WHERE NgayMo BETWEEN '20261001' AND '20261231' AND TrangThai = N'Mở đăng ký'"
+    rows:
+      KhoaHoc:
+        - [ "K21", "Văn hóa hội nhập", "Hội nhập", "2026-11-09", "Mở đăng ký" ]
+        - [ "K22", "Pháp luật", "Chuyên môn", "2026-11-16", "Mở đăng ký" ]
+    expected: [ [ "K22", "Pháp luật" ] ]
+  - id: 5
+    catches: "SELECT MaKH, TenKH FROM KhoaHoc WHERE NgayMo BETWEEN '20261002' AND '20261230' AND Nhom IN (N'Kỹ năng', N'Chuyên môn') AND TrangThai = N'Mở đăng ký'"
+    rows:
+      KhoaHoc:
+        - [ "K31", "Khai xuân sớm", "Kỹ năng", "2026-10-01", "Mở đăng ký" ]
+        - [ "K32", "Tổng kết năm", "Chuyên môn", "2026-12-31", "Mở đăng ký" ]
+        - [ "K33", "Đầu năm", "Kỹ năng", "2027-01-04", "Mở đăng ký" ]
+    expected: [ [ "K31", "Khai xuân sớm" ], [ "K32", "Tổng kết năm" ] ]
+resultTypes: [ "varchar", "nvarchar" ]
