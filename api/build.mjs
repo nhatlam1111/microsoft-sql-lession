@@ -4,7 +4,7 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 
 import { parse } from 'yaml';
 
 await build({
-  entryPoints: ['src/index.ts', 'src/dev-server.ts', 'src/check-exercises.ts', 'src/check-data.ts'],
+  entryPoints: ['src/index.ts', 'src/dev-server.ts', 'src/check-exercises.ts', 'src/check-data.ts', 'src/check-arcade.ts'],
   bundle: true, platform: 'node', format: 'esm', target: 'node20', outdir: 'dist', packages: 'external', logLevel: 'warning',
 });
 
