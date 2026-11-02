@@ -1,0 +1,52 @@
+id: bo-khoang-trang-thua
+chapter: '2-7'
+order: 3
+title: Tên nhập có khoảng trắng
+difficulty: vua
+lessons: [ 2-7-ham-chuoi-tieng-viet ]
+prompt: >-
+  File nhập từ hệ thống cũ làm họ tên có thể thừa dấu cách ở đầu hoặc cuối. Từ bảng ImportNV, lấy mã và họ tên đã bỏ dấu cách ở hai đầu, kèm số ký tự của họ tên sau khi bỏ.
+columns: [ MaNV, Họ tên, Số ký tự ]
+ordered: false
+tables:
+  ImportNV:
+    MaNV: varchar(10) NOT NULL
+    HoTen: nvarchar(100) NOT NULL
+answer: "SELECT MaNV, TRIM(HoTen) AS [Họ tên], LEN(TRIM(HoTen)) AS [Số ký tự] FROM ImportNV"
+tests:
+  - id: 1
+    visible: true
+    rows:
+      ImportNV:
+        - [ "NV201", "Lê Ngọc Ánh" ]
+        - [ "NV202", "Hà Quang Minh  " ]
+    expected: [ [ "NV201", "Lê Ngọc Ánh", 11 ], [ "NV202", "Hà Quang Minh", 13 ] ]
+  - id: 2
+    visible: true
+    rows:
+      ImportNV:
+        - [ "NV205", "Trịnh Dũng" ]
+        - [ "NV206", "Đặng An   " ]
+    expected: [ [ "NV205", "Trịnh Dũng", 10 ], [ "NV206", "Đặng An", 7 ] ]
+  - id: 3
+    catches: "SELECT MaNV, TRIM(HoTen), LEN(TRIM(HoTen)) FROM ImportNV WHERE LEN(HoTen) >= 5"
+    rows:
+      ImportNV:
+        - [ "NV211", "  Yên" ]
+        - [ "NV212", "Cù Phong" ]
+    expected: [ [ "NV211", "Yên", 3 ], [ "NV212", "Cù Phong", 8 ] ]
+  - id: 4
+    catches: "SELECT MaNV, TRIM(HoTen), LEN(HoTen) FROM ImportNV"
+    rows:
+      ImportNV:
+        - [ "NV221", "   Giáp Vân" ]
+        - [ "NV222", "Âu Khải" ]
+    expected: [ [ "NV221", "Giáp Vân", 8 ], [ "NV222", "Âu Khải", 7 ] ]
+  - id: 5
+    catches: "SELECT MaNV, RTRIM(HoTen), LEN(RTRIM(HoTen)) FROM ImportNV"
+    rows:
+      ImportNV:
+        - [ "NV231", " Sầm Hiền " ]
+        - [ "NV232", "Từ Khoa" ]
+    expected: [ [ "NV231", "Sầm Hiền", 8 ], [ "NV232", "Từ Khoa", 7 ] ]
+resultTypes: [ "varchar", "nvarchar", "int" ]

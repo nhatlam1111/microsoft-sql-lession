@@ -1,0 +1,56 @@
+id: cap-phong-chuc-danh
+chapter: '2-6'
+order: 2
+title: Các cặp phòng và chức danh
+difficulty: de
+lessons: [ 2-6-distinct-bo-dong-trung ]
+prompt: >-
+  Nhân sự cần biết những cặp phòng và chức danh đang có. Từ bảng NhanSu, lấy mã phòng và mã chức danh, mỗi cặp khác nhau một dòng.
+columns: [ MaPB, MaCD ]
+ordered: false
+tables:
+  NhanSu:
+    MaNV: varchar(10) NOT NULL
+    MaPB: varchar(10) NOT NULL
+    MaCD: varchar(10) NOT NULL
+answer: "SELECT DISTINCT MaPB, MaCD FROM NhanSu"
+tests:
+  - id: 1
+    visible: true
+    rows:
+      NhanSu:
+        - [ "NV201", "KD", "CV" ]
+        - [ "NV202", "KD", "CV" ]
+        - [ "NV203", "IT", "NV" ]
+    expected: [ [ "IT", "NV" ], [ "KD", "CV" ] ]
+  - id: 2
+    visible: true
+    rows:
+      NhanSu:
+        - [ "NV205", "KT", "TP" ]
+        - [ "NV206", "KT", "TP" ]
+        - [ "NV207", "KT", "TP" ]
+    expected: [ [ "KT", "TP" ] ]
+  - id: 3
+    catches: "SELECT DISTINCT MaPB, MIN(MaCD) OVER (PARTITION BY MaPB) FROM NhanSu"
+    rows:
+      NhanSu:
+        - [ "NV211", "KD", "CV" ]
+        - [ "NV212", "KD", "TP" ]
+    expected: [ [ "KD", "CV" ], [ "KD", "TP" ] ]
+  - id: 4
+    catches: "SELECT DISTINCT MIN(MaPB) OVER (PARTITION BY MaCD), MaCD FROM NhanSu"
+    rows:
+      NhanSu:
+        - [ "NV221", "KD", "CV" ]
+        - [ "NV222", "IT", "CV" ]
+    expected: [ [ "IT", "CV" ], [ "KD", "CV" ] ]
+  - id: 5
+    catches: "SELECT DISTINCT TOP (2) MaPB, MaCD FROM NhanSu"
+    rows:
+      NhanSu:
+        - [ "NV231", "KD", "CV" ]
+        - [ "NV232", "IT", "NV" ]
+        - [ "NV233", "NS", "TP" ]
+    expected: [ [ "IT", "NV" ], [ "KD", "CV" ], [ "NS", "TP" ] ]
+resultTypes: [ "varchar", "varchar" ]

@@ -1,0 +1,54 @@
+id: tim-khong-dau
+chapter: '2-7'
+order: 6
+title: Tìm tên không dấu
+difficulty: kho
+lessons: [ 2-7-ham-chuoi-tieng-viet ]
+prompt: >-
+  Lễ tân chỉ gõ được không dấu. Từ bảng KhachMoi, lấy mã và họ tên của những người có họ tên bắt đầu bằng ngo, không phân biệt dấu và hoa thường, ví dụ Ngô hay Ngọc đều được tính. Xếp mã tăng dần.
+columns: [ MaKM, HoTen ]
+ordered: true
+tables:
+  KhachMoi:
+    MaKM: varchar(10) NOT NULL
+    HoTen: nvarchar(100) NOT NULL
+answer: "SELECT MaKM, HoTen FROM KhachMoi WHERE HoTen COLLATE Latin1_General_CI_AI LIKE N'ngo%' ORDER BY MaKM ASC"
+tests:
+  - id: 1
+    visible: true
+    rows:
+      KhachMoi:
+        - [ "K01", "Ngô Đức Thịnh" ]
+        - [ "K02", "Trần Việt" ]
+    expected: [ [ "K01", "Ngô Đức Thịnh" ] ]
+  - id: 2
+    visible: true
+    rows:
+      KhachMoi:
+        - [ "K05", "Ngọc Lan" ]
+        - [ "K06", "Ninh Hà" ]
+        - [ "K07", "NGÔ THANH" ]
+    expected: [ [ "K05", "Ngọc Lan" ], [ "K07", "NGÔ THANH" ] ]
+  - id: 3
+    catches: "SELECT MaKM, HoTen FROM KhachMoi WHERE HoTen COLLATE Latin1_General_CI_AI LIKE N'%ngo%' ORDER BY MaKM ASC"
+    rows:
+      KhachMoi:
+        - [ "K11", "Lê Ngọc Châu" ]
+        - [ "K12", "Ngô Bảo" ]
+    expected: [ [ "K12", "Ngô Bảo" ] ]
+  - id: 4
+    catches: "SELECT MaKM, HoTen FROM KhachMoi WHERE HoTen LIKE N'Ngô%' OR HoTen LIKE N'Ngọc%' ORDER BY MaKM ASC"
+    rows:
+      KhachMoi:
+        - [ "K21", "Ngoan Nguyễn" ]
+        - [ "K22", "Ngộ Không" ]
+    expected: [ [ "K21", "Ngoan Nguyễn" ], [ "K22", "Ngộ Không" ] ]
+  - id: 5
+    catches: "SELECT MaKM, HoTen FROM KhachMoi WHERE HoTen COLLATE Latin1_General_CI_AI LIKE N'ng%' ORDER BY MaKM ASC"
+    rows:
+      KhachMoi:
+        - [ "K31", "Nguyễn An" ]
+        - [ "K32", "Ngô Bình" ]
+        - [ "K33", "Ninh Châu" ]
+    expected: [ [ "K32", "Ngô Bình" ] ]
+resultTypes: [ "varchar", "nvarchar" ]

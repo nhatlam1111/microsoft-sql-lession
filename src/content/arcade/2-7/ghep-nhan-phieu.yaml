@@ -1,0 +1,53 @@
+id: ghep-nhan-phieu
+chapter: '2-7'
+order: 4
+title: Nhãn phiếu lương
+difficulty: vua
+lessons: [ 2-7-ham-chuoi-tieng-viet ]
+prompt: >-
+  Phiếu lương có nhãn gồm mã nhân viên, dấu cách, dấu gạch ngang, dấu cách rồi họ tên, như NV101 - Lê Ánh. Từ bảng NhanSu, lấy mã phòng và nhãn đó cho mọi dòng. Người chưa có mã phòng vẫn phải có nhãn.
+columns: [ MaPB, Nhãn ]
+ordered: false
+tables:
+  NhanSu:
+    MaNV: varchar(10) NOT NULL
+    HoTen: nvarchar(100) NOT NULL
+    MaPB: varchar(10) NULL
+answer: "SELECT MaPB, CONCAT(MaNV, N' - ', HoTen) AS [Nhãn] FROM NhanSu"
+tests:
+  - id: 1
+    visible: true
+    rows:
+      NhanSu:
+        - [ "NV301", "Lê Ngọc Ánh", "KD" ]
+        - [ "NV302", "Trịnh Văn Dũng", "IT" ]
+    expected: [ [ "KD", "NV301 - Lê Ngọc Ánh" ], [ "IT", "NV302 - Trịnh Văn Dũng" ] ]
+  - id: 2
+    visible: true
+    rows:
+      NhanSu:
+        - [ "NV305", "Phan Dương", "KT" ]
+        - [ "NV306", "Hà Minh", "NS" ]
+    expected: [ [ "KT", "NV305 - Phan Dương" ], [ "NS", "NV306 - Hà Minh" ] ]
+  - id: 3
+    catches: "SELECT MaPB, CONCAT(MaNV, N' - ', HoTen) FROM NhanSu WHERE MaPB IS NOT NULL"
+    rows:
+      NhanSu:
+        - [ "NV311", "Tăng Linh", null ]
+        - [ "NV312", "Cù Phong", "KD" ]
+    expected: [ [ null, "NV311 - Tăng Linh" ], [ "KD", "NV312 - Cù Phong" ] ]
+  - id: 4
+    catches: "SELECT MaPB, CONCAT(MaNV, N' - ', HoTen) FROM NhanSu WHERE MaPB IN ('KD', 'IT', 'KT', 'NS')"
+    rows:
+      NhanSu:
+        - [ "NV321", "Giáp Vân", "VH" ]
+        - [ "NV322", "Âu Khải", "IT" ]
+    expected: [ [ "VH", "NV321 - Giáp Vân" ], [ "IT", "NV322 - Âu Khải" ] ]
+  - id: 5
+    catches: "SELECT MaPB, CONCAT(MaNV, N' - ', LEFT(HoTen, 15)) FROM NhanSu"
+    rows:
+      NhanSu:
+        - [ "NV331", "Nghiêm Thị Thu Hiền", "KD" ]
+        - [ "NV332", "Từ Khoa", "KD" ]
+    expected: [ [ "KD", "NV331 - Nghiêm Thị Thu Hiền" ], [ "KD", "NV332 - Từ Khoa" ] ]
+resultTypes: [ "varchar", "nvarchar" ]

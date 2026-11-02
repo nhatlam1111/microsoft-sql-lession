@@ -1,0 +1,57 @@
+id: danh-muc-co-loc
+chapter: '2-6'
+order: 4
+title: Danh mục địa điểm đã đi
+difficulty: kho
+lessons: [ 2-6-distinct-bo-dong-trung ]
+prompt: >-
+  Kế toán cần danh mục nơi đến của các chuyến công tác đã thanh toán (TrangThai là Đã thanh toán) có ngày đi từ 01/07/2026 trở đi, gồm cả ngày đó. Từ bảng CongTacPhi, lấy nơi đến và mã phòng, mỗi cặp một dòng, xếp nơi đến tăng dần, cùng nơi đến thì mã phòng tăng dần.
+columns: [ NoiDen, MaPB ]
+ordered: true
+tables:
+  CongTacPhi:
+    MaCT: varchar(10) NOT NULL
+    NoiDen: nvarchar(50) NOT NULL
+    MaPB: varchar(10) NOT NULL
+    NgayDi: date NOT NULL
+    TrangThai: nvarchar(20) NOT NULL
+answer: "SELECT DISTINCT NoiDen, MaPB FROM CongTacPhi WHERE TrangThai = N'Đã thanh toán' AND NgayDi >= '20260701' ORDER BY NoiDen ASC, MaPB ASC"
+tests:
+  - id: 1
+    visible: true
+    rows:
+      CongTacPhi:
+        - [ "CT01", "Đà Nẵng", "KD", "2026-07-05", "Đã thanh toán" ]
+        - [ "CT02", "Đà Nẵng", "KD", "2026-08-01", "Đã thanh toán" ]
+        - [ "CT03", "Huế", "IT", "2026-09-09", "Đã thanh toán" ]
+    expected: [ [ "Đà Nẵng", "KD" ], [ "Huế", "IT" ] ]
+  - id: 2
+    visible: true
+    rows:
+      CongTacPhi:
+        - [ "CT05", "Cần Thơ", "KT", "2026-08-15", "Đã thanh toán" ]
+        - [ "CT06", "Vinh", "NS", "2026-09-20", "Đã thanh toán" ]
+    expected: [ [ "Cần Thơ", "KT" ], [ "Vinh", "NS" ] ]
+  - id: 3
+    catches: "SELECT DISTINCT NoiDen, MaPB FROM CongTacPhi WHERE NgayDi >= '20260701' ORDER BY NoiDen ASC, MaPB ASC"
+    rows:
+      CongTacPhi:
+        - [ "CT11", "Huế", "KD", "2026-08-02", "Chờ duyệt" ]
+        - [ "CT12", "Vinh", "KD", "2026-08-03", "Đã thanh toán" ]
+    expected: [ [ "Vinh", "KD" ] ]
+  - id: 4
+    catches: "SELECT DISTINCT NoiDen, MaPB FROM CongTacPhi WHERE TrangThai = N'Đã thanh toán' AND NgayDi >= '20260702' ORDER BY NoiDen ASC, MaPB ASC"
+    rows:
+      CongTacPhi:
+        - [ "CT21", "Quy Nhơn", "IT", "2026-07-01", "Đã thanh toán" ]
+        - [ "CT22", "Sóc Trăng", "IT", "2026-06-30", "Đã thanh toán" ]
+    expected: [ [ "Quy Nhơn", "IT" ] ]
+  - id: 5
+    catches: "SELECT DISTINCT NoiDen, MaPB FROM CongTacPhi WHERE TrangThai = N'Đã thanh toán' AND NgayDi >= '20260701' ORDER BY NoiDen ASC, MaPB DESC"
+    rows:
+      CongTacPhi:
+        - [ "CT31", "Huế", "KT", "2026-07-20", "Đã thanh toán" ]
+        - [ "CT32", "Huế", "IT", "2026-07-21", "Đã thanh toán" ]
+        - [ "CT33", "Huế", "KD", "2026-07-22", "Đã thanh toán" ]
+    expected: [ [ "Huế", "IT" ], [ "Huế", "KD" ], [ "Huế", "KT" ] ]
+resultTypes: [ "nvarchar", "varchar" ]
