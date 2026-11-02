@@ -129,6 +129,7 @@ export default function ArcadeHome({ chapters, cards, apiBase }: Props) {
         <div>
           <h1>Luyện SQL</h1>
           <p>{cards.length} bài nối tiếp nhau. Xong bài trước mới mở bài sau.</p>
+          <p>Mỗi bài có test công khai để tự kiểm và test khóa chỉ chấm khi nộp. Đạt hết thì được thưởng coin; dùng coin để mở test khóa khi cần xem dữ liệu của nó.</p>
         </div>
         {me && (
           <div className="ac-stats">

@@ -5,7 +5,7 @@ title: Danh sách gọi phỏng vấn
 difficulty: de
 lessons: [ 2-1-chon-cot-dat-ten-cot ]
 prompt: >-
-  Bộ phận tuyển dụng cần danh sách để gọi điện hẹn phỏng vấn. Từ bảng UngVien, lấy mã và họ tên của mọi hồ sơ. Mỗi dòng trong bảng cho một dòng kết quả.
+  Bộ phận tuyển dụng cần danh sách để liên hệ hẹn phỏng vấn. Từ bảng UngVien, lấy mã và họ tên của mọi hồ sơ. Mỗi dòng trong bảng cho một dòng kết quả.
 columns: [ MaUV, HoTen ]
 ordered: false
 tables:

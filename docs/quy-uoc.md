@@ -100,14 +100,15 @@ Mọi quy ước khi viết bài, review bài và làm việc với database c�
 - Bối cảnh là nhân sự và các mảng gần như tuyển dụng, đào tạo, tài sản, công tác phí, phúc lợi. Mỗi bài tự khai bảng riêng, chỉ gồm vài cột cần thiết. Dữ liệu đều giả; đề tự soạn, không chép đề hoặc dữ liệu của nền tảng khác.
 - Chỉ dùng từ khóa đã dạy tới hết chương đó, xem bảng dưới. Một bài được trộn kiến thức các chương trước. Bài có phép tính số, `NOT IN`, `NOT LIKE`, `PERCENT`, `WITH TIES`, `YEAR()`, `REPLACE`, `CHARINDEX`, `FORMAT` chỉ được dùng khi đọc lại bài học thấy đã dạy.
 - Đề nói rõ cột, thứ tự cột, thứ tự dòng và phạm vi dòng. Bộ chấm không so tiêu đề cột, nên không ra bài mà mục tiêu duy nhất là đặt tiêu đề. `ordered: true` thì sắp xếp phải có tiêu chí phụ để không hòa. Đề không phụ thuộc ngày hiện tại: dùng mốc cố định, không dùng `GETDATE()` trong đáp án. Không gợi ý trong đề.
-- Chuỗi tiếng Việt trong SQL có `N`. Ngày trong YAML phải có dấu nháy.
-- Mỗi bài có ít nhất 2 unit test và 3 hidden test. Mỗi hidden test bắt một lỗi cụ thể, ghi thành `catches`: một câu sai qua hết unit test nhưng trượt test đó. Hidden test không đòi kiến thức ngoài đề; đề đã nói phạm vi thì dữ liệu ẩn chỉ kiểm phạm vi đó.
+- Chuỗi tiếng Việt trong SQL có `N`. Ngày trong YAML phải có dấu nháy. Kiểu cột ở cấp Cơ bản chỉ dùng `varchar`, `nvarchar`, `date`, `decimal`, là bốn kiểu bài 1.3 đã dạy.
+- `columns` có thể là tiêu đề nghiệp vụ tiếng Việt để người học tự tìm cột trong bảng. Tên cột trong bảng không chứa khoảng trắng: bài 2.1 chỉ dạy ngoặc vuông cho tiêu đề sau `AS`.
+- Mỗi bài có ít nhất 2 unit test và 3 hidden test. Mỗi hidden test bắt một lỗi cụ thể, ghi thành `catches`: một câu sai qua hết unit test nhưng trượt test đó. Ưu tiên lỗi người học chương đó có thể mắc, như nhầm hai cột gần tên: unit test để hai cột trùng giá trị, hidden test mới khác nhau. Hidden test không đòi kiến thức ngoài đề; đề đã nói phạm vi thì dữ liệu ẩn chỉ kiểm phạm vi đó.
 - Phân bố: 20 bài Dễ, 20 bài Vừa, 10 bài Khó.
 - Sau mỗi chương, chạy `npm --prefix api run check:arcade -- <chương>`, đọc lại `expected` bằng mắt, rồi review theo §4.5 như một bài: làm từng đề như người mới chỉ học tới chương đó, trước khi xem `answer`.
 
 | Chương | Bài (Dễ/Vừa/Khó) | Từ khóa thêm ở chương | Bẫy chính của hidden test |
 |---|---|---|---|
-| 2-1 | 5 (4/1/0) | `SELECT`, `*`, `AS`, `FROM`, `[…]` | Thêm dòng, ô `NULL` trong cột được chọn, dòng trùng phải giữ, thứ tự cột |
+| 2-1 | 5 (4/1/0) | `SELECT`, `*`, `AS`, `FROM` | Nhầm cột gần tên, thêm dòng, ô `NULL` trong cột được chọn, dòng trùng phải giữ |
 | 2-2 | 6 (3/3/0) | `WHERE`, `=`, `<>`, `>`, `>=`, `<`, `<=`, `N'…'` | Giá trị ở biên, mã gần giống, không có dòng nào đạt |
 | 2-3 | 7 (3/3/1) | `AND`, `OR`, ngoặc, `IN`, `BETWEEN`, `LIKE`, `%`, `_` | Thiếu ngoặc, hai đầu `BETWEEN`, nhầm `_` với `%`, tiền tố gần giống |
 | 2-4 | 5 (2/2/1) | `ORDER BY`, `ASC`, `DESC`, `TOP` | Thiếu tiêu chí phụ, ít hơn n dòng, đảo thứ tự chèn |
