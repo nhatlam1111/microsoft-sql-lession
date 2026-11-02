@@ -1,6 +1,6 @@
 # Làm lại bài 3.3 — lọc nhóm bằng HAVING
 
-Trạng thái: thiết kế ngắn cho yêu cầu làm tiếp 3.3, **chờ người dùng duyệt trước khi sửa bài**. Không thay quyền/phạm vi phát hành 3.1–3.2 và research đã được yêu cầu riêng. Quy ước/template hiện hành thắng các hồ sơ lịch sử.
+Trạng thái: **đã duyệt** trong chat: “Duyệt, triển khai theo thiết kế”. Không thay quyền/phạm vi phát hành 3.1–3.2 và research đã được yêu cầu riêng. Quy ước/template hiện hành thắng các hồ sơ lịch sử.
 
 Base: main `ebaa187` đã push; nhánh làm 3.3 là `codex/lesson-3-3-refresh`.
 
@@ -57,4 +57,4 @@ Trước viết: chạy SELECT mới kiểm câu chính/từng bước, checks/t
 
 Test bảo vệ các tổng/nhóm/ngưỡng, input/checks và ví dụ trích so với toàn nhóm, caption/alias, đủ tiền đề ba đề; không khóa nguyên câu văn. Kiểm theo §4.4: API build/check:exercises qua runner hoàn tác rồi check:data; npm test/check/build/check:dist; UI đúng build, highlight/tab/đổi bước và màn hẹp. Review độc lập một bài theo §4.5, model kế thừa/ngữ cảnh mới/report-only, đọc đề trước answer; tác giả xử lý hết nhận xét theo §4.6. Nếu phải sửa công cụ ngoài khối hiện có thì cập nhật thiết kế và thêm review tích hợp.
 
-Lưu spec/plan/evidence mới cho 3.3, giữ report gốc; không tự sửa hồ sơ research hoặc triển khai Arcade. Phần lựa chọn câu chữ/dòng trích/mark và bố trí ví dụ giao tác giả quyết định trong giới hạn trên. Sau khi duyệt thiết kế mới gọi writing-plans và triển khai; chưa sửa sản phẩm 3.3 ở giai đoạn thiết kế.
+Lưu spec/plan/evidence mới cho 3.3, giữ report gốc; không tự sửa hồ sơ research hoặc triển khai Arcade. Phần lựa chọn câu chữ/dòng trích/mark và bố trí ví dụ giao tác giả quyết định trong giới hạn trên. Triển khai trực tiếp trong phiên theo [kế hoạch](../plans/2026-11-02-lesson-3-3-refresh.md), giữ cách làm đã dùng cho 3.1–3.2; reviewer là agent mới theo quy ước repo.
