@@ -22,7 +22,7 @@ export type PublicExercise = Omit<Exercise, 'answer' | 'check'> & { lesson: stri
 
 export type FailureKind =
   | 'bad-request' | 'bad-code' | 'rate' | 'unknown-exercise' | 'blocked' | 'multi'
-  | 'timeout' | 'too-big' | 'quota' | 'unavailable' | 'network';
+  | 'timeout' | 'too-big' | 'quota' | 'unavailable' | 'network' | 'locked' | 'not-enough-coins';
 
 export interface ApiFailure { ok: false; kind: FailureKind; reason?: string }
 

@@ -20,17 +20,17 @@ export interface Deps {
   run(sql: string, check?: string): Promise<RunOutcome>;
 }
 
-type Reply<T> = { status: number; body: T | ApiFailure };
+export type Reply<T> = { status: number; body: T | ApiFailure };
 
-const SHOWN_ROWS = 200;
-const GRADED_ROWS = 5000;
+export const SHOWN_ROWS = 200;
+export const GRADED_ROWS = 5000;
 // A timeout is 504, not 408: a browser may silently send a request again after a 408.
 const STATUS: Record<FailureKind, number> = {
-  'bad-request': 400, 'bad-code': 401, 'unknown-exercise': 404, rate: 429,
+  'bad-request': 400, 'bad-code': 401, locked: 403, 'unknown-exercise': 404, 'not-enough-coins': 409, rate: 429,
   blocked: 422, multi: 422, 'too-big': 422, timeout: 504, quota: 503, unavailable: 503, network: 503,
 };
 
-const fail = (kind: FailureKind, reason?: string): { status: number; body: ApiFailure } =>
+export const fail = (kind: FailureKind, reason?: string): { status: number; body: ApiFailure } =>
   ({ status: STATUS[kind], body: reason === undefined ? { ok: false, kind } : { ok: false, kind, reason } });
 
 function prepare(body: unknown, code: string | null, deps: Deps): { exercise: Exercise; sql: string } | { status: number; body: ApiFailure } {
