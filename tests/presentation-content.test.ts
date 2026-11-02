@@ -12,8 +12,8 @@ const slides = [...raw.matchAll(/<Slide\b[^>]*>([\s\S]*?)<\/Slide>/g)].map(match
 const withoutNotes = (text: string) => text.replace(/<PresenterNotes\b[^>]*>[\s\S]*?<\/PresenterNotes>/g, '');
 
 describe('concept-led foundation lecture', () => {
-  it('keeps18 concept slides with visible explanations and no quiz prerequisite', () => {
-    expect(slides).toHaveLength(18);
+  it('keeps 21 concept slides with visible explanations and no quiz prerequisite', () => {
+    expect(slides).toHaveLength(21);
     expect(metadata.sourceLessons).toEqual(['1.1', '1.2', '1.4', '1.5']);
     expect(outline.reduce((sum, slide) => sum + slide.minutes, 0)).toBe(48);
     expect(metadata.minutes).toBe(55);
@@ -66,5 +66,12 @@ describe('concept-led foundation lecture', () => {
     expect(proseParagraphs(raw).filter(paragraph => paragraph.words > 120)).toEqual([]);
     for (const phrase of BANNED_PHRASES) expect(raw.toLowerCase()).not.toContain(phrase);
     expect(raw).not.toMatch(/[😀-🙏]/u);
+  });
+
+  it('shows the mandatory contract reference condition to the audience, not only in notes', () => {
+    const relationship = withoutNotes(slides[outline.findIndex(slide => slide.id === 'ky-hieu-erd')]);
+    expect(relationship).toMatch(/HopDong\.MaNV[\s\S]*không nhận[\s\S]*NULL/);
+    expect(relationship).toContain('đang bật');
+    expect(relationship).toMatch(/một hồ sơ có thể[\s\S]*nhiều hợp đồng/);
   });
 });

@@ -14,7 +14,29 @@ describe('presentation outline', () => {
   it('uses the authored deck as the single outline', () => {
     const body = readFileSync('src/content/presentations/lam-quen.mdx', 'utf8');
     const outline = presentationOutline(body);
-    expect(outline).toHaveLength(18);
+    expect(outline.map(({ id, minutes }) => [id, minutes])).toEqual([
+      ['database-la-gi', 2],
+      ['cac-mo-hinh-luu-tru', 2],
+      ['so-sanh-cac-dang-database', 3],
+      ['tu-excel-den-database-quan-he', 3],
+      ['sql-server-la-gi', 2],
+      ['sql-la-gi', 2],
+      ['bon-ten-can-phan-biet', 2],
+      ['du-lieu-trong-database', 2],
+      ['so-do-quan-he-erd', 2],
+      ['bang-trong-database', 2],
+      ['bang-dong-cot', 2],
+      ['thong-tin-o-nhieu-bang', 2],
+      ['nhan-dien-mot-ho-so', 1],
+      ['khoa-chinh', 3],
+      ['bang-khong-co-khoa-chinh', 2],
+      ['ma-phong-trong-ho-so', 2],
+      ['khoa-ngoai', 3],
+      ['bang-khong-co-khoa-ngoai', 2],
+      ['ky-hieu-erd', 3],
+      ['ten-phong-cua-nv001', 3],
+      ['hop-dong-kem-ten-phong', 3],
+    ]);
     expect(outline.reduce((sum, slide) => sum + slide.minutes, 0)).toBe(48);
     expect(new Set(outline.map(slide => slide.source))).toEqual(new Set(['1.1','1.2','1.4','1.5']));
   });

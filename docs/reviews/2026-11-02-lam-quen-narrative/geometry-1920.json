@@ -1,0 +1,257 @@
+[
+  {
+    "footerGap": 156,
+    "id": "database-la-gi",
+    "images": [
+      {
+        "ok": true,
+        "src": "http://127.0.0.1:4327/microsoft-sql-lession/_astro/1-1-database.Buu88_5x_Z1ePjl7.webp"
+      }
+    ],
+    "overflowX": false,
+    "scrollExcess": 0,
+    "viewport": [
+      1920,
+      1080
+    ]
+  },
+  {
+    "footerGap": 73,
+    "id": "cac-mo-hinh-luu-tru",
+    "images": [
+      {
+        "ok": true,
+        "src": "http://127.0.0.1:4327/microsoft-sql-lession/_astro/relational-database-terms.E9NKJfx7.svg"
+      },
+      {
+        "ok": true,
+        "src": "http://127.0.0.1:4327/microsoft-sql-lession/_astro/graph-database-property-graph.CrMFoNAZ_Z17lD1x.webp"
+      }
+    ],
+    "overflowX": false,
+    "scrollExcess": 0,
+    "viewport": [
+      1920,
+      1080
+    ]
+  },
+  {
+    "footerGap": 71,
+    "id": "so-sanh-cac-dang-database",
+    "images": [],
+    "overflowX": false,
+    "scrollExcess": 0,
+    "viewport": [
+      1920,
+      1080
+    ]
+  },
+  {
+    "footerGap": 24,
+    "id": "tu-excel-den-database-quan-he",
+    "images": [],
+    "overflowX": false,
+    "scrollExcess": 0,
+    "viewport": [
+      1920,
+      1080
+    ]
+  },
+  {
+    "footerGap": 171,
+    "id": "sql-server-la-gi",
+    "images": [
+      {
+        "ok": true,
+        "src": "http://127.0.0.1:4327/microsoft-sql-lession/_astro/1-1-sql-server.BhnjVbxY_QjIe6.webp"
+      }
+    ],
+    "overflowX": false,
+    "scrollExcess": 0,
+    "viewport": [
+      1920,
+      1080
+    ]
+  },
+  {
+    "footerGap": 139,
+    "id": "sql-la-gi",
+    "images": [
+      {
+        "ok": true,
+        "src": "http://127.0.0.1:4327/microsoft-sql-lession/_astro/1-1-sql-language.CeqF0asP_2oBJh8.webp"
+      }
+    ],
+    "overflowX": false,
+    "scrollExcess": 0,
+    "viewport": [
+      1920,
+      1080
+    ]
+  },
+  {
+    "footerGap": 118,
+    "id": "bon-ten-can-phan-biet",
+    "images": [],
+    "overflowX": false,
+    "scrollExcess": 0,
+    "viewport": [
+      1920,
+      1080
+    ]
+  },
+  {
+    "footerGap": 37,
+    "id": "du-lieu-trong-database",
+    "images": [],
+    "overflowX": false,
+    "scrollExcess": 0,
+    "viewport": [
+      1920,
+      1080
+    ]
+  },
+  {
+    "footerGap": 105,
+    "id": "so-do-quan-he-erd",
+    "images": [],
+    "overflowX": false,
+    "scrollExcess": 0,
+    "viewport": [
+      1920,
+      1080
+    ]
+  },
+  {
+    "footerGap": 105,
+    "id": "bang-trong-database",
+    "images": [],
+    "overflowX": false,
+    "scrollExcess": 0,
+    "viewport": [
+      1920,
+      1080
+    ]
+  },
+  {
+    "footerGap": 105,
+    "id": "bang-dong-cot",
+    "images": [],
+    "overflowX": false,
+    "scrollExcess": 0,
+    "viewport": [
+      1920,
+      1080
+    ]
+  },
+  {
+    "footerGap": 51,
+    "id": "thong-tin-o-nhieu-bang",
+    "images": [],
+    "overflowX": false,
+    "scrollExcess": 0,
+    "viewport": [
+      1920,
+      1080
+    ]
+  },
+  {
+    "footerGap": 50,
+    "id": "nhan-dien-mot-ho-so",
+    "images": [],
+    "overflowX": false,
+    "scrollExcess": 0,
+    "viewport": [
+      1920,
+      1080
+    ]
+  },
+  {
+    "footerGap": 23,
+    "id": "khoa-chinh",
+    "images": [],
+    "overflowX": false,
+    "scrollExcess": 0,
+    "viewport": [
+      1920,
+      1080
+    ]
+  },
+  {
+    "footerGap": 23,
+    "id": "bang-khong-co-khoa-chinh",
+    "images": [],
+    "overflowX": false,
+    "scrollExcess": 0,
+    "viewport": [
+      1920,
+      1080
+    ]
+  },
+  {
+    "footerGap": 169,
+    "id": "ma-phong-trong-ho-so",
+    "images": [],
+    "overflowX": false,
+    "scrollExcess": 0,
+    "viewport": [
+      1920,
+      1080
+    ]
+  },
+  {
+    "footerGap": 23,
+    "id": "khoa-ngoai",
+    "images": [],
+    "overflowX": false,
+    "scrollExcess": 0,
+    "viewport": [
+      1920,
+      1080
+    ]
+  },
+  {
+    "footerGap": 23,
+    "id": "bang-khong-co-khoa-ngoai",
+    "images": [],
+    "overflowX": false,
+    "scrollExcess": 0,
+    "viewport": [
+      1920,
+      1080
+    ]
+  },
+  {
+    "footerGap": 47,
+    "id": "ky-hieu-erd",
+    "images": [],
+    "overflowX": false,
+    "scrollExcess": 0,
+    "viewport": [
+      1920,
+      1080
+    ]
+  },
+  {
+    "footerGap": 23,
+    "id": "ten-phong-cua-nv001",
+    "images": [],
+    "overflowX": false,
+    "scrollExcess": 0,
+    "viewport": [
+      1920,
+      1080
+    ]
+  },
+  {
+    "footerGap": 47,
+    "id": "hop-dong-kem-ten-phong",
+    "images": [],
+    "overflowX": false,
+    "scrollExcess": 0,
+    "viewport": [
+      1920,
+      1080
+    ]
+  }
+]
