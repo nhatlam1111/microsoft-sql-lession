@@ -126,7 +126,7 @@ Review tích hợp cuối trên 4af339b/build21:21 không có finding mới cầ
 
 ## Tiến trình thiết kế
 
-Lượt phản hồi sau bàn giao: người dùng thấy GROUP BY/SELECT trong drawer chưa giải thích đủ cơ chế tạo kết quả. Đã chọn hướng B có minh họa nhưng chỉ dùng vài nhóm đại diện, ưu tiên giải SELECT. [Bản thiết kế bổ sung](2026-11-01-drawer-3-1-3-2-select-design.md) ghi phạm vi cụ thể đang chờ duyệt; các kết quả review/kiểm trước chỉ áp dụng bản đã bàn giao, không xác nhận thay đổi đề xuất này.
+Lượt phản hồi sau bàn giao: người dùng thấy GROUP BY/SELECT trong drawer chưa giải thích đủ cơ chế tạo kết quả. Đã chọn hướng B có minh họa nhưng chỉ dùng vài nhóm đại diện, ưu tiên giải SELECT, rồi duyệt [thiết kế bổ sung](2026-11-01-drawer-3-1-3-2-select-design.md). Lượt bổ sung có kế hoạch và hồ sơ kiểm/review riêng; các kết quả review/kiểm trước chỉ áp dụng bản đã bàn giao, không xác nhận thay đổi của lượt bổ sung.
 
 - [x] Đọc quy ước/template, hồ sơ công ty, 2.1–2.9 và nguồn/bài tập/test của 3.1–3.2; kiểm điểm nối 3.3.
 - [x] Người dùng chốt giữ hai tình huống; viết bản thiết kế.
