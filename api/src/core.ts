@@ -9,7 +9,7 @@ export interface RunOutcome {
   affected: number[];
   check: Shape | null;
   error: string | null;
-  errorKind: 'timeout' | 'quota' | 'unavailable' | null;
+  errorKind: 'timeout' | 'quota' | 'unavailable' | 'rate' | null;
   ms: number;
 }
 

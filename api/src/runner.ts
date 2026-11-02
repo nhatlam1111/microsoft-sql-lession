@@ -32,7 +32,8 @@ export function createRunner(config: sql.config) {
     return poolPromise;
   };
 
-  async function run(text: string, check?: string): Promise<RunOutcome> {
+  /** `setup` builds the data the statement runs on, in the same transaction, so the rollback takes it away too. */
+  async function run(text: string, check?: string, setup?: string): Promise<RunOutcome> {
     const started = Date.now();
     let tx: sql.Transaction;
     try {
@@ -50,6 +51,17 @@ export function createRunner(config: sql.config) {
         'SET XACT_ABORT ON; SET LOCK_TIMEOUT 3000; SET ROWCOUNT 5001; SET NOCOUNT OFF; SET NOEXEC OFF;'
         + ' SET PARSEONLY OFF; SET FMTONLY OFF; SET IMPLICIT_TRANSACTIONS OFF;',
       );
+      if (setup) {
+        try {
+          await request().batch(setup);
+        } catch (e) {
+          const err = e as { number?: number; message?: string };
+          // 1222: another run of the same code holds the same table names. Anything else is a bad challenge, not the learner's fault.
+          if (err.number === 1222) return empty(Date.now() - started, { errorKind: 'rate' });
+          console.error(`ALERT: the data of an Arcade test did not load: ${err.message}`);
+          return empty(Date.now() - started, { errorKind: 'unavailable' });
+        }
+      }
       const main = await request().batch(text);
       // The guard should make this impossible; if the learner's statement still ended the transaction, say so loudly.
       const open = await request().query('SELECT @@TRANCOUNT AS n');
