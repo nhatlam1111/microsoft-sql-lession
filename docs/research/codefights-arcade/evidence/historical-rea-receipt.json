@@ -1,0 +1,204 @@
+{
+  "note": "Receipt tác giả từ summary REA cho HTML shell lịch sử; không có khôi phục logic Arcade.",
+  "url": "https://web.archive.org/web/20170624125417id_/https://codefights.com/arcade/intro",
+  "source_sha256": "1d4aa901fce9339c270165d4ca9d3cf292a666ee6cbfa472eef4bdeb3b027634",
+  "source_bytes": 3552,
+  "acquired_date": "2026-11-02",
+  "summary_evidence_id": "ev_33256a595c6cf112e8ebb28a939cd7ad88ddaac7c46d65b9815ef20fe49df96c",
+  "parent_evidence_id": "ev_fbf46be95e4ab8fa2dd76cfc4448a155368504185e92db2ef2144920b73bd824",
+  "normalized_summary": {
+    "input_path": "C:\\Users\\Lam\\AppData\\Local\\Temp\\codex-codefights-arcade-2026-11-02-01a19bfc\\historical-2017",
+    "format": "directory",
+    "root_artifact_sha256": "03128193293cbbe5f64760711a516688853fc6d6c76abcc39226313815908541",
+    "source_selection": {
+      "requested_paths": [
+        "codefights-2017-intro.html"
+      ],
+      "unselected_files": 0
+    },
+    "statistics": {
+      "relevant_files": 1,
+      "nested_asar_containers": 0,
+      "text_bytes_read": 3552,
+      "invalid_utf8_files": 0,
+      "parsed_javascript_files": 0,
+      "skipped_javascript_files": 0,
+      "visited_ast_nodes": 0,
+      "findings": 3,
+      "modules": 0,
+      "parse_failures": 0
+    },
+    "electron": {
+      "browser_windows": 0,
+      "explicit_web_preferences": 0,
+      "preload_entrypoints": 0,
+      "context_bridge_apis": 0,
+      "exposed_api_members": 0,
+      "ipc": {
+        "operations": 0,
+        "literal_channels": 0,
+        "dynamic_channel_operations": 0,
+        "renderer_transmissions": 0,
+        "renderer_listeners": 0,
+        "main_handlers": 0,
+        "paired_renderer_transmissions": 0,
+        "ambiguous_renderer_transmissions": 0,
+        "unpaired_literal_renderer_transmissions": 0
+      },
+      "sender_validation_observations": 0,
+      "utility_processes": 0,
+      "resolved_utility_entrypoints": 0,
+      "native_addon_bindings": 0,
+      "resolved_native_addon_bindings": 0
+    },
+    "coverage": {
+      "static_sources": {
+        "sources": 0,
+        "unmeasured_sources": 0,
+        "syntax": {
+          "complete": 0,
+          "recovered": 0,
+          "failed": 0,
+          "not-examined": 0
+        },
+        "semantics": {
+          "unknown_sources": 0,
+          "unexamined_sources": 0
+        },
+        "examination": {
+          "complete": 0,
+          "limited": 0,
+          "not-examined": 0
+        },
+        "electron_applicability": {
+          "observed": 0,
+          "unknown": 0
+        }
+      },
+      "application": {
+        "status": "partial",
+        "truncated": false,
+        "omitted_count": null,
+        "limits": []
+      },
+      "semantic": {
+        "status": "unknown",
+        "truncated": false,
+        "omitted_nodes": 0,
+        "omitted_relations": 0,
+        "limits": [],
+        "families": [
+          {
+            "family": "boundary",
+            "status": "partial",
+            "retained_relations": 0,
+            "omitted_relations": 0,
+            "unknown_count": 0
+          },
+          {
+            "family": "call-flow",
+            "status": "partial",
+            "retained_relations": 0,
+            "omitted_relations": 0,
+            "unknown_count": 0
+          },
+          {
+            "family": "child-process",
+            "status": "partial",
+            "retained_relations": 0,
+            "omitted_relations": 0,
+            "unknown_count": 0
+          },
+          {
+            "family": "closure",
+            "status": "partial",
+            "retained_relations": 0,
+            "omitted_relations": 0,
+            "unknown_count": 0
+          },
+          {
+            "family": "configuration",
+            "status": "partial",
+            "retained_relations": 0,
+            "omitted_relations": 0,
+            "unknown_count": 0
+          },
+          {
+            "family": "data-flow",
+            "status": "partial",
+            "retained_relations": 0,
+            "omitted_relations": 0,
+            "unknown_count": 0
+          },
+          {
+            "family": "event",
+            "status": "partial",
+            "retained_relations": 0,
+            "omitted_relations": 0,
+            "unknown_count": 0
+          },
+          {
+            "family": "object-flow",
+            "status": "partial",
+            "retained_relations": 0,
+            "omitted_relations": 0,
+            "unknown_count": 0
+          },
+          {
+            "family": "promise-ownership",
+            "status": "partial",
+            "retained_relations": 0,
+            "omitted_relations": 0,
+            "unknown_count": 0
+          },
+          {
+            "family": "request",
+            "status": "partial",
+            "retained_relations": 0,
+            "omitted_relations": 0,
+            "unknown_count": 0
+          },
+          {
+            "family": "resource-lifecycle",
+            "status": "partial",
+            "retained_relations": 0,
+            "omitted_relations": 0,
+            "unknown_count": 0
+          },
+          {
+            "family": "timer",
+            "status": "partial",
+            "retained_relations": 0,
+            "omitted_relations": 0,
+            "unknown_count": 0
+          }
+        ]
+      },
+      "application_unknowns": 1,
+      "semantic_unknowns": 0
+    },
+    "limitation_count": 18
+  },
+  "limitations": [
+    "Boundary extraction covers unshadowed JSON/global coercions plus parse and validation method candidates.",
+    "Child-process extraction covers asynchronous node:child_process creation, literal argv/env/stdio options, exit/error listeners, and kill signals.",
+    "CommonJS and ESM binding relationships were recovered from inert syntax and resolved only within the inventoried artifact container.",
+    "Configuration extraction covers process.env, process.argv, node:fs reads, and direct logical defaults.",
+    "Event extraction covers EventEmitter-style literal registrations, removals, and dispatch candidates; dynamic names remain unknown.",
+    "Function fingerprints are static candidates; equal digests can remain ambiguous and do not prove behavioral equivalence.",
+    "Graph coverage is incomplete; unavailable facts remain explicit and must not be read as absence.",
+    "JavaScript and HTML were parsed as inert text; bundle bootstrap code was never executed.",
+    "Local data flow does not claim control-flow-sensitive reaching definitions or arbitrary dynamic property resolution.",
+    "Promise ownership covers explicit unshadowed Promise construction, static factories, aggregation, chaining, and await syntax only.",
+    "Request extraction covers fetch, WebSocket, node:http/node:https construction, direct option fields, and exact local response consumers.",
+    "Resource extraction covers built-in filesystem/network acquisition and exact local close/destroy/end handles.",
+    "Static imports, entrypoints, workers, endpoints, and storage relationships do not prove runtime execution.",
+    "Static paths and relationships may remain unresolved when expressions are dynamic or obfuscated.",
+    "The semantic graph contains static syntax observations and conservative relationship candidates; it does not claim runtime execution.",
+    "Timer extraction covers global or node:timers scheduling and exact local-handle cancellation.",
+    "Webpack/Rspack factories were recovered from AST literals; REA did not invoke push handlers or bundle bootstrap code.",
+    "codefights-2017-intro.html has 1 inline JavaScript body starting at line 39 that was not analyzed; endpoints, storage, imports and other facts in it are absent from the evidence."
+  ],
+  "missing_bundle": "https://web.archive.org/web/20170624125417id_/https://codefights.com/b204e24bbb952f7c72440e0bab935da56969234b.js?meteor_js_resource=true",
+  "missing_bundle_status": 404
+}

@@ -1,0 +1,324 @@
+{
+  "note": "Receipt do tác giả tổng hợp từ Evidence, không thay toàn bộ raw bundle. Không có source code/cookie/token.",
+  "acquired_date": "2026-11-02",
+  "timezone": "Asia/Saigon",
+  "source_url": "https://app.codesignal.com/build-chunks/69250.5d3e5abd3c2d1fd4.js",
+  "source_bytes": 1024944,
+  "source_sha256": "fe9746a310377ce941852ed5e393d53d04ce2f0af692143145562d88092fee51",
+  "parent_evidence_id": "ev_8fbf6bf644fbc86d894db6a8907e45c02a27322f4acb34038e0e6a4cf0b7bdba",
+  "summary_evidence_id": "ev_2a08a2fa71a9199becf2cc4b2fe98dfd2f3bf354c4bea2f0f0ad8b6eedfebf52",
+  "authority": "shipped-artifact",
+  "confidence": "derived",
+  "provider": {
+    "id": "rea-javascript-application",
+    "name": "REA JavaScript application analyzer",
+    "version": "1"
+  },
+  "analysis_profile": null,
+  "parameters": {
+    "analysis_timeout_ms": 45000,
+    "format": "auto",
+    "input_path": "E:\\Projects\\SQL Lession\\temp\\research-codefights-2026-11-02\\rea-input",
+    "integrity_policy": "fail",
+    "max_heap_mb": 1024,
+    "max_semantic_nodes": 10000,
+    "max_semantic_nodes_per_file": 6000,
+    "max_semantic_unknowns": 5000,
+    "max_semantic_unknowns_per_file": 3000,
+    "source_paths": [
+      "69250.5d3e5abd3c2d1fd4.js"
+    ]
+  },
+  "summary": {
+    "coverage": {
+      "application": {
+        "limits": [],
+        "omitted_count": null,
+        "status": "partial",
+        "truncated": false
+      },
+      "application_unknowns": 0,
+      "semantic": {
+        "families": [
+          {
+            "family": "boundary",
+            "omitted_relations": null,
+            "retained_relations": 0,
+            "status": "partial",
+            "unknown_count": 0
+          },
+          {
+            "family": "call-flow",
+            "omitted_relations": null,
+            "retained_relations": 0,
+            "status": "partial",
+            "unknown_count": 0
+          },
+          {
+            "family": "child-process",
+            "omitted_relations": null,
+            "retained_relations": 0,
+            "status": "partial",
+            "unknown_count": 0
+          },
+          {
+            "family": "closure",
+            "omitted_relations": null,
+            "retained_relations": 0,
+            "status": "partial",
+            "unknown_count": 0
+          },
+          {
+            "family": "configuration",
+            "omitted_relations": null,
+            "retained_relations": 0,
+            "status": "partial",
+            "unknown_count": 0
+          },
+          {
+            "family": "data-flow",
+            "omitted_relations": null,
+            "retained_relations": 0,
+            "status": "partial",
+            "unknown_count": 347
+          },
+          {
+            "family": "event",
+            "omitted_relations": null,
+            "retained_relations": 0,
+            "status": "partial",
+            "unknown_count": 0
+          },
+          {
+            "family": "object-flow",
+            "omitted_relations": null,
+            "retained_relations": 0,
+            "status": "partial",
+            "unknown_count": 2653
+          },
+          {
+            "family": "promise-ownership",
+            "omitted_relations": null,
+            "retained_relations": 0,
+            "status": "partial",
+            "unknown_count": 0
+          },
+          {
+            "family": "request",
+            "omitted_relations": null,
+            "retained_relations": 0,
+            "status": "partial",
+            "unknown_count": 0
+          },
+          {
+            "family": "resource-lifecycle",
+            "omitted_relations": null,
+            "retained_relations": 0,
+            "status": "partial",
+            "unknown_count": 0
+          },
+          {
+            "family": "timer",
+            "omitted_relations": null,
+            "retained_relations": 0,
+            "status": "partial",
+            "unknown_count": 0
+          }
+        ],
+        "limits": [
+          {
+            "name": "max_semantic_nodes",
+            "unit": "items",
+            "value": 10000
+          },
+          {
+            "name": "max_semantic_nodes_per_file",
+            "unit": "items",
+            "value": 6000
+          },
+          {
+            "name": "max_semantic_unknowns",
+            "unit": "items",
+            "value": 5000
+          },
+          {
+            "name": "max_semantic_unknowns_per_file",
+            "unit": "items",
+            "value": 3000
+          },
+          {
+            "name": "semantic_graph_file_node_ceiling",
+            "unit": "items",
+            "value": 6000
+          },
+          {
+            "name": "semantic_graph_file_unknown_ceiling",
+            "unit": "items",
+            "value": 3000
+          },
+          {
+            "name": "semantic_graph_node_ceiling",
+            "unit": "items",
+            "value": 10000
+          },
+          {
+            "name": "semantic_graph_unknown_ceiling",
+            "unit": "items",
+            "value": 5000
+          }
+        ],
+        "omitted_nodes": null,
+        "omitted_relations": null,
+        "omitted_unknown_occurrences": [
+          {
+            "family": "call-flow",
+            "occurrences": 20676,
+            "reason": "dynamic-call"
+          },
+          {
+            "family": "object-flow",
+            "occurrences": 24230,
+            "reason": "ambiguous-target"
+          },
+          {
+            "family": "object-flow",
+            "occurrences": 386,
+            "reason": "dynamic-property"
+          }
+        ],
+        "status": "partial",
+        "truncated": true
+      },
+      "semantic_unknowns": 3000,
+      "static_sources": {
+        "electron_applicability": {
+          "observed": 0,
+          "unknown": 1
+        },
+        "examination": {
+          "complete": 1,
+          "limited": 0,
+          "not-examined": 0
+        },
+        "semantics": {
+          "unexamined_sources": 0,
+          "unknown_sources": 1
+        },
+        "sources": 1,
+        "syntax": {
+          "complete": 1,
+          "failed": 0,
+          "not-examined": 0,
+          "recovered": 0
+        },
+        "unmeasured_sources": 0
+      }
+    },
+    "electron": {
+      "browser_windows": 0,
+      "context_bridge_apis": 0,
+      "explicit_web_preferences": 0,
+      "exposed_api_members": 0,
+      "ipc": {
+        "ambiguous_renderer_transmissions": 0,
+        "dynamic_channel_operations": 0,
+        "literal_channels": 0,
+        "main_handlers": 0,
+        "operations": 0,
+        "paired_renderer_transmissions": 0,
+        "renderer_listeners": 0,
+        "renderer_transmissions": 0,
+        "unpaired_literal_renderer_transmissions": 0
+      },
+      "native_addon_bindings": 0,
+      "preload_entrypoints": 0,
+      "resolved_native_addon_bindings": 0,
+      "resolved_utility_entrypoints": 0,
+      "sender_validation_observations": 0,
+      "utility_processes": 0
+    },
+    "format": "directory",
+    "input_path": "E:\\Projects\\SQL Lession\\temp\\research-codefights-2026-11-02\\rea-input",
+    "limitation_count": 19,
+    "root_artifact_sha256": "7bcae923a9091b9886f11deddc7d99bb75a08ea5ea89c3cc59857bb4cb6bf437",
+    "source_selection": {
+      "requested_paths": [
+        "69250.5d3e5abd3c2d1fd4.js"
+      ],
+      "unselected_files": 0
+    },
+    "statistics": {
+      "findings": 2514,
+      "invalid_utf8_files": 0,
+      "modules": 211,
+      "nested_asar_containers": 0,
+      "parse_failures": 0,
+      "parsed_javascript_files": 1,
+      "relevant_files": 1,
+      "skipped_javascript_files": 0,
+      "text_bytes_read": 1024944,
+      "visited_ast_nodes": 262559
+    }
+  },
+  "limitations": [
+    "CommonJS and ESM binding relationships were recovered from inert syntax and resolved only within the inventoried artifact container.",
+    "Graph coverage is incomplete; unavailable facts remain explicit and must not be read as absence.",
+    "JavaScript and HTML were parsed as inert text; bundle bootstrap code was never executed.",
+    "Static imports, entrypoints, workers, endpoints, and storage relationships do not prove runtime execution.",
+    "Static paths and relationships may remain unresolved when expressions are dynamic or obfuscated.",
+    "Webpack/Rspack factories were recovered from AST literals; REA did not invoke push handlers or bundle bootstrap code."
+  ],
+  "raw_bundle": {
+    "local_path": "temp/research-codefights-2026-11-02/rea-evidence-bundle.json",
+    "bytes": 20921904,
+    "sha256": "726be04b3a7c1595cc630e71b95c11968212afb36af81349c5b4621a626b9f97"
+  },
+  "public_js_acquisition": {
+    "observed_urls": 51,
+    "successful": 51,
+    "total_bytes": 19006082,
+    "analyzed_files": 1
+  },
+  "artifact_hashes": [
+    {
+      "file": "triadworks-ide.png",
+      "bytes": 32711,
+      "sha256": "948b5dbb1ab63ae1eb16e3410a556e3224d40effcee6f4cd7ef42fb72a842d85"
+    },
+    {
+      "file": "triadworks-hint.png",
+      "bytes": 4944,
+      "sha256": "de24e0fca37ae55583e207a5bc776ada6a0b5974e9d892dfc3cc59696abccd0b"
+    },
+    {
+      "file": "triadworks-arcade.png",
+      "bytes": 29714,
+      "sha256": "63a6fef2dd199ced509d570f33d4b3ebd351b11a3b37b542d4ee34f17e7cea05"
+    },
+    {
+      "file": "serious-games-catalog.pdf",
+      "bytes": 2028801,
+      "sha256": "9ee6ea705ffbd17b6c6249de6608b5dc827dd04e4ebcbd426bf0b313d82fe44f"
+    },
+    {
+      "file": "serious-games-p18.png",
+      "bytes": 347795,
+      "sha256": "5afddb4196a037729e11ea2cc65104f3dc1da40f746b615aa13e65c2b7cfb348"
+    },
+    {
+      "file": "sandbox-run-failed.jpg",
+      "bytes": 63170,
+      "sha256": "9b74a33e1a48a1bc526c289283ef3170ece8f2f1465ef7fb89fc00e02819bb27"
+    },
+    {
+      "file": "sandbox-submit-failed.jpg",
+      "bytes": 73238,
+      "sha256": "45264788fbcd67214e324ae084105cadf3ce9ea702d9f626dba74c8c6c544502"
+    },
+    {
+      "file": "sandbox-syntax-error.jpg",
+      "bytes": 70062,
+      "sha256": "0c64897f4614d78de1beba186d3473beab3ce0273e74422bfa782113c6019f9a"
+    }
+  ]
+}

@@ -1,0 +1,114 @@
+{
+  "date": "2026-11-02",
+  "timezone": "Asia/Saigon",
+  "source_commit": "8de5a4f407ef4c0740ba571f108ecedfbed975b4",
+  "scope": "Research documentation only; no application/source/SQL/infrastructure mutations",
+  "checks": [
+    {
+      "command": "npm test",
+      "log_name": "tests.log",
+      "exit_code": 0,
+      "notes": "56 files,441 tests",
+      "log_sha256": "f70277885f067e266d1b31653a267b0f674225371bdae6238a05c4883c644812"
+    },
+    {
+      "command": "npm run check",
+      "log_name": "astro-check.log",
+      "exit_code": 134,
+      "notes": "First attempt scanned acquired vendor JS inside temp and exhausted heap; task artifact placement issue",
+      "log_sha256": "6cc5668f8ed9ba52b274bf1099389ba76a195bab6b852e7ef2a7bd003f467258"
+    },
+    {
+      "command": "npm run check",
+      "log_name": "astro-check-clean.log",
+      "exit_code": 0,
+      "notes": "After relocating raw JS outside project,252 files,0 errors,0 warnings,3 existing-source deprecation hints",
+      "log_sha256": "7421d568939b13876544cb36dcf322ed8b64f313183f1953a81efe700c4de72c"
+    },
+    {
+      "command": "npm run build",
+      "log_name": "build.log",
+      "exit_code": 0,
+      "notes": "139 pages",
+      "log_sha256": "a339ded2f980b0fa4ddbf3b545e212a679bfdbbccbf1c064b0e4a452bb3e00b5"
+    },
+    {
+      "command": "npm run check:dist",
+      "log_name": "check-dist.log",
+      "exit_code": 0,
+      "notes": "139 pages,2771 links",
+      "log_sha256": "1e8e35cbf453ea84d6dc3d2cc77b46089f5850e938c4b7f982c09554443db6df"
+    },
+    {
+      "command": "npm --prefix api run typecheck",
+      "log_name": "api-typecheck.log",
+      "exit_code": 0,
+      "notes": "Typecheck only,no SQL",
+      "log_sha256": "ba6c33f2d9a096e3becba7a0a9ba36301a036cf72e0e05d1a02073b613a3c0e6"
+    }
+  ],
+  "document_check": {
+    "reports": 18,
+    "markdownFiles": 26,
+    "localLinks": 182,
+    "mermaidBlocks": 7,
+    "mermaidCheck": "fences/family plus separate browser render artifact",
+    "mermaidRenderer": "Mermaid 12.2.0 browser",
+    "mermaidRendered": 7,
+    "jsonExamples": 3,
+    "evidenceReferences": 418,
+    "issues": []
+  },
+  "mermaid": {
+    "renderer": "Mermaid 12.2.0 browser",
+    "statuses": [
+      {
+        "name": "04-state-machines.md#1",
+        "status": "PASS"
+      },
+      {
+        "name": "04-state-machines.md#2",
+        "status": "PASS"
+      },
+      {
+        "name": "04-state-machines.md#3",
+        "status": "PASS"
+      },
+      {
+        "name": "09-user-flows.md#1",
+        "status": "PASS"
+      },
+      {
+        "name": "09-user-flows.md#2",
+        "status": "PASS"
+      },
+      {
+        "name": "09-user-flows.md#3",
+        "status": "PASS"
+      },
+      {
+        "name": "14-technical-architecture.md#1",
+        "status": "PASS"
+      }
+    ],
+    "summary": "7/7 diagrams rendered",
+    "svgCount": 7
+  },
+  "review": {
+    "initial": "independent-review.md",
+    "delta": "delta-review.md",
+    "findings": 6,
+    "handled": 6,
+    "new_delta_findings": 0,
+    "model": "inherited session model; no override"
+  },
+  "limits": [
+    "No historical Arcade runtime/backend recovered",
+    "Historical HTML inventory is not JS logic analysis",
+    "No course database/API live calls",
+    "No SQL Server environment run in CodeSignal; only MySQL sandbox",
+    "No new feature acceptance tests run",
+    "No Arcade prototype or current app browser regression QA",
+    "External HEAD permalink404; local source links used"
+  ]
+}
