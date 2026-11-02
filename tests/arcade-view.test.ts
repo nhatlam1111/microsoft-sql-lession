@@ -2,7 +2,8 @@ import { it, expect } from 'vitest';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import ArcadeTable from '../src/components/islands/ArcadeTable';
-import { arcadeUrl, chapterView, linePath, mapPoints, nextItem, stationPercent, type ChallengeCard } from '../src/lib/arcade-view';
+import { arcadeUrl, chapterView, linePath, mapPoints, nextItem, stationPercent, testRows, type ChallengeCard } from '../src/lib/arcade-view';
+import type { PublicChallenge, PublicTest, TestResult } from '../src/lib/arcade-types';
 import type { ArcadeChapter } from '../src/data/arcade';
 
 const chapters: ArcadeChapter[] = [
@@ -82,4 +83,41 @@ it('shows NULL the way the course result tables do', () => {
   expect(html).toContain('<td class="res-null">NULL</td>');
   expect(html).toContain('<td>1</td>');
   expect(html).toContain('res-grid');
+});
+
+const unitTest = (id: number): PublicTest => ({ id, rows: { T: [['x']] }, expected: [['x']] });
+const challenge: PublicChallenge = {
+  id: 'c', chapter: '2-1', order: 1, title: 't', difficulty: 'de', lessons: ['l'], prompt: 'p', columns: ['a'], resultTypes: ['varchar'],
+  ordered: false, tables: { T: { a: 'varchar(10)' } }, tests: [unitTest(1), unitTest(2)], hiddenTests: [3, 4, 5],
+};
+const passed = (id: number, ok: boolean): TestResult => ({ id, shown: false, passed: ok });
+
+it('lists unit, opened and locked tests in id order', () => {
+  expect(testRows(challenge, [unitTest(3)], null, null).map(r => [r.id, r.kind])).toEqual([[1, 'unit'], [2, 'unit'], [3, 'opened'], [4, 'hidden'], [5, 'hidden']]);
+});
+
+it('takes status from the last submission when nothing ran yet', () => {
+  expect(testRows(challenge, [], [3], null).find(r => r.id === 3)?.status).toBe('failed');
+  expect(testRows(challenge, [], [3], null).find(r => r.id === 4)?.status).toBe('passed');
+  expect(testRows(challenge, [], null, null).find(r => r.id === 3)?.status).toBe('idle');
+});
+
+it('lets the latest results win over the last submission', () => {
+  const rows = testRows(challenge, [], [3], [passed(3, true), passed(1, false)]);
+  expect(rows.find(r => r.id === 3)?.status).toBe('passed');
+  expect(rows.find(r => r.id === 1)?.status).toBe('failed');
+  expect(rows.find(r => r.id === 1)?.result).toEqual(passed(1, false));
+});
+
+it('keeps the last submission for tests a run did not cover', () => {
+  expect(testRows(challenge, [], [5], [passed(1, true)]).find(r => r.id === 5)?.status).toBe('failed');
+});
+
+it('gives a locked test no data', () => {
+  expect(testRows(challenge, [], null, null).find(r => r.id === 4)?.test).toBeNull();
+  expect(testRows(challenge, [unitTest(4)], null, null).find(r => r.id === 4)?.test?.id).toBe(4);
+});
+
+it('does not list an opened test twice when it is also a unit test id', () => {
+  expect(testRows(challenge, [unitTest(1)], null, null).filter(r => r.id === 1)).toHaveLength(1);
 });

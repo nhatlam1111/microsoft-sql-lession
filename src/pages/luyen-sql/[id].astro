@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArcadeWorkspace from '../../components/islands/ArcadeWorkspace';
 import { ARCADE_CHAPTERS, ARCADE_RULES, DIFFICULTY_LABEL } from '../../data/arcade';
 import { publicChallenge, sortChallenges } from '../../lib/arcade-play';
 import type { PublicChallenge } from '../../lib/arcade-types';
@@ -17,7 +18,8 @@ export async function getStaticPaths() {
 }
 
 interface Props { challenge: PublicChallenge; n: number; total: number; nextId: string | null }
-const { challenge, n, total } = Astro.props;
+const { challenge, n, total, nextId } = Astro.props;
+const apiBase = import.meta.env.PUBLIC_EXERCISE_API ?? '';
 const catalog = await loadCatalog();
 const lessons = challenge.lessons.map(slug => catalog.find(e => e.slug === slug)!);
 const chapterNumber = ARCADE_CHAPTERS.findIndex(c => c.id === challenge.chapter) + 1;
@@ -53,7 +55,9 @@ const chapterNumber = ARCADE_CHAPTERS.findIndex(c => c.id === challenge.chapter)
           </>
         ))}
       </section>
-      <section class="ex-work" aria-label="Khung làm bài"></section>
+      <section class="ex-work" aria-label="Khung làm bài">
+        <ArcadeWorkspace client:only="react" challenge={challenge} apiBase={apiBase} nextId={nextId} />
+      </section>
     </div>
   </main>
 </BaseLayout>

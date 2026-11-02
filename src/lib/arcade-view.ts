@@ -1,6 +1,7 @@
 /** What the Arcade pages show, worked out from the challenges and the learner's progress. */
 import { ARCADE_RULES, type ArcadeChapter, type Difficulty } from '../data/arcade';
 import { isUnlocked, sortChallenges } from './arcade-play';
+import type { PublicChallenge, PublicTest, TestResult } from './arcade-types';
 import { withBase } from './paths';
 
 export type ChallengeCard = { id: string; chapter: string; order: number; title: string; difficulty: Difficulty };
@@ -28,6 +29,33 @@ export function chapterView(chapters: ArcadeChapter[], challenges: ChallengeCard
 
 export const nextItem = (view: ChapterView[]): ChapterItem | null =>
   view.flatMap(c => c.items).find(i => i.status === 'current') ?? null;
+
+export type TestStatus = 'passed' | 'failed' | 'idle';
+
+export interface TestRow {
+  id: number;
+  kind: 'unit' | 'opened' | 'hidden';
+  status: TestStatus;
+  /** null for a hidden test that is still locked: the page has no data for it. */
+  test: PublicTest | null;
+  result: TestResult | null;
+}
+
+export const TEST_STATUS_LABEL: Record<TestStatus, string> = { passed: 'Đạt', failed: 'Chưa đạt', idle: 'Chưa chạy' };
+
+/** The latest results win; a test they did not cover keeps what the last submission said about it. */
+export function testRows(challenge: PublicChallenge, opened: PublicTest[], lastFailed: number[] | null, results: TestResult[] | null): TestRow[] {
+  const known = new Map<number, Pick<TestRow, 'kind' | 'test'>>();
+  for (const id of challenge.hiddenTests) known.set(id, { kind: 'hidden', test: null });
+  for (const test of opened) known.set(test.id, { kind: 'opened', test });
+  for (const test of challenge.tests) known.set(test.id, { kind: 'unit', test });
+  return [...known].sort(([a], [b]) => a - b).map(([id, row]) => {
+    const result = results?.find(r => r.id === id) ?? null;
+    const failed = result ? !result.passed : lastFailed?.includes(id);
+    const status: TestStatus = failed === undefined ? 'idle' : failed ? 'failed' : 'passed';
+    return { id, ...row, status, result };
+  });
+}
 
 /** The map's geometry; arcade.css has the same padding, row height and station position. */
 const MAP = { padX: 28, padTop: 12, rowHeight: 172, stationY: 72, edge: 9, span: 82 };
