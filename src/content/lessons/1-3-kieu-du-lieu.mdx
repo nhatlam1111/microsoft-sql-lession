@@ -1,64 +1,75 @@
 ---
 num: "1.3"
-title: Kiểu dữ liệu
-shortTitle: Kiểu dữ liệu
+title: Các kiểu dữ liệu cơ bản
+shortTitle: Kiểu dữ liệu cơ bản
 level: 1
 area: A1
 kind: full
 minutes: 7
 prerequisites:
   - "1.2"
-goal: bạn đọc được kiểu dữ liệu và khả năng nhận NULL của cột, biết vì sao database khai báo kiểu cho cả cột và biết chuyển kiểu có thể đổi giá trị
+goal: bạn nhận diện được các kiểu số, chuỗi, ngày giờ thường gặp, đọc được khai báo cơ bản và biết tìm chi tiết trong phụ lục
 excel: Kiểu của ô và Format Cells
-summary: Vì sao mỗi cột có một kiểu dữ liệu, cách đọc kiểu và NULL trong SSMS, và điều gì xảy ra khi giá trị không đúng kiểu của cột.
+summary: Phân biệt số, chuỗi, ngày giờ; đọc giới hạn cơ bản và chọn kiểu để giữ đúng ý nghĩa dữ liệu.
 noExercises: true
 noScenario: true
 ---
 
 ## Từ kiểu của ô đến kiểu của cột
 
-Trong sheet chưa đặt Data Validation, mỗi ô tự mang kiểu riêng, nên cùng một cột có thể lẫn ngày, số và chữ. **Format Cells** chỉ đổi cách hiển thị, không biến một ô chữ thành ngày hay số. Database làm khác: mỗi **cột** được khai báo một **kiểu dữ liệu** dùng cho mọi dòng.
+Trong sheet chưa đặt giới hạn nhập, cùng một cột có thể lẫn ngày, số và chữ. **Format Cells** chỉ đổi cách hiển thị; nó không biến một ô chữ thành ngày hoặc số. Với bảng SQL Server, mỗi cột được khai báo một **kiểu dữ liệu**, quy định loại giá trị mà cột có thể lưu.
 
-Nhờ vậy SQL Server so sánh và sắp xếp `NgayVaoLam` theo ngày, tính toán `LuongCoBan` theo số. Nếu lưu ngày thành chữ, thứ tự chữ không bảo đảm là thứ tự thời gian: `15/02/2024` sẽ đứng trước `20/01/2024` dù là ngày muộn hơn.
+Kiểu giúp tính và so sánh theo ý nghĩa: ngày theo thời gian, tiền theo số. Đổi kiểu có thể đổi giá trị.
 
-### Đọc kiểu của cột
+### Nhận diện số, chuỗi và ngày giờ
 
-Trong SSMS, **Object Explorer** là khung cây bên trái liệt kê bảng và cột. Mở một bảng rồi mở **Columns**, chữ trong ngoặc sau tên cột cho biết kiểu dữ liệu và cột có nhận **`NULL`** hay không; `PK`, `FK` đánh dấu khóa chính, khóa ngoại, học ở bài 1.4. `NULL` biểu thị giá trị chưa có hoặc chưa biết; `NOT NULL` nghĩa là cột không nhận giá trị này.
+Bảng dùng giá trị minh họa, không phải kết quả truy vấn database khóa học. Chưa cần nhớ dung lượng hay toàn bộ miền giá trị:
 
-<Ssms view="explorer" table="HopDong" mark={['LuongCoBan', 'NgayKetThuc']} caption="Mô phỏng Object Explorer. Hai cột có viền xanh: LuongCoBan là decimal(18,0), không nhận NULL; NgayKetThuc là date, nhận NULL. Với hợp đồng không xác định thời hạn, dữ liệu mẫu để NgayKetThuc là NULL." />
-
-Bảng dưới giải thích các kiểu thường gặp; `NhanVien.MaNV` nghĩa là cột `MaNV` của bảng `NhanVien`. Bạn cần nhận ra cột lưu chữ (còn gọi là **chuỗi**), ngày hay số. Gặp kiểu khác thì đọc cùng cách: tên kiểu đứng trước, giới hạn nếu có nằm trong ngoặc:
-
-| Kiểu dữ liệu | Ví dụ | Ý nghĩa cần nhớ |
+| Kiểu | Giá trị minh họa | Dùng cho |
 |---|---|---|
-| `varchar(n)` | `NhanVien.MaNV`: `NV001` | Chuỗi thường dùng cho mã, không bảo đảm giữ dấu tiếng Việt; `n` là độ dài tối đa |
-| `nvarchar(n)` | `NhanVien.HoTen`: `Trần Thị Mai` | Chuỗi Unicode, giữ được dấu tiếng Việt |
-| `date` | `NhanVien.NgayVaoLam`: `2024-03-01` | Ngày, không kèm giờ; dạng hiển thị do công cụ quyết định |
-| `decimal(p,s)` | `DonNghiPhep.SoNgay`: `2.0`, kiểu `decimal(4,1)` | Số có tối đa `p` chữ số, trong đó `s` chữ số sau dấu thập phân |
+| `int` | `12` | Số nguyên, không có phần lẻ, như số lượng |
+| `bit` | `0` hoặc `1` | Cờ hai trạng thái, như có/không; ý nghĩa do hệ thống quy ước |
+| `decimal(p,s)` | `12.5` với `decimal(4,1)` | Số cần độ chính xác đã chốt, như tiền hoặc số ngày |
+| `varchar(n)` | `NV001` | Chuỗi, thường dùng cho mã; khả năng lưu ký tự phụ thuộc bảng mã |
+| `nvarchar(n)` | `Trần Thị Mai` | Chuỗi Unicode, phù hợp tên và nội dung tiếng Việt |
+| `date` | `2024-03-01` | Ngày, không có giờ |
+| `time` | `08:30:00` | Giờ trong ngày, không kèm ngày |
+| `datetime2` | `2024-03-01 08:30:00` | Cả ngày và giờ; không mang thông tin múi giờ |
 
-Ví dụ, `decimal(18,0)` lưu số có tối đa `18` chữ số, không có phần lẻ. Khi tự viết giá trị tiếng Việt trong câu SQL, dùng `N'Trần Thị Mai'`: chữ `N` đánh dấu chuỗi Unicode, bỏ đi có thể mất dấu.
+**Chuỗi** là dãy ký tự, kể cả khi chỉ gồm chữ số. Cột `SoCCCD` của bộ mẫu dùng chuỗi vì cần giữ số `0` đầu và không dùng để cộng trừ. Mã định danh không nên đổi thành số chỉ vì nhìn giống số.
 
-### Chọn kiểu theo ý nghĩa của dữ liệu
+**Unicode** là chuẩn biểu diễn ký tự của nhiều ngôn ngữ. Khi viết giá trị tiếng Việt trong SQL, dùng `N'Trần Thị Mai'` để đánh dấu chuỗi Unicode. `varchar` có thể lưu Unicode khi dùng bảng mã UTF-8 phù hợp; không được hiểu nó luôn là “chữ không dấu”.
 
-`SoCCCD` dùng `varchar(12)` dù chỉ gồm chữ số, vì mã định danh cần giữ số `0` đầu và không dùng để cộng trừ.
+Kiểu `float` lưu số gần đúng, phù hợp số đo chấp nhận sai số; không thay `decimal` khi tiền cần chính xác theo số chữ số đã chốt. Tra [nhóm số chính xác](../../phu-luc/pl-1-chi-tiet-kieu-du-lieu/#so-chinh-xac) và [số gần đúng](../../phu-luc/pl-1-chi-tiet-kieu-du-lieu/#so-gan-dung) ở PL.1.
 
-### Khi giá trị không đúng kiểu của cột
+### Đọc phần khai báo trong ngoặc
 
-Khi hai giá trị khác kiểu gặp nhau, như chữ được ghi vào cột ngày hoặc số, SQL Server có thể tự đổi một bên sang kiểu khác, gọi là **chuyển kiểu ngầm**. Với chữ ghi vào cột, kết quả có ba khả năng:
+Trong `decimal(p,s)`, `p` là tổng số chữ số, `s` là số chữ số phần lẻ. `decimal(4,1)` dành tối đa ba chữ số trước và một chữ số sau dấu thập phân; dấu âm không tính vào tổng này. `decimal(18,0)` không giữ phần lẻ.
 
-- **Giữ đúng giá trị:** chữ `9610000` thành số `9610000`.
-- **Đổi khác ý người nhập:** database khóa học đọc tháng trước, ngày sau, nên chữ `01/02/2024` thành `2024-01-02`, tức ngày 2 tháng 1, dù người nhập có thể muốn ngày 1 tháng 2.
-- **Bị từ chối:** chữ `chưa rõ` không đổi được thành ngày.
+Với chuỗi, `n` quy định giới hạn lưu trữ: `varchar(n)` tính bằng **byte**, đơn vị dung lượng; `nvarchar(n)` tính bằng cặp byte. Vì ký tự có thể dùng nhiều byte, `n` không luôn bằng số ký tự. Xem [nhóm chuỗi](../../phu-luc/pl-1-chi-tiet-kieu-du-lieu/#chuoi) để đọc giới hạn đầy đủ.
 
-Kiểu dữ liệu chỉ kiểm được một phần: `2099-03-01` là ngày hợp lệ nhưng có thể sai hồ sơ; cột tiền vẫn nhận số âm nếu không có luật chặn. **Lưu được chưa chắc đã đúng ý**.
+Cùng một ngày có thể hiển thị khác nhau tùy công cụ. Đổi `datetime2` sang `date` làm mất giờ. Tra chi tiết ở [PL.1 — ngày giờ](../../phu-luc/pl-1-chi-tiet-kieu-du-lieu/#ngay-gio).
 
-Ở bài này chỉ cần đọc kiểu cột, khả năng nhận `NULL` và biết chuyển kiểu có thể đổi giá trị. Chuyển kiểu ngầm gặp lại ở bài 2.2, `NULL` ở bài 2.5, Unicode ở bài 2.7; tính toán và làm tròn số ở bài 3.1, các luật khác ở bài 5.2.
+### Chuyển kiểu có thể đổi nghĩa
+
+Khi giá trị khác kiểu gặp cột đích, SQL Server có thể tự chuyển kiểu, gọi là **chuyển kiểu ngầm**. Có ba khả năng:
+
+- **Giữ đúng giá trị:** chuỗi `9610000` đọc được thành số `9610000`.
+- **Lưu được nhưng khác ý:** với cấu hình đọc tháng trước ngày, chuỗi `01/02/2024` thành `2024-01-02`, dù người nhập muốn ngày 1 tháng 2.
+- **Bị từ chối:** chuỗi `chưa rõ` không chuyển được thành ngày.
+
+**Lưu được chưa chắc đã đúng ý**. `2099-03-01` là ngày hợp lệ nhưng có thể sai hồ sơ; cột tiền cũng nhận số âm nếu không có luật chặn. Kiểu dữ liệu kiểm loại và giới hạn giá trị, không thay bước xác minh nghiệp vụ.
+
+Nguồn: [Microsoft — kiểu dữ liệu](https://learn.microsoft.com/en-us/sql/t-sql/data-types/data-types-transact-sql), [chuyển kiểu](https://learn.microsoft.com/en-us/sql/t-sql/data-types/data-type-conversion-database-engine).
+
+Ở bài này chỉ cần nhận diện và đọc kiểu cơ bản. `NULL` không phải kiểu dữ liệu; khả năng nhận `NULL` học ở bài 1.4. Các hàm chuyển kiểu nằm ở [PL.2](../../phu-luc/pl-2-chuyen-doi-kieu-du-lieu/); xử lý ngày giờ học ở bài 2.8.
 
 ## Hay nhầm ở đâu
 
 <Mistakes>
 
-1. **Hiểu `NOT NULL` là đã nhập đầy đủ.** Chuỗi rỗng (không có ký tự nào) hoặc chuỗi toàn dấu cách vẫn có thể vào cột chữ `NOT NULL` nếu không có luật khác.
+1. **Chọn số cho mọi mã gồm chữ số.** Khi chuyển thành số, số `0` đầu không còn được giữ như một phần của mã.
+2. **Coi ngày hiển thị đúng là đã đúng giá trị.** Ngày bị đọc nhầm tháng/ngày vẫn có thể là ngày hợp lệ.
 
 </Mistakes>
 
@@ -66,45 +77,45 @@ Kiểu dữ liệu chỉ kiểm được một phần: `2099-03-01` là ngày h�
 
 <Apply>
 
-- **Đề xuất kiểu cho cột mới:** khi yêu cầu IT thêm cột, nêu rõ cột lưu ngày, tiền hay mã định danh và có được để trống không, để chọn kiểu phù hợp.
-- **Thống nhất file trước khi nhập:** đọc kiểu cột rồi chốt với IT cách gửi ngày, số tiền và giá trị chưa có, tránh ô bị từ chối hoặc đổi nghĩa.
+- **Mô tả cột mới:** nêu cột chứa mã, tiền, số lượng hay thời điểm để chọn nhóm kiểu phù hợp.
+- **Chuẩn bị dữ liệu nhập:** thống nhất cách viết ngày, phần lẻ và mã định danh trước khi chuyển file sang hệ thống.
 
 </Apply>
 
 ## Ghi nhớ
 
 <Memo rows={[
-  ['Mỗi ô Excel có thể khác kiểu', 'Mỗi cột database có một kiểu đã khai báo'],
-  ['Format Cells chỉ đổi cách hiển thị', 'SQL Server có thể đổi chữ sang kiểu của cột'],
-  ['Ô trống và ô chỉ có dấu cách trông giống nhau', 'NULL khác chuỗi rỗng; NOT NULL chưa bảo đảm đã nhập'],
+  ['Format Cells đổi cách nhìn', 'Kiểu dữ liệu quy định giá trị và cách xử lý của cả cột'],
+  ['Mã có thể nhìn giống số', 'Chuỗi giữ cách viết mã; số dành cho giá trị cần tính toán'],
+  ['Ngày và số có nhiều cách viết', 'Chuyển kiểu có thể giữ nguyên, đổi nghĩa hoặc bị từ chối'],
 ]} />
 
 **Tự kiểm tra trước khi bấm "Đã học xong":**
 
 <details>
-<summary>Vì sao database khai báo kiểu cho cả cột?</summary>
+<summary>Chọn kiểu nào cho số lượng nguyên, tên tiếng Việt và thời điểm có cả ngày lẫn giờ?</summary>
 
-Để SQL Server so sánh, sắp xếp và tính toán đúng theo ngày hoặc số, thay vì để một cột lẫn nhiều kiểu.
-
-</details>
-
-<details>
-<summary>Từ nhãn <code>LuongCoBan (decimal(18,0), not null)</code>, bạn đọc được gì?</summary>
-
-Cột lưu số có tối đa `18` chữ số, không có phần lẻ và không nhận `NULL`.
+`int` cho số lượng nguyên; `nvarchar` cho tên tiếng Việt; `datetime2` cho cả ngày và giờ khi chưa cần thông tin múi giờ.
 
 </details>
 
 <details>
-<summary>Người nhập muốn ngày 1 tháng 2, gửi chữ <code>01/02/2024</code> vào cột ngày của database khóa học. Lưu được thì đã đúng ý chưa?</summary>
+<summary><code>decimal(4,1)</code> dành bao nhiêu chữ số cho phần nguyên và phần lẻ?</summary>
 
-Chưa. Chuyển kiểu ngầm trong cấu hình của database khóa học đọc tháng trước, ngày sau, nên giá trị thành `2024-01-02`, tức ngày 2 tháng 1. Đây là ngày hợp lệ nhưng khác ý người nhập.
+Tối đa ba chữ số phần nguyên và một chữ số phần lẻ. Dấu âm không tính vào bốn chữ số.
 
 </details>
 
 <details>
-<summary>Vì sao <code>SoCCCD</code> dùng kiểu chuỗi dù chỉ gồm chữ số?</summary>
+<summary>Vì sao mã định danh và tiền chính xác không nên lần lượt đổi sang số nguyên và <code>float</code> cho tiện?</summary>
 
-Vì đó là mã định danh: cần giữ số `0` đầu và không dùng để cộng trừ.
+Mã cần giữ cách viết; `float` lưu số gần đúng. Tiền cần chính xác thường dùng `decimal`.
+
+</details>
+
+<details>
+<summary>Giá trị chuyển kiểu lưu được đã đủ để kết luận đúng nghiệp vụ chưa?</summary>
+
+Chưa. Chuyển kiểu có thể đọc nhầm tháng/ngày; một ngày hoặc số hợp lệ vẫn có thể sai hồ sơ.
 
 </details>

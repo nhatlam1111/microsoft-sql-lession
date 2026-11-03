@@ -117,7 +117,9 @@ Gợi ý dưới nút "Đã học xong" là "Bấm khi bạn trả lời đượ
 
 ### Bài nền
 
-Bài nền là bài mở đầu ngắn theo mục 2.5 của `quy-uoc.md`. Frontmatter có `noScenario: true`, `noExercises: true`, `minutes: 7`. Thứ tự cấp 2: **phần chính theo chủ đề → Hay nhầm ở đâu → Ứng dụng → Ghi nhớ**, sau `Memo` là các câu tự kiểm tra như bài khái niệm. Không dùng `Chat`, `Key`. Đối chiếu với bài 1.1.
+Bài nền theo mục 2.5 của `quy-uoc.md`. Frontmatter có `noScenario: true`, `noExercises: true`; `minutes: 12` cho 1.1/1.5, `minutes: 7` cho 1.2–1.4. Thứ tự cấp 2: **phần chính theo chủ đề → Hay nhầm ở đâu → Ứng dụng → Ghi nhớ**, sau `Memo` là các câu tự kiểm tra như bài khái niệm. Không dùng `Chat`, `Key`. Đối chiếu với bài 1.1.
+
+Bài 1.1/1.5 hướng tới 800–1.000 từ (trần 1.100), ba bài giữa 500–700 (trần 800), đếm bằng `proseParagraphs`. Dùng hình nguồn ngoài trong khung `figure.lesson-illustration` sẵn có; hình cần xem rộng đặt `style="display: block"`, liên kết mở bản gốc, alt và chú thích/credit tiếng Việt. Không tự vẽ lại, không đồng nhất sơ đồ ví dụ ngoài khóa học với HRM_Demo. Ghi quyền sử dụng chính xác và giới hạn chưa xác minh trong hồ sơ nguồn.
 
 ### Bài có câu lệnh và kết quả
 

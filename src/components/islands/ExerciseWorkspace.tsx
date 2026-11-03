@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent, type KeyboardEvent } from 'react';
 import type { GradeResponse, PublicExercise, RunResponse } from '../../lib/exercise-types';
-import type { DbTable } from '../../lib/db-schema';
 import { createExerciseClient } from '../../lib/exercise-client';
 import { ASK_CODE, MESSAGES, WAITING, verdictText } from '../../lib/exercise-messages';
 import { loadAccessCode, loadDraft, saveAccessCode, saveDraft } from '../../lib/exercise-storage';
@@ -10,19 +9,18 @@ import { useProgress } from './use-progress';
 import SqlEditor from './SqlEditor';
 import { COURSE_SERVER } from '../../lib/course-server';
 import { withBase } from '../../lib/paths';
-import { DbDiagramDialog } from './DbDiagram';
+import { EVENTS, emit } from '../../lib/events';
 
 interface Props {
   exercise: PublicExercise;
   apiBase: string;
-  tables: DbTable[];
   nums: string[];
 }
 
 type Action = 'run' | 'grade';
 const SHOWN_ROWS = 200;
 
-export default function ExerciseWorkspace({ exercise, apiBase, tables, nums }: Props) {
+export default function ExerciseWorkspace({ exercise, apiBase, nums }: Props) {
   useProgress(nums);
   const client = useMemo(() => createExerciseClient(apiBase), [apiBase]);
   const [sql, setSql] = useState(() => loadDraft(exercise.id) ?? '');
@@ -35,8 +33,6 @@ export default function ExerciseWorkspace({ exercise, apiBase, tables, nums }: P
   const [failure, setFailure] = useState<string | null>(null);
   const [verdict, setVerdict] = useState<{ correct: boolean; text: string } | null>(null);
   const [tab, setTab] = useState<'results' | 'messages'>('results');
-  const [diagramOpen, setDiagramOpen] = useState(false);
-  const diagramButton = useRef<HTMLButtonElement>(null);
   const codeField = useRef<HTMLInputElement>(null);
   const pending = useRef<Action>('run');
 
@@ -83,8 +79,6 @@ export default function ExerciseWorkspace({ exercise, apiBase, tables, nums }: P
     if (editorKeyAction(e) === 'run' && e.key !== 'Tab') { e.preventDefault(); void go('run'); }
   };
 
-  const closeDiagram = () => { setDiagramOpen(false); diagramButton.current?.focus(); };
-
   return (
     <div className="ws" onKeyDown={onKeyDown}>
       <p className="ws-help" id="ws-practice-help">
@@ -103,7 +97,7 @@ export default function ExerciseWorkspace({ exercise, apiBase, tables, nums }: P
         <button type="button" className="ws-btn" onClick={() => void go('run')} disabled={busy !== null}>{busy === 'run' ? 'Đang chạy…' : 'Chạy (F5)'}</button>
         <button type="button" className="ws-btn is-primary" onClick={() => void go('grade')} disabled={busy !== null}>{busy === 'grade' ? 'Đang chấm…' : 'Nộp bài'}</button>
         <span className="ws-spacer" />
-        <button type="button" className="ws-btn is-ghost" ref={diagramButton} onClick={() => setDiagramOpen(true)}>Sơ đồ database</button>
+        <button type="button" className="ws-btn is-ghost" aria-haspopup="dialog" onClick={() => emit(EVENTS.openDiagram)}>Sơ đồ database</button>
       </div>
       {slow && <p className="ws-wait" role="status">{WAITING}</p>}
       {failure && <p className="ws-fail" role="alert">{failure}</p>}
@@ -141,7 +135,6 @@ export default function ExerciseWorkspace({ exercise, apiBase, tables, nums }: P
           {result.truncated && <figcaption className="res-trim">Đã cắt, chỉ hiện {SHOWN_ROWS} dòng đầu.</figcaption>}
         </figure>
       )}
-      <DbDiagramDialog tables={tables} open={diagramOpen} onClose={closeDiagram} />
     </div>
   );
 }

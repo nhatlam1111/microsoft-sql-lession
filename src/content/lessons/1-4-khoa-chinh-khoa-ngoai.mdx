@@ -1,50 +1,67 @@
 ---
 num: "1.4"
-title: Khóa chính và khóa ngoại
-shortTitle: Khóa chính, khóa ngoại
+title: Ràng buộc dữ liệu — NULL, khóa chính và khóa ngoại
+shortTitle: Ràng buộc dữ liệu
 level: 1
 area: A1
 kind: full
 minutes: 7
 prerequisites:
   - "1.3"
-goal: bạn phân biệt được khóa chính và khóa ngoại, đọc được nhãn PK, FK và biết hai khóa này kiểm được gì
-excel: Cột mã không trùng; danh sách chọn lấy từ sheet khác
-summary: Khóa chính xác định một dòng, khóa ngoại giữ mã tham chiếu có thật giữa các bảng, và điều hai khóa này không kiểm được.
+goal: bạn phân biệt được NULL, NOT NULL, khóa chính và khóa ngoại, đọc được khóa ghép và biết giới hạn của các luật dữ liệu
+excel: Data Validation và kiểm tra mã trùng
+summary: Ràng buộc dữ liệu kiểm được gì, khi nào cột phải có giá trị, và cách khóa giữ mã duy nhất hoặc tham chiếu có thật.
 noExercises: true
 noScenario: true
 ---
 
-## Từ cột mã trong Excel đến khóa của bảng
+## Từ kiểm dữ liệu trong Excel đến luật của bảng
 
-Trong Excel, bạn có thể tô màu mã nhân viên bị trùng để kiểm lại, hoặc dùng danh sách chọn lấy từ sheet khác để nhập đúng mã phòng. Những cách này chỉ có tác dụng trong file đó. Database có hai luật từ chối dữ liệu sai ngay khi ghi: khóa chính và khóa ngoại.
+Excel có Data Validation và cách đánh dấu mã trùng. Với database, **ràng buộc (constraint)** là luật được khai báo để kiểm dữ liệu. Đặt tên cột là “Mã nhân viên” chưa tạo luật không trùng.
 
-### Khóa chính xác định đúng một dòng
+Kiểu dữ liệu xác định loại giá trị; ràng buộc bổ sung điều kiện. Khi ràng buộc đang bật, thao tác ghi thông thường bị từ chối nếu vi phạm.
 
-Khi `NhanVien.MaNV` được khai báo là **khóa chính (primary key)**, SQL Server từ chối hai dòng trùng mã và không nhận `NULL` ở cột khóa. Đây là một **ràng buộc (constraint)**, tức luật dữ liệu đã nói ở bài 1.1.
+### NULL và NOT NULL
 
-Mã được dùng để xác định hồ sơ vì họ tên có thể trùng hoặc thay đổi. `NV001` luôn chỉ một hồ sơ, nên các bảng hợp đồng, chấm công và lương dùng mã này để nhắc tới đúng hồ sơ.
+**`NULL`** biểu thị chưa có giá trị: chưa biết, chưa thu thập hoặc không áp dụng, tùy ý nghĩa cột. Nó không phải số `0`, chuỗi rỗng `''` hay chuỗi chữ `'NULL'`. `NULL` cũng không phải một kiểu dữ liệu: cột ngày hoặc cột số đều có thể cho phép giá trị này.
 
-### Khóa ngoại giữ mã tham chiếu có thật
+**`NOT NULL`** nghĩa là cột không nhận `NULL`. Trong schema mẫu, `NhanVien.HoTen` là `nvarchar(100) NOT NULL`: lưu chuỗi Unicode, không nhận `NULL`. Nhưng chuỗi rỗng hoặc toàn dấu cách vẫn có thể được nhận nếu không có luật khác chặn.
 
-**Khóa ngoại (foreign key)** buộc mã khác `NULL` phải trỏ tới một giá trị khóa có thật ở bảng được trỏ tới. `NhanVien.MaPB` trỏ sang `PhongBan.MaPB`, khóa chính của danh mục phòng: mã `KT` được nhận vì có trong danh mục, `KT01` không có thì bị từ chối. Ở đây `MaPB` không nhận `NULL`, nên hồ sơ nào cũng tìm được phòng của mình. Một mã phòng được nhiều nhân viên dùng là bình thường, vì chỉ `PhongBan` mới bắt mỗi mã một dòng.
+Cột `NhanVien.NgayNghiViec` cho phép `NULL`. Bộ mẫu quy ước chưa có ngày nghỉ là chưa nghỉ việc; đó là ý nghĩa nghiệp vụ được chọn cho cột, không phải nghĩa chung của mọi `NULL`.
 
-Khóa ngoại là luật kiểm khi ghi, **không phải ô chọn trên màn hình**: mã sai bị từ chối dù màn hình có ô chọn hay không. Khi ràng buộc đang bật, thêm, sửa, xóa dữ liệu theo cách thông thường đều bị kiểm; trong dữ liệu mẫu, không xóa được phòng còn hồ sơ trỏ tới.
+### Khóa chính và tính duy nhất
 
-### Đọc khóa trong SSMS
+**Khóa chính (primary key)**, viết tắt **`PK`**, dùng để xác định duy nhất một dòng. Khi `NhanVien.MaNV` được khai báo làm khóa chính, giá trị không được trùng và không nhận `NULL`. Họ tên không phù hợp làm mã nhận diện vì có thể trùng hoặc thay đổi.
 
-Trong Object Explorer, mở **Tables → `dbo.NhanVien` → Columns** (`dbo` là nhóm chứa các bảng): nhãn **`PK`** chỉ khóa chính, **`FK`** chỉ khóa ngoại. `MaQuanLy` lưu mã người quản lý nên trỏ về chính `NhanVien.MaNV`; hồ sơ `NV004` không có quản lý nên để `NULL`, khóa ngoại chỉ kiểm khi có mã.
+Một bảng có tối đa một khóa chính; khóa gồm nhiều cột gọi là **khóa ghép**. `BangLuong` dùng `KyLuong` và `MaNV`: cả cặp phải duy nhất, còn từng cột được lặp. Vì vậy một mã nhân viên có thể có lương ở nhiều kỳ, mỗi kỳ tối đa một dòng.
 
-<Ssms view="explorer" table="NhanVien" mark={['MaNV', 'MaPB', 'MaCD', 'MaQuanLy']} caption="Mô phỏng Object Explorer. Phần có viền xanh: MaNV là khóa chính; MaPB, MaCD, MaQuanLy là khóa ngoại." />
+**`UNIQUE`** bảo đảm giá trị hoặc tổ hợp không trùng, có thể khai báo ngoài khóa chính. Cần thêm `NOT NULL` nếu muốn cột bắt buộc có giá trị. Cách `UNIQUE` xử lý `NULL` học ở bài 5.2.
 
-Ở bài này chỉ cần phân biệt hai loại khóa và đọc được nhãn `PK`, `FK`. Xem khóa ngoại trỏ tới bảng nào ở bài 1.5, cách khai báo ràng buộc ở bài 5.2.
+### Khóa ngoại và giá trị tham chiếu
+
+**Khóa ngoại (foreign key)**, viết tắt **`FK`**, yêu cầu giá trị tham chiếu khác `NULL` có trong khóa được tham chiếu: thường là khóa chính hoặc khóa được bảo đảm duy nhất.
+
+`NhanVien.MaPB` trỏ tới `PhongBan.MaPB`. Vì `MaPB` không nhận `NULL` và có khóa ngoại đang bật, mỗi hồ sơ phải có mã phòng tồn tại trong danh mục. Khóa ngoại không bắt mọi phòng phải có nhân viên và không ngăn nhiều hồ sơ dùng cùng mã phòng.
+
+| Trường hợp | Luật kiểm và kết quả |
+|---|---|
+| Hai dòng trùng `NhanVien.MaNV` | Khóa chính chặn |
+| Mã phòng không tồn tại trong `PhongBan` | Khóa ngoại chặn |
+| `NULL` ở `NhanVien.MaPB` | `NOT NULL` chặn |
+| Mã phòng có thật nhưng nhập nhầm người | Các luật trên chưa phát hiện sai nghiệp vụ |
+
+Khóa ngoại là luật kiểm khi ghi, **không phải ô chọn trên màn hình**. Nó cũng có thể trỏ về cùng bảng; `NhanVien.MaQuanLy` tham chiếu `NhanVien.MaNV`. Cột nhận `NULL` nên hồ sơ chưa có quản lý vẫn có thể hợp lệ.
+
+Nguồn: [Microsoft — khóa chính và khóa ngoại](https://learn.microsoft.com/en-us/sql/relational-databases/tables/primary-and-foreign-key-constraints), [NULL](https://learn.microsoft.com/en-us/sql/t-sql/language-elements/null-and-unknown-transact-sql), [UNIQUE và CHECK](https://learn.microsoft.com/en-us/sql/relational-databases/tables/unique-constraints-and-check-constraints).
+
+Ở bài này chỉ cần nhận ra bốn khái niệm chính và khóa ghép. Bài 1.5 đưa chúng lên sơ đồ; khai báo `UNIQUE`, `CHECK` và giá trị mặc định `DEFAULT` học ở bài 5.2, lọc `NULL` ở bài 2.5.
 
 ## Hay nhầm ở đâu
 
 <Mistakes>
 
-1. **Thấy mã có thật thì nghĩ đã đúng hồ sơ.** Gán nhầm `KD` cho người thuộc `KT` vẫn qua khóa ngoại vì cả hai mã đều tồn tại. Luật giữ liên kết hợp lệ, không thay bước xác minh nghiệp vụ.
-2. **Nghĩ khóa chính chặn mọi hồ sơ trùng người.** Một người có hai mã khác nhau vẫn thành hai dòng. Trong dữ liệu mẫu, `SoCCCD` chưa có ràng buộc cấm trùng, nên số này cũng có thể trùng; bài 4.6 hướng dẫn soát dữ liệu.
+1. **Coi mã có thật là mã đúng.** Gán nhầm một mã phòng tồn tại vẫn qua khóa ngoại: hợp lệ chưa chắc đã đúng.
+2. **Cho rằng khóa chính chặn mọi hồ sơ trùng người.** Cùng một người có hai mã khác nhau vẫn có thể thành hai dòng. Trong bộ mẫu, `SoCCCD` chưa có ràng buộc cấm trùng; soát hồ sơ là việc riêng.
 
 </Mistakes>
 
@@ -52,44 +69,45 @@ Trong Object Explorer, mở **Tables → `dbo.NhanVien` → Columns** (`dbo` là
 
 <Apply>
 
-- **Nhắc đúng hồ sơ:** ghi mã như `NV001` trong yêu cầu gửi IT, không chỉ ghi họ tên.
-- **Hiểu vì sao thao tác bị chặn:** khi hệ thống báo không xóa hoặc không ghi được, kiểm xem mã đã có trong bảng chưa, có trong danh mục không, hoặc còn dòng nào đang trỏ tới mã đó.
+- **Đọc yêu cầu dữ liệu:** tách “phải có giá trị”, “không trùng” và “mã có trong danh mục” để chọn luật.
+- **Hiểu thao tác bị chặn:** xác định lỗi do thiếu giá trị, trùng khóa hay mã tham chiếu không tồn tại trước khi yêu cầu sửa dữ liệu.
 
 </Apply>
 
 ## Ghi nhớ
 
 <Memo rows={[
-  ['Tô màu mã NV trùng', 'Khóa chính: không trùng, không nhận NULL'],
-  ['Danh sách chọn từ sheet khác', 'Khóa ngoại: mã khác NULL phải có ở bảng được trỏ tới'],
+  ['Ô nhìn trống chưa nói được nguyên nhân', 'NULL biểu thị chưa có giá trị, theo ý nghĩa của cột'],
+  ['Bắt có dữ liệu và kiểm mã trùng là hai việc', 'NOT NULL chặn NULL; PK giữ khóa duy nhất và không NULL'],
+  ['Dò mã sang danh mục', 'FK kiểm giá trị tham chiếu có thật, không xác minh đúng nghiệp vụ'],
 ]} />
 
 **Tự kiểm tra trước khi bấm "Đã học xong":**
 
 <details>
-<summary>Khóa chính và khóa ngoại khác nhau thế nào?</summary>
+<summary><code>NULL</code>, chuỗi rỗng và số <code>0</code> có giống nhau không; <code>NOT NULL</code> chặn gì?</summary>
 
-Khóa chính xác định một dòng, không trùng và không nhận `NULL`. Khóa ngoại giữ mã tham chiếu có thật; nhiều dòng có thể cùng trỏ tới một mã.
-
-</details>
-
-<details>
-<summary>Vì sao một mã phòng xuất hiện ở nhiều dòng <code>NhanVien</code> mà không bị chặn?</summary>
-
-Vì `NhanVien.MaPB` là khóa ngoại, không phải khóa chính của bảng này. Khóa ngoại chỉ cần mã có trong `PhongBan`.
+Không. `NOT NULL` chỉ chặn `NULL`, không chặn số `0`, chuỗi rỗng hoặc toàn dấu cách nếu không có luật khác.
 
 </details>
 
 <details>
-<summary>Từ nhãn <code>MaQuanLy (FK, varchar(10), null)</code>, bạn đọc được gì?</summary>
+<summary>Khóa chính khác khóa ngoại ở điểm nào?</summary>
 
-Đây là khóa ngoại, lưu chuỗi có độ dài tối đa `10` và được để `NULL`.
+Khóa chính giữ dòng duy nhất, không `NULL`. Khóa ngoại kiểm mã tồn tại, cho nhiều dòng cùng tham chiếu.
 
 </details>
 
 <details>
-<summary>Hai hồ sơ có cùng <code>MaNV</code> và hai hồ sơ khác mã cùng thuộc <code>KT</code>: trường hợp nào bị khóa chặn?</summary>
+<summary>Khóa ghép gồm kỳ lương và mã nhân viên có cấm một mã xuất hiện ở hai kỳ không?</summary>
 
-Hai hồ sơ trùng `MaNV` bị khóa chính chặn. Hai hồ sơ khác mã cùng có `MaPB` là `KT` vẫn được nhận vì `KT` có trong danh mục; khóa ngoại cho phép nhiều hồ sơ dùng cùng mã phòng.
+Không. Chỉ cả cặp phải duy nhất; cùng nhân viên ở hai kỳ khác nhau vẫn được nhận.
+
+</details>
+
+<details>
+<summary>Khóa ngoại ở mã phòng đã đủ để bắt mỗi hồ sơ có phòng và xác nhận đó là phòng đúng chưa?</summary>
+
+Chưa. `NOT NULL` bắt có mã; khóa ngoại kiểm mã tồn tại, chưa xác nhận đúng phòng.
 
 </details>

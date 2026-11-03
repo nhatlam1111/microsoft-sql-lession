@@ -1,63 +1,91 @@
 ---
 num: "1.5"
-title: Đọc sơ đồ quan hệ (ERD)
-shortTitle: Đọc sơ đồ ERD
+title: Database diagram, ERD và cách đọc
+shortTitle: Đọc database diagram và ERD
 level: 1
 area: A1
 kind: full
-minutes: 7
+minutes: 12
 prerequisites:
   - "1.4"
-goal: bạn tìm được đường đi và cặp cột liên kết trên sơ đồ, giải thích được vì sao một hồ sơ có thể xuất hiện nhiều dòng khi lấy dữ liệu qua bảng khác
-excel: Các sheet tham chiếu nhau
-summary: Đọc sơ đồ quan hệ để tìm bảng và cặp cột cần đi qua, nhận ra quan hệ một-nhiều và phía có thể làm tăng số dòng.
+goal: bạn đọc được bảng, cột, khóa và các dạng quan hệ trên sơ đồ dạng bảng, xác định phía bắt buộc và lần được đường lấy thông tin
+excel: Các sheet và mã tham chiếu giữa chúng
+summary: Đọc sơ đồ bảng PUBS của Microsoft để hiểu một–một, một–nhiều, nhiều–nhiều và liên hệ với khóa tự tham chiếu trong dữ liệu khóa học.
 noExercises: true
 noScenario: true
 ---
 
-## Tìm đường lấy dữ liệu trên sơ đồ
+import { Image } from 'astro:assets';
+import pubsDiagram from '../../assets/lessons/1-5-pubs-diagram.png';
+import pubsOriginal from '../../assets/lessons/1-5-pubs-diagram.png?url';
 
-Trong Excel, muốn thêm tên phòng vào danh sách nhân viên, bạn dò mã phòng sang sheet danh mục để lấy tên. Với `NV001`, mã `KT` dẫn tới `Kế toán`. Database cũng lưu mã ở `NhanVien`, tên phòng ở `PhongBan`; sơ đồ cho biết hai bảng liên quan qua cặp cột nào.
+## Từ các sheet liên quan đến sơ đồ bảng
 
-**ERD** (Entity–Relationship Diagram) là **sơ đồ quan hệ** giữa các bảng. Trong sơ đồ dưới, mỗi hộp là một bảng, trong hộp có các cột, đường nối thể hiện khóa ngoại đã khai báo. Sơ đồ rộng nên có thể cuộn ngang để xem hết.
+Trong Excel, mã giúp tìm thông tin giữa các sheet. Sơ đồ cho biết bảng nào liên quan qua cặp cột nào, không phải danh sách hồ sơ hay thứ tự chạy câu lệnh.
 
-<Erd path={['NhanVien', 'PhongBan']} caption="Tô xanh: NhanVien → PhongBan qua cặp cột MaPB. 1 là phía một, ∞ là phía nhiều." />
+**Database diagram** là sơ đồ cấu trúc database, thường có bảng, cột và khóa. **ERD** (Entity–Relationship Diagram) là sơ đồ thực thể–quan hệ: thực thể là loại đối tượng cần quản lý, thuộc tính là thông tin của đối tượng. Ở dạng thể hiện bằng bảng, mỗi hộp chứa tên bảng và danh sách cột, như sơ đồ của khóa học.
 
-### Đọc đường liên kết
+### Đọc hộp bảng và đường liên kết
 
-Đường tô xanh là `NhanVien.MaPB` → `PhongBan.MaPB`. Bắt đầu từ mã phòng của hồ sơ, tìm cùng mã ở danh mục rồi đọc `TenPB`. Tên phòng lấy theo phòng ban đang lưu hiện tại.
+Ảnh Microsoft dưới đây mô tả một phần database mẫu **PUBS** về xuất bản/bán sách, không phải `HRM_Demo`. Giao diện trong ảnh là đời cũ; bài chỉ đọc cấu trúc.
 
-Trong hình, `PK` là khóa chính, `FK` là khóa ngoại như ở bài 1.4. Ở đường tô xanh, đầu có chấm tròn và `∞` nằm ở cột khóa ngoại, đầu có `1` tới cột khóa chính được trỏ tới.
+<figure class="lesson-illustration" style="display: block">
+  <a href={pubsOriginal} aria-label="Mở sơ đồ bảng PUBS gốc ở kích thước lớn">
+    <Image src={pubsDiagram} alt="Sơ đồ PUBS từ Microsoft: mỗi bảng là một khối chữ nhật có tên và các cột. publishers liên hệ một–một với pub_info, một–nhiều với titles; stores và titles liên hệ qua bảng sales." width={477} loading="lazy" format="png" style="max-width: 100%;" />
+  </a>
+  <figcaption><strong>Các bảng là những khối chứa cột</strong>Nhận diện <code>publishers</code>, <code>pub_info</code>, <code>titles</code>, <code>stores</code> và <code>sales</code>. Giữ nguyên ảnh Microsoft; <a href="https://learn.microsoft.com/en-us/ssms/visual-db-tools/design-database-diagrams-visual-database-tools">trang nguồn</a>, <a href="https://github.com/MicrosoftDocs/data-tools/blob/main/LICENSE">giấy phép MIT của kho tài liệu</a>. Bấm hình để mở bản gốc.</figcaption>
+</figure>
 
-Trên database khóa học, dùng sơ đồ trong bài hoặc nút **Sơ đồ database** ở trang bài tập; không tự cài/lưu sơ đồ vào database khóa học, vì việc đó ghi vào database dùng chung.
+Mỗi **hộp là một bảng**: `publishers` lưu nhà xuất bản, `titles` lưu đầu sách, `stores` lưu cửa hàng, `sales` lưu các dòng bán hàng. Thanh trên cùng là tên bảng; từng dòng bên trong là **tên cột**, không phải một bản ghi.
 
-### Quan hệ một-nhiều
+Chìa khóa cạnh cột đánh dấu **khóa chính (`PK`)**; đường liên kết thể hiện **khóa ngoại (`FK`)**. Một số công cụ ghi nhãn `PK`/`FK`. Trong ảnh này, đầu đường có chìa khóa là phía một, đầu `∞` là phía nhiều.
 
-Quan hệ **một-nhiều**, ký hiệu **`1 — ∞`**, đọc từ hai phía:
+Đọc cả bảng và cột: `titles.pub_id` tham chiếu `publishers.pub_id` để tìm tên nhà xuất bản `pub_name`. Hai cột cùng tên chưa tự tạo quan hệ; đường khóa ngoại thể hiện luật đã khai báo.
 
-- **Từ bảng `PhongBan`:** một phòng có thể có nhiều hồ sơ nhân viên; khóa ngoại không bắt phòng nào cũng phải có người.
-- **Từ bảng `NhanVien`:** mỗi hồ sơ thuộc đúng một phòng ban trong thiết kế này, vì `MaPB` không nhận `NULL` và phải trỏ tới một mã phòng có thật.
+Ảnh không in kiểu hoặc `NULL` cạnh cột. Muốn biết phía nào bắt buộc, phải đối chiếu khai báo; đầu một/nhiều chưa đủ kết luận.
 
-Đường tô xanh đi từ nhiều sang một nên lấy hồ sơ kèm tên phòng vẫn cho một dòng mỗi hồ sơ. Đi sang phía nhiều có thể làm tăng số dòng: `NV021` có ba hợp đồng, nên khi lấy hồ sơ kèm hợp đồng, mã này hiện ba dòng. Bạn cần xác định mỗi dòng kết quả là một hồ sơ hay một hợp đồng trước khi đếm.
+### Đọc các dạng quan hệ từ hai phía
 
-### Đi qua thêm một bảng
+**Số lượng liên hệ (cardinality)**: `1` là tối đa một; `N` hoặc `∞` là có thể nhiều. Đọc ba dạng trên cùng sơ đồ:
 
-Muốn lấy lương kèm tên phòng, bắt đầu từ `BangLuong`, qua `NhanVien` rồi tới `PhongBan`. Đọc từng chặng giống đường vừa học; tên phòng vẫn là phòng hiện lưu, không phải phòng tại kỳ lương:
-
-| Đường liên kết | Cặp cột | Thông tin tìm được |
+| Dạng | Ví dụ PUBS | Cách đọc |
 |---|---|---|
-| Lương → hồ sơ | `BangLuong.MaNV` → `NhanVien.MaNV` | Mã phòng `MaPB` của hồ sơ |
-| Hồ sơ → phòng ban | `NhanVien.MaPB` → `PhongBan.MaPB` | Tên phòng `TenPB` |
+| **Một–một** (`1:1`) | `publishers` — `pub_info` | Một nhà xuất bản có tối đa một dòng thông tin bổ sung; mỗi dòng bổ sung thuộc một nhà xuất bản |
+| **Một–nhiều** (`1:N`) | `publishers` — `titles` | Một nhà xuất bản có thể có nhiều đầu sách; một đầu sách tham chiếu tối đa một nhà xuất bản |
+| **Nhiều–nhiều** (`M:N`) | `stores` — `sales` — `titles` | Một cửa hàng bán nhiều đầu sách; một đầu sách được bán ở nhiều cửa hàng, thông qua các dòng bán hàng |
 
-Khóa chính có thể gồm nhiều cột: `BangLuong` dùng cả `KyLuong` và `MaNV`, nên cả cặp giá trị không trùng, còn từng cột được lặp; một nhân viên có tối đa một dòng lương mỗi kỳ. Phân tích dữ liệu lương qua nhiều bảng học ở bài 3.6.
+Một–nhiều và nhiều–một là cùng quan hệ nhìn theo hai chiều. Từ `publishers` sang `titles` là một–nhiều; từ `titles` về `publishers` là nhiều–một. Không dùng vị trí trái/phải hoặc chiều đọc trang để quyết định phía nhiều.
 
-Ở bài này chỉ cần đọc được sơ đồ, chỉ ra cặp cột và nhận ra phía có thể làm tăng số dòng. Cú pháp lấy dữ liệu từ nhiều bảng, gọi là kết bảng, học ở bài 3.4 và 3.6.
+Trong **một–một**, khóa ngoại chưa đủ vì nhiều dòng vẫn có thể cùng tham chiếu một mã. `pub_info.pub_id` vừa là `PK` vừa là `FK` nên duy nhất: mỗi nhà xuất bản có tối đa một dòng bổ sung. Thiết kế khác có thể dùng `UNIQUE`.
+
+Trong **nhiều–nhiều**, `sales` là **bảng trung gian**, lưu mã cửa hàng `stor_id`, mã sách `title_id`, số đơn `ord_num` và số lượng `qty`. Hai phía thành hai quan hệ một–nhiều với `sales`, không cần đường nhiều–nhiều trực tiếp.
+
+Khóa chính của `sales` gồm cả `stor_id`, `ord_num` và `title_id`. Cùng cửa hàng và đầu sách được lặp ở những đơn khác nhau, nên một dòng `sales` không đại diện duy nhất cho một cặp cửa hàng–đầu sách.
+
+**Bắt buộc hay tùy chọn** phải đọc thêm `NULL`/`NOT NULL`. Theo script PUBS, `titles.pub_id` cho phép `NULL`: một đầu sách có thể chưa được gán nhà xuất bản. Còn `pub_info.pub_id` là khóa chính và khóa ngoại nên phải trỏ tới đúng một nhà xuất bản.
+
+Chiều ngược không được bảo đảm giống vậy: một dòng `publishers` vẫn có thể chưa có dòng `pub_info` hoặc `titles` tham chiếu. Khóa ngoại không bắt mỗi dòng phía một có dòng phía nhiều; “tối đa một” khác “đúng một”.
+
+### Lần đường lấy thông tin và nhận ra tự tham chiếu
+
+Lấy sách đã bán tại cửa hàng theo đường `stores` → `sales` → `titles`: khớp cặp `stor_id` rồi cặp `title_id`. Cần tên nhà xuất bản thì đi tiếp qua cặp `pub_id` tới `publishers`.
+
+Trước khi lấy dữ liệu, chốt **mỗi dòng kết quả** là một dòng bán, một đầu sách hay một nhà xuất bản. Đi sang phía nhiều có thể lặp thông tin đầu sách; nếu cần danh sách đầu sách không trùng còn phải loại trùng. Sơ đồ không tự làm việc đó.
+
+**Tự tham chiếu** là khóa ngoại trỏ về cùng bảng. Ví dụ ở bài 1.4: `NhanVien.MaQuanLy` → `NhanVien.MaNV`; một người có thể quản lý nhiều hồ sơ, mỗi hồ sơ có tối đa một quản lý. `MaQuanLy` nhận `NULL` nên có thể chưa có quản lý. Liên hệ này thuộc `HRM_Demo`, không nằm trong ảnh PUBS.
+
+Hai bảng không có đường nối trực tiếp vẫn có thể liên quan qua bảng trung gian. Sơ đồ cũng không cho biết lịch sử nếu mô hình không lưu lịch sử. Với khóa học, dùng nút **Sơ đồ database**; không tự cài/lưu sơ đồ vào database khóa học vì việc đó ghi dữ liệu chung.
+
+Nguồn: [Microsoft — đọc database diagram](https://learn.microsoft.com/en-us/ssms/visual-db-tools/design-database-diagrams-visual-database-tools), [script PUBS để đối chiếu khóa và NULL](https://github.com/microsoft/sql-server-samples/blob/master/samples/databases/northwind-pubs/instpubs.sql), [khóa chính/khóa ngoại](https://learn.microsoft.com/en-us/sql/relational-databases/tables/primary-and-foreign-key-constraints).
+
+Ở bài này chỉ cần đọc hộp bảng, cặp cột, loại quan hệ và tính bắt buộc. Cú pháp kết bảng học ở bài 3.4/3.6, kết bảng với chính nó ở bài 3.7; thiết kế và ràng buộc đi sâu ở bài 5.1–5.2.
 
 ## Hay nhầm ở đâu
 
 <Mistakes>
 
-1. **Cho rằng hai bảng không có đường nối là không liên quan.** `ChamCong` và `BangLuong` không nối trực tiếp, nhưng cùng liên quan đến `NhanVien` qua `MaNV`. Sơ đồ chỉ vẽ quan hệ đã khai báo bằng khóa ngoại.
+1. **Thấy phía một thì nghĩ luôn có đúng một dòng liên quan.** Cột khóa ngoại nhận `NULL` thì có thể chưa có liên hệ; phía được tham chiếu cũng không bắt buộc có dòng trỏ tới.
+2. **Đếm dòng bán thành số đầu sách.** Cùng đầu sách có thể xuất hiện trong nhiều đơn; phải chốt ý nghĩa dòng và yêu cầu loại trùng khi cần.
 
 </Mistakes>
 
@@ -65,38 +93,52 @@ Khóa chính có thể gồm nhiều cột: `BangLuong` dùng cả `KyLuong` và
 
 <Apply>
 
-- **Tìm đủ nguồn cho báo cáo:** xác định bảng và cặp cột liên kết trước khi viết câu lệnh, như lương kèm tên phòng cần ba bảng `BangLuong`, `NhanVien`, `PhongBan`.
-- **Nhận ra dòng bị lặp:** biết một nhân viên có thể có nhiều hợp đồng hoặc kỳ lương để chọn đúng ý nghĩa của mỗi dòng báo cáo.
+- **Tìm đủ nguồn báo cáo:** lần qua bảng và cặp cột để lấy tên sách hoặc nhà xuất bản từ mã đang lưu.
+- **Tránh đếm sai đối tượng:** nhận ra bảng trung gian và phía nhiều trước khi đếm dòng bán, đầu sách hoặc cửa hàng.
 
 </Apply>
 
 ## Ghi nhớ
 
 <Memo rows={[
-  ['Dò mã qua các sheet', 'Đọc đường khóa ngoại → khóa chính trên ERD'],
-  ['Một mã phòng dùng ở nhiều hồ sơ', 'Một-nhiều: một phòng có thể có nhiều hồ sơ'],
-  ['Một mã NV ở nhiều dòng hợp đồng', 'Đi từ một sang nhiều: một hồ sơ có thể ra nhiều dòng'],
+  ['Mỗi sheet có tên và các cột', 'Mỗi hộp là bảng; đường khóa cho biết cặp cột liên hệ'],
+  ['Một mã xuất hiện ở nhiều dòng', 'Đọc quan hệ từ hai phía; nhiều–nhiều đi qua bảng trung gian'],
+  ['Có thể có hoặc phải có giá trị', 'PK/FK/UNIQUE quyết định giới hạn; NULL/NOT NULL góp phần quyết định tính bắt buộc'],
 ]} />
 
 **Tự kiểm tra trước khi bấm "Đã học xong":**
 
 <details>
-<summary>Trong sơ đồ của bài, hộp và đường nối thể hiện gì?</summary>
+<summary>Trong hình, một hộp và một dòng bên trong hộp đại diện cho gì?</summary>
 
-Hộp là bảng và các cột; đường nối thể hiện khóa ngoại đã khai báo trỏ tới khóa được tham chiếu.
-
-</details>
-
-<details>
-<summary>Muốn lấy hợp đồng kèm tên phòng, đi qua bảng và cặp cột nào?</summary>
-
-`HopDong` → `NhanVien` → `PhongBan`: `HopDong.MaNV` với `NhanVien.MaNV`, rồi `NhanVien.MaPB` với `PhongBan.MaPB`.
+Hộp là bảng; dòng bên trong liệt kê một cột, không phải bản ghi dữ liệu.
 
 </details>
 
 <details>
-<summary>Vì sao lấy hồ sơ kèm hợp đồng có thể ra nhiều dòng cho cùng một mã nhân viên?</summary>
+<summary>Chỉ ra một–một, một–nhiều và nhiều–nhiều trong ví dụ PUBS.</summary>
 
-Vì một người có thể có nhiều hợp đồng, như `NV021` có ba. Đi sang phía nhiều làm tăng số dòng.
+`publishers`–`pub_info` là một–một; `publishers`–`titles` là một–nhiều; `stores` và `titles` là nhiều–nhiều thông qua `sales`.
+
+</details>
+
+<details>
+<summary>Vì sao khóa ngoại của <code>pub_info.pub_id</code> giữ được một–một, nhưng nhà xuất bản chưa chắc có dòng bổ sung?</summary>
+
+PK giữ mã duy nhất; FK kiểm mã có thật, không bắt mỗi nhà xuất bản có dòng `pub_info`.
+
+</details>
+
+<details>
+<summary>Tìm tên sách đã bán tại cửa hàng cần đi đường nào; một dòng bán có phải một đầu sách riêng biệt không?</summary>
+
+`stores` → `sales` → `titles`. Cùng đầu sách có thể lặp trong nhiều đơn.
+
+</details>
+
+<details>
+<summary>Khóa tự tham chiếu đã học nằm ở đâu; một hồ sơ có bắt buộc có quản lý không?</summary>
+
+Ở `HRM_Demo`: `NhanVien.MaQuanLy` → `NhanVien.MaNV`. Cột nhận `NULL` nên có thể chưa có quản lý; đây không phải đường trong hình PUBS.
 
 </details>

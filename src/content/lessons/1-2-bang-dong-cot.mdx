@@ -1,56 +1,74 @@
 ---
 num: "1.2"
-title: Bảng, dòng và cột
-shortTitle: Bảng, dòng và cột
+title: Microsoft SQL Server — ưu điểm và giới hạn
+shortTitle: Microsoft SQL Server
 level: 1
 area: A1
 kind: full
 minutes: 7
 prerequisites:
   - "1.1"
-goal: bạn chỉ ra được bảng, dòng và cột trong database, biết chúng giống và khác sheet Excel ở đâu
-excel: Sheet, dòng, cột
-summary: Hiểu dữ liệu trong database được xếp thành bảng, dòng và cột như thế nào, giống và khác sheet Excel ở đâu.
+goal: bạn phân biệt được SQL Server, SQL, T-SQL và SSMS, hiểu ưu điểm, giới hạn và nền tảng thực hành của khóa học
+excel: Excel là phần mềm làm việc với workbook
+summary: SQL Server quản lý database quan hệ; hiểu vai trò của SQL, SSMS, các edition và Azure SQL Database.
 noExercises: true
 noScenario: true
 ---
 
-import { Image } from 'astro:assets';
-import tableStructure from '../../assets/lessons/1-2-database-table.png';
+## Từ phần mềm Excel đến hệ quản lý SQL Server
 
-## Từ sheet Excel đến bảng trong database
+Bạn dùng Excel để xử lý workbook. Database cần phần mềm quản lý; người dùng gửi yêu cầu qua ứng dụng, không mở trực tiếp tệp dữ liệu trên máy chủ.
 
-Dữ liệu trong database được xếp thành các bảng. Nếu đã quen Excel, bạn có thể hình dung mỗi bảng như một sheet có các cột cố định. Hình dưới trích ba cột và ba dòng của bảng `NhanVien` trong dữ liệu mẫu của khóa học; bảng này có 12 cột và 48 dòng.
+**Microsoft SQL Server** là hệ quản lý database quan hệ của Microsoft. Nó lưu, đọc, cập nhật và bảo vệ dữ liệu, có thể quản lý nhiều database. Phần mềm này có thể chạy trên Windows hoặc Linux, ở máy của bạn hoặc máy chủ cung cấp dịch vụ qua mạng.
 
-<figure class="lesson-illustration" style="display: block">
-  <Image src={tableStructure} alt="Minh họa database chứa bảng NhanVien với ba cột MaNV, HoTen và NgayVaoLam. Nhãn Bảng chỉ khung bảng, nhãn Dòng chỉ toàn bộ hồ sơ NV005 tô vàng, nhãn Cột chỉ cột HoTen có khung dọc màu xanh." width={960} widths={[720, 1440]} sizes="(max-width: 1024px) 414px, 720px" format="webp" loading="lazy" style="max-width: 100%;" />
-  <figcaption>Hình minh họa ba cột và ba dòng của bảng <code>NhanVien</code>: dòng <code>NV005</code> được tô vàng, cột <code>HoTen</code> (họ tên) có khung dọc màu xanh; <code>MaNV</code> là mã nhân viên.</figcaption>
-</figure>
+### Bốn tên và cách chúng làm việc cùng nhau
 
-- **Bảng** lưu một loại đối tượng, như `NhanVien` lưu hồ sơ nhân viên, `PhongBan` lưu phòng ban.
-- **Dòng**, còn gọi là **bản ghi**, là một đối tượng của bảng: một hồ sơ ở `NhanVien`, như dòng của `NV005`; một hợp đồng ở `HopDong`.
-- **Cột** là một chi tiết của mọi dòng, như `HoTen` là họ tên.
+**SQL** là ngôn ngữ yêu cầu đọc hoặc thay đổi dữ liệu. **T-SQL** (Transact-SQL) là cách triển khai SQL của Microsoft, có cú pháp và tính năng mở rộng. Khóa học dùng T-SQL.
 
-### Bảng chặt hơn sheet
+**SSMS** (SQL Server Management Studio) là công cụ trên Windows để kết nối, xem cấu trúc, gửi câu lệnh và đọc kết quả. Đóng SSMS không xóa database trên máy chủ.
 
-Trong sheet, bạn có thể gộp ô hoặc dùng dòng đầu làm tiêu đề. Bảng thì không gộp ô được, mọi dòng có cùng các cột, và tên cột thuộc thiết kế của bảng, không phải một dòng dữ liệu. Hình trên hiện tên cột ở trên cùng chỉ để dễ đọc.
+| Tên | Vai trò |
+|---|---|
+| Database | Dữ liệu được lưu và cấu trúc của dữ liệu |
+| SQL Server | Phần mềm quản lý, xử lý yêu cầu trên database |
+| SQL/T-SQL | Ngôn ngữ diễn đạt yêu cầu |
+| SSMS | Công cụ để bạn kết nối và gửi yêu cầu |
 
-Nhờ vậy SQL Server đọc và lọc dữ liệu theo đúng cột: muốn tìm theo họ tên thì chỉ cần chỉ ra cột `HoTen`. Cái giá là thêm cột không đơn giản như chèn cột trong Excel: người có quyền phải đổi thiết kế bảng.
+Ứng dụng nhân sự cũng có thể gửi yêu cầu tới SQL Server mà người dùng không mở SSMS.
 
-### Mỗi bảng lưu một loại đối tượng
+### Ưu điểm đi cùng điều kiện sử dụng
 
-File Excel thường gom nhiều thông tin vào một sheet. Database tách chúng ra: hồ sơ ở `NhanVien`, hợp đồng ở `HopDong`, danh mục phòng ở `PhongBan`. `NV021` có ba hợp đồng: nếu gộp vào `NhanVien`, thông tin của người này phải lặp lại ở mỗi hợp đồng và dễ sửa sót. Tách bảng thì riêng `NV021` có ba dòng ở `HopDong`, còn hồ sơ chỉ nằm ở một nơi.
+SQL Server thuận tiện khi lấy thông tin qua nhiều bảng, như hồ sơ kèm tên phòng. **Ràng buộc** là luật được khai báo, như mã không được trùng; bài 1.4 giải thích giới hạn của luật.
 
-Các bảng liên quan với nhau qua mã: mỗi dòng `HopDong` ghi `MaNV` của người đó. Vì mỗi dòng ở đây là một hợp đồng, cùng mã `NV021` xuất hiện ba lần không có nghĩa là có ba hồ sơ nhân viên. Cách liên kết này học ở bài 1.4 và 1.5.
+**Phân quyền** giới hạn phần dữ liệu từng tài khoản được đọc/sửa. **Giao dịch (transaction)** giúp nhóm thao tác cùng hoàn tất hoặc cùng hoàn tác khi được lập trình và xử lý đúng. Các khả năng này cần cấu hình và cách dùng phù hợp.
 
-Ở bài này chỉ cần chỉ ra được bảng, dòng, cột và biết bảng khác sheet ở đâu. Xem dữ liệu của một bảng học ở bài 2.1, sắp xếp ở bài 2.4, tính tổng ở bài 3.1.
+SSMS hỗ trợ viết truy vấn và quản trị. Sao lưu/khôi phục giúp xử lý sự cố khi có cấu hình và bản sao lưu dùng được, không bảo đảm phục hồi được mọi lỗi.
+
+### Giới hạn, edition và nơi thực hành
+
+**Edition** là bản sản phẩm với tính năng và tài nguyên khác nhau. Không lấy giới hạn bản miễn phí làm giới hạn chung của SQL Server. Các nhóm trong SQL Server 2025:
+
+| Nhóm edition | Điều cần biết |
+|---|---|
+| Express | Miễn phí, giới hạn tài nguyên và kích thước database; phù hợp nhu cầu nhỏ |
+| Standard, Enterprise | Bản thương mại, khác nhau về tính năng, giới hạn và chi phí |
+| Standard Developer, Enterprise Developer | Dùng phát triển/kiểm thử, không được cấp phép làm hệ thống vận hành thật |
+| Evaluation | Bản đánh giá có thời hạn |
+
+Hệ thống cần người thiết kế, quản lý quyền và theo dõi hiệu năng. Tăng dữ liệu/người dùng có thể cần thêm tài nguyên hoặc tối ưu truy vấn. SQL Server không tự biết dữ liệu đúng nghiệp vụ hay tự đồng bộ file Excel.
+
+Khóa học dùng **Azure SQL Database**, dịch vụ Microsoft quản lý trên Azure, dùng chung nền tảng xử lý với SQL Server. Cú pháp cốt lõi dùng được trên cả hai; tính năng quản trị và giới hạn có thể khác. Lối học trên web không cần tự cài SQL Server.
+
+Nguồn: [Microsoft — SQL Server](https://learn.microsoft.com/en-us/sql/sql-server/what-is-sql-server), [edition SQL Server 2025](https://learn.microsoft.com/en-us/sql/sql-server/editions-and-components-of-sql-server-2025), [SSMS](https://learn.microsoft.com/en-us/ssms/sql-server-management-studio-ssms).
+
+Ở bài này chỉ cần phân biệt các tên và biết khả năng đi cùng điều kiện. Bạn bắt đầu viết câu lệnh ở bài 2.1; [chọn nơi thực hành tại trang Giới thiệu](/microsoft-sql-lession/gioi-thieu/#chon-noi-thuc-hanh). Phân quyền học ở bài 6.1, giao dịch ở bài 5.5, sao lưu ở bài 6.3.
 
 ## Hay nhầm ở đâu
 
 <Mistakes>
 
-1. **Muốn thêm dòng tổng cộng vào bảng.** Database vẫn có thể nhận một dòng tổng nếu dòng đó thỏa các luật đã khai báo, khiến danh sách có thêm một "hồ sơ" không phải người nào. Số tổng được tính khi lấy dữ liệu.
-2. **Coi thứ tự dòng trong bảng là cố định.** Bảng không có dòng 1, dòng 2 như sheet, nên cùng một yêu cầu có thể ra thứ tự khác nhau. Muốn chỉ một dòng thì dùng mã như `NV005`; muốn thứ tự nhất định thì yêu cầu khi lấy dữ liệu.
+1. **Cài SSMS rồi nghĩ đã có SQL Server.** SSMS chỉ là công cụ kết nối; bạn còn cần một hệ thống database để gửi yêu cầu tới.
+2. **Thấy cùng chữ SQL thì chép mọi cú pháp giữa các sản phẩm.** Phần mở rộng có thể khác, nên câu chạy ở sản phẩm khác chưa chắc chạy trên SQL Server.
 
 </Mistakes>
 
@@ -58,39 +76,45 @@ Các bảng liên quan với nhau qua mã: mỗi dòng `HopDong` ghi `MaNV` củ
 
 <Apply>
 
-- **Mô tả yêu cầu dữ liệu:** nói rõ cần bảng nào, mỗi dòng là gì và lấy những cột nào, thay vì chỉ nói "lấy danh sách".
-- **Chuẩn bị file trước khi gửi IT nhập:** bỏ ô gộp, dòng tổng và dòng ghi chú để mỗi dòng trong file là một hồ sơ.
+- **Báo lỗi đúng thành phần:** phân biệt công cụ SSMS, kết nối và hệ quản lý để mô tả lỗi rõ hơn cho người phụ trách.
+- **Chọn đúng nơi thực hành:** dùng web được cấp mã hoặc SSMS theo hướng dẫn, không cài thêm hệ quản lý khi chưa cần bản riêng.
 
 </Apply>
 
 ## Ghi nhớ
 
 <Memo rows={[
-  ['Sheet', 'Bảng'],
-  ['Dòng và cột trong sheet', 'Dòng (bản ghi) và cột'],
-  ['Tiêu đề là một dòng', 'Tên cột thuộc thiết kế bảng, không phải dòng dữ liệu'],
-  ['Có thể gộp ô', 'Không gộp ô; mọi dòng có cùng các cột'],
+  ['Excel làm việc với workbook', 'SQL Server quản lý database; SSMS là công cụ kết nối'],
+  ['Thao tác bằng menu hoặc công thức', 'Gửi yêu cầu bằng SQL; khóa học dùng T-SQL'],
+  ['Tính năng phụ thuộc bản phần mềm', 'Edition và nền tảng quyết định tính năng, giới hạn thực tế'],
 ]} />
 
 **Tự kiểm tra trước khi bấm "Đã học xong":**
 
 <details>
-<summary>Bảng giống gì trong Excel, và khác ở điểm nào?</summary>
+<summary>SSMS, SQL Server và database giữ ba vai trò nào?</summary>
 
-Bảng giống một sheet, nhưng không gộp ô được, mọi dòng có cùng các cột và tên cột không phải một dòng dữ liệu.
-
-</details>
-
-<details>
-<summary>Trong hình, dòng tô vàng đại diện cho gì và cột có khung xanh chứa thông tin gì?</summary>
-
-Dòng tô vàng là hồ sơ mang mã `NV005`. Cột có khung xanh là `HoTen`, lưu họ tên của mọi hồ sơ.
+SSMS kết nối/gửi yêu cầu; SQL Server quản lý; database là dữ liệu và cấu trúc được quản lý.
 
 </details>
 
 <details>
-<summary><code>NV021</code> có ba hợp đồng. Riêng mã này có mấy dòng ở <code>NhanVien</code> và <code>HopDong</code>, và mỗi dòng là gì?</summary>
+<summary>SQL và T-SQL có quan hệ thế nào?</summary>
 
-`NhanVien` có một dòng hồ sơ của `NV021`; `HopDong` có ba dòng, mỗi dòng là một hợp đồng của hồ sơ đó. Tách hai bảng giúp thông tin nhân viên không phải lặp lại ở mỗi hợp đồng.
+SQL là ngôn ngữ yêu cầu dữ liệu. T-SQL là cách triển khai SQL của Microsoft, có thêm cú pháp và tính năng riêng.
+
+</details>
+
+<details>
+<summary>Nêu một ưu điểm của SQL Server cùng điều kiện để ưu điểm đó có tác dụng.</summary>
+
+Ví dụ: phân quyền giới hạn người được sửa dữ liệu, nhưng phải cấu hình quyền phù hợp. Sao lưu hỗ trợ khôi phục khi có bản sao lưu dùng được.
+
+</details>
+
+<details>
+<summary>Giới hạn của Express có áp dụng cho mọi edition và Azure SQL Database không?</summary>
+
+Không. Giới hạn phụ thuộc edition, phiên bản hoặc mức dịch vụ. Azure SQL Database là dịch vụ được quản lý, không đồng nhất mọi tính năng với SQL Server tự cài.
 
 </details>

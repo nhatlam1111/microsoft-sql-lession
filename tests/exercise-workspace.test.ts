@@ -10,7 +10,7 @@ const exercise: PublicExercise = {
   ordered: false, kind: 'query',
 };
 const render = () => renderToStaticMarkup(createElement(ExerciseWorkspace, {
-  exercise, apiBase: '', tables: [], nums: ['2.1'],
+  exercise, apiBase: '', nums: ['2.1'],
 }));
 const inputOf = (html: string) => html.match(/<textarea\b([^>]*)>([\s\S]*?)<\/textarea>/)!;
 afterEach(() => vi.unstubAllGlobals());

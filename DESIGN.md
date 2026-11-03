@@ -202,6 +202,8 @@ For style-only changes, preserve copy, links, SQL, data, level order and progres
 
 HRM_Demo relationship lines show `1` beside the referenced primary key and `∞` beside the foreign key, including the employee/manager loop. These indicate the one and many sides, not whether a value is required. Keep labels outside table boxes, share labels at common endpoints, and color them with the highlighted path. Both lesson diagrams and the database popup use the same component and legend.
 
+The top navigation offers “Sơ đồ database” beside “Luyện SQL”. It and the exercise toolbar open one shared `DbDiagramPopup` in `BaseLayout`, using the schema parsed from `database/HRM_Demo.sql` at build time. The modal isolates the background, locks page scrolling, keeps Tab inside, closes through Escape/close/backdrop, and restores focus to its opener. Navigation labels stay on one line; below 1200px the brand keeps its named icon and progress keeps its count while their secondary visuals make room for the navigation.
+
 ## Do's and Don'ts
 
 - Do derive shared visual decisions from the canonical CSS tokens and verify a sibling screen.

@@ -1,70 +1,91 @@
 ---
 num: "1.1"
-title: Database là gì và SSMS dùng để làm gì
-shortTitle: Database và SSMS
+title: Database là gì?
+shortTitle: Database quan hệ và NoSQL
 level: 1
 area: A1
 kind: full
-minutes: 7
+minutes: 12
 prerequisites: []
-goal: bạn phân biệt được database, SQL Server, SQL và SSMS, biết nguồn dữ liệu chung giúp gì và vì sao vẫn cần kiểm tra dữ liệu
-excel: Workbook và sheet
-summary: Từ file Excel gửi qua lại đến một nguồn dữ liệu chung, hiểu database, SQL Server, SQL và vai trò của SSMS.
+goal: bạn giải thích được database, phân biệt database quan hệ với NoSQL và chỉ ra bảng, dòng, cột trong database quan hệ
+excel: Workbook, sheet, dòng và cột
+summary: So sánh database quan hệ với NoSQL, phân biệt DBMS/RDBMS và đọc cấu trúc bảng, dòng, cột.
 noExercises: true
 noScenario: true
 ---
 
 import { Image } from 'astro:assets';
-import databaseConcept from '../../assets/lessons/1-1-database.png';
-import sqlServerConcept from '../../assets/lessons/1-1-sql-server.png';
-import sqlLanguageConcept from '../../assets/lessons/1-1-sql-language.png';
+import relationalTerms from '../../assets/presentations/relational-database-terms.svg?url';
+import graphModel from '../../assets/presentations/graph-database-property-graph.png';
 
-## Từ file Excel đến một nguồn dữ liệu chung
+## Từ Excel đến những cách tổ chức dữ liệu
 
-Nếu đã quen Excel, bạn biết một **workbook** (file Excel) có nhiều **sheet** (trang tính). Khi mỗi phòng giữ một bản sao, hồ sơ được sửa ở bản này có thể chưa kịp sửa ở bản kia. Vì vậy, dữ liệu dùng cho cả công ty thường được đưa vào một nguồn chung.
+Một **workbook** là file Excel, còn **sheet** là trang tính bên trong. Bạn có thể lưu nhân viên và hợp đồng ở các sheet khác nhau. Thông tin cần được tổ chức để tìm lại và cập nhật, thay vì chỉ nằm trong các file gửi qua lại.
 
-**Database** (cơ sở dữ liệu) là tập dữ liệu có cấu trúc, được phần mềm quản lý để nhiều người cùng dùng, mỗi người theo quyền được cấp. Có thể hình dung database giống một workbook, mỗi **bảng** giống một sheet. Các bên cùng đọc một nguồn nên thay đổi đã cập nhật thì ai có quyền đọc đều thấy. Một workbook đặt ở nơi dùng chung cũng làm được phần này; database còn cấp quyền tới từng bảng và kiểm dữ liệu theo luật đã khai báo.
+**Database**, hay **cơ sở dữ liệu**, là tập hợp dữ liệu được tổ chức để lưu trữ, tìm kiếm và cập nhật. Database phục vụ một ứng dụng trên máy cá nhân hoặc nhiều ứng dụng cùng truy cập qua mạng. Nó không nhất thiết chỉ gồm các bảng giống Excel.
+
+**Hệ quản lý database (DBMS)** là phần mềm quản lý tập dữ liệu đó: tiếp nhận yêu cầu, kiểm quyền và thực hiện thao tác. Database là dữ liệu được quản lý, DBMS là phần mềm quản lý. Microsoft SQL Server là một DBMS mà bạn sẽ tìm hiểu ở bài 1.2.
+
+### Hai nhóm: database quan hệ và NoSQL
+
+Bài này so sánh **database quan hệ** với **NoSQL** theo cách tổ chức dữ liệu. Nhóm quan hệ dùng bảng; NoSQL gồm những cách tổ chức khác. Lựa chọn tùy việc cần đọc và cập nhật.
+
+**RDBMS** (Relational DBMS) là DBMS quản lý database quan hệ, như SQL Server. Hệ NoSQL cũng là DBMS: **DBMS là tên chung**, không phải nhóm đối lập với NoSQL.
+
+| Tiêu chí | Database quan hệ | Database NoSQL |
+|---|---|---|
+| Cách tổ chức | Bảng, dòng, cột; các bảng liên hệ bằng giá trị khóa | Tùy mô hình: tài liệu, khóa–giá trị, cột rộng hoặc đồ thị |
+| Nhu cầu phù hợp | Hồ sơ, hợp đồng, lương; cần lấy thông tin qua nhiều bảng và kiểm các luật liên quan | Đọc cả hồ sơ dạng tài liệu, tra theo mã hoặc lần theo mạng liên hệ |
+| Ưu điểm | Thuận tiện tổ chức dữ liệu nghiệp vụ và giữ liên kết hợp lệ bằng luật đã khai báo | Chọn cách lưu và truy cập phù hợp với hình dạng dữ liệu, như lấy cả tài liệu hoặc đi theo liên hệ |
+| Giới hạn cần cân nhắc | Phải thiết kế cấu trúc và quan hệ; thay đổi thiết kế cần được quản lý | Khả năng truy vấn và kiểm luật khác nhau tùy sản phẩm; dữ liệu lưu lặp cần cách cập nhật nhất quán |
+| Hệ quản lý tiêu biểu | SQL Server, PostgreSQL, MySQL | MongoDB, Redis, Cassandra, Neo4j |
+
+Trong NoSQL, **tài liệu** gom chi tiết của một đối tượng; **khóa–giá trị** dùng khóa để tra giá trị; **cột rộng** tổ chức dòng theo nhóm cột; **đồ thị** biểu diễn đối tượng bằng điểm, liên hệ bằng đường. Đây là các dạng bên trong NoSQL.
+
+Tài liệu thường dùng **JSON**, cách viết dữ liệu bằng tên và giá trị, có thể chứa danh sách hoặc nhóm chi tiết. Ví dụ: tài liệu nhân viên chứa cả địa chỉ và các số điện thoại.
+
+NoSQL không có nghĩa là không có cấu trúc, không có quan hệ hoặc luôn nhanh hơn. Khả năng phụ thuộc sản phẩm và thiết kế; một sản phẩm có thể hỗ trợ nhiều mô hình.
 
 <figure class="lesson-illustration">
-  <Image src={databaseConcept} alt="Minh họa database bằng một khối dữ liệu và nhiều bảng có dòng, cột được sắp xếp cùng nhau." width={720} widths={[360, 720]} sizes="(max-width: 560px) 360px, 335px" format="webp" loading="lazy" />
-  <figcaption><strong>Database — dữ liệu được lưu</strong>Hình khái niệm: một database gồm nhiều bảng dữ liệu.</figcaption>
+  <Image src={graphModel} alt="Đồ thị gốc biểu diễn các đối tượng bằng điểm, các liên hệ bằng đường có nhãn và thuộc tính." width={720} widths={[360, 720]} sizes="(max-width: 560px) 360px, 335px" format="webp" loading="lazy" />
+  <figcaption><strong>Đồ thị — một ví dụ trong nhóm NoSQL</strong>Đường giữa các điểm có ý nghĩa trong dữ liệu; đây không phải sơ đồ các bảng và không đại diện mọi database NoSQL. Ảnh Achim Friedland (Ahzf), <a href="https://commons.wikimedia.org/wiki/File:GraphDatabase_PropertyGraph.png">Wikimedia Commons</a>, <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>.</figcaption>
 </figure>
 
-### SQL Server quản lý, SQL gửi yêu cầu
+Khóa học dùng database quan hệ với SQL Server, nên phần tiếp theo tập trung vào bảng.
 
-Người dùng không mở database như mở một file; mọi yêu cầu đi qua phần mềm quản lý để kiểm quyền và xử lý. **SQL Server** là phần mềm của Microsoft quản lý việc lưu trữ, đọc và cập nhật database. Nó thường chạy trên **máy chủ**, hệ thống cung cấp dữ liệu qua mạng do IT quản lý.
+### Bảng, dòng và cột trong mô hình quan hệ
 
-<figure class="lesson-illustration">
-  <Image src={sqlServerConcept} alt="Minh họa SQL Server là phần mềm: một khung ứng dụng quản lý các database, có biểu tượng thiết lập và bảng dữ liệu." width={720} widths={[360, 720]} sizes="(max-width: 560px) 360px, 335px" format="webp" loading="lazy" />
-  <figcaption><strong>SQL Server — phần mềm quản lý</strong>SQL Server chạy nền trên máy chủ, không phải cửa sổ bạn mở; khung trong hình chỉ minh họa việc quản lý các database.</figcaption>
+Trong **database quan hệ**, dữ liệu được tổ chức thành **bảng**. Một bảng có các **cột** mô tả loại thông tin và các **dòng**, còn gọi là **bản ghi**, chứa dữ liệu cụ thể. Giá trị nằm ở giao điểm dòng và cột.
+
+<figure class="lesson-illustration" style="display: block">
+  <a href={relationalTerms} aria-label="Mở hình bảng, dòng và cột ở kích thước gốc">
+    <img src={relationalTerms} width="984" height="460" loading="lazy" alt="Hình gốc minh họa Relation là toàn bảng, Tuple là một dòng được khoanh ngang, Attribute là một cột được khoanh dọc." style="max-width: 100%;" />
+  </a>
+  <figcaption>Đọc nhãn trong hình: <strong>Relation = bảng; Tuple = dòng; Attribute = cột.</strong>Ví dụ thuật ngữ từ nguồn ngoài, không phải dữ liệu nhân sự của khóa học. Ảnh Booyabazooka, <a href="https://commons.wikimedia.org/wiki/File:Relational_database_terms.svg">Wikimedia Commons</a>, public domain. Bấm hình để xem bản gốc.</figcaption>
 </figure>
 
-Muốn lấy dữ liệu, bạn gửi yêu cầu bằng **SQL**: ngôn ngữ để đọc và thay đổi dữ liệu. SQL Server xử lý yêu cầu đó rồi trả kết quả.
+Trong bộ mẫu của khóa học, bảng `NhanVien` lưu hồ sơ nhân viên: một dòng là một hồ sơ, cột `HoTen` lưu họ tên. Bảng `HopDong` lưu hợp đồng: mỗi dòng là một hợp đồng. Một người có thể có nhiều hợp đồng, nên số dòng của hai bảng không cùng mang nghĩa “số người”.
 
-<figure class="lesson-illustration">
-  <Image src={sqlLanguageConcept} alt="Minh họa SQL bằng một yêu cầu được gửi tới hệ thống để lấy kết quả dạng bảng từ dữ liệu đang lưu." width={720} widths={[360, 720]} sizes="(max-width: 560px) 360px, 335px" format="webp" loading="lazy" />
-  <figcaption><strong>SQL — ngôn ngữ gửi yêu cầu</strong>Hình minh họa việc diễn đạt yêu cầu lấy dữ liệu; bảng bên phải tượng trưng cho kết quả được trả về.</figcaption>
-</figure>
+Bảng giống một sheet để bạn hình dung, nhưng tên cột thuộc thiết kế bảng, không phải dòng dữ liệu đầu tiên. Trong bảng thông thường của database quan hệ, các dòng dùng cùng tập cột, không có ô gộp như sheet. Muốn thêm cột phải đổi thiết kế bằng quyền phù hợp.
 
-### SSMS là công cụ làm việc với database
+Tách hồ sơ và hợp đồng giúp không phải chép lại toàn bộ thông tin nhân viên ở mỗi hợp đồng. Các bảng vẫn liên quan qua mã; cách nhận diện và giữ liên hệ học ở bài 1.4. “Quan hệ” ở đây là tên mô hình, không chỉ có nghĩa là một đường nối được vẽ trên sơ đồ.
 
-**SSMS** (SQL Server Management Studio) là công cụ cài trên máy Windows để kết nối tới SQL Server, xem các bảng, gửi câu lệnh và đọc kết quả. Dữ liệu nằm ở máy chủ, không nằm trong SSMS, nên đóng SSMS không làm mất dữ liệu.
+### Dữ liệu chung vẫn cần quy tắc và người kiểm
 
-Bạn bắt đầu viết câu lệnh từ bài 2.1, trên trang bài tập của khóa học hoặc trong SSMS; chọn nơi thực hành ở [trang Giới thiệu](/microsoft-sql-lession/gioi-thieu/#chon-noi-thuc-hanh).
+Khi các ứng dụng cùng đọc một database, chúng có thể dùng chung dữ liệu đã cập nhật ở nguồn, thay vì mỗi nơi giữ một bản sao riêng. File đã xuất sang Excel vẫn chỉ phản ánh thời điểm lấy; sửa file đó không tự cập nhật database.
 
-### Nguồn chung vẫn cần kiểm tra
+Excel cũng có làm việc chung và **Data Validation**, công cụ giới hạn dữ liệu nhập khi được thiết lập. Database không tự biết thông tin đúng nghiệp vụ; phần mềm và người thiết kế phải khai báo quyền, cấu trúc và luật cần kiểm. Bạn sẽ học giới hạn của các luật ở bài 1.4.
 
-Người thiết kế database có thể khai báo **luật dữ liệu**, như mã phòng phải có trong danh mục phòng. Khi luật đang bật, SQL Server từ chối dữ liệu vi phạm khi thêm hoặc sửa theo cách thông thường. Excel cũng có Data Validation để giới hạn dữ liệu nhập, nhưng phải thiết lập trong từng file.
+Nguồn khái niệm và so sánh: [Microsoft — các mô hình lưu trữ](https://learn.microsoft.com/en-us/azure/architecture/data-guide/technology-choices/understand-data-store-models), [BCcampus — mô hình quan hệ](https://opentextbc.ca/dbdesign01/chapter/chapter-7-the-relational-data-model/).
 
-Dữ liệu qua được luật là hợp lệ, nhưng **hợp lệ chưa chắc đã đúng**. `Kinh doanh` là phòng có trong danh mục, nên ghi nhầm một nhân viên vào phòng này vẫn lưu được. Database không tự biết ai thuộc phòng nào; người được giao cập nhật phải đối chiếu giấy tờ gốc rồi sửa.
-
-Ở bài này chỉ cần phân biệt bốn tên trên và biết giới hạn của luật dữ liệu. Bài sau đi tiếp: bảng, dòng, cột ở bài 1.2, kiểu dữ liệu ở bài 1.3, khóa chính và khóa ngoại ở bài 1.4, các loại luật khác ở bài 5.2.
+Ở bài này chỉ cần phân biệt database với DBMS, phân biệt hai nhóm và đọc được bảng/dòng/cột. Bài 1.2 giới thiệu SQL Server; từ bài 2.1 bạn bắt đầu lấy dữ liệu trong bảng, còn thiết kế bảng học ở bài 5.1.
 
 ## Hay nhầm ở đâu
 
 <Mistakes>
 
-1. **Sửa file xuất rồi coi như đã sửa nguồn.** Danh sách xuất sang Excel chỉ phản ánh dữ liệu lúc lấy; sửa trong file không đổi dữ liệu ở nguồn.
+1. **Cho rằng mọi database đều gồm các bảng.** Đó là cách tổ chức của mô hình quan hệ; tài liệu hay đồ thị tổ chức dữ liệu theo cách khác.
+2. **Đưa dòng tổng vào bảng hồ sơ.** Database vẫn có thể nhận nếu dòng đó thỏa các luật đã khai báo, làm danh sách lẫn dòng không phải hồ sơ. Tổng được tính khi lấy dữ liệu.
 
 </Mistakes>
 
@@ -72,39 +93,46 @@ Dữ liệu qua được luật là hợp lệ, nhưng **hợp lệ chưa chắc
 
 <Apply>
 
-- **Nói đúng tên khi trao đổi với IT:** phân biệt database, SQL Server và SSMS khi xin quyền truy cập hoặc báo lỗi kết nối.
-- **Kiểm số liệu đúng nơi:** lấy dữ liệu từ nguồn chung thay vì so các file gửi qua lại; số nào bất thường thì đối chiếu giấy tờ gốc.
+- **Mô tả đúng yêu cầu dữ liệu:** nói rõ mỗi dòng đại diện cho hồ sơ hay hợp đồng và cần những cột nào, để tránh đếm sai đối tượng.
+- **Hiểu lựa chọn lưu trữ:** nhận ra bài toán cần tra theo mã, đọc tài liệu hay lần theo liên hệ trước khi trao đổi về mô hình phù hợp.
 
 </Apply>
 
 ## Ghi nhớ
 
-**SSMS** gửi câu **SQL** tới **SQL Server**; SQL Server xử lý trên **database** rồi trả kết quả. Luật dữ liệu chặn dữ liệu vi phạm, nhưng **hợp lệ chưa chắc đã đúng**.
-
 <Memo rows={[
-  ['Workbook có nhiều sheet', 'Database có nhiều bảng'],
-  ['Mỗi phòng giữ một bản sao', 'Các phòng cùng đọc một database'],
+  ['Có nhiều cách tổ chức dữ liệu', 'Quan hệ dùng bảng; NoSQL gồm tài liệu, khóa–giá trị, cột rộng, đồ thị'],
+  ['Workbook và các sheet', 'Giúp hình dung database quan hệ và các bảng, không đại diện mọi mô hình'],
+  ['Dòng và cột của sheet', 'Trong bảng: dòng là bản ghi; cột mô tả một loại thông tin'],
+  ['Excel là phần mềm mở file', 'Phân biệt dữ liệu được lưu (database) với phần mềm quản lý (DBMS)'],
 ]} />
 
 **Tự kiểm tra trước khi bấm "Đã học xong":**
 
 <details>
-<summary>Database, SQL Server, SQL và SSMS khác nhau thế nào; vì sao các phòng cùng dùng một database?</summary>
+<summary>Database và DBMS khác nhau thế nào?</summary>
 
-Database lưu dữ liệu; SQL Server là phần mềm quản lý database; SQL là ngôn ngữ để đọc và thay đổi dữ liệu; SSMS là công cụ gửi câu SQL tới SQL Server và nhận kết quả. Các phòng cùng đọc dữ liệu cập nhật ở một nơi, nên giảm lệch giữa các bản sao.
-
-</details>
-
-<details>
-<summary>Bạn đóng SSMS rồi mở lại. Dữ liệu có mất theo cửa sổ vừa đóng không, và vì sao?</summary>
-
-Không. SSMS là công cụ kết nối và gửi yêu cầu; dữ liệu được SQL Server quản lý ở máy chủ, không nằm trong cửa sổ SSMS.
+Database là tập dữ liệu được tổ chức để lưu, tìm và cập nhật; DBMS là phần mềm quản lý và xử lý yêu cầu trên dữ liệu đó.
 
 </details>
 
 <details>
-<summary>Một nhân viên bị ghi nhầm vào phòng có trong danh mục. Database có tự phát hiện không?</summary>
+<summary>Database quan hệ và NoSQL khác nhau thế nào về cách tổ chức dữ liệu?</summary>
 
-Không, nếu luật chỉ kiểm phòng có trong danh mục. Giá trị đó hợp lệ nên vẫn lưu được.
+Database quan hệ tổ chức thành bảng, dòng, cột. NoSQL gồm các cách tổ chức khác, như tài liệu, khóa–giá trị, cột rộng và đồ thị. Cả hai đều cần hệ quản lý DBMS; RDBMS là hệ quản lý database quan hệ.
+
+</details>
+
+<details>
+<summary>Một dòng của bảng nhân viên và một dòng của bảng hợp đồng có cùng ý nghĩa không?</summary>
+
+Không. Một dòng nhân viên là một hồ sơ; một dòng hợp đồng là một hợp đồng. Một hồ sơ có thể liên quan nhiều hợp đồng.
+
+</details>
+
+<details>
+<summary>Vì sao ví database với workbook chỉ là cách hình dung có giới hạn?</summary>
+
+Workbook/sheet giúp hình dung bảng trong mô hình quan hệ. Database còn có các mô hình khác; tên cột của bảng thuộc thiết kế, không phải một dòng dữ liệu như tiêu đề trong sheet.
 
 </details>

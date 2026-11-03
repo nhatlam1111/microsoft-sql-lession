@@ -66,13 +66,16 @@ Mọi quy ước khi viết bài, review bài và làm việc với database c�
 - Dùng cùng quy tắc ở câu chính, câu trong sơ đồ, `LineMap`, `Memo` và màn bài tập. CSS dùng token `--sql-tab-size: 4`; editor và lớp tô màu phải cùng mốc tab. Nút **Sao chép** giữ đúng xuống dòng/thụt lề đang hiển thị, không chép ra hai ký tự `\` và `t`. Không tự định dạng lại bản nháp người học khi gõ, mở trang hay chạy SQL.
 - Kiểm trên **bản build**: ít nhất một câu có nhiều cột/điều kiện, một `CASE` có hai cấp thụt lề, câu có highlight trong drawer và thao tác sao chép/dán vào editor. Khi chỉ sửa định dạng, đối chiếu token SQL, giữ nguyên literal/comment/điều kiện, kết quả và thông báo lỗi; không bỏ kiểm số liệu vì test cũ đang đọc chuỗi escape chưa giải mã.
 
-### 2.5 Bài nền (duyệt 30/10/2026)
+### 2.5 Bài nền (cập nhật 03/11/2026)
 
-- Các bài mở đầu level 1 là **bài nền**, không có tình huống hay nhân vật: frontmatter có `noScenario: true`, `noExercises: true`, `minutes: 7`. Hiện gồm các bài 1.1–1.5.
+- Các bài mở đầu level 1 là **bài nền**, không có tình huống hay nhân vật: frontmatter có `noScenario: true`, `noExercises: true`. Hiện gồm các bài 1.1–1.5; bài 1.1 và 1.5 có `minutes: 12`, bài 1.2–1.4 có `minutes: 7`.
 - Thứ tự: phần chính theo chủ đề → Hay nhầm ở đâu (1–2 ý) → Ứng dụng (1–2 ý) → Ghi nhớ → ít nhất ba câu tự kiểm tra. Không dùng `Chat`, `Key`.
-- Dài 500–700 từ, đếm bằng `proseParagraphs`; `npm test` chặn ở 800. Rút bằng cách bỏ chi tiết chưa cần cho bài, không viết tắt lời giải thích.
+- Bài 1.2–1.4 dài 500–700 từ, `npm test` chặn ở 800; bài 1.1 và 1.5 hướng tới 800–1.000 từ, chặn ở 1.100. Đếm bằng `proseParagraphs`. Rút bằng cách bỏ chi tiết chưa cần cho bài, không viết tắt lời giải thích.
 - Phần chính mở bằng điều quen trong Excel, dùng 0–3 tiểu mục, vẫn nói vì sao và để làm gì, vẫn có đoạn "Ở bài này chỉ cần…". Ví dụ dùng bảng và giá trị có thật trong dữ liệu mẫu, không kể chuyện.
 - Các quy tắc còn lại của mục 1–3 vẫn áp dụng, như giới hạn đoạn, không hứa quá, in đậm có chọn lọc.
+- Năm bài dùng khái niệm từ tài liệu chính thống và hình internet nguyên gốc, không tự vẽ hoặc tạo ảnh AI. Ví dụ ngoài HRM_Demo được dùng để giải thích các mô hình/quan hệ chưa có trong bộ mẫu, phải ghi rõ nguồn và không kể thành dữ kiện của công ty. Hình có alt/chú thích tiếng Việt và nguồn/tác giả/quyền sử dụng đúng thực tế; lưu hồ sơ nguồn trong `src/assets/lessons/SOURCES.md`. Không tự gán giấy phép CC khi nguồn không công bố.
+- Mạch hiện hành: 1.1 database, hai nhóm quan hệ/NoSQL và bảng/dòng/cột; 1.2 SQL Server, SQL/T-SQL/SSMS; 1.3 kiểu dữ liệu và dẫn phụ lục; 1.4 ràng buộc, NULL/NOT NULL, PK/FK; 1.5 database diagram/ERD và một sơ đồ dạng bảng PUBS của Microsoft xuyên suốt.
+- Riêng lượt làm lại 1.1–1.5 ngày 03/11/2026, người làm khóa học yêu cầu tự review: tác giả vẫn tự rà và kiểm bằng máy/UI, không giao agent review theo `4.5. Ngoại lệ này không đổi quy trình review các lượt khác.
 
 ### 2.6 Drawer của sơ đồ (duyệt 31/10/2026)
 

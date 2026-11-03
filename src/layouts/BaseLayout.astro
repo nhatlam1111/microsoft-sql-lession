@@ -18,6 +18,9 @@ import TopBar from '../components/layout/TopBar.astro';
 import NarrowNotice from '../components/layout/NarrowNotice.astro';
 import RoadmapPopup from '../components/islands/RoadmapPopup';
 import SearchDialog from '../components/islands/SearchDialog';
+import DbDiagramPopup from '../components/islands/DbDiagramPopup';
+import { parseSchema } from '../lib/db-schema';
+import schemaSql from '../../database/HRM_Demo.sql?raw';
 import { AREAS, LEVELS } from '../data/curriculum';
 import { loadCatalog } from '../lib/load-catalog';
 import { navEntries } from '../lib/catalog';
@@ -48,5 +51,6 @@ const pageTitle = title === 'SQL Server' ? title : `${title} · SQL Server`;
     <slot />
     <RoadmapPopup client:only="react" catalog={navEntries(catalog)} levels={LEVELS} />
     <SearchDialog client:only="react" items={createSearchItems(catalog, appendices, AREAS, presentations)} />
+    <DbDiagramPopup client:load tables={parseSchema(schemaSql)} />
   </body>
 </html>

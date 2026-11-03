@@ -18,10 +18,22 @@ export function DbDiagramDialog({ tables, open, onClose }: Props) {
 
   useEffect(() => {
     if (!open) return;
+    const before = document.activeElement as HTMLElement | null;
+    const host = ref.current?.closest('astro-island') ?? ref.current?.parentElement;
+    const siblings = [...document.body.children].filter((element): element is HTMLElement => element instanceof HTMLElement && element !== host && !element.contains(ref.current));
+    const inertStates = siblings.map(element => element.inert);
+    const overflow = document.body.style.overflow;
+    siblings.forEach(element => { element.inert = true; });
+    document.body.style.overflow = 'hidden';
     ref.current?.focus();
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') close.current(); };
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      siblings.forEach((element, index) => { element.inert = inertStates[index]; });
+      document.body.style.overflow = overflow;
+      before?.focus();
+    };
   }, [open]);
 
   if (!open) return null;
@@ -35,7 +47,7 @@ export function DbDiagramDialog({ tables, open, onClose }: Props) {
   };
 
   return (
-    <div className="dbd-backdrop" onMouseDown={e => { if (e.target === e.currentTarget) onClose(); }}>
+    <div className="dbd-backdrop" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
       <div className="dbd" role="dialog" aria-modal="true" aria-labelledby="dbd-title" tabIndex={-1} ref={ref} onKeyDown={keepTabInside}>
         <div className="dbd-head">
           <h2 id="dbd-title">Sơ đồ HRM_Demo</h2>

@@ -67,12 +67,12 @@ import graphModel from '../../assets/presentations/graph-database-property-graph
 </PresenterNotes>
 </Slide>
 
-<Slide id="tu-excel-den-database-quan-he" title="Từ Excel đến database quan hệ" source="1.2" minutes={3}>
+<Slide id="tu-excel-den-database-quan-he" title="Từ Excel đến database quan hệ" source="1.1" minutes={3}>
 
 <figure class="concept-excel-map"><table><thead><tr><th scope="col">Điểm quen trong Excel</th><th scope="col">Giúp hình dung trong database</th></tr></thead><tbody><tr><td><strong>Workbook</strong>: một file Excel</td><td>Database <code>HRM_Demo</code></td></tr><tr><td><strong>Sheet</strong>: một trang tính</td><td>Bảng <code>NhanVien</code></td></tr><tr><td>Một dòng dữ liệu nhân viên</td><td>Một bản ghi, như hồ sơ <code>NV001</code></td></tr></tbody></table></figure>
 <p>Đây là phép so sánh để hình dung: Excel là <strong>phần mềm bảng tính</strong>, còn SQL Server là phần mềm quản lý database quan hệ.</p><p>Trong mô hình sắp học, các bảng có cột được thiết kế sẵn và dùng mã để tham chiếu nhau.</p>
 
-<PresenterNotes source="1.2" minutes={3}>
+<PresenterNotes source="1.1" minutes={3}>
 
 **Ý cần nói:** Giải thích workbook và sheet tại chỗ, không mặc định biết hàm dò tìm. Từ file/trang tính quen thuộc dẫn sang database/bảng, rồi mới gọi phần mềm quản lý ở slide kế tiếp.
 
@@ -83,11 +83,11 @@ import graphModel from '../../assets/presentations/graph-database-property-graph
 </PresenterNotes>
 </Slide>
 
-<Slide id="sql-server-la-gi" title="SQL Server là gì" source="1.1" minutes={2}>
+<Slide id="sql-server-la-gi" title="SQL Server là gì" source="1.2" minutes={2}>
 
 <div class="concept-image-layout"><figure><Image src={serverConcept} alt="Hình khái niệm phần mềm SQL Server quản lý các database." width={560} format="webp" /><figcaption>SQL Server là phần mềm; hình chỉ minh họa việc quản lý</figcaption></figure><div><p><strong>SQL Server</strong> là phần mềm của Microsoft quản lý việc lưu trữ, đọc và cập nhật database.</p><p>Phần mềm thường chạy trên <strong>máy chủ</strong>, máy cung cấp dữ liệu qua mạng; nó kiểm quyền và luật dữ liệu đã khai báo khi ghi.</p></div></div>
 
-<PresenterNotes source="1.1" minutes={2}>
+<PresenterNotes source="1.2" minutes={2}>
 
 **Ý cần nói:** Liên hệ với bảng so sánh vừa xem: SQL Server là phần mềm được dùng để làm việc với dữ liệu quan hệ trong buổi học. Tách máy chủ, phần mềm và dữ liệu.
 
@@ -98,11 +98,11 @@ import graphModel from '../../assets/presentations/graph-database-property-graph
 </PresenterNotes>
 </Slide>
 
-<Slide id="sql-la-gi" title="SQL diễn đạt yêu cầu lấy dữ liệu" source="1.1" minutes={2}>
+<Slide id="sql-la-gi" title="SQL diễn đạt yêu cầu lấy dữ liệu" source="1.2" minutes={2}>
 
 <div class="concept-sql-layout"><figure><Image src={sqlConcept} alt="Minh họa yêu cầu SQL gửi tới hệ thống và nhận kết quả dạng bảng." width={480} format="webp" /><figcaption>Hình khái niệm gửi yêu cầu và nhận kết quả</figcaption></figure><div><p><strong>SQL</strong> là ngôn ngữ diễn đạt yêu cầu đọc hoặc thay đổi dữ liệu; yêu cầu lấy dữ liệu gọi là <strong>truy vấn</strong>.</p><div class="concept-query"><span>Lấy họ tên nhân viên</span><pre><code>SELECT HoTen FROM NhanVien;</code></pre><span>Kết quả trích: Trần Thị Mai · Vũ Thị Lan · Tôn Thất Long</span></div><p class="projection-caption">SQL Server xử lý câu này rồi trả cột họ tên; thứ tự dòng có thể khác hình.</p></div></div>
 
-<PresenterNotes source="1.1" minutes={2}>
+<PresenterNotes source="1.2" minutes={2}>
 
 **Ý cần nói:** Phần mềm cần biết ta muốn lấy gì: đọc yêu cầu tiếng Việt, câu SQL, rồi phần kết quả trích. Không phân tích cú pháp.
 
@@ -113,12 +113,12 @@ import graphModel from '../../assets/presentations/graph-database-property-graph
 </PresenterNotes>
 </Slide>
 
-<Slide id="bon-ten-can-phan-biet" title="Bốn tên, bốn vai trò" source="1.1" minutes={2}>
+<Slide id="bon-ten-can-phan-biet" title="Bốn tên, bốn vai trò" source="1.2" minutes={2}>
 
 <figure><div class="projection-path concept-request"><div><strong>SSMS</strong><span>Công cụ gửi yêu cầu</span></div><span>→ SQL →</span><div><strong>SQL Server</strong><span>Phần mềm xử lý</span></div><span>→</span><div><strong>Database</strong><span>Dữ liệu được lưu</span></div></div><figcaption>Yêu cầu đi tới dữ liệu; kết quả được trả ngược về công cụ</figcaption></figure>
 <p><strong>SSMS</strong> là công cụ kết nối tới SQL Server để gửi câu SQL và xem kết quả; đóng SSMS không làm mất dữ liệu trên máy chủ.</p><p>Tiếp theo, ta mở database quan hệ <code>HRM_Demo</code> để nhìn các bảng nhân sự và bản đồ liên hệ của chúng.</p>
 
-<PresenterNotes source="1.1" minutes={2}>
+<PresenterNotes source="1.2" minutes={2}>
 
 **Ý cần nói:** Đọc sơ đồ và gọi đúng bốn tên: công cụ, ngôn ngữ, phần mềm quản lý, dữ liệu. Sau đó chuyển từ cách gửi yêu cầu sang cấu trúc dữ liệu cần đọc.
 
@@ -165,14 +165,14 @@ import graphModel from '../../assets/presentations/graph-database-property-graph
 </PresenterNotes>
 </Slide>
 
-<Slide id="bang-trong-database" title="Phóng vào bảng NhanVien" source="1.2" minutes={2}>
+<Slide id="bang-trong-database" title="Phóng vào bảng NhanVien" source="1.1" minutes={2}>
 
 <ProjectionTable caption="Trích bảng NhanVien · ba cột và hai hồ sơ" columns={['MaNV','HoTen','MaPB']} rows={[
 ['NV001','Trần Thị Mai','KT'],['NV021','Tôn Thất Long','IT'],
 ]} />
 <p><strong>Bảng</strong> tổ chức dữ liệu cùng loại thành dòng và cột, như <code>NhanVien</code> lưu các hồ sơ nhân viên.</p><p>Khung tên cột thuộc thiết kế bảng, không phải một dòng dữ liệu nhân viên.</p>
 
-<PresenterNotes source="1.2" minutes={2}>
+<PresenterNotes source="1.1" minutes={2}>
 
 **Ý cần nói:** Nối hộp NhanVien trên bản đồ với phần dữ liệu đang mở. Chỉ toàn khung trước, sau đó mới tới dòng và cột ở slide kế.
 
@@ -183,14 +183,14 @@ import graphModel from '../../assets/presentations/graph-database-property-graph
 </PresenterNotes>
 </Slide>
 
-<Slide id="bang-dong-cot" title="Dòng và cột trong bảng" source="1.2" minutes={2}>
+<Slide id="bang-dong-cot" title="Dòng và cột trong bảng" source="1.1" minutes={2}>
 
 <ProjectionTable caption="Trích NhanVien · dòng NV001 tô vàng · cột HoTen tô xanh" columns={['MaNV','HoTen','MaPB']} rows={[
 ['NV001','Trần Thị Mai','KT'],['NV021','Tôn Thất Long','IT'],
 ]} markRow={0} markColumn={1} />
 <p>Một <strong>dòng</strong>, còn gọi là bản ghi, đại diện cho một hồ sơ trong <code>NhanVien</code>; một <strong>cột</strong> là một thuộc tính như họ tên hoặc mã phòng.</p><p>Ý nghĩa dòng tùy bảng: ở <code>HopDong</code>, mỗi dòng là một hợp đồng.</p>
 
-<PresenterNotes source="1.2" minutes={2}>
+<PresenterNotes source="1.1" minutes={2}>
 
 **Ý cần nói:** Chỉ cả dòng NV001 và cả cột HoTen, không chỉ một ô; đọc tên thuộc tính rồi một giá trị. Việc cùng gọi là dòng không làm mọi bảng lưu cùng một loại thông tin.
 
@@ -201,12 +201,12 @@ import graphModel from '../../assets/presentations/graph-database-property-graph
 </PresenterNotes>
 </Slide>
 
-<Slide id="thong-tin-o-nhieu-bang" title="Tách thông tin thành nhiều bảng" source="1.2" minutes={2}>
+<Slide id="thong-tin-o-nhieu-bang" title="Tách thông tin thành nhiều bảng" source="1.1" minutes={2}>
 
 <ConceptFigure kind="split" />
 <p>Ba hợp đồng cùng ghi <code>MaNV = NV021</code> để nhắc tới một hồ sơ.</p><p>Tách thông tin hồ sơ ra một nơi giúp giảm việc chép lại và sửa sót ở từng hợp đồng.</p>
 
-<PresenterNotes source="1.2" minutes={2}>
+<PresenterNotes source="1.1" minutes={2}>
 
 **Ý cần nói:** Một hồ sơ NV021 đi với ba dòng hợp đồng, mỗi hợp đồng có mã riêng. Danh mục phòng tách riêng cũng giúp tên phòng không phải chép vào từng hồ sơ.
 

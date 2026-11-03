@@ -16,7 +16,7 @@ const arcadePath = withBase('/luyen-sql/');
 const inArcade = Astro.url.pathname === arcadePath.slice(0, -1) || Astro.url.pathname.startsWith(arcadePath);
 ---
 <header class="topbar">
-  <a class="brand" href={withBase('/')}>
+  <a class="brand" href={withBase('/')} aria-label="SQL Server">
     <svg class="brand-mark" viewBox="0 0 20 20" aria-hidden="true">
       <rect x="1" y="1" width="18" height="18" rx="4" fill="currentColor" />
       <path d="M1 7h18M1 13h18M7 7v12" stroke="#fff" stroke-width="1.6" />
@@ -30,6 +30,7 @@ const inArcade = Astro.url.pathname === arcadePath.slice(0, -1) || Astro.url.pat
     <button type="button" class="top-btn top-btn-roadmap" data-action="roadmap">Lộ trình</button>
     <a class="top-btn" href={withBase('/')} aria-current={current('/')}>Mindmap</a>
     <a class="top-btn" href={arcadePath} aria-current={inArcade ? 'page' : undefined}>Luyện SQL</a>
+    <button type="button" class="top-btn" data-action="diagram" aria-haspopup="dialog">Sơ đồ database</button>
     <a class="top-btn" href={appendixPath} aria-current={inAppendix ? 'page' : undefined}>Phụ lục</a>
     <a class="top-btn" href={withBase('/gioi-thieu/')} aria-current={current('/gioi-thieu/')}>Giới thiệu</a>
   </nav>
@@ -42,4 +43,5 @@ const inArcade = Astro.url.pathname === arcadePath.slice(0, -1) || Astro.url.pat
   import { EVENTS, emit } from '../../lib/events';
   document.querySelector('[data-action="roadmap"]')?.addEventListener('click', () => emit(EVENTS.openRoadmap));
   document.querySelector('[data-action="search"]')?.addEventListener('click', () => emit(EVENTS.openSearch));
+  document.querySelector('[data-action="diagram"]')?.addEventListener('click', () => emit(EVENTS.openDiagram));
 </script>

@@ -68,7 +68,7 @@ Thâm niên ở đây tính theo **mốc kỷ niệm**, tức ngày vào làm c�
 
 SQL Server xét `WHEN` từ trên xuống và chọn nhánh đúng đầu tiên, nên đặt nhánh đủ `3` năm trước nhánh đủ `1` năm. `NV003` thỏa cả hai điều kiện nên dừng ngay ở nhánh đầu.
 
-**`ELSE`** cung cấp giá trị khi không nhánh `WHEN` nào đúng. Ở đây `NgayVaoLam` có `NOT NULL` (hình ở bài 1.4) và đã lọc ngày không sau mốc chốt, nên phần còn lại chính là nhóm `Dưới 1 năm`. Cột có ô `NULL` thì so sánh cho `UNKNOWN` như bài 2.5, nên dòng đó cũng rơi vào `ELSE`. Bỏ `ELSE` thì dòng không khớp nhánh nào nhận `NULL`.
+**`ELSE`** cung cấp giá trị khi không nhánh `WHEN` nào đúng. Ở đây `NgayVaoLam` có `NOT NULL` (khái niệm ở bài 1.4) và đã lọc ngày không sau mốc chốt, nên phần còn lại chính là nhóm `Dưới 1 năm`. Cột có ô `NULL` thì so sánh cho `UNKNOWN` như bài 2.5, nên dòng đó cũng rơi vào `ELSE`. Bỏ `ELSE` thì dòng không khớp nhánh nào nhận `NULL`.
 
 `CASE` chọn giá trị giống IF trong công thức Excel, không thay `WHERE`: tạo nhãn trong `SELECT` không loại hồ sơ và không ghi nhãn vào bảng nguồn. Các nhánh cùng trả chuỗi Unicode `N'…'` để kết quả là một cột chữ.
 
