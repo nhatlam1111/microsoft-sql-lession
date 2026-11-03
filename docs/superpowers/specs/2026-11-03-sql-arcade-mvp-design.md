@@ -292,7 +292,9 @@ Không làm thêm gì cho cấp Nâng cao trong MVP.
 
 ## 15. Hiện trạng (2026-11-03)
 
-Toàn bộ MVP đã xong trên nhánh `feat/arcade-mvp`, chưa merge, chưa deploy. Việc còn lại và kết quả kiểm ở [ghi chú bàn giao](../../reviews/2026-11-03-arcade-mvp-ban-giao.md).
+MVP đã merge vào `main` qua PR #7 (commit `a8d5801`). Hai workflow sau merge dừng ở `npm test` vì chưa cài dependencies của `api/`, nên chưa chạy bước deploy của phiên bản này. Bản sửa CI trên nhánh `codex/fix-arcade-ci-dependencies` cài dependencies gốc và API trước test, giữ nguyên test và mã sản phẩm. Kết quả kiểm và giới hạn của lượt sửa ở [hồ sơ sửa CI](../../reviews/2026-11-03-arcade-ci-fix.md). Kết quả nghiệm thu MVP trước merge ở [ghi chú bàn giao](../../reviews/2026-11-03-arcade-mvp-ban-giao.md).
+
+Người làm khóa học đã đồng ý merge/push bản sửa CI ngày 03/11/2026. Phạm vi phát hành là `main`, tự chạy lại build/deploy web và API; xem kết quả runner tại GitHub Actions.
 
 Những điểm đi xa hơn hoặc khác phần trên:
 

@@ -34,11 +34,11 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - run: npm --prefix api ci
       - run: npm test
       - name: Build the API
         working-directory: api
         run: |
-          npm ci
           npm run typecheck
           npm run build
           npm prune --omit=dev

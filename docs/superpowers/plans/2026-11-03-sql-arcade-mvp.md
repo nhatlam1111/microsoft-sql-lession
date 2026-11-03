@@ -959,3 +959,10 @@ Plan được làm hết 15 task. Những chỗ làm khác:
 - Task 13: thay bài 4 và 5 của chương 1 thay vì thêm câu vào bài 2.1.
 - Task 14: mỗi reviewer đọc hai chương liền nhau thay vì một chương; review tích hợp nội dung gộp vào review cuối. Bảng từ khóa hẹp lại theo đúng những gì bài học dạy. Thêm `check:arcade -- <chương>` và `--write` để điền `expected`.
 - Task 15: thêm `retryWhileWaking` khi `check:arcade` gặp database đang ngủ; `check:dist` chỉ quét `<main>` và khớp nguyên giá trị. Review cuối dẫn tới `Store.submit`, xem [hồ sơ xử lý](../../reviews/2026-11-03-arcade-tich-hop-disposition.md).
+
+## Sửa CI sau merge PR #7 (2026-11-03)
+
+- Hai run sau merge `a8d5801` lỗi trước build/deploy: `arcade-config.test.ts` và `arcade-store.test.ts` không import được `mssql` từ `api/src/arcade-store.ts`. `npm ci` ở gốc không cài `api/package-lock.json`; ở workflow API, bước cài đó đang nằm sau test.
+- Cài `npm --prefix api ci` trước test ở cả hai workflow; bỏ lần cài trùng trong bước build API. README ghi đủ hai lệnh cài trước khi chạy test trên máy. Không đổi dependency, test, API hay nội dung bài.
+- Đã tái hiện trên bản sao sạch không có `api/node_modules`; sau cài API, đủ 561 test/67 file đạt, check/build web, `check:dist`, API typecheck/build/prune đều exit 0. Review tích hợp độc lập bằng Codex kế thừa model phiên không có finding; đã xử lý các mục để ngoài phạm vi trong [hồ sơ sửa CI](../../reviews/2026-11-03-arcade-ci-fix.md). Chưa xác minh lại trên GitHub Ubuntu/Node 22 hoặc Azure.
+- Người làm khóa học đã đồng ý "merge và push lên nhé" ngày 03/11/2026 sau khi nhận bản sửa và evidence; phát hành bằng merge vào `main` rồi push để hai workflow tự build/deploy. Các kết quả local/review ở trên là hồ sơ trước phát hành, kết quả runner đích xem ở GitHub Actions.

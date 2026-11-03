@@ -50,7 +50,10 @@ Cần Node.js 22 trở lên.
 
 ```bash
 npm ci
+npm --prefix api ci
 ```
+
+Test Arcade ở thư mục gốc import code API, nên cần cài cả hai bộ dependencies trước khi chạy `npm test`.
 
 ```bash
 npm run dev
@@ -159,8 +162,8 @@ Dữ liệu hidden test nằm trong repo public, nên ai đọc repo cũng thấ
 
 | Workflow | Khi nào chạy | Làm gì |
 |---|---|---|
-| `deploy.yml` | Mọi lần push vào `main`, hoặc bấm tay | `npm ci`, `npm run check`, `npm test`, build (đọc `PUBLIC_EXERCISE_API`), `check:dist`, đẩy lên GitHub Pages |
-| `deploy-api.yml` | Push vào `main` có đổi `api/`, bài tập, bài luyện (`src/content/arcade/`), `src/data/arcade.ts`, `src/lib/arcade-*.ts`, `src/lib/sql-guard.ts`, `grade.ts`, `exercise-types.ts`; hoặc bấm "Run workflow" | Test, `typecheck`, build API, đăng nhập Azure bằng OIDC, deploy lên Function App, rồi gọi thử `/api/ping` và `/api/arcade/me` không kèm mã (phải ra 401) |
+| `deploy.yml` | Mọi lần push vào `main`, hoặc bấm tay | Cài dependencies gốc và `api/`, `npm run check`, `npm test`, build (đọc `PUBLIC_EXERCISE_API`), `check:dist`, đẩy lên GitHub Pages |
+| `deploy-api.yml` | Push vào `main` có đổi `api/`, bài tập, bài luyện (`src/content/arcade/`), `src/data/arcade.ts`, `src/lib/arcade-*.ts`, `src/lib/sql-guard.ts`, `grade.ts`, `exercise-types.ts`; hoặc bấm "Run workflow" | Cài dependencies gốc và `api/`, test, `typecheck`, build API, đăng nhập Azure bằng OIDC, deploy lên Function App, rồi gọi thử `/api/ping` và `/api/arcade/me` không kèm mã (phải ra 401) |
 
 Cấu hình cần có (giá trị do người phụ trách tự điền, không nằm trong repo):
 
