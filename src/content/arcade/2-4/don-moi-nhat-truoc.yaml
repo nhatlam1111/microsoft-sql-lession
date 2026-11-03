@@ -1,0 +1,56 @@
+id: don-moi-nhat-truoc
+chapter: '2-4'
+order: 2
+title: Đơn mới nhất lên đầu
+difficulty: de
+lessons: [ 2-2-where-loc-nhu-autofilter, 2-3-and-or-in-between-like, 2-4-sap-xep-va-top ]
+prompt: >-
+  Nhân sự muốn xem đơn nghỉ theo ngày nộp, đơn mới nhất lên đầu. Từ bảng DonNghi, lấy mã đơn và ngày nộp của mọi dòng, xếp ngày nộp giảm dần. Ngày nộp của các đơn không trùng nhau.
+columns: [ MaDon, NgayNop ]
+ordered: true
+tables:
+  DonNghi:
+    MaDon: varchar(10) NOT NULL
+    MaNV: varchar(10) NOT NULL
+    NgayNghi: date NOT NULL
+    NgayNop: date NOT NULL
+answer: "SELECT MaDon, NgayNop FROM DonNghi ORDER BY NgayNop DESC"
+tests:
+  - id: 1
+    visible: true
+    rows:
+      DonNghi:
+        - [ "D03", "NV103", "2026-09-12", "2026-09-20" ]
+        - [ "D02", "NV102", "2026-09-10", "2026-09-15" ]
+        - [ "D01", "NV101", "2026-09-08", "2026-09-01" ]
+    expected: [ [ "D03", "2026-09-20" ], [ "D02", "2026-09-15" ], [ "D01", "2026-09-01" ] ]
+  - id: 2
+    visible: true
+    rows:
+      DonNghi:
+        - [ "D06", "NV106", "2026-10-09", "2026-10-05" ]
+        - [ "D05", "NV105", "2026-10-02", "2026-09-28" ]
+    expected: [ [ "D06", "2026-10-05" ], [ "D05", "2026-09-28" ] ]
+  - id: 3
+    catches: "SELECT MaDon, NgayNop FROM DonNghi ORDER BY MaDon DESC"
+    rows:
+      DonNghi:
+        - [ "D11", "NV111", "2026-09-25", "2026-09-24" ]
+        - [ "D12", "NV112", "2026-09-20", "2026-09-18" ]
+    expected: [ [ "D11", "2026-09-24" ], [ "D12", "2026-09-18" ] ]
+  - id: 4
+    catches: "SELECT MaDon, NgayNop FROM DonNghi ORDER BY NgayNghi DESC"
+    rows:
+      DonNghi:
+        - [ "D21", "NV121", "2026-08-20", "2026-10-01" ]
+        - [ "D22", "NV122", "2026-10-30", "2026-09-02" ]
+    expected: [ [ "D21", "2026-10-01" ], [ "D22", "2026-09-02" ] ]
+  - id: 5
+    catches: "SELECT MaDon, NgayNop FROM DonNghi"
+    rows:
+      DonNghi:
+        - [ "D31", "NV131", "2026-09-03", "2026-09-01" ]
+        - [ "D32", "NV132", "2026-09-09", "2026-09-08" ]
+        - [ "D33", "NV133", "2026-09-30", "2026-09-29" ]
+    expected: [ [ "D33", "2026-09-29" ], [ "D32", "2026-09-08" ], [ "D31", "2026-09-01" ] ]
+resultTypes: [ "varchar", "date" ]

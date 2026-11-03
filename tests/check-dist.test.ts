@@ -1,5 +1,5 @@
 import { it, expect } from 'vitest';
-import { findLinkProblems, findAnswerLeaks, missingExerciseLinks, findCodeTypographyProblems, findAppendixFragmentProblems } from '../scripts/check-dist.mjs';
+import { findLinkProblems, findAnswerLeaks, findHiddenLeaks, hiddenOnlyValues, missingExerciseLinks, findCodeTypographyProblems, findAppendixFragmentProblems } from '../scripts/check-dist.mjs';
 
 const BASE = '/microsoft-sql-lession';
 const exists = (p: string) => p === 'bai/1-1-x/index.html' || p === 'HRM_Demo.sql';
@@ -59,4 +59,31 @@ it('finds an answer that reached the page escaped, as island props are', () => {
     { path: 'once.html', text: 'SELECT MaNV FROM NhanVien WHERE MaPB = &#39;IT&#39; AND HoTen &lt;&gt; N&quot;x&quot;' },
     { path: 'bundle.js', text: '"SELECT MaNV FROM NhanVien WHERE MaPB = \\u0027IT\\u0027 AND HoTen <> N\\"x\\""' },
   ], [answer])).toEqual(['props.html', 'once.html', 'bundle.js']);
+});
+
+const challenge = {
+  title: 'Tiêu đề', prompt: 'Đề bài có Kế toán',
+  tests: [
+    { visible: true, rows: { T: [['MO-CONG', 'abc', 1]] }, expected: [['MO-CONG']] },
+    { rows: { T: [['MO-CONG', 'x', 2], ['BAT-MAT', 'Kế toán', null]] }, expected: [['BAT-MAT'], ['KET-QUA-AN']] },
+  ],
+};
+
+it('lists string values only hidden tests hold', () => {
+  expect(hiddenOnlyValues(challenge)).toEqual(['BAT-MAT', 'KET-QUA-AN']);
+});
+
+it('finds a hidden value in a built page, however it was escaped', () => {
+  expect(findHiddenLeaks('<astro-island props="[&quot;BAT-MAT&quot;]">', ['BAT-MAT'])).toEqual(['BAT-MAT']);
+  expect(findHiddenLeaks('<p>không có</p>', ['BAT-MAT'])).toEqual([]);
+});
+
+it('looks for hidden values only in the main part of a page', () => {
+  expect(findHiddenLeaks('<header>Excel</header><main><p>đề</p></main><footer>Excel</footer>', ['Excel'])).toEqual([]);
+  expect(findHiddenLeaks('<header>x</header><main><p>Excel</p></main>', ['Excel'])).toEqual(['Excel']);
+});
+
+it('does not take part of a longer value for a hidden value', () => {
+  expect(findHiddenLeaks('<main>[&quot;5000000&quot;]</main>', ['500000'])).toEqual([]);
+  expect(findHiddenLeaks('<main>[&quot;500000&quot;]</main>', ['500000'])).toEqual(['500000']);
 });

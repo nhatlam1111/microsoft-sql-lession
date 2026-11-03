@@ -1,0 +1,59 @@
+id: bang-ke-cong-tac
+chapter: '2-1'
+order: 4
+title: Bảng kê công tác phí
+difficulty: de
+lessons: [ 2-1-chon-cot-dat-ten-cot ]
+prompt: >-
+  Kế toán cần bảng kê từ bảng CongTacPhi, bốn cột theo thứ tự: ngày đi, mã nhân viên, nơi đến, số tiền thực chi. Lấy mọi dòng đang lưu, kể cả các dòng giống nhau ở bốn cột này.
+columns: [ Ngày đi, Mã nhân viên, Nơi đến, Số tiền thực chi ]
+ordered: false
+tables:
+  CongTacPhi:
+    MaCT: varchar(10) NOT NULL
+    MaNV: varchar(10) NOT NULL
+    NoiDi: nvarchar(50) NOT NULL
+    NoiDen: nvarchar(50) NOT NULL
+    NgayDi: date NOT NULL
+    NgayVe: date NOT NULL
+    SoTienDuKien: decimal(12,0) NOT NULL
+    SoTienThucChi: decimal(12,0) NOT NULL
+answer: SELECT NgayDi, MaNV, NoiDen, SoTienThucChi FROM CongTacPhi
+tests:
+  - id: 1
+    visible: true
+    rows:
+      CongTacPhi:
+        - [ "CT01", "NV101", "Hà Nội", "Hải Phòng", "2026-09-02", "2026-09-02", 900000, 900000 ]
+        - [ "CT02", "NV104", "Hà Nội", "Bắc Ninh", "2026-09-05", "2026-09-05", 600000, 600000 ]
+    expected: [ [ "2026-09-02", "NV101", "Hải Phòng", "900000" ], [ "2026-09-05", "NV104", "Bắc Ninh", "600000" ] ]
+  - id: 2
+    visible: true
+    rows:
+      CongTacPhi:
+        - [ "CT05", "NV107", "Cần Thơ", "Sóc Trăng", "2026-09-11", "2026-09-11", 700000, 700000 ]
+        - [ "CT06", "NV109", "Huế", "Đà Nẵng", "2026-09-12", "2026-09-12", 800000, 800000 ]
+    expected: [ [ "2026-09-11", "NV107", "Sóc Trăng", "700000" ], [ "2026-09-12", "NV109", "Đà Nẵng", "800000" ] ]
+  - id: 3
+    catches: SELECT NgayDi, MaNV, NoiDen, SoTienDuKien FROM CongTacPhi
+    rows:
+      CongTacPhi:
+        - [ "CT11", "NV101", "Hà Nội", "Vinh", "2026-09-15", "2026-09-15", 1500000, 1320000 ]
+        - [ "CT12", "NV110", "Đà Nẵng", "Quảng Ngãi", "2026-09-16", "2026-09-16", 650000, 650000 ]
+    expected: [ [ "2026-09-15", "NV101", "Vinh", "1320000" ], [ "2026-09-16", "NV110", "Quảng Ngãi", "650000" ] ]
+  - id: 4
+    catches: SELECT NgayVe, MaNV, NoiDen, SoTienThucChi FROM CongTacPhi
+    rows:
+      CongTacPhi:
+        - [ "CT21", "NV104", "Hà Nội", "Đà Lạt", "2026-09-18", "2026-09-20", 4000000, 4000000 ]
+        - [ "CT22", "NV112", "Cần Thơ", "Cà Mau", "2026-09-19", "2026-09-19", 900000, 900000 ]
+    expected: [ [ "2026-09-18", "NV104", "Đà Lạt", "4000000" ], [ "2026-09-19", "NV112", "Cà Mau", "900000" ] ]
+  - id: 5
+    catches: SELECT DISTINCT NgayDi, MaNV, NoiDen, SoTienThucChi FROM CongTacPhi
+    rows:
+      CongTacPhi:
+        - [ "CT31", "NV107", "Hà Nội", "Bình Dương", "2026-09-22", "2026-09-22", 500000, 500000 ]
+        - [ "CT32", "NV107", "TP.HCM", "Bình Dương", "2026-09-22", "2026-09-22", 500000, 500000 ]
+        - [ "CT33", "NV109", "TP.HCM", "Long An", "2026-09-25", "2026-09-25", 700000, 700000 ]
+    expected: [ [ "2026-09-22", "NV107", "Bình Dương", "500000" ], [ "2026-09-22", "NV107", "Bình Dương", "500000" ], [ "2026-09-25", "NV109", "Long An", "700000" ] ]
+resultTypes: [ "date", "varchar", "nvarchar", "decimal" ]

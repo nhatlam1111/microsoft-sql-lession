@@ -1,0 +1,54 @@
+id: thay-o-trong
+chapter: '2-5'
+order: 4
+title: Nhãn cho ô chưa có giảng viên
+difficulty: vua
+lessons: [ 2-3-and-or-in-between-like, 2-4-sap-xep-va-top, 2-5-null-o-trong ]
+prompt: >-
+  Phòng đào tạo in danh sách khóa học. Từ bảng KhoaHoc, lấy mã khóa và giảng viên của mọi dòng; ô chưa có giảng viên thì hiện đúng chữ “(chưa phân công)”, gồm cả hai dấu ngoặc. Ô đã có giá trị giữ nguyên, kể cả chuỗi rỗng.
+columns: [ MaKH, Giảng viên ]
+ordered: false
+tables:
+  KhoaHoc:
+    MaKH: varchar(10) NOT NULL
+    TenKH: nvarchar(100) NOT NULL
+    GiangVien: nvarchar(100) NULL
+answer: "SELECT MaKH, COALESCE(GiangVien, N'(chưa phân công)') AS [Giảng viên] FROM KhoaHoc"
+tests:
+  - id: 1
+    visible: true
+    rows:
+      KhoaHoc:
+        - [ "K01", "Viết email", "Lê Bảo Châu" ]
+        - [ "K02", "Excel", null ]
+    expected: [ [ "K01", "Lê Bảo Châu" ], [ "K02", "(chưa phân công)" ] ]
+  - id: 2
+    visible: true
+    rows:
+      KhoaHoc:
+        - [ "K05", "An toàn", null ]
+        - [ "K06", "Giao tiếp", "Vũ Hoàng Nam" ]
+        - [ "K07", "Pháp luật", "Đặng Thu Trang" ]
+    expected: [ [ "K05", "(chưa phân công)" ], [ "K06", "Vũ Hoàng Nam" ], [ "K07", "Đặng Thu Trang" ] ]
+  - id: 3
+    catches: "SELECT MaKH, COALESCE(GiangVien, N'(chưa phân công)') FROM KhoaHoc WHERE GiangVien IS NULL OR GiangVien LIKE N'% %'"
+    rows:
+      KhoaHoc:
+        - [ "K11", "Sơ cấp cứu", "Hùng" ]
+        - [ "K12", "Quản lý", null ]
+    expected: [ [ "K11", "Hùng" ], [ "K12", "(chưa phân công)" ] ]
+  - id: 4
+    catches: "SELECT MaKH, COALESCE(NULLIF(GiangVien, ''), N'(chưa phân công)') FROM KhoaHoc"
+    rows:
+      KhoaHoc:
+        - [ "K21", "Nội quy", "" ]
+        - [ "K22", "Thuyết trình", "Lê Bảo Châu" ]
+    expected: [ [ "K21", "" ], [ "K22", "Lê Bảo Châu" ] ]
+  - id: 5
+    catches: "SELECT MaKH, ISNULL(GiangVien, '(chua phan cong)') FROM KhoaHoc WHERE GiangVien IS NOT NULL UNION ALL SELECT MaKH, N'(chưa phân công)' FROM KhoaHoc WHERE MaKH IN ('K02', 'K05')"
+    rows:
+      KhoaHoc:
+        - [ "K31", "Hội nhập", null ]
+        - [ "K32", "Tuyển dụng", "Vũ Hoàng Nam" ]
+    expected: [ [ "K31", "(chưa phân công)" ], [ "K32", "Vũ Hoàng Nam" ] ]
+resultTypes: [ "varchar", "nvarchar" ]

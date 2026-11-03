@@ -9,7 +9,9 @@
     "typecheck": "tsc -p tsconfig.json",
     "dev": "node dist/dev-server.js",
     "check:exercises": "node dist/check-exercises.js",
-    "check:data": "node dist/check-data.js"
+    "check:data": "node dist/check-data.js",
+    "check:arcade": "node dist/check-arcade.js",
+    "check:arcade:store": "node dist/check-arcade-store.js"
   },
   "dependencies": {
     "@azure/functions": "^4.16.5",

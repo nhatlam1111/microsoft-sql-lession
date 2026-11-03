@@ -1,0 +1,54 @@
+id: chua-co-email
+chapter: '2-5'
+order: 1
+title: Hồ sơ chưa có email
+difficulty: de
+lessons: [ 2-3-and-or-in-between-like, 2-4-sap-xep-va-top, 2-5-null-o-trong ]
+prompt: >-
+  Bộ phận tuyển dụng cần các hồ sơ chưa có giá trị ở ô email. Từ bảng UngVien, lấy mã và họ tên của các dòng có Email là NULL. Ô chứa chuỗi rỗng hoặc chữ NULL không tính là ô trống.
+columns: [ MaUV, HoTen ]
+ordered: false
+tables:
+  UngVien:
+    MaUV: varchar(10) NOT NULL
+    HoTen: nvarchar(100) NOT NULL
+    Email: varchar(100) NULL
+answer: "SELECT MaUV, HoTen FROM UngVien WHERE Email IS NULL"
+tests:
+  - id: 1
+    visible: true
+    rows:
+      UngVien:
+        - [ "UV01", "Phạm Gia Linh", null ]
+        - [ "UV02", "Trần Quốc Việt", "viet@mail.test" ]
+    expected: [ [ "UV01", "Phạm Gia Linh" ] ]
+  - id: 2
+    visible: true
+    rows:
+      UngVien:
+        - [ "UV05", "Đoàn Minh Khôi", "khoi@mail.test" ]
+        - [ "UV06", "Vương Hải Yến", null ]
+        - [ "UV07", "Lê Thảo Nhi", null ]
+    expected: [ [ "UV06", "Vương Hải Yến" ], [ "UV07", "Lê Thảo Nhi" ] ]
+  - id: 3
+    catches: "SELECT MaUV, HoTen FROM UngVien WHERE Email IS NULL OR Email = ''"
+    rows:
+      UngVien:
+        - [ "UV11", "Chu Bảo Ngọc", "" ]
+        - [ "UV12", "Tô Hoài Nam", null ]
+    expected: [ [ "UV12", "Tô Hoài Nam" ] ]
+  - id: 4
+    catches: "SELECT MaUV, HoTen FROM UngVien WHERE COALESCE(Email, 'NULL') = 'NULL'"
+    rows:
+      UngVien:
+        - [ "UV21", "Hồ Thanh Tâm", "NULL" ]
+        - [ "UV22", "Bùi Gia Hân", null ]
+    expected: [ [ "UV22", "Bùi Gia Hân" ] ]
+  - id: 5
+    catches: "SELECT MaUV, HoTen FROM UngVien WHERE Email IS NULL OR Email LIKE '%@mail.khac'"
+    rows:
+      UngVien:
+        - [ "UV31", "Mai Phương Thảo", "thao@mail.khac" ]
+        - [ "UV32", "Ngô Đức Thịnh", "thinh@mail.test" ]
+    expected: []
+resultTypes: [ "varchar", "nvarchar" ]

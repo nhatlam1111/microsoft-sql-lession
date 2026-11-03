@@ -1,0 +1,56 @@
+id: chon-hai-cot
+chapter: '2-1'
+order: 1
+title: Danh sách gọi phỏng vấn
+difficulty: de
+lessons: [ 2-1-chon-cot-dat-ten-cot ]
+prompt: >-
+  Bộ phận tuyển dụng cần danh sách để liên hệ hẹn phỏng vấn. Từ bảng UngVien, lấy mã và họ tên của mọi hồ sơ. Mỗi dòng trong bảng cho một dòng kết quả.
+columns: [ MaUV, HoTen ]
+ordered: false
+tables:
+  UngVien:
+    MaUV: varchar(10) NOT NULL
+    HoTen: nvarchar(100) NOT NULL
+    ViTri: nvarchar(50) NOT NULL
+    Email: varchar(100) NULL
+answer: SELECT MaUV, HoTen FROM UngVien
+tests:
+  - id: 1
+    visible: true
+    rows:
+      UngVien:
+        - [ "UV01", "Phạm Gia Linh", "Kế toán", "linh@mail.test" ]
+        - [ "UV02", "Trần Quốc Việt", "Lập trình viên", "viet@mail.test" ]
+    expected: [ [ "UV01", "Phạm Gia Linh" ], [ "UV02", "Trần Quốc Việt" ] ]
+  - id: 2
+    visible: true
+    rows:
+      UngVien:
+        - [ "UV07", "Lê Thảo Nhi", "Nhân sự", "nhi@mail.test" ]
+        - [ "UV09", "Đoàn Minh Khôi", "Kế toán", "khoi@mail.test" ]
+    expected: [ [ "UV07", "Lê Thảo Nhi" ], [ "UV09", "Đoàn Minh Khôi" ] ]
+  - id: 3
+    catches: SELECT TOP 2 MaUV, HoTen FROM UngVien
+    rows:
+      UngVien:
+        - [ "UV11", "Vương Hải Yến", "Kế toán", "yen@mail.test" ]
+        - [ "UV12", "Nguyễn Đức Anh", "Bảo vệ", "anh@mail.test" ]
+        - [ "UV13", "Chu Bảo Ngọc", "Nhân sự", "ngoc@mail.test" ]
+        - [ "UV14", "Tô Hoài Nam", "Lập trình viên", "nam@mail.test" ]
+    expected: [ [ "UV11", "Vương Hải Yến" ], [ "UV12", "Nguyễn Đức Anh" ], [ "UV13", "Chu Bảo Ngọc" ], [ "UV14", "Tô Hoài Nam" ] ]
+  - id: 4
+    catches: SELECT MaUV, HoTen FROM UngVien WHERE Email IS NOT NULL
+    rows:
+      UngVien:
+        - [ "UV21", "Hồ Thanh Tâm", "Lái xe", null ]
+        - [ "UV22", "Bùi Gia Hân", "Nhân sự", "han@mail.test" ]
+    expected: [ [ "UV21", "Hồ Thanh Tâm" ], [ "UV22", "Bùi Gia Hân" ] ]
+  - id: 5
+    catches: SELECT DISTINCT MaUV, HoTen FROM UngVien
+    rows:
+      UngVien:
+        - [ "UV31", "Mai Phương Thảo", "Kế toán", "thao@mail.test" ]
+        - [ "UV31", "Mai Phương Thảo", "Nhân sự", "thao@mail.test" ]
+    expected: [ [ "UV31", "Mai Phương Thảo" ], [ "UV31", "Mai Phương Thảo" ] ]
+resultTypes: [ "varchar", "nvarchar" ]

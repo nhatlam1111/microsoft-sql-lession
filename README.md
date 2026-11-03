@@ -11,6 +11,7 @@ Web: https://nhatlam1111.github.io/microsoft-sql-lession/
 - **Popup "Lộ trình của bạn"** và trạng thái từng bài (chưa học, đã xem, đã học, cần xem lại). Tiến độ lưu trong trình duyệt và xuất/nhập được bằng file JSON.
 - **Sơ đồ thứ tự chạy câu lệnh:** từng bước SQL Server làm, mỗi bước có drawer giải thích và bảng dữ liệu sau bước đó.
 - **Bài tập chạy SQL trên database thật** (bài 2.1–2.9, 3.1–3.10, 4.1–4.4, 4.6 và 6.5): viết câu lệnh, chạy (F5), nộp bài và biết đúng hay chưa. Trang có popup sơ đồ database. Mọi lần chạy đều nằm trong một transaction rồi `ROLLBACK`, nên dữ liệu không đổi. Muốn chạy cần mã truy cập, xin người phụ trách khóa học. Bài tập không có gợi ý và không có nút xem đáp án. Bộ chấm không so tên cột; bài 2.1 nhắc học viên tự đối chiếu tiêu đề alias với đề.
+- **Luyện SQL** (`/luyen-sql/`): 50 bài cấp Cơ bản nối tiếp nhau theo bài 2.1–2.9. Mỗi bài có unit test và hidden test; đạt hết được thưởng coin, dùng coin mở hidden test. Coin và tiến độ lưu trên server theo mã truy cập, mỗi mã là một hồ sơ học viên.
 - **Script `HRM_Demo.sql`** tải được từ trang Giới thiệu.
 
 ## Công nghệ
@@ -20,7 +21,7 @@ Web: https://nhatlam1111.github.io/microsoft-sql-lession/
 | Web | Astro 5 (trang tĩnh, MDX), React 19 cho các phần tương tác, React Flow cho mindmap |
 | Kiểm thử | Vitest 3, `astro check`, `scripts/check-dist.mjs` (kiểm bản build) |
 | API bài tập | Azure Functions (Flex Consumption, Node.js 24, mô hình v4), `mssql`, đóng gói bằng esbuild |
-| Database | Azure SQL Database `free-sql-db-8797714` trên máy chủ `sql-lession` (serverless, gói miễn phí) |
+| Database | Azure SQL Database `free-sql-db-8797714` cho bài học và `arcade` cho Luyện SQL, cùng máy chủ `sql-lession` (serverless, gói miễn phí) |
 | Deploy | GitHub Actions: GitHub Pages cho web; OIDC + `Azure/functions-action` cho API |
 
 ## Cấu trúc thư mục
@@ -29,12 +30,13 @@ Web: https://nhatlam1111.github.io/microsoft-sql-lession/
 src/
   content/lessons/      bài học (.mdx), mỗi bài một file
   content/exercises/    bài tập (.yaml), mỗi bài học một file
+  content/arcade/       bài Luyện SQL (.yaml), mỗi chương một thư mục, mỗi bài một file
   components/lesson/    khối dùng trong bài: Sql, Result, Excel, RunFlow, Memo, Exercises…
   components/islands/   phần React: mindmap, popup lộ trình, sidebar, khung làm bài, sơ đồ database
   lib/                  logic thuần: tiến độ, bộ chặn lệnh, chấm bài, tô màu T-SQL…
   pages/                trang chủ, trang bài, trang bài tập, giới thiệu, 404, file HRM_Demo.sql
 api/                    API bài tập (Azure Functions), có package.json riêng
-database/               HRM_Demo.sql, checksum chuẩn của 7 bảng, script tạo user cho API
+database/               HRM_Demo.sql, checksum chuẩn của 7 bảng, script tạo user cho API, arcade-setup.sql cho database Arcade
 scripts/check-dist.mjs  kiểm bản build: link, trang bài, trang bài tập, không lọt đáp án
 tests/                  test Vitest
 docs/                   quy ước, khung bài, hồ sơ công ty
@@ -89,6 +91,8 @@ API chạy ở http://127.0.0.1:7071/api. Khi chạy `npm run dev`, web tự g�
 | `npm run build` | Đóng gói API và đề bài kèm đáp án vào `dist/` |
 | `npm run check:exercises` | Chạy mọi câu đáp án và câu kiểm tra trên database thật (có `ROLLBACK`), báo câu lỗi hoặc ra 0 dòng |
 | `npm run check:data` | So checksum 7 bảng với `database/HRM_Demo.checksums.json`, báo bảng nào lệch |
+| `npm run check:arcade` | Chạy mọi bài luyện trên database `arcade`, có `ROLLBACK`: đáp án phải đúng `expected`, mỗi `catches` phải qua unit test và trượt hidden test của nó. Thêm `-- 2-3` để chạy một chương, `-- --write` để điền `expected` từ đáp án |
+| `npm run check:arcade:store` | Kiểm luật coin trên database `arcade`, gồm hai tab cùng mở một test |
 
 ## Database mẫu `HRM_Demo`
 
@@ -145,17 +149,23 @@ exercises:
 - Bài truy vấn chấm theo giá trị: không so tên cột, so thứ tự dòng chỉ khi `ordered: true`, số `9610000` và `9610000.0` coi là bằng nhau. Bài sửa dữ liệu so số dòng bị ảnh hưởng trước, rồi so kết quả câu kiểm tra (câu này lấy mọi dòng của bảng bị sửa, có `ORDER BY`). Khi sai, lý do chỉ ra dòng và cột lệch, không bao giờ đưa giá trị của đáp án.
 - Trước khi push, chạy `npm --prefix api run check:exercises` để chắc mọi đáp án chạy được trên database thật.
 
+## Viết bài Luyện SQL
+
+Mỗi bài là một file `src/content/arcade/<chương>/<id>.yaml`, gồm đề, `tables`, `answer` và `tests`. Hidden test là test không có `visible: true` và phải có `catches`. Quy tắc nội dung nằm ở mục 2.8 của [quy ước](docs/quy-uoc.md). Sau khi viết, chạy `npm --prefix api run build`, `npm --prefix api run check:arcade -- <chương> --write`, đọc lại `expected` rồi chạy lại không có `--write`.
+
+Dữ liệu hidden test nằm trong repo public, nên ai đọc repo cũng thấy; khi mở cho nhiều người cần chuyển chúng ra ngoài repo. `check:dist` chặn chúng lọt vào `dist/`.
+
 ## Deploy
 
 | Workflow | Khi nào chạy | Làm gì |
 |---|---|---|
 | `deploy.yml` | Mọi lần push vào `main`, hoặc bấm tay | `npm ci`, `npm run check`, `npm test`, build (đọc `PUBLIC_EXERCISE_API`), `check:dist`, đẩy lên GitHub Pages |
-| `deploy-api.yml` | Push vào `main` có đổi `api/`, bài tập, `src/lib/sql-guard.ts`, `grade.ts`, `exercise-types.ts`; hoặc bấm "Run workflow" | Test, `typecheck`, build API, đăng nhập Azure bằng OIDC, deploy lên Function App, rồi gọi thử `/api/ping` không kèm mã (phải ra 401) |
+| `deploy-api.yml` | Push vào `main` có đổi `api/`, bài tập, bài luyện (`src/content/arcade/`), `src/data/arcade.ts`, `src/lib/arcade-*.ts`, `src/lib/sql-guard.ts`, `grade.ts`, `exercise-types.ts`; hoặc bấm "Run workflow" | Test, `typecheck`, build API, đăng nhập Azure bằng OIDC, deploy lên Function App, rồi gọi thử `/api/ping` và `/api/arcade/me` không kèm mã (phải ra 401) |
 
 Cấu hình cần có (giá trị do người phụ trách tự điền, không nằm trong repo):
 
 - GitHub → Settings → Secrets and variables → Actions: secret `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_SUBSCRIPTION_ID`; variable `AZURE_FUNCTIONAPP_NAME`, `PUBLIC_EXERCISE_API`.
-- Function App → Environment variables: `SQL_SERVER`, `SQL_DATABASE`, `SQL_USER` (`hrm_practice`), `SQL_PASSWORD`, `ACCESS_CODES` (các mã cách nhau bởi dấu phẩy).
+- Function App → Environment variables: `SQL_SERVER`, `SQL_DATABASE`, `SQL_USER` (`hrm_practice`), `SQL_PASSWORD`, `ACCESS_CODES` (các mã cách nhau bởi dấu phẩy). Luyện SQL cần thêm `ARCADE_SQL_DATABASE`, `ARCADE_RUNNER_USER`, `ARCADE_RUNNER_PASSWORD`, `ARCADE_STORE_USER`, `ARCADE_STORE_PASSWORD`; thiếu chúng thì chỉ các đầu gọi Arcade báo lỗi.
 - Federated credential của identity phải khớp đúng chuỗi subject GitHub gửi. Repo này gửi dạng có ID: `repo:nhatlam1111@25176629/microsoft-sql-lession@1423314136:ref:refs/heads/main`.
 
 ## An toàn dữ liệu
@@ -163,6 +173,7 @@ Cấu hình cần có (giá trị do người phụ trách tự điền, không 
 - API dùng user `hrm_practice`, chỉ có `SELECT`, `INSERT`, `UPDATE`, `DELETE` trên 7 bảng (`database/practice-user.sql`).
 - Bộ chặn lệnh chạy trước khi câu lệnh tới database. Câu phải bắt đầu bằng `SELECT`, `WITH`, `INSERT`, `UPDATE` hoặc `DELETE`. Các lệnh như `DROP`, `COMMIT`, `EXEC`, `SET` hay `SELECT … INTO` bị chặn, và mỗi lần chỉ chạy một câu.
 - Mỗi lần chạy là một transaction có `XACT_ABORT`, `LOCK_TIMEOUT 3000` và `ROWCOUNT 5001`, và luôn `ROLLBACK`. Câu lệnh chạy quá 10 giây thì bị dừng. Mỗi mã truy cập gọi tối đa 30 lần mỗi phút.
+- Database `arcade` dùng hai user: `arcade_runner` chạy câu của học viên, chỉ có quyền trên schema `dbo` luôn rỗng; `arcade_store` lưu coin và tiến độ ở schema `arcade`. Mỗi test tạo bảng và dữ liệu trong transaction rồi `ROLLBACK`. Luyện SQL chỉ nhận câu `SELECT` hoặc `WITH`, mỗi test chạy tối đa 5 giây.
 - Mọi đầu gọi của API đều cần mã truy cập, thiếu hoặc sai mã thì trả 401. Trình duyệt chỉ gọi được API từ web này và từ `localhost:4321` (CORS).
 - Nếu `npm --prefix api run check:data` báo lệch, dừng thao tác ghi và báo người phụ trách. Chỉ chạy lại script trên database dùng chung sau khi được đồng ý theo [quy ước an toàn dữ liệu](docs/quy-uoc.md).
 - Không commit mật khẩu, mã truy cập hay secret. `.env` và `api/local.settings.json` đã nằm trong `.gitignore`.

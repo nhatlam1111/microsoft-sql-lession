@@ -1,0 +1,53 @@
+id: viet-hoa-ho-ten
+chapter: '2-7'
+order: 1
+title: Tên in trên thẻ
+difficulty: de
+lessons: [ 2-7-ham-chuoi-tieng-viet ]
+prompt: >-
+  Thẻ nhân viên in họ tên chữ hoa. Từ bảng NhanSu, lấy mã nhân viên và họ tên đã đổi thành chữ hoa cho mọi dòng.
+columns: [ MaNV, Họ tên ]
+ordered: false
+tables:
+  NhanSu:
+    MaNV: varchar(10) NOT NULL
+    HoTen: nvarchar(100) NOT NULL
+answer: "SELECT MaNV, UPPER(HoTen) AS [Họ tên] FROM NhanSu"
+tests:
+  - id: 1
+    visible: true
+    rows:
+      NhanSu:
+        - [ "NV101", "LÊ NGỌC ÁNH" ]
+        - [ "NV102", "trịnh văn dũng" ]
+    expected: [ [ "NV101", "LÊ NGỌC ÁNH" ], [ "NV102", "TRỊNH VĂN DŨNG" ] ]
+  - id: 2
+    visible: true
+    rows:
+      NhanSu:
+        - [ "NV105", "Phan Thùy Dương" ]
+        - [ "NV106", "hà quang minh" ]
+    expected: [ [ "NV105", "PHAN THÙY DƯƠNG" ], [ "NV106", "HÀ QUANG MINH" ] ]
+  - id: 3
+    catches: "SELECT MaNV, UPPER(HoTen) FROM NhanSu WHERE HoTen IS NOT NULL AND MaNV LIKE 'NV1%'"
+    rows:
+      NhanSu:
+        - [ "NV211", "Tăng Mỹ Linh" ]
+        - [ "NV112", "Cù Đình Phong" ]
+    expected: [ [ "NV211", "TĂNG MỸ LINH" ], [ "NV112", "CÙ ĐÌNH PHONG" ] ]
+  - id: 4
+    catches: "SELECT MaNV, UPPER(LEFT(HoTen, 20)) FROM NhanSu"
+    rows:
+      NhanSu:
+        - [ "NV121", "Nghiêm Thị Thu Hiền Anh" ]
+        - [ "NV122", "Âu Dương Khải" ]
+    expected: [ [ "NV121", "NGHIÊM THỊ THU HIỀN ANH" ], [ "NV122", "ÂU DƯƠNG KHẢI" ] ]
+  - id: 5
+    catches: "SELECT TOP (1) MaNV, UPPER(HoTen) FROM NhanSu UNION ALL SELECT MaNV, UPPER(HoTen) FROM NhanSu WHERE MaNV LIKE '%2' OR MaNV LIKE '%6'"
+    rows:
+      NhanSu:
+        - [ "NV131", "Sầm Thu Hiền" ]
+        - [ "NV133", "Từ Anh Khoa" ]
+        - [ "NV135", "Nghiêm Hoa" ]
+    expected: [ [ "NV131", "SẦM THU HIỀN" ], [ "NV133", "TỪ ANH KHOA" ], [ "NV135", "NGHIÊM HOA" ] ]
+resultTypes: [ "varchar", "nvarchar" ]

@@ -56,14 +56,15 @@ export function sanitize(text: string): string {
 
 export type GuardResult = { ok: true } | { ok: false; reason: string };
 
-const refuse = (reason: string): GuardResult => ({ ok: false, reason });
+const refuse = (reason: string): Extract<GuardResult, { ok: false }> => ({ ok: false, reason });
 
 /** Line breaks as SQL Server reads them: a bare CR ends a -- comment too. The API sends this form to the database. */
 export function normalizeSql(text: string): string {
   return text.replace(/\r\n?/g, '\n');
 }
 
-export function guardExercise(text: string): GuardResult {
+/** The checks every statement goes through; a refusal, or the text with strings and comments taken out. */
+function inspect(text: string, starts: string[], startsReason: string): Extract<GuardResult, { ok: false }> | string {
   if (!text.trim()) return refuse('Chưa có câu lệnh nào.');
   if (text.length > MAX_LENGTH) return refuse('Câu lệnh dài quá 4.000 ký tự.');
   let stripped: string;
@@ -76,7 +77,7 @@ export function guardExercise(text: string): GuardResult {
   if (!stripped) return refuse('Chưa có câu lệnh nào.');
   if (stripped.includes(';')) return refuse('Mỗi lần chỉ chạy một câu lệnh.');
   const first = (stripped.match(/^[a-z]+/i)?.[0] ?? '').toLowerCase();
-  if (!STARTS.includes(first)) return refuse('Bài tập chỉ nhận câu bắt đầu bằng SELECT, WITH, INSERT, UPDATE hoặc DELETE.');
+  if (!starts.includes(first)) return refuse(startsReason);
   const hit = stripped.match(BLOCKED);
   if (hit) {
     const word = /^begin/i.test(hit[1]) ? 'BEGIN TRAN' : hit[1].toUpperCase();
@@ -88,5 +89,17 @@ export function guardExercise(text: string): GuardResult {
   if (/\binto\b/i.test(stripped.replace(/\binsert\s+into\b/gi, ' '))) {
     return refuse('SELECT … INTO tạo bảng mới nên không dùng được trong bài tập.');
   }
-  return { ok: true };
+  return stripped;
+}
+
+export function guardExercise(text: string): GuardResult {
+  const seen = inspect(text, STARTS, 'Bài tập chỉ nhận câu bắt đầu bằng SELECT, WITH, INSERT, UPDATE hoặc DELETE.');
+  return typeof seen === 'string' ? { ok: true } : seen;
+}
+
+/** Arcade runs queries only, so a data change is refused here and not left to the rollback. */
+export function guardArcade(text: string): GuardResult {
+  const seen = inspect(text, ['select', 'with'], 'Bài luyện chỉ nhận câu bắt đầu bằng SELECT hoặc WITH.');
+  if (typeof seen !== 'string') return seen;
+  return /\b(insert|update|delete|declare|cursor)\b/i.test(seen) ? refuse('Bài luyện chỉ nhận câu truy vấn.') : { ok: true };
 }

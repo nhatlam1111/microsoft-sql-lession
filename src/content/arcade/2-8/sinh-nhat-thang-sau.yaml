@@ -1,0 +1,54 @@
+id: sinh-nhat-thang-sau
+chapter: '2-8'
+order: 6
+title: Sinh nhật tháng sau
+difficulty: kho
+lessons: [ 2-4-sap-xep-va-top, 2-8-ham-ngay-tham-nien ]
+prompt: >-
+  Tại mốc cố định 15/12/2026, phòng nhân sự chuẩn bị quà cho người có sinh nhật trong tháng ngay sau tháng của mốc, bất kể năm sinh. Từ bảng NhanSu, lấy mã nhân viên, ngày sinh và số ranh giới tháng đã qua tính từ ngày vào làm đến mốc (dùng DATEDIFF với đơn vị month). Xếp mã tăng dần.
+columns: [ MaNV, NgaySinh, Số tháng ]
+ordered: true
+tables:
+  NhanSu:
+    MaNV: varchar(10) NOT NULL
+    NgaySinh: date NOT NULL
+    NgayVaoLam: date NOT NULL
+answer: "SELECT MaNV, NgaySinh, DATEDIFF(month, NgayVaoLam, CAST('20261215' AS date)) AS [Số tháng] FROM NhanSu WHERE MONTH(NgaySinh) = MONTH(DATEADD(month, 1, CAST('20261215' AS date))) ORDER BY MaNV ASC"
+tests:
+  - id: 1
+    visible: true
+    rows:
+      NhanSu:
+        - [ "NV501", "1990-01-05", "2024-03-01" ]
+        - [ "NV502", "1985-12-20", "2023-01-10" ]
+        - [ "NV503", "1992-01-30", "2026-06-15" ]
+    expected: [ [ "NV501", "1990-01-05", 33 ], [ "NV503", "1992-01-30", 6 ] ]
+  - id: 2
+    visible: true
+    rows:
+      NhanSu:
+        - [ "NV505", "2000-02-10", "2025-02-01" ]
+        - [ "NV506", "1999-01-11", "2025-12-31" ]
+    expected: [ [ "NV506", "1999-01-11", 12 ] ]
+  - id: 3
+    catches: "SELECT MaNV, NgaySinh, DATEDIFF(month, NgayVaoLam, CAST('20261215' AS date)) FROM NhanSu WHERE MONTH(NgaySinh) = 1"
+    rows:
+      NhanSu:
+        - [ "NV512", "1994-01-02", "2022-07-07" ]
+        - [ "NV511", "1975-01-15", "2020-05-05" ]
+    expected: [ [ "NV511", "1975-01-15", 79 ], [ "NV512", "1994-01-02", 53 ] ]
+  - id: 4
+    catches: "SELECT MaNV, NgaySinh, DATEDIFF(month, NgayVaoLam, CAST('20261215' AS date)) FROM NhanSu WHERE MONTH(NgaySinh) = 1 AND DAY(NgaySinh) >= 2 ORDER BY MaNV ASC"
+    rows:
+      NhanSu:
+        - [ "NV521", "1991-01-01", "2021-01-04" ]
+        - [ "NV522", "1996-07-07", "2021-01-04" ]
+    expected: [ [ "NV521", "1991-01-01", 71 ] ]
+  - id: 5
+    catches: "SELECT MaNV, NgaySinh, DATEDIFF(month, NgayVaoLam, CAST('20261215' AS date)) FROM NhanSu WHERE MONTH(NgaySinh) = 1 AND NgaySinh < '20010101' ORDER BY MaNV ASC"
+    rows:
+      NhanSu:
+        - [ "NV531", "2002-01-09", "2026-01-05" ]
+        - [ "NV532", "1993-01-19", "2026-02-05" ]
+    expected: [ [ "NV531", "2002-01-09", 11 ], [ "NV532", "1993-01-19", 10 ] ]
+resultTypes: [ "varchar", "date", "int" ]

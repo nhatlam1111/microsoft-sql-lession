@@ -1,0 +1,55 @@
+id: tai-san-tang-5
+chapter: '2-2'
+order: 5
+title: Tài sản đang ở tầng 5
+difficulty: vua
+lessons: [ 2-2-where-loc-nhu-autofilter ]
+prompt: >-
+  Sau đợt chuyển chỗ, phòng hành chính cần biết tài sản nào hiện đang đặt ở “Tầng 5”. Từ bảng TaiSan, lấy mã và tên tài sản.
+columns: [ Mã tài sản, Tên tài sản ]
+ordered: false
+tables:
+  TaiSan:
+    MaTS: varchar(10) NOT NULL
+    TenTS: nvarchar(100) NOT NULL
+    NoiDatTruoc: nvarchar(30) NULL
+    NoiDatHienTai: nvarchar(30) NOT NULL
+answer: "SELECT MaTS, TenTS FROM TaiSan WHERE NoiDatHienTai = N'Tầng 5'"
+tests:
+  - id: 1
+    visible: true
+    rows:
+      TaiSan:
+        - [ "TS01", "Máy in màu", "Tầng 5", "Tầng 5" ]
+        - [ "TS02", "Máy chiếu", "Tầng 2", "Tầng 2" ]
+    expected: [ [ "TS01", "Máy in màu" ] ]
+  - id: 2
+    visible: true
+    rows:
+      TaiSan:
+        - [ "TS05", "Tủ hồ sơ", "Tầng 3", "Tầng 3" ]
+        - [ "TS06", "Bàn họp", "Tầng 5", "Tầng 5" ]
+        - [ "TS07", "Máy hủy giấy", "Tầng 4", "Tầng 4" ]
+    expected: [ [ "TS06", "Bàn họp" ] ]
+  - id: 3
+    catches: "SELECT MaTS, TenTS FROM TaiSan WHERE NoiDatTruoc = N'Tầng 5'"
+    rows:
+      TaiSan:
+        - [ "TS11", "Ghế họp", "Tầng 5", "Tầng 2" ]
+        - [ "TS12", "Bảng trắng", "Tầng 1", "Tầng 5" ]
+    expected: [ [ "TS12", "Bảng trắng" ] ]
+  - id: 4
+    catches: "SELECT MaTS, TenTS FROM TaiSan WHERE NoiDatHienTai LIKE N'Tầng 5%'"
+    rows:
+      TaiSan:
+        - [ "TS21", "Máy lạnh", "Tầng 3", "Tầng 5" ]
+        - [ "TS22", "Tủ lạnh", "Tầng 3", "Tầng 5A" ]
+    expected: [ [ "TS21", "Máy lạnh" ] ]
+  - id: 5
+    catches: "SELECT MaTS, TenTS FROM TaiSan WHERE NoiDatTruoc = N'Tầng 5' OR NoiDatHienTai = N'Tầng 5'"
+    rows:
+      TaiSan:
+        - [ "TS31", "Máy chấm công", "Tầng 5", "Sảnh" ]
+        - [ "TS32", "Kệ sách", null, "Tầng 5" ]
+    expected: [ [ "TS32", "Kệ sách" ] ]
+resultTypes: [ "varchar", "nvarchar" ]

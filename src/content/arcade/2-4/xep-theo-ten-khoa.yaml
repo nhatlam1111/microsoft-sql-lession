@@ -1,0 +1,57 @@
+id: xep-theo-ten-khoa
+chapter: '2-4'
+order: 1
+title: Danh mục khóa theo tên
+difficulty: de
+lessons: [ 2-2-where-loc-nhu-autofilter, 2-3-and-or-in-between-like, 2-4-sap-xep-va-top ]
+prompt: >-
+  Phòng đào tạo in danh mục khóa học. Từ bảng KhoaHoc, lấy tên khóa và số buổi của mọi dòng, xếp theo tên khóa tăng dần. Tên khóa trong bảng không trùng nhau.
+columns: [ TenKH, SoBuoi ]
+ordered: true
+tables:
+  KhoaHoc:
+    MaKH: varchar(10) NOT NULL
+    TenKH: nvarchar(100) NOT NULL
+    SoBuoi: decimal(3,0) NOT NULL
+answer: "SELECT TenKH, SoBuoi FROM KhoaHoc ORDER BY TenKH ASC"
+tests:
+  - id: 1
+    visible: true
+    rows:
+      KhoaHoc:
+        - [ "K01", "Bảo mật", 2 ]
+        - [ "K02", "Excel", 4 ]
+        - [ "K03", "Giao tiếp", 5 ]
+    expected: [ [ "Bảo mật", "2" ], [ "Excel", "4" ], [ "Giao tiếp", "5" ] ]
+  - id: 2
+    visible: true
+    rows:
+      KhoaHoc:
+        - [ "K05", "An toàn", 1 ]
+        - [ "K06", "Pháp luật", 2 ]
+    expected: [ [ "An toàn", "1" ], [ "Pháp luật", "2" ] ]
+  - id: 3
+    catches: "SELECT TenKH, SoBuoi FROM KhoaHoc"
+    rows:
+      KhoaHoc:
+        - [ "K13", "Thuyết trình", 3 ]
+        - [ "K11", "Kỹ năng email", 2 ]
+        - [ "K12", "Quản lý", 4 ]
+    expected: [ [ "Kỹ năng email", "2" ], [ "Quản lý", "4" ], [ "Thuyết trình", "3" ] ]
+  - id: 4
+    catches: "SELECT TenKH, SoBuoi FROM KhoaHoc ORDER BY MaKH ASC"
+    rows:
+      KhoaHoc:
+        - [ "K21", "Tuyển dụng", 2 ]
+        - [ "K22", "Nội quy", 1 ]
+        - [ "K23", "Hội nhập", 2 ]
+    expected: [ [ "Hội nhập", "2" ], [ "Nội quy", "1" ], [ "Tuyển dụng", "2" ] ]
+  - id: 5
+    catches: "SELECT TenKH, SoBuoi FROM KhoaHoc ORDER BY SoBuoi ASC"
+    rows:
+      KhoaHoc:
+        - [ "K31", "Đàm phán", 5 ]
+        - [ "K32", "Viết báo cáo", 2 ]
+        - [ "K33", "Phỏng vấn", 3 ]
+    expected: [ [ "Đàm phán", "5" ], [ "Phỏng vấn", "3" ], [ "Viết báo cáo", "2" ] ]
+resultTypes: [ "nvarchar", "decimal" ]

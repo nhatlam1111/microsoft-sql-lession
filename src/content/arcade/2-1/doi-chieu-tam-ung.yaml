@@ -1,0 +1,58 @@
+id: doi-chieu-tam-ung
+chapter: '2-1'
+order: 5
+title: Đối chiếu khoản tạm ứng
+difficulty: vua
+lessons: [ 2-1-chon-cot-dat-ten-cot ]
+prompt: >-
+  Kế toán đối chiếu các khoản tạm ứng đang lưu trong bảng TamUng. Cột thứ nhất là mã tạm ứng, tiếp theo là ngày tiền được chi ra, rồi số tiền đã được duyệt, và cuối cùng là mã người nhận. Lấy mọi dòng, kể cả khoản chưa được duyệt.
+columns: [ Mã tạm ứng, Ngày chi, Số tiền duyệt, Mã người nhận ]
+ordered: false
+tables:
+  TamUng:
+    MaTU: varchar(10) NOT NULL
+    MaNV: varchar(10) NOT NULL
+    NgayDeNghi: date NOT NULL
+    NgayDuyet: date NULL
+    NgayChi: date NULL
+    SoTienDeNghi: decimal(12,0) NOT NULL
+    SoTienDuyet: decimal(12,0) NULL
+    LyDo: nvarchar(100) NULL
+answer: SELECT MaTU, NgayChi, SoTienDuyet, MaNV FROM TamUng
+tests:
+  - id: 1
+    visible: true
+    rows:
+      TamUng:
+        - [ "TU01", "NV201", "2026-08-03", "2026-08-05", "2026-08-05", 5000000, 5000000, "Mua văn phòng phẩm" ]
+        - [ "TU02", "NV202", "2026-08-04", "2026-08-06", "2026-08-06", 3000000, 3000000, "Tổ chức họp" ]
+    expected: [ [ "TU01", "2026-08-05", "5000000", "NV201" ], [ "TU02", "2026-08-06", "3000000", "NV202" ] ]
+  - id: 2
+    visible: true
+    rows:
+      TamUng:
+        - [ "TU05", "NV205", "2026-08-10", "2026-08-11", "2026-08-11", 2000000, 2000000, null ]
+        - [ "TU06", "NV206", "2026-08-12", "2026-08-13", "2026-08-13", 7000000, 7000000, "Tiếp khách" ]
+    expected: [ [ "TU05", "2026-08-11", "2000000", "NV205" ], [ "TU06", "2026-08-13", "7000000", "NV206" ] ]
+  - id: 3
+    catches: SELECT MaTU, NgayChi, SoTienDeNghi, MaNV FROM TamUng
+    rows:
+      TamUng:
+        - [ "TU11", "NV211", "2026-08-17", "2026-08-18", "2026-08-18", 6000000, 4500000, "Mua thiết bị" ]
+        - [ "TU12", "NV212", "2026-08-18", "2026-08-19", "2026-08-19", 1000000, 1000000, null ]
+    expected: [ [ "TU11", "2026-08-18", "4500000", "NV211" ], [ "TU12", "2026-08-19", "1000000", "NV212" ] ]
+  - id: 4
+    catches: SELECT MaTU, NgayDuyet, SoTienDuyet, MaNV FROM TamUng
+    rows:
+      TamUng:
+        - [ "TU21", "NV221", "2026-08-20", "2026-08-21", "2026-08-25", 2500000, 2500000, "Sửa máy in" ]
+        - [ "TU22", "NV222", "2026-08-21", "2026-08-24", "2026-08-24", 900000, 900000, "Mua nước uống" ]
+    expected: [ [ "TU21", "2026-08-25", "2500000", "NV221" ], [ "TU22", "2026-08-24", "900000", "NV222" ] ]
+  - id: 5
+    catches: SELECT MaTU, NgayChi, SoTienDuyet, MaNV FROM TamUng WHERE SoTienDuyet IS NOT NULL
+    rows:
+      TamUng:
+        - [ "TU31", "NV231", "2026-08-26", null, null, 3500000, null, "Đang chờ duyệt" ]
+        - [ "TU32", "NV232", "2026-08-27", "2026-08-28", "2026-08-28", 1200000, 1200000, null ]
+    expected: [ [ "TU31", null, null, "NV231" ], [ "TU32", "2026-08-28", "1200000", "NV232" ] ]
+resultTypes: [ "varchar", "date", "decimal", "varchar" ]

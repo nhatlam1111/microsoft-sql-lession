@@ -1,0 +1,57 @@
+id: lay-toan-bo-cot
+chapter: '2-1'
+order: 3
+title: Toàn bộ danh mục khóa học
+difficulty: de
+lessons: [ 2-1-chon-cot-dat-ten-cot ]
+prompt: >-
+  Phòng đào tạo cần xem nguyên trạng bảng KhoaHoc: mọi cột, theo thứ tự cột của bảng, và mọi dòng. Giữ cả những ô chưa có giảng viên. Bảng có thể có hai dòng giống hệt nhau; dòng nào cũng phải có trong kết quả.
+columns: [ MaKH, TenKH, SoBuoi, GiangVien ]
+ordered: false
+tables:
+  KhoaHoc:
+    MaKH: varchar(10) NOT NULL
+    TenKH: nvarchar(100) NOT NULL
+    SoBuoi: decimal(3,0) NOT NULL
+    GiangVien: nvarchar(100) NULL
+answer: SELECT * FROM KhoaHoc
+tests:
+  - id: 1
+    visible: true
+    rows:
+      KhoaHoc:
+        - [ "K01", "Kỹ năng viết email", 2, "Lê Bảo Châu" ]
+        - [ "K02", "Excel cho nhân sự", 4, "Vũ Hoàng Nam" ]
+    expected: [ [ "K01", "Kỹ năng viết email", "2", "Lê Bảo Châu" ], [ "K02", "Excel cho nhân sự", "4", "Vũ Hoàng Nam" ] ]
+  - id: 2
+    visible: true
+    rows:
+      KhoaHoc:
+        - [ "K05", "An toàn lao động", 1, "Đặng Thu Trang" ]
+        - [ "K06", "Giao tiếp nội bộ", 3, "Lê Bảo Châu" ]
+    expected: [ [ "K05", "An toàn lao động", "1", "Đặng Thu Trang" ], [ "K06", "Giao tiếp nội bộ", "3", "Lê Bảo Châu" ] ]
+  - id: 3
+    catches: SELECT * FROM KhoaHoc WHERE GiangVien IS NOT NULL
+    rows:
+      KhoaHoc:
+        - [ "K11", "Quản lý thời gian", 2, null ]
+        - [ "K12", "Thuyết trình", 3, "Vũ Hoàng Nam" ]
+    expected: [ [ "K11", "Quản lý thời gian", "2", null ], [ "K12", "Thuyết trình", "3", "Vũ Hoàng Nam" ] ]
+  - id: 4
+    catches: SELECT TOP 3 * FROM KhoaHoc
+    rows:
+      KhoaHoc:
+        - [ "K21", "Pháp luật lao động", 2, "Đặng Thu Trang" ]
+        - [ "K22", "Quy trình tuyển dụng", 2, "Lê Bảo Châu" ]
+        - [ "K23", "Bảo mật thông tin", 1, null ]
+        - [ "K24", "Phân tích công việc", 4, "Vũ Hoàng Nam" ]
+    expected: [ [ "K21", "Pháp luật lao động", "2", "Đặng Thu Trang" ], [ "K22", "Quy trình tuyển dụng", "2", "Lê Bảo Châu" ], [ "K23", "Bảo mật thông tin", "1", null ], [ "K24", "Phân tích công việc", "4", "Vũ Hoàng Nam" ] ]
+  - id: 5
+    catches: SELECT DISTINCT * FROM KhoaHoc
+    rows:
+      KhoaHoc:
+        - [ "K31", "Sơ cấp cứu", 1, "Đặng Thu Trang" ]
+        - [ "K31", "Sơ cấp cứu", 1, "Đặng Thu Trang" ]
+        - [ "K32", "Kỹ năng phỏng vấn", 2, "Lê Bảo Châu" ]
+    expected: [ [ "K31", "Sơ cấp cứu", "1", "Đặng Thu Trang" ], [ "K31", "Sơ cấp cứu", "1", "Đặng Thu Trang" ], [ "K32", "Kỹ năng phỏng vấn", "2", "Lê Bảo Châu" ] ]
+resultTypes: [ "varchar", "nvarchar", "decimal", "nvarchar" ]

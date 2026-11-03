@@ -1,0 +1,54 @@
+id: du-ba-nam
+chapter: '2-8'
+order: 5
+title: Đủ ba năm công tác
+difficulty: kho
+lessons: [ 2-4-sap-xep-va-top, 2-8-ham-ngay-tham-nien ]
+prompt: >-
+  Tại mốc cố định 21/10/2026, công ty tặng quà cho người đã đủ ba năm tính từ ngày vào làm, tức ngày kỷ niệm ba năm không muộn hơn mốc đó, gồm cả đúng ngày đó. Từ bảng NhanSu, lấy mã nhân viên và ngày vào làm, xếp ngày vào làm tăng dần, cùng ngày thì mã tăng dần.
+columns: [ MaNV, NgayVaoLam ]
+ordered: true
+tables:
+  NhanSu:
+    MaNV: varchar(10) NOT NULL
+    NgayVaoLam: date NOT NULL
+answer: "SELECT MaNV, NgayVaoLam FROM NhanSu WHERE DATEADD(year, 3, NgayVaoLam) <= '20261021' ORDER BY NgayVaoLam ASC, MaNV ASC"
+tests:
+  - id: 1
+    visible: true
+    rows:
+      NhanSu:
+        - [ "NV401", "2021-05-10" ]
+        - [ "NV402", "2025-02-01" ]
+        - [ "NV403", "2022-09-09" ]
+    expected: [ [ "NV401", "2021-05-10" ], [ "NV403", "2022-09-09" ] ]
+  - id: 2
+    visible: true
+    rows:
+      NhanSu:
+        - [ "NV405", "2019-03-03" ]
+        - [ "NV406", "2026-01-15" ]
+    expected: [ [ "NV405", "2019-03-03" ] ]
+  - id: 3
+    catches: "SELECT MaNV, NgayVaoLam FROM NhanSu WHERE DATEDIFF(year, NgayVaoLam, '20261021') >= 3 ORDER BY NgayVaoLam ASC, MaNV ASC"
+    rows:
+      NhanSu:
+        - [ "NV411", "2023-11-01" ]
+        - [ "NV412", "2020-01-01" ]
+    expected: [ [ "NV412", "2020-01-01" ] ]
+  - id: 4
+    catches: "SELECT MaNV, NgayVaoLam FROM NhanSu WHERE DATEADD(year, 3, NgayVaoLam) <= '20261020' ORDER BY NgayVaoLam ASC, MaNV ASC"
+    rows:
+      NhanSu:
+        - [ "NV421", "2023-10-21" ]
+        - [ "NV422", "2024-10-21" ]
+    expected: [ [ "NV421", "2023-10-21" ] ]
+  - id: 5
+    catches: "SELECT MaNV, NgayVaoLam FROM NhanSu WHERE DATEADD(year, 3, NgayVaoLam) <= '20261021' ORDER BY NgayVaoLam ASC"
+    rows:
+      NhanSu:
+        - [ "NV432", "2022-02-02" ]
+        - [ "NV431", "2022-02-02" ]
+        - [ "NV433", "2021-02-02" ]
+    expected: [ [ "NV433", "2021-02-02" ], [ "NV431", "2022-02-02" ], [ "NV432", "2022-02-02" ] ]
+resultTypes: [ "varchar", "date" ]

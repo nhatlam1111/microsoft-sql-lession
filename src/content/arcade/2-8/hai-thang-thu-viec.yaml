@@ -1,0 +1,52 @@
+id: hai-thang-thu-viec
+chapter: '2-8'
+order: 1
+title: Ngày hết thử việc
+difficulty: de
+lessons: [ 2-8-ham-ngay-tham-nien ]
+prompt: >-
+  Ngày hết thử việc được ghi là ngày sau ngày bắt đầu đúng hai tháng, ví dụ bắt đầu 10/03/2026 thì ghi 10/05/2026. Từ bảng ThuViec, lấy mã nhân viên và ngày hết thử việc cho mọi dòng.
+columns: [ MaNV, Ngày hết thử việc ]
+ordered: false
+tables:
+  ThuViec:
+    MaNV: varchar(10) NOT NULL
+    NgayBatDau: date NOT NULL
+answer: "SELECT MaNV, DATEADD(month, 2, NgayBatDau) AS [Ngày hết thử việc] FROM ThuViec"
+tests:
+  - id: 1
+    visible: true
+    rows:
+      ThuViec:
+        - [ "NV101", "2026-03-10" ]
+        - [ "NV102", "2026-05-01" ]
+    expected: [ [ "NV101", "2026-05-10" ], [ "NV102", "2026-07-01" ] ]
+  - id: 2
+    visible: true
+    rows:
+      ThuViec:
+        - [ "NV105", "2026-06-15" ]
+        - [ "NV106", "2026-09-20" ]
+    expected: [ [ "NV105", "2026-08-15" ], [ "NV106", "2026-11-20" ] ]
+  - id: 3
+    catches: "SELECT MaNV, DATEADD(day, 61, NgayBatDau) FROM ThuViec"
+    rows:
+      ThuViec:
+        - [ "NV111", "2026-01-15" ]
+        - [ "NV112", "2026-03-01" ]
+    expected: [ [ "NV111", "2026-03-15" ], [ "NV112", "2026-05-01" ] ]
+  - id: 4
+    catches: "SELECT MaNV, DATEADD(month, 2, NgayBatDau) FROM ThuViec WHERE MONTH(NgayBatDau) >= 3"
+    rows:
+      ThuViec:
+        - [ "NV121", "2026-02-10" ]
+        - [ "NV122", "2026-04-10" ]
+    expected: [ [ "NV121", "2026-04-10" ], [ "NV122", "2026-06-10" ] ]
+  - id: 5
+    catches: "SELECT MaNV, DATEADD(month, 2, NgayBatDau) FROM ThuViec WHERE NgayBatDau >= '20260301' AND NgayBatDau <= '20261031'"
+    rows:
+      ThuViec:
+        - [ "NV131", "2026-12-31" ]
+        - [ "NV132", "2026-07-07" ]
+    expected: [ [ "NV131", "2027-02-28" ], [ "NV132", "2026-09-07" ] ]
+resultTypes: [ "varchar", "date" ]

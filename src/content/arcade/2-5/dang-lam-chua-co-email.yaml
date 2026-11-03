@@ -1,0 +1,56 @@
+id: dang-lam-chua-co-email
+chapter: '2-5'
+order: 3
+title: Người đang làm thiếu email
+difficulty: vua
+lessons: [ 2-3-and-or-in-between-like, 2-4-sap-xep-va-top, 2-5-null-o-trong ]
+prompt: >-
+  Từ bảng NhanSu, lấy mã và họ tên của những người chưa nghỉ việc và chưa có email, tức cả NgayNghiViec lẫn Email đều là NULL. Xếp mã nhân viên tăng dần.
+columns: [ MaNV, HoTen ]
+ordered: true
+tables:
+  NhanSu:
+    MaNV: varchar(10) NOT NULL
+    HoTen: nvarchar(100) NOT NULL
+    Email: varchar(100) NULL
+    NgayNghiViec: date NULL
+answer: "SELECT MaNV, HoTen FROM NhanSu WHERE NgayNghiViec IS NULL AND Email IS NULL ORDER BY MaNV ASC"
+tests:
+  - id: 1
+    visible: true
+    rows:
+      NhanSu:
+        - [ "NV201", "Trịnh Văn Dũng", null, null ]
+        - [ "NV202", "Lê Ngọc Ánh", null, null ]
+        - [ "NV203", "Hà An", "an@mail.test", "2026-01-01" ]
+    expected: [ [ "NV201", "Trịnh Văn Dũng" ], [ "NV202", "Lê Ngọc Ánh" ] ]
+  - id: 2
+    visible: true
+    rows:
+      NhanSu:
+        - [ "NV205", "Hà Quang Minh", "minh@mail.test", "2025-12-31" ]
+        - [ "NV206", "Phan Thùy Dương", null, null ]
+    expected: [ [ "NV206", "Phan Thùy Dương" ] ]
+  - id: 3
+    catches: "SELECT MaNV, HoTen FROM NhanSu WHERE Email IS NULL ORDER BY MaNV ASC"
+    rows:
+      NhanSu:
+        - [ "NV211", "Tăng Mỹ Linh", null, "2026-03-01" ]
+        - [ "NV212", "Cù Đình Phong", null, null ]
+    expected: [ [ "NV212", "Cù Đình Phong" ] ]
+  - id: 4
+    catches: "SELECT MaNV, HoTen FROM NhanSu WHERE NgayNghiViec IS NULL ORDER BY MaNV ASC"
+    rows:
+      NhanSu:
+        - [ "NV222", "Giáp Thị Vân", "van@mail.test", null ]
+        - [ "NV221", "Âu Dương Khải", "khai@mail.test", null ]
+    expected: []
+  - id: 5
+    catches: "SELECT MaNV, HoTen FROM NhanSu WHERE NgayNghiViec IS NULL AND Email IS NULL"
+    rows:
+      NhanSu:
+        - [ "NV233", "Sầm Thu Hiền", null, null ]
+        - [ "NV231", "Từ Anh Khoa", null, null ]
+        - [ "NV232", "Nghiêm Hoa", null, null ]
+    expected: [ [ "NV231", "Từ Anh Khoa" ], [ "NV232", "Nghiêm Hoa" ], [ "NV233", "Sầm Thu Hiền" ] ]
+resultTypes: [ "varchar", "nvarchar" ]

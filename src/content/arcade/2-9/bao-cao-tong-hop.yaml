@@ -1,0 +1,61 @@
+id: bao-cao-tong-hop
+chapter: '2-9'
+order: 6
+title: Báo cáo hợp đồng
+difficulty: kho
+lessons: [ 2-3-and-or-in-between-like, 2-4-sap-xep-va-top, 2-5-null-o-trong, 2-8-ham-ngay-tham-nien, 2-9-case-when-ham-if ]
+prompt: >-
+  Tại mốc cố định 21/10/2026, nhân sự cần báo cáo mọi dòng hợp đồng của phòng KD hoặc IT. Từ bảng HopDong, lấy mã hợp đồng và một cột ghi chú: chưa có ngày kết thúc thì ghi “Không thời hạn”; ngày kết thúc từ 20/10/2026 trở về trước thì ghi “Đã hết”; ngày kết thúc từ 21/10/2026 đến 20/11/2026 thì ghi “Sắp hết”; còn lại ghi “Còn hạn”. Xếp mã tăng dần.
+columns: [ MaHD, Ghi chú ]
+ordered: true
+tables:
+  HopDong:
+    MaHD: varchar(20) NOT NULL
+    MaPB: varchar(10) NOT NULL
+    NgayKetThuc: date NULL
+answer: "SELECT MaHD, CASE WHEN NgayKetThuc IS NULL THEN N'Không thời hạn' WHEN NgayKetThuc <= '20261020' THEN N'Đã hết' WHEN NgayKetThuc <= '20261120' THEN N'Sắp hết' ELSE N'Còn hạn' END AS [Ghi chú] FROM HopDong WHERE MaPB IN ('KD', 'IT') ORDER BY MaHD ASC"
+tests:
+  - id: 1
+    visible: true
+    rows:
+      HopDong:
+        - [ "HD01", "KD", null ]
+        - [ "HD02", "IT", "2026-05-01" ]
+        - [ "HD03", "KD", "2026-11-01" ]
+    expected: [ [ "HD01", "Không thời hạn" ], [ "HD02", "Đã hết" ], [ "HD03", "Sắp hết" ] ]
+  - id: 2
+    visible: true
+    rows:
+      HopDong:
+        - [ "HD05", "IT", "2027-06-30" ]
+        - [ "HD06", "KD", "2026-10-30" ]
+    expected: [ [ "HD05", "Còn hạn" ], [ "HD06", "Sắp hết" ] ]
+  - id: 3
+    catches: "SELECT MaHD, CASE WHEN NgayKetThuc IS NULL THEN N'Không thời hạn' WHEN NgayKetThuc <= '20261020' THEN N'Đã hết' WHEN NgayKetThuc <= '20261120' THEN N'Sắp hết' ELSE N'Còn hạn' END FROM HopDong ORDER BY MaHD ASC"
+    rows:
+      HopDong:
+        - [ "HD11", "KT", "2026-11-01" ]
+        - [ "HD12", "KD", "2027-01-01" ]
+    expected: [ [ "HD12", "Còn hạn" ] ]
+  - id: 4
+    catches: "SELECT MaHD, CASE WHEN NgayKetThuc IS NULL THEN N'Không thời hạn' WHEN NgayKetThuc <= '20261021' THEN N'Đã hết' WHEN NgayKetThuc <= '20261120' THEN N'Sắp hết' ELSE N'Còn hạn' END FROM HopDong WHERE MaPB IN ('KD', 'IT') ORDER BY MaHD ASC"
+    rows:
+      HopDong:
+        - [ "HD21", "KD", "2026-10-21" ]
+        - [ "HD22", "IT", "2026-01-01" ]
+    expected: [ [ "HD21", "Sắp hết" ], [ "HD22", "Đã hết" ] ]
+  - id: 5
+    catches: "SELECT MaHD, CASE WHEN NgayKetThuc IS NULL THEN N'Không thời hạn' WHEN NgayKetThuc <= '20261020' THEN N'Đã hết' WHEN NgayKetThuc <= '20261119' THEN N'Sắp hết' ELSE N'Còn hạn' END FROM HopDong WHERE MaPB IN ('KD', 'IT') ORDER BY MaHD ASC"
+    rows:
+      HopDong:
+        - [ "HD31", "KD", "2026-11-20" ]
+        - [ "HD32", "IT", "2026-11-21" ]
+    expected: [ [ "HD31", "Sắp hết" ], [ "HD32", "Còn hạn" ] ]
+  - id: 6
+    catches: "SELECT MaHD, CASE WHEN NgayKetThuc IS NULL THEN N'Không thời hạn' WHEN NgayKetThuc <= '20261020' THEN N'Đã hết' WHEN NgayKetThuc <= '20261120' THEN N'Sắp hết' ELSE N'Còn hạn' END FROM HopDong WHERE MaPB IN ('KD', 'IT')"
+    rows:
+      HopDong:
+        - [ "HD42", "KD", "2026-01-01" ]
+        - [ "HD41", "IT", null ]
+    expected: [ [ "HD41", "Không thời hạn" ], [ "HD42", "Đã hết" ] ]
+resultTypes: [ "varchar", "nvarchar" ]

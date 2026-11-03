@@ -1,0 +1,58 @@
+id: cac-phong-dang-co
+chapter: '2-6'
+order: 1
+title: Các phòng đang có người
+difficulty: de
+lessons: [ 2-6-distinct-bo-dong-trung ]
+prompt: >-
+  Từ bảng NhanSu, lấy danh sách mã phòng xuất hiện trong bảng, mỗi mã một dòng.
+columns: [ MaPB ]
+ordered: false
+tables:
+  NhanSu:
+    MaNV: varchar(10) NOT NULL
+    HoTen: nvarchar(100) NOT NULL
+    MaPB: varchar(10) NOT NULL
+answer: "SELECT DISTINCT MaPB FROM NhanSu"
+tests:
+  - id: 1
+    visible: true
+    rows:
+      NhanSu:
+        - [ "NV101", "Lê Ngọc Ánh", "KD" ]
+        - [ "NV102", "Trịnh Văn Dũng", "KD" ]
+        - [ "NV103", "Hà An", "IT" ]
+    expected: [ [ "IT" ], [ "KD" ] ]
+  - id: 2
+    visible: true
+    rows:
+      NhanSu:
+        - [ "NV105", "Phan Thùy Dương", "KT" ]
+        - [ "NV106", "Hà Quang Minh", "KT" ]
+        - [ "NV107", "Tăng Mỹ Linh", "NS" ]
+    expected: [ [ "KT" ], [ "NS" ] ]
+  - id: 3
+    catches: "SELECT DISTINCT MaPB FROM NhanSu WHERE MaPB IN ('KD', 'IT', 'KT', 'NS')"
+    rows:
+      NhanSu:
+        - [ "NV111", "Cù Đình Phong", "VH" ]
+        - [ "NV112", "Giáp Thị Vân", "VH" ]
+        - [ "NV113", "Âu Dương Khải", "KD" ]
+    expected: [ [ "KD" ], [ "VH" ] ]
+  - id: 4
+    catches: "SELECT DISTINCT TOP (2) MaPB FROM NhanSu"
+    rows:
+      NhanSu:
+        - [ "NV121", "Sầm Thu Hiền", "KD" ]
+        - [ "NV122", "Từ Anh Khoa", "IT" ]
+        - [ "NV123", "Nghiêm Hoa", "NS" ]
+    expected: [ [ "IT" ], [ "KD" ], [ "NS" ] ]
+  - id: 5
+    catches: "SELECT MIN(MaPB) FROM NhanSu UNION SELECT MAX(MaPB) FROM NhanSu"
+    rows:
+      NhanSu:
+        - [ "NV131", "Ninh Hà", "BGD" ]
+        - [ "NV132", "Lục Xuân", "KT" ]
+        - [ "NV133", "Doãn Thảo", "VH" ]
+    expected: [ [ "BGD" ], [ "KT" ], [ "VH" ] ]
+resultTypes: [ "varchar" ]

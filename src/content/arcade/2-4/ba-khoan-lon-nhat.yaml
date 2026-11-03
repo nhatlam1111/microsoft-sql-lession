@@ -1,0 +1,61 @@
+id: ba-khoan-lon-nhat
+chapter: '2-4'
+order: 4
+title: Ba khoản chi lớn nhất
+difficulty: vua
+lessons: [ 2-2-where-loc-nhu-autofilter, 2-3-and-or-in-between-like, 2-4-sap-xep-va-top ]
+prompt: >-
+  Kế toán cần tối đa ba khoản có số tiền lớn nhất trong bảng KhoanChi. Lấy mã khoản và số tiền, xếp số tiền giảm dần; cùng số tiền thì mã khoản tăng dần. Bảng có ít hơn ba dòng thì lấy hết.
+columns: [ MaKC, SoTien ]
+ordered: true
+tables:
+  KhoanChi:
+    MaKC: varchar(10) NOT NULL
+    NoiDung: nvarchar(100) NOT NULL
+    SoTien: decimal(12,0) NOT NULL
+answer: "SELECT TOP (3) MaKC, SoTien FROM KhoanChi ORDER BY SoTien DESC, MaKC ASC"
+tests:
+  - id: 1
+    visible: true
+    rows:
+      KhoanChi:
+        - [ "C01", "Thuê xe", 3000000 ]
+        - [ "C03", "Tiếp khách", 5000000 ]
+        - [ "C04", "In ấn", 1200000 ]
+    expected: [ [ "C03", "5000000" ], [ "C01", "3000000" ], [ "C04", "1200000" ] ]
+  - id: 2
+    visible: true
+    rows:
+      KhoanChi:
+        - [ "C11", "Điện nước", 2000000 ]
+        - [ "C12", "Bảo trì", 7000000 ]
+    expected: [ [ "C12", "7000000" ], [ "C11", "2000000" ] ]
+  - id: 3
+    catches: "SELECT TOP (3) MaKC, SoTien FROM KhoanChi ORDER BY SoTien DESC, MaKC DESC"
+    rows:
+      KhoanChi:
+        - [ "C24", "Tiền A", 900000 ]
+        - [ "C23", "Tiền B", 900000 ]
+        - [ "C22", "Tiền C", 900000 ]
+        - [ "C21", "Tiền D", 900000 ]
+        - [ "C25", "Tiền E", 100000 ]
+    expected: [ [ "C21", "900000" ], [ "C22", "900000" ], [ "C23", "900000" ] ]
+  - id: 4
+    catches: "SELECT TOP (4) MaKC, SoTien FROM KhoanChi ORDER BY SoTien DESC, MaKC ASC"
+    rows:
+      KhoanChi:
+        - [ "C31", "Đào tạo", 4000000 ]
+        - [ "C32", "Thưởng", 6000000 ]
+        - [ "C33", "Hội nghị", 5000000 ]
+        - [ "C34", "Sửa xe", 3000000 ]
+    expected: [ [ "C32", "6000000" ], [ "C33", "5000000" ], [ "C31", "4000000" ] ]
+  - id: 5
+    catches: "SELECT TOP (3) MaKC, SoTien FROM KhoanChi WHERE SoTien >= 1000000 ORDER BY SoTien DESC, MaKC ASC"
+    rows:
+      KhoanChi:
+        - [ "C41", "Nhỏ", 100000 ]
+        - [ "C42", "Vừa", 500000 ]
+        - [ "C43", "Lớn", 900000 ]
+        - [ "C44", "Rất lớn", 9000000 ]
+    expected: [ [ "C44", "9000000" ], [ "C43", "900000" ], [ "C42", "500000" ] ]
+resultTypes: [ "varchar", "decimal" ]

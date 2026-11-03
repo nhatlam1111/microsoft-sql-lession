@@ -1,0 +1,52 @@
+id: ba-so-cuoi-cua-ma
+chapter: '2-7'
+order: 2
+title: Ba số cuối của mã
+difficulty: de
+lessons: [ 2-7-ham-chuoi-tieng-viet ]
+prompt: >-
+  Mã hợp đồng gồm phần năm, dấu gạch và ba số cuối, như 2026-007; hợp đồng cũ chỉ ghi hai số năm, như 26-007. Từ bảng HopDong, lấy mã hợp đồng và ba ký tự cuối của mã, giữ nguyên các số 0 ở đầu.
+columns: [ MaHD, Số thứ tự ]
+ordered: false
+tables:
+  HopDong:
+    MaHD: varchar(20) NOT NULL
+    MaNV: varchar(10) NOT NULL
+answer: "SELECT MaHD, RIGHT(MaHD, 3) AS [Số thứ tự] FROM HopDong"
+tests:
+  - id: 1
+    visible: true
+    rows:
+      HopDong:
+        - [ "2026-207", "NV101" ]
+        - [ "2026-123", "NV102" ]
+    expected: [ [ "2026-207", "207" ], [ "2026-123", "123" ] ]
+  - id: 2
+    visible: true
+    rows:
+      HopDong:
+        - [ "2025-145", "NV105" ]
+        - [ "2025-310", "NV106" ]
+    expected: [ [ "2025-145", "145" ], [ "2025-310", "310" ] ]
+  - id: 3
+    catches: "SELECT MaHD, SUBSTRING(MaHD, 6, 3) FROM HopDong"
+    rows:
+      HopDong:
+        - [ "26-007", "NV111" ]
+        - [ "2026-018", "NV112" ]
+    expected: [ [ "26-007", "007" ], [ "2026-018", "018" ] ]
+  - id: 4
+    catches: "SELECT MaHD, CAST(RIGHT(MaHD, 3) AS decimal(3,0)) FROM HopDong"
+    rows:
+      HopDong:
+        - [ "2024-007", "NV121" ]
+        - [ "2024-020", "NV122" ]
+    expected: [ [ "2024-007", "007" ], [ "2024-020", "020" ] ]
+  - id: 5
+    catches: "SELECT MaHD, RIGHT(RTRIM(MaHD), 3) FROM HopDong WHERE MaHD LIKE '202%'"
+    rows:
+      HopDong:
+        - [ "1999-100", "NV131" ]
+        - [ "2026-200", "NV132" ]
+    expected: [ [ "1999-100", "100" ], [ "2026-200", "200" ] ]
+resultTypes: [ "varchar", "varchar" ]

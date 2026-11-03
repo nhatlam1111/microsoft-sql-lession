@@ -15,6 +15,8 @@ export const MESSAGES: Record<Exclude<FailureKind, 'blocked'>, string> = {
   rate: 'Bạn chạy hơi nhanh, chờ vài giây rồi thử lại.',
   'unknown-exercise': MISSING,
   'bad-request': MISSING,
+  locked: 'Bài này chưa mở. Làm xong bài trước đã.',
+  'not-enough-coins': 'Chưa đủ coin để mở test này.',
 };
 
 export const WAITING = 'Đang khởi động database, lần đầu có thể mất tới 1 phút…';

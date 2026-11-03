@@ -11,12 +11,12 @@ function isReply(body: unknown): boolean {
   return b.ok === true || (b.ok === false && typeof b.kind === 'string');
 }
 
-export function createExerciseClient(
+export function createApiCaller(
   base: string,
   fetchImpl: typeof fetch = (input, init) => fetch(input, init),
   opts = { slowMs: 3000, timeoutMs: 120_000 },
 ) {
-  async function call<T>(path: string, body: unknown, code: string | null, onSlow?: () => void): Promise<T | ApiFailure> {
+  return async function call<T>(path: string, body: unknown, code: string | null, onSlow?: () => void): Promise<T | ApiFailure> {
     if (!base) return NETWORK;
     const controller = new AbortController();
     // A sleeping database can take about a minute to wake; say so instead of looking stuck.
@@ -39,7 +39,11 @@ export function createExerciseClient(
       clearTimeout(slow);
       clearTimeout(timeout);
     }
-  }
+  };
+}
+
+export function createExerciseClient(base: string, fetchImpl?: typeof fetch, opts?: { slowMs: number; timeoutMs: number }) {
+  const call = createApiCaller(base, fetchImpl, opts);
 
   return {
     /** Wakes the database early; skipped without a code, so visitors who cannot run anything do not wake it. */

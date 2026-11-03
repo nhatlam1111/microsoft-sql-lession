@@ -1,0 +1,57 @@
+id: don-nghi-da-duyet
+chapter: '2-3'
+order: 1
+title: Đơn phép năm đã duyệt
+difficulty: de
+lessons: [ 2-2-where-loc-nhu-autofilter, 2-3-and-or-in-between-like ]
+prompt: >-
+  Nhân sự cần các đơn có loại nghỉ là “Phép năm” và trạng thái là “Đã duyệt”; đơn phải đạt cả hai điều kiện. Từ bảng DonNghi, lấy mã đơn, mã nhân viên và số ngày.
+columns: [ MaDon, MaNV, SoNgay ]
+ordered: false
+tables:
+  DonNghi:
+    MaDon: varchar(10) NOT NULL
+    MaNV: varchar(10) NOT NULL
+    LoaiNghi: nvarchar(20) NOT NULL
+    SoNgay: decimal(4,1) NOT NULL
+    TrangThai: nvarchar(20) NOT NULL
+answer: "SELECT MaDon, MaNV, SoNgay FROM DonNghi WHERE LoaiNghi = N'Phép năm' AND TrangThai = N'Đã duyệt'"
+tests:
+  - id: 1
+    visible: true
+    rows:
+      DonNghi:
+        - [ "D01", "NV101", "Phép năm", 2, "Đã duyệt" ]
+        - [ "D02", "NV102", "Nghỉ ốm", 1, "Từ chối" ]
+    expected: [ [ "D01", "NV101", "2.0" ] ]
+  - id: 2
+    visible: true
+    rows:
+      DonNghi:
+        - [ "D05", "NV105", "Phép năm", 1.5, "Đã duyệt" ]
+        - [ "D06", "NV106", "Việc riêng", 3, "Chờ duyệt" ]
+        - [ "D07", "NV107", "Phép năm", 4, "Đã duyệt" ]
+    expected: [ [ "D05", "NV105", "1.5" ], [ "D07", "NV107", "4.0" ] ]
+  - id: 3
+    catches: "SELECT MaDon, MaNV, SoNgay FROM DonNghi WHERE LoaiNghi = N'Phép năm'"
+    rows:
+      DonNghi:
+        - [ "D11", "NV111", "Phép năm", 2, "Chờ duyệt" ]
+        - [ "D12", "NV112", "Phép năm", 1, "Đã duyệt" ]
+    expected: [ [ "D12", "NV112", "1.0" ] ]
+  - id: 4
+    catches: "SELECT MaDon, MaNV, SoNgay FROM DonNghi WHERE TrangThai = N'Đã duyệt'"
+    rows:
+      DonNghi:
+        - [ "D21", "NV121", "Nghỉ ốm", 2, "Đã duyệt" ]
+        - [ "D22", "NV122", "Phép năm", 3, "Đã duyệt" ]
+    expected: [ [ "D22", "NV122", "3.0" ] ]
+  - id: 5
+    catches: "SELECT MaDon, MaNV, SoNgay FROM DonNghi WHERE LoaiNghi = N'Phép năm' OR TrangThai = N'Đã duyệt'"
+    rows:
+      DonNghi:
+        - [ "D31", "NV131", "Phép năm", 1, "Từ chối" ]
+        - [ "D32", "NV132", "Việc riêng", 2, "Đã duyệt" ]
+        - [ "D33", "NV133", "Phép năm", 2, "Đã duyệt" ]
+    expected: [ [ "D33", "NV133", "2.0" ] ]
+resultTypes: [ "varchar", "varchar", "decimal" ]

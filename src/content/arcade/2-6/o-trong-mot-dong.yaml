@@ -1,0 +1,60 @@
+id: o-trong-mot-dong
+chapter: '2-6'
+order: 3
+title: Danh sách nơi làm việc
+difficulty: vua
+lessons: [ 2-4-sap-xep-va-top, 2-5-null-o-trong, 2-6-distinct-bo-dong-trung ]
+prompt: >-
+  Từ bảng NhanSu, lấy danh sách chi nhánh đang được ghi, mỗi giá trị một dòng, xếp tăng dần. Những người chưa được phân chi nhánh (ô NULL) gộp thành một dòng NULL trong kết quả, và SQL Server tự xếp dòng này lên đầu.
+columns: [ ChiNhanh ]
+ordered: true
+tables:
+  NhanSu:
+    MaNV: varchar(10) NOT NULL
+    ChiNhanh: nvarchar(30) NULL
+answer: "SELECT DISTINCT ChiNhanh FROM NhanSu ORDER BY ChiNhanh ASC"
+tests:
+  - id: 1
+    visible: true
+    rows:
+      NhanSu:
+        - [ "NV301", "Cần Thơ" ]
+        - [ "NV302", "Hà Nội" ]
+        - [ "NV303", "Hà Nội" ]
+        - [ "NV304", null ]
+    expected: [ [ null ], [ "Cần Thơ" ], [ "Hà Nội" ] ]
+  - id: 2
+    visible: true
+    rows:
+      NhanSu:
+        - [ "NV305", "Đà Nẵng" ]
+        - [ "NV306", null ]
+        - [ "NV307", null ]
+        - [ "NV308", "Huế" ]
+    expected: [ [ null ], [ "Đà Nẵng" ], [ "Huế" ] ]
+  - id: 3
+    catches: "SELECT DISTINCT ChiNhanh FROM NhanSu WHERE ChiNhanh IS NOT NULL OR MaNV IN ('NV304', 'NV306', 'NV307') ORDER BY ChiNhanh ASC"
+    rows:
+      NhanSu:
+        - [ "NV311", null ]
+        - [ "NV312", "Vinh" ]
+    expected: [ [ null ], [ "Vinh" ] ]
+  - id: 4
+    catches: "SELECT TOP (4) ChiNhanh FROM NhanSu GROUP BY ChiNhanh ORDER BY ChiNhanh ASC"
+    rows:
+      NhanSu:
+        - [ "NV321", "An Giang" ]
+        - [ "NV322", "Bắc Ninh" ]
+        - [ "NV323", "Cà Mau" ]
+        - [ "NV324", "Đồng Nai" ]
+        - [ "NV325", null ]
+    expected: [ [ null ], [ "An Giang" ], [ "Bắc Ninh" ], [ "Cà Mau" ], [ "Đồng Nai" ] ]
+  - id: 5
+    catches: "SELECT DISTINCT ChiNhanh FROM NhanSu WHERE ChiNhanh IS NULL OR LEN(ChiNhanh) >= 3 ORDER BY ChiNhanh ASC"
+    rows:
+      NhanSu:
+        - [ "NV331", "Hà Nội" ]
+        - [ "NV332", null ]
+        - [ "NV333", "HN" ]
+    expected: [ [ null ], [ "Hà Nội" ], [ "HN" ] ]
+resultTypes: [ "nvarchar" ]

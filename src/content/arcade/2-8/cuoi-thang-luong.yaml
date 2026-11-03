@@ -1,0 +1,52 @@
+id: cuoi-thang-luong
+chapter: '2-8'
+order: 3
+title: Kỳ lương đầu tiên
+difficulty: vua
+lessons: [ 2-8-ham-ngay-tham-nien ]
+prompt: >-
+  Kỳ lương đầu tiên của người mới kết thúc vào ngày cuối của tháng họ vào làm. Từ bảng NhanSu, lấy mã nhân viên và ngày cuối tháng đó cho mọi dòng.
+columns: [ MaNV, Cuối kỳ lương đầu ]
+ordered: false
+tables:
+  NhanSu:
+    MaNV: varchar(10) NOT NULL
+    NgayVaoLam: date NOT NULL
+answer: "SELECT MaNV, EOMONTH(NgayVaoLam) AS [Cuối kỳ lương đầu] FROM NhanSu"
+tests:
+  - id: 1
+    visible: true
+    rows:
+      NhanSu:
+        - [ "NV201", "2026-03-10" ]
+        - [ "NV202", "2026-05-20" ]
+    expected: [ [ "NV201", "2026-03-31" ], [ "NV202", "2026-05-31" ] ]
+  - id: 2
+    visible: true
+    rows:
+      NhanSu:
+        - [ "NV205", "2026-07-01" ]
+        - [ "NV206", "2026-08-31" ]
+    expected: [ [ "NV205", "2026-07-31" ], [ "NV206", "2026-08-31" ] ]
+  - id: 3
+    catches: "SELECT MaNV, DATEFROMPARTS(YEAR(NgayVaoLam), MONTH(NgayVaoLam), 31) FROM NhanSu WHERE MONTH(NgayVaoLam) IN (1, 3, 5, 7, 8, 10, 12)"
+    rows:
+      NhanSu:
+        - [ "NV211", "2026-04-10" ]
+        - [ "NV212", "2026-10-05" ]
+    expected: [ [ "NV211", "2026-04-30" ], [ "NV212", "2026-10-31" ] ]
+  - id: 4
+    catches: "SELECT MaNV, DATEADD(day, 30, DATEADD(day, 1 - DAY(NgayVaoLam), NgayVaoLam)) FROM NhanSu"
+    rows:
+      NhanSu:
+        - [ "NV221", "2026-06-15" ]
+        - [ "NV222", "2026-01-15" ]
+    expected: [ [ "NV221", "2026-06-30" ], [ "NV222", "2026-01-31" ] ]
+  - id: 5
+    catches: "SELECT MaNV, EOMONTH(NgayVaoLam) FROM NhanSu WHERE MONTH(NgayVaoLam) >= 3"
+    rows:
+      NhanSu:
+        - [ "NV231", "2024-02-10" ]
+        - [ "NV232", "2026-03-03" ]
+    expected: [ [ "NV231", "2024-02-29" ], [ "NV232", "2026-03-31" ] ]
+resultTypes: [ "varchar", "date" ]

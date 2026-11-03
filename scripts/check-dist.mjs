@@ -91,6 +91,39 @@ export function findAnswerLeaks(files, answers) {
   }).map(f => f.path);
 }
 
+const textCells = tests => tests
+  .flatMap(t => [...Object.values(t.rows ?? {}).flat(2), ...(t.expected ?? []).flat()])
+  .filter(v => typeof v === 'string');
+
+/**
+ * Text that sits in a challenge's hidden tests and nowhere the learner may see it.
+ * Short values and numbers are left out: they turn up in any page by chance. So this is a second line of defence;
+ * the first is publicChallenge, which never hands hidden tests to a page.
+ * @param {{ title: string; prompt: string; tests: { visible?: boolean; rows?: object; expected?: unknown[][] }[] }} challenge
+ * @returns {string[]}
+ */
+export function hiddenOnlyValues(challenge) {
+  const shown = new Set(textCells(challenge.tests.filter(t => t.visible)));
+  const page = `${challenge.title} ${challenge.prompt}`;
+  return [...new Set(textCells(challenge.tests.filter(t => !t.visible)))]
+    .filter(v => v.length >= 4 && !shown.has(v) && !page.includes(v));
+}
+
+/**
+ * The values that made it into the main part of a built page; the site-wide menus around it may share a word by chance.
+ * A value counts only as a whole, so 500000 is not found inside 5000000.
+ * @param {string} html @param {string[]} values
+ * @returns {string[]}
+ */
+export function findHiddenLeaks(html, values) {
+  const main = html.match(/<main\b[\s\S]*<\/main>/)?.[0] ?? html;
+  const hay = squeeze(main);
+  return values.filter(v => {
+    const needle = squeeze(v).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return new RegExp(`(?<![\\p{L}\\p{N}])${needle}(?![\\p{L}\\p{N}])`, 'u').test(hay);
+  });
+}
+
 /**
  * Exercise pages a lesson page does not link to; the lesson's "Bài tập" list must point at every one.
  * @param {string} html @param {string} lesson @param {number} count @param {string} base
@@ -177,6 +210,24 @@ function main() {
     ? walk(dist).filter(f => /\.(html|js|json)$/.test(f)).map(f => ({ path: relative(dist, f).split(sep).join('/'), text: readFileSync(f, 'utf8') }))
     : [];
   for (const leak of findAnswerLeaks(shipped, answers)) errors.push(`dist/${leak} có chứa câu đáp án hoặc câu kiểm tra của bài tập`);
+
+  const arcadeDir = join('src', 'content', 'arcade');
+  const challenges = existsSync(arcadeDir)
+    ? readdirSync(arcadeDir, { recursive: true }).filter(f => f.endsWith('.yaml')).map(f => parseYaml(readFileSync(join(arcadeDir, f), 'utf8')))
+    : [];
+  if (challenges.length && !isFile('luyen-sql/index.html')) errors.push('thiếu dist/luyen-sql/index.html');
+  for (const c of challenges) {
+    const page = `luyen-sql/${c.id}/index.html`;
+    if (!isFile(page)) {
+      errors.push(`thiếu trang bài luyện ${c.id}: dist/${page}`);
+      continue;
+    }
+    for (const value of findHiddenLeaks(readFileSync(join(dist, page), 'utf8'), hiddenOnlyValues(c))) errors.push(`dist/${page} có dữ liệu hidden test: ${value}`);
+  }
+  // Lesson pages stay out of this scan: an Arcade answer may match a sample statement taught there, which is no leak.
+  const arcadeFiles = shipped.filter(f => f.path.startsWith('luyen-sql/') || f.path.startsWith('_astro/'));
+  const secrets = challenges.flatMap(c => [c.answer, ...c.tests.flatMap(t => (t.catches ? [t.catches] : []))]);
+  for (const leak of findAnswerLeaks(arcadeFiles, secrets)) errors.push(`dist/${leak} có chứa đáp án hoặc câu sai mẫu của bài luyện`);
 
   if (errors.length) {
     for (const e of errors) console.error(e);
