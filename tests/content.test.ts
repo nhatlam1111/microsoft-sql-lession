@@ -16,7 +16,6 @@ const LEGACY_LAYOUT_SLUGS = new Set([
 
 // Frozen migration list: lessons with a query keep the old subsections until each one is edited; remove a lesson when it moves to two.
 const PENDING_TWO_SUBSECTIONS = new Set([
-  '3-8-union-gop-danh-sach', '3-9-subquery',
   '3-10-dem-co-dieu-kien', '4-1-cte-tung-buoc', '4-2-xep-hang-row-number-rank',
   '4-3-luy-ke-so-thang-truoc', '4-4-pivot-xoay-bang', '4-6-soi-chat-luong-du-lieu',
 ]);
@@ -75,10 +74,12 @@ describe('lesson files', () => {
       // The learner sees the statement first, then its parts; the scenario is the only example.
       const main = lessonMainSection(f.body);
       const [first, second] = main.split(/^### /m).slice(1);
-      expect(main.match(/<Sql\b/g), f.slug).toHaveLength(1);
+      // One runnable statement; read-only excerpts are allowed by quy-uoc §2 and must disable copying.
+      const sqlBlocks = [...main.matchAll(/<Sql\b([\s\S]*?)\/>/g)];
+      expect(sqlBlocks.filter(block => !/\bcopy=\{false\}/.test(block[1])), f.slug).toHaveLength(1);
       expect(first.indexOf('<Excel'), f.slug).toBeLessThan(first.indexOf('<Sql'));
       expect(first.indexOf('<Sql'), f.slug).toBeLessThan(first.indexOf('<LineMap'));
-      expect(main.replace(/<RunFlow[\s\S]*?\]\} \/>/, '').replace(/<Sql\b[\s\S]*?\/>/, ''), f.slug).not.toMatch(/`SELECT [^`]*`/);
+      expect(main.replace(/<RunFlow[\s\S]*?\]\}(?: note="[^"]*")? \/>/, '').replace(/<Sql\b[\s\S]*?\/>/g, ''), f.slug).not.toMatch(/`SELECT [^`]*`/);
       expect(second, f.slug).not.toContain('<Messages');
       if (second.includes('<RunFlow')) expect(second.indexOf('<RunFlow'), f.slug).toBeLessThan(second.indexOf('<Result'));
       expect(second.slice(second.lastIndexOf('<Result')), f.slug).toContain('chị Hạnh');

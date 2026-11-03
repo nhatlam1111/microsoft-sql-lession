@@ -17,58 +17,31 @@ summary: Chồng hai danh sách bằng UNION hoặc UNION ALL, kiểm dòng trù
 
 ## Tình huống
 
+Tháng 10/2026, chị Hạnh cần một danh sách để gửi phiếu đối chiếu:
+
 <Chat who="Chị Hạnh · Phòng Nhân sự" time="09:10" initial="H">
-Chị có hai nhóm cần rà lại trong tháng 9: người có đơn nghỉ được duyệt và người có giờ vào sau 8 giờ. Em gộp mã nhân viên thành một danh sách, mỗi mã chỉ xuất hiện một lần để chị gửi phiếu đối chiếu nhé.
+Chị có hai nhóm cần rà lại trong tháng 9: người có đơn nghỉ được duyệt và người có giờ vào sau 8 giờ. Em gộp mã nhân viên thành một danh sách, mỗi mã chỉ xuất hiện một lần nhé.
 </Chat>
 
-Với đơn nghỉ, lấy đơn đã duyệt có ngày bắt đầu từ 01/09 đến trước 01/10/2026, như bài 3.1. Với chấm công, lấy ngày trong tháng 9 có giờ vào sau 08:00. Mốc giờ này chỉ là giả định chọn hồ sơ để rà soát; chưa đủ kết luận đi muộn hay vi phạm vì chưa xét ca làm và lý do.
+Phạm vi: đơn `DonNghiPhep` đã duyệt có `TuNgay` từ `01/09` đến trước `01/10/2026`; dòng `ChamCong` có `Ngay` trong cùng khoảng và `GioVao` sau `08:00`. Mốc giờ chỉ để rà soát, chưa đủ kết luận đi muộn hay vi phạm vì chưa xét ca làm và lý do.
 
 <Key>Cần các mã thuộc ít nhất một trong hai nhóm, mỗi mã một dòng.</Key>
 
 ## Từ hai danh sách đến một danh sách chung
 
-### Chồng dòng và kết bảng
+### Từ dán chồng trong Excel đến UNION
 
-Trong Excel, bạn có thể chép cột mã của danh sách thứ hai xuống dưới danh sách thứ nhất, rồi dùng **Remove Duplicates** để bỏ các dòng trùng trong vùng đã chọn. Trong SQL, **`UNION`** làm việc tương tự: chồng kết quả của các câu `SELECT` thành một danh sách, rồi bỏ dòng trùng. `JOIN` ở các bài trước lại kết các dòng theo điều kiện để lấy thêm cột liên quan.
+Trong Excel, bạn chép cột mã của nhóm thứ hai xuống dưới nhóm thứ nhất, chọn cả vùng rồi dùng **Remove Duplicates** (bỏ dòng trùng). Hình minh họa trích hai mã của mỗi nhóm trước khi bỏ trùng; `A2` và `A4` cùng là `NV005`. Cột nguồn chỉ giúp đọc hình, không nằm trong vùng bỏ trùng `A1:A5`.
 
-Mỗi câu `SELECT` ở hai phía gọi là một **nhánh**. Nhánh đơn nghỉ trả `9` dòng mã; nhánh chấm công trả `76` dòng, mỗi dòng là mã của một lần có giờ vào sau mốc. Một mã có thể lặp lại ở nhiều ngày hoặc xuất hiện ở cả hai nhánh.
+<Excel sheets="Gộp mã để gửi phiếu" mark={['A2','A4']} rows={[
+  ['MaNV','Nguồn để đối chiếu hình'],
+  ['NV005','Đơn nghỉ'],
+  ['NV012','Đơn nghỉ'],
+  ['NV005','Giờ vào'],
+  ['NV001','Giờ vào'],
+]} />
 
-Hai bảng dưới trích một số dòng của hai kết quả đã kiểm; đây chưa phải danh sách đã gộp. Dòng đánh dấu ở mỗi bảng cùng mang mã `NV005`; thứ tự dòng chưa được bảo đảm vì chưa có `ORDER BY`.
-
-<Result columns={["MaNV"]} rows={[["NV005"],["NV012"],["NV013"],["NV016"],["NV022"]]} total={9} mark={[1]} />
-
-<Result columns={["MaNV"]} rows={[["NV001"],["NV002"],["NV003"],["NV004"],["NV005"],["NV006"],["NV007"],["NV008"]]} total={76} mark={[5]} />
-
-Nếu chỉ nối hai cột mã này mà chưa bỏ trùng, bạn có `85` dòng, không phải `85` mã khác nhau. **`UNION ALL`** giữ mọi lần xuất hiện, kể cả các lần lặp ngay trong một nhánh; `UNION` bỏ trùng trên kết quả chung. Không cần thêm `DISTINCT` ở từng nhánh chỉ để đạt yêu cầu mỗi mã một dòng của chị Hạnh.
-
-### Cột phải cùng vị trí và dòng trùng phải giống toàn bộ
-
-Hai nhánh phải trả **cùng số cột**, các vị trí tương ứng có **kiểu dữ liệu tương thích** — dùng cùng kiểu hoặc có thể **chuyển kiểu ngầm** về kiểu chung (bài 1.3). Với bài này, cả hai đều trả một cột `MaNV` kiểu `varchar`, nên có thể chồng lên nhau. Nếu một nhánh thêm `Ngay` còn nhánh kia chỉ có `MaNV`, câu gộp sẽ không hợp lệ.
-
-SQL gộp theo **vị trí cột**, không dò theo tên. Nếu lấy hai cột, vị trí thứ nhất của cả hai nhánh phải cùng mang nghĩa mã nhân viên; vị trí thứ hai cùng mang nghĩa nguồn. Đảo mã và nguồn ở một nhánh có thể tạo kết quả sai nghĩa ngay cả khi kiểu vẫn tương thích. Tên cột kết quả lấy từ nhánh đầu.
-
-Khi cần biết mã đến từ đâu, thêm một chuỗi cố định làm nhãn nguồn ở mỗi nhánh. Câu dưới vẫn dùng `UNION`, nhưng xét trùng theo cả cặp `MaNV` và `Nguon`:
-
-<Sql code={`SELECT MaNV, N'Đơn nghỉ' AS [Nguon]
-FROM DonNghiPhep
-WHERE TrangThai = N'Đã duyệt'
-\tAND TuNgay >= '20260901' AND TuNgay < '20261001'
-UNION
-SELECT MaNV, N'Giờ vào'
-FROM ChamCong
-WHERE Ngay >= '20260901' AND Ngay < '20261001'
-\tAND GioVao > '08:00'
-ORDER BY MaNV, Nguon;`} />
-
-<Result columns={["MaNV","Nguon"]} rows={[["NV001","Giờ vào"],["NV002","Giờ vào"],["NV003","Giờ vào"],["NV004","Giờ vào"],["NV005","Đơn nghỉ"],["NV005","Giờ vào"],["NV006","Giờ vào"],["NV007","Giờ vào"],["NV008","Giờ vào"],["NV009","Giờ vào"]]} total={49} mark={[5,6]} />
-
-Hai dòng đánh dấu, `NV005` với nguồn `Đơn nghỉ` và `NV005` với nguồn `Giờ vào`, khác nhau nên đều được giữ. Các lần cùng mã và cùng nguồn bị gộp lại. Vì vậy thêm nhãn nguồn giúp đối chiếu, nhưng không còn đáp ứng yêu cầu mỗi mã chỉ một dòng của tình huống đầu bài.
-
-Ở bài này chỉ cần nắm cách chồng các cột có cùng ý nghĩa và chọn đúng mức bỏ trùng. Không dựa vào chuyển kiểu ngầm để bỏ qua kiểm cấu trúc.
-
-### Câu lệnh cho tình huống
-
-Mỗi nhánh tự lọc bảng của mình. Một `ORDER BY` ở cuối sắp xếp **toàn bộ kết quả sau khi gộp**; không có nó thì không có thứ tự dòng được bảo đảm, dù lần chạy trước nhìn như đã tăng dần.
+Trong SQL, **UNION** chồng kết quả của các câu `SELECT` rồi bỏ dòng trùng. Mỗi câu ở một phía gọi là một **nhánh**; mỗi nhánh tự lọc nguồn của mình. Với yêu cầu mỗi mã một dòng, câu lệnh là:
 
 <Sql code={`SELECT MaNV
 FROM DonNghiPhep
@@ -81,15 +54,26 @@ WHERE Ngay >= '20260901' AND Ngay < '20261001'
 \tAND GioVao > '08:00'
 ORDER BY MaNV;`} />
 
-<Result columns={["MaNV"]} rows={[["NV001"],["NV002"],["NV003"],["NV004"],["NV005"],["NV006"],["NV007"],["NV008"],["NV009"],["NV010"]]} total={41} />
+<LineMap rows={[
+  ['SELECT MaNV … FROM DonNghiPhep', 'Nhánh đầu lấy mã của đơn, không lấy thêm chi tiết đơn. Ví dụ: NV005 có một đơn đạt điều kiện.'],
+  ["WHERE TrangThai = N'Đã duyệt' AND TuNgay >= '20260901' AND TuNgay < '20261001'", 'Chỉ chọn đơn đã duyệt bắt đầu trong tháng 9. Ví dụ: đơn của NV005 bắt đầu 10/09/2026 được lấy.'],
+  ['UNION', 'Chồng hai kết quả và bỏ dòng giống nhau, kể cả trùng ngay trong một nhánh. Ví dụ: NV005 ở cả hai nguồn chỉ còn một dòng mã.'],
+  ['SELECT MaNV … FROM ChamCong', 'Nhánh sau lấy mã của từng dòng chấm công đạt điều kiện. Ví dụ: NV005 có mặt ở nguồn này nữa.'],
+  ["WHERE Ngay >= '20260901' AND Ngay < '20261001' AND GioVao > '08:00'", 'Chọn ngày trong tháng 9 có giờ vào sau mốc, không nhận đúng 08:00. Ví dụ: 08:15 nằm sau mốc 08:00.'],
+  ['ORDER BY MaNV', 'Một ORDER BY ở cuối sắp toàn bộ kết quả chung tăng dần. Ví dụ: NV001 đứng trước NV005 sau khi gộp.'],
+]} />
 
-Gửi chị Hạnh danh sách `41` mã khác nhau; bảng trên trích `10` dòng đầu. Mã thuộc một nhóm hay cả hai nhóm đều chỉ xuất hiện một lần. Đây là danh sách để đối chiếu theo các điều kiện đã chọn, không phải kết luận người nào nghỉ không phép hoặc đi muộn.
+Hai nhánh phải có **cùng số cột**, các vị trí tương ứng có **kiểu dữ liệu tương thích**: cùng kiểu hoặc có thể **chuyển kiểu ngầm** về kiểu chung (bài 1.3). Ở đây đều là một cột `MaNV` kiểu `varchar`. SQL gộp theo **vị trí**, không dò tên cột; `JOIN` ở các bài trước lại kết các dòng theo điều kiện để lấy thông tin liên quan.
 
-Nếu đổi duy nhất `UNION` thành `UNION ALL`, hai nhánh vẫn được lọc như cũ nhưng kết quả có `85` dòng. Chọn cách này khi cần giữ từng lần xuất hiện để xử lý tiếp; nếu cần ngày của mỗi lần chấm công, phải đưa thêm `Ngay` và một cột tương ứng có ý nghĩa ở nhánh còn lại. `UNION ALL` không làm bước bỏ trùng; thời gian chạy thực tế còn tùy dữ liệu và cách thực thi.
+**UNION ALL** giữ mọi lần xuất hiện. Thay duy nhất `UNION` trong câu trên bằng `UNION ALL` sẽ giữ `85` dòng từ `9` dòng đơn nghỉ và `76` dòng chấm công, gồm mã lặp ở nhiều ngày hoặc ở cả hai nguồn. Đây là số lần xuất hiện, không phải số mã khác nhau; `UNION` đã bỏ trùng nên không cần thêm `DISTINCT` ở từng nhánh.
+
+`UNION` xét trùng theo **toàn bộ cột được chọn**. Nếu cần nguồn ở bài tập, thêm `N'Đơn nghỉ' AS [Nguon]` sau `MaNV` ở nhánh đầu, `N'Giờ vào'` ở cùng vị trí nhánh sau; tên cột chung lấy từ nhánh đầu và `ORDER BY` cuối dùng tên đó. Với phạm vi đang xét, kết quả có `49` cặp mã–nguồn: `NV005` với `Đơn nghỉ` khác `NV005` với `Giờ vào`, nên giữ cả hai. Các lần cùng mã, cùng nguồn mới gộp lại.
+
+Ở bài này chỉ cần chồng các cột cùng ý nghĩa và chọn mức bỏ trùng. Đổi nhãn hay dùng `UNION ALL` không sửa dữ liệu nguồn; thời gian chạy còn tùy dữ liệu và cách thực thi. Cách đọc kế hoạch thực thi để xem máy xử lý học ở bài 5.7.
 
 ### SQL Server chạy câu này thế nào
 
-Về logic, trong mỗi nhánh, `FROM` xác định nguồn, `WHERE` lọc dòng rồi `SELECT` chọn cột `MaNV`. **Hai nhánh độc lập**: `UNION` gộp kết quả và bỏ dòng trùng, sau đó `ORDER BY` sắp danh sách chung. Đây là mô hình logic, không phải thứ tự thực thi vật lý hoặc yêu cầu SQL Server phải chạy xong nhánh trên rồi mới chạy nhánh dưới.
+Theo **thứ tự xử lý logic**, mỗi nhánh đi từ `FROM` → `WHERE` → `SELECT`, rồi hai kết quả cùng vào `UNION`, sau đó `ORDER BY` sắp xếp. Hai nhánh độc lập; sơ đồ không phải thứ tự thực thi vật lý. Hai thẻ đầu tóm tắt nhánh đã lọc, nên bảng kết quả của chúng chỉ còn mã:
 
 <RunFlow query={`SELECT MaNV
 FROM DonNghiPhep
@@ -105,8 +89,9 @@ ORDER BY MaNV;`} steps={[
     clause: "SELECT",
     title: "Nhánh đơn nghỉ: lấy mã sau lọc.",
     focus: "SELECT MaNV\nFROM DonNghiPhep\nWHERE TrangThai = N'Đã duyệt'\n\tAND TuNgay >= '20260901' AND TuNgay < '20261001'",
+    input: "Bảng `DonNghiPhep`; nhánh này tự lọc `TrangThai`, `TuNgay` rồi chọn mã.",
     meaning: "`SELECT` trả cột `MaNV` sau khi `FROM` chọn nguồn và `WHERE` lọc đơn của nhánh này.",
-    detail: "`SELECT` ở nhánh `DonNghiPhep` trả `9` dòng mã của đơn đã duyệt có `TuNgay` trong tháng 9/2026. `NV005` xuất hiện một lần; bảng dưới có đủ `9` dòng.",
+    detail: "`9` dòng, `1` cột `MaNV`; bảng dưới có đủ các mã của nhánh đơn nghỉ.",
     sql: `SELECT MaNV
 FROM DonNghiPhep
 WHERE TrangThai = N'Đã duyệt'
@@ -119,8 +104,9 @@ WHERE TrangThai = N'Đã duyệt'
     clause: "SELECT",
     title: "Nhánh chấm công: lấy mã sau lọc.",
     focus: "SELECT MaNV\nFROM ChamCong\nWHERE Ngay >= '20260901' AND Ngay < '20261001'\n\tAND GioVao > '08:00'",
+    input: "Bảng `ChamCong`; nhánh này tự lọc `Ngay`, `GioVao` rồi chọn mã.",
     meaning: "`SELECT` của nhánh chấm công chọn cột mã từ nguồn riêng; không lấy kết quả nhánh đơn nghỉ làm đầu vào.",
-    detail: "`SELECT` ở nhánh `ChamCong` trả `76` lần mã xuất hiện, sau khi lọc `Ngay` trong tháng 9/2026 và `GioVao` sau `08:00`. Cùng mã có thể lặp ở nhiều ngày. Hình trích `10` dòng; có `NV005` như ở nhánh đơn nghỉ.",
+    detail: "`76` dòng, `1` cột `MaNV`, có thể lặp mã theo ngày; hình trích `10` dòng, gồm `NV005` như ở nhánh đơn nghỉ.",
     sql: `SELECT MaNV
 FROM ChamCong
 WHERE Ngay >= '20260901' AND Ngay < '20261001'
@@ -134,7 +120,7 @@ WHERE Ngay >= '20260901' AND Ngay < '20261001'
     title: "Gộp và bỏ dòng mã trùng.",
     focus: "UNION",
     meaning: "`UNION` kết hợp hai kết quả và chỉ giữ một dòng cho mỗi giá trị `MaNV`, vì mỗi nhánh chọn đúng một cột.",
-    detail: "`UNION` nhận `9` dòng từ đơn nghỉ và `76` dòng từ chấm công, trả `41` mã khác nhau. Hai lần `NV005` ở hai nhánh chỉ còn một dòng. Chưa có `ORDER BY` nên không dựa vào thứ tự trong hình.",
+    detail: "`41` dòng, `1` cột mã; `NV005` chỉ còn một dòng. Chưa sắp xếp nên không dựa vào thứ tự trong hình.",
     sql: `SELECT MaNV
 FROM DonNghiPhep
 WHERE TrangThai = N'Đã duyệt'
@@ -153,7 +139,7 @@ WHERE Ngay >= '20260901' AND Ngay < '20261001'
     title: "Sắp toàn bộ danh sách chung.",
     focus: "ORDER BY MaNV",
     meaning: "`ORDER BY` ở cuối sắp xếp kết quả chung theo mã tăng dần, không sắp riêng từng nhánh.",
-    detail: "`ORDER BY` giữ nguyên `41` mã sau `UNION`, chỉ đổi thứ tự hiển thị. Hình trích `10` dòng đầu; đây là danh sách gửi chị Hạnh.",
+    detail: "Vẫn `41` dòng, `1` cột mã; hình trích `10` dòng đầu của danh sách gửi chị Hạnh.",
     sql: `SELECT MaNV
 FROM DonNghiPhep
 WHERE TrangThai = N'Đã duyệt'
@@ -169,6 +155,10 @@ ORDER BY MaNV;`,
     total: 41,
   }
 ]} note="Hai thẻ SELECT là hai đầu vào độc lập. Các mũi tên cùng đi vào UNION; chỉ ORDER BY cuối câu bảo đảm thứ tự kết quả." />
+
+<Result columns={["MaNV"]} rows={[["NV001"],["NV002"],["NV003"],["NV004"],["NV005"],["NV006"],["NV007"],["NV008"],["NV009"],["NV010"]]} total={41} />
+
+Gửi chị Hạnh danh sách `41` mã khác nhau, bảng trên trích `10` dòng đầu. Mã thuộc một nhóm hay cả hai đều chỉ có một dòng; danh sách này dùng đối chiếu theo điều kiện đã chọn, chưa phải kết luận nghỉ không phép hay đi muộn.
 
 ## Hay nhầm ở đâu
 

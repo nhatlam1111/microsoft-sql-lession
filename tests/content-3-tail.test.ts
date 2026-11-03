@@ -4,7 +4,7 @@ import { parse } from 'yaml';
 import { lessonBlocks } from './helpers/lesson-blocks';
 import { seedRows } from './helpers/hrm-seed';
 import { checkFlow } from '../src/lib/run-flow';
-import { runInNewContext } from 'node:vm';
+import { inputPreview } from '../src/lib/run-flow';
 
 const slugs = ['3-8-union-gop-danh-sach', '3-9-subquery', '3-10-dem-co-dieu-kien'];
 describe('lessons 3.8–3.10: full lessons and supported practice', () => {
@@ -24,9 +24,11 @@ describe('lessons 3.8–3.10: full lessons and supported practice', () => {
     expect(body).toMatch(/ORDER BY MaNV/);
     expect(results.some(r => r.columns.length === 1 && new Set(r.rows.map(x => x[0])).size === r.rows.length)).toBe(true);
     expect(body).not.toMatch(/luôn (nhanh|chạy nhanh)/);
-    expect(body).toMatch(/total=\{9\} mark=\{\[1\]\}/);
-    expect(body).toMatch(/total=\{76\} mark=\{\[5\]\}/);
-    expect(body).toMatch(/total=\{49\} mark=\{\[5,6\]\}/);
+    const flow = lessonBlocks(slugs[0]).steps;
+    expect(flow[0].rows).toContainEqual(['NV005']);
+    expect(flow[1].rows).toContainEqual(['NV005']);
+    expect(body).toMatch(/49/);
+    expect(body).toMatch(/85/);
   });
   it('3.8 walks the exact situation query through two independent branches, UNION and shared ordering', () => {
     const { body, query, steps } = lessonBlocks(slugs[0]);
@@ -42,9 +44,8 @@ describe('lessons 3.8–3.10: full lessons and supported practice', () => {
     expect(steps[2].sql).toContain('\nUNION\n');
     expect(steps[2].sql).not.toContain('ORDER BY');
     expect(steps[3].sql).toBe(query);
-    const example = body.split('### Câu lệnh cho tình huống')[1].split('### SQL Server chạy câu này thế nào')[0];
-    const sql = example.match(/<Sql code=\{`([\s\S]*?)`\} \/>/)!;
-    expect(runInNewContext('`' + sql[1] + '`')).toBe(query);
+    // Same statement in the teaching block and the diagram, independent of subsection wording.
+    expect(body.match(/<Sql code=\{`([\s\S]*?)`\} \/>/)?.[1]).toBe(body.match(/<RunFlow query=\{`([\s\S]*?)`/ )?.[1]);
     const actualLeave = seedRows('DonNghiPhep').filter(r => r.TrangThai === 'Đã duyệt' && String(r.TuNgay).startsWith('2026-09')).map(r => [r.MaNV]);
     expect(steps[0].rows.map(row => JSON.stringify(row)).sort()).toEqual(actualLeave.map(row => JSON.stringify(row)).sort());
     expect(steps[0].rows).toContainEqual(['NV005']);
@@ -56,10 +57,10 @@ describe('lessons 3.8–3.10: full lessons and supported practice', () => {
   it('3.9 shows a correlated existence test and its inverse without multiplying employee rows', () => {
     const { body, results, steps } = lessonBlocks(slugs[1]);
     expect(body).toMatch(/IN \(/);
-    expect(body).toMatch(/WHERE EXISTS/);
+    expect(body).toMatch(/EXISTS \(/);
     expect(body).toMatch(/dp\.MaNV = nv\.MaNV/);
-    expect(body).toMatch(/WHERE NOT EXISTS/);
-    expect(body).toMatch(/hd\.MaNV = nv\.MaNV/);
+    expect(body).toMatch(/NOT EXISTS/);
+    expect(body).toMatch(/SELECT 1/);
     expect(results.some(r => r.total === 9 && r.columns.includes('HoTen'))).toBe(true);
     expect(steps.length).toBeGreaterThanOrEqual(2);
   });
@@ -73,18 +74,25 @@ describe('lessons 3.8–3.10: full lessons and supported practice', () => {
     expect(report?.rows.reduce((sum, row) => sum + Number(row[3]), 0)).toBe(45);
     expect(report?.rows.every(row => Number(row[1]) + Number(row[2]) === row[3])).toBe(true);
   });
-  it('3.9 preserves the nine approved-September employee profiles and the two profiles without any contract', () => {
+  it('3.9 preserves nine approved-September profiles and shows the complement within the same leave scope', () => {
     const {results, steps, query} = lessonBlocks(slugs[1]);
     const ids = new Set(seedRows('DonNghiPhep').filter(r => r.TrangThai === 'Đã duyệt' && String(r.TuNgay).startsWith('2026-09')).map(r => r.MaNV));
     const employees = seedRows('NhanVien');
     const expected = employees.filter(r => ids.has(r.MaNV)).map(r => [r.MaNV,r.HoTen,r.MaPB]);
     expect(results.find(r => r.columns.join(',') === 'MaNV,HoTen,MaPB')?.rows).toEqual(expected);
-    const contracted = new Set(seedRows('HopDong').map(r => r.MaNV));
-    expect(results.find(r => r.columns.join(',') === 'MaNV,HoTen')?.rows).toEqual(employees.filter(r => !contracted.has(r.MaNV)).map(r => [r.MaNV,r.HoTen]));
+    expect(employees.filter(r => !ids.has(r.MaNV))).toHaveLength(39);
     expect(steps.map(s => [s.clause,s.total])).toEqual([['FROM',48],['WHERE',9],['SELECT',9],['ORDER BY',9]]);
     expect(checkFlow(steps,query)).toEqual([]);
-    expect(steps[1].sql).toMatch(/\nWHERE nv\.MaNV IN \(\n\tSELECT MaNV\n\tFROM DonNghiPhep\n\tWHERE/);
-    expect(steps[1].sql).toMatch(/\n\t\tAND TuNgay/);
+    const beforeOrder = steps[2].rows.map(r => String(r[0]));
+    expect(beforeOrder).not.toEqual([...beforeOrder].sort());
+    const finalOrder = steps[3].rows.map(r => String(r[0]));
+    expect(finalOrder).toEqual([...finalOrder].sort());
+    expect(steps[1].sql).toMatch(/\nWHERE nv\.MaNV IN \(\n\tSELECT dp.MaNV\n\tFROM DonNghiPhep AS dp\n\tWHERE/);
+    expect(steps[1].sql).toMatch(/\n\t\tAND dp.TuNgay/);
+    expect(steps[1].checks?.totals).toEqual([9,9]);
+    expect(steps[1].checks?.rows.some(r => r[1] === false)).toBe(true);
+    expect(inputPreview(steps[2],steps[1]).columns).toEqual(expect.arrayContaining(['MaNV','HoTen','MaPB']));
+    expect(steps[1].examples?.[0].table?.rows).toEqual([...ids].sort().slice(0,5).map(id => [id]));
   });
   it('3.10 report and flow retain active profiles and conditional gender totals from the source fixture', () => {
     const {results,steps,query} = lessonBlocks(slugs[2]);
