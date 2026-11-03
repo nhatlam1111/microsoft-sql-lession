@@ -11,7 +11,7 @@ Quy ước và template hiện hành thay mọi chỉ dẫn cũ trong spec, plan
 
 Thực hiện quy trình kiểm tra và review độc lập ở mục 4 của quy ước; ghi đúng kết quả, lỗi nền và giới hạn công cụ. Cập nhật spec/plan sau mỗi vòng sửa. Database dùng chung chỉ được đọc, câu ghi chỉ qua luồng luôn hoàn tác theo mục 5; push/deploy cần người làm khóa học đồng ý.
 
-Khi review bằng Codex, giữ model đang dùng của phiên và để agent reviewer kế thừa model đó, không chỉ định model khác. Quy định Sonnet dành cho review bằng Claude; chi tiết ở mục 4.5 của quy ước.
+Khi review bằng Codex, dùng agent reviewer **GPT-6.1 Terra**, effort **high**, với ngữ cảnh mới (`fork_turns: "none"`); truyền rõ `model: "gpt-6.1-terra"`, `reasoning_effort: "high"`. Quy định Sonnet dành cho review bằng Claude; chi tiết ở mục 4.5 của quy ước.
 
 Giao reviewer theo gói và lời dặn ở mục 4.5: ngữ cảnh mới, source/build đúng phiên bản, nền tảng Excel cơ bản, kiểm đủ tiền đề từng bài tập và ghi riêng những gì chưa xác minh. Sau nhiều bài hoặc sửa công cụ, thêm review tích hợp; xử lý từng nhận xét theo mục 4.6, không dùng Ready thay cho bằng chứng kiểm hay quyền push.
 

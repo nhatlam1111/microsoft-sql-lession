@@ -1,0 +1,70 @@
+{
+  "reports": {
+    "review-bai-3-4-inner-join-vlookup.md": "53bc6793377acbe2c92b15cd1dfa521b7d69f5d5792c376fc2294a400a051eed",
+    "review-bai-3-5-left-join.md": "30302a6211ff8145726724d708d590b4570ec1335507deb1b2463d47d775ca47",
+    "review-tich-hop-3-4-3-5.md": "0ae0de80ec15202bb86ea915dee76423b4437282993ad7a0b08b240d3325ad85"
+  },
+  "lessonReviewVersion": {
+    "baseCommit": "63f8f5c67782726a78fe794d617dfe0ae422e4cb",
+    "sourceState": "working tree before independent reviews; no product changes while lesson reviewers run",
+    "modelConfig": {
+      "model": "gpt-6.1-terra",
+      "reasoning_effort": "high",
+      "fork_turns": "none"
+    },
+    "files": {
+      "AGENTS.md": "de2afd3efc15baae2ce724287464fad2adaa8ec752723d961805fa4adcbdedbf",
+      "docs/quy-uoc.md": "9ccc223bde97e61008ad738bf3a666c739351c4ef8dd78b00d602044f5805877",
+      "docs/lesson-template.md": "849299ee2154de26e48b332d59142c598ae817c47b8b9ab7600860451c92d152",
+      "docs/ho-so-cong-ty.md": "45544f9efbe9ddbb824b50ff44e8bcb6e4fd4f50e83c59a17588a2713108eb44",
+      "src/content/lessons/2-1-chon-cot-dat-ten-cot.mdx": "99708140d987c87aa06ecd3e43156d4dd01b403a4c1f0e1d8b03c4e39bfcab2b",
+      "src/content/lessons/1-3-kieu-du-lieu.mdx": "26d7246c7af856f03556aa4def01eb911d99747e4e531ba399f558c535f97c9b",
+      "src/content/lessons/1-4-khoa-chinh-khoa-ngoai.mdx": "8a4b9cb84eb1d97c7c949b59c010aa33afc19e9bf9f8a22f75c9ebebd9a09325",
+      "src/content/lessons/1-5-doc-so-do-erd.mdx": "3ccbebde0c9cf13f031e696340bc3684cf12f9f596fbbde364c8e349a589fd2f",
+      "src/content/lessons/2-2-where-loc-nhu-autofilter.mdx": "573b060c660a4d192d8d16e283a92e63323c50bf2c683b38702a0a7ea48762a7",
+      "src/content/lessons/2-3-and-or-in-between-like.mdx": "6e0ea372e39fc2f800fa0b1310c6f19530c0fae69618fc856439bf53efc9d4a9",
+      "src/content/lessons/2-4-sap-xep-va-top.mdx": "3d2f8bec1c618aa4b77dcc16dabe0e31ef2fd52dc577859e3c5dfd0e71d4507a",
+      "src/content/lessons/3-1-count-sum-avg.mdx": "2076e84e0ebf1cc8256d58c1a2f9666554760fb1cdf95a10b78c4e20d7d1e561",
+      "src/content/lessons/3-2-group-by-pivottable.mdx": "1cfe3255b88ddd60d268250d58b5658da56aeae1287091b382714a92ee068455",
+      "src/content/lessons/3-3-having-loc-sau-khi-gop.mdx": "4dc63d840f386b70adb4b6266b756e85caced7856f81fa04d1694740a47b12d1",
+      "src/content/lessons/3-4-inner-join-vlookup.mdx": "e6ed2e14d98ccc9f9cc2afddc8c26ae05a0856fa5a2b1d65ee48194d3cec2404",
+      "src/content/exercises/3-4-inner-join-vlookup.yaml": "087c2f6ea3e3bcff545b01bdc7ace4daa9e43617bbd6c3bce2da2d437a616843",
+      "dist/bai/3-4-inner-join-vlookup/index.html": "b1b9a537608cc5c61b1487dcd1b6fbfd009ad9a145f18e311f950a0aa33ececc",
+      "src/content/lessons/2-5-null-o-trong.mdx": "680c49b308710d9dd229bbaef2ae195fee1230a0fe9d3284ab3af0d5b88fc96d",
+      "src/content/lessons/3-5-left-join.mdx": "77b55653ac1e6292e665a3bf6be14cb1bd5ca582a9246e451950cdbc438cc741",
+      "src/content/exercises/3-5-left-join.yaml": "b9f2e2615adc3cb64b7d1548b3ec38e658581890bc8aaaefb80d2cdc5d8f08c0",
+      "dist/bai/3-5-left-join/index.html": "034a68b8f93eb42e137c848d9cffc8afea4416344c383401bbea3c44b0b15be1"
+    }
+  },
+  "integrationReviewVersion": {
+    "baseCommit": "63f8f5c67782726a78fe794d617dfe0ae422e4cb",
+    "sourceState": "post-fix working tree; frozen during integration review",
+    "modelConfig": {
+      "model": "gpt-6.1-terra",
+      "reasoning_effort": "high",
+      "fork_turns": "none"
+    },
+    "files": {
+      "AGENTS.md": "de2afd3efc15baae2ce724287464fad2adaa8ec752723d961805fa4adcbdedbf",
+      "CLAUDE.md": "7adb62126ba41deb1bd557b89fceddcaa0926b76782447e1edbc6d12de6b10db",
+      "docs/quy-uoc.md": "9ccc223bde97e61008ad738bf3a666c739351c4ef8dd78b00d602044f5805877",
+      "docs/lesson-template.md": "42b1d1dbed5cd88765ad4ead3b00737eca82be0bf41f142c544f08c1837ceb4d",
+      "docs/ho-so-cong-ty.md": "45544f9efbe9ddbb824b50ff44e8bcb6e4fd4f50e83c59a17588a2713108eb44",
+      "tests/content.test.ts": "5cbe06afed53e81db790ab60775ad5f9283496062909f1f7a98e44de6c52f1f3",
+      "tests/content-flow-checks.test.ts": "f535d0d377e73f9fe337841186ac93dc42e46c061b036d1c47c4a0ec9af2a0ec",
+      "tests/content-joins.test.ts": "c1d32fcb3bcaedb0a6aad913c9c2a1bf864ace156c40c2b76ce731951ccb3ea8",
+      "src/content/lessons/3-4-inner-join-vlookup.mdx": "4ec025ba8589d7ca5396ffcaebc7245bd5a6ac28b4cb4f30eb8d0ed1bbc7fd47",
+      "src/content/exercises/3-4-inner-join-vlookup.yaml": "087c2f6ea3e3bcff545b01bdc7ace4daa9e43617bbd6c3bce2da2d437a616843",
+      "dist/bai/3-4-inner-join-vlookup/index.html": "36dc0796f8bd304195b62d53b478d100cb0aa122e1dd8775ba6e0e2539545f2b",
+      "dist/bai/3-4-inner-join-vlookup/bai-tap/1/index.html": "69f8b35348d39ac92f3caa88d5ea9d1ebc89be0452f1906bbbc42881d225eac3",
+      "dist/bai/3-4-inner-join-vlookup/bai-tap/2/index.html": "2ae2cd3ede9f5e6313123f274664d1a2192649b040a4232822fa923395baa790",
+      "dist/bai/3-4-inner-join-vlookup/bai-tap/3/index.html": "81a79fd485486db29e63d81e47a5c842bac01e2e9735b5ad4a1d9434985e349a",
+      "src/content/lessons/3-5-left-join.mdx": "94784044233590ec2a48ba89460f94b0f06c1ae02f78a169787d8605dbd2a2ca",
+      "src/content/exercises/3-5-left-join.yaml": "b9f2e2615adc3cb64b7d1548b3ec38e658581890bc8aaaefb80d2cdc5d8f08c0",
+      "dist/bai/3-5-left-join/index.html": "9105ba1e434b77a2e6d0dce60c39735bc324233d05c0e8a13adf6f575b492918",
+      "dist/bai/3-5-left-join/bai-tap/1/index.html": "172028ff5186b0ac6453810f1911623a641a6abc3b10706b7a2d94b5d0175e8c",
+      "dist/bai/3-5-left-join/bai-tap/2/index.html": "f119e51d6b9b163a54fb5d1897a4d490366b0a317df2797880dfcdaad4bbf048",
+      "dist/bai/3-5-left-join/bai-tap/3/index.html": "6b3a99a1d0797f65dc8cd92ceec393316369bdafe97087e7b6a835df526e297c"
+    }
+  }
+}

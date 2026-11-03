@@ -1,0 +1,17 @@
+{
+  "reason": "After completed review, copied test sources renamed to .ts.snapshot to avoid root Astro check treating review artifacts as application code. Original bytes and manifest source hashes preserved. Product tsconfig unchanged.",
+  "files": {
+    "snapshot/tests/content.test.ts": {
+      "storedAs": "snapshot/tests/content.test.ts.snapshot",
+      "sha256": "e39f0dfbca58125a11cb18e496e90bcbc669fd38aef6facdc2b1567b4464bd56"
+    },
+    "snapshot/tests/content-joins.test.ts": {
+      "storedAs": "snapshot/tests/content-joins.test.ts.snapshot",
+      "sha256": "6f0c0e2796490bb62bfc19f000bb647b4fe4e0744528bc7327f204e100733645"
+    },
+    "snapshot/tests/content-flow-checks.test.ts": {
+      "storedAs": "snapshot/tests/content-flow-checks.test.ts.snapshot",
+      "sha256": "8c8cc58161262dbe5cccba8900688e37d59297dbf8b9a323f491d3b51d13725a"
+    }
+  }
+}

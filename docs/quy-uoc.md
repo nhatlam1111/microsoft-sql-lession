@@ -75,7 +75,7 @@ Mọi quy ước khi viết bài, review bài và làm việc với database c�
 - Các quy tắc còn lại của mục 1–3 vẫn áp dụng, như giới hạn đoạn, không hứa quá, in đậm có chọn lọc.
 - Năm bài dùng khái niệm từ tài liệu chính thống và hình internet nguyên gốc, không tự vẽ hoặc tạo ảnh AI. Ví dụ ngoài HRM_Demo được dùng để giải thích các mô hình/quan hệ chưa có trong bộ mẫu, phải ghi rõ nguồn và không kể thành dữ kiện của công ty. Hình có alt/chú thích tiếng Việt và nguồn/tác giả/quyền sử dụng đúng thực tế; lưu hồ sơ nguồn trong `src/assets/lessons/SOURCES.md`. Không tự gán giấy phép CC khi nguồn không công bố.
 - Mạch hiện hành: 1.1 database, hai nhóm quan hệ/NoSQL và bảng/dòng/cột; 1.2 SQL Server, SQL/T-SQL/SSMS; 1.3 kiểu dữ liệu và dẫn phụ lục; 1.4 ràng buộc, NULL/NOT NULL, PK/FK; 1.5 database diagram/ERD và một sơ đồ dạng bảng PUBS của Microsoft xuyên suốt.
-- Riêng lượt làm lại 1.1–1.5 ngày 03/11/2026, người làm khóa học yêu cầu tự review: tác giả vẫn tự rà và kiểm bằng máy/UI, không giao agent review theo `4.5. Ngoại lệ này không đổi quy trình review các lượt khác.
+- Riêng lượt làm lại 1.1–1.5 ngày 03/11/2026, người làm khóa học yêu cầu tự review: tác giả vẫn tự rà và kiểm bằng máy/UI, không giao agent review theo mục 4.5. Ngoại lệ này không đổi quy trình review các lượt khác.
 
 ### 2.6 Drawer của sơ đồ (duyệt 31/10/2026)
 
@@ -181,10 +181,12 @@ Khi chuyển một bài cũ sang khung mới, cập nhật các test đang kiể
 
 Làm xong một bài thì giao cho một agent mới, không mang ngữ cảnh lúc viết, học thử và review bài đó.
 
+Xác nhận ngày 03/11/2026: phần 1 đã xong; từ lượt 3.4–3.5 trở đi chạy luôn agent review sau khi có bản đã kiểm, không chờ người làm khóa học tự review. Vẫn xử lý từng nhận xét và review tích hợp theo quy trình dưới đây; quyền review không bao gồm quyền push/deploy.
+
 - **Claude:** review bằng model **Sonnet**, effort **high**.
-- **Codex:** giữ model đang dùng của phiên; agent review độc lập kế thừa model đó, không truyền tham số đổi model và không yêu cầu Sonnet. Đây là cách review đúng quy ước của Codex, không phải phương án thay thế do thiếu Sonnet.
+- **Codex:** agent review dùng **GPT-6.1 Terra**, effort **high**. Truyền rõ `model: "gpt-6.1-terra"`, `reasoning_effort: "high"`; không để kế thừa model khác của phiên. Áp dụng cho cả review từng bài và review tích hợp.
 - Review chạy nền; review nhiều bài thì chạy vài agent một lượt theo số slot công cụ cho phép. Với Codex, dùng ngữ cảnh mới (`fork_turns: "none"`), không sao chép lịch sử viết bài. Agent dừng do hết hạn mức thì tiếp tục đúng agent và lượt đó, không tạo agent thay thế hoặc đổi model. Nếu report đã ghi trước lúc bị ngắt, tiếp tục để xác nhận không còn phần thiếu; không review lại từ đầu.
-- Ghi đúng công cụ và model thực tế đã dùng; nếu không xác định được tên model cụ thể thì ghi "kế thừa model của phiên", không đoán tên.
+- Ghi đúng công cụ, model và effort đã cấu hình cho agent. Với Codex ghi `gpt-6.1-terra`/`high`; nếu công cụ không xác nhận model thực tế thì ghi rõ giới hạn đó, không tự đoán tên hoặc nhận đã xác minh.
 - Mỗi lượt ghi vào thư mục riêng theo ngày, như `temp/review/2026-10-25-doc-lap/`; lượt mới trong cùng ngày thêm hậu tố. Không ghi đè report của lượt đã kết thúc; được hoàn thiện report đang dở khi tiếp tục cùng lượt.
 
 #### Chuẩn bị gói giao review

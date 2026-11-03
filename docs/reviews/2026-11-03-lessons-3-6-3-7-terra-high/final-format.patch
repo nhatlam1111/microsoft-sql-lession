@@ -1,0 +1,5 @@
+--- before/src/content/lessons/3-7-self-join-quan-ly.mdx
++++ after/src/content/lessons/3-7-self-join-quan-ly.mdx
+@@ -27 +27 @@
+-<Key>Tên quản lý cũng nằm trong NhanVien; cần phân biệt hai vai trò của cùng bảng.</Key>
++<Key>Tên quản lý cũng nằm trong `NhanVien`; cần phân biệt hai vai trò của cùng bảng.</Key>

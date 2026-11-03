@@ -1,0 +1,20 @@
+--- before/src/content/lessons/3-6-ket-nhieu-bang.mdx
++++ after/src/content/lessons/3-6-ket-nhieu-bang.mdx
+@@ -179 +178,0 @@
+-            "LoaiHD",
+@@ -187 +185,0 @@
+-              "Xác định thời hạn",
+@@ -194 +191,0 @@
+-              "Thử việc",
+@@ -201 +197,0 @@
+-              "Xác định thời hạn",
+@@ -208 +203,0 @@
+-              "Không xác định thời hạn",
+@@ -215 +209,0 @@
+-              "Không xác định thời hạn",
+@@ -473 +467 @@
+-Bạn gửi chị Hạnh đủ `43` dòng lương kỳ `2026-09`, mỗi mã một lần sau kiểm ứng viên và đối chiếu số dòng gốc. Báo cáo thêm họ tên, mã và loại hợp đồng tại mốc đã chốt, giữ số thực lĩnh đã lưu. Việc `NV041` còn hợp đồng đạt điều kiện ngày không tự chứng minh người đó còn làm việc; báo cáo này chỉ nhận người có lương đúng kỳ.
++Bạn gửi chị Hạnh đủ `43` dòng lương kỳ `2026-09`, mỗi mã một lần sau kiểm ứng viên và đối chiếu số dòng gốc. Báo cáo thêm họ tên, mã và loại hợp đồng tại mốc đã chốt, giữ số thực lĩnh đã lưu.
+@@ -536 +530 @@
+-Xác định mỗi dòng cần đại diện cho gì trước khi viết. Bộ chấm so kết quả, không bắt buộc bí danh hoặc một cú pháp duy nhất.
++Xác định mỗi dòng cần đại diện cho gì trước khi viết. Với danh mục chưa dùng trong ví dụ, mở **Sơ đồ database** trên thanh đầu trang để tra cặp khóa và tên cột. Bộ chấm so kết quả, không bắt buộc bí danh hoặc một cú pháp duy nhất.

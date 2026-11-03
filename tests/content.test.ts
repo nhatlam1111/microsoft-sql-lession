@@ -16,8 +16,7 @@ const LEGACY_LAYOUT_SLUGS = new Set([
 
 // Frozen migration list: lessons with a query keep the old subsections until each one is edited; remove a lesson when it moves to two.
 const PENDING_TWO_SUBSECTIONS = new Set([
-  '3-4-inner-join-vlookup', '3-5-left-join', '3-6-ket-nhieu-bang',
-  '3-7-self-join-quan-ly', '3-8-union-gop-danh-sach', '3-9-subquery',
+  '3-8-union-gop-danh-sach', '3-9-subquery',
   '3-10-dem-co-dieu-kien', '4-1-cte-tung-buoc', '4-2-xep-hang-row-number-rank',
   '4-3-luy-ke-so-thang-truoc', '4-4-pivot-xoay-bang', '4-6-soi-chat-luong-du-lieu',
 ]);

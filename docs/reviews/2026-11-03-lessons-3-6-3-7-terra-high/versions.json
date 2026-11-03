@@ -1,0 +1,195 @@
+{
+  "individualReviewVersion": {
+    "capturedUtc": "2026-11-03T14:42:10.039694+00:00",
+    "files": {
+      "AGENTS.md": "de2afd3efc15baae2ce724287464fad2adaa8ec752723d961805fa4adcbdedbf",
+      "docs/quy-uoc.md": "9ccc223bde97e61008ad738bf3a666c739351c4ef8dd78b00d602044f5805877",
+      "docs/lesson-template.md": "42b1d1dbed5cd88765ad4ead3b00737eca82be0bf41f142c544f08c1837ceb4d",
+      "docs/ho-so-cong-ty.md": "41812ce79865a2672cf22c712b99194601a9039eef29c8bd37fc460fdd0e8f4f",
+      "src/content/lessons/1-1-database-la-gi.mdx": "71cf48d1153917d0f9b05a12ef636504bf4c16551de3d8352037436f0df97939",
+      "src/content/lessons/1-2-bang-dong-cot.mdx": "23d2fd03eb0458c575452b05f89f5a88167ef2e0d9d334061a41eebb057eca68",
+      "src/content/lessons/1-3-kieu-du-lieu.mdx": "26d7246c7af856f03556aa4def01eb911d99747e4e531ba399f558c535f97c9b",
+      "src/content/lessons/1-4-khoa-chinh-khoa-ngoai.mdx": "8a4b9cb84eb1d97c7c949b59c010aa33afc19e9bf9f8a22f75c9ebebd9a09325",
+      "src/content/lessons/1-5-doc-so-do-erd.mdx": "3ccbebde0c9cf13f031e696340bc3684cf12f9f596fbbde364c8e349a589fd2f",
+      "src/content/lessons/2-1-chon-cot-dat-ten-cot.mdx": "99708140d987c87aa06ecd3e43156d4dd01b403a4c1f0e1d8b03c4e39bfcab2b",
+      "src/content/lessons/2-2-where-loc-nhu-autofilter.mdx": "573b060c660a4d192d8d16e283a92e63323c50bf2c683b38702a0a7ea48762a7",
+      "src/content/lessons/2-3-and-or-in-between-like.mdx": "6e0ea372e39fc2f800fa0b1310c6f19530c0fae69618fc856439bf53efc9d4a9",
+      "src/content/lessons/2-4-sap-xep-va-top.mdx": "3d2f8bec1c618aa4b77dcc16dabe0e31ef2fd52dc577859e3c5dfd0e71d4507a",
+      "src/content/lessons/2-5-null-o-trong.mdx": "680c49b308710d9dd229bbaef2ae195fee1230a0fe9d3284ab3af0d5b88fc96d",
+      "src/content/lessons/2-6-distinct-bo-dong-trung.mdx": "33db89dbd08aae3a929ff78fb9b728b88ad15b5ccb6814688f767a0fb95b24f3",
+      "src/content/lessons/2-7-ham-chuoi-tieng-viet.mdx": "fc059bf3a7e2394bd2f0cad6055a14a8a19840be65a306089ce77fd812361675",
+      "src/content/lessons/2-8-ham-ngay-tham-nien.mdx": "52c2fe409c31b515733f2d9691145b6305bafe1344eb989da8def859fa8a68fc",
+      "src/content/lessons/2-9-case-when-ham-if.mdx": "92c1fe7367df0731ef2b8a6a39396ebe32a540e01a109b69aed7e9373f84376e",
+      "src/content/lessons/3-1-count-sum-avg.mdx": "2076e84e0ebf1cc8256d58c1a2f9666554760fb1cdf95a10b78c4e20d7d1e561",
+      "src/content/lessons/3-2-group-by-pivottable.mdx": "1cfe3255b88ddd60d268250d58b5658da56aeae1287091b382714a92ee068455",
+      "src/content/lessons/3-3-having-loc-sau-khi-gop.mdx": "4dc63d840f386b70adb4b6266b756e85caced7856f81fa04d1694740a47b12d1",
+      "src/content/lessons/3-4-inner-join-vlookup.mdx": "4ec025ba8589d7ca5396ffcaebc7245bd5a6ac28b4cb4f30eb8d0ed1bbc7fd47",
+      "src/content/lessons/3-5-left-join.mdx": "94784044233590ec2a48ba89460f94b0f06c1ae02f78a169787d8605dbd2a2ca",
+      "src/content/lessons/3-6-ket-nhieu-bang.mdx": "43b5ef208c4830647643a5b85afb0521165c352ec3fb5b12a12aa9df9087ad6e",
+      "src/content/lessons/3-7-self-join-quan-ly.mdx": "613b9074ddfde0cb27d4079b02540660cd7990d18767ba1d046a95a83d698727",
+      "src/content/exercises/3-6-ket-nhieu-bang.yaml": "88af21f05825d321f40b6e6a88d22eccddce9f8025b081ffdde922bfe3baf8d6",
+      "src/content/exercises/3-7-self-join-quan-ly.yaml": "295d16c2c8ef56fbb0ad528678e0d0d065947243a3f14c627ad0d0eb86eda7c7",
+      "docs/superpowers/specs/2026-11-03-lessons-3-6-3-7-design.md": "a62ba8bfc6845aeb3e814064af1d0853a6299eaa9705b660e0008a109056f6ec",
+      "dist/bai/3-6-ket-nhieu-bang/index.html": "9f237c233712da83cc80ce238be2f5307caf7f68db3266a55e60c48574508ec8",
+      "dist/bai/3-7-self-join-quan-ly/index.html": "bea0f2023ff34836183fe4f4ca12aaf4b698239fe1f45735786abd68975f8a6e",
+      "dist/bai/3-6-ket-nhieu-bang/bai-tap/1/index.html": "ba0ed48776094edb46ef63011ad0a63c245c52f4921165285d69c18a6843b1d0",
+      "dist/bai/3-6-ket-nhieu-bang/bai-tap/2/index.html": "41fa5940a3fb1d86ed87c99160e468a8b2c721dbd72bd9cb3c05574dc8a8b9f9",
+      "dist/bai/3-6-ket-nhieu-bang/bai-tap/3/index.html": "a876f75542a8803b8e26fb8d41b35d7f4f952ff67e3e967bf938ce903d01b0c9",
+      "dist/bai/3-7-self-join-quan-ly/bai-tap/1/index.html": "a01b40c42acd4e063a6b0f43352433e2d57f73f52284906a7fcf848ab63314d9",
+      "dist/bai/3-7-self-join-quan-ly/bai-tap/2/index.html": "c936c2bc7ea82e5b1a9d524b240b30d431f4635bef4e86d43cbaa7d52c464621",
+      "dist/bai/3-7-self-join-quan-ly/bai-tap/3/index.html": "436b541c5622f4b4aeb46895727b61df7c23cfa4746d28912ef1c3bced41539e"
+    },
+    "reviewerConfiguration": {
+      "model": "gpt-6.1-terra",
+      "reasoning_effort": "high",
+      "fork_turns": "none"
+    },
+    "build": "npm run build 21:40:42, 190 pages; no lesson edits since build"
+  },
+  "integrationVersion": {
+    "capturedUtc": "2026-11-03T14:51:49.826985+00:00",
+    "files": {
+      "AGENTS.md": "de2afd3efc15baae2ce724287464fad2adaa8ec752723d961805fa4adcbdedbf",
+      "docs/quy-uoc.md": "9ccc223bde97e61008ad738bf3a666c739351c4ef8dd78b00d602044f5805877",
+      "docs/lesson-template.md": "42b1d1dbed5cd88765ad4ead3b00737eca82be0bf41f142c544f08c1837ceb4d",
+      "docs/ho-so-cong-ty.md": "41812ce79865a2672cf22c712b99194601a9039eef29c8bd37fc460fdd0e8f4f",
+      "src/content/lessons/1-1-database-la-gi.mdx": "71cf48d1153917d0f9b05a12ef636504bf4c16551de3d8352037436f0df97939",
+      "src/content/lessons/1-2-bang-dong-cot.mdx": "23d2fd03eb0458c575452b05f89f5a88167ef2e0d9d334061a41eebb057eca68",
+      "src/content/lessons/1-3-kieu-du-lieu.mdx": "26d7246c7af856f03556aa4def01eb911d99747e4e531ba399f558c535f97c9b",
+      "src/content/lessons/1-4-khoa-chinh-khoa-ngoai.mdx": "8a4b9cb84eb1d97c7c949b59c010aa33afc19e9bf9f8a22f75c9ebebd9a09325",
+      "src/content/lessons/1-5-doc-so-do-erd.mdx": "3ccbebde0c9cf13f031e696340bc3684cf12f9f596fbbde364c8e349a589fd2f",
+      "src/content/lessons/2-1-chon-cot-dat-ten-cot.mdx": "99708140d987c87aa06ecd3e43156d4dd01b403a4c1f0e1d8b03c4e39bfcab2b",
+      "src/content/lessons/2-2-where-loc-nhu-autofilter.mdx": "573b060c660a4d192d8d16e283a92e63323c50bf2c683b38702a0a7ea48762a7",
+      "src/content/lessons/2-3-and-or-in-between-like.mdx": "6e0ea372e39fc2f800fa0b1310c6f19530c0fae69618fc856439bf53efc9d4a9",
+      "src/content/lessons/2-4-sap-xep-va-top.mdx": "3d2f8bec1c618aa4b77dcc16dabe0e31ef2fd52dc577859e3c5dfd0e71d4507a",
+      "src/content/lessons/2-5-null-o-trong.mdx": "680c49b308710d9dd229bbaef2ae195fee1230a0fe9d3284ab3af0d5b88fc96d",
+      "src/content/lessons/2-6-distinct-bo-dong-trung.mdx": "33db89dbd08aae3a929ff78fb9b728b88ad15b5ccb6814688f767a0fb95b24f3",
+      "src/content/lessons/2-7-ham-chuoi-tieng-viet.mdx": "fc059bf3a7e2394bd2f0cad6055a14a8a19840be65a306089ce77fd812361675",
+      "src/content/lessons/2-8-ham-ngay-tham-nien.mdx": "52c2fe409c31b515733f2d9691145b6305bafe1344eb989da8def859fa8a68fc",
+      "src/content/lessons/2-9-case-when-ham-if.mdx": "92c1fe7367df0731ef2b8a6a39396ebe32a540e01a109b69aed7e9373f84376e",
+      "src/content/lessons/3-1-count-sum-avg.mdx": "2076e84e0ebf1cc8256d58c1a2f9666554760fb1cdf95a10b78c4e20d7d1e561",
+      "src/content/lessons/3-2-group-by-pivottable.mdx": "1cfe3255b88ddd60d268250d58b5658da56aeae1287091b382714a92ee068455",
+      "src/content/lessons/3-3-having-loc-sau-khi-gop.mdx": "4dc63d840f386b70adb4b6266b756e85caced7856f81fa04d1694740a47b12d1",
+      "src/content/lessons/3-4-inner-join-vlookup.mdx": "4ec025ba8589d7ca5396ffcaebc7245bd5a6ac28b4cb4f30eb8d0ed1bbc7fd47",
+      "src/content/lessons/3-5-left-join.mdx": "94784044233590ec2a48ba89460f94b0f06c1ae02f78a169787d8605dbd2a2ca",
+      "src/content/lessons/3-6-ket-nhieu-bang.mdx": "7923c133060ce3709534ced98498d809a9af18c86c45c7ff7a4bb4bde7d1db7e",
+      "src/content/lessons/3-7-self-join-quan-ly.mdx": "613b9074ddfde0cb27d4079b02540660cd7990d18767ba1d046a95a83d698727",
+      "src/content/exercises/3-6-ket-nhieu-bang.yaml": "88af21f05825d321f40b6e6a88d22eccddce9f8025b081ffdde922bfe3baf8d6",
+      "src/content/exercises/3-7-self-join-quan-ly.yaml": "295d16c2c8ef56fbb0ad528678e0d0d065947243a3f14c627ad0d0eb86eda7c7",
+      "docs/superpowers/specs/2026-11-03-lessons-3-6-3-7-design.md": "b50266459583abc44f7583d4bc20df69515379b9348b7db42b5ed39246c528a6",
+      "dist/bai/3-6-ket-nhieu-bang/index.html": "97182e35d9160685787e0d1a171d063b5333fa3a19109ae09143c10b7b57692e",
+      "dist/bai/3-7-self-join-quan-ly/index.html": "bea0f2023ff34836183fe4f4ca12aaf4b698239fe1f45735786abd68975f8a6e",
+      "dist/bai/3-6-ket-nhieu-bang/bai-tap/1/index.html": "ba0ed48776094edb46ef63011ad0a63c245c52f4921165285d69c18a6843b1d0",
+      "dist/bai/3-6-ket-nhieu-bang/bai-tap/2/index.html": "41fa5940a3fb1d86ed87c99160e468a8b2c721dbd72bd9cb3c05574dc8a8b9f9",
+      "dist/bai/3-6-ket-nhieu-bang/bai-tap/3/index.html": "a876f75542a8803b8e26fb8d41b35d7f4f952ff67e3e967bf938ce903d01b0c9",
+      "dist/bai/3-7-self-join-quan-ly/bai-tap/1/index.html": "a01b40c42acd4e063a6b0f43352433e2d57f73f52284906a7fcf848ab63314d9",
+      "dist/bai/3-7-self-join-quan-ly/bai-tap/2/index.html": "c936c2bc7ea82e5b1a9d524b240b30d431f4635bef4e86d43cbaa7d52c464621",
+      "dist/bai/3-7-self-join-quan-ly/bai-tap/3/index.html": "436b541c5622f4b4aeb46895727b61df7c23cfa4746d28912ef1c3bced41539e",
+      "tests/content.test.ts": "e39f0dfbca58125a11cb18e496e90bcbc669fd38aef6facdc2b1567b4464bd56",
+      "tests/content-joins.test.ts": "6f0c0e2796490bb62bfc19f000bb647b4fe4e0744528bc7327f204e100733645",
+      "tests/content-flow-checks.test.ts": "8c8cc58161262dbe5cccba8900688e37d59297dbf8b9a323f491d3b51d13725a",
+      "docs/superpowers/plans/2026-11-03-lessons-3-6-3-7.md": "112651096cc2b897173f497f9d5b6103cd97d22ceeab60ce5268a95be0ff99dc"
+    },
+    "build": "21:45:43, npm run build 190 pages; check:dist 3567 links; no lesson edits afterward",
+    "reviewerConfiguration": {
+      "model": "gpt-6.1-terra",
+      "reasoning_effort": "high",
+      "fork_turns": "none"
+    }
+  },
+  "reports": {
+    "review-bai-3.6.md": "bb1ed2cdcb42032854bf48181e76599bc0a8c2029d162a1146e0a586a713dd8b",
+    "review-bai-3.7.md": "e18c3bfff12b34f50321b730f90df4186027f16bc298bb4a643f278961ec10fc",
+    "review-tich-hop-3-6-3-7.md": "d470fcf6555f93c8dd60390631402b1a913b23da82b6ec1af07ca0c7d0e11fcb"
+  },
+  "finalVersion": {
+    "capturedUtc": "2026-11-03T14:59:39.494813+00:00",
+    "build": "21:55:15, 190 pages/3567 links",
+    "files": {
+      "AGENTS.md": "de2afd3efc15baae2ce724287464fad2adaa8ec752723d961805fa4adcbdedbf",
+      "docs/quy-uoc.md": "9ccc223bde97e61008ad738bf3a666c739351c4ef8dd78b00d602044f5805877",
+      "docs/lesson-template.md": "42b1d1dbed5cd88765ad4ead3b00737eca82be0bf41f142c544f08c1837ceb4d",
+      "docs/ho-so-cong-ty.md": "41812ce79865a2672cf22c712b99194601a9039eef29c8bd37fc460fdd0e8f4f",
+      "src/content/lessons/1-1-database-la-gi.mdx": "71cf48d1153917d0f9b05a12ef636504bf4c16551de3d8352037436f0df97939",
+      "src/content/lessons/1-2-bang-dong-cot.mdx": "23d2fd03eb0458c575452b05f89f5a88167ef2e0d9d334061a41eebb057eca68",
+      "src/content/lessons/1-3-kieu-du-lieu.mdx": "26d7246c7af856f03556aa4def01eb911d99747e4e531ba399f558c535f97c9b",
+      "src/content/lessons/1-4-khoa-chinh-khoa-ngoai.mdx": "8a4b9cb84eb1d97c7c949b59c010aa33afc19e9bf9f8a22f75c9ebebd9a09325",
+      "src/content/lessons/1-5-doc-so-do-erd.mdx": "3ccbebde0c9cf13f031e696340bc3684cf12f9f596fbbde364c8e349a589fd2f",
+      "src/content/lessons/2-1-chon-cot-dat-ten-cot.mdx": "99708140d987c87aa06ecd3e43156d4dd01b403a4c1f0e1d8b03c4e39bfcab2b",
+      "src/content/lessons/2-2-where-loc-nhu-autofilter.mdx": "573b060c660a4d192d8d16e283a92e63323c50bf2c683b38702a0a7ea48762a7",
+      "src/content/lessons/2-3-and-or-in-between-like.mdx": "6e0ea372e39fc2f800fa0b1310c6f19530c0fae69618fc856439bf53efc9d4a9",
+      "src/content/lessons/2-4-sap-xep-va-top.mdx": "3d2f8bec1c618aa4b77dcc16dabe0e31ef2fd52dc577859e3c5dfd0e71d4507a",
+      "src/content/lessons/2-5-null-o-trong.mdx": "680c49b308710d9dd229bbaef2ae195fee1230a0fe9d3284ab3af0d5b88fc96d",
+      "src/content/lessons/2-6-distinct-bo-dong-trung.mdx": "33db89dbd08aae3a929ff78fb9b728b88ad15b5ccb6814688f767a0fb95b24f3",
+      "src/content/lessons/2-7-ham-chuoi-tieng-viet.mdx": "fc059bf3a7e2394bd2f0cad6055a14a8a19840be65a306089ce77fd812361675",
+      "src/content/lessons/2-8-ham-ngay-tham-nien.mdx": "52c2fe409c31b515733f2d9691145b6305bafe1344eb989da8def859fa8a68fc",
+      "src/content/lessons/2-9-case-when-ham-if.mdx": "92c1fe7367df0731ef2b8a6a39396ebe32a540e01a109b69aed7e9373f84376e",
+      "src/content/lessons/3-1-count-sum-avg.mdx": "2076e84e0ebf1cc8256d58c1a2f9666554760fb1cdf95a10b78c4e20d7d1e561",
+      "src/content/lessons/3-2-group-by-pivottable.mdx": "1cfe3255b88ddd60d268250d58b5658da56aeae1287091b382714a92ee068455",
+      "src/content/lessons/3-3-having-loc-sau-khi-gop.mdx": "4dc63d840f386b70adb4b6266b756e85caced7856f81fa04d1694740a47b12d1",
+      "src/content/lessons/3-4-inner-join-vlookup.mdx": "4ec025ba8589d7ca5396ffcaebc7245bd5a6ac28b4cb4f30eb8d0ed1bbc7fd47",
+      "src/content/lessons/3-5-left-join.mdx": "94784044233590ec2a48ba89460f94b0f06c1ae02f78a169787d8605dbd2a2ca",
+      "src/content/lessons/3-6-ket-nhieu-bang.mdx": "7923c133060ce3709534ced98498d809a9af18c86c45c7ff7a4bb4bde7d1db7e",
+      "src/content/lessons/3-7-self-join-quan-ly.mdx": "3c6d13e9a5e9babf4022119f4ca817b82c02048e09c99180241b885aae57caf3",
+      "src/content/exercises/3-6-ket-nhieu-bang.yaml": "88af21f05825d321f40b6e6a88d22eccddce9f8025b081ffdde922bfe3baf8d6",
+      "src/content/exercises/3-7-self-join-quan-ly.yaml": "295d16c2c8ef56fbb0ad528678e0d0d065947243a3f14c627ad0d0eb86eda7c7",
+      "docs/superpowers/specs/2026-11-03-lessons-3-6-3-7-design.md": "7bfc2c8537da5e13fe424e54a61ab90ae69bab41d720656c71d77e478b26d7c1",
+      "dist/bai/3-6-ket-nhieu-bang/index.html": "97182e35d9160685787e0d1a171d063b5333fa3a19109ae09143c10b7b57692e",
+      "dist/bai/3-7-self-join-quan-ly/index.html": "f4548335f20fd85af1732d91fa84718223f1513b5d5dd46d880bf0b01b65fffd",
+      "dist/bai/3-6-ket-nhieu-bang/bai-tap/1/index.html": "ba0ed48776094edb46ef63011ad0a63c245c52f4921165285d69c18a6843b1d0",
+      "dist/bai/3-6-ket-nhieu-bang/bai-tap/2/index.html": "41fa5940a3fb1d86ed87c99160e468a8b2c721dbd72bd9cb3c05574dc8a8b9f9",
+      "dist/bai/3-6-ket-nhieu-bang/bai-tap/3/index.html": "a876f75542a8803b8e26fb8d41b35d7f4f952ff67e3e967bf938ce903d01b0c9",
+      "dist/bai/3-7-self-join-quan-ly/bai-tap/1/index.html": "a01b40c42acd4e063a6b0f43352433e2d57f73f52284906a7fcf848ab63314d9",
+      "dist/bai/3-7-self-join-quan-ly/bai-tap/2/index.html": "c936c2bc7ea82e5b1a9d524b240b30d431f4635bef4e86d43cbaa7d52c464621",
+      "dist/bai/3-7-self-join-quan-ly/bai-tap/3/index.html": "436b541c5622f4b4aeb46895727b61df7c23cfa4746d28912ef1c3bced41539e",
+      "tests/content.test.ts": "e39f0dfbca58125a11cb18e496e90bcbc669fd38aef6facdc2b1567b4464bd56",
+      "tests/content-joins.test.ts": "6f0c0e2796490bb62bfc19f000bb647b4fe4e0744528bc7327f204e100733645",
+      "tests/content-flow-checks.test.ts": "8c8cc58161262dbe5cccba8900688e37d59297dbf8b9a323f491d3b51d13725a",
+      "docs/superpowers/plans/2026-11-03-lessons-3-6-3-7.md": "d1472044a98e104bfc3e0e2dbc5b7a3729a3c71a0a2f58162077f1567ed90504",
+      "docs/verification/2026-11-03-lessons-3-6-3-7.md": "662fa06e2dadc75cfcef4845ee5520b8f6348a98b4b87146efae2c8ef26ebacd"
+    },
+    "checks": {
+      "tests": 569,
+      "astroErrors": 0,
+      "astroWarnings": 0,
+      "astroBaselineHints": 7,
+      "pages": 190,
+      "links": 3567,
+      "liveSelects": 21,
+      "illustrationComparisons": 27,
+      "apiExercises": 76,
+      "dataUnchanged": true
+    },
+    "reviewConfiguration": {
+      "model": "gpt-6.1-terra",
+      "reasoning_effort": "high",
+      "fork_turns": "none"
+    },
+    "notes": "Final change after integration snapshot: code formatting of NhanVien in Key 3.7 only; all three reports retained unchanged. Three copied TS tests stored as .ts.snapshot after review, bytes/hashes unchanged. No commit/push/deploy."
+  },
+  "artifactStorageMap": {
+    "reason": "After completed review, copied test sources renamed to .ts.snapshot to avoid root Astro check treating review artifacts as application code. Original bytes and manifest source hashes preserved. Product tsconfig unchanged.",
+    "files": {
+      "snapshot/tests/content.test.ts": {
+        "storedAs": "snapshot/tests/content.test.ts.snapshot",
+        "sha256": "e39f0dfbca58125a11cb18e496e90bcbc669fd38aef6facdc2b1567b4464bd56"
+      },
+      "snapshot/tests/content-joins.test.ts": {
+        "storedAs": "snapshot/tests/content-joins.test.ts.snapshot",
+        "sha256": "6f0c0e2796490bb62bfc19f000bb647b4fe4e0744528bc7327f204e100733645"
+      },
+      "snapshot/tests/content-flow-checks.test.ts": {
+        "storedAs": "snapshot/tests/content-flow-checks.test.ts.snapshot",
+        "sha256": "8c8cc58161262dbe5cccba8900688e37d59297dbf8b9a323f491d3b51d13725a"
+      }
+    }
+  },
+  "patches": {
+    "format": "unified diff, zero context; use git apply --unidiff-zero when replaying",
+    "files": {
+      "final-format.patch": "ad935575f8677d75721d489c8af90ca802b04f0b90b4311f3c6db27ab41e2e74",
+      "initial-source.patch": "6028e2e77e0504ebe4fda12e5dcf7c934bc203f20e70e6e619f6a045d4c42dc4",
+      "review-fixes.patch": "aca8ac13a2df327677e4ac939b159f9089d9e1fa7d8c0c8c8af4aa735bf90531"
+    }
+  }
+}
