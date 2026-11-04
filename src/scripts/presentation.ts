@@ -10,7 +10,11 @@ if (root) initPresentation(root);
 function initPresentation(root: HTMLElement) {
   const elements = [...root.querySelectorAll<HTMLElement>('[data-slide]')];
   if (!elements.length) return;
-  const slides = elements.map(element => ({ id: element.id, hasAnswer: !!element.querySelector('details[data-answer]') }));
+  const slides = elements.map(element => ({
+    id: element.id,
+    hasAnswer: !!element.querySelector('details[data-answer]'),
+    aliases: [...element.querySelectorAll<HTMLElement>('[data-slide-alias][id]')].map(alias => alias.id),
+  }));
   const deck = root.dataset.deck ?? '';
   const presenter = root.dataset.mode === 'presenter';
   const initial = presentationFromUrl(new URL(location.href), slides);

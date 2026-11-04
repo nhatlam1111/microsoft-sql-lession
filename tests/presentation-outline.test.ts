@@ -16,29 +16,33 @@ describe('presentation outline', () => {
     const outline = presentationOutline(body);
     expect(outline.map(({ id, minutes }) => [id, minutes])).toEqual([
       ['database-la-gi', 2],
-      ['cac-mo-hinh-luu-tru', 2],
-      ['so-sanh-cac-dang-database', 3],
-      ['tu-excel-den-database-quan-he', 3],
-      ['sql-server-la-gi', 2],
-      ['sql-la-gi', 2],
-      ['bon-ten-can-phan-biet', 2],
-      ['du-lieu-trong-database', 2],
-      ['so-do-quan-he-erd', 2],
-      ['bang-trong-database', 2],
+      ['so-sanh-cac-dang-database', 2],
+      ['tu-excel-den-database-quan-he', 2],
       ['bang-dong-cot', 2],
       ['thong-tin-o-nhieu-bang', 2],
-      ['nhan-dien-mot-ho-so', 1],
-      ['khoa-chinh', 3],
-      ['bang-khong-co-khoa-chinh', 2],
-      ['ma-phong-trong-ho-so', 2],
-      ['khoa-ngoai', 3],
-      ['bang-khong-co-khoa-ngoai', 2],
-      ['ky-hieu-erd', 3],
-      ['ten-phong-cua-nv001', 3],
-      ['hop-dong-kem-ten-phong', 3],
+      ['sql-server-la-gi', 2],
+      ['bon-ten-can-phan-biet', 2],
+      ['uu-diem-va-dieu-kien', 2],
+      ['edition-va-azure-sql', 2],
+      ['kieu-du-lieu-cua-cot', 2],
+      ['decimal-va-float', 2],
+      ['varchar-va-nvarchar', 2],
+      ['ngay-va-gio', 2],
+      ['chuyen-kieu-du-lieu', 2],
+      ['rang-buoc-du-lieu', 1],
+      ['null-va-not-null', 2],
+      ['khoa-chinh', 2],
+      ['khoa-ghep-va-unique', 2],
+      ['khoa-ngoai', 2],
+      ['so-do-quan-he-erd', 2],
+      ['quan-he-mot-mot', 2],
+      ['quan-he-mot-nhieu', 2],
+      ['quan-he-nhieu-nhieu', 2],
+      ['quan-he-bat-buoc-tuy-chon', 2],
+      ['lan-duong-va-tu-tham-chieu', 3],
     ]);
-    expect(outline.reduce((sum, slide) => sum + slide.minutes, 0)).toBe(48);
-    expect(new Set(outline.map(slide => slide.source))).toEqual(new Set(['1.1','1.2','1.4','1.5']));
+    expect(outline.reduce((sum, slide) => sum + slide.minutes, 0)).toBe(50);
+    expect(outline.map(s => s.source)).toEqual(['1.1','1.1','1.1','1.1','1.1','1.2','1.2','1.2','1.2','1.3','1.3','1.3','1.3','1.3','1.4','1.4','1.4','1.4','1.4','1.5','1.5','1.5','1.5','1.5','1.5']);
   });
   it('keeps the new layouts free of progress side effects', () => {
     for (const path of ['src/layouts/PresentationLayout.astro','src/components/presentations/PresentationShell.astro','src/scripts/presentation.ts']) {

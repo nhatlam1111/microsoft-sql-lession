@@ -33,6 +33,21 @@ describe('presentation sequence', () => {
 });
 
 describe('URL restoration and sharing', () => {
+  it('restores legacy query and hash aliases as canonical slide IDs across reload and share', () => {
+    const renamed = [{ id: 'intro', hasAnswer: false }, { id: 'current', aliases: ['old-question'], hasAnswer: true }];
+    for (const suffix of ['?slide=old-question', '#old-question', '#old%2Dquestion']) {
+      const result = presentationFromUrl(new URL(`https://example.org/${suffix}`), renamed);
+      expect(result.state).toEqual({ slideId: 'current', step: 0, revision: 0 });
+      const restored = presentationStateUrl(new URL('https://example.org/'), result.state, run);
+      expect(restored.searchParams.get('slide')).toBe('current');
+      expect(presentationFromUrl(restored, renamed)).toEqual({ state: result.state, run });
+      expect(presentationShareUrl(restored, result.state.slideId).search).toBe('?slide=current');
+    }
+    expect(presentationFromUrl(new URL('https://example.org/?slide=old-question&step=1&rev=7'), renamed).state)
+      .toEqual({ slideId: 'current', step: 1, revision: 7 });
+    expect(presentationFromUrl(new URL('https://example.org/?slide=unknown#old-question'), renamed).state.slideId).toBe('intro');
+    expect(normalizePresentationState([{ id: 'intro', aliases: ['current'], hasAnswer: false }, ...renamed.slice(1)], { slideId: 'current' }).slideId).toBe('current');
+  });
   it('restores the authoritative revision and reveal after presenter reload', () => {
     const state = { slideId: 'question', step: 1 as const, revision: 42 };
     const url = presentationStateUrl(new URL('https://example.org/base/bai-giang/deck/nguoi-giang/?noise=1#old'), state, run);

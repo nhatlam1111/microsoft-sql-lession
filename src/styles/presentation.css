@@ -185,3 +185,26 @@
 }
 
 .concept-split .concept-data-row { padding: 8px 0; }
+
+/* The revised foundation deck reuses course type, colors and the projection canvas. */
+.foundation-layout { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.15fr); gap: 32px; align-items: center; }
+.foundation-layout .projection-table table { font-size: 26px; }
+.foundation-layout .projection-table { align-self: center; }
+.projection-body .foundation-terms img { height: auto; max-height: 260px; }
+.foundation-layout .projection-table th, .foundation-layout .projection-table td { padding: 10px 12px; }
+.foundation-graph img { max-height: 210px; }
+.projection-body .foundation-table table { font-size: 26px; line-height: 1.35; }
+.projection-body .foundation-table th, .projection-body .foundation-table td { padding: 9px 14px; }
+.projection-body .foundation-editions table { font-size: 24px; }
+.foundation-erd { grid-template-columns: minmax(0,1fr) minmax(0,1.15fr); align-items: start; }
+.foundation-copy p { font-size: 28px; line-height: 1.42; margin-bottom: 18px; }
+.foundation-copy p:last-child { margin-bottom: 0; }
+.pubs-figure { min-width: 0; }
+.pubs-overview img { width: auto; height: 350px; max-height: none; margin: 0 auto; image-rendering: auto; }
+.pubs-crops { display: flex; justify-content: center; align-items: start; gap: 16px; }
+.pubs-detail { min-width: 0; text-align: center; text-decoration: none; }
+.pubs-detail > code { display: inline-block; font-size: 24px; margin-top: 10px; }
+.pubs-crop { position: relative; overflow: hidden; max-width: 100%; background: var(--surface); }
+.projection-body .pubs-crop img { position: absolute; left: var(--pubs-left); top: var(--pubs-top); width: var(--pubs-width); max-width: none; max-height: none; height: auto; object-fit: initial; }
+.projection-body .pubs-figure figcaption { line-height: 1.35; margin-top: 12px; }
+.pubs-figure .projection-credit { font-size: 18px; line-height: 1.35; }
