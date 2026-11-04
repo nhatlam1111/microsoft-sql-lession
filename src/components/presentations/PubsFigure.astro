@@ -1,0 +1,31 @@
+---
+import original from '../../assets/lessons/1-5-pubs-diagram.png?url';
+
+// Pixel coordinates in the unmodified 477×474 Microsoft source image.
+const regions = {
+  publishers: { x: 18, y: 70, width: 118, height: 84 },
+  pub_info: { x: 168, y: 239, width: 115, height: 56 },
+  titles: { x: 28, y: 259, width: 115, height: 140 },
+  stores: { x: 314, y: 183, width: 114, height: 119 },
+  sales: { x: 314, y: 307, width: 114, height: 98 },
+} as const;
+interface Props { tables?: (keyof typeof regions)[]; zoom?: number }
+const { tables = [], zoom = 2.1 } = Astro.props;
+---
+<figure class="pubs-figure">
+  {tables.length ? <div class="pubs-crops">
+    {tables.map(name => {
+      const region = regions[name];
+      return <a href={original} class="pubs-detail" aria-label={'Mở toàn ảnh PUBS gốc, đang xem bảng ' + name}>
+        <div class="pubs-crop" style={'width:' + region.width * zoom + 'px;height:' + region.height * zoom + 'px;--pubs-left:' + -region.x * zoom + 'px;--pubs-top:' + -region.y * zoom + 'px;--pubs-width:' + 477 * zoom + 'px'}>
+          <img src={original} width="477" height="474" alt={'Vùng bảng ' + name + ' trong ảnh PUBS gốc của Microsoft, phóng bằng CSS; mở liên kết để xem cả các đường quan hệ.'} />
+        </div>
+        <code>{name}</code>
+      </a>;
+    })}
+  </div> : <a class="pubs-overview" href={original} aria-label="Mở toàn sơ đồ PUBS gốc">
+    <img src={original} width="477" height="474" alt="Sơ đồ PUBS gốc của Microsoft gồm bảy bảng: publishers, pub_info, titles, stores, sales, employee và discounts; các đường khóa liên kết những bảng này." />
+  </a>}
+  <figcaption>{tables.length ? 'Vùng bảng phóng từ ảnh PUBS, không có đường nối; bấm để xem toàn sơ đồ' : 'PUBS · bản đồ cấu trúc, bấm để xem ảnh gốc'}</figcaption>
+  <div class="projection-credit"><a href="https://learn.microsoft.com/en-us/ssms/visual-db-tools/design-database-diagrams-visual-database-tools">Microsoft Learn · ảnh gốc PUBS</a><a href="https://github.com/MicrosoftDocs/data-tools/blob/main/LICENSE">MicrosoftDocs/data-tools · MIT</a></div>
+</figure>

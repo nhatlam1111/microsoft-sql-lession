@@ -1,6 +1,6 @@
 # Ảnh internet cho bài giảng Làm quen
 
-Tải ngày 02/11/2026; giữ nguyên nội dung ảnh gốc, chú thích tiếng Việt và credit nằm trong HTML của slide `cac-mo-hinh-luu-tru` và ghi chú người giảng. Không dùng ảnh này làm schema của HRM_Demo.
+Tải ngày 02/11/2026; giữ nguyên nội dung ảnh gốc, chú thích tiếng Việt và credit nằm trong HTML của các slide `so-sanh-cac-dang-database` (đồ thị) và `bang-dong-cot` (bảng, dòng, cột) cùng ghi chú người giảng. Không dùng ảnh này làm schema của HRM_Demo.
 
 | Asset | Tác giả và giấy phép | Trang nguồn | File gốc |
 |---|---|---|---|

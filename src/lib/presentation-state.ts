@@ -1,11 +1,13 @@
 /** Presentation state is independent of learning progress and browser storage. */
-export interface SlideSpec { id: string; hasAnswer: boolean }
+export interface SlideSpec { id: string; hasAnswer: boolean; aliases?: string[] }
 export interface PresentationState { slideId: string; step: 0 | 1; revision: number }
 export type PresentationAction = 'next' | 'prev' | 'first' | 'last' | { slideId: string };
 
 export function normalizePresentationState(slides: SlideSpec[], candidate: Partial<PresentationState>): PresentationState {
   if (!slides.length) throw new Error('A presentation needs at least one slide.');
-  const slide = slides.find(s => s.id === candidate.slideId) ?? slides[0];
+  const slide = slides.find(s => s.id === candidate.slideId)
+    ?? slides.find(s => s.aliases?.includes(candidate.slideId ?? ''))
+    ?? slides[0];
   return {
     slideId: slide.id,
     step: slide.hasAnswer && candidate.step === 1 ? 1 : 0,
