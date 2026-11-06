@@ -11,13 +11,13 @@ import { readLessonFiles, readCatalog, lessonMainSection, sqlSubheadings, proseP
 
 // Frozen migration list: existing lessons may keep their old layout until edited; new full lessons use the narrative format.
 const LEGACY_LAYOUT_SLUGS = new Set([
-  '6-5-update-quen-where',
+  '5-6-update-quen-where',
 ]);
 
 // Frozen migration list: lessons with a query keep the old subsections until each one is edited; remove a lesson when it moves to two.
 const PENDING_TWO_SUBSECTIONS = new Set([
-  '4-1-cte-tung-buoc', '4-2-xep-hang-row-number-rank',
-  '4-3-luy-ke-so-thang-truoc', '4-4-pivot-xoay-bang', '4-6-soi-chat-luong-du-lieu',
+  '3-12-cte-tung-buoc', '3-13-xep-hang-row-number-rank',
+  '3-16-luy-ke-so-thang-truoc', '3-18-pivot-xoay-bang', '3-19-soi-chat-luong-du-lieu',
 ]);
 
 describe('lesson files', () => {
@@ -25,13 +25,13 @@ describe('lesson files', () => {
   it('every frontmatter passes the schema', () => {
     for (const f of files) expect(lessonSchema.safeParse(f.data).success, f.slug).toBe(true);
   });
-  it('matches the 52 lessons of the design (num, area, kind)', () => {
+  it('matches the 52 course entries (num, area, kind)', () => {
     expect(readCatalog().map(e => `${e.num} ${e.area}${e.kind === 'full' ? ' full' : ''}`)).toEqual(EXPECTED);
   });
   it('passes the catalog rules', () => expect(validateCatalog(readCatalog())).toEqual([]));
-  it('has 7, 6, 3, 8, 9, 6, 6, 7 lessons in areas A1..A8', () => {
+  it('has 7, 6, 3, 8, 11, 4, 5, 8 lessons in areas A1..A8', () => {
     const count = (a: string) => readCatalog().filter(e => e.area === a).length;
-    expect(['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8'].map(count)).toEqual([7, 6, 3, 8, 9, 6, 6, 7]);
+    expect(['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8'].map(count)).toEqual([7, 6, 3, 8, 11, 4, 5, 8]);
   });
   it('uses exactly the section headings of its kind, in order', () => {
     for (const f of files) {
@@ -53,7 +53,7 @@ describe('lesson files', () => {
   it('keeps the query and its run order together in the main section, and preserves the legacy theory heading', () => {
     for (const f of files) {
       const { kind, num } = f.data as { kind: string; num: string };
-      if (kind !== 'full' || num === '6.5') continue;
+      if (kind !== 'full' || num === '5.6') continue;
       const h3 = sqlSubheadings(f.body);
       const legacy = lessonMainSection(f.body).split(/\r?\n/, 1)[0] === 'Làm bằng SQL';
       if (legacy) expect(h3[0], f.slug).toBe('Lý thuyết cơ bản');
@@ -148,7 +148,7 @@ describe('lesson files', () => {
     for (const p of BANNED_PHRASES) expect(text.includes(p), p).toBe(false);
     expect(/\p{Extended_Pictographic}/u.test(page)).toBe(false);
     const h2 = [...page.matchAll(/<h2[^>]*>([^<]+)<\/h2>/g)].map(m => m[1].trim());
-    expect(h2).toEqual(['Khóa học này dạy gì', 'Chọn nơi thực hành', 'Cách dùng trang', '6 level', 'Kết nối bằng SSMS', 'Database mẫu HRM_Demo', 'Khi không kết nối được', 'Tiến độ của bạn được lưu ở đâu']);
+    expect(h2).toEqual(['Khóa học này dạy gì', 'Chọn nơi thực hành', 'Cách dùng trang', '{LEVELS.length} phần học', 'Kết nối bằng SSMS', 'Database mẫu HRM_Demo', 'Khi không kết nối được', 'Tiến độ của bạn được lưu ở đâu']);
   });
   it('lesson SQL uses escaped tabs instead of literal leading whitespace that MDX strips', () => {
     for (const f of files) for (const m of f.body.matchAll(/<Sql[^>]*code=\{`([\s\S]*?)`\}/g)) {
@@ -243,7 +243,8 @@ describe('fixes from the review of lessons 1.2 to 1.6 (2026-10-19)', () => {
   });
   it('every concept lesson ends with at least three self-check questions', () => {
     for (const f of readLessonFiles()) {
-      if (!(f.data as { noExercises?: boolean }).noExercises) continue;
+      const { kind, noExercises } = f.data as { kind: string; noExercises?: boolean };
+      if (kind !== 'full' || !noExercises) continue;
       expect(f.body, f.slug).toContain('**Tự kiểm tra trước khi bấm "Đã học xong":**');
       expect((f.body.match(/<details>/g) ?? []).length, f.slug).toBeGreaterThanOrEqual(3);
     }
@@ -334,7 +335,7 @@ describe('fixes from the independent reviews of 2026-10-19', () => {
       'mỗi thông tin chỉ nằm ở một chỗ', 'được khai báo đủ', 'cặp NV001 và ngày 2026-09-01', 'bài 3.4 và 3.5 sẽ học']));
   it('2.1 counts records not people, closes the scenario and keeps the first-run advice', () => {
     check('2-1-chon-cot-dat-ten-cot',
-      ['48 hồ sơ', 'mỗi lần chỉ nhận một câu', 'bài 6.1', 'SoCCCD', 'Copy with Headers',
+      ['48 hồ sơ', 'mỗi lần chỉ nhận một câu', 'bài 5.1', 'SoCCCD', 'Copy with Headers',
         'bài 2.2', 'câu truy vấn (query)', 'Giả định của tình huống', 'Sơ đồ database'],
       ['48 người, mỗi người một dòng', 'sẽ học ở các bài sau', 'của 10 người là đủ', 'đó là 10 người nào', 'PhongBanCu', 'Select Top 1000 Rows']);
     const page = readFileSync('src/pages/gioi-thieu.astro', 'utf8');
@@ -435,13 +436,13 @@ describe('fixes from the final review', () => {
     expect(query).toMatch(/hd\.NgayKetThuc IS NULL OR hd\.NgayKetThuc >= '20260930'/);
     expect(query).not.toContain('GETDATE');
   });
-  it('6.5 says to check @@TRANCOUNT in the same query window and not to commit on close', () => {
-    expect(body('6-5-update-quen-where')).toContain('cùng cửa sổ');
-    expect(body('6-5-update-quen-where')).toContain('chọn No');
+  it('5.6 says to check @@TRANCOUNT in the same query window and not to commit on close', () => {
+    expect(body('5-6-update-quen-where')).toContain('cùng cửa sổ');
+    expect(body('5-6-update-quen-where')).toContain('chọn No');
   });
-  it('6.5 links the related lessons', () => {
-    for (const slug of ['6-3-backup-restore', '6-4-point-in-time-restore', '6-6-temporal-table']) {
-      expect(body('6-5-update-quen-where')).toContain(`/microsoft-sql-lession/bai/${slug}/`);
+  it('5.6 links the related lessons', () => {
+    for (const slug of ['5-4-backup-restore', '5-5-point-in-time-restore', '5-7-temporal-table']) {
+      expect(body('5-6-update-quen-where')).toContain(`/microsoft-sql-lession/bai/${slug}/`);
     }
   });
   it('2.5 replaces a varchar NULL with COALESCE so Vietnamese text keeps its accents', () => {
@@ -471,8 +472,8 @@ describe('fixes from the final review', () => {
     expect(body('1-5-doc-so-do-erd')).toContain('`stores` → `sales` → `titles`');
     expect(body('1-5-doc-so-do-erd')).toMatch(/không tự cài\/lưu sơ đồ vào database (?:chung|khóa học)/);
     expect(body('1-5-doc-so-do-erd')).not.toMatch(/<(Sql|Result|RunFlow)\b/);
-    expect(body('5-2-rang-buoc-du-lieu')).toContain('BULK INSERT');
-    expect(body('6-6-temporal-table')).toContain('UTC');
+    expect(body('4-2-rang-buoc-du-lieu')).toContain('BULK INSERT');
+    expect(body('5-7-temporal-table')).toContain('UTC');
   });
 });
 

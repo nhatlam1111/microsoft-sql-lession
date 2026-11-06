@@ -10,7 +10,7 @@ Giữ `kind: full` hoặc `summary`; bài nền thêm `noScenario: true`. Tiêu 
 
 ```yaml
 ---
-num: "2.2"                     # đúng bảng 52 bài
+num: "2.2"                     # theo thứ tự trong danh mục
 title: "WHERE: lọc như AutoFilter"
 shortTitle: WHERE              # tối đa 28 ký tự
 level: 2
@@ -22,7 +22,7 @@ prerequisites:
 goal: bạn tự lọc được danh sách nhân viên theo một điều kiện
 excel: AutoFilter
 summary: Một câu nói đúng vấn đề và nội dung chính của bài.
-# noExercises: true            # bài khái niệm không có mục Bài tập, hiện là 1.1–1.5 và 4.5
+# noExercises: true            # bài khái niệm không có mục Bài tập, ví dụ 1.1–1.5 và 4.8
 # noScenario: true             # bài nền không có mục Tình huống
 ---
 ```
@@ -161,7 +161,7 @@ Câu trả lời nghiệp vụ từ kết quả này, đúng giả định đầ
 - Bước `SELECT` có `CASE` thêm `labels` vào `checks` để thành bảng nhánh: `rows` ghi `false` trước nhánh đúng, `null` sau nhánh đúng, `labels` là nhãn của từng hàng, `totals` là số dòng dừng ở từng nhánh rồi ở `ELSE`. Ví dụ `checks: { conditions: ['Mốc 3 năm <= ngày chốt', 'Mốc 1 năm <= ngày chốt'], rows: [['NV003', true, null], ['NV025', false, true], ['NV045', false, false]], labels: ['Từ 3 năm trở lên', 'Từ 1 đến dưới 3 năm', 'Dưới 1 năm'], totals: [33, 8, 4] }`.
 - Với hai nhánh `UNION`, có thể tóm tắt mỗi nhánh đã qua `FROM` → `WHERE` → `SELECT` thành một bước `SELECT`, rồi bước `UNION` và `ORDER BY`. `RunFlow` nhận dạng bốn bước này để vẽ hai đầu vào độc lập, cùng đi vào phép gộp; không dùng mũi tên nối nhánh đầu sang nhánh sau. Viết `note` riêng để nói rõ quan hệ logic, không quy định nhánh nào chạy trước; câu kiểm từng nhánh chỉ đọc bảng của chính nhánh đó. Xem bài 3.8.
 - `LineMap` giải thích từng phần của câu lệnh tình huống. Mỗi dòng có "Ví dụ:" và giá trị cụ thể được nhận, loại hoặc đổi; không chép lại cùng lời giải thích ở cả bảng lẫn đoạn văn.
-- Bài xử lý sự cố như 6.5 có thể đặt tên tiểu mục theo diễn biến sự cố; vẫn đi từ tình huống tới lời giải, giữ giới hạn an toàn và các mục cuối.
+- Bài xử lý sự cố như 5.6 có thể đặt tên tiểu mục theo diễn biến sự cố; vẫn đi từ tình huống tới lời giải, giữ giới hạn an toàn và các mục cuối.
 
 ### Ví dụ thụt lề SQL trong MDX
 

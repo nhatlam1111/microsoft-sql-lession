@@ -53,3 +53,53 @@ exercises:
       AVG(SoNgay) AS [BinhQuan], MIN(SoNgay) AS [ItNhat], MAX(SoNgay) AS [NhieuNhat]
       FROM DonNghiPhep
       WHERE TuNgay >= '20261101' AND TuNgay < '20261201';
+  - id: 3-1-4
+    title: Hai trạng thái trong cùng một dòng
+    summary: Đếm từng trạng thái và đếm toàn bộ hồ sơ.
+    prompt: >-
+      Dùng mọi hồ sơ NhanVien, không lọc trạng thái hay phòng ban. Trả về đúng một dòng
+      với ba cột theo thứ tự: DangLam (số hồ sơ có TrangThai là chuỗi Unicode “Đang làm”),
+      DaNghi (số hồ sơ có TrangThai là chuỗi Unicode “Đã nghỉ”), TongSo (số hồ sơ mọi trạng thái).
+      Nếu không có hồ sơ mang một trong hai trạng thái đó, chỉ tiêu tương ứng bằng 0.
+    columns: [DangLam, DaNghi, TongSo]
+    ordered: false
+    kind: query
+    answer: |
+      SELECT COUNT(CASE WHEN TrangThai = N'Đang làm' THEN 1 END) AS [DangLam],
+          COUNT(CASE WHEN TrangThai = N'Đã nghỉ' THEN 1 END) AS [DaNghi],
+          COUNT(*) AS [TongSo]
+      FROM NhanVien;
+  - id: 3-1-5
+    title: Tổng thực lĩnh từ 15 triệu trong hai kỳ lương
+    summary: Cộng có điều kiện trong phạm vi hai kỳ.
+    prompt: >-
+      Từ BangLuong, chỉ xét KyLuong 2026-08 và 2026-09. Trả về đúng một dòng với hai cột
+      theo thứ tự: SoDongLuong (số dòng của cả hai kỳ), TongTu15Trieu (tổng ThucLinh từ
+      các dòng có ThucLinh lớn hơn hoặc bằng 15000000). Dòng không đạt ngưỡng góp 0
+      vào tổng tiền và vẫn được đếm vào SoDongLuong.
+    columns: [SoDongLuong, TongTu15Trieu]
+    ordered: false
+    kind: query
+    answer: |
+      SELECT COUNT(*) AS [SoDongLuong],
+          SUM(CASE WHEN ThucLinh >= 15000000 THEN ThucLinh ELSE 0 END) AS [TongTu15Trieu]
+      FROM BangLuong
+      WHERE KyLuong IN ('2026-08', '2026-09');
+  - id: 3-1-6
+    title: Hồ sơ có và thiếu email trong ba phòng
+    summary: Đếm điều kiện khác NULL và IS NULL trên cùng phạm vi.
+    prompt: >-
+      Dùng các hồ sơ NhanVien có MaPB thuộc KD, VH hoặc NS, không lọc trạng thái. Trả về
+      đúng một dòng với ba cột theo thứ tự: CoEmail (số hồ sơ có Email khác NULL),
+      ThieuEmail (số hồ sơ có Email là NULL), TongSo (số hồ sơ trong ba phòng).
+      Chuỗi rỗng vẫn được tính vào CoEmail. Nếu không có hồ sơ phù hợp với một chỉ tiêu
+      đếm, chỉ tiêu đó bằng 0.
+    columns: [CoEmail, ThieuEmail, TongSo]
+    ordered: false
+    kind: query
+    answer: |
+      SELECT COUNT(CASE WHEN Email IS NOT NULL THEN 1 END) AS [CoEmail],
+          COUNT(CASE WHEN Email IS NULL THEN 1 END) AS [ThieuEmail],
+          COUNT(*) AS [TongSo]
+      FROM NhanVien
+      WHERE MaPB IN ('KD', 'VH', 'NS');

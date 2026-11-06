@@ -14,17 +14,16 @@ it('picks the lesson to resume', () => {
   expect(R.resumeTarget(emptyState(), CAT)?.num).toBe('1.1');
   expect(R.resumeTarget(demoState(NOW), CAT)?.num).toBe('3.5');
   expect(R.resumeTarget(doneAll(['3.4']), CAT)?.num).toBe('3.5');
-  expect(R.resumeTarget(doneAll(['6.7']), CAT)?.num).toBe('1.1');
+  expect(R.resumeTarget(doneAll(['5.8']), CAT)?.num).toBe('1.1');
   expect(R.resumeTarget(doneAll(ALL_NUMS), CAT)).toBeNull();
 });
 it('summarises levels like the mockup', () => {
   expect(R.levelSummaries(demoState(NOW), CAT, 3)).toEqual([
     { level: 1, done: 5, total: 5, flags: 0, state: 'done' },
     { level: 2, done: 8, total: 9, flags: 1, state: 'partial' },
-    { level: 3, done: 4, total: 12, flags: 0, state: 'current' },
-    { level: 4, done: 0, total: 10, flags: 0, state: 'todo' },
-    { level: 5, done: 0, total: 9, flags: 0, state: 'todo' },
-    { level: 6, done: 0, total: 7, flags: 0, state: 'todo' },
+    { level: 3, done: 4, total: 19, flags: 0, state: 'current' },
+    { level: 4, done: 0, total: 11, flags: 0, state: 'todo' },
+    { level: 5, done: 0, total: 8, flags: 0, state: 'todo' },
   ]);
 });
 it('finds the earliest flagged lesson', () => expect(R.firstFlagged(demoState(NOW), CAT)?.num).toBe('2.8'));

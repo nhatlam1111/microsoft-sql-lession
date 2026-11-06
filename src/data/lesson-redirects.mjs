@@ -1,7 +1,25 @@
-/** Legacy routes preserve the identity of the former conditional-count lesson. */
+import { conditionalCountMerge, currentLessonSlug, lessonMoves, renumberedLessons, windowLessonMoves } from './lesson-moves.mjs';
+
+/** Bookmarks continue to point to the same lesson or exercise after renumbering. */
 export function lessonRedirectRoutes(base) {
-  return Object.fromEntries(['', '/bai-tap/1', '/bai-tap/2', '/bai-tap/3'].map(tail => [
-    `/bai/3-10-dem-co-dieu-kien${tail}/`,
-    `${base.replace(/\/$/, '')}/bai/3-12-dem-co-dieu-kien${tail}/`,
-  ]));
+  const prefix = base.replace(/\/$/, '');
+  const moves = [
+    ...lessonMoves,
+    ...renumberedLessons,
+    ...windowLessonMoves,
+    ...conditionalCountMerge.from.map(from => [
+      from, conditionalCountMerge.to, conditionalCountMerge.exerciseCount, conditionalCountMerge.firstExercise,
+    ]),
+  ];
+  return Object.fromEntries(moves.flatMap(([from, previous, count, firstExercise = 1]) => {
+    const to = currentLessonSlug(previous);
+    if (!to) return [];
+    return [
+      [`/bai/${from}/`, `${prefix}/bai/${to}/`],
+      ...Array.from({ length: count }, (_, i) => [
+        `/bai/${from}/bai-tap/${i + 1}/`,
+        `${prefix}/bai/${to}/bai-tap/${i + firstExercise}/`,
+      ]),
+    ];
+  }));
 }

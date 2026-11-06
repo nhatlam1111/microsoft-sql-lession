@@ -36,7 +36,7 @@ it('rejects text that is not JSON', () => {
   expect(P.parseProgress('abc', ALL_NUMS)).toEqual({ ok: false, error: 'File không phải JSON hợp lệ.' });
 });
 it('rejects JSON of the wrong shape', () => {
-  for (const t of ['{}', '[]', '{"version":3,"lessons":{}}', '{"version":1,"lessons":{"1.1":{"status":"great","flagged":false,"seenAt":1}}}']) {
+  for (const t of ['{}', '[]', '{"version":6,"lessons":{}}', '{"version":1,"lessons":{"1.1":{"status":"great","flagged":false,"seenAt":1}}}']) {
     expect(P.parseProgress(t, ALL_NUMS)).toEqual({ ok: false, error: 'File không đúng định dạng tiến độ của khóa học.' });
   }
 });

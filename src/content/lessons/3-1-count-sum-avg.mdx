@@ -1,37 +1,38 @@
 ---
 num: "3.1"
-title: COUNT, SUM, AVG, MIN, MAX
-shortTitle: COUNT, SUM, AVG
+title: COUNT, SUM, AVG, MIN, MAX và đếm có điều kiện
+shortTitle: Tổng hợp có điều kiện
 level: 3
 area: A5
 kind: full
-minutes: 25
+minutes: 30
 prerequisites:
   - "2.5"
-goal: bạn tổng hợp đúng phạm vi dữ liệu, phân biệt đếm dòng với đếm giá trị và xử lý kết quả NULL
-excel: COUNT, COUNTA, SUM, AVERAGE, MIN, MAX
-summary: Từ danh sách đơn nghỉ đến số đơn, tổng và bình quân số ngày; phân biệt COUNT(*) với COUNT(cột), số 0 với NULL.
+  - "2.9"
+goal: bạn tổng hợp đúng phạm vi, phân biệt đếm dòng với đếm giá trị và dùng CASE để đếm hoặc cộng theo điều kiện
+excel: COUNT, COUNTA, SUM, AVERAGE, MIN, MAX, COUNTIFS, SUMIFS
+summary: Đối chiếu hai tổng số ngày trên cùng danh sách đơn nghỉ bằng COUNT, SUM và CASE.
 ---
 
 ## Tình huống
 
-Tháng 10/2026, chị Hạnh cần một dòng tổng hợp thay cho danh sách từng đơn:
+Tháng 10/2026, chị Hạnh đối chiếu hai báo cáo đơn nghỉ trước khi gửi số liệu tháng 9.
 
 <Chat who="Chị Hạnh · Phòng Nhân sự" time="9:20" initial="H">
-Em tổng hợp giúp chị các đơn nghỉ đã duyệt, bắt đầu trong tháng 9 nhé: có bao nhiêu đơn, tổng bao nhiêu ngày, bình quân mỗi đơn bao nhiêu ngày, đơn ít nhất và nhiều nhất bao nhiêu ngày. Bình quân làm tròn hai chữ số thập phân giúp chị.
+Bảng tổng hợp ghi 16 ngày, còn bảng bàn giao ghi 12. Bảng bàn giao chỉ theo dõi đơn từ hai ngày trở lên. Em tính lại trên các đơn đã duyệt bắt đầu trong tháng 9 giúp chị nhé. Chị cần số đơn, tổng ngày, bình quân làm tròn hai chữ số thập phân, số ngày ít nhất và nhiều nhất. Trên cùng dòng, cho chị thêm số đơn từ hai ngày trở lên và tổng ngày của riêng các đơn đó để chị đối chiếu số 12.
 </Chat>
 
 Giả định: lấy bảng `DonNghiPhep` đang lưu; một dòng là một đơn. Phạm vi là `TrangThai = N'Đã duyệt'` và `TuNgay` từ `2026-09-01` đến trước `2026-10-01`. Cộng toàn bộ `SoNgay` của các đơn này, không phân bổ ngày nghỉ theo từng tháng.
 
-<Key>Từ các đơn đạt điều kiện, tính năm con số cho cả phạm vi trong một dòng.</Key>
+<Key>Tính chỉ tiêu chung và phần của các đơn từ hai ngày trở lên trên cùng một dòng.</Key>
 
-## Từ danh sách đơn nghỉ đến một dòng tổng hợp
+## Đối chiếu hai báo cáo trên cùng một dòng
 
 ### Từ công thức Excel đến các hàm tổng hợp
 
-Trong Excel, bạn có thể đưa các đơn đạt điều kiện sang một sheet riêng rồi tính trên cột số ngày. Hình minh họa `9` đơn đó, đánh dấu hai đầu vùng `C2:C10` và ô tổng `C11`. Nếu chỉ ẩn dòng bằng bộ lọc trên sheet gốc, `SUM` thông thường vẫn cộng cả dòng bị lọc; cần tách vùng như trên hoặc dùng hàm cho dữ liệu đã lọc như `SUBTOTAL`.
+Trong Excel, bạn có thể đưa các đơn đã duyệt bắt đầu trong tháng 9 sang một sheet riêng. Trên vùng số ngày `C2:C10`, `SUM` tính tổng chung ở `C11`, `COUNTIFS` đếm đơn từ hai ngày ở `C12`, và `SUMIFS` cộng số ngày của các đơn đó ở `C13`. Nếu chỉ lọc ẩn dòng ở sheet gốc, `SUM` thông thường vẫn cộng cả dòng bị ẩn do lọc.
 
-<Excel sheets="Đơn đã duyệt bắt đầu tháng 9" cell="C11" formula="=SUM(C2:C10)" selected="C11" mark={['C2', 'C10', 'C11']} numeric={['B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B9', 'B10']} rows={[
+<Excel sheets="Đơn đã duyệt bắt đầu tháng 9" cell="C13" formula={'=SUMIFS(C2:C10,C2:C10,">=2")'} selected="C13" mark={['C11', 'C12', 'C13']} numeric={['B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B9', 'B10']} rows={[
   ['Mã đơn', 'Từ ngày', 'Số ngày'],
   ['DP001', '2026-09-07', 2],
   ['DP002', '2026-09-15', 1],
@@ -42,15 +43,19 @@ Trong Excel, bạn có thể đưa các đơn đạt điều kiện sang một s
   ['DP016', '2026-09-14', 1],
   ['DP017', '2026-09-08', 2],
   ['DP019', '2026-09-11', 1],
-  ['Tổng', '', 16],
+  ['Tổng ngày', '', 16],
+  ['Số đơn từ 2 ngày', '', 5],
+  ['Ngày bàn giao', '', 12],
 ]} />
 
-Trong SQL, **hàm tổng hợp** tính một giá trị từ nhiều dòng. Bạn lọc đúng các đơn bằng `WHERE`, rồi dùng các hàm trong `SELECT` để tính năm con số chị Hạnh cần:
+Trong SQL, **hàm tổng hợp** tính một giá trị từ nhiều dòng. `WHERE` chọn các đơn dùng chung cho hai báo cáo. Hai biểu thức có `CASE` trong `SELECT` tính riêng phần dành cho bảng bàn giao.
 
 <Sql code={`SELECT COUNT(*) AS [SoDon],
 \tSUM(SoNgay) AS [TongNgay],
 \tCAST(AVG(SoNgay) AS decimal(10,2)) AS [BinhQuan],
-\tMIN(SoNgay) AS [ItNhat], MAX(SoNgay) AS [NhieuNhat]
+\tMIN(SoNgay) AS [ItNhat], MAX(SoNgay) AS [NhieuNhat],
+\tCOUNT(CASE WHEN SoNgay >= 2 THEN 1 END) AS [SoDonTuHaiNgay],
+\tSUM(CASE WHEN SoNgay >= 2 THEN SoNgay ELSE 0 END) AS [TongNgayTuHaiNgay]
 FROM DonNghiPhep
 WHERE TrangThai = N'Đã duyệt'
 \tAND TuNgay >= '20260901' AND TuNgay < '20261001';`} />
@@ -62,6 +67,8 @@ Từng phần của câu:
   ['SUM(SoNgay) AS [TongNgay]', 'Cộng số ngày, tương tự SUM(C2:C10) trong hình Excel. Ví dụ: chín đơn có tổng 16.0 ngày.'],
   ['CAST(AVG(SoNgay) AS decimal(10,2))', 'AVG tính bình quân, tương tự AVERAGE của Excel; CAST đổi kết quả sang số có hai chữ số thập phân. Ví dụ: 16.0 chia 9 rồi làm tròn được 1.78.'],
   ['MIN(SoNgay), MAX(SoNgay)', 'Tìm số ngày nhỏ nhất và lớn nhất, như MIN/MAX của Excel. Ví dụ: DP002 có 1.0 ngày, DP003 có 3.0 ngày, là hai mức đầu cuối.'],
+  ['COUNT(CASE WHEN SoNgay >= 2 THEN 1 END)', 'Đếm đơn đạt ngưỡng như COUNTIFS. CASE trả 1 cho đơn đạt và NULL cho đơn còn lại. Ví dụ: DP001 có đúng 2.0 ngày nên được đếm.'],
+  ['SUM(CASE WHEN SoNgay >= 2 THEN SoNgay ELSE 0 END)', 'Cộng số ngày của các đơn đạt ngưỡng như SUMIFS. Ví dụ: DP001 góp 2.0 ngày, DP002 góp 0.'],
   ['FROM DonNghiPhep', 'Chỉ bảng nguồn, mỗi dòng là một đơn. Ví dụ: bắt đầu từ 20 đơn đang lưu.'],
   ["WHERE TrangThai = N'Đã duyệt'", 'Giữ đơn đã duyệt như cách lọc ở bài 2.2. Ví dụ: DP010 bị loại vì có trạng thái Từ chối.'],
   ["AND TuNgay >= '20260901'", 'AND yêu cầu thêm ngày bắt đầu không trước 01/09. Ví dụ: DP018 bắt đầu 31/08 nên bị loại.'],
@@ -78,16 +85,24 @@ Trong Excel, `COUNTA(A2:A10)` đếm các mã đơn đã điền, còn `COUNT` t
 
 Khi không có dòng nào đạt `WHERE`, câu tổng hợp không `GROUP BY` vẫn trả một dòng: `COUNT(*)` và `COUNT(cột)` bằng `0`, bốn hàm còn lại trả `NULL`. Nếu có dòng nhưng cột được tính đều là `NULL`, các hàm đó cũng trả `NULL`. `SUM` và `AVG` dùng với số; `MIN`, `MAX` còn dùng được với ngày, như tìm `TuNgay` sớm nhất hoặc muộn nhất.
 
+**Điều kiện riêng của chỉ tiêu.** `WHERE` quyết định đơn nào đi vào mọi phép tính. Bên trong hai chỉ tiêu bàn giao, `CASE` quyết định mỗi đơn đóng góp giá trị gì cho phép đếm hoặc phép cộng.
+
+Cũng có thể đếm đơn bằng `SUM(CASE WHEN SoNgay >= 2 THEN 1 ELSE 0 END)`. Khi đó `SUM` cộng các số `1` và `0` do `CASE` trả về. Nếu vẫn dùng `COUNT` mà thêm `ELSE 0`, cả chín đơn đều được đếm vì `0` khác `NULL`.
+
+Nếu còn đơn qua `WHERE` nhưng không đơn nào đạt ngưỡng, `COUNT(CASE … END)` trả `0` và `SUM` có `ELSE 0` cũng trả `0`. Bỏ `ELSE 0` thì `SUM` trả `NULL` vì mọi giá trị đưa vào đều là `NULL`. Khi `WHERE` loại hết dòng, `SUM` trả `NULL` dù có `ELSE 0`.
+
 Ở bài này chỉ cần tổng hợp cả phạm vi đã lọc. Tính riêng từng nhóm học ở bài 3.2, lọc nhóm theo số liệu đã tính học ở bài 3.3.
 
 ### SQL Server chạy câu này thế nào
 
-Sơ đồ là **thứ tự xử lý logic**, không phải cách SQL Server đọc dữ liệu. Bấm từng bước để thấy `20` đơn còn `9`, rồi các hàm tổng hợp đưa chín dòng thành một. Trước bước tổng hợp, thứ tự dòng có thể khác hình vì câu không yêu cầu sắp xếp:
+Sơ đồ mô tả **thứ tự xử lý logic**. `FROM` lấy `20` đơn, `WHERE` giữ `9` đơn, rồi `SELECT` tạo một dòng để đối chiếu. Bấm bước `SELECT` để xem vì sao cùng chín đơn cho hai tổng khác nhau.
 
 <RunFlow query={`SELECT COUNT(*) AS [SoDon],
 \tSUM(SoNgay) AS [TongNgay],
 \tCAST(AVG(SoNgay) AS decimal(10,2)) AS [BinhQuan],
-\tMIN(SoNgay) AS [ItNhat], MAX(SoNgay) AS [NhieuNhat]
+\tMIN(SoNgay) AS [ItNhat], MAX(SoNgay) AS [NhieuNhat],
+\tCOUNT(CASE WHEN SoNgay >= 2 THEN 1 END) AS [SoDonTuHaiNgay],
+\tSUM(CASE WHEN SoNgay >= 2 THEN SoNgay ELSE 0 END) AS [TongNgayTuHaiNgay]
 FROM DonNghiPhep
 WHERE TrangThai = N'Đã duyệt'
 \tAND TuNgay >= '20260901' AND TuNgay < '20261001';`} steps={[
@@ -144,10 +159,10 @@ WHERE TrangThai = N'Đã duyệt'
   },
   {
     clause: 'SELECT',
-    title: 'Tính năm con số cho cả phạm vi.',
-    focus: "SELECT COUNT(*) AS [SoDon],\n\tSUM(SoNgay) AS [TongNgay],\n\tCAST(AVG(SoNgay) AS decimal(10,2)) AS [BinhQuan],\n\tMIN(SoNgay) AS [ItNhat], MAX(SoNgay) AS [NhieuNhat]",
+    title: 'Tính chỉ tiêu chung và chỉ tiêu bàn giao.',
+    focus: "SELECT COUNT(*) AS [SoDon],\n\tSUM(SoNgay) AS [TongNgay],\n\tCAST(AVG(SoNgay) AS decimal(10,2)) AS [BinhQuan],\n\tMIN(SoNgay) AS [ItNhat], MAX(SoNgay) AS [NhieuNhat],\n\tCOUNT(CASE WHEN SoNgay >= 2 THEN 1 END) AS [SoDonTuHaiNgay],\n\tSUM(CASE WHEN SoNgay >= 2 THEN SoNgay ELSE 0 END) AS [TongNgayTuHaiNgay]",
     inputColumns: ['MaDon', 'SoNgay'],
-    meaning: '`SELECT` tính trên cả `9` đơn qua `WHERE`, không chỉ năm dòng đầu vào đang trích. Mỗi biểu thức tạo một ô trong cùng dòng kết quả; `AS` đặt tên cột chứa ô đó.',
+    meaning: '`SELECT` xét cả `9` đơn qua `WHERE`. Hai biểu thức có `CASE` xác định mỗi đơn đóng góp gì cho hai ô bàn giao. Đầu vào đang hiển thị chỉ trích năm dòng.',
     examples: [{
       title: 'Từ số ngày của chín đơn đến năm ô kết quả',
       note: 'Minh họa đối chiếu cả `9` đơn bằng số lần xuất hiện của từng giá trị `SoNgay`, không liệt kê lại từng đơn hoặc tạo thêm bảng trong database.',
@@ -162,33 +177,48 @@ WHERE TrangThai = N'Đã duyệt'
         { expression: 'MIN(SoNgay)', explanation: 'So các giá trị số ngày trong phạm vi; nhỏ nhất là `1.0`.', column: 'ItNhat', value: '1.0' },
         { expression: 'MAX(SoNgay)', explanation: 'So các giá trị số ngày trong phạm vi; lớn nhất là `3.0`.', column: 'NhieuNhat', value: '3.0' },
       ],
+    }, {
+      title: 'Hai chỉ tiêu của bảng bàn giao',
+      note: 'Bảng minh họa đủ chín đơn theo tần suất. Hai cột CASE cho biết giá trị mà một đơn có số ngày tương ứng đóng góp.',
+      table: {
+        columns: ['SoNgay', 'Số đơn', 'CASE cho COUNT', 'CASE cho SUM'],
+        rows: [['1.0', 4, null, '0.0'], ['2.0', 3, 1, '2.0'], ['3.0', 2, 1, '3.0']],
+      },
+      calculations: [
+        { expression: 'COUNT(CASE WHEN SoNgay >= 2 THEN 1 END)', explanation: 'Bỏ bốn giá trị `NULL`. Ba đơn hai ngày và hai đơn ba ngày cho `3 + 2 = 5` đơn.', column: 'SoDonTuHaiNgay', value: 5 },
+        { expression: 'SUM(CASE WHEN SoNgay >= 2 THEN SoNgay ELSE 0 END)', explanation: 'Cộng phần đóng góp của cả chín đơn, được `4 × 0.0 + 3 × 2.0 + 2 × 3.0 = 12.0` ngày.', column: 'TongNgayTuHaiNgay', value: '12.0' },
+      ],
     }],
-    detail: 'Còn `1` dòng, `5` cột để trả lời chị Hạnh. Các dòng đơn đã được tổng hợp, không còn mỗi đơn một dòng.',
+    detail: 'Kết quả có `1` dòng, gồm `5` chỉ tiêu chung và `2` chỉ tiêu bàn giao.',
     sql: `SELECT COUNT(*) AS [SoDon],
 \tSUM(SoNgay) AS [TongNgay],
 \tCAST(AVG(SoNgay) AS decimal(10,2)) AS [BinhQuan],
-\tMIN(SoNgay) AS [ItNhat], MAX(SoNgay) AS [NhieuNhat]
+\tMIN(SoNgay) AS [ItNhat], MAX(SoNgay) AS [NhieuNhat],
+\tCOUNT(CASE WHEN SoNgay >= 2 THEN 1 END) AS [SoDonTuHaiNgay],
+\tSUM(CASE WHEN SoNgay >= 2 THEN SoNgay ELSE 0 END) AS [TongNgayTuHaiNgay]
 FROM DonNghiPhep
 WHERE TrangThai = N'Đã duyệt'
 \tAND TuNgay >= '20260901' AND TuNgay < '20261001';`,
-    columns: ['SoDon', 'TongNgay', 'BinhQuan', 'ItNhat', 'NhieuNhat'],
-    rows: [[9, '16.0', '1.78', '1.0', '3.0']],
+    columns: ['SoDon', 'TongNgay', 'BinhQuan', 'ItNhat', 'NhieuNhat', 'SoDonTuHaiNgay', 'TongNgayTuHaiNgay'],
+    rows: [[9, '16.0', '1.78', '1.0', '3.0', 5, '12.0']],
     total: 1,
   },
 ]} />
 
-<Result columns={['SoDon', 'TongNgay', 'BinhQuan', 'ItNhat', 'NhieuNhat']} rows={[
-  [9, '16.0', '1.78', '1.0', '3.0'],
+<Result columns={['SoDon', 'TongNgay', 'BinhQuan', 'ItNhat', 'NhieuNhat', 'SoDonTuHaiNgay', 'TongNgayTuHaiNgay']} rows={[
+  [9, '16.0', '1.78', '1.0', '3.0', 5, '12.0'],
 ]} />
 
-Bạn có thể trả lời chị Hạnh: có `9` đơn đạt điều kiện, tổng `16.0` ngày, bình quân `1.78` ngày mỗi đơn sau làm tròn; ít nhất `1.0`, nhiều nhất `3.0` ngày. Đây là số liệu trên đơn bắt đầu tháng 9, không phải số người nghỉ hoặc tổng ngày thực nghỉ trong tháng. `DP018` bắt đầu `2026-08-31`, kết thúc `2026-09-04`, nên bị loại dù kéo sang tháng 9.
+Cả hai con số chị Hạnh cần đối chiếu đều khớp với phạm vi của từng báo cáo. Bảng tổng hợp có `9` đơn với `16.0` ngày. Bảng bàn giao có `5` đơn từ hai ngày trở lên với `12.0` ngày. Phần chênh `4.0` ngày đến từ bốn đơn một ngày.
+
+Bình quân mỗi đơn là `1.78` ngày sau khi làm tròn, ít nhất `1.0` và nhiều nhất `3.0`. Các số này tính theo tháng bắt đầu ghi trên đơn. `DP018` bắt đầu `2026-08-31` nên nằm ngoài phạm vi dù kết thúc ngày `2026-09-04`.
 
 ## Hay nhầm ở đâu
 
 <Mistakes>
 
 1. **Đếm đơn rồi gọi là số người.** Một người có thể có nhiều đơn; báo cáo có thể đếm thừa người nếu cứ dùng số dòng làm số người khác nhau.
-2. **Tính trước rồi mới nhớ đến điều kiện.** Bỏ lọc trạng thái hoặc tháng sẽ cộng cả đơn từ chối hay đơn ngoài phạm vi, dù phép cộng vẫn chạy được.
+2. **Đưa điều kiện bàn giao vào `WHERE`.** Các đơn một ngày biến mất khỏi cả chỉ tiêu chung, làm tổng chung giảm từ `16.0` còn `12.0` ngày.
 3. **Đổi `SoNgay` sang số nguyên trước khi tính bình quân.** `AVG` lúc đó trả số nguyên; dù đổi kết quả sang hai chữ số thập phân, phần lẻ đã mất vẫn không lấy lại được.
 
 </Mistakes>
@@ -209,6 +239,7 @@ Bạn có thể trả lời chị Hạnh: có `9` đơn đạt điều kiện, t
   ['Đếm dòng trong vùng đã chọn', 'COUNT(*) đếm mọi dòng qua WHERE'],
   ['Đếm ô đã có dữ liệu', 'COUNT(cột) chỉ đếm giá trị khác NULL'],
   ['SUM, AVERAGE, MIN, MAX', 'SUM, AVG, MIN, MAX bỏ NULL; số 0 vẫn tham gia'],
+  ['COUNTIFS và SUMIFS', 'CASE chọn phần đóng góp của từng dòng trước khi SUM cộng hoặc COUNT đếm'],
   ['Tính trên vùng không có dữ liệu', 'Không GROUP BY: một dòng, COUNT = 0, bốn hàm còn lại = NULL'],
 ]} />
 
@@ -235,8 +266,15 @@ Có, đều bằng `9` vì `SoNgay` là `NOT NULL` trong bộ mẫu. `COUNT(*)` 
 
 </details>
 
+<details>
+<summary>Nếu thêm <code>ELSE 0</code> vào <code>CASE</code> bên trong <code>COUNT</code>, số đơn bàn giao đổi thế nào?</summary>
+
+Kết quả tăng từ `5` lên `9`. Bốn đơn một ngày nhận `0`, và `COUNT` đếm cả `0`.
+
+</details>
+
 ## Bài tập
 
-Bộ chấm so giá trị và thứ tự cột, không kiểm tên alias hay bắt buộc cách viết. Tự đối chiếu hàm đã dùng với mục tiêu từng đề; các bài dưới chỉ có một dòng nên không yêu cầu sắp xếp.
+Ba đề đầu luyện đếm, tổng hợp và xử lý phạm vi rỗng. Ba đề sau dùng điều kiện riêng cho từng chỉ tiêu. Bộ chấm so giá trị và thứ tự cột, không kiểm tên alias. Mỗi đề trả một dòng nên không yêu cầu sắp xếp.
 
 <Exercises />

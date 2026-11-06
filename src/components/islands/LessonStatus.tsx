@@ -53,7 +53,7 @@ export default function LessonStatus({ num, nums, variant, hint = QUERY_DONE_HIN
   return (
     <div className="lesson-done">
       <div className="lesson-done-actions">{doneButton}{flagButton}</div>
-      <p className="lesson-done-hint">{hint}</p>
+      {hint && <p className="lesson-done-hint">{hint}</p>}
     </div>
   );
 }

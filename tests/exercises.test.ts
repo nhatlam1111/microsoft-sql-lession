@@ -20,7 +20,7 @@ it('every exercise file passes the schema and the course rules', () => {
 it('ships 3 exercises for 3.5 and 2 data-change exercises for 6.5', () => {
   const byLesson = Object.fromEntries(readExerciseFiles().map(f => [f.lesson, f.exercises]));
   expect(byLesson['3-5-left-join'].map(e => [e.id, e.kind])).toEqual([['3-5-1', 'query'], ['3-5-2', 'query'], ['3-5-3', 'query']]);
-  expect(byLesson['6-5-update-quen-where'].map(e => [e.id, e.kind])).toEqual([['6-5-1', 'change'], ['6-5-2', 'change']]);
+  expect(byLesson['5-6-update-quen-where'].map(e => [e.id, e.kind])).toEqual([['6-5-1', 'change'], ['6-5-2', 'change']]);
 });
 
 it('ships 4 exercises for 2.1, the first a whole table with no order, filter or TOP', () => {

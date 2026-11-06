@@ -1,4 +1,4 @@
-import { STORAGE_KEY, LEGACY_STORAGE_KEY, emptyState, parseProgress, serializeProgress, type ProgressState } from './progress';
+import { STORAGE_KEY, PREVIOUS_STORAGE_KEYS, emptyState, parseProgress, serializeProgress, type ProgressState } from './progress';
 
 export interface StorageLike { getItem(k: string): string | null; setItem(k: string, v: string): void }
 export type LoadProblem = null | 'unavailable' | 'corrupt';
@@ -9,8 +9,13 @@ export const BACKUP_KEY = 'sqlserver-course:progress:corrupt-backup';
 
 export function loadProgress(storage: StorageLike | null, knownNums: string[]): LoadResult {
   if (!storage) return { state: emptyState(), problem: 'unavailable' };
-  let raw: string | null;
-  try { raw = storage.getItem(STORAGE_KEY) ?? storage.getItem(LEGACY_STORAGE_KEY); } catch { return { state: emptyState(), problem: 'unavailable' }; }
+  let raw: string | null = null;
+  try {
+    for (const key of [STORAGE_KEY, ...PREVIOUS_STORAGE_KEYS]) {
+      raw = storage.getItem(key);
+      if (raw !== null) break;
+    }
+  } catch { return { state: emptyState(), problem: 'unavailable' }; }
   if (raw === null) return { state: emptyState(), problem: null };
   const parsed = parseProgress(raw, knownNums, true);
   if (parsed.ok) return { state: parsed.state, problem: null };

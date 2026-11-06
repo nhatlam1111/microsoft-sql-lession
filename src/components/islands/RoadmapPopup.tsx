@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import type { NavEntry } from '../../lib/catalog';
+import { Fragment, useEffect, useRef, useState } from 'react';
+import { groupLevelLessons, type NavEntry } from '../../lib/catalog';
 import type { LevelDef, LevelNo } from '../../data/curriculum';
 import { getSnapshot, initProgressStore } from '../../lib/progress-store';
 import { iconOf } from '../../lib/progress';
@@ -45,10 +45,9 @@ export default function RoadmapPopup({ catalog, levels }: Props) {
   const model = popupModel(state, previousActiveAt, catalog, Date.now(), previousLastLessonNum);
   const level = shownLevel ?? model.expandedLevel;
   const levelDef = levels.find(l => l.no === level)!;
-  const lessons = catalog.filter(e => e.level === level);
+  const groups = groupLevelLessons(catalog, levelDef);
   const currentIndex = Math.max(0, levels.findIndex(l => l.no === model.expandedLevel));
   const lineFrac = model.cta ? currentIndex / (levels.length - 1) : 1;
-  const rows = Math.ceil(lessons.length / 2);
 
   return (
     <div className="rp-backdrop" onClick={e => { if (e.target === e.currentTarget) setOpen(false); }}>
@@ -70,7 +69,7 @@ export default function RoadmapPopup({ catalog, levels }: Props) {
           </div>
         </div>
 
-        <ol className="rp-track" style={{ ['--done-frac' as string]: lineFrac }}>
+        <ol className="rp-track" style={{ ['--stations' as string]: levels.length, ['--done-frac' as string]: lineFrac }}>
           {model.levels.map(sum => {
             const def = levels.find(l => l.no === sum.level)!;
             return (
@@ -92,17 +91,23 @@ export default function RoadmapPopup({ catalog, levels }: Props) {
             <h3>Level {levelDef.no} · {levelDef.name}</h3>
             <p>Học xong level này: {levelDef.outcome}</p>
           </div>
-          <ol className="rp-lessons" style={{ gridTemplateRows: `repeat(${rows}, auto)` }}>
-            {lessons.map(e => (
-              <li key={e.num} className={model.cta?.slug === e.slug ? 'is-next' : undefined}>
-                <a href={lessonUrl(e.slug)}>
-                  <StatusIcon icon={iconOf(state, e.num)} />
-                  <span className="rp-num">{e.num}</span>
-                  <span className="rp-lesson">{e.title}</span>
-                </a>
-              </li>
-            ))}
-          </ol>
+          {groups.map(({ title, lessons }) => (
+            <Fragment key={title ?? levelDef.name}>
+              {title && <h4 className="rp-subheading">{title}</h4>}
+              <ol className="rp-lessons" aria-label={title}
+                style={{ ['--lesson-rows' as string]: Math.ceil(lessons.length / 2) }}>
+                {lessons.map(e => (
+                  <li key={e.num} className={model.cta?.slug === e.slug ? 'is-next' : undefined}>
+                    <a href={lessonUrl(e.slug)}>
+                      <StatusIcon icon={iconOf(state, e.num)} />
+                      <span className="rp-num">{e.num}</span>
+                      <span className="rp-lesson">{e.title}</span>
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </Fragment>
+          ))}
         </section>
         <p className="rp-hint">Bấm vào một trạm để xem các bài trong level đó</p>
 

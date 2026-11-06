@@ -9,9 +9,9 @@ import { checkFlow, inputPreview } from '../src/lib/run-flow';
 const select='3-10-subquery-trong-select', from='3-11-subquery-trong-from';
 const normalize=(sql:string)=>sql.replace(/\s+/g,' ').trim();
 describe('subqueries in SELECT and FROM',()=>{
-  it('inserts two A4 lessons before the preserved COUNT lesson',()=>{
-    expect(readCatalog().filter(l=>l.num.startsWith('3.')).slice(-4).map(l=>[l.num,l.slug,l.area])).toEqual([
-      ['3.9','3-9-subquery','A4'],['3.10',select,'A4'],['3.11',from,'A4'],['3.12','3-12-dem-co-dieu-kien','A5'],
+  it('keeps the three subquery lessons before CTE',()=>{
+    expect(readCatalog().filter(l=>l.level===3).slice(8,12).map(l=>[l.num,l.slug,l.area])).toEqual([
+      ['3.9','3-9-subquery','A4'],['3.10',select,'A4'],['3.11',from,'A4'],['3.12','3-12-cte-tung-buoc','A5'],
     ]);
   });
   it.each([select,from])('%s is a full 25-minute lesson with four checks and three supported query exercises',slug=>{

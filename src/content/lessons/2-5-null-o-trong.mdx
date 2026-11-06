@@ -64,7 +64,7 @@ Kiểm ô đã có giá trị thì viết **`IS NOT NULL`**, như `NgayNghiViec 
 
 Lọc và hiển thị là hai việc. `IS NULL` ở `WHERE` quyết định giữ dòng nào; `COALESCE` ở `SELECT` chỉ tạo giá trị trả về, `Email` của `NV044` trong bảng vẫn là `NULL`. Một cột kết quả chỉ có một kiểu: `Email` là `varchar(100)`, nhãn có `N` là chuỗi Unicode, nên cả cột được đổi sang `nvarchar` để giữ dấu tiếng Việt. Đây là **chuyển kiểu ngầm** đã gặp ở bài 1.3.
 
-Ở bài này chỉ cần kiểm ô `NULL`, hiểu vì sao dấu `=` không dùng được và ghi nhãn trong kết quả. Cách đếm và cộng khi có `NULL` học ở bài 3.1, kiểm chuỗi rỗng và chất lượng dữ liệu ở bài 4.6.
+Ở bài này chỉ cần kiểm ô `NULL`, hiểu vì sao dấu `=` không dùng được và ghi nhãn trong kết quả. Cách đếm và cộng khi có `NULL` học ở bài 3.1, kiểm chuỗi rỗng và chất lượng dữ liệu ở bài 3.19.
 
 ### SQL Server chạy câu này thế nào
 
@@ -183,7 +183,7 @@ Bạn có thể trả lời chị Hạnh: phòng `VH` có `8` hồ sơ chưa có
 
 1. **So sánh bằng dấu `=`.** Đổi điều kiện thành `AND NgayNghiViec = NULL`, câu vẫn chạy không báo lỗi nhưng trả `0` dòng thay vì `8`. Không ra dòng nào chưa có nghĩa là không có hồ sơ phù hợp.
 2. **Đổi `COALESCE` thành `ISNULL`.** `ISNULL(Email, N'(chưa có)')` cũng thay `NULL` bằng giá trị thứ hai, nhưng giữ kiểu `varchar` của cột nên nhãn ra `(chua có)`, mất dấu. Hàm này trả giá trị, không phải điều kiện `IS NULL`.
-3. **Coi dòng không có nhãn là đã có email.** `COALESCE` chỉ thay `NULL`; chuỗi rỗng hay dấu cách vẫn được giữ như một giá trị và không hiện nhãn. Kiểm những trường hợp này học ở bài 4.6.
+3. **Coi dòng không có nhãn là đã có email.** `COALESCE` chỉ thay `NULL`; chuỗi rỗng hay dấu cách vẫn được giữ như một giá trị và không hiện nhãn. Kiểm những trường hợp này học ở bài 3.19.
 
 </Mistakes>
 

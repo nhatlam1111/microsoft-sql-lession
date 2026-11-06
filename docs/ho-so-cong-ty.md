@@ -42,10 +42,10 @@ Quản lý trực tiếp (`MaQuanLy`), theo câu `UPDATE` trong script: Giám đ
 | NV009 | Ngô Thị Thu Trang | BGD | TL | 2019-05-06 | | |
 | NV010 | Đỗ Thị Hồng | NS | TP | 2016-06-01 | | |
 | NV011 | Lý Minh Khoa | IT | CVC | 2018-04-02 | | |
-| NV012 | Trịnh Thị Ngọc | NS | CVC | 2018-07-16 | | Ví dụ phụ cấp ở bài 6.5 |
-| NV013 | Mai Đức Anh | KD | CV | 2019-03-04 | | Lương kỳ 2026-09 ghi dư 1 ngày công (bài 4.7) |
+| NV012 | Trịnh Thị Ngọc | NS | CVC | 2018-07-16 | | Ví dụ phụ cấp ở bài 5.6 |
+| NV013 | Mai Đức Anh | KD | CV | 2019-03-04 | | Lương kỳ 2026-09 ghi dư 1 ngày công |
 | NV014 | Hồ Thị Bích | KT | CVC | 2017-10-02 | | |
-| NV015 | Dương Văn Nam | VH | NV | 2019-09-09 | | Trùng số CCCD với NV038 (bài 4.6) |
+| NV015 | Dương Văn Nam | VH | NV | 2019-09-09 | | Trùng số CCCD với NV038 (bài 3.19) |
 | NV016 | Lâm Thị Kim | KD | CV | 2020-02-10 | | |
 | NV017 | Cao Minh Trí | IT | CV | 2020-06-01 | | |
 | NV018 | Tạ Thị Yến | KT | CV | 2021-03-01 | | |
@@ -59,23 +59,23 @@ Quản lý trực tiếp (`MaQuanLy`), theo câu `UPDATE` trong script: Giám đ
 | NV026 | Phùng Thị Mỹ | KT | CV | 2021-05-04 | | |
 | NV027 | Đinh Công Hậu | VH | NV | 2018-08-20 | | |
 | NV028 | La Thị Diệu | KD | CV | 2022-08-01 | | |
-| NV029 | Mạc Văn Đông | IT | CV | 2025-03-01 | | Hợp đồng thử việc có ngày kết thúc trước ngày bắt đầu (bài 4.6) |
+| NV029 | Mạc Văn Đông | IT | CV | 2025-03-01 | | Hợp đồng thử việc có ngày kết thúc trước ngày bắt đầu (bài 3.19) |
 | NV030 | Nghiêm Thị Hoa | NS | CV | 2023-04-03 | | 3 hợp đồng |
 | NV031 | Ông Văn Tú | VH | NV | 2020-10-05 | | |
-| NV032 | Từ Thị Hương | KD | CV | 2021-09-06 | | Lương kỳ 2026-09 ghi dư 1 ngày công (bài 4.7) |
+| NV032 | Từ Thị Hương | KD | CV | 2021-09-06 | | Lương kỳ 2026-09 ghi dư 1 ngày công |
 | NV033 | Khúc Văn Hải | VH | NV | 2019-06-03 | 2026-06-30 | Đã nghỉ |
 | NV034 | Văn Thị Ly | KT | NV | 2022-11-01 | | |
 | NV035 | Thái Minh Hiếu | IT | CV | 2022-03-07 | | |
 | NV036 | Doãn Thị Thảo | KD | CV | 2024-11-15 | | |
 | NV037 | Giang Văn Bình | VH | NV | 2017-05-02 | | |
-| NV038 | Ninh Thị Hà | KD | NV | 2023-08-14 | | Trùng số CCCD với NV015 (bài 4.6) |
+| NV038 | Ninh Thị Hà | KD | NV | 2023-08-14 | | Trùng số CCCD với NV015 (bài 3.19) |
 | NV039 | Âu Văn Kiên | IT | CV | 2022-06-06 | | |
 | NV040 | Lục Thị Xuân | KD | NV | 2025-05-05 | | |
 | NV041 | Hà Văn Quý | VH | NV | 2020-01-06 | 2026-08-15 | Đã nghỉ; chỉ có lương kỳ 2026-08 |
 | NV042 | Bạch Thị Tuyết | KT | NV | 2024-07-01 | | |
 | NV043 | Đàm Văn Khánh | IT | CV | 2023-02-06 | | |
-| NV044 | Lã Thị Oanh | VH | NV | 2025-08-04 | | Thiếu email (bài 4.6) |
-| NV045 | Ung Văn Lực | KD | NV | 2026-07-01 | | Thiếu email (bài 4.6) |
+| NV044 | Lã Thị Oanh | VH | NV | 2025-08-04 | | Thiếu email (bài 3.19) |
+| NV045 | Ung Văn Lực | KD | NV | 2026-07-01 | | Thiếu email (bài 3.19) |
 | NV046 | Hứa Thị Phương | IT | NV | 2026-09-14 | | Vào làm giữa tháng 9, chỉ có lương kỳ 2026-09 |
 | NV047 | Phạm Ngọc Ánh | NS | CV | 2026-10-01 | | Mới vào, chưa có hợp đồng |
 | NV048 | Đỗ Minh Quân | IT | NV | 2026-10-05 | | Mới vào, chưa có hợp đồng |
@@ -95,7 +95,7 @@ Các nhân vật là giả định, không phải hồ sơ trong bộ mẫu.
 
 | Nhân vật | Là ai | Xuất hiện |
 |---|---|---|
-| Chị Hạnh · Phòng Nhân sự | Người đưa yêu cầu trong mọi bài có tình huống; xưng "chị", gọi người học là "em" | 2.1–2.9, 3.1–3.12, 4.1–4.6 |
+| Chị Hạnh · Phòng Nhân sự | Người đưa yêu cầu trong mọi bài có tình huống; xưng "chị", gọi người học là "em" | 2.1–2.9, 3.1–3.13, 3.16, 3.18–3.19, 4.8 |
 | Người học ("em", "bạn") | Người đọc và lấy dữ liệu từ hệ thống nhân sự cho chị Hạnh; có mã truy cập web hoặc tài khoản SSMS | từ bài 2.1 |
 | Bên IT | Quản trị hệ thống, cấp tên máy chủ và tài khoản, nhập file vào hệ thống, xóa dữ liệu theo yêu cầu | nhắc tới khi cần |
 | Kế toán | Người nhận các danh sách và bảng lương | 2.1 |
@@ -104,7 +104,7 @@ Chị Hạnh trùng tên với hồ sơ NV020 Kiều Thị Hạnh (KD, đã ngh�
 
 ## 6. Lỗi dữ liệu cài sẵn
 
-Các lỗi này có chủ ý, dành cho bài 4.6 và 4.7; bài khác không được coi chúng là dữ liệu đúng hay sửa chúng đi:
+Dữ liệu mẫu có các lỗi cài sẵn. Bài 3.19 dùng các trường hợp trùng CCCD, thiếu email và ngày hợp đồng đảo thứ tự để luyện xác minh:
 
 - NV015 và NV038 trùng số CCCD, nên 48 hồ sơ chỉ có 47 số CCCD khác nhau.
 - NV044 và NV045 không có email.
@@ -127,7 +127,7 @@ Các lỗi này có chủ ý, dành cho bài 4.6 và 4.7; bài khác không đư
 | 2.7 | Chị Hạnh in phiếu ký nhận cho toàn bộ hồ sơ hiện mang MaPB = IT, không lọc trạng thái hay ngày. Theo script có 10 hồ sơ; nhãn dạng 007 - BÙI THANH SƠN và số ký tự họ tên chỉ tạo trong kết quả, dài nhất 14 ký tự ở NV035, NV046. COLLATE chỉ áp dụng cho phép so sánh, không sửa dữ liệu nguồn. |
 | 2.8 | Tại mốc cố định 21/10/2026, chị Hạnh cần các dòng hợp đồng có ngày kết thúc từ ngày đó đến hết 20/11/2026 (gồm hai đầu). Theo script có HD2025-014/NV025 (31/10), HD2026-004/NV046 (13/11), HD2024-008/NV036 (14/11). Đây là danh sách hợp đồng theo ngày lưu, không kết luận phải gia hạn. |
 | 2.9 | Tại mốc cố định 21/10/2026, chị Hạnh chia các hồ sơ đang làm, đã vào làm tới ngày đó, theo ngày kỷ niệm đủ năm. Theo script có 45 hồ sơ: 4 dưới một năm, 8 từ một đến dưới ba năm, 33 từ ba năm trở lên. CASE chỉ tạo nhãn kết quả, không sửa trạng thái hoặc dữ liệu nguồn. |
-| 3.1 | Chị Hạnh cần tổng hợp đơn đã duyệt có TuNgay từ 01/09 đến trước 01/10/2026, cộng toàn bộ SoNgay của đơn. Theo script: 9 đơn, tổng 16.0 ngày, bình quân làm tròn hai số lẻ 1.78, ít nhất 1.0 và nhiều nhất 3.0 ngày. Đây không phải số ngày thực nghỉ trong tháng; DP018 bắt đầu tháng 8 bị loại dù kéo sang tháng 9. |
+| 3.1 | Chị Hạnh đối chiếu báo cáo tổng hợp ghi 16 ngày với báo cáo bàn giao ghi 12 ngày. Trên cùng phạm vi đơn đã duyệt có TuNgay từ 01/09 đến trước 01/10/2026, báo cáo bảy cột trả 9 đơn, tổng 16.0 ngày, bình quân 1.78, ít nhất 1.0, nhiều nhất 3.0, 5 đơn từ hai ngày và 12.0 ngày của các đơn đó. Phần chênh đến từ bốn đơn một ngày. Cộng toàn bộ SoNgay theo tháng bắt đầu. DP018 nằm ngoài phạm vi vì bắt đầu tháng 8. |
 | 3.2 | Chị Hạnh đếm hồ sơ đang làm theo MaPB hiện lưu, xếp số lượng giảm dần rồi mã tăng dần. Theo script có 45 hồ sơ thành 6 nhóm: KD 13, IT 10, VH 8, KT 7, NS 5, BGD 2; không phải phòng tại thời điểm quá khứ. Thêm TrangThai vào khóa nhóm trong cùng phạm vi đang làm không tách thêm nhóm vì mọi hồ sơ cùng trạng thái. |
 | 3.3 | Từ cùng phạm vi đang làm của 3.2, chị Hạnh chỉ giữ nhóm phòng có trên 10 hồ sơ. Theo script, HAVING COUNT(*) > 10 giữ KD 13; IT đúng 10 bị loại. WHERE lọc hồ sơ trước, HAVING lọc nhóm sau; kết quả không tự kết luận phòng thiếu người. |
 | 3.4 | Chị Hạnh lấy mọi hồ sơ kèm tên phòng theo mã hiện lưu, xếp mã nhân viên tăng dần. Danh mục có khóa duy nhất và mã hồ sơ hợp lệ nên 48 hồ sơ vẫn cho 48 dòng; không dựng phòng lịch sử. |
@@ -138,11 +138,10 @@ Các lỗi này có chủ ý, dành cho bài 4.6 và 4.7; bài khác không đư
 | 3.9 | Chị Hạnh lấy mã, tên, phòng hiện lưu của hồ sơ có ít nhất một đơn cùng phạm vi tháng 9 đã duyệt như 3.1: 9 hồ sơ, không lọc trạng thái nhân viên. IN và EXISTS cùng kết quả; NOT EXISTS với cùng phạm vi đơn giữ 39 hồ sơ còn lại. NV001 có đơn chờ duyệt tháng 10 nên vẫn thuộc nhóm không có đơn đạt phạm vi tháng 9. |
 | 3.10 | Chị Hạnh lấy mọi hồ sơ kèm số hợp đồng cùng mã đang lưu, không lọc trạng thái hoặc kiểm hiệu lực: 48 dòng; NV021/NV030 có 3, NV047/NV048 có 0. Câu con COUNT không GROUP BY giữ một giá trị; bỏ liên hệ sẽ đếm cả 55 hợp đồng cho từng hồ sơ. |
 | 3.11 | Chị Hạnh lấy mã có ít nhất hai dòng hợp đồng đang lưu: 55 hợp đồng thành 46 nhóm, lọc còn 7 mã. NV021/NV030 có 3; NV025/NV029/NV040/NV044/NV045 có 2. Không xác nhận hiệu lực hoặc kết luận nhiều hợp đồng là sai. |
-| 3.12 | Chị Hạnh cần số nam/nữ/tổng của hồ sơ đang làm theo MaPB hiện lưu. Có 45 hồ sơ: BGD 1/1/2; IT 9/1/10; KD 6/7/13; KT 0/7/7; NS 0/5/5; VH 6/2/8, tổng 22 nam và 23 nữ. Sơ đồ minh họa đủ hai hồ sơ BGD và năm hồ sơ NS, từ giới tính qua cờ 1/0 tới các ô báo cáo; nhóm không có nam vẫn có dòng vì còn hồ sơ nữ. |
-| 4.1 | Chị Hạnh kiểm đơn đã duyệt bắt đầu tháng 9 qua CTE: 9 đơn, 3 loại; tổng Phép năm 9.0, Nghỉ ốm 5.0, Việc riêng 2.0. Lọc từ 5 ngày giữ 2 loại, cột LoaiNghi/TongNgay. CTE có phạm vi một câu, không lưu bảng hoặc cam kết nhanh hơn. |
-| 4.2 | Chị Hạnh lấy một hợp đồng có NgayBatDau gần nhất không sau 21/10/2026 cho mỗi MaNV có hợp đồng; cùng ngày chọn MaHD giảm dần. Có 55 dòng đầu vào, 46 mã; NV047/NV048 không có hợp đồng. Đây không phải xác nhận hiệu lực. Chín đơn đã duyệt bắt đầu tháng 9 minh họa đồng hạng số ngày: ROW_NUMBER đến 3 có 3 dòng, RANK đến 3 có 5, DENSE_RANK đến 3 có 9. |
-| 4.3 | Chị Hạnh xem ngày trên mọi trạng thái đơn theo tháng TuNgay từ tháng 8 đến 10/2026: tổng 14/20/11, lũy kế 14/34/45, kỳ trước NULL/14/20, chênh lệch NULL/6/-9. Khóa Thang là EOMONTH; không chia ngày qua tháng, không suy ra thực nghỉ hoặc dữ liệu đủ kỳ. LAG lấy dòng có sẵn trước, không tự tạo tháng thiếu; lọc tháng hiển thị sau cửa sổ. |
-| 4.4 | Chị Hạnh xoay tổng ngày trên mọi trạng thái đơn bắt đầu tháng8–10/2026: mỗi tháng một dòng, cột Phép năm/Nghỉ ốm/Việc riêng. Tổng lần lượt12/2/NULL,12/5/3,10/NULL/1. PIVOT chỉ có ba cột nguồn cần thiết; SUM giữ ô thiếu NULL, COUNT khóa đơn cho0. Không phân bổ đơn qua tháng hoặc kết luận thực nghỉ. |
-| 4.5 | Chị Hạnh thống nhất định nghĩa hồ sơ đang làm: MaNV/HoTen/MaPB/MaCD từ NhanVien, TrangThai Đang làm. Đề xuất view thường dbo.vw_HoSoDangLam; chưa tạo trong DB khóa học. Bài đọc hiểu, hai mẫu copy=false, không giả Result và không có YAML; năm câu ôn thay thực hành tạo đối tượng. |
-| 4.6 | Chị Hạnh rà mọi trạng thái theo ba luật: CCCD lặp (1nhóm/2hồ sơ NV015,NV038), email thiếu (NV044/VH và NV045/KD, đềuNULL), hợp đồng đảo thứ tự ngày (HD2025-003/NV029). Kết quả chỉ là dấu hiệu để đối chiếu, không tự sửa/xóa. Ba đề đi từ nhóm ra hồ sơ, giữ phòng có0 và tổng theo mã luật2/2/1; không cộng thành người riêng biệt. |
-| 6.5 | Một chiều thứ Sáu, câu `UPDATE` phụ cấp của NV012 kỳ 2026-09 bị bôi đen thiếu, chạy cho cả bảng lương. |
+| 3.12 | Chị Hạnh kiểm đơn đã duyệt bắt đầu tháng 9 qua CTE: 9 đơn, 3 loại; tổng Phép năm 9.0, Nghỉ ốm 5.0, Việc riêng 2.0. Lọc từ 5 ngày giữ 2 loại, cột LoaiNghi/TongNgay. CTE có phạm vi một câu, không lưu bảng hoặc cam kết nhanh hơn. |
+| 3.13 | Chị Hạnh lấy một hợp đồng có NgayBatDau gần nhất không sau 21/10/2026 cho mỗi MaNV có hợp đồng; cùng ngày chọn MaHD giảm dần. Có 55 dòng đầu vào, 46 mã; NV047/NV048 không có hợp đồng. Đây không phải xác nhận hiệu lực. Chín đơn đã duyệt bắt đầu tháng 9 minh họa đồng hạng số ngày: ROW_NUMBER đến 3 có 3 dòng, RANK đến 3 có 5, DENSE_RANK đến 3 có 9. |
+| 3.16 | Chị Hạnh xem ngày trên mọi trạng thái đơn theo tháng TuNgay từ tháng 8 đến 10/2026: tổng 14/20/11, lũy kế 14/34/45, kỳ trước NULL/14/20, chênh lệch NULL/6/-9. Khóa Thang là EOMONTH; không chia ngày qua tháng, không suy ra thực nghỉ hoặc dữ liệu đủ kỳ. LAG lấy dòng có sẵn trước, không tự tạo tháng thiếu; lọc tháng hiển thị sau cửa sổ. |
+| 3.18 | Chị Hạnh xoay tổng ngày trên mọi trạng thái đơn bắt đầu tháng8–10/2026: mỗi tháng một dòng, cột Phép năm/Nghỉ ốm/Việc riêng. Tổng lần lượt12/2/NULL,12/5/3,10/NULL/1. PIVOT chỉ có ba cột nguồn cần thiết; SUM giữ ô thiếu NULL, COUNT khóa đơn cho0. Không phân bổ đơn qua tháng hoặc kết luận thực nghỉ. |
+| 3.19 | Chị Hạnh rà mọi trạng thái theo ba luật: CCCD lặp (1nhóm/2hồ sơ NV015,NV038), email thiếu (NV044/VH và NV045/KD, đềuNULL), hợp đồng đảo thứ tự ngày (HD2025-003/NV029). Kết quả chỉ là dấu hiệu để đối chiếu, không tự sửa/xóa. Ba đề đi từ nhóm ra hồ sơ, giữ phòng có0 và tổng theo mã luật2/2/1; không cộng thành người riêng biệt. |
+| 4.8 | Chị Hạnh thống nhất định nghĩa hồ sơ đang làm: MaNV/HoTen/MaPB/MaCD từ NhanVien, TrangThai Đang làm. Đề xuất view thường dbo.vw_HoSoDangLam; chưa tạo trong DB khóa học. Bài đọc hiểu, hai mẫu copy=false, không giả Result và không có YAML; năm câu ôn thay thực hành tạo đối tượng. |
+| 5.6 | Một chiều thứ Sáu, câu `UPDATE` phụ cấp của NV012 kỳ 2026-09 bị bôi đen thiếu, chạy cho cả bảng lương. |

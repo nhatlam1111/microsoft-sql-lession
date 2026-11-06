@@ -59,7 +59,7 @@ Từng phần của câu:
 
 Câu có `WHERE` thì `DISTINCT` chỉ xét các dòng đã lọc: chỉ giữ hồ sơ phòng `IT` thì chỉ các dòng đó được so với nhau.
 
-Ở bài này chỉ cần lấy danh sách không trùng theo đúng các cột cần trả về. Đếm số hồ sơ của từng phòng học ở bài 3.2, kiểm hồ sơ trùng và chất lượng dữ liệu học ở bài 4.6.
+Ở bài này chỉ cần lấy danh sách không trùng theo đúng các cột cần trả về. Đếm số hồ sơ của từng phòng học ở bài 3.2, kiểm hồ sơ trùng và chất lượng dữ liệu học ở bài 3.19.
 
 ### SQL Server chạy câu này thế nào
 
@@ -143,7 +143,7 @@ Bạn có thể trả lời chị Hạnh: toàn bộ `48` hồ sơ đang lưu, g
 
 1. **Thêm `MaNV` cho dễ đối chiếu rồi vẫn mong mỗi phòng một dòng.** Câu có thêm `MaNV` ra `48` dòng, vì `MaNV` được khai báo là khóa chính nên mỗi hồ sơ là một dòng khác nhau.
 2. **Thấy mã phòng lặp thì cho rằng hồ sơ bị nhập trùng.** Nhiều người cùng phòng là hợp lệ; xóa hồ sơ chỉ vì trùng mã phòng sẽ làm mất người trong danh sách.
-3. **Dùng `DISTINCT` để che hồ sơ trùng.** `DISTINCT` chỉ so các cột đã chọn: chọn họ tên thì hai hồ sơ trùng tên hiện thành một dòng, dù bảng nguồn vẫn còn cả hai và chưa chắc là cùng một người. Phải đối chiếu mã hồ sơ; cách soi hồ sơ trùng học ở bài 4.6.
+3. **Dùng `DISTINCT` để che hồ sơ trùng.** `DISTINCT` chỉ so các cột đã chọn: chọn họ tên thì hai hồ sơ trùng tên hiện thành một dòng, dù bảng nguồn vẫn còn cả hai và chưa chắc là cùng một người. Phải đối chiếu mã hồ sơ; cách soi hồ sơ trùng học ở bài 3.19.
 4. **Sắp theo cột không chọn.** Đổi thành `ORDER BY NgayVaoLam`, câu báo `ORDER BY items must appear in the select list if SELECT DISTINCT is specified.` Một mã phòng sau bỏ trùng đại diện nhiều hồ sơ có ngày vào làm khác nhau, nên không có một ngày duy nhất để sắp theo.
 
 </Mistakes>

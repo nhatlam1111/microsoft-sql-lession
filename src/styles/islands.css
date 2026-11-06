@@ -33,16 +33,17 @@
 .rp-flag { font-size: 13px; font-weight: 600; color: var(--flag); }
 
 .rp-track {
-  --line-inset: calc(100% / 12);
-  position: relative; list-style: none; margin: 0; padding: 22px 28px 6px;
-  display: grid; grid-template-columns: repeat(6, minmax(0, 1fr));
+  --track-padding: 28px;
+  --line-inset: calc(var(--track-padding) + (100% - 2 * var(--track-padding)) / (2 * var(--stations)));
+  position: relative; list-style: none; margin: 0; padding: 22px var(--track-padding) 6px;
+  display: grid; grid-template-columns: repeat(var(--stations), minmax(0, 1fr));
 }
 .rp-track::before, .rp-track::after {
   content: ''; position: absolute; top: 41px; height: 3px; border-radius: 2px;
-  left: calc(28px + (100% - 56px) / 12);
+  left: var(--line-inset);
 }
-.rp-track::before { right: calc(28px + (100% - 56px) / 12); background: var(--rule); }
-.rp-track::after { width: calc((100% - 56px) * 10 / 12 * var(--done-frac, 0)); background: var(--done); }
+.rp-track::before { right: var(--line-inset); background: var(--rule); }
+.rp-track::after { width: calc((100% - 2 * var(--line-inset)) * var(--done-frac, 0)); background: var(--done); }
 .rp-station { position: relative; z-index: 1; }
 .rp-station button {
   width: 100%; display: grid; justify-items: center; gap: 5px; padding: 0 4px 8px;
@@ -70,7 +71,8 @@
 .rp-level-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 0 8px 14px; }
 .rp-level-head h3 { margin: 0; font-size: 15.5px; font-weight: 700; }
 .rp-level-head p { max-width: 58%; margin: 0; font-size: 13px; line-height: 1.6; color: var(--ink-2); text-align: right; }
-.rp-lessons { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-flow: column; column-gap: 24px; row-gap: 2px; }
+.rp-subheading { margin: 10px 8px 4px; font-size: 13.5px; font-weight: 650; color: var(--ink-2); }
+.rp-lessons { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(var(--lesson-rows), auto); grid-auto-flow: column; column-gap: 24px; row-gap: 2px; }
 .rp-lessons a { display: flex; align-items: center; gap: 9px; min-height: 36px; padding: 7px 8px; border-radius: var(--radius-s); text-decoration: none; font-size: 13.5px; color: var(--ink); }
 .rp-lessons a:hover { background: var(--surface-hover); }
 .rp-lessons li.is-next a { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
@@ -83,6 +85,19 @@
 .rp-spacer { flex: 1; }
 .rp-ghost { display: inline-flex; align-items: center; justify-content: center; min-height: 38px; padding: 8px 14px; border: 1px solid var(--rule-strong); border-radius: var(--radius-m); background: var(--surface); font-weight: 600; font-size: 13.5px; color: var(--ink); text-decoration: none; cursor: pointer; }
 .rp-ghost:hover { border-color: var(--control-line); background: var(--surface-hover); }
+
+@media (max-width: 560px) {
+  .rp-backdrop { padding: 12px; }
+  .rp-modal { max-height: calc(100dvh - 24px); overflow-y: auto; }
+  .rp-head { grid-template-columns: minmax(0, 1fr); padding: 20px 16px; }
+  .rp-cta { justify-items: start; }
+  .rp-track { --track-padding: 8px; }
+  .rp-station button { min-width: 0; padding-inline: 2px; grid-template-columns: minmax(0, 1fr); }
+  .rp-st-name { font-size: clamp(10px, 2.6vw, 13.5px); overflow-wrap: anywhere; max-width: 100%; }
+  .rp-level { margin-inline: 12px; padding-inline: 8px; }
+  .rp-lessons { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; grid-auto-flow: row; }
+  .rp-lesson { white-space: normal; }
+}
 
 /* ---------- Progress menu ---------- */
 .pm { position: relative; }
@@ -162,7 +177,6 @@
 .lv3 { color: var(--lv3); background: var(--lv3-soft); }
 .lv4 { color: var(--lv4); background: var(--lv4-soft); }
 .lv5 { color: var(--lv5); background: var(--lv5-soft); }
-.lv6 { color: var(--lv6); background: var(--lv6-soft); }
 .mm-legend .lvb + .lvb { margin-left: -2px; }
 
 /* Lesson drawer: a preview of the lesson's opening, docked on the right of the map */

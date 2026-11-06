@@ -1,4 +1,5 @@
 import { legacyExerciseId, legacyLessonNum } from './curriculum-version';
+import { mergedFromNum, migrateLessonNumToV3, migrateLessonNumToV4, migrateLessonNumToV5, qualityOutlineNum } from '../data/lesson-moves.mjs';
 
 export type MainStatus = 'todo' | 'seen' | 'done';
 export type Icon = MainStatus | 'flag';
@@ -6,7 +7,7 @@ export type Icon = MainStatus | 'flag';
 export interface LessonProgress { status: 'seen' | 'done'; flagged: boolean; seenAt: number; doneAt?: number }
 
 export interface ProgressState {
-  version: 2;
+  version: 5;
   lessons: Record<string, LessonProgress>;
   lastLessonNum: string | null;
   lastActiveAt: number | null;
@@ -14,8 +15,10 @@ export interface ProgressState {
   exercises?: Record<string, { doneAt: number }>;
 }
 
-export const STORAGE_KEY = 'sqlserver-course:progress:v2';
-export const LEGACY_STORAGE_KEY = 'sqlserver-course:progress:v1';
+export const STORAGE_KEY = 'sqlserver-course:progress:v5';
+export const PREVIOUS_STORAGE_KEYS = [
+  'sqlserver-course:progress:v4', 'sqlserver-course:progress:v3', 'sqlserver-course:progress:v2', 'sqlserver-course:progress:v1',
+];
 
 export const IMPORT_ERRORS = {
   notJson: 'File không phải JSON hợp lệ.',
@@ -25,7 +28,7 @@ export const IMPORT_ERRORS = {
 const DAY_MS = 86_400_000;
 
 export function emptyState(): ProgressState {
-  return { version: 2, lessons: {}, lastLessonNum: null, lastActiveAt: null };
+  return { version: 5, lessons: {}, lastLessonNum: null, lastActiveAt: null };
 }
 
 export function statusOf(s: ProgressState, num: string): MainStatus {
@@ -107,10 +110,13 @@ export function parseProgress(text: string, knownNums: string[], keepUnknown = f
   let raw: unknown;
   try { raw = JSON.parse(text); } catch { return { ok: false, error: IMPORT_ERRORS.notJson }; }
   const bad = { ok: false as const, error: IMPORT_ERRORS.badShape };
-  if (!isObject(raw) || (raw.version !== 1 && raw.version !== 2) || !isObject(raw.lessons)) return bad;
-  const migrate = raw.version === 1;
+  if (!isObject(raw) || (raw.version !== 1 && raw.version !== 2 && raw.version !== 3 && raw.version !== 4 && raw.version !== 5) || !isObject(raw.lessons)) return bad;
+  const version = raw.version;
+  const numAtV3 = (num: string) => version >= 3 ? num : migrateLessonNumToV3(version === 1 ? legacyLessonNum(num) : num);
+  const numAtV4 = (num: string | null) => num === null || version >= 4 ? num : migrateLessonNumToV4(num);
+  const numAtV5 = (num: string | null) => num === null || version === 5 ? num : migrateLessonNumToV5(num);
   const rawLast = raw.lastLessonNum ?? null;
-  const last = migrate && typeof rawLast === 'string' ? legacyLessonNum(rawLast) : rawLast;
+  const last = typeof rawLast === 'string' ? numAtV5(numAtV4(numAtV3(rawLast))) : rawLast;
   const active = raw.lastActiveAt ?? null;
   if (last !== null && typeof last !== 'string') return bad;
   if (active !== null && !isNum(active)) return bad;
@@ -120,22 +126,37 @@ export function parseProgress(text: string, knownNums: string[], keepUnknown = f
     exercises = {};
     for (const [id, value] of Object.entries(raw.exercises)) {
       if (!isObject(value) || !isNum(value.doneAt)) return bad;
-      exercises[migrate ? legacyExerciseId(id) : id] = { doneAt: value.doneAt };
+      exercises[version === 1 ? legacyExerciseId(id) : id] = { doneAt: value.doneAt };
     }
   }
 
   const known = new Set(knownNums);
   const lessons: Record<string, LessonProgress> = {};
+  const mergedLessons = new Map<string, LessonProgress>();
   let ignored = 0;
   for (const [rawNum, value] of Object.entries(raw.lessons)) {
-    const num = migrate ? legacyLessonNum(rawNum) : rawNum;
+    const v3Num = numAtV3(rawNum);
+    const v4Num = numAtV4(v3Num);
+    const num = numAtV5(v4Num);
     const lesson = parseLesson(value);
     if (!lesson) return bad;
-    if (known.has(num) || keepUnknown) lessons[num] = lesson; else ignored++;
+    if (num === null || (!known.has(num) && !keepUnknown)) {
+      ignored++;
+    } else if ((version < 4 && v3Num === mergedFromNum) || (version < 5 && v4Num === qualityOutlineNum)) {
+      mergedLessons.set(num, lesson);
+    } else {
+      lessons[num] = lesson;
+    }
+  }
+  for (const [num, mergedLesson] of mergedLessons) {
+    const existing = lessons[num];
+    lessons[num] = existing
+      ? { ...existing, flagged: existing.flagged || mergedLesson.flagged }
+      : { status: 'seen', flagged: mergedLesson.flagged, seenAt: mergedLesson.seenAt };
   }
   return {
     ok: true,
-    state: { version: 2, lessons, lastLessonNum: last !== null && known.has(last) ? last : null, lastActiveAt: active, ...(exercises ? { exercises } : {}) },
+    state: { version: 5, lessons, lastLessonNum: last !== null && known.has(last) ? last : null, lastActiveAt: active, ...(exercises ? { exercises } : {}) },
     ignored,
   };
 }
@@ -151,7 +172,7 @@ export function demoState(now: number): ProgressState {
   lessons['2.8'] = { status: 'seen', flagged: true, seenAt: earlier };
   lessons['3.7'] = { status: 'seen', flagged: false, seenAt: last };
   lessons['3.5'] = { status: 'seen', flagged: false, seenAt: last };
-  return { version: 2, lessons, lastLessonNum: '3.5', lastActiveAt: last };
+  return { version: 5, lessons, lastLessonNum: '3.5', lastActiveAt: last };
 }
 
 export function exportFileName(now: number): string {

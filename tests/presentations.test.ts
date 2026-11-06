@@ -49,7 +49,7 @@ describe('presentation metadata stays outside course progress', () => {
     expect(presentationsForLevel(entries, 2)).toEqual([]);
     expect(presentationNavEntries([deck])).toEqual([{ slug: deck.slug, title: deck.title, sourceLessons: deck.sourceLessons }]);
     expect(main).toHaveLength(52);
-    expect(LEVELS).toHaveLength(6);
+    expect(LEVELS).toHaveLength(5);
   });
 
   it('creates deployment-safe audience and presenter links', () => {

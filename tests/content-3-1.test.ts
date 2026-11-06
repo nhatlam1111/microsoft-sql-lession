@@ -11,9 +11,9 @@ const exercises = () => parse(readFileSync(exercisePath, 'utf8')).exercises;
 
 it('3.1 derives every SELECT cell from a compact illustration of all nine forms, not five excerpt rows', () => {
   const { steps } = lessonBlocks(slug);
-  const [example] = steps[2].examples ?? [];
+  const [example, handover] = steps[2].examples ?? [];
   expect(example).toBeDefined();
-  expect(steps[2].examples).toHaveLength(1);
+  expect(steps[2].examples).toHaveLength(2);
   const frequency = new Map<string, number>();
   for (const form of leaveStartingIn('2026-09')) {
     const days = Number(form.SoNgay).toFixed(1);
@@ -27,6 +27,15 @@ it('3.1 derives every SELECT cell from a compact illustration of all nine forms,
   expect(example.calculations?.map(c => c.expression)).toEqual([
     'COUNT(*)', 'SUM(SoNgay)', 'CAST(AVG(SoNgay) AS decimal(10,2))', 'MIN(SoNgay)', 'MAX(SoNgay)',
   ]);
+  const expectedHandover = [...frequency.entries()].sort().map(([days, count]) => [
+    days, count, Number(days) >= 2 ? 1 : null, Number(days) >= 2 ? days : '0.0',
+  ]);
+  expect(handover.table?.rows).toEqual(expectedHandover);
+  const conditional = expectedHandover.filter(row => row[2] !== null);
+  expect(handover.calculations?.map(c => [c.column, c.value])).toEqual([
+    ['SoDonTuHaiNgay', conditional.reduce((n, row) => n + Number(row[1]), 0)],
+    ['TongNgayTuHaiNgay', conditional.reduce((n, row) => n + Number(row[1]) * Number(row[3]), 0).toFixed(1)],
+  ]);
   expect(inputPreview(steps[2], steps[1]).rows).toHaveLength(5);
 });
 
@@ -38,7 +47,11 @@ it('3.1 filters approved forms by start month, then aggregates all nine rows int
   expect(source.find(r => r.MaDon === 'DP018')!.DenNgay).toBe('2026-09-04');
   const days = selected.map(r => Number(r.SoNgay));
   const sum = days.reduce((a, b) => a + b, 0);
-  const expected = [[days.length, sum.toFixed(1), (sum / days.length).toFixed(2), Math.min(...days).toFixed(1), Math.max(...days).toFixed(1)]];
+  const handover = days.filter(day => day >= 2);
+  const expected = [[
+    days.length, sum.toFixed(1), (sum / days.length).toFixed(2), Math.min(...days).toFixed(1), Math.max(...days).toFixed(1),
+    handover.length, handover.reduce((n, day) => n + day, 0).toFixed(1),
+  ]];
   expect(lesson.steps.map(s => [s.clause, s.total])).toEqual([['FROM', 20], ['WHERE', 9], ['SELECT', 1]]);
   expect(checkFlow(lesson.steps, lesson.query)).toEqual([]);
   expect(lesson.steps[0].columns).toEqual(['MaDon', 'TuNgay', 'SoNgay', 'TrangThai']);
@@ -69,6 +82,22 @@ it('3.1 teaches non-NULL counts and the empty aggregate on its own scenario befo
   // Cross-table transfer still needs to distinguish the two counts in exercise 1.
   const active = seedRows('NhanVien').filter(r => r.TrangThai === 'Đang làm');
   expect([active.length, active.filter(r => r.Email !== null).length]).toEqual([45, 43]);
+});
+
+it('3.1 reconciles both reports in the main query using the same nine forms', () => {
+  const { body, query, steps } = lessonBlocks(slug);
+  const matching = leaveStartingIn('2026-09').filter(row => Number(row.SoNgay) >= 2);
+  const total = matching.reduce((days, row) => days + Number(row.SoNgay), 0);
+  const teaching = body.split('### SQL Server chạy câu này thế nào')[0];
+  expect(query).toContain('COUNT(CASE WHEN SoNgay >= 2 THEN 1 END) AS [SoDonTuHaiNgay]');
+  expect(query).toContain('SUM(CASE WHEN SoNgay >= 2 THEN SoNgay ELSE 0 END) AS [TongNgayTuHaiNgay]');
+  expect(query.split('FROM DonNghiPhep')[1]).not.toContain('SoNgay >= 2');
+  expect(steps[2].columns).toHaveLength(7);
+  expect(steps[2].rows[0].slice(-2)).toEqual([matching.length, total.toFixed(1)]);
+  expect(teaching).toContain('SUM(CASE WHEN SoNgay >= 2 THEN 1 ELSE 0 END)');
+  expect(body.split('</Chat>')[0]).toMatch(/16 ngày[\s\S]*12/);
+  expect(body).toContain('Phần chênh `4.0` ngày đến từ bốn đơn một ngày.');
+  expect(teaching).toContain('vì `0` khác `NULL`');
 });
 
 it('3.1 checks each date bound and status on visible source rows, then aggregates all nine rows', () => {
@@ -104,6 +133,9 @@ it('3.1 exercises cover a different scope, decimal average and a genuine empty a
     ['3-1-1', 'query', false, ['SoHoSo', 'SoEmail']],
     ['3-1-2', 'query', false, ['SoDon', 'TongNgay', 'BinhQuan', 'ItNhat', 'NhieuNhat']],
     ['3-1-3', 'query', false, ['SoDon', 'TongNgay', 'BinhQuan', 'ItNhat', 'NhieuNhat']],
+    ['3-1-4', 'query', false, ['DangLam', 'DaNghi', 'TongSo']],
+    ['3-1-5', 'query', false, ['SoDongLuong', 'TongTu15Trieu']],
+    ['3-1-6', 'query', false, ['CoEmail', 'ThieuEmail', 'TongSo']],
   ]);
   const active = seedRows('NhanVien').filter(r => r.TrangThai === 'Đang làm');
   expect([active.length, active.filter(r => r.Email !== null).length]).toEqual([45, 43]);
@@ -114,9 +146,13 @@ it('3.1 exercises cover a different scope, decimal average and a genuine empty a
   expect(es[1].answer).toMatch(/TuNgay >= '20260801' AND TuNgay < '20260901'/);
   expect(es[2].answer).toMatch(/TuNgay >= '20261101' AND TuNgay < '20261201'/);
   expect(leaveStartingIn('2026-11', false)).toHaveLength(0);
-  for (const e of es.slice(1)) {
+  for (const e of es.slice(1, 3)) {
     for (const fn of ['COUNT(*)', 'SUM(SoNgay)', 'AVG(SoNgay)', 'MIN(SoNgay)', 'MAX(SoNgay)']) expect(e.answer).toContain(fn);
     expect(e.answer).not.toMatch(/GROUP BY|ISNULL|COALESCE|N?'NULL'/);
+  }
+  for (const e of es.slice(3)) {
+    expect(e.answer).toContain('CASE WHEN');
+    expect(e.answer).not.toMatch(/GROUP BY|ORDER BY/);
   }
   for (const e of es) expect(lessonBlocks(slug).body.replace(/\s+/g, ' ')).not.toContain(e.answer.replace(/\s+/g, ' ').trim());
 });

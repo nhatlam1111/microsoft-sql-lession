@@ -67,7 +67,7 @@ Trong câu chính, `COUNT` không có `GROUP BY` nên trả đúng một dòng t
 
 Như bài 3.1, có thể tổng hợp bằng `SUM` hoặc `MAX` thay vì đếm, tùy yêu cầu. Không có dòng phù hợp thì hai hàm này trả một dòng mang `NULL`; giữ `NULL` hoặc dùng `COALESCE` phải theo nghĩa báo cáo. Điều kiện của dòng liên quan đặt trong câu con cùng điều kiện mã; điều kiện giới hạn danh sách hồ sơ mới đặt ở `WHERE` ngoài. Đừng thêm `GROUP BY` máy móc: nó có thể làm câu con trả không có dòng hoặc nhiều dòng.
 
-Ở bài này chỉ cần tạo một giá trị cho mỗi dòng bằng câu con tương quan. Dùng câu con làm cả nguồn dữ liệu học ở bài 3.11; xem cách máy thực thi thật học ở bài 5.7. Không suy từ cách diễn giải từng hồ sơ rằng SQL Server bắt buộc chạy lại câu con từng dòng hoặc subquery luôn nhanh hơn kết bảng.
+Ở bài này chỉ cần tạo một giá trị cho mỗi dòng bằng câu con tương quan. Dùng câu con làm cả nguồn dữ liệu học ở bài 3.11; xem cách máy thực thi thật học ở bài 4.7. Không suy từ cách diễn giải từng hồ sơ rằng SQL Server bắt buộc chạy lại câu con từng dòng hoặc subquery luôn nhanh hơn kết bảng.
 
 ### SQL Server chạy câu này thế nào
 

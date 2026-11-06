@@ -45,6 +45,13 @@ it('the course menu works without a current lesson', () => {
   expect(html).toContain(`href="/microsoft-sql-lession/bai/${entry('1.1').slug}/"`);
 });
 
+it('labels the data rescue lesson list inside Administrator', () => {
+  const html = renderToStaticMarkup(createElement(SidebarNav, { catalog: CAT, levels: LEVELS, currentNum: '5.6' }));
+  expect(html).toContain('class="side-subheading">Cấp cứu dữ liệu</h3>');
+  expect(html).toContain('aria-label="Cấp cứu dữ liệu"');
+  expect(html).toContain(`href="/microsoft-sql-lession/bai/${entry('5.6').slug}/" aria-current="page"`);
+});
+
 it('the diagram popup keeps the data set name HRM_Demo', () => {
   const tables = parseSchema(readFileSync('database/HRM_Demo.sql', 'utf8'));
   expect(renderToStaticMarkup(createElement(DbDiagramDialog, { tables, open: true, onClose: () => {} }))).toContain('Sơ đồ HRM_Demo');

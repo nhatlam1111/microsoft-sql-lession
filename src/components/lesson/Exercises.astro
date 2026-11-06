@@ -27,19 +27,19 @@ const items = file && slug ? publicExercises(file.data) : [];
 )}
 
 <script>
-  import { STORAGE_KEY } from '../../lib/progress';
+  import { isExerciseDone } from '../../lib/progress';
+  import { getSnapshot, subscribe } from '../../lib/progress-store';
 
-  // Marks the exercises this browser has solved; the page is static, so it reads saved progress directly.
+  // Use the same migrated progress as the course menu and lesson status.
   function paint() {
-    let solved: Record<string, unknown> = {};
-    try { solved = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '{}').exercises ?? {}; } catch { /* blocked storage */ }
+    const { state } = getSnapshot();
     for (const item of document.querySelectorAll<HTMLElement>('.exl-item')) {
-      const done = Boolean(solved[item.dataset.exercise ?? '']);
+      const done = isExerciseDone(state, item.dataset.exercise ?? '');
       item.classList.toggle('is-done', done);
       const status = item.querySelector('.exl-status');
       if (status) status.textContent = done ? 'Đã làm đúng' : 'Chưa làm';
     }
   }
+  subscribe(paint);
   paint();
-  window.addEventListener('pageshow', paint);
 </script>

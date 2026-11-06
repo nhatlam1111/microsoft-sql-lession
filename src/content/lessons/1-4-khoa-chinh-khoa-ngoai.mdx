@@ -35,7 +35,7 @@ Cột `NhanVien.NgayNghiViec` cho phép `NULL`. Bộ mẫu quy ước chưa có 
 
 Một bảng có tối đa một khóa chính; khóa gồm nhiều cột gọi là **khóa ghép**. `BangLuong` dùng `KyLuong` và `MaNV`: cả cặp phải duy nhất, còn từng cột được lặp. Vì vậy một mã nhân viên có thể có lương ở nhiều kỳ, mỗi kỳ tối đa một dòng.
 
-**`UNIQUE`** bảo đảm giá trị hoặc tổ hợp không trùng, có thể khai báo ngoài khóa chính. Cần thêm `NOT NULL` nếu muốn cột bắt buộc có giá trị. Cách `UNIQUE` xử lý `NULL` học ở bài 5.2.
+**`UNIQUE`** bảo đảm giá trị hoặc tổ hợp không trùng, có thể khai báo ngoài khóa chính. Cần thêm `NOT NULL` nếu muốn cột bắt buộc có giá trị. Cách `UNIQUE` xử lý `NULL` học ở bài 4.2.
 
 ### Khóa ngoại và giá trị tham chiếu
 
@@ -54,7 +54,7 @@ Khóa ngoại là luật kiểm khi ghi, **không phải ô chọn trên màn h�
 
 Nguồn: [Microsoft — khóa chính và khóa ngoại](https://learn.microsoft.com/en-us/sql/relational-databases/tables/primary-and-foreign-key-constraints), [NULL](https://learn.microsoft.com/en-us/sql/t-sql/language-elements/null-and-unknown-transact-sql), [UNIQUE và CHECK](https://learn.microsoft.com/en-us/sql/relational-databases/tables/unique-constraints-and-check-constraints).
 
-Ở bài này chỉ cần nhận ra bốn khái niệm chính và khóa ghép. Bài 1.5 đưa chúng lên sơ đồ; khai báo `UNIQUE`, `CHECK` và giá trị mặc định `DEFAULT` học ở bài 5.2, lọc `NULL` ở bài 2.5.
+Ở bài này chỉ cần nhận ra bốn khái niệm chính và khóa ghép. Bài 1.5 đưa chúng lên sơ đồ; khai báo `UNIQUE`, `CHECK` và giá trị mặc định `DEFAULT` học ở bài 4.2, lọc `NULL` ở bài 2.5.
 
 ## Hay nhầm ở đâu
 

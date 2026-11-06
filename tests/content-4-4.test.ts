@@ -4,7 +4,7 @@ import { parse } from 'yaml';
 import { fixtureQuery, lessonExamples } from './helpers/window-fixture';
 import { pivotFixtureQuery } from './helpers/pivot-fixture';
 import { guardExercise } from '../src/lib/sql-guard';
-const slug='4-4-pivot-xoay-bang';
+const slug='3-18-pivot-xoay-bang';
 const run=(s:string)=>/\bPIVOT\b/i.test(s)?pivotFixtureQuery(s):fixtureQuery(s);
 it('the restricted PIVOT arithmetic model retains groups and COUNT zeroes with a non-null key',()=>{
   const result=pivotFixtureQuery(`WITH Nguon AS (
@@ -16,7 +16,7 @@ PIVOT (COUNT(MaDon) FOR TrangThai IN ([Đã duyệt], [Chờ duyệt], [Từ ch�
 ORDER BY p.LoaiNghi;`);
   expect(result.rows).toEqual([['Nghỉ ốm',4,0,0],['Phép năm',8,3,1],['Việc riêng',2,1,1]]);
 });
-it('4.4 day totals preserve missing combinations and the CASE alternative has identical values',()=>{
+it('3.18 day totals preserve missing combinations and the CASE alternative has identical values',()=>{
   const l=lessonExamples(slug);
   expect(l.pairs.length).toBeGreaterThanOrEqual(3);
   const main=l.pairs.find(p=>/\bPIVOT\b/.test(p.sql))!;
@@ -33,7 +33,7 @@ it('4.4 day totals preserve missing combinations and the CASE alternative has id
   const extra=main.sql.replace('SELECT EOMONTH(TuNgay)', 'SELECT MaDon, EOMONTH(TuNgay)');
   expect(pivotFixtureQuery(extra).rows).toHaveLength(20);
 });
-it('4.4 practice changes the population, COUNT measure and monthly axis without copying an illustration',()=>{
+it('3.18 practice changes the population, COUNT measure and monthly axis without copying an illustration',()=>{
   const path=`src/content/exercises/${slug}.yaml`;expect(existsSync(path)).toBe(true);if(!existsSync(path))return;
   const es=parse(readFileSync(path,'utf8')).exercises;expect(es).toHaveLength(3);
   for(const e of es){expect(guardExercise(e.answer)).toEqual({ok:true});expect(run(e.answer).columns).toEqual(e.columns);}

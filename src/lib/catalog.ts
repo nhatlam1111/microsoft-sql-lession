@@ -1,4 +1,5 @@
 import type { LessonFrontmatter } from './lesson-schema';
+import type { LevelDef } from '../data/curriculum';
 
 export interface CatalogEntry extends LessonFrontmatter { slug: string }
 
@@ -7,6 +8,18 @@ export type NavEntry = Pick<CatalogEntry, 'num' | 'slug' | 'title' | 'shortTitle
 
 export function navEntries(catalog: CatalogEntry[]): NavEntry[] {
   return catalog.map(({ num, slug, title, shortTitle, level }) => ({ num, slug, title, shortTitle, level }));
+}
+
+export function groupLevelLessons(catalog: NavEntry[], level: LevelDef): { title?: string; lessons: NavEntry[] }[] {
+  const lessons = catalog.filter(entry => entry.level === level.no);
+  const section = level.section;
+  if (!section) return [{ lessons }];
+  const start = lessons.findIndex(entry => entry.num === section.firstLesson);
+  if (start < 0) return [{ lessons }];
+  return [
+    { lessons: lessons.slice(0, start) },
+    { title: section.title, lessons: lessons.slice(start) },
+  ];
 }
 
 const parts = (num: string) => num.split('.').map(Number);

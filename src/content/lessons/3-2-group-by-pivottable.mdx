@@ -67,6 +67,8 @@ Từng phần của câu:
 
 Với cách nhóm theo cột đang học, **cột lấy trực tiếp trong `SELECT`, nếu không nằm trong hàm tổng hợp, phải có trong `GROUP BY`**. Vì vậy câu này nhóm theo `MaPB`, còn `COUNT(*)` là phép tính cho mỗi nhóm. Một dòng kết quả đại diện cả phòng, không còn là một hồ sơ cụ thể.
 
+Khi dùng một biểu thức `SUM(CASE … END)` như ở bài 3.1 trong câu có `GROUP BY MaPB`, SQL Server cộng phần đóng góp của các hồ sơ trong từng phòng.
+
 **Nhóm nhiều cột** thì liệt kê các cột cách nhau bằng dấu phẩy: `GROUP BY MaPB, TrangThai` tạo một nhóm cho mỗi cặp giá trị. Vẫn lọc đang làm như tình huống thì không tách thêm nhóm, vì mọi hồ sơ cùng trạng thái; khi đề yêu cầu mọi trạng thái, các cặp phòng/trạng thái có hồ sơ sẽ thành những nhóm riêng. Trong PivotTable, đó là đặt thêm trạng thái vào Rows; số lượng được tính cho từng tổ hợp, không lặp nguyên tổng phòng.
 
 `GROUP BY MaPB` không tự tạo một dòng số `0` cho phòng không có hồ sơ qua `WHERE`, cũng không tự thêm **Grand Total** (tổng cộng) như ô `B8` trong hình Excel. Nhóm từ các dòng còn lại, nên không có dòng thì không có nhóm. Nếu cột nhóm có giá trị `NULL`, các dòng `NULL` của cột đó cùng thuộc một nhóm; các hồ sơ trong tình huống này đều có mã phòng.

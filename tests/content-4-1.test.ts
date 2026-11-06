@@ -5,8 +5,8 @@ import { fixtureQuery, lessonExamples } from './helpers/window-fixture';
 import { checkFlow, splitFocus } from '../src/lib/run-flow';
 import { guardExercise } from '../src/lib/sql-guard';
 
-const slug = '4-1-cte-tung-buoc';
-it('4.1 keeps the exact-threshold type after aggregation, and returns only the requested two columns', () => {
+const slug = '3-12-cte-tung-buoc';
+it('3.12 keeps the exact-threshold type after aggregation, and returns only the requested two columns', () => {
   const l = lessonExamples(slug);
   expect(l.results.find(r => r.columns.join(',') === 'LoaiNghi,TongNgay')?.rows).toEqual([['Phép năm',9],['Nghỉ ốm',5]]);
   expect(l.steps.map(s => [s.clause,s.total])).toEqual([['FROM',3],['WHERE',2],['SELECT',2],['ORDER BY',2]]);
@@ -23,7 +23,7 @@ it('4.1 keeps the exact-threshold type after aggregation, and returns only the r
   expect(focus.before).toContain('TongTheoLoai AS');
   expect(focus.focus).toContain('SELECT tl.');
 });
-it('4.1 exercises distinguish a sum of days, active profile counts, and repeated contracts', () => {
+it('3.12 exercises distinguish a sum of days, active profile counts, and repeated contracts', () => {
   const path = `src/content/exercises/${slug}.yaml`;
   expect(existsSync(path)).toBe(true);
   if (!existsSync(path)) return;

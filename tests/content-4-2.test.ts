@@ -5,8 +5,8 @@ import { fixtureQuery, lessonExamples } from './helpers/window-fixture';
 import { seedRows } from './helpers/hrm-seed';
 import { checkFlow, splitFocus } from '../src/lib/run-flow';
 import { guardExercise } from '../src/lib/sql-guard';
-const slug='4-2-xep-hang-row-number-rank';
-it('4.2 picks one whole contract per employee and preserves scoped, runnable flow queries',()=>{
+const slug='3-13-xep-hang-row-number-rank';
+it('3.13 picks one whole contract per employee and preserves scoped, runnable flow queries',()=>{
   const l=lessonExamples(slug);
   expect(l.pairs.length).toBe(3);
   expect(l.steps.map(s=>[s.clause,s.total])).toEqual([['FROM',55],['WHERE',46],['SELECT',46],['ORDER BY',46]]);
@@ -22,7 +22,7 @@ it('4.2 picks one whole contract per employee and preserves scoped, runnable flo
   expect(rows.some(r=>r[0]==='NV047'||r[0]==='NV048')).toBe(false);
   expect(splitFocus(l.query,l.steps[3].focus)?.focus).toBe('ORDER BY xh.MaNV ASC;');
 });
-it('4.2 excludes future starts before numbering and resolves equal-date contracts by unique code',()=>{
+it('3.13 excludes future starts before numbering and resolves equal-date contracts by unique code',()=>{
   const l=lessonExamples(slug);
   expect(l.query.length).toBeGreaterThan(0);
   const template=seedRows('HopDong')[0];
@@ -33,7 +33,7 @@ it('4.2 excludes future starts before numbering and resolves equal-date contract
   ];
   expect(fixtureQuery(l.query,{HopDong:contracts}).rows).toEqual([['NVX','HD-B','2026-10-21']]);
 });
-it('4.2 practice resets numbering and keeps ties; row/rank/dense cutoffs yield distinct populations',()=>{
+it('3.13 practice resets numbering and keeps ties; row/rank/dense cutoffs yield distinct populations',()=>{
   const path=`src/content/exercises/${slug}.yaml`;
   expect(existsSync(path)).toBe(true);if(!existsSync(path))return;
   const es=parse(readFileSync(path,'utf8')).exercises;

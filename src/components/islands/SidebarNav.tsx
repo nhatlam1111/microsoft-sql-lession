@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import type { NavEntry } from '../../lib/catalog';
+import { Fragment, useState } from 'react';
+import { groupLevelLessons, type NavEntry } from '../../lib/catalog';
 import type { AppendixNavEntry } from '../../lib/appendices';
 import { presentationsForLevel, type PresentationNavEntry } from '../../lib/presentations';
 import type { LevelDef } from '../../data/curriculum';
@@ -39,6 +39,7 @@ export default function SidebarNav({ catalog, levels, currentNum, appendices = [
       {levels.map(level => {
         const sum = summaries.find(s => s.level === level.no)!;
         const isOpen = open.has(level.no);
+        const groups = isOpen ? groupLevelLessons(catalog, level) : [];
         return (
           <section key={level.no} className="side-group">
             <button type="button" className={`side-level is-${sum.state}`} aria-expanded={isOpen}
@@ -50,26 +51,29 @@ export default function SidebarNav({ catalog, levels, currentNum, appendices = [
                 {sum.flags > 0 && <span className="side-flags"> · {sum.flags} cờ</span>}
               </span>
             </button>
-            {isOpen && (
-              <ol className="side-lessons">
-                {catalog.filter(e => e.level === level.no).map(e => (
-                  <li key={e.num}>
-                    <a href={lessonUrl(e.slug)} aria-current={e.num === currentNum ? 'page' : undefined}>
-                      <StatusIcon icon={iconOf(state, e.num)} />
-                      <span className="side-num">{e.num}</span>
-                      <span className="side-lesson">{e.shortTitle}</span>
-                    </a>
-                  </li>
-                ))}
-                {presentationsForLevel(presentations, level.no).map(entry => (
-                  <li key={`presentation:${entry.slug}`}>
-                    <a href={presentationUrl(entry.slug)} aria-label={`Slide tổng hợp: ${entry.title}`}>
-                      <span className="side-lesson">Slide tổng hợp</span>
-                    </a>
-                  </li>
-                ))}
-              </ol>
-            )}
+            {groups.map(({ title, lessons }, index) => (
+              <Fragment key={title ?? level.name}>
+                {title && <h3 className="side-subheading">{title}</h3>}
+                <ol className="side-lessons" aria-label={title}>
+                  {lessons.map(e => (
+                    <li key={e.num}>
+                      <a href={lessonUrl(e.slug)} aria-current={e.num === currentNum ? 'page' : undefined}>
+                        <StatusIcon icon={iconOf(state, e.num)} />
+                        <span className="side-num">{e.num}</span>
+                        <span className="side-lesson">{e.shortTitle}</span>
+                      </a>
+                    </li>
+                  ))}
+                  {index === groups.length - 1 && presentationsForLevel(presentations, level.no).map(entry => (
+                    <li key={`presentation:${entry.slug}`}>
+                      <a href={presentationUrl(entry.slug)} aria-label={`Slide tổng hợp: ${entry.title}`}>
+                        <span className="side-lesson">Slide tổng hợp</span>
+                      </a>
+                    </li>
+                  ))}
+                </ol>
+              </Fragment>
+            ))}
           </section>
         );
       })}

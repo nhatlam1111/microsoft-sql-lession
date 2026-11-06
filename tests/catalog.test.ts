@@ -1,5 +1,6 @@
 import { it, expect } from 'vitest';
-import { compareNum, validateCatalog, neighbors, navEntries } from '../src/lib/catalog';
+import { compareNum, groupLevelLessons, validateCatalog, neighbors, navEntries } from '../src/lib/catalog';
+import { LEVELS } from '../src/data/curriculum';
 import { fakeCatalog } from './helpers/expected';
 
 it('sorts lesson numbers numerically', () => {
@@ -33,4 +34,12 @@ it('gives the course menu and the roadmap popup only the lesson fields they show
   const nav = navEntries(fakeCatalog());
   expect(nav).toHaveLength(fakeCatalog().length);
   expect(Object.keys(nav[0]).sort()).toEqual(['level', 'num', 'shortTitle', 'slug', 'title']);
+});
+
+it('groups lessons 5.4 through 5.8 under data rescue within Administrator', () => {
+  const groups = groupLevelLessons(navEntries(fakeCatalog()), LEVELS[4]);
+  expect(groups.map(({ title, lessons }) => [title, lessons.map(lesson => lesson.num)])).toEqual([
+    [undefined, ['5.1', '5.2', '5.3']],
+    ['Cấp cứu dữ liệu', ['5.4', '5.5', '5.6', '5.7', '5.8']],
+  ]);
 });

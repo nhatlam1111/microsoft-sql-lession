@@ -122,6 +122,7 @@ button { font: inherit; color: inherit; }
 .side-name { flex: 1; min-width: 0; }
 .side-count { font-size: 12px; font-weight: 600; color: var(--ink-3); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .side-flags { color: var(--flag); }
+.side-subheading { margin: 8px 0 4px 19px; padding-left: 10px; font-size: 12px; font-weight: 650; color: var(--ink-2); }
 .side-lessons { list-style: none; margin: 4px 0 12px 19px; padding: 0 0 0 10px; border-left: 1px solid var(--rule); }
 .side-lessons a {
   display: flex; align-items: center; gap: 8px;
@@ -132,10 +133,9 @@ button { font: inherit; color: inherit; }
 .side-lessons a[aria-current='page'] { background: var(--accent-soft); color: var(--accent); font-weight: 600; box-shadow: inset 3px 0 var(--accent); }
 .side-num { width: 26px; flex: none; font-size: 12px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
 .side-lessons a[aria-current='page'] .side-num { color: var(--accent); }
-.side-lesson { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.side-lesson { min-width: 0; overflow-wrap: anywhere; }
 .side-appendices { margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--rule); }
 .side-appendices .side-num { width: 34px; }
-.side-appendices .side-lesson { white-space: normal; overflow: visible; }
 
 /* ---------- Lesson header ---------- */
 .lesson-head { margin-bottom: 8px; }

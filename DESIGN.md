@@ -125,7 +125,7 @@ Blue is navigation, selection and primary action; green is completed learning; a
 | Text hierarchy | `--ink`, `--ink-2`, `--ink-3` | Titles, body, supporting labels |
 | Brand and focus | `--accent`, `--accent-hover`, `--accent-soft`, `--accent-line`, `--focus-ring` | Shared actions, selected navigation, focus |
 | Boundaries | `--rule`, `--rule-strong`, `--control-line` | Dividers, panel edges, input/control outlines |
-| Learning states | `--done*`, `--seen*`, `--flag*`, `--lv1` through `--lv6` and soft variants | Progress, callouts, level labels |
+| Learning states | `--done*`, `--seen*`, `--flag*`, `--lv1` through `--lv5` and soft variants | Progress, callouts, level labels |
 | Font roles | `--font-ui`, `--font-read`, `--font-code`, `--font-tool` | Interface, prose, SQL, replicas |
 | Shape and depth | `--radius-s/m/l`, `--shadow-s/m/l`, `--scrim` | Controls, panels, overlays |
 | Timing and scroll | `--motion-fast`, `--motion-normal`, `--ease-ui`, `--scroll-*` | Shared visual feedback and global scrollbars |

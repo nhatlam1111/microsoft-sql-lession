@@ -1,10 +1,11 @@
 import { z } from 'astro/zod';
+import { lessonSchema } from './lesson-schema';
 
 /** Lecture decks reference lessons without becoming progress-bearing lessons themselves. */
 export const presentationSchema = z.object({
   title: z.string().min(1),
   summary: z.string().min(1),
-  sourceLessons: z.array(z.string().regex(/^[1-6]\.(10|[1-9])$/)).min(1),
+  sourceLessons: z.array(lessonSchema.shape.num).min(1),
   keywords: z.array(z.string().min(1)).min(1),
   minutes: z.number().int().positive(),
 }).strict();

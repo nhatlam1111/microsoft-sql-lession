@@ -48,9 +48,9 @@ describe('independent reference catalog', () => {
     expect(appendixNeighbors(entries, 'PL.1').prev).toBeUndefined();
     expect(appendixNeighbors(entries, 'PL.1').next?.num).toBe('PL.2');
     expect(appendixNeighbors(entries, 'PL.6').next).toBeUndefined();
-    expect(neighbors(main, '6.7').next).toBeUndefined();
+    expect(neighbors(main, '5.8').next).toBeUndefined();
     expect(main).toHaveLength(52);
-    expect(LEVELS).toHaveLength(6);
+    expect(LEVELS).toHaveLength(5);
   });
 
   it('generates reference links under the deployment base', () => {
@@ -85,7 +85,7 @@ describe('combined lookup without changing the learning path', () => {
     entries[1].keywords = ['TRY_CONVERT', 'chuyển đổi kiểu'];
     entries[4].keywords = ['DATE_BUCKET', 'DATETRUNC'];
     const items = createSearchItems(main, entries, AREAS);
-    expect(items).toHaveLength(58);
+    expect(items).toHaveLength(main.length + entries.length);
     for (const query of ['PL.2', 'pl.2', 'TRY_CONVERT', 'chuyen doi kieu']) {
       const found = searchItems(items, query)[0];
       expect(found.num, query).toBe('PL.2');

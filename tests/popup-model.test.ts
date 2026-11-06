@@ -9,7 +9,7 @@ const CAT = fakeCatalog();
 it('greets a first-time visitor', () => {
   const m = popupModel(emptyState(), null, CAT, NOW);
   expect([m.title, m.sub, m.cta?.label, m.cta?.sublabel, m.introLink, m.expandedLevel, m.flag])
-    .toEqual(['Chào bạn', 'Khóa học có 6 level, 52 bài. Cứ học lần lượt từ bài 1.1.', 'Bắt đầu bài 1.1 →', '1.1', true, 1, null]);
+    .toEqual(['Chào bạn', 'Khóa học có 5 level, 52 bài. Cứ học lần lượt từ bài 1.1.', 'Bắt đầu bài 1.1 →', '1.1', true, 1, null]);
 });
 it('welcomes back with the mockup texts', () => {
   const s = demoState(NOW);
@@ -26,7 +26,7 @@ it('omits the date when the previous visit is unknown', () => {
 it('congratulates when everything is done', () => {
   const s = ALL_NUMS.reduce((acc, n) => toggleDone(markSeen(acc, n, NOW), n, NOW), emptyState());
   const m = popupModel(s, NOW - 3 * 86_400_000, CAT, NOW);
-  expect([m.title, m.sub, m.cta, m.expandedLevel]).toEqual(['Bạn đã học xong cả 52 bài', 'Muốn ôn lại bài nào thì bấm vào trạm của level đó.', null, 6]);
+  expect([m.title, m.sub, m.cta, m.expandedLevel]).toEqual(['Bạn đã học xong cả 52 bài', 'Muốn ôn lại bài nào thì bấm vào trạm của level đó.', null, 5]);
 });
 it('a first visit that lands on a lesson page still gets the greeting', () => {
   const s = markSeen(emptyState(), '4.2', NOW);

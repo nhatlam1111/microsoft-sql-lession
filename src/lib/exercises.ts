@@ -1,6 +1,7 @@
 import { z } from 'astro/zod';
 import { withBase } from './paths';
 import { findUnprefixedUnicodeStrings } from './tsql-lexer';
+import { exerciseLessonNum } from '../data/lesson-moves.mjs';
 import type { ExerciseFile, PublicExercise } from './exercise-types';
 
 const exerciseSchema = z.object({
@@ -37,7 +38,7 @@ export function checkExerciseFile(file: ExerciseFile, lessons: { slug: string; n
   const problems: string[] = [];
   file.exercises.forEach((e, i) => {
     const at = `bài tập ${i + 1}:`;
-    const expected = `${lesson.num.replace('.', '-')}-${i + 1}`;
+    const expected = `${exerciseLessonNum(lesson.slug, lesson.num).replace('.', '-')}-${i + 1}`;
     if (e.id !== expected) problems.push(`${at} mã phải là ${expected}, đang là ${e.id}`);
     if (e.kind === 'change' && !e.check) problems.push(`${at} bài sửa dữ liệu cần check`);
     if (e.kind === 'query' && e.check) problems.push(`${at} bài truy vấn không có check`);

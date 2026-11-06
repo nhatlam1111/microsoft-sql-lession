@@ -152,7 +152,7 @@ import graphModel from '../../assets/presentations/graph-database-property-graph
 
 **Hay hiểu nhầm:** Có SQL Server là mọi thay đổi đã có lịch sử hoặc mọi thao tác đều hoàn tác được.
 
-**Giải thích:** Lịch sử cần thiết kế lưu lịch sử; giao dịch và sao lưu có cơ chế riêng. Giao dịch đi sâu ở bài 5.4, phân quyền ở 6.1, sao lưu ở 6.3. Buổi này chưa thử ghi dữ liệu trên SSMS.
+**Giải thích:** Lịch sử cần thiết kế lưu lịch sử; giao dịch và sao lưu có cơ chế riêng. Giao dịch đi sâu ở bài 4.4, phân quyền ở 5.1, sao lưu ở 5.4. Buổi này chưa thử ghi dữ liệu trên SSMS.
 
 </PresenterNotes>
 </Slide>
@@ -331,7 +331,7 @@ import graphModel from '../../assets/presentations/graph-database-property-graph
 ['2026-09','NV002','Nhận'],
 ['2026-09','NV001','Chặn: trùng cặp'],
 ]} markRow={3} /><div class="foundation-copy"><p><strong>Khóa ghép</strong> là một khóa gồm nhiều cột: PK của <code>BangLuong</code> gồm <code>KyLuong</code> và <code>MaNV</code>; cả cặp phải duy nhất, từng cột vẫn được lặp.</p>
-<p><strong><code>UNIQUE</code></strong> giữ một giá trị hoặc tổ hợp không trùng ngoài PK; thêm <code>NOT NULL</code> nếu cột bắt buộc có giá trị; cách <code>UNIQUE</code> xử lý <code>NULL</code> học ở bài 5.2.</p></div></div>
+<p><strong><code>UNIQUE</code></strong> giữ một giá trị hoặc tổ hợp không trùng ngoài PK; thêm <code>NOT NULL</code> nếu cột bắt buộc có giá trị; cách <code>UNIQUE</code> xử lý <code>NULL</code> học ở bài 4.2.</p></div></div>
 
 <PresenterNotes source="1.4" minutes={2}>
 

@@ -16,7 +16,6 @@ it.each([
   ['3-2-group-by-pivottable', [45, 45], ['TrangThai']],
   ['3-3-having-loc-sau-khi-gop', [45, 45], ['TrangThai']],
   ['3-5-left-join', [2, 2], ['MaHD']],
-  ['3-12-dem-co-dieu-kien', [45, 45], ['TrangThai']],
 ])('%s checks each record against each condition, on columns its input shows', (slug, totals, columns) => {
   const { steps } = lessonBlocks(slug);
   const at = steps.findIndex(s => s.clause === 'WHERE');

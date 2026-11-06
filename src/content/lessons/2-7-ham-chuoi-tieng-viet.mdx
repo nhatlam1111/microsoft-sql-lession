@@ -78,7 +78,7 @@ Khác Excel, `LEN` của SQL không tính dấu cách cuối, còn `TRIM` không
 
 **Collation** là bộ quy tắc so sánh và sắp xếp chữ. Database khóa học không phân biệt hoa thường (`CI`) nhưng phân biệt dấu (`AS`), nên `HoTen LIKE N'bui%'` không ra dòng nào. Khi việc tra cứu cho phép bỏ dấu, thêm **`COLLATE`** vào chính điều kiện: `HoTen COLLATE Latin1_General_CI_AI LIKE N'bui%'` tìm ra `NV007`, vì `AI` là không phân biệt dấu. `COLLATE` chỉ áp dụng cho phép so sánh đó, không đổi collation của database. Bỏ dấu thì tìm rộng hơn, nên xác nhận lại hồ sơ bằng mã. `N` giữ ký tự bạn viết, không quyết định cách so sánh.
 
-Ở bài này chỉ cần chọn hàm theo phần chuỗi cần lấy, giữ Unicode khi viết chữ và phân biệt luật so sánh với nội dung lưu. Kiểu dữ liệu xem lại bài 1.3, kiểm chất lượng dữ liệu học ở bài 4.6.
+Ở bài này chỉ cần chọn hàm theo phần chuỗi cần lấy, giữ Unicode khi viết chữ và phân biệt luật so sánh với nội dung lưu. Kiểu dữ liệu xem lại bài 1.3, kiểm chất lượng dữ liệu học ở bài 3.19.
 
 ### SQL Server chạy câu này thế nào
 

@@ -2,7 +2,7 @@ import {it,expect} from 'vitest';
 import {readFileSync,existsSync} from 'node:fs';
 import {parse} from 'yaml';
 import {fixtureQuery,lessonExamples} from './helpers/window-fixture';
-const slugs=['4-1-cte-tung-buoc','4-2-xep-hang-row-number-rank','4-3-luy-ke-so-thang-truoc'];
+const slugs=['3-12-cte-tung-buoc','3-13-xep-hang-row-number-rank','3-16-luy-ke-so-thang-truoc'];
 it('illustrations and runnable flow checks do not solve any of the nine new exercises unchanged',()=>{
   for(const slug of slugs)expect(existsSync(`src/content/exercises/${slug}.yaml`),slug).toBe(true);
   const examples=slugs.flatMap(slug=>{

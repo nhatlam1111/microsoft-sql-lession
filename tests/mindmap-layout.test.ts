@@ -34,7 +34,7 @@ it('opens a left area to the left, in roadmap order', () => {
   const { nodes } = layoutMindmap(AREAS, CAT, new Set<AreaId>(['A5']));
   const leaves = nodes.filter(n => n.kind === 'lesson');
   const area = nodes.find(n => n.id === 'area:A5')!;
-  expect(leaves.map(n => n.num)).toEqual(['3.1', '3.2', '3.3', '3.12', '4.1', '4.2', '4.3', '4.4', '4.5']);
+  expect(leaves.map(n => n.num)).toEqual(['3.1', '3.2', '3.3', '3.12', '3.13', '3.14', '3.15', '3.16', '3.17', '3.18', '4.8']);
   for (const l of leaves) expect(l.x + SIZES.leafW).toBe(area.x - SIZES.gapAreaLeaf);
 });
 it('keeps each side vertically centred on the root', () => {

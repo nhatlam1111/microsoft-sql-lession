@@ -81,7 +81,7 @@ Khi đổi yêu cầu trong bài tập, điều kiện giới hạn hồ sơ nh�
 
 Không thay máy móc bằng `NOT IN`: nếu danh sách con chứa `NULL`, mã không khớp có thể nhận `UNKNOWN` và bị `WHERE` loại (bài 2.5). `NOT EXISTS` kiểm có dòng khớp nên tránh bẫy danh sách đó; đây là giới hạn chung, không khẳng định `DonNghiPhep.MaNV` hiện chứa `NULL`.
 
-Ở bài này chỉ cần lọc theo danh sách hoặc sự tồn tại, không cam kết subquery nhanh hơn `JOIN`. Subquery còn có thể tạo một giá trị trong `SELECT` ở bài 3.10 và làm nguồn trong `FROM` ở bài 3.11. Cách tổ chức câu dài bằng CTE học ở bài 4.1; cách xem máy thực thi học ở bài 5.7.
+Ở bài này chỉ cần lọc theo danh sách hoặc sự tồn tại, không cam kết subquery nhanh hơn `JOIN`. Subquery còn có thể tạo một giá trị trong `SELECT` ở bài 3.10 và làm nguồn trong `FROM` ở bài 3.11. Cách tổ chức câu dài bằng CTE học ở bài 3.12; cách xem máy thực thi học ở bài 4.7.
 
 ### SQL Server chạy câu này thế nào
 

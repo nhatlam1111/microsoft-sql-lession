@@ -14,7 +14,7 @@ import { withBase } from '../lib/paths';
 
       <h2>Khóa học này dạy gì</h2>
       <p>Khóa học đi từ chỗ chưa viết câu SQL nào tới lúc tự đọc hiểu, truy vấn và phân tích được dữ liệu trên Microsoft SQL Server. Mọi ví dụ đều dùng dữ liệu nhân sự: nhân viên, hợp đồng, chấm công, nghỉ phép, bảng lương. Mỗi khái niệm SQL được đặt cạnh một việc quen làm trên Excel, như AutoFilter, VLOOKUP hay PivotTable.</p>
-      <p>Khóa học tập trung vào truy vấn và phân tích; trang này có hướng dẫn chuẩn bị nơi thực hành, không đi sâu quản trị máy chủ. Phần cấp cứu dữ liệu ở level cuối dừng ở mức hiểu: biết việc gì phải làm ngay, dữ liệu còn cứu được bằng cách nào và cần báo cho ai.</p>
+      <p>Khóa học tập trung vào truy vấn và phân tích. Phần Administrator giới thiệu phân quyền, môi trường, khóa dữ liệu và cấp cứu dữ liệu. Khi có sự cố, bạn cần biết việc gì phải làm ngay, dữ liệu còn cứu được bằng cách nào và cần báo cho ai.</p>
 
       <h2 id="chon-noi-thuc-hanh">Chọn nơi thực hành</h2>
       <p>Các bài 1.1–1.5 chỉ đọc hiểu, chưa cần công cụ nào. Bạn bắt đầu viết SQL từ bài 2.1, theo một trong ba lối:</p>
@@ -23,7 +23,7 @@ import { withBase } from '../lib/paths';
         <li><strong>Có tài khoản SSMS của khóa học:</strong> làm theo mục <a href="#ket-noi-ssms">Kết nối bằng SSMS</a>. Cách này cần Windows; tài khoản do người phụ trách cấp.</li>
         <li><strong>Chưa có mã hay tài khoản:</strong> dùng SQL Server riêng với bộ dữ liệu mẫu theo <a href="#tao-ban-rieng">hướng dẫn tạo bản riêng</a>. Bạn chạy SQL trong SSMS và tự đối chiếu yêu cầu; bản riêng không có chấm tự động.</li>
       </ul>
-      <p>Trên trang bài tập, <strong>Chạy (F5)</strong> hiện kết quả; <strong>Nộp bài</strong> còn đối chiếu yêu cầu. Trang nhận mỗi lần một câu lệnh, luôn <strong>hoàn tác</strong> thay đổi sau khi chạy. Cơ chế này chỉ có trên trang bài tập; trong SSMS, mặc định câu sửa thành công là ghi hẳn ngay, không có Ctrl+Z. Trên database dùng chung, ở các bài đầu chỉ chạy các câu đọc có trong bài; cách hoàn tác học ở bài 5.4.</p>
+      <p>Trên trang bài tập, <strong>Chạy (F5)</strong> hiện kết quả; <strong>Nộp bài</strong> còn đối chiếu yêu cầu. Trang nhận mỗi lần một câu lệnh, luôn <strong>hoàn tác</strong> thay đổi sau khi chạy. Cơ chế này chỉ có trên trang bài tập; trong SSMS, mặc định câu sửa thành công là ghi hẳn ngay, không có Ctrl+Z. Trên database dùng chung, ở các bài đầu chỉ chạy các câu đọc có trong bài; cách hoàn tác học ở bài 4.4.</p>
       <p>Nếu chỉ dùng web, bạn không cần làm theo mục kết nối SSMS bên dưới.</p>
       <h3 id="doc-ket-qua">Đọc kết quả sau khi chạy</h3>
       <p>Trên trang bài tập lẫn trong SSMS, kết quả hiện ở hai tab:</p>
@@ -35,7 +35,7 @@ import { withBase } from '../lib/paths';
       <h2>Cách dùng trang</h2>
       <ul>
         <li><strong>Lộ trình:</strong> nút Lộ trình trên thanh trên cùng cho biết bạn đang ở bài nào và học tiếp từ đâu. Nếu lần trước bạn ghé cách đây từ một ngày trở lên, lộ trình tự mở khi bạn vào trang.</li>
-        <li><strong>Mindmap:</strong> trang chủ chia kiến thức thành 8 mảng. Mỗi bài gắn nhãn level từ L1 đến L6, nên nhìn một nhánh là thấy mảng đó đi từ cơ bản lên nâng cao ra sao.</li>
+        <li><strong>Mindmap</strong> trên trang chủ chia kiến thức thành 8 mảng. Nhãn L1 đến L{LEVELS.length} cho biết mỗi bài nằm ở phần nào trong lộ trình.</li>
         <li><strong>Tìm bài:</strong> bấm ô tìm kiếm hoặc Ctrl K, gõ không dấu cũng được.</li>
       </ul>
       <p>Mỗi bài có một trong các trạng thái sau:</p>
@@ -46,7 +46,7 @@ import { withBase } from '../lib/paths';
         <li><StatusIcon icon="flag" /> <strong>Cần xem lại:</strong> bạn tự cắm cờ khi thấy chưa chắc, gỡ cờ lúc nào cũng được.</li>
       </ul>
 
-      <h2>6 level</h2>
+      <h2>{LEVELS.length} phần học</h2>
       <table class="intro-levels">
         <thead><tr><th>Level</th><th>Học xong level này</th></tr></thead>
         <tbody>
