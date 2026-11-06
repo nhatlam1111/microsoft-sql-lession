@@ -7,14 +7,16 @@ Web: https://nhatlam1111.github.io/microsoft-sql-lession/
 ## Trên web có gì
 
 - **Mindmap** 8 mảng kiến thức làm trang chủ. Bấm vào một bài thì drawer tóm tắt bài mở ra; nút "Menu khóa học" mở danh sách bài.
-- **50 bài, 6 level.** Bài 1.1–1.5, 2.1–2.9, 3.1–3.10, 4.1–4.6 và 6.5 viết đầy đủ, các bài còn lại là bản tóm tắt. Bài đầy đủ đối chiếu với Excel; 1.1–1.5 là bài nền ngắn không có tình huống, từ 2.1 có tình huống; các bài truy vấn có câu lệnh tô màu kiểu SSMS và kết quả từ `HRM_Demo`.
+- **52 bài, 6 level.** Bài 1.1–1.5, 2.1–2.9, 3.1–3.12, 4.1–4.6 và 6.5 viết đầy đủ, các bài còn lại là bản tóm tắt. Bài đầy đủ đối chiếu với Excel; 1.1–1.5 là bài nền ngắn không có tình huống, từ 2.1 có tình huống; các bài truy vấn có câu lệnh tô màu kiểu SSMS và kết quả từ `HRM_Demo`.
 - **Popup "Lộ trình của bạn"** và trạng thái từng bài (chưa học, đã xem, đã học, cần xem lại). Tiến độ lưu trong trình duyệt và xuất/nhập được bằng file JSON.
 - **Sơ đồ thứ tự chạy câu lệnh:** từng bước SQL Server làm, mỗi bước có drawer giải thích và bảng dữ liệu sau bước đó.
-- **Bài tập chạy SQL trên database thật** (bài 2.1–2.9, 3.1–3.10, 4.1–4.4, 4.6 và 6.5): viết câu lệnh, chạy (F5), nộp bài và biết đúng hay chưa. Trang có popup sơ đồ database. Mọi lần chạy đều nằm trong một transaction rồi `ROLLBACK`, nên dữ liệu không đổi. Muốn chạy cần mã truy cập, xin người phụ trách khóa học. Bài tập không có gợi ý và không có nút xem đáp án. Bộ chấm không so tên cột; bài 2.1 nhắc học viên tự đối chiếu tiêu đề alias với đề.
+- **Bài tập chạy SQL trên database thật** (bài 2.1–2.9, 3.1–3.12, 4.1–4.4, 4.6 và 6.5): viết câu lệnh, chạy (F5), nộp bài và biết đúng hay chưa. Trang có popup sơ đồ database. Mọi lần chạy đều nằm trong một transaction rồi `ROLLBACK`, nên dữ liệu không đổi. Muốn chạy cần mã truy cập, xin người phụ trách khóa học. Bài tập không có gợi ý và không có nút xem đáp án. Bộ chấm không so tên cột; bài 2.1 nhắc học viên tự đối chiếu tiêu đề alias với đề.
 - **Luyện SQL** (`/luyen-sql/`): 50 bài cấp Cơ bản nối tiếp nhau theo bài 2.1–2.9. Mỗi bài có unit test và hidden test; đạt hết được thưởng coin, dùng coin mở hidden test. Coin và tiến độ lưu trên server theo mã truy cập, mỗi mã là một hồ sơ học viên.
 - **Script `HRM_Demo.sql`** tải được từ trang Giới thiệu.
 
 ## Công nghệ
+
+Đợt thêm bài subquery chuyển bài COUNT từ 3.10 sang 3.12. Tiến độ và nháp dùng namespace v2, tự đọc bản v1 theo số bài cũ và giữ nguyên bản cũ; v2 có sẵn là bản chính, không hợp nhất các lần ghi tiếp từ tab cũ. Client bài tập gửi ID có tiền tố `course-v2:`; API mới vẫn nhận request cũ theo nghĩa cũ. Khi được phép phát hành, triển khai API trước web; API cũ sẽ từ chối ID có tiền tố thay vì chấm nhầm. Bốn URL COUNT cũ chuyển tới 3.12.
 
 | Phần | Dùng gì |
 |---|---|

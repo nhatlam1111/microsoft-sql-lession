@@ -1,0 +1,17 @@
+{
+  "src\\content\\lessons\\3-10-subquery-trong-select.mdx": "05275b5df03e23d11cb7483ce8a473649f73bdd999dae3f05676b27fe62c4bca",
+  "src\\content\\lessons\\3-11-subquery-trong-from.mdx": "b2983f3867e8e70fa6fe32b77e56bafa255d26436f43100dd52c40b6810ce737",
+  "src\\content\\lessons\\3-12-dem-co-dieu-kien.mdx": "c8ee60c976712c9ff30af03cb9de4fa9f0cf1ce39c188af825338046fb796a0c",
+  "src\\content\\exercises\\3-10-subquery-trong-select.yaml": "44f5fa27025dc0a9d72903bc38a9a60e6849fd728f30530b91a1fa2bf3beeb2d",
+  "src\\content\\exercises\\3-11-subquery-trong-from.yaml": "18c98e037c69e18f3d9274e7a5387cd131770efed18bf9c532066d3878b6907e",
+  "src\\content\\exercises\\3-12-dem-co-dieu-kien.yaml": "4606e38571bede84b549692e6cfc43a6ff95ed33ac0624e006684f87925d0de6",
+  "dist\\bai\\3-10-subquery-trong-select\\index.html": "007b1fd61ad70fb747c886e87507ce61b92ae3e5aaf7f81395a6d09c1751c5b6",
+  "dist\\bai\\3-11-subquery-trong-from\\index.html": "1f764b99128724e5c3d71628069fa1883c650692ba720f9015706e07f00abf81",
+  "dist\\bai\\3-12-dem-co-dieu-kien\\index.html": "466c3a4f18ce866ccde5b0b0b6b25f3581371a241a1c863ad276889096f6f880",
+  "docs\\reviews\\2026-11-04-subquery-terra-high\\locked-prerequisites-3-10.md": "2be6bf11cd013b9a744a037d68ae3aac9fd76b70d5e93f4c2c5832eaa193405f",
+  "docs\\reviews\\2026-11-04-subquery-terra-high\\locked-prerequisites-3-11.md": "4dd1ea97dddb2ba3f3f99871f96c427437fb9b0c3fdce7a37e0dbad4f29d6793",
+  "docs\\reviews\\2026-11-04-subquery-terra-high\\review-bai-3-10.md": "cf357f7c75171ef23d60dcf4f4316cda98d9261a4f16bf892534c5fc073e5cf2",
+  "docs\\reviews\\2026-11-04-subquery-terra-high\\review-bai-3-11.md": "ded80139bbf75e3ad4a2eadb40bdc2d33c627783cfba3df60e5e4e6d5c2dc862",
+  "docs\\reviews\\2026-11-04-subquery-terra-high\\review-bai-3-11-addendum.md": "b03dc512a24ce36ea57a424b4e65007cd01057929967f315fea4ed809e65176b",
+  "docs\\reviews\\2026-11-04-subquery-terra-high\\review-integration.md": "c52e565e3cfcca1e33fc8403c7e4878ac6dfd9983300685b5ebad283b3330dc5"
+}

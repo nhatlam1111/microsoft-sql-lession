@@ -7,7 +7,7 @@ area: A5
 kind: full
 minutes: 30
 prerequisites:
-  - "3.9"
+  - "3.11"
   - "3.2"
 goal: bạn đặt tên các kết quả trung gian bằng CTE và kiểm được từng phần của một báo cáo
 excel: Các vùng kết quả trung gian
@@ -30,7 +30,7 @@ Lấy `DonNghiPhep` có `TrangThai = N'Đã duyệt'` và `TuNgay` từ `01/09/2
 
 Trong Excel, bạn có thể để danh sách đơn đạt điều kiện ở một vùng, dùng danh sách đó tính tổng theo loại ở vùng khác, rồi lọc các tổng. Đặt tên mỗi vùng giúp chị Hạnh biết mình đang kiểm đầu vào hay bảng tổng. Trong SQL, **CTE** (Common Table Expression, biểu thức bảng chung) đặt tên cho kết quả một truy vấn để phần sau tham chiếu như một nguồn bảng.
 
-`WITH DonDaDuyetThang9 AS (...)` khai báo tên `DonDaDuyetThang9`; truy vấn trong ngoặc chọn các cột và dòng của kết quả ấy. `AS` ở đây gắn tên với truy vấn định nghĩa. Câu `SELECT` ngay sau phần khai báo đọc tên CTE trong `FROM`. Không tạo sheet hay bảng mới trong database.
+Ở bài 3.11, câu con trong `FROM` đã tạo một nguồn trung gian. Với CTE, `WITH DonDaDuyetThang9 AS (...)` khai báo tên `DonDaDuyetThang9`; truy vấn trong ngoặc chọn các cột và dòng của kết quả ấy. `AS` ở đây gắn tên với truy vấn định nghĩa. Câu `SELECT` ngay sau phần khai báo đọc tên CTE trong `FROM`. Không tạo sheet hay bảng mới trong database.
 
 Muốn có hai CTE, dùng **một `WITH`**, đặt dấu phẩy sau dấu đóng ngoặc CTE đầu rồi viết `TongTheoLoai AS (...)`. CTE phía sau được đọc CTE đã khai báo phía trước. Trong tình huống này, `DonDaDuyetThang9` chọn đơn, `TongTheoLoai` nhóm theo loại và tạo cột `TongNgay` bằng `SUM(SoNgay)` như bài 3.2.
 

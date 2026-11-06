@@ -16,7 +16,7 @@ const LEGACY_LAYOUT_SLUGS = new Set([
 
 // Frozen migration list: lessons with a query keep the old subsections until each one is edited; remove a lesson when it moves to two.
 const PENDING_TWO_SUBSECTIONS = new Set([
-  '3-10-dem-co-dieu-kien', '4-1-cte-tung-buoc', '4-2-xep-hang-row-number-rank',
+  '4-1-cte-tung-buoc', '4-2-xep-hang-row-number-rank',
   '4-3-luy-ke-so-thang-truoc', '4-4-pivot-xoay-bang', '4-6-soi-chat-luong-du-lieu',
 ]);
 
@@ -25,13 +25,13 @@ describe('lesson files', () => {
   it('every frontmatter passes the schema', () => {
     for (const f of files) expect(lessonSchema.safeParse(f.data).success, f.slug).toBe(true);
   });
-  it('matches the 50 lessons of the design (num, area, kind)', () => {
+  it('matches the 52 lessons of the design (num, area, kind)', () => {
     expect(readCatalog().map(e => `${e.num} ${e.area}${e.kind === 'full' ? ' full' : ''}`)).toEqual(EXPECTED);
   });
   it('passes the catalog rules', () => expect(validateCatalog(readCatalog())).toEqual([]));
-  it('has 7, 6, 3, 6, 9, 6, 6, 7 lessons in areas A1..A8', () => {
+  it('has 7, 6, 3, 8, 9, 6, 6, 7 lessons in areas A1..A8', () => {
     const count = (a: string) => readCatalog().filter(e => e.area === a).length;
-    expect(['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8'].map(count)).toEqual([7, 6, 3, 6, 9, 6, 6, 7]);
+    expect(['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8'].map(count)).toEqual([7, 6, 3, 8, 9, 6, 6, 7]);
   });
   it('uses exactly the section headings of its kind, in order', () => {
     for (const f of files) {

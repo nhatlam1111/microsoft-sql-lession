@@ -3,7 +3,7 @@ import { compareNum, validateCatalog, neighbors, navEntries } from '../src/lib/c
 import { fakeCatalog } from './helpers/expected';
 
 it('sorts lesson numbers numerically', () => {
-  expect(['3.10', '3.9', '1.2', '3.1'].sort(compareNum)).toEqual(['1.2', '3.1', '3.9', '3.10']);
+  expect(['3.12', '3.10', '3.9', '3.11', '1.2', '3.1'].sort(compareNum)).toEqual(['1.2', '3.1', '3.9', '3.10', '3.11', '3.12']);
 });
 it('reports every rule violation', () => {
   const base = { title: 't', shortTitle: 't', area: 'A1', kind: 'summary', minutes: 5, goal: 'g', excel: 'e', summary: 's' } as const;

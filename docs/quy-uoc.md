@@ -89,7 +89,7 @@ Mọi quy ước khi viết bài, review bài và làm việc với database c�
 
 ### 2.7 Bài phụ lục tra cứu (duyệt 01/11/2026)
 
-- Phụ lục là chương tra cứu riêng, số `PL.1`, `PL.2`…, không phải level thứ bảy, không tính vào 50 bài hoặc tiến độ/resume. Hai bài đầu luôn là chi tiết kiểu dữ liệu và chuyển đổi kiểu. Bài chính vẫn phải tự đủ kiến thức làm bài tập; phụ lục bổ trợ khi cần hiểu sâu.
+- Phụ lục là chương tra cứu riêng, số `PL.1`, `PL.2`…, không phải level thứ bảy, không tính vào 52 bài hoặc tiến độ/resume. Hai bài đầu luôn là chi tiết kiểu dữ liệu và chuyển đổi kiểu. Bài chính vẫn phải tự đủ kiến thức làm bài tập; phụ lục bổ trợ khi cần hiểu sâu.
 - Mở bài nói cách dùng và tiền đề tối thiểu; bảng tra nhanh dẫn từ tên kỹ thuật hoặc tác vụ tới phần giải thích. Mỗi nhóm có mục đích, cú pháp/tham số, đầu vào/kiểu trả về, ví dụ và kết quả kèm lý do, giới hạn cùng cách tránh lỗi thường gặp. Danh mục kiểu dữ liệu phải đủ kiểu dựng sẵn, có dung lượng/miền giá trị/đơn vị; kiểu hiếm chỉ cần mục đích và giới hạn, không ép ví dụ riêng cho từng kiểu.
 - Đây là **biến thể tra cứu**, không áp khung tình huống đơn/hai tiểu mục, giới hạn bài nền hay bắt buộc Chat/LineMap/RunFlow/Ứng dụng/Memo/Exercises. Không thêm vào allowlist bài cũ. Vẫn giữ quy tắc viết gọn từng đoạn, giải thích thuật ngữ, highlight, thụt lề, kiểm số liệu và review độc lập.
 - Được dùng `SELECT` trên hằng số hoặc bảng dẫn xuất `VALUES` để cô lập cơ chế; giải thích cách đọc chúng trước khi yêu cầu tự làm. Ví dụ chỉ đọc, ghi rõ kết quả là tính từ giá trị minh họa, không suy thành dữ kiện mới của công ty. Khuôn cú pháp/đoạn chỉ để đọc dùng `copy={false}`. Nêu nơi chạy phù hợp, không hứa allowlist bài tập web hỗ trợ mọi ví dụ phụ lục.

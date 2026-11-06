@@ -6,8 +6,8 @@ import { seedRows } from './helpers/hrm-seed';
 import { checkFlow } from '../src/lib/run-flow';
 import { inputPreview } from '../src/lib/run-flow';
 
-const slugs = ['3-8-union-gop-danh-sach', '3-9-subquery', '3-10-dem-co-dieu-kien'];
-describe('lessons 3.8–3.10: full lessons and supported practice', () => {
+const slugs = ['3-8-union-gop-danh-sach', '3-9-subquery', '3-12-dem-co-dieu-kien'];
+describe('lessons 3.8, 3.9 and 3.12: full lessons and supported practice', () => {
   it.each(slugs)('%s has full narrative, three self-checks before practice and three query exercises', slug => {
     const lesson = lessonBlocks(slug);
     expect((lesson.data as {kind: string}).kind).toBe('full');
@@ -64,10 +64,11 @@ describe('lessons 3.8–3.10: full lessons and supported practice', () => {
     expect(results.some(r => r.total === 9 && r.columns.includes('HoTen'))).toBe(true);
     expect(steps.length).toBeGreaterThanOrEqual(2);
   });
-  it('3.10 contrasts conditional sum with COUNT of a nullable expression on the active population', () => {
+  it('3.12 contrasts conditional sum with COUNT of a nullable expression on the active population', () => {
     const { body, results, query } = lessonBlocks(slugs[2]);
-    expect(query).toMatch(/WHERE TrangThai = N'Đang làm'/);
-    expect(query).toMatch(/SUM\(CASE WHEN GioiTinh = N'Nữ' THEN 1 ELSE 0 END\)/);
+    const normalized = query.replace(/\s+/g, ' ').replace(/\(\s+/g, '(').replace(/\s+\)/g, ')');
+    expect(normalized).toMatch(/WHERE TrangThai = N'Đang làm'/);
+    expect(normalized).toMatch(/SUM\(CASE WHEN GioiTinh = N'Nữ' THEN 1 ELSE 0 END\)/);
     expect(body).toMatch(/COUNT\(CASE WHEN GioiTinh = N'Nữ' THEN 1 END\)/);
     const report = results.find(r => r.columns.join(',') === 'MaPB,SoNam,SoNu,TongSo');
     expect(report?.total).toBe(6);
@@ -94,7 +95,7 @@ describe('lessons 3.8–3.10: full lessons and supported practice', () => {
     expect(inputPreview(steps[2],steps[1]).columns).toEqual(expect.arrayContaining(['MaNV','HoTen','MaPB']));
     expect(steps[1].examples?.[0].table?.rows).toEqual([...ids].sort().slice(0,5).map(id => [id]));
   });
-  it('3.10 report and flow retain active profiles and conditional gender totals from the source fixture', () => {
+  it('3.12 report and flow retain active profiles and conditional gender totals from the source fixture', () => {
     const {results,steps,query} = lessonBlocks(slugs[2]);
     const active = seedRows('NhanVien').filter(r => r.TrangThai === 'Đang làm');
     const expected = [...new Set(active.map(r => String(r.MaPB)))].sort().map(code => {
@@ -104,5 +105,27 @@ describe('lessons 3.8–3.10: full lessons and supported practice', () => {
     expect(results.find(r => r.columns.join(',') === 'MaPB,SoNam,SoNu,TongSo')?.rows).toEqual(expected);
     expect(steps.map(s => [s.clause,s.total])).toEqual([['FROM',48],['WHERE',45],['GROUP BY',6],['SELECT',6],['ORDER BY',6]]);
     expect(checkFlow(steps,query)).toEqual([]);
+  });
+  it('3.12 traces conditional contributions from two complete groups to the output cells', () => {
+    const {body, steps} = lessonBlocks(slugs[2]);
+    expect(body.match(/<details>/g)).toHaveLength(4);
+    const select=steps.find(s=>s.clause==='SELECT')!;
+    expect(select.checks).toBeUndefined(); // These are aggregates over groups, not CASE labels for individual output rows.
+    expect(select.examples).toHaveLength(2);
+    const employees=seedRows('NhanVien').filter(r=>r.TrangThai==='Đang làm');
+    for(const code of ['BGD','NS']){
+      const example=select.examples!.find(e=>e.calculations?.some(c=>c.column==='MaPB'&&c.value===code))!;
+      expect(example,code).toBeDefined();
+      const members=employees.filter(r=>r.MaPB===code);
+      expect(example.table?.columns).toEqual(['MaNV','MaPB','GioiTinh','Cờ nam','Cờ nữ']);
+      expect(example.table?.rows).toEqual(members.map(r=>[r.MaNV,r.MaPB,r.GioiTinh,Number(r.GioiTinh==='Nam'),Number(r.GioiTinh==='Nữ')]));
+      expect(example.calculations?.map(c=>[c.column,c.value])).toEqual([
+        ['MaPB',code],['SoNam',members.filter(r=>r.GioiTinh==='Nam').length],
+        ['SoNu',members.filter(r=>r.GioiTinh==='Nữ').length],['TongSo',members.length],
+      ]);
+    }
+    const unsorted=steps[3].rows.map(r=>String(r[0]));
+    expect(unsorted).not.toEqual([...unsorted].sort());
+    expect(steps[4].rows.map(r=>String(r[0]))).toEqual([...unsorted].sort());
   });
 });

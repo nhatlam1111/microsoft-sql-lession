@@ -4,11 +4,21 @@ import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { parse as parseYaml } from 'yaml';
+import { lessonRedirectRoutes } from '../src/data/lesson-redirects.mjs';
 
 export const BASE = '/microsoft-sql-lession';
 
 const EXTERNAL = /^(?:[a-z][a-z0-9+.-]*:|\/\/)/i;
 const ATTR = /\s(?:href|src)\s*=\s*["']([^"']+)["']/gi;
+
+/** A registered legacy URL must point to the same based target in every redirect mechanism. */
+export function findLessonRedirectProblems(html, target) {
+  const problems = [];
+  if (!html.includes(`content="0;url=${target}"`)) problems.push('thiếu chuyển hướng refresh đúng đích');
+  if (!new RegExp(`<link\\b[^>]*rel="canonical"[^>]*href="https?://[^"/]+${target.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`).test(html)) problems.push('thiếu canonical đúng đích');
+  if (!html.includes(`<a href="${target}"`)) problems.push('thiếu link dự phòng đúng đích');
+  return problems;
+}
 
 function candidates(rel) {
   if (rel === '' || rel.endsWith('/')) return [`${rel}index.html`];
@@ -172,10 +182,17 @@ function main() {
     for (const code of findCodeTypographyProblems(html)) errors.push(`${relative(dist, page).split(sep).join('/')}: dấu nháy cong trong code tự kiểm tra: ${code}`);
   }
   const lessonDir = join('src', 'content', 'lessons');
+  const redirects = lessonRedirectRoutes(BASE);
+  for (const [route, target] of Object.entries(redirects)) {
+    const path = `${route.slice(1)}index.html`;
+    const html = readHtml(path);
+    if (html === null) errors.push(`thiếu dist/${path}`);
+    else for (const problem of findLessonRedirectProblems(html, target)) errors.push(`${path}: ${problem}`);
+  }
   const lessons = existsSync(lessonDir) ? readdirSync(lessonDir).filter(f => f.endsWith('.mdx')).length : 0;
   const baiDir = join(dist, 'bai');
   const lessonPages = existsSync(baiDir)
-    ? readdirSync(baiDir).filter(d => existsSync(join(baiDir, d, 'index.html'))).length
+    ? readdirSync(baiDir).filter(d => existsSync(join(baiDir, d, 'index.html')) && !(`/bai/${d}/` in redirects)).length
     : 0;
   if (lessonPages !== lessons) errors.push(`có ${lessonPages} trang bài nhưng ${lessons} file bài`);
 

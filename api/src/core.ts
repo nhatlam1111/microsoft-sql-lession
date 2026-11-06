@@ -2,6 +2,7 @@
 import { guardExercise, normalizeSql } from '../../src/lib/sql-guard';
 import { compareChanges, compareResults, type Shape } from '../../src/lib/grade';
 import type { ApiFailure, Exercise, FailureKind, GradeResponse, RunResponse } from '../../src/lib/exercise-types';
+import { resolveCourseExerciseId } from '../../src/lib/curriculum-version';
 
 export interface RunOutcome {
   shape: Shape | null;
@@ -38,7 +39,8 @@ function prepare(body: unknown, code: string | null, deps: Deps): { exercise: Ex
   if (!b || typeof b !== 'object' || typeof b.exercise !== 'string' || typeof b.sql !== 'string') return fail('bad-request');
   if (!code || !deps.codes.includes(code)) return fail('bad-code');
   if (!deps.allow(code)) return fail('rate');
-  const exercise = deps.exercises[b.exercise];
+  const id = resolveCourseExerciseId(b.exercise);
+  const exercise = id === null ? undefined : deps.exercises[id];
   if (!exercise) return fail('unknown-exercise');
   const guard = guardExercise(b.sql);
   if (!guard.ok) return fail('blocked', guard.reason);

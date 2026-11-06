@@ -95,7 +95,7 @@ Các nhân vật là giả định, không phải hồ sơ trong bộ mẫu.
 
 | Nhân vật | Là ai | Xuất hiện |
 |---|---|---|
-| Chị Hạnh · Phòng Nhân sự | Người đưa yêu cầu trong mọi bài có tình huống; xưng "chị", gọi người học là "em" | 2.1–2.9, 3.1–3.10, 4.1–4.6 |
+| Chị Hạnh · Phòng Nhân sự | Người đưa yêu cầu trong mọi bài có tình huống; xưng "chị", gọi người học là "em" | 2.1–2.9, 3.1–3.12, 4.1–4.6 |
 | Người học ("em", "bạn") | Người đọc và lấy dữ liệu từ hệ thống nhân sự cho chị Hạnh; có mã truy cập web hoặc tài khoản SSMS | từ bài 2.1 |
 | Bên IT | Quản trị hệ thống, cấp tên máy chủ và tài khoản, nhập file vào hệ thống, xóa dữ liệu theo yêu cầu | nhắc tới khi cần |
 | Kế toán | Người nhận các danh sách và bảng lương | 2.1 |
@@ -136,7 +136,9 @@ Các lỗi này có chủ ý, dành cho bài 4.6 và 4.7; bài khác không đư
 | 3.7 | Chị Hạnh lấy mọi hồ sơ kèm quản lý trực tiếp hiện lưu: LEFT JOIN giữ đủ 48 dòng, NV004 có quản lý NULL; INNER JOIN chỉ còn 47. NV001 trỏ NV005, NV005 trỏ NV004; không coi NV004 là quản lý trực tiếp của NV001. NV004/NV005 mỗi người có sáu hồ sơ trực tiếp ở mọi trạng thái; NV048 chưa có cấp dưới. |
 | 3.8 | Chị Hạnh gộp mã từ đơn đã duyệt có TuNgay trong tháng 9/2026 (9 dòng) với chấm công tháng 9 có GioVao sau 08:00 (76 dòng). UNION một cột MaNV trả 41 mã; UNION ALL giữ 85 lần xuất hiện. Thêm nhãn nguồn rồi UNION có 49 cặp mã–nguồn. 08:00 là giả định rà soát, không kết luận đi muộn/vi phạm; không xét ca làm và lý do. |
 | 3.9 | Chị Hạnh lấy mã, tên, phòng hiện lưu của hồ sơ có ít nhất một đơn cùng phạm vi tháng 9 đã duyệt như 3.1: 9 hồ sơ, không lọc trạng thái nhân viên. IN và EXISTS cùng kết quả; NOT EXISTS với cùng phạm vi đơn giữ 39 hồ sơ còn lại. NV001 có đơn chờ duyệt tháng 10 nên vẫn thuộc nhóm không có đơn đạt phạm vi tháng 9. |
-| 3.10 | Chị Hạnh cần số nam/nữ/tổng của hồ sơ đang làm theo MaPB hiện lưu. Có 45 hồ sơ: BGD 1/1/2; IT 9/1/10; KD 6/7/13; KT 0/7/7; NS 0/5/5; VH 6/2/8. Toàn bộ đang làm có 23 nữ. Tổng ngày của đơn đã duyệt bắt đầu tháng 9: phép năm 9.0, nghỉ ốm 5.0, việc riêng 2.0, tổng 16.0; không phải số ngày thực nghỉ trong tháng. |
+| 3.10 | Chị Hạnh lấy mọi hồ sơ kèm số hợp đồng cùng mã đang lưu, không lọc trạng thái hoặc kiểm hiệu lực: 48 dòng; NV021/NV030 có 3, NV047/NV048 có 0. Câu con COUNT không GROUP BY giữ một giá trị; bỏ liên hệ sẽ đếm cả 55 hợp đồng cho từng hồ sơ. |
+| 3.11 | Chị Hạnh lấy mã có ít nhất hai dòng hợp đồng đang lưu: 55 hợp đồng thành 46 nhóm, lọc còn 7 mã. NV021/NV030 có 3; NV025/NV029/NV040/NV044/NV045 có 2. Không xác nhận hiệu lực hoặc kết luận nhiều hợp đồng là sai. |
+| 3.12 | Chị Hạnh cần số nam/nữ/tổng của hồ sơ đang làm theo MaPB hiện lưu. Có 45 hồ sơ: BGD 1/1/2; IT 9/1/10; KD 6/7/13; KT 0/7/7; NS 0/5/5; VH 6/2/8, tổng 22 nam và 23 nữ. Sơ đồ minh họa đủ hai hồ sơ BGD và năm hồ sơ NS, từ giới tính qua cờ 1/0 tới các ô báo cáo; nhóm không có nam vẫn có dòng vì còn hồ sơ nữ. |
 | 4.1 | Chị Hạnh kiểm đơn đã duyệt bắt đầu tháng 9 qua CTE: 9 đơn, 3 loại; tổng Phép năm 9.0, Nghỉ ốm 5.0, Việc riêng 2.0. Lọc từ 5 ngày giữ 2 loại, cột LoaiNghi/TongNgay. CTE có phạm vi một câu, không lưu bảng hoặc cam kết nhanh hơn. |
 | 4.2 | Chị Hạnh lấy một hợp đồng có NgayBatDau gần nhất không sau 21/10/2026 cho mỗi MaNV có hợp đồng; cùng ngày chọn MaHD giảm dần. Có 55 dòng đầu vào, 46 mã; NV047/NV048 không có hợp đồng. Đây không phải xác nhận hiệu lực. Chín đơn đã duyệt bắt đầu tháng 9 minh họa đồng hạng số ngày: ROW_NUMBER đến 3 có 3 dòng, RANK đến 3 có 5, DENSE_RANK đến 3 có 9. |
 | 4.3 | Chị Hạnh xem ngày trên mọi trạng thái đơn theo tháng TuNgay từ tháng 8 đến 10/2026: tổng 14/20/11, lũy kế 14/34/45, kỳ trước NULL/14/20, chênh lệch NULL/6/-9. Khóa Thang là EOMONTH; không chia ngày qua tháng, không suy ra thực nghỉ hoặc dữ liệu đủ kỳ. LAG lấy dòng có sẵn trước, không tự tạo tháng thiếu; lọc tháng hiển thị sau cửa sổ. |

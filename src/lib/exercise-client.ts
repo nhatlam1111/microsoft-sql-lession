@@ -1,5 +1,6 @@
 /** Calls the exercise API from the browser. Every failure comes back as an ApiFailure, never as a thrown error. */
 import type { ApiFailure, GradeResponse, RunResponse } from './exercise-types';
+import { COURSE_EXERCISE_PREFIX } from './curriculum-version';
 
 const NETWORK: ApiFailure = { ok: false, kind: 'network' };
 const UNAVAILABLE: ApiFailure = { ok: false, kind: 'unavailable' };
@@ -53,8 +54,8 @@ export function createExerciseClient(base: string, fetchImpl?: typeof fetch, opt
       return r.ok === true;
     },
     run: (id: string, sql: string, code: string, onSlow?: () => void) =>
-      call<RunResponse>('run', { exercise: id, sql }, code, onSlow),
+      call<RunResponse>('run', { exercise: COURSE_EXERCISE_PREFIX + id, sql }, code, onSlow),
     grade: (id: string, sql: string, code: string, onSlow?: () => void) =>
-      call<GradeResponse>('grade', { exercise: id, sql }, code, onSlow),
+      call<GradeResponse>('grade', { exercise: COURSE_EXERCISE_PREFIX + id, sql }, code, onSlow),
   };
 }

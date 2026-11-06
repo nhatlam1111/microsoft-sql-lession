@@ -21,20 +21,20 @@ it('puts the root at the centre and four areas on each side without overlap', ()
     expect(side[i].y).toBeGreaterThanOrEqual(side[i - 1].y + side[i - 1].height + SIZES.groupGap);
   }
 });
-it('opens A4 with its six lessons beside it, centred on the area', () => {
+it('opens A4 with its eight lessons beside it, centred on the area', () => {
   const { nodes, edges } = layoutMindmap(AREAS, CAT, new Set<AreaId>(['A4']));
   const leaves = nodes.filter(n => n.kind === 'lesson');
   const area = nodes.find(n => n.id === 'area:A4')!;
-  expect(leaves.map(n => n.num)).toEqual(['3.4', '3.5', '3.6', '3.7', '3.8', '3.9']);
+  expect(leaves.map(n => n.num)).toEqual(['3.4', '3.5', '3.6', '3.7', '3.8', '3.9', '3.10', '3.11']);
   for (const l of leaves) expect(l.x).toBe(area.x + SIZES.areaW + SIZES.gapAreaLeaf);
   expect(area.y + area.height / 2).toBeCloseTo((leaves[0].y + leaves.at(-1)!.y + SIZES.leafH) / 2, 5);
-  expect(edges.filter(e => e.source === 'area:A4')).toHaveLength(6);
+  expect(edges.filter(e => e.source === 'area:A4')).toHaveLength(8);
 });
 it('opens a left area to the left, in roadmap order', () => {
   const { nodes } = layoutMindmap(AREAS, CAT, new Set<AreaId>(['A5']));
   const leaves = nodes.filter(n => n.kind === 'lesson');
   const area = nodes.find(n => n.id === 'area:A5')!;
-  expect(leaves.map(n => n.num)).toEqual(['3.1', '3.2', '3.3', '3.10', '4.1', '4.2', '4.3', '4.4', '4.5']);
+  expect(leaves.map(n => n.num)).toEqual(['3.1', '3.2', '3.3', '3.12', '4.1', '4.2', '4.3', '4.4', '4.5']);
   for (const l of leaves) expect(l.x + SIZES.leafW).toBe(area.x - SIZES.gapAreaLeaf);
 });
 it('keeps each side vertically centred on the root', () => {

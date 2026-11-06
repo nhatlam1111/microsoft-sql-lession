@@ -1,0 +1,69 @@
+lesson: 3-10-subquery-trong-select
+exercises:
+  - id: 3-10-1
+    title: Số đơn đang chờ của từng hồ sơ
+    summary: Giữ mọi hồ sơ và đếm riêng đơn đang chờ theo mã.
+    prompt: >-
+      Lấy mọi hồ sơ NhanVien, kể cả người đã nghỉ. Trả ba cột theo thứ tự MaNV, HoTen,
+      SoDonChoDuyet: số dòng DonNghiPhep cùng MaNV có TrangThai bằng chuỗi Unicode “Chờ duyệt”.
+      Không giới hạn ngày đơn. Người không có đơn đạt điều kiện nhận số 0; mỗi hồ sơ một dòng, xếp
+      MaNV tăng dần. Luyện subquery trong SELECT. Bộ chấm so giá trị và thứ tự, không so tiêu đề
+      cột.
+    columns: ["MaNV", "HoTen", "SoDonChoDuyet"]
+    ordered: true
+    kind: query
+    answer: |
+      SELECT nv.MaNV, nv.HoTen,
+          (
+              SELECT COUNT(*)
+              FROM DonNghiPhep AS dp
+              WHERE dp.MaNV = nv.MaNV
+                  AND dp.TrangThai = N'Chờ duyệt'
+          ) AS [SoDonChoDuyet]
+      FROM NhanVien AS nv
+      ORDER BY nv.MaNV;
+  - id: 3-10-2
+    title: Tổng ngày trên danh sách hồ sơ
+    summary: Cộng ngày đơn đạt phạm vi mà vẫn giữ hồ sơ không có đơn.
+    prompt: >-
+      Lấy mọi hồ sơ NhanVien, không lọc trạng thái nhân viên. Trả MaNV, HoTen, TongNgay theo thứ tự:
+      tổng toàn bộ SoNgay của các đơn DonNghiPhep cùng mã, TrangThai bằng chuỗi Unicode “Đã duyệt”,
+      TuNgay từ 2026-09-01 đến trước 2026-10-01. Không chia ngày qua tháng hoặc suy ra ngày thực
+      nghỉ. Không có đơn đạt điều kiện thì giữ NULL, không đổi thành 0. Mỗi hồ sơ một dòng, xếp MaNV
+      tăng dần. Luyện subquery trong SELECT; bộ chấm so giá trị và thứ tự, không so tiêu đề cột.
+    columns: ["MaNV", "HoTen", "TongNgay"]
+    ordered: true
+    kind: query
+    answer: |
+      SELECT nv.MaNV, nv.HoTen,
+          (
+              SELECT SUM(dp.SoNgay)
+              FROM DonNghiPhep AS dp
+              WHERE dp.MaNV = nv.MaNV
+                  AND dp.TrangThai = N'Đã duyệt'
+                  AND dp.TuNgay >= '20260901' AND dp.TuNgay < '20261001'
+          ) AS [TongNgay]
+      FROM NhanVien AS nv
+      ORDER BY nv.MaNV;
+  - id: 3-10-3
+    title: Ngày bắt đầu lớn nhất trong phạm vi
+    summary: Lấy một mốc tổng hợp cho mỗi hồ sơ và giữ NULL khi chưa có.
+    prompt: >-
+      Lấy mọi hồ sơ NhanVien, kể cả người đã nghỉ. Trả MaNV, HoTen, NgayBatDauGanNhat theo thứ tự:
+      giá trị NgayBatDau lớn nhất trong các dòng HopDong cùng mã có NgayBatDau không sau 2026-10-21.
+      Không xét NgayKetThuc hoặc LoaiHD, không kết luận hiệu lực pháp lý. Không có hợp đồng đạt điều
+      kiện thì giữ NULL. Mỗi hồ sơ một dòng, xếp MaNV tăng dần. Luyện subquery trong SELECT; bộ chấm
+      so giá trị và thứ tự, không so tiêu đề cột.
+    columns: ["MaNV", "HoTen", "NgayBatDauGanNhat"]
+    ordered: true
+    kind: query
+    answer: |
+      SELECT nv.MaNV, nv.HoTen,
+          (
+              SELECT MAX(hd.NgayBatDau)
+              FROM HopDong AS hd
+              WHERE hd.MaNV = nv.MaNV
+                  AND hd.NgayBatDau <= '20261021'
+          ) AS [NgayBatDauGanNhat]
+      FROM NhanVien AS nv
+      ORDER BY nv.MaNV;

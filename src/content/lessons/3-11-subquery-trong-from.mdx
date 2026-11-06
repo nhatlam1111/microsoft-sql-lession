@@ -1,0 +1,445 @@
+---
+num: "3.11"
+title: "Subquery trong FROM: lấy kết quả làm nguồn"
+shortTitle: Subquery trong FROM
+level: 3
+area: A4
+kind: full
+minutes: 25
+prerequisites:
+  - "3.2"
+  - "3.3"
+  - "3.10"
+goal: bạn dùng bảng dẫn xuất trong FROM để lọc kết quả đã tổng hợp, đặt đúng bí danh và tên cột, nhận ra lỗi phạm vi tham chiếu
+excel: Tạo bảng tổng hợp rồi lọc cột số lượng
+summary: Đưa câu SELECT con vào FROM, đặt tên cho nguồn và cột để câu ngoài tiếp tục lọc, chọn và sắp xếp báo cáo.
+---
+
+## Tình huống
+
+Tháng 10/2026, từ bảng đối chiếu hợp đồng, chị Hạnh cần một danh sách gọn hơn:
+
+<Chat who="Chị Hạnh · Phòng Nhân sự" time="09:40" initial="H">
+Chị cần mã của những người có ít nhất hai dòng hợp đồng đang lưu, kèm số hợp đồng. Em xếp số hợp đồng từ nhiều xuống ít, nếu bằng nhau thì mã tăng dần để chị dò nhé.
+</Chat>
+
+Phạm vi: mọi dòng `HopDong`, không lọc loại hay ngày; không lọc trạng thái nhân viên. Mỗi `MaNV` một dòng kết quả, chỉ có mã và số hợp đồng. Danh sách dùng để đối chiếu hồ sơ, không xác nhận hiệu lực hoặc kết luận có nhiều hợp đồng là sai.
+
+<Key>Tổng hợp hợp đồng theo mã, rồi lấy kết quả ấy làm nguồn để lọc số lượng.</Key>
+
+## Lọc trên kết quả đã tổng hợp
+
+### Từ bảng tổng hợp Excel đến subquery trong FROM
+
+Trong Excel, bạn tạo bảng đếm hợp đồng theo mã như cách tổng hợp ở bài 3.2, rồi lọc cột số lượng từ `2` trở lên. Hình minh họa trích bảng trước khi lọc: ô `B2` là nhóm được giữ, `B4` là nhóm bị loại. Đây là bảng kết quả trung gian, không phải từng dòng hợp đồng gốc.
+
+<Excel sheets="Tổng hợp hợp đồng trước lọc" mark={['B2','B4']} rows={[
+  ['MaNV','SoHopDong'],
+  ['NV021',3],
+  ['NV025',2],
+  ['NV004',1],
+]} />
+
+Trong SQL, có thể đặt câu tổng hợp trong ngoặc tại `FROM`, rồi để câu ngoài đọc kết quả ấy như một nguồn dữ liệu. Với yêu cầu này, câu lệnh là:
+
+<Sql code={`SELECT t.MaNV, t.SoHopDong
+FROM (
+\tSELECT hd.MaNV, COUNT(hd.MaHD) AS [SoHopDong]
+\tFROM HopDong AS hd
+\tGROUP BY hd.MaNV
+) AS t
+WHERE t.SoHopDong >= 2
+ORDER BY t.SoHopDong DESC, t.MaNV ASC;`} />
+
+<LineMap rows={[
+  ['SELECT hd.MaNV, COUNT(hd.MaHD) AS [SoHopDong]', 'Câu con xuất mã và một cột đếm có tên. Ví dụ: nhóm NV021 xuất NV021 / 3.'],
+  ['FROM HopDong AS hd … GROUP BY hd.MaNV', 'Câu con xét mọi hợp đồng và gom theo mã nhân viên. Ví dụ: ba hợp đồng của NV021 thành một dòng tổng hợp.'],
+  ['FROM (…) AS t', 'Câu ngoài đặt bí danh t cho nguồn là kết quả câu con. Ví dụ: dòng NV004 / 1 vẫn có trong nguồn trước khi lọc.'],
+  ['WHERE t.SoHopDong >= 2', 'Câu ngoài lọc số lượng đã có trong nguồn t. Ví dụ: NV021 / 3 được giữ, NV004 / 1 bị loại.'],
+  ['SELECT t.MaNV, t.SoHopDong', 'Câu ngoài lấy đúng hai cột từ nguồn t. Ví dụ: không đưa từng MaHD của NV021 ra danh sách.'],
+  ['ORDER BY t.SoHopDong DESC, t.MaNV ASC', 'Xếp danh sách cuối theo số giảm dần, rồi mã tăng dần khi bằng nhau. Ví dụ: NV021 / 3 đứng trước NV025 / 2.'],
+]} />
+
+Kết quả câu con đặt trong `FROM` gọi là **bảng dẫn xuất (derived table)**: một nguồn dữ liệu được tạo từ câu truy vấn trong phạm vi câu lệnh này. Nó có thể có nhiều dòng và nhiều cột; khác bài 3.10, không phải ép toàn bộ kết quả vào một ô. `AS t` đặt **bí danh bảng** để câu ngoài gọi các cột `t.MaNV`, `t.SoHopDong`; bí danh này là bắt buộc cho bảng dẫn xuất, còn từ khóa `AS` có thể bỏ.
+
+Hai tầng có phạm vi riêng. Câu con dùng `hd`, nhóm `55` dòng hợp đồng thành `46` mã có hợp đồng và chỉ xuất hai cột. Câu ngoài nhìn thấy hai cột của `t`, không thấy `hd` hoặc từng `MaHD` đã không được xuất. `AS [SoHopDong]` đặt tên cho biểu thức đếm để câu ngoài tham chiếu; các cột xuất ra cần tên riêng, không trùng nhau.
+
+Ở bài 3.3, `HAVING` lọc nhóm trong cùng một câu tổng hợp. Ở đây `SoHopDong` đã là một cột của nguồn `t`, nên `WHERE` ngoài đọc và lọc nó được. Nếu đưa điều kiện lên hợp đồng gốc hoặc dùng bí danh vừa đặt trong `WHERE` của chính câu con, bạn đã đổi tầng xử lý. Không phải mọi điều kiện đều chuyển qua lại được: lọc hợp đồng trước khi đếm khác với lọc số lượng sau khi đếm.
+
+Cùng cách tổ chức này, có thể dùng `SUM` để cộng cột số, rồi câu ngoài lọc cột tổng. Điều kiện chọn dòng nguồn phải đặt trong câu con trước `GROUP BY`; ngưỡng trên tổng đặt ở câu ngoài. Mỗi dòng kết quả vẫn theo khóa nhóm của câu con. Chỉ có hợp đồng mới có nhóm, nên bảng dẫn xuất này không tự tạo dòng `0` cho `NV047` hoặc `NV048`.
+
+Bảng dẫn xuất không tạo bảng mới được lưu và không bảo đảm chạy nhanh hơn cách viết bằng `HAVING`. Sơ đồ chỉ giúp đọc quan hệ dữ liệu; SQL Server có thể tối ưu cách thực thi. `ORDER BY` ở câu ngoài mới bảo đảm thứ tự danh sách gửi đi; nguồn `t` không có thứ tự cố định để kế thừa.
+
+Ở bài này chỉ cần đặt tên nguồn, nhận đúng cột xuất ra và lọc kết quả tổng hợp. Không chuyển nguyên câu con tương quan của bài 3.10 sang bảng dẫn xuất thông thường để tham chiếu bí danh ngoài; cách dùng `APPLY` cho nguồn phụ thuộc từng dòng nằm ngoài phạm vi bài. Tổ chức nhiều bước có tên bằng CTE học ở bài 4.1; xem thực thi thật ở bài 5.7.
+
+### SQL Server chạy câu này thế nào
+
+Sơ đồ theo thứ tự xử lý logic của câu ngoài. Drawer `FROM` giải thích việc câu con nhóm `55` hợp đồng thành `46` dòng; câu ngoài bắt đầu với nguồn ấy rồi mới lọc ngưỡng:
+
+<RunFlow query={`SELECT t.MaNV, t.SoHopDong
+FROM (
+\tSELECT hd.MaNV, COUNT(hd.MaHD) AS [SoHopDong]
+\tFROM HopDong AS hd
+\tGROUP BY hd.MaNV
+) AS t
+WHERE t.SoHopDong >= 2
+ORDER BY t.SoHopDong DESC, t.MaNV ASC;`} steps={[
+  {
+    "clause": "FROM",
+    "title": "Dùng kết quả nhóm hợp đồng làm nguồn.",
+    "focus": "FROM (\n\tSELECT hd.MaNV, COUNT(hd.MaHD) AS [SoHopDong]\n\tFROM HopDong AS hd\n\tGROUP BY hd.MaNV\n) AS t",
+    "input": "Câu con đọc toàn bộ `55` dòng `HopDong`, có `6` cột, rồi nhóm theo `hd.MaNV`.",
+    "meaning": "`FROM` dùng kết quả câu con làm nguồn tên `t`. Câu con gom các hợp đồng cùng mã và xuất mã cùng số đếm.",
+    "detail": "Có `46` dòng, `2` cột `MaNV`, `SoHopDong`: mỗi mã có hợp đồng một dòng. `NV047` và `NV048` không có nhóm; đây không phải danh sách đủ hồ sơ.",
+    "sql": "SELECT hd.MaNV, COUNT(hd.MaHD) AS [SoHopDong] FROM HopDong AS hd GROUP BY hd.MaNV;",
+    "columns": [
+      "MaNV",
+      "SoHopDong"
+    ],
+    "rows": [
+      [
+        "NV021",
+        3
+      ],
+      [
+        "NV004",
+        1
+      ],
+      [
+        "NV025",
+        2
+      ],
+      [
+        "NV030",
+        3
+      ],
+      [
+        "NV045",
+        2
+      ]
+    ],
+    "total": 46,
+    "examples": [
+      {
+        "title": "Nhóm NV021",
+        "note": "Minh họa đầy đủ các hợp đồng của một nhóm mẫu; phép nhóm vẫn xét cả 55 dòng nguồn.",
+        "table": {
+          "columns": [
+            "MaHD",
+            "MaNV"
+          ],
+          "rows": [
+            [
+              "HD2021-001",
+              "NV021"
+            ],
+            [
+              "HD2021-002",
+              "NV021"
+            ],
+            [
+              "HD2024-005",
+              "NV021"
+            ]
+          ]
+        },
+        "calculations": [
+          {
+            "expression": "COUNT(hd.MaHD)",
+            "explanation": "Mỗi mã hợp đồng góp một vào số đếm của nhóm NV021.",
+            "column": "SoHopDong",
+            "value": 3
+          }
+        ],
+        "conclusion": "Câu con xuất một dòng NV021 / 3; không mang MaHD ra bảng dẫn xuất."
+      },
+      {
+        "title": "Nhóm NV004",
+        "note": "Minh họa đầy đủ các hợp đồng của một nhóm mẫu; phép nhóm vẫn xét cả 55 dòng nguồn.",
+        "table": {
+          "columns": [
+            "MaHD",
+            "MaNV"
+          ],
+          "rows": [
+            [
+              "HD2015-001",
+              "NV004"
+            ]
+          ]
+        },
+        "calculations": [
+          {
+            "expression": "COUNT(hd.MaHD)",
+            "explanation": "Mỗi mã hợp đồng góp một vào số đếm của nhóm NV004.",
+            "column": "SoHopDong",
+            "value": 1
+          }
+        ],
+        "conclusion": "Câu con xuất một dòng NV004 / 1; không mang MaHD ra bảng dẫn xuất."
+      }
+    ]
+  },
+  {
+    "clause": "WHERE",
+    "title": "Giữ mã có ít nhất hai hợp đồng.",
+    "focus": "WHERE t.SoHopDong >= 2",
+    "inputColumns": [
+      "MaNV",
+      "SoHopDong"
+    ],
+    "meaning": "`WHERE` ngoài so cột `t.SoHopDong` đã được câu con tạo với ngưỡng `2`.",
+    "detail": "Còn `7` dòng, `2` cột. `NV021` có `3` được giữ; `NV004` có `1` bị loại.",
+    "sql": "SELECT t.MaNV, t.SoHopDong\nFROM (\n\tSELECT hd.MaNV, COUNT(hd.MaHD) AS [SoHopDong]\n\tFROM HopDong AS hd\n\tGROUP BY hd.MaNV\n) AS t\nWHERE t.SoHopDong >= 2;",
+    "columns": [
+      "MaNV",
+      "SoHopDong"
+    ],
+    "rows": [
+      [
+        "NV025",
+        2
+      ],
+      [
+        "NV021",
+        3
+      ],
+      [
+        "NV029",
+        2
+      ],
+      [
+        "NV030",
+        3
+      ],
+      [
+        "NV040",
+        2
+      ],
+      [
+        "NV044",
+        2
+      ],
+      [
+        "NV045",
+        2
+      ]
+    ],
+    "total": 7,
+    "checks": {
+      "conditions": [
+        "SoHopDong >= 2"
+      ],
+      "rows": [
+        [
+          "NV021",
+          true
+        ],
+        [
+          "NV004",
+          false
+        ],
+        [
+          "NV025",
+          true
+        ],
+        [
+          "NV030",
+          true
+        ],
+        [
+          "NV045",
+          true
+        ]
+      ],
+      "totals": [
+        7,
+        7
+      ]
+    }
+  },
+  {
+    "clause": "SELECT",
+    "title": "Lấy hai cột báo cáo.",
+    "focus": "SELECT t.MaNV, t.SoHopDong",
+    "inputColumns": [
+      "MaNV",
+      "SoHopDong"
+    ],
+    "meaning": "`SELECT` ngoài lấy mã và số hợp đồng từ `t`; không đếm hợp đồng lại.",
+    "detail": "Vẫn `7` dòng, `2` cột theo thứ tự chị Hạnh cần. Bản trích này chưa được xếp theo số hợp đồng.",
+    "sql": "SELECT t.MaNV, t.SoHopDong\nFROM (\n\tSELECT hd.MaNV, COUNT(hd.MaHD) AS [SoHopDong]\n\tFROM HopDong AS hd\n\tGROUP BY hd.MaNV\n) AS t\nWHERE t.SoHopDong >= 2;",
+    "columns": [
+      "MaNV",
+      "SoHopDong"
+    ],
+    "rows": [
+      [
+        "NV025",
+        2
+      ],
+      [
+        "NV021",
+        3
+      ],
+      [
+        "NV029",
+        2
+      ],
+      [
+        "NV030",
+        3
+      ],
+      [
+        "NV040",
+        2
+      ],
+      [
+        "NV044",
+        2
+      ],
+      [
+        "NV045",
+        2
+      ]
+    ],
+    "total": 7
+  },
+  {
+    "clause": "ORDER BY",
+    "title": "Xếp số hợp đồng rồi mã nhân viên.",
+    "focus": "ORDER BY t.SoHopDong DESC, t.MaNV ASC",
+    "meaning": "`ORDER BY` ngoài xếp số hợp đồng giảm dần; cùng số thì mã tăng dần.",
+    "detail": "Kết quả cuối có `7` dòng, `2` cột: hai mã có `3` hợp đồng đứng trước năm mã có `2`.",
+    "sql": "SELECT t.MaNV, t.SoHopDong\nFROM (\n\tSELECT hd.MaNV, COUNT(hd.MaHD) AS [SoHopDong]\n\tFROM HopDong AS hd\n\tGROUP BY hd.MaNV\n) AS t\nWHERE t.SoHopDong >= 2\nORDER BY t.SoHopDong DESC, t.MaNV ASC;",
+    "columns": [
+      "MaNV",
+      "SoHopDong"
+    ],
+    "rows": [
+      [
+        "NV021",
+        3
+      ],
+      [
+        "NV030",
+        3
+      ],
+      [
+        "NV025",
+        2
+      ],
+      [
+        "NV029",
+        2
+      ],
+      [
+        "NV040",
+        2
+      ],
+      [
+        "NV044",
+        2
+      ],
+      [
+        "NV045",
+        2
+      ]
+    ],
+    "total": 7
+  }
+]} />
+
+<Result columns={["MaNV", "SoHopDong"]} rows={[["NV021", 3], ["NV030", 3], ["NV025", 2], ["NV029", 2], ["NV040", 2], ["NV044", 2], ["NV045", 2]]} total={7} mark={[2,3]} />
+
+Kết quả gửi chị Hạnh có `7` mã với ít nhất hai dòng hợp đồng đang lưu: `NV021`, `NV030` có `3`; năm mã còn lại có `2`. Danh sách đã xếp số hợp đồng giảm dần, cùng số thì mã tăng dần. Hai dòng được đánh dấu cho thấy quy tắc xếp giữa nhóm `3` và nhóm `2`.
+
+## Hay nhầm ở đâu
+
+<Mistakes>
+
+1. **Thiếu bí danh nguồn.** Nếu bỏ `AS t` khỏi câu chính, phần `FROM` không còn tên cho bảng dẫn xuất. Lần kiểm tối giản dùng `SELECT *` ngoài và kết thúc ngay sau ngoặc trả thông báo sau; vị trí báo lỗi có thể đổi theo phần câu lệnh còn lại.
+
+<Sql copy={false} code={`FROM (
+\tSELECT MaNV, COUNT(MaHD) AS [SoHopDong]
+\tFROM HopDong
+\tGROUP BY MaNV
+)`} />
+
+<Messages lines={["Incorrect syntax near ';'."]} />
+
+2. **Cột đếm không có tên.** Bỏ `AS [SoHopDong]` làm cột biểu thức thứ hai không có tên để dùng như cột của `t`. Chỉ có bí danh bảng chưa đủ:
+
+<Sql copy={false} code={`SELECT hd.MaNV, COUNT(hd.MaHD)`} />
+
+<Messages lines={["No column name was specified for column 2 of 't'."]} />
+
+3. **Gọi cột hoặc bí danh ngoài phạm vi.** Đổi phần chọn cột ngoài thành đoạn dưới đây không lấy được mã hợp đồng: `t` chỉ xuất `MaNV`, `SoHopDong`. Dùng `hd.MaNV` bên ngoài cũng lỗi vì `hd` thuộc câu con; hãy dùng `t.MaNV`.
+
+<Sql copy={false} code={`SELECT t.MaHD`} />
+
+<Messages lines={["Invalid column name 'MaHD'."]} />
+
+4. **Xếp trong câu con rồi trông chờ câu ngoài giữ thứ tự.** Thêm `ORDER BY hd.MaNV` sau `GROUP BY` trong câu con này gây lỗi. SQL Server có ngoại lệ khi dùng thêm `TOP`, `OFFSET` hoặc `FOR XML`, nhưng chúng mang mục đích khác; không thêm chỉ để né lỗi. Muốn xếp báo cáo vẫn đặt `ORDER BY` ở câu ngoài.
+
+<Sql copy={false} code={`GROUP BY hd.MaNV
+ORDER BY hd.MaNV`} />
+
+<Messages lines={["The ORDER BY clause is invalid in views, inline functions, derived tables, subqueries, and common table expressions, unless TOP, OFFSET or FOR XML is also specified."]} />
+
+</Mistakes>
+
+Các đoạn trên chỉ là phần thay trong câu chính để đọc lỗi, không phải truy vấn độc lập.
+
+## Ứng dụng
+
+<Apply>
+
+- **Lọc chỉ tiêu đã tính:** tách việc tổng hợp và chọn ngưỡng để đọc được báo cáo có nhiều tầng điều kiện.
+- **Giới hạn dữ liệu giữa hai tầng:** xuất đúng cột cần dùng, tránh nhầm một dòng hợp đồng với một dòng tổng hợp theo người.
+- **Chuẩn bị đọc câu dài:** phân biệt nguồn trung gian với kết quả cuối trước khi học cách đặt tên nhiều bước bằng CTE.
+
+</Apply>
+
+## Ghi nhớ
+
+<Memo rows={[
+  ['Tạo bảng tổng hợp rồi lọc trong Excel', 'FROM (SELECT …) AS t đưa kết quả câu con thành nguồn cho câu ngoài.'],
+  ['Một vùng có nhiều dòng, nhiều cột', 'Bảng dẫn xuất không bị giới hạn một ô như scalar subquery trong SELECT.'],
+  ['Tên nguồn và tiêu đề cột', 'Bảng dẫn xuất cần bí danh; cột xuất ra có tên riêng để câu ngoài tham chiếu.'],
+  ['Lọc và xếp bảng báo cáo', 'WHERE ngoài dùng cột đã xuất; ORDER BY ngoài xác định thứ tự kết quả cuối.'],
+]} />
+
+**Tự kiểm tra trước khi bấm "Đã học xong":**
+
+<details>
+<summary>Vì sao câu con ở <code>FROM</code> được trả nhiều dòng, còn câu con tạo một ô ở <code>SELECT</code> thì không?</summary>
+
+Ở `FROM`, kết quả là nguồn dữ liệu cho câu ngoài nên có thể gồm nhiều dòng, nhiều cột. Ở vị trí một ô của `SELECT`, cần một giá trị nên câu con chỉ có một cột, tối đa một dòng.
+
+</details>
+
+<details>
+<summary>Vì sao <code>WHERE t.SoHopDong &gt;= 2</code> đọc được số lượng đã tổng hợp?</summary>
+
+Câu con đã xuất `SoHopDong` thành cột của nguồn `t` trước khi câu ngoài lọc. Nó khác dùng `WHERE` để lọc từng hợp đồng gốc trước tổng hợp.
+
+</details>
+
+<details>
+<summary>Câu ngoài có thể lấy <code>t.MaHD</code> hoặc <code>hd.MaNV</code> trong câu chính không?</summary>
+
+Không. Câu con chỉ xuất `MaNV`, `SoHopDong` và bí danh `hd` ở trong câu con. Câu ngoài dùng `t.MaNV`, `t.SoHopDong`; cột không xuất ra không thuộc nguồn `t`.
+
+</details>
+
+<details>
+<summary>Đặt <code>ORDER BY</code> ở đâu để giữ đúng thứ tự báo cáo, và có nên thêm <code>TOP</code> chỉ để hết lỗi không?</summary>
+
+Đặt ở câu ngoài. Không thêm `TOP` để né lỗi vì nó giới hạn dòng; thứ tự của câu con không bảo đảm thứ tự kết quả ngoài.
+
+</details>
+
+## Bài tập
+
+<Exercises />

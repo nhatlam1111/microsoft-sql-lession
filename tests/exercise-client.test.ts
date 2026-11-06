@@ -36,7 +36,7 @@ it('sends the access code header and the exercise body', async () => {
   const [url, init] = fetchImpl.mock.calls[0] as unknown as [string, RequestInit];
   expect(url).toBe('https://x/api/grade');
   expect(new Headers(init.headers).get('x-access-code')).toBe('abc');
-  expect(JSON.parse(init.body as string)).toEqual({ exercise: '3-5-1', sql: 'SELECT 1' });
+  expect(JSON.parse(init.body as string)).toEqual({ exercise: 'course-v2:3-5-1', sql: 'SELECT 1' });
 });
 
 it('treats a reply that is not one of the API answers as the service being unavailable', async () => {

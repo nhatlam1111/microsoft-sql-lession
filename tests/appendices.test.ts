@@ -49,7 +49,7 @@ describe('independent reference catalog', () => {
     expect(appendixNeighbors(entries, 'PL.1').next?.num).toBe('PL.2');
     expect(appendixNeighbors(entries, 'PL.6').next).toBeUndefined();
     expect(neighbors(main, '6.7').next).toBeUndefined();
-    expect(main).toHaveLength(50);
+    expect(main).toHaveLength(52);
     expect(LEVELS).toHaveLength(6);
   });
 
@@ -85,7 +85,7 @@ describe('combined lookup without changing the learning path', () => {
     entries[1].keywords = ['TRY_CONVERT', 'chuyển đổi kiểu'];
     entries[4].keywords = ['DATE_BUCKET', 'DATETRUNC'];
     const items = createSearchItems(main, entries, AREAS);
-    expect(items).toHaveLength(56);
+    expect(items).toHaveLength(58);
     for (const query of ['PL.2', 'pl.2', 'TRY_CONVERT', 'chuyen doi kieu']) {
       const found = searchItems(items, query)[0];
       expect(found.num, query).toBe('PL.2');
@@ -104,7 +104,7 @@ describe('combined lookup without changing the learning path', () => {
       expect(searchItems(items, query).filter(e => e.section === 'lesson').map(e => e.num))
         .toEqual(searchLessons(main, query, AREAS).map(e => e.num));
     }
-    expect(items.slice(50).map(e => e.num)).toEqual(Object.keys(APPENDIX_SLUGS));
+    expect(items.slice(52).map(e => e.num)).toEqual(Object.keys(APPENDIX_SLUGS));
     expect(JSON.stringify(main)).toBe(before);
     expect(searchItems(items, '')).toEqual([]);
     expect(searchItems(items, 'tra cuu', 2)).toHaveLength(2);

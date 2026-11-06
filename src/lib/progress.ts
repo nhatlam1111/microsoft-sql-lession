@@ -1,10 +1,12 @@
+import { legacyExerciseId, legacyLessonNum } from './curriculum-version';
+
 export type MainStatus = 'todo' | 'seen' | 'done';
 export type Icon = MainStatus | 'flag';
 
 export interface LessonProgress { status: 'seen' | 'done'; flagged: boolean; seenAt: number; doneAt?: number }
 
 export interface ProgressState {
-  version: 1;
+  version: 2;
   lessons: Record<string, LessonProgress>;
   lastLessonNum: string | null;
   lastActiveAt: number | null;
@@ -12,7 +14,8 @@ export interface ProgressState {
   exercises?: Record<string, { doneAt: number }>;
 }
 
-export const STORAGE_KEY = 'sqlserver-course:progress:v1';
+export const STORAGE_KEY = 'sqlserver-course:progress:v2';
+export const LEGACY_STORAGE_KEY = 'sqlserver-course:progress:v1';
 
 export const IMPORT_ERRORS = {
   notJson: 'File không phải JSON hợp lệ.',
@@ -22,7 +25,7 @@ export const IMPORT_ERRORS = {
 const DAY_MS = 86_400_000;
 
 export function emptyState(): ProgressState {
-  return { version: 1, lessons: {}, lastLessonNum: null, lastActiveAt: null };
+  return { version: 2, lessons: {}, lastLessonNum: null, lastActiveAt: null };
 }
 
 export function statusOf(s: ProgressState, num: string): MainStatus {
@@ -104,8 +107,10 @@ export function parseProgress(text: string, knownNums: string[], keepUnknown = f
   let raw: unknown;
   try { raw = JSON.parse(text); } catch { return { ok: false, error: IMPORT_ERRORS.notJson }; }
   const bad = { ok: false as const, error: IMPORT_ERRORS.badShape };
-  if (!isObject(raw) || raw.version !== 1 || !isObject(raw.lessons)) return bad;
-  const last = raw.lastLessonNum ?? null;
+  if (!isObject(raw) || (raw.version !== 1 && raw.version !== 2) || !isObject(raw.lessons)) return bad;
+  const migrate = raw.version === 1;
+  const rawLast = raw.lastLessonNum ?? null;
+  const last = migrate && typeof rawLast === 'string' ? legacyLessonNum(rawLast) : rawLast;
   const active = raw.lastActiveAt ?? null;
   if (last !== null && typeof last !== 'string') return bad;
   if (active !== null && !isNum(active)) return bad;
@@ -115,21 +120,22 @@ export function parseProgress(text: string, knownNums: string[], keepUnknown = f
     exercises = {};
     for (const [id, value] of Object.entries(raw.exercises)) {
       if (!isObject(value) || !isNum(value.doneAt)) return bad;
-      exercises[id] = { doneAt: value.doneAt };
+      exercises[migrate ? legacyExerciseId(id) : id] = { doneAt: value.doneAt };
     }
   }
 
   const known = new Set(knownNums);
   const lessons: Record<string, LessonProgress> = {};
   let ignored = 0;
-  for (const [num, value] of Object.entries(raw.lessons)) {
+  for (const [rawNum, value] of Object.entries(raw.lessons)) {
+    const num = migrate ? legacyLessonNum(rawNum) : rawNum;
     const lesson = parseLesson(value);
     if (!lesson) return bad;
     if (known.has(num) || keepUnknown) lessons[num] = lesson; else ignored++;
   }
   return {
     ok: true,
-    state: { version: 1, lessons, lastLessonNum: last !== null && known.has(last) ? last : null, lastActiveAt: active, ...(exercises ? { exercises } : {}) },
+    state: { version: 2, lessons, lastLessonNum: last !== null && known.has(last) ? last : null, lastActiveAt: active, ...(exercises ? { exercises } : {}) },
     ignored,
   };
 }
@@ -145,7 +151,7 @@ export function demoState(now: number): ProgressState {
   lessons['2.8'] = { status: 'seen', flagged: true, seenAt: earlier };
   lessons['3.7'] = { status: 'seen', flagged: false, seenAt: last };
   lessons['3.5'] = { status: 'seen', flagged: false, seenAt: last };
-  return { version: 1, lessons, lastLessonNum: '3.5', lastActiveAt: last };
+  return { version: 2, lessons, lastLessonNum: '3.5', lastActiveAt: last };
 }
 
 export function exportFileName(now: number): string {

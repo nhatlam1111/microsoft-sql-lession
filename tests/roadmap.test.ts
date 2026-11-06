@@ -21,7 +21,7 @@ it('summarises levels like the mockup', () => {
   expect(R.levelSummaries(demoState(NOW), CAT, 3)).toEqual([
     { level: 1, done: 5, total: 5, flags: 0, state: 'done' },
     { level: 2, done: 8, total: 9, flags: 1, state: 'partial' },
-    { level: 3, done: 4, total: 10, flags: 0, state: 'current' },
+    { level: 3, done: 4, total: 12, flags: 0, state: 'current' },
     { level: 4, done: 0, total: 10, flags: 0, state: 'todo' },
     { level: 5, done: 0, total: 9, flags: 0, state: 'todo' },
     { level: 6, done: 0, total: 7, flags: 0, state: 'todo' },

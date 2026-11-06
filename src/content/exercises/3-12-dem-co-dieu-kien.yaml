@@ -1,6 +1,6 @@
-lesson: 3-10-dem-co-dieu-kien
+lesson: 3-12-dem-co-dieu-kien
 exercises:
-  - id: 3-10-1
+  - id: 3-12-1
     title: Hai trạng thái cạnh nhau theo phòng
     summary: Đếm có điều kiện trên toàn bộ hồ sơ.
     prompt: Dùng mọi hồ sơ NhanVien, nhóm theo MaPB hiện lưu. Mỗi phòng một dòng, trả MaPB, DangLam
@@ -21,7 +21,7 @@ exercises:
       ORDER BY MaPB ASC;
     ordered: true
     kind: query
-  - id: 3-10-2
+  - id: 3-12-2
     title: Tổng tiền của các dòng từ 15 triệu
     summary: Cộng giá trị có điều kiện trong mỗi kỳ.
     prompt: Từ BangLuong, chỉ xét KyLuong 2026-08 và 2026-09. Mỗi kỳ một dòng, trả KyLuong, SoDongLuong
@@ -41,7 +41,7 @@ exercises:
       ORDER BY KyLuong ASC;
     ordered: true
     kind: query
-  - id: 3-10-3
+  - id: 3-12-3
     title: Email có và thiếu theo phòng
     summary: COUNT chỉ đếm biểu thức khác NULL.
     prompt: Dùng mọi hồ sơ NhanVien hiện có MaPB thuộc KD, VH hoặc NS, không lọc trạng thái. Mỗi phòng

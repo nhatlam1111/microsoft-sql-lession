@@ -1,0 +1,429 @@
+---
+num: "3.10"
+title: "Subquery trong SELECT: một giá trị cho mỗi dòng"
+shortTitle: Subquery trong SELECT
+level: 3
+area: A4
+kind: full
+minutes: 25
+prerequisites:
+  - "2.5"
+  - "3.1"
+  - "3.9"
+goal: bạn dùng subquery tương quan trong SELECT để tạo một giá trị cho mỗi hồ sơ, phân biệt kết quả NULL với số 0 và nhận ra lỗi nhiều dòng hoặc nhiều cột
+excel: Thêm cột đếm theo mã bằng COUNTIF
+summary: Tính số hợp đồng trên từng dòng nhân viên bằng câu SELECT con; hiểu điều kiện liên hệ, giới hạn một giá trị và các lỗi thường gặp.
+---
+
+## Tình huống
+
+Tháng 10/2026, chị Hạnh chuẩn bị đối chiếu hồ sơ hợp đồng:
+
+<Chat who="Chị Hạnh · Phòng Nhân sự" time="09:20" initial="H">
+Em lấy toàn bộ hồ sơ nhân viên đang lưu, mỗi dòng có mã, họ tên và số hợp đồng của người đó. Người chưa có hợp đồng vẫn phải hiện, số hợp đồng là 0. Xếp mã nhân viên tăng dần giúp chị nhé.
+</Chat>
+
+Phạm vi: mọi hồ sơ `NhanVien`, kể cả người đã nghỉ. Đếm mọi dòng `HopDong` cùng `MaNV`, không lọc loại hoặc ngày và không xác nhận hợp đồng còn hiệu lực. Một hồ sơ có nhiều hợp đồng vẫn chỉ chiếm một dòng báo cáo.
+
+<Key>Giữ danh sách hồ sơ, thêm đúng một ô số hợp đồng cho mỗi người.</Key>
+
+## Thêm số hợp đồng vào từng dòng hồ sơ
+
+### Từ cột đếm trong Excel đến subquery trong SELECT
+
+Trong Excel, bạn giữ bảng hồ sơ rồi thêm cột số hợp đồng. Giả sử sheet `HopDong` có mã nhân viên ở `B2:B56`, công thức `COUNTIF` đếm số ô bằng mã của dòng đang xét. Dấu `$` khóa vùng hợp đồng khi sao chép xuống, còn `A2` đổi theo dòng. Hình minh họa trích hai hồ sơ: công thức ở `C2` đếm mã trong `A2`; `C3` cho thấy người chưa có hợp đồng vẫn được giữ.
+
+<Excel sheets="Đối chiếu hợp đồng" cell="C2" formula="=COUNTIF(HopDong!$B$2:$B$56,A2)" mark={['C2','C3']} rows={[
+  ['MaNV','HoTen','SoHopDong'],
+  ['NV021','Tôn Thất Long',3],
+  ['NV047','Phạm Ngọc Ánh',0],
+]} />
+
+Bài 3.9 dùng câu con trong `WHERE` để quyết định giữ hồ sơ. Ở đây cần giữ mọi hồ sơ và tạo thêm một giá trị, nên đặt câu con trong danh sách cột của `SELECT`:
+
+<Sql code={`SELECT nv.MaNV, nv.HoTen,
+\t(
+\t\tSELECT COUNT(hd.MaHD)
+\t\tFROM HopDong AS hd
+\t\tWHERE hd.MaNV = nv.MaNV
+\t) AS [SoHopDong]
+FROM NhanVien AS nv
+ORDER BY nv.MaNV;`} />
+
+<LineMap rows={[
+  ['FROM NhanVien AS nv', 'Câu ngoài lấy hồ sơ, gọi bảng bằng bí danh nv. Ví dụ: NV047 vẫn thuộc nguồn dù chưa có hợp đồng.'],
+  ['SELECT nv.MaNV, nv.HoTen', 'Giữ mã và tên của dòng ngoài. Ví dụ: NV021 đi cùng tên Tôn Thất Long.'],
+  ['(SELECT COUNT(hd.MaHD) …)', 'Ngoặc bao câu con tạo một giá trị cho ô của dòng ngoài. Ví dụ: ba mã hợp đồng của NV021 cho số 3.'],
+  ['WHERE hd.MaNV = nv.MaNV', 'Liên hệ hợp đồng với đúng hồ sơ đang xét; hd thuộc câu con, nv thuộc câu ngoài. Ví dụ: khi nv.MaNV là NV021, chỉ hợp đồng cùng mã được đếm.'],
+  ['AS [SoHopDong]', 'Đặt tên cột nhận giá trị từ câu con. Ví dụ: ô SoHopDong của NV047 là 0.'],
+  ['ORDER BY nv.MaNV', 'Xếp danh sách cuối theo mã tăng dần. Ví dụ: NV021 đứng trước NV047.'],
+]} />
+
+**Câu ngoài** là câu lấy hồ sơ từ `NhanVien`; **câu con** là phần nằm trong ngoặc. Câu con dùng `nv.MaNV` của dòng ngoài nên gọi là **subquery tương quan**: giá trị cần tính phụ thuộc hồ sơ đang xét. `hd` chỉ dùng trong câu con; viết rõ `hd.MaNV` và `nv.MaNV` giúp tránh nhầm hai cột cùng tên.
+
+Tại vị trí một ô trong `SELECT`, câu con là **subquery vô hướng (scalar subquery)**: phải trả đúng một cột và không quá một dòng. Một dòng cho giá trị của ô; không có dòng cho `NULL`; nhiều dòng làm cả câu lệnh báo lỗi. Khác với danh sách cho `IN`, tại đây không có chỗ chứa nhiều giá trị riêng trong một ô.
+
+Trong câu chính, `COUNT` không có `GROUP BY` nên trả đúng một dòng tổng hợp: `NV021` nhận `3`, `NV047` không khớp hợp đồng vẫn nhận `0`. Nếu lấy trực tiếp `MaHD` thay cho phép đếm thì `NV047` cho câu con không có dòng và ô ngoài nhận `NULL`; `NV021` lại gây lỗi nhiều dòng. Số `0` trong báo cáo đến từ `COUNT`, không phải mọi câu con rỗng đều tự đổi thành `0`.
+
+Như bài 3.1, có thể tổng hợp bằng `SUM` hoặc `MAX` thay vì đếm, tùy yêu cầu. Không có dòng phù hợp thì hai hàm này trả một dòng mang `NULL`; giữ `NULL` hoặc dùng `COALESCE` phải theo nghĩa báo cáo. Điều kiện của dòng liên quan đặt trong câu con cùng điều kiện mã; điều kiện giới hạn danh sách hồ sơ mới đặt ở `WHERE` ngoài. Đừng thêm `GROUP BY` máy móc: nó có thể làm câu con trả không có dòng hoặc nhiều dòng.
+
+Ở bài này chỉ cần tạo một giá trị cho mỗi dòng bằng câu con tương quan. Dùng câu con làm cả nguồn dữ liệu học ở bài 3.11; xem cách máy thực thi thật học ở bài 5.7. Không suy từ cách diễn giải từng hồ sơ rằng SQL Server bắt buộc chạy lại câu con từng dòng hoặc subquery luôn nhanh hơn kết bảng.
+
+### SQL Server chạy câu này thế nào
+
+Sơ đồ diễn giải thứ tự xử lý logic của câu ngoài. Hai ví dụ ở bước `SELECT` soi toàn bộ hợp đồng cùng mã của `NV021` và `NV047`, không coi phần trích hồ sơ là toàn bộ dữ liệu cần đếm:
+
+<RunFlow query={`SELECT nv.MaNV, nv.HoTen,
+\t(
+\t\tSELECT COUNT(hd.MaHD)
+\t\tFROM HopDong AS hd
+\t\tWHERE hd.MaNV = nv.MaNV
+\t) AS [SoHopDong]
+FROM NhanVien AS nv
+ORDER BY nv.MaNV;`} steps={[
+  {
+    "clause": "FROM",
+    "title": "Lấy toàn bộ hồ sơ làm nguồn.",
+    "focus": "FROM NhanVien AS nv",
+    "input": "Bảng `NhanVien` có `48` hồ sơ, gồm cả người đã nghỉ và người chưa có hợp đồng.",
+    "meaning": "`FROM` lấy hồ sơ với bí danh `nv`; chưa giới hạn trạng thái hay ngày.",
+    "detail": "Có `48` dòng, `12` cột. Bảng trích gồm `NV021` có nhiều hợp đồng và `NV047` chưa có hợp đồng.",
+    "sql": "SELECT * FROM NhanVien AS nv;",
+    "columns": [
+      "MaNV",
+      "HoTen",
+      "GioiTinh",
+      "NgaySinh",
+      "SoCCCD",
+      "Email",
+      "NgayVaoLam",
+      "NgayNghiViec",
+      "MaPB",
+      "MaCD",
+      "MaQuanLy",
+      "TrangThai"
+    ],
+    "rows": [
+      [
+        "NV021",
+        "Tôn Thất Long",
+        "Nam",
+        "1995-03-03",
+        "000095289756",
+        "long.tt@hrmdemo.vn",
+        "2021-07-01",
+        null,
+        "IT",
+        "CV",
+        "NV007",
+        "Đang làm"
+      ],
+      [
+        "NV004",
+        "Hoàng Minh Tuấn",
+        "Nam",
+        "1975-07-19",
+        "000075155133",
+        "tuan.hm@hrmdemo.vn",
+        "2015-01-05",
+        null,
+        "BGD",
+        "GD",
+        null,
+        "Đang làm"
+      ],
+      [
+        "NV047",
+        "Phạm Ngọc Ánh",
+        "Nữ",
+        "1999-02-17",
+        "000199495650",
+        "anh.pn@hrmdemo.vn",
+        "2026-10-01",
+        null,
+        "NS",
+        "CV",
+        "NV010",
+        "Đang làm"
+      ],
+      [
+        "NV048",
+        "Đỗ Minh Quân",
+        "Nam",
+        "2000-08-25",
+        "000200503569",
+        "quan.dm@hrmdemo.vn",
+        "2026-10-05",
+        null,
+        "IT",
+        "NV",
+        "NV007",
+        "Đang làm"
+      ],
+      [
+        "NV030",
+        "Nghiêm Thị Hoa",
+        "Nữ",
+        "1999-07-15",
+        "000199361027",
+        "hoa.nt@hrmdemo.vn",
+        "2023-04-03",
+        null,
+        "NS",
+        "CV",
+        "NV010",
+        "Đang làm"
+      ]
+    ],
+    "total": 48,
+    "preview": [
+      "MaNV",
+      "HoTen"
+    ]
+  },
+  {
+    "clause": "SELECT",
+    "title": "Tính một số hợp đồng cho mỗi hồ sơ.",
+    "focus": "SELECT nv.MaNV, nv.HoTen,\n\t(\n\t\tSELECT COUNT(hd.MaHD)\n\t\tFROM HopDong AS hd\n\t\tWHERE hd.MaNV = nv.MaNV\n\t) AS [SoHopDong]",
+    "inputColumns": [
+      "MaNV",
+      "HoTen"
+    ],
+    "meaning": "`SELECT` giữ mã và tên; câu con liên hệ theo `MaNV`, đếm hợp đồng để tạo một ô `SoHopDong` cho dòng ngoài.",
+    "detail": "Vẫn `48` dòng, còn `3` cột. `NV021` nhận `3`, `NV047` nhận `0`; hồ sơ không bị nhân theo số hợp đồng.",
+    "sql": "SELECT nv.MaNV, nv.HoTen,\n\t(\n\t\tSELECT COUNT(hd.MaHD)\n\t\tFROM HopDong AS hd\n\t\tWHERE hd.MaNV = nv.MaNV\n\t) AS [SoHopDong]\nFROM NhanVien AS nv;",
+    "columns": [
+      "MaNV",
+      "HoTen",
+      "SoHopDong"
+    ],
+    "rows": [
+      [
+        "NV021",
+        "Tôn Thất Long",
+        3
+      ],
+      [
+        "NV004",
+        "Hoàng Minh Tuấn",
+        1
+      ],
+      [
+        "NV047",
+        "Phạm Ngọc Ánh",
+        0
+      ],
+      [
+        "NV048",
+        "Đỗ Minh Quân",
+        0
+      ],
+      [
+        "NV030",
+        "Nghiêm Thị Hoa",
+        3
+      ]
+    ],
+    "total": 48,
+    "examples": [
+      {
+        "title": "Một hồ sơ NV021",
+        "note": "Minh họa toàn bộ hợp đồng cùng mã NV021; không phải chỉ đếm phần trích của bảng nguồn.",
+        "table": {
+          "columns": [
+            "MaHD",
+            "MaNV"
+          ],
+          "rows": [
+            [
+              "HD2021-001",
+              "NV021"
+            ],
+            [
+              "HD2021-002",
+              "NV021"
+            ],
+            [
+              "HD2024-005",
+              "NV021"
+            ]
+          ]
+        },
+        "calculations": [
+          {
+            "expression": "COUNT(hd.MaHD)",
+            "explanation": "Đếm mã hợp đồng sau điều kiện hd.MaNV = NV021. Không GROUP BY nên vẫn có một dòng tổng hợp khi không khớp hợp đồng.",
+            "column": "SoHopDong",
+            "value": 3
+          }
+        ],
+        "conclusion": "Hồ sơ NV021 vẫn có một dòng; ô SoHopDong nhận 3."
+      },
+      {
+        "title": "Một hồ sơ NV047",
+        "note": "Minh họa đầy đủ trường hợp không có dòng hợp đồng cùng mã NV047; không dựng một dòng hợp đồng giả.",
+        "calculations": [
+          {
+            "expression": "COUNT(hd.MaHD)",
+            "explanation": "Đếm mã hợp đồng sau điều kiện hd.MaNV = NV047. Không GROUP BY nên vẫn có một dòng tổng hợp khi không khớp hợp đồng.",
+            "column": "SoHopDong",
+            "value": 0
+          }
+        ],
+        "conclusion": "Hồ sơ NV047 vẫn có một dòng; ô SoHopDong nhận 0."
+      }
+    ],
+    "mark": [
+      1,
+      3
+    ]
+  },
+  {
+    "clause": "ORDER BY",
+    "title": "Xếp mã nhân viên tăng dần.",
+    "focus": "ORDER BY nv.MaNV",
+    "meaning": "`ORDER BY` xếp các dòng báo cáo theo `nv.MaNV` tăng dần.",
+    "detail": "Danh sách gửi chị Hạnh vẫn có `48` dòng, `3` cột; bảng trích xếp đúng mã.",
+    "sql": "SELECT nv.MaNV, nv.HoTen,\n\t(\n\t\tSELECT COUNT(hd.MaHD)\n\t\tFROM HopDong AS hd\n\t\tWHERE hd.MaNV = nv.MaNV\n\t) AS [SoHopDong]\nFROM NhanVien AS nv\nORDER BY nv.MaNV;",
+    "columns": [
+      "MaNV",
+      "HoTen",
+      "SoHopDong"
+    ],
+    "rows": [
+      [
+        "NV001",
+        "Trần Thị Mai",
+        1
+      ],
+      [
+        "NV002",
+        "Lê Văn Hùng",
+        1
+      ],
+      [
+        "NV003",
+        "Nguyễn Thu Hà",
+        1
+      ],
+      [
+        "NV004",
+        "Hoàng Minh Tuấn",
+        1
+      ],
+      [
+        "NV005",
+        "Vũ Thị Lan",
+        1
+      ],
+      [
+        "NV006",
+        "Đặng Quốc Bảo",
+        1
+      ],
+      [
+        "NV021",
+        "Tôn Thất Long",
+        3
+      ],
+      [
+        "NV030",
+        "Nghiêm Thị Hoa",
+        3
+      ],
+      [
+        "NV047",
+        "Phạm Ngọc Ánh",
+        0
+      ],
+      [
+        "NV048",
+        "Đỗ Minh Quân",
+        0
+      ]
+    ],
+    "total": 48
+  }
+]} />
+
+<Result columns={["MaNV", "HoTen", "SoHopDong"]} rows={[["NV001", "Trần Thị Mai", 1], ["NV002", "Lê Văn Hùng", 1], ["NV003", "Nguyễn Thu Hà", 1], ["NV004", "Hoàng Minh Tuấn", 1], ["NV005", "Vũ Thị Lan", 1], ["NV006", "Đặng Quốc Bảo", 1], ["NV021", "Tôn Thất Long", 3], ["NV030", "Nghiêm Thị Hoa", 3], ["NV047", "Phạm Ngọc Ánh", 0], ["NV048", "Đỗ Minh Quân", 0]]} total={48} mark={[7,9]} />
+
+Kết quả gửi chị Hạnh có đủ `48` hồ sơ, mỗi hồ sơ một dòng, mã tăng dần. Hai dòng được đánh dấu cho thấy `NV021` có `3` dòng hợp đồng và `NV047` có `0`; đây là số hợp đồng đang lưu, không phải số hợp đồng còn hiệu lực.
+
+## Hay nhầm ở đâu
+
+Các đoạn dưới chỉ là phần thay trong câu chính để đọc lỗi; giữ nguyên câu ngoài và điều kiện liên hệ, không chạy riêng từng đoạn.
+
+<Mistakes>
+
+1. **Lấy mã hợp đồng thay vì đếm.** Đoạn thay thế dưới đây có một cột nhưng `NV021` cho ba dòng. SQL Server báo lỗi cho cả câu lệnh, không tự chọn một hợp đồng. Nhiều dòng chứa cùng giá trị vẫn vi phạm giới hạn.
+
+<Sql copy={false} code={`SELECT hd.MaHD
+FROM HopDong AS hd
+WHERE hd.MaNV = nv.MaNV`} />
+
+<Messages lines={["Subquery returned more than 1 value. This is not permitted when the subquery follows =, !=, <, <= , >, >= or when the subquery is used as an expression."]} />
+
+2. **Trả nhiều cột trong một ô.** Thay biểu thức đếm bằng hai cột dưới đây gây lỗi ngay cả khi chỉ có một hợp đồng:
+
+<Sql copy={false} code={`SELECT hd.MaHD, hd.NgayBatDau`} />
+
+<Messages lines={["Only one expression can be specified in the select list when the subquery is not introduced with EXISTS."]} />
+
+3. **Bỏ điều kiện liên hệ.** Bỏ `hd.MaNV = nv.MaNV` làm `COUNT` đếm toàn bộ `55` hợp đồng ở mọi dòng. Câu vẫn chạy, nhưng `NV047` cũng nhận `55` thay vì `0`. Kiểm cả người có nhiều hợp đồng và người không có để bắt lỗi này.
+4. **Dùng TOP hoặc MAX để làm hết lỗi.** `TOP (1)` chỉ giữ một dòng; `MAX(MaHD)` chỉ lấy mã lớn nhất, đều không trả số hợp đồng chị Hạnh cần. Chỉ dùng phép chọn hoặc tổng hợp khi yêu cầu nghiệp vụ cần chính giá trị đó; chọn một dòng bằng `TOP` còn cần quy tắc `ORDER BY` rõ ràng.
+
+</Mistakes>
+
+## Ứng dụng
+
+<Apply>
+
+- **Thêm chỉ tiêu vào danh sách:** giữ người chưa có dòng liên quan để chị Hạnh thấy hồ sơ cần bổ sung.
+- **Tính riêng trong từng phạm vi:** đặt điều kiện của hợp đồng hoặc đơn trong câu con để chỉ tiêu không làm mất dòng hồ sơ ngoài.
+- **Đọc lỗi một ô:** kiểm số cột, số dòng và điều kiện liên hệ trước khi đổi cách viết truy vấn.
+
+</Apply>
+
+## Ghi nhớ
+
+<Memo rows={[
+  ['Thêm một cột tính theo mã ở Excel', 'Subquery trong SELECT tạo một giá trị cho ô của mỗi dòng ngoài.'],
+  ['Đếm đúng mã của dòng hiện tại', 'Tương quan hd.MaNV = nv.MaNV giới hạn các dòng liên quan.'],
+  ['Một ô nhận một giá trị', 'Câu con có một cột, tối đa một dòng; không có dòng cho NULL, nhiều dòng báo lỗi.'],
+  ['Không có hợp đồng vẫn cần số 0', 'COUNT không GROUP BY trả một dòng với 0; SUM và MAX trên phạm vi rỗng cho NULL.'],
+]} />
+
+**Tự kiểm tra trước khi bấm "Đã học xong":**
+
+<details>
+<summary>Câu con trong <code>SELECT</code> khác câu con cho <code>IN</code> ở điểm nào?</summary>
+
+Ở đây câu con cung cấp một giá trị cho một ô: một cột, tối đa một dòng. `IN` đối chiếu với danh sách có thể gồm nhiều dòng.
+
+</details>
+
+<details>
+<summary>Vì sao <code>NV047</code> nhận <code>0</code>, dù câu con không tìm thấy hợp đồng?</summary>
+
+`COUNT` không `GROUP BY` trả một dòng tổng hợp mang `0`. Câu con lấy trực tiếp mã hợp đồng trên phạm vi không có dòng mới làm ô ngoài nhận `NULL`.
+
+</details>
+
+<details>
+<summary>Bỏ <code>hd.MaNV = nv.MaNV</code> có nhất thiết làm SQL Server báo lỗi không?</summary>
+
+Không. Phép đếm vẫn trả một dòng, nhưng đếm cả `55` hợp đồng cho mọi hồ sơ nên sai yêu cầu. Điều kiện liên hệ giới hạn đúng người cần tính.
+
+</details>
+
+<details>
+<summary>Muốn cộng một cột số thay vì đếm dòng, cần đổi gì và chú ý gì khi không có dòng?</summary>
+
+Dùng `SUM` trên cột số cần cộng, giữ điều kiện liên hệ và phạm vi trong câu con. Không có dòng phù hợp thì kết quả là `NULL`, không tự thành `0`.
+
+</details>
+
+## Bài tập
+
+<Exercises />

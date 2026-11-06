@@ -1,0 +1,68 @@
+lesson: 3-11-subquery-trong-from
+exercises:
+  - id: 3-11-1
+    title: Những phòng có ít nhất năm hồ sơ đang làm
+    summary: Tổng hợp theo phòng rồi lọc cột số lượng ở câu ngoài.
+    prompt: >-
+      Trong NhanVien, chỉ tính hồ sơ có TrangThai bằng chuỗi Unicode “Đang làm”. Dùng bảng dẫn xuất
+      trong FROM để nhóm theo MaPB hiện lưu và đếm hồ sơ; câu ngoài chỉ giữ số lượng từ 5 trở lên.
+      Trả MaPB, SoHoSo theo thứ tự, mỗi phòng một dòng. Xếp SoHoSo giảm dần, cùng số thì MaPB tăng
+      dần. Không dựng lại phòng ở thời điểm quá khứ; bộ chấm so giá trị và thứ tự, không so tiêu đề
+      cột.
+    columns: ["MaPB", "SoHoSo"]
+    ordered: true
+    kind: query
+    answer: |
+      SELECT t.MaPB, t.SoHoSo
+      FROM (
+          SELECT MaPB, COUNT(*) AS [SoHoSo]
+          FROM NhanVien
+          WHERE TrangThai = N'Đang làm'
+          GROUP BY MaPB
+      ) AS t
+      WHERE t.SoHoSo >= 5
+      ORDER BY t.SoHoSo DESC, t.MaPB ASC;
+  - id: 3-11-2
+    title: Tổng ngày đạt ngưỡng theo mã
+    summary: Lọc đơn trước khi cộng rồi lọc tổng ở tầng ngoài.
+    prompt: >-
+      Trong DonNghiPhep, chỉ tính đơn có TrangThai bằng chuỗi Unicode “Đã duyệt”, TuNgay từ
+      2026-09-01 đến trước 2026-10-01. Dùng bảng dẫn xuất trong FROM để cộng toàn bộ SoNgay theo
+      MaNV; câu ngoài chỉ giữ tổng từ 2 ngày trở lên. Trả MaNV, TongNgay theo thứ tự, mỗi mã một
+      dòng, xếp TongNgay giảm dần rồi MaNV tăng dần. Không chia ngày qua tháng, không suy ra ngày
+      thực nghỉ, không lọc trạng thái nhân viên. Bộ chấm so giá trị và thứ tự, không so tiêu đề cột.
+    columns: ["MaNV", "TongNgay"]
+    ordered: true
+    kind: query
+    answer: |
+      SELECT t.MaNV, t.TongNgay
+      FROM (
+          SELECT MaNV, SUM(SoNgay) AS [TongNgay]
+          FROM DonNghiPhep
+          WHERE TrangThai = N'Đã duyệt'
+              AND TuNgay >= '20260901' AND TuNgay < '20261001'
+          GROUP BY MaNV
+      ) AS t
+      WHERE t.TongNgay >= 2
+      ORDER BY t.TongNgay DESC, t.MaNV ASC;
+  - id: 3-11-3
+    title: Tổng thực lĩnh của các kỳ đang lưu
+    summary: Dùng nguồn tổng hợp để chọn mã có tổng tiền đạt ngưỡng.
+    prompt: >-
+      Dùng mọi dòng BangLuong đang lưu, không lọc KyLuong hoặc trạng thái nhân viên. Dùng bảng dẫn
+      xuất trong FROM để cộng ThucLinh theo MaNV; câu ngoài chỉ giữ tổng từ 30000000 đồng trở lên.
+      Trả MaNV, TongThucLinh theo thứ tự, mỗi mã một dòng, xếp TongThucLinh giảm dần rồi MaNV tăng
+      dần. Đây là tổng các kỳ có sẵn của mỗi mã, không phải tiền của một tháng hoặc tính lại lương.
+      Bộ chấm so giá trị và thứ tự, không so tiêu đề cột.
+    columns: ["MaNV", "TongThucLinh"]
+    ordered: true
+    kind: query
+    answer: |
+      SELECT t.MaNV, t.TongThucLinh
+      FROM (
+          SELECT MaNV, SUM(ThucLinh) AS [TongThucLinh]
+          FROM BangLuong
+          GROUP BY MaNV
+      ) AS t
+      WHERE t.TongThucLinh >= 30000000
+      ORDER BY t.TongThucLinh DESC, t.MaNV ASC;

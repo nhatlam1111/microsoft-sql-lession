@@ -2,7 +2,7 @@ import { z } from 'astro/zod';
 
 /** Frontmatter of one lesson file; shared by the content collection and the tests. */
 export const lessonSchema = z.object({
-  num: z.string().regex(/^[1-6]\.(10|[1-9])$/),
+  num: z.string().regex(/^[1-6]\.[1-9]\d*$/),
   title: z.string().min(1),
   shortTitle: z.string().min(1).max(28),
   level: z.number().int().min(1).max(6),
