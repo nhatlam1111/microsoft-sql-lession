@@ -1,20 +1,19 @@
-# Hướng dẫn làm việc với khóa học SQL Server
+# Khóa học SQL Server cho BA/PM
 
-Trước khi viết, sửa hoặc review bài, đọc:
+Mục tiêu: người chỉ biết Excel cơ bản đọc hiểu, truy vấn và phân tích dữ liệu; biết phối hợp xử lý sự cố, không đào tạo DBA.
 
-1. [Quy ước hiện hành](docs/quy-uoc.md): nội dung, độ sâu, định dạng, kiểm tra, review và an toàn dữ liệu.
-2. [Khung bài hiện hành](docs/lesson-template.md): cấu trúc MDX, biến thể bài nền/khái niệm/truy vấn và cách dùng các khối.
-3. [Hồ sơ công ty](docs/ho-so-cong-ty.md) cùng các bài trước có liên quan.
-4. Bài mẫu: [bài 2.1](src/content/lessons/2-1-chon-cot-dat-ten-cot.mdx) cho bài có câu lệnh, [bài 1.1](src/content/lessons/1-1-database-la-gi.mdx) cho bài nền.
+Bắt đầu bằng [quy trình biên soạn](docs/bien-soan.md), rồi chỉ đọc các mục cần cho loại thay đổi. [Quy ước](docs/quy-uoc.md) là chuẩn quyết định; [template](docs/lesson-template.md) hướng dẫn MDX/component. Spec, plan và review cũ không thay quy ước hiện hành.
 
-Quy ước và template hiện hành thay mọi chỉ dẫn cũ trong spec, plan, mockup và hồ sơ review. Chỉ chuyển các bài cũ thuộc phạm vi người dùng yêu cầu, không tự chuyển hàng loạt. Không thêm bài vào các danh sách cho phép khung cũ trong test.
+Không chuyển hàng loạt bài cũ hay thêm ngoại lệ khung cũ vào test. Database chung chỉ đọc; câu ghi chỉ qua runner luôn hoàn tác theo mục 5 của quy ước. Push/deploy cần người làm khóa học đồng ý.
 
-Thực hiện quy trình kiểm tra và review độc lập ở mục 4 của quy ước; ghi đúng kết quả, lỗi nền và giới hạn công cụ. Cập nhật spec/plan sau mỗi vòng sửa. Database dùng chung chỉ được đọc, câu ghi chỉ qua luồng luôn hoàn tác theo mục 5; push/deploy cần người làm khóa học đồng ý.
+## Review theo công cụ
 
-Khi review bằng Codex, dùng agent reviewer **GPT-6.1 Terra**, effort **high**, với ngữ cảnh mới (`fork_turns: "none"`); truyền rõ `model: "gpt-6.1-terra"`, `reasoning_effort: "high"`. Quy định Sonnet dành cho review bằng Claude; chi tiết ở mục 4.5 của quy ước.
+Codex: reviewer GPT-6.1 Terra, effort high, ngữ cảnh mới. Truyền rõ model: "gpt-6.1-terra", reasoning_effort: "high", fork_turns: "none"; không kế thừa model tác giả. Claude dùng Sonnet/high theo quy ước.
 
-Giao reviewer theo gói và lời dặn ở mục 4.5: ngữ cảnh mới, source/build đúng phiên bản, nền tảng Excel cơ bản, kiểm đủ tiền đề từng bài tập và ghi riêng những gì chưa xác minh. Sau nhiều bài hoặc sửa công cụ, thêm review tích hợp; xử lý từng nhận xét theo mục 4.6, không dùng Ready thay cho bằng chứng kiểm hay quyền push.
+Gói giao review và điều kiện review tích hợp theo mục 4.5 của quy ước. Kiểm tiền đề từng đề, giữ report gốc, tách kiểm source/HTML/UI/SQL; không lấy Ready làm bằng chứng kỹ thuật hay quyền push.
 
-## Kỹ năng teach-skills
+## Skill
 
-Bốn kỹ năng `teach`, `source-verifier`, `hidden-case-trainer`, `cognitive-pacer` nằm ở `.agents/skills/` (bản sao từ `E:\Projects\teach-skills`; khi sửa, cập nhật cả hai thư mục `.claude/skills` và `.agents/skills`). Chỉ dùng khi người làm khóa học gọi rõ; chúng không tạo `learning-workspace/` hay bài HTML trong repo này. Nội dung bài vẫn theo `docs/quy-uoc.md` và `docs/lesson-template.md`, nếu mâu thuẫn thì quy ước của repo thắng.
+Dùng skill course-author cho biên soạn/review bài MDX trong repo; hai bản .agents/skills và .claude/skills phải đồng bộ. Skill chỉ dẫn về tài liệu chung, không sao chép chính sách.
+
+teach, source-verifier, hidden-case-trainer và cognitive-pacer chỉ dùng khi người làm khóa học gọi rõ để dạy tương tác. Chúng không tự tạo learning-workspace/HTML, tìm nguồn hay bẫy kiến trúc khi biên soạn bài. Quy ước repo thắng nếu xung đột. Khi sửa skill, cập nhật cả .agents/skills và .claude/skills; không tự sửa bản dùng chung ở repo khác.

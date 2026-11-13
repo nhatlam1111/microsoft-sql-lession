@@ -2,8 +2,8 @@ lesson: 3-12-cte-tung-buoc
 exercises:
   - id: 4-1-1
     title: Tổng ngày đơn đã duyệt bắt đầu tháng 8
-    summary: Dùng CTE đặt tên tổng theo loại rồi lọc tổng.
-    prompt: Từ DonNghiPhep, chỉ lấy đơn có TrangThai là chuỗi Unicode Đã duyệt và TuNgay từ 01/08/2026 đến hết 31/08/2026. Cộng nguyên SoNgay theo LoaiNghi; chỉ giữ tổng lớn hơn hoặc bằng 2. Trả LoaiNghi, TongNgay; xếp TongNgay giảm dần rồi LoaiNghi tăng dần. Luyện CTE và lọc cột tổng ở câu ngoài.
+    summary: Viết một CTE tính tổng theo loại rồi lọc tổng ở câu ngoài.
+    prompt: Dùng một CTE trên DonNghiPhep. Chọn đơn có TrangThai là N'Đã duyệt' và TuNgay trong tháng 8/2026, rồi cộng toàn bộ SoNgay của các đơn theo LoaiNghi. Ở câu ngoài, giữ tổng từ 2 ngày. Trả LoaiNghi, TongNgay. Xếp TongNgay giảm dần, cùng tổng thì xếp LoaiNghi tăng dần.
     columns: [LoaiNghi, TongNgay]
     answer: |-
       WITH TongThang8 AS (
@@ -21,14 +21,17 @@ exercises:
     kind: query
   - id: 4-1-2
     title: Phòng có từ tám hồ sơ đang làm
-    summary: CTE đếm hồ sơ theo mã phòng hiện lưu.
-    prompt: Dùng NhanVien, lấy TrangThai là chuỗi Unicode Đang làm, đếm hồ sơ theo MaPB hiện lưu. Dùng CTE để giữ nhóm có từ 8 hồ sơ trở lên. Trả MaPB, SoHoSo; xếp MaPB tăng dần. Không dựng lại phòng hoặc trạng thái quá khứ.
+    summary: Nối hai CTE để lọc hồ sơ rồi đếm theo mã phòng.
+    prompt: Viết hai CTE. CTE đầu lấy MaPB từ các hồ sơ NhanVien có TrangThai là N'Đang làm'. CTE thứ hai đọc kết quả đó và đếm số hồ sơ theo MaPB hiện lưu. Ở câu ngoài, giữ phòng có ít nhất 8 hồ sơ. Trả MaPB, SoHoSo theo MaPB tăng dần.
     columns: [MaPB, SoHoSo]
     answer: |-
-      WITH HoSoTheoPhong AS (
-          SELECT MaPB, COUNT(*) AS [SoHoSo]
+      WITH HoSoDangLam AS (
+          SELECT MaPB
           FROM NhanVien
           WHERE TrangThai = N'Đang làm'
+      ), HoSoTheoPhong AS (
+          SELECT MaPB, COUNT(*) AS [SoHoSo]
+          FROM HoSoDangLam
           GROUP BY MaPB
       )
       SELECT MaPB, SoHoSo
@@ -38,19 +41,22 @@ exercises:
     ordered: true
     kind: query
   - id: 4-1-3
-    title: Mã nhân viên có nhiều hợp đồng được lưu
-    summary: Đếm hợp đồng, không suy ra hiệu lực.
-    prompt: Dùng toàn bộ HopDong, không lọc ngày hoặc loại hợp đồng. Đếm theo MaNV, đặt kết quả vào CTE rồi giữ những mã có ít nhất 2 hợp đồng. Trả MaNV, SoHopDong; xếp MaNV tăng dần. Đây là số dòng đang lưu, không phải số hợp đồng còn hiệu lực.
+    title: Đối chiếu số hợp đồng trước khi lọc
+    summary: Kiểm hai mã trong CTE đếm rồi lập danh sách các mã có nhiều hợp đồng.
+    prompt: Dùng toàn bộ dòng HopDong để đếm số hợp đồng theo MaNV trong CTE đầu. Trước khi lọc ngưỡng, tự kiểm số đếm của NV004 và NV021 bằng cách cho SELECT cuối đọc CTE này và chỉ lấy hai mã đó. Sau đó thêm CTE thứ hai đọc số đếm từ CTE đầu và giữ các mã có ít nhất 2 hợp đồng. Nộp bảng cuối với MaNV, SoHopDong theo MaNV tăng dần. Đề đếm số dòng đang lưu trên mọi loại và ngày hợp đồng.
     columns: [MaNV, SoHopDong]
     answer: |-
       WITH DemHopDong AS (
           SELECT MaNV, COUNT(*) AS [SoHopDong]
           FROM HopDong
           GROUP BY MaNV
+      ), NhieuHopDong AS (
+          SELECT MaNV, SoHopDong
+          FROM DemHopDong
+          WHERE SoHopDong >= 2
       )
       SELECT MaNV, SoHopDong
-      FROM DemHopDong
-      WHERE SoHopDong >= 2
+      FROM NhieuHopDong
       ORDER BY MaNV ASC;
     ordered: true
     kind: query

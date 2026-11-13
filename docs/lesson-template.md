@@ -1,5 +1,7 @@
 # Khung một bài học
 
+Đọc phần biến thể và component liên quan theo [quy trình biên soạn](bien-soan.md); không cần đọc toàn bộ thuộc tính khi chỉ sửa lời văn. Chốt đoạn giải thích đại diện trước khi dựng đủ khối. Lời giảng cốt lõi luôn hiện; drawer chỉ làm rõ thêm bằng dữ liệu.
+
 Bài có câu lệnh đối chiếu với [`bài 2.1`](../src/content/lessons/2-1-chon-cot-dat-ten-cot.mdx) về mạch kể, độ sâu, chữ đậm và giá trị được highlight; bài nền đối chiếu với [`bài 1.1`](../src/content/lessons/1-1-database-la-gi.mdx). [`Bài 3.5`](../src/content/lessons/3-5-left-join.mdx) là ví dụ kỹ thuật `RunFlow` nhiều bước, chưa chuyển sang bố cục hai tiểu mục.
 
 File này hướng dẫn dựng bài và dùng các khối. Quy tắc viết, định dạng, số liệu, review và an toàn database nằm ở [`quy-uoc.md`](quy-uoc.md); bối cảnh, nhân vật và dữ liệu mẫu ở [`ho-so-cong-ty.md`](ho-so-cong-ty.md). Spec, plan, mockup và hồ sơ review là lịch sử từng lượt; khi viết tiếp dùng hai tài liệu hiện hành này.
@@ -59,7 +61,7 @@ Giải thích khái niệm mới bằng lời thường và in đậm có chọn
 Đặt hình hoặc ví dụ cạnh ý cần làm rõ. Giá trị dẫn chứng, tên bảng/cột
 và địa chỉ ô trong lời giải thích dùng code có nền, như `NV005`, `MaNV`, `C4`.
 Chọn khối phù hợp trong bảng thuộc tính cuối tài liệu; chỉ dùng khi cần.
-Nêu giới hạn quan trọng và cái giá của cách làm bằng một vế câu.
+Nêu giới hạn quan trọng tại chỗ. Điều kiện đơn giản dùng một vế; cơ chế khó giải thích đủ 2–4 câu, không cắt mất lý do chỉ để ngắn.
 
 Ở bài này chỉ cần nắm ý chính đang học; chỉ sang đúng bài đào sâu hơn.
 
@@ -159,6 +161,7 @@ Câu trả lời nghiệp vụ từ kết quả này, đúng giả định đầ
 - `rows` mỗi bước trích tối đa 10 dòng; `total` là số dòng thật sau bước đó. Thứ tự logic không mô tả cách SQL Server đọc vật lý.
 - Bước lọc có `checks` là bảng soi: `conditions` là tiêu đề từng điều kiện, có tên cột; `rows` là mã hồ sơ ở cột đầu của đầu vào, nằm trong 5 dòng đang hiện, rồi đúng hoặc sai theo từng điều kiện; `totals` đếm riêng số dòng đầu vào đúng từng điều kiện, rồi số dòng giữ. Ví dụ `checks: { conditions: ['MaPB IN (…)', 'NgayVaoLam BETWEEN …'], rows: [['NV002', true, false], ['NV003', true, true]], totals: [24, 3, 2] }`. Các điều kiện nối bằng `AND`: mọi điều kiện đúng thì giữ. Ô `null` hiện `UNKNOWN`. Build dừng khi bảng soi không khớp đầu vào hoặc kết quả của bước.
 - Bước `SELECT` có `CASE` thêm `labels` vào `checks` để thành bảng nhánh: `rows` ghi `false` trước nhánh đúng, `null` sau nhánh đúng, `labels` là nhãn của từng hàng, `totals` là số dòng dừng ở từng nhánh rồi ở `ELSE`. Ví dụ `checks: { conditions: ['Mốc 3 năm <= ngày chốt', 'Mốc 1 năm <= ngày chốt'], rows: [['NV003', true, null], ['NV025', false, true], ['NV045', false, false]], labels: ['Từ 3 năm trở lên', 'Từ 1 đến dưới 3 năm', 'Dưới 1 năm'], totals: [33, 8, 4] }`.
+- Với các CTE nối tiếp như bài 3.12, dùng một thẻ `CTE` cho mỗi kết quả có tên, trước `FROM` của câu ngoài. Xếp theo quan hệ dữ liệu, nêu nguồn và các mệnh đề trong từng CTE. `note` nói rõ đây là luồng dữ liệu logic; SQL Server tự chọn cách thực thi.
 - Với hai nhánh `UNION`, có thể tóm tắt mỗi nhánh đã qua `FROM` → `WHERE` → `SELECT` thành một bước `SELECT`, rồi bước `UNION` và `ORDER BY`. `RunFlow` nhận dạng bốn bước này để vẽ hai đầu vào độc lập, cùng đi vào phép gộp; không dùng mũi tên nối nhánh đầu sang nhánh sau. Viết `note` riêng để nói rõ quan hệ logic, không quy định nhánh nào chạy trước; câu kiểm từng nhánh chỉ đọc bảng của chính nhánh đó. Xem bài 3.8.
 - `LineMap` giải thích từng phần của câu lệnh tình huống. Mỗi dòng có "Ví dụ:" và giá trị cụ thể được nhận, loại hoặc đổi; không chép lại cùng lời giải thích ở cả bảng lẫn đoạn văn.
 - Bài xử lý sự cố như 5.6 có thể đặt tên tiểu mục theo diễn biến sự cố; vẫn đi từ tình huống tới lời giải, giữ giới hạn an toàn và các mục cuối.
@@ -183,7 +186,7 @@ Kết quả cần thấy: `SELECT`/`FROM`/`WHERE` cùng cột; `HoTen`, `CASE`, 
 
 ## Trình tự dùng khung
 
-1. Đọc quy ước và hồ sơ công ty; chốt mục tiêu, giả định và câu trả lời cần có.
+1. Theo ma trận đọc trong bien-soan.md; chốt mục tiêu, tiền đề, giả định và câu trả lời cần có.
 2. Chọn biến thể bài nền, khái niệm hoặc truy vấn; đặt tiêu đề phần chính theo vấn đề cụ thể.
 3. Chọn ví dụ tối thiểu và các khối thật sự cần; chạy, đối chiếu dữ liệu theo quy trình trước khi điền.
 4. Viết theo mạch của biến thể đã chọn, không tách lại hai phần Excel/SQL.

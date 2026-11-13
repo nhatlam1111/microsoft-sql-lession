@@ -16,7 +16,7 @@ const LEGACY_LAYOUT_SLUGS = new Set([
 
 // Frozen migration list: lessons with a query keep the old subsections until each one is edited; remove a lesson when it moves to two.
 const PENDING_TWO_SUBSECTIONS = new Set([
-  '3-12-cte-tung-buoc', '3-13-xep-hang-row-number-rank',
+  '3-13-xep-hang-row-number-rank',
   '3-16-luy-ke-so-thang-truoc', '3-18-pivot-xoay-bang', '3-19-soi-chat-luong-du-lieu',
 ]);
 

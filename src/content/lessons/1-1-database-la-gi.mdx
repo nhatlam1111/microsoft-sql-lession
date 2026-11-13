@@ -34,13 +34,13 @@ Bài này so sánh **database quan hệ** với **NoSQL** theo cách tổ chức
 
 | Tiêu chí | Database quan hệ | Database NoSQL |
 |---|---|---|
-| Cách tổ chức | Bảng, dòng, cột; các bảng liên hệ bằng giá trị khóa | Tùy mô hình: tài liệu, khóa–giá trị, cột rộng hoặc đồ thị |
+| Cách tổ chức | Bảng, dòng, cột; các bảng liên hệ qua giá trị chung, như mã nhân viên | Tùy mô hình: tài liệu, khóa–giá trị, cột rộng hoặc đồ thị |
 | Nhu cầu phù hợp | Hồ sơ, hợp đồng, lương; cần lấy thông tin qua nhiều bảng và kiểm các luật liên quan | Đọc cả hồ sơ dạng tài liệu, tra theo mã hoặc lần theo mạng liên hệ |
 | Ưu điểm | Thuận tiện tổ chức dữ liệu nghiệp vụ và giữ liên kết hợp lệ bằng luật đã khai báo | Chọn cách lưu và truy cập phù hợp với hình dạng dữ liệu, như lấy cả tài liệu hoặc đi theo liên hệ |
 | Giới hạn cần cân nhắc | Phải thiết kế cấu trúc và quan hệ; thay đổi thiết kế cần được quản lý | Khả năng truy vấn và kiểm luật khác nhau tùy sản phẩm; dữ liệu lưu lặp cần cách cập nhật nhất quán |
 | Hệ quản lý tiêu biểu | SQL Server, PostgreSQL, MySQL | MongoDB, Redis, Cassandra, Neo4j |
 
-Trong NoSQL, **tài liệu** gom chi tiết của một đối tượng; **khóa–giá trị** dùng khóa để tra giá trị; **cột rộng** tổ chức dòng theo nhóm cột; **đồ thị** biểu diễn đối tượng bằng điểm, liên hệ bằng đường. Đây là các dạng bên trong NoSQL.
+Trong NoSQL, **tài liệu** gom chi tiết của một đối tượng; **khóa–giá trị** dùng một mã để tra dữ liệu tương ứng, như mã nhân viên là khóa và hồ sơ là giá trị; **cột rộng** tổ chức dòng theo nhóm cột; **đồ thị** biểu diễn đối tượng bằng điểm, liên hệ bằng đường. Đây là các dạng bên trong NoSQL.
 
 Tài liệu thường dùng **JSON**, cách viết dữ liệu bằng tên và giá trị, có thể chứa danh sách hoặc nhóm chi tiết. Ví dụ: tài liệu nhân viên chứa cả địa chỉ và các số điện thoại.
 
@@ -48,7 +48,7 @@ NoSQL không có nghĩa là không có cấu trúc, không có quan hệ hoặc 
 
 <figure class="lesson-illustration">
   <Image src={graphModel} alt="Đồ thị gốc biểu diễn các đối tượng bằng điểm, các liên hệ bằng đường có nhãn và thuộc tính." width={720} widths={[360, 720]} sizes="(max-width: 560px) 360px, 335px" format="webp" loading="lazy" />
-  <figcaption><strong>Đồ thị — một ví dụ trong nhóm NoSQL</strong>Đường giữa các điểm có ý nghĩa trong dữ liệu; đây không phải sơ đồ các bảng và không đại diện mọi database NoSQL. Ảnh Achim Friedland (Ahzf), <a href="https://commons.wikimedia.org/wiki/File:GraphDatabase_PropertyGraph.png">Wikimedia Commons</a>, <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>.</figcaption>
+  <figcaption><strong>Đồ thị — một ví dụ trong nhóm NoSQL.</strong> Đường giữa các điểm có ý nghĩa trong dữ liệu; đây không phải sơ đồ các bảng và không đại diện mọi database NoSQL. Ảnh Achim Friedland (Ahzf), <a href="https://commons.wikimedia.org/wiki/File:GraphDatabase_PropertyGraph.png">Wikimedia Commons</a>, <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>.</figcaption>
 </figure>
 
 Khóa học dùng database quan hệ với SQL Server, nên phần tiếp theo tập trung vào bảng.
@@ -61,7 +61,7 @@ Trong **database quan hệ**, dữ liệu được tổ chức thành **bảng**
   <a href={relationalTerms} aria-label="Mở hình bảng, dòng và cột ở kích thước gốc">
     <img src={relationalTerms} width="984" height="460" loading="lazy" alt="Hình gốc minh họa Relation là toàn bảng, Tuple là một dòng được khoanh ngang, Attribute là một cột được khoanh dọc." style="max-width: 100%;" />
   </a>
-  <figcaption>Đọc nhãn trong hình: <strong>Relation = bảng; Tuple = dòng; Attribute = cột.</strong>Ví dụ thuật ngữ từ nguồn ngoài, không phải dữ liệu nhân sự của khóa học. Ảnh Booyabazooka, <a href="https://commons.wikimedia.org/wiki/File:Relational_database_terms.svg">Wikimedia Commons</a>, public domain. Bấm hình để xem bản gốc.</figcaption>
+  <figcaption>Đọc nhãn trong hình: <strong>Relation = bảng; Tuple = dòng; Attribute = cột.</strong> Ví dụ thuật ngữ từ nguồn ngoài, không phải dữ liệu nhân sự của khóa học. Ảnh Booyabazooka, <a href="https://commons.wikimedia.org/wiki/File:Relational_database_terms.svg">Wikimedia Commons</a>, public domain. Bấm hình để xem bản gốc.</figcaption>
 </figure>
 
 Trong bộ mẫu của khóa học, bảng `NhanVien` lưu hồ sơ nhân viên: một dòng là một hồ sơ, cột `HoTen` lưu họ tên. Bảng `HopDong` lưu hợp đồng: mỗi dòng là một hợp đồng. Một người có thể có nhiều hợp đồng, nên số dòng của hai bảng không cùng mang nghĩa “số người”.

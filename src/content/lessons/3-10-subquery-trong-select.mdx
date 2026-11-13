@@ -63,9 +63,13 @@ ORDER BY nv.MaNV;`} />
 
 Tại vị trí một ô trong `SELECT`, câu con là **subquery vô hướng (scalar subquery)**: phải trả đúng một cột và không quá một dòng. Một dòng cho giá trị của ô; không có dòng cho `NULL`; nhiều dòng làm cả câu lệnh báo lỗi. Khác với danh sách cho `IN`, tại đây không có chỗ chứa nhiều giá trị riêng trong một ô.
 
-Trong câu chính, `COUNT` không có `GROUP BY` nên trả đúng một dòng tổng hợp: `NV021` nhận `3`, `NV047` không khớp hợp đồng vẫn nhận `0`. Nếu lấy trực tiếp `MaHD` thay cho phép đếm thì `NV047` cho câu con không có dòng và ô ngoài nhận `NULL`; `NV021` lại gây lỗi nhiều dòng. Số `0` trong báo cáo đến từ `COUNT`, không phải mọi câu con rỗng đều tự đổi thành `0`.
+`COUNT(hd.MaHD)` đếm mã hợp đồng khác `NULL`. Trong thiết kế bộ mẫu, `MaHD` là khóa chính nên mỗi dòng hợp đồng đều có mã; đếm mã ở đây cũng là đếm dòng hợp đồng. Với `NV021`, ba hợp đồng cùng mã nhân viên cho số `3`.
 
-Như bài 3.1, có thể tổng hợp bằng `SUM` hoặc `MAX` thay vì đếm, tùy yêu cầu. Không có dòng phù hợp thì hai hàm này trả một dòng mang `NULL`; giữ `NULL` hoặc dùng `COALESCE` phải theo nghĩa báo cáo. Điều kiện của dòng liên quan đặt trong câu con cùng điều kiện mã; điều kiện giới hạn danh sách hồ sơ mới đặt ở `WHERE` ngoài. Đừng thêm `GROUP BY` máy móc: nó có thể làm câu con trả không có dòng hoặc nhiều dòng.
+Phép đếm không có `GROUP BY` vẫn trả đúng một dòng tổng hợp khi không có hợp đồng khớp, nên `NV047` nhận `0`. Nếu lấy trực tiếp `MaHD` thay cho phép đếm thì câu con của `NV047` không có dòng và ô ngoài nhận `NULL`; `NV021` lại gây lỗi nhiều dòng. Số `0` đến từ phép đếm, không phải mọi câu con rỗng đều tự đổi thành `0`.
+
+Chọn phép tổng hợp theo việc cần biết: `SUM` để cộng, `MAX` để lấy giá trị lớn nhất như đã học ở bài 3.1. Khi không có dòng phù hợp, hai hàm này trả một dòng mang `NULL`; giữ `NULL` hay thay bằng giá trị khác qua `COALESCE` phải theo nghĩa báo cáo.
+
+Điều kiện đặt ở đâu quyết định phần dữ liệu bị lọc. Muốn chỉ đếm một loại hợp đồng nhưng vẫn giữ mọi hồ sơ, đặt điều kiện trong câu con cùng điều kiện mã; muốn bỏ hồ sơ khỏi danh sách, đặt điều kiện ở `WHERE` ngoài. Không thêm `GROUP BY` máy móc: nó có thể làm câu con trả không có dòng hoặc nhiều dòng.
 
 Ở bài này chỉ cần tạo một giá trị cho mỗi dòng bằng câu con tương quan. Dùng câu con làm cả nguồn dữ liệu học ở bài 3.11; xem cách máy thực thi thật học ở bài 4.7. Không suy từ cách diễn giải từng hồ sơ rằng SQL Server bắt buộc chạy lại câu con từng dòng hoặc subquery luôn nhanh hơn kết bảng.
 
@@ -252,7 +256,7 @@ ORDER BY nv.MaNV;`} steps={[
         "calculations": [
           {
             "expression": "COUNT(hd.MaHD)",
-            "explanation": "Đếm mã hợp đồng sau điều kiện hd.MaNV = NV021. Không GROUP BY nên vẫn có một dòng tổng hợp khi không khớp hợp đồng.",
+            "explanation": "Ba dòng cùng mã NV021 có ba MaHD khác NULL, nên phép đếm trả 3.",
             "column": "SoHopDong",
             "value": 3
           }
@@ -265,7 +269,7 @@ ORDER BY nv.MaNV;`} steps={[
         "calculations": [
           {
             "expression": "COUNT(hd.MaHD)",
-            "explanation": "Đếm mã hợp đồng sau điều kiện hd.MaNV = NV047. Không GROUP BY nên vẫn có một dòng tổng hợp khi không khớp hợp đồng.",
+            "explanation": "Không có hợp đồng cùng mã NV047. COUNT không có GROUP BY vẫn trả một dòng tổng hợp mang số 0.",
             "column": "SoHopDong",
             "value": 0
           }

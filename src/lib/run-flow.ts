@@ -62,8 +62,10 @@ export interface FlowStep {
 const MAX_ROWS = 10;
 const INPUT_ROWS = 5;
 
-// SQL Server's logical processing order; steps that update data reuse the SELECT slot for SET and DELETE.
+// CTE cards summarize named inputs before the consuming query's logical processing order.
+// Steps that update data reuse the SELECT slot for SET and DELETE.
 const RANKS: [RegExp, number][] = [
+  [/^CTE$/, 0],
   [/^FROM$/, 1],
   [/\bJOIN$/, 2],
   [/^WHERE$/, 3],

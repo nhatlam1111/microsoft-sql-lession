@@ -2,6 +2,8 @@
 
 Mọi quy ước khi viết bài, review bài và làm việc với database của khóa học nằm ở file này. Khung bài và các khối dùng được nằm ở [`lesson-template.md`](lesson-template.md); hiện trạng công ty, nhân vật và những gì các bài đã kể nằm ở [`ho-so-cong-ty.md`](ho-so-cong-ty.md). Có quy ước mới thì ghi vào đây, trong cùng commit với thay đổi đầu tiên áp dụng nó.
 
+Điểm bắt đầu cho tác giả/reviewer: [biên soạn theo phạm vi](bien-soan.md). Định hướng phần 4–5 theo [mục tiêu khóa học](dinh-huong-khoa-hoc.md), áp dụng khi hoàn thiện từng bài.
+
 **Chuẩn hiện hành:** bài có câu lệnh lấy [`bài 2.1`](../src/content/lessons/2-1-chon-cot-dat-ten-cot.mdx) làm mẫu về mạch kể, độ sâu và cách đánh dấu chữ; bài nền theo mục 2.5 lấy [`bài 1.1`](../src/content/lessons/1-1-database-la-gi.mdx) làm mẫu. Excel và SQL được giải thích trong cùng một phần chính, có tiêu đề theo chủ đề của bài. Bố cục hai tiểu mục và quy tắc bám tình huống ở mục 2.1 áp dụng từ 31/10/2026; các bài chưa chuyển được liệt kê trong `tests/content.test.ts`, được chỉnh dần từng bài và không dùng làm mẫu bố cục. Không viết bài đầy đủ mới theo khung cũ. Spec, plan, mockup ở `docs/superpowers` và hồ sơ ở `docs/reviews` là lịch sử từng lượt; gặp chỗ khác file này thì file này đúng.
 
 ## 1. Viết gọn
@@ -9,7 +11,7 @@ Mọi quy ước khi viết bài, review bài và làm việc với database c�
 - **Không dài dòng.** Mỗi đoạn một ý, tối đa khoảng bốn câu; một ý nói được bằng một câu thì không viết hai câu. `npm test` chặn đoạn văn quá 120 chữ trong bài đầy đủ.
 - **Không vòng vo.** Câu đầu đoạn nói ngay ý chính. Bỏ câu dẫn rỗng ("Cần lưu ý rằng…", "Như đã biết…", "Nói cách khác…") và các câu rào đón không thêm thông tin.
 - **Không lặp ý.** Mỗi ý nói một lần, ở chỗ người học cần nó; chỗ khác thì trỏ về ("xem Hay nhầm 2", "bài 1.3"). "Hay nhầm" nêu lỗi và hậu quả; "Ứng dụng" nêu việc làm được nhờ chủ đề của bài, kèm mục đích cụ thể. Câu trả lời tình huống không giảng lại câu lệnh. Chỉ "Ghi nhớ" và câu tự kiểm tra được nhắc lại ý đã có, vì đó là phần ôn.
-- **Điều kiện và "vì sao" viết bằng một vế câu**, không bằng một đoạn. Chi tiết ngoài phạm vi bài (trường hợp hiếm, tùy chọn của công cụ, lịch sử tính năng) thì bỏ, hoặc trỏ sang bài đi sâu hơn.
+- **Giải thích đủ quan hệ nhân quả.** Điều kiện đơn giản viết bằng một vế; cơ chế khó có thể cần 2–4 câu để đi từ dữ liệu qua thao tác tới kết quả. Rút bằng cách bỏ lặp và nhánh ngoài mục tiêu, không cắt mất lời giải thích hoặc nới giới hạn từ để thêm chủ đề.
 - **Khi sửa theo review:** ưu tiên sửa câu đang có hơn thêm câu mới. Mỗi lần thêm một ý, tìm chỗ cắt bớt; mục review chỉ đúng ở trường hợp hiếm thì ghi "Không làm theo" kèm lý do.
 
 ## 2. Nội dung bài
@@ -131,118 +133,76 @@ Mọi quy ước khi viết bài, review bài và làm việc với database c�
 - Hình đánh dấu đúng chỗ phần chữ nói: `mark` của `Ssms`, `Result`, `Excel`, `path` của `Erd`; chú thích hình nói phần nào được đánh dấu. Hình mô phỏng giữ những chi tiết mang nghĩa (ví dụ số dòng nhảy cóc sau khi lọc, dùng `rowNumbers` của `Excel`).
 - Đáp án bài tập không được xuất hiện nguyên văn ở bất kỳ trang nào (`check:dist` kiểm); câu ví dụ trong bài cũng không được nộp đúng cho bài tập.
 
-## 4. Quy trình làm một bài
+## 4. Quy trình làm một bài (cập nhật 13/11/2026)
+
+Điểm vào và phạm vi đọc ở [bien-soan.md](bien-soan.md). Quy trình này áp dụng cho Codex và Claude; đọc theo tác động, giữ nguyên chuẩn nội dung và an toàn dữ liệu.
 
 ### 4.1 Trước khi viết
 
-- Đọc `ho-so-cong-ty.md` và các bài đứng trước có liên quan, để không giải thích lại hoặc nói khác đi.
-- Chốt giả định của tình huống: mốc thời gian, phạm vi dữ liệu, ai hỏi và cần câu trả lời gì.
-- Chốt mục tiêu chính, phần đã học và phần để bài sau; bài khái niệm chọn 2–4 nhịp giải thích đủ đi tới câu trả lời. Mở bài mẫu để đối chiếu cách kể, không chép nguyên ví dụ của nó vào mọi bài.
-- Chạy mọi câu lệnh và con số sẽ đưa vào bài (mục 5).
+- Chốt mục tiêu quan sát được, tiền đề, tình huống/phạm vi dữ liệu, phần giữ và phần ngoài bài trong gói giao việc ở hồ sơ hiện có; dùng mẫu trong bien-soan.md, không tạo brief/plan trùng nội dung. Bài nền không ép có tình huống. Phân ý thành phải hiểu để làm bài / cần nhận biết / tùy chọn; mọi tiền đề của đề bắt buộc phải nằm trong phần giảng bắt buộc.
+- Đọc bài/YAML đang sửa, các mục quy ước và bài trước cần cho thay đổi. Đọc hồ sơ công ty khi dùng tình huống/số liệu; mở template/bài mẫu khi viết mới hoặc đổi cấu trúc, không đọc lại toàn bộ sau mỗi chỉnh chữ.
+- Trước khi dựng đủ khối, tự lần một dòng/nhóm đại diện: đầu vào nào, thao tác nào, vì sao tạo từng ô kết quả. Khi cách giảng chưa rõ, chốt đoạn ngắn trước; cập nhật theo mẫu đã chốt không cần mở lại một vòng thiết kế.
+- SQL/số liệu mới hoặc đổi phải kiểm theo mục 5. Chỉ đổi câu chữ thì đối chiếu nghĩa và bằng chứng hiện có; không nhận đã chạy lại khi chưa chạy. Khẳng định mới về schema phải kiểm schema/source và nêu rõ giới hạn đối chiếu live.
 
-### 4.2 Viết theo khung ở `lesson-template.md` và các mục 1–3
+### 4.2 Viết theo mục tiêu
 
-1. Viết tình huống và giả định ngắn; chốt một câu hỏi dữ liệu bằng `Key`.
-2. Đặt tiêu đề phần chính theo vấn đề cụ thể. Lồng cách Excel và SQL xử lý vào từng ý, giải nghĩa thuật ngữ ngay chỗ dùng.
-3. Đặt ví dụ/hình cạnh ý cần minh họa. Bài truy vấn đi theo mạch ở mục 2.1; bài khái niệm dùng lời giải thích, không ép có câu lệnh.
-4. Trả lời người hỏi ngay trong phần chính, đúng phạm vi giả định. Dẫn các chi tiết sâu sang bài tương ứng.
-5. Viết Hay nhầm bằng lỗi/hậu quả; Ứng dụng bằng khả năng áp dụng của chủ đề; Ghi nhớ và tự kiểm tra theo mục tiêu.
-6. Rà lần lượt chữ đậm của khái niệm, code của giá trị dẫn chứng, dấu ô trong hình và các chỗ lặp trước khi chạy kiểm tra.
+Theo biến thể trong template; giữ cấu trúc, định dạng và các mục 1–3. Lời văn giải thích mục đích/cơ chế, LineMap gắn phần câu với tác dụng, RunFlow minh họa chuyển đổi bằng dữ liệu, Memo dùng để ôn. Không chép cùng lời giải ở mọi khối.
 
-### 4.3 Tự rà trước khi đưa review
+Phần giải thích cốt lõi phải đọc được trước khi mở drawer. Excel làm cầu nối khi phù hợp; không mặc định người học biết VBA, VLOOKUP, PivotTable hoặc Evaluate Formula. Dùng ví dụ đại diện, không giảng hết mọi dòng. Không tự tạo hình, mockup hay sửa component nếu các khối sẵn có đã diễn đạt đủ; khi cần sửa công cụ, ghi thành phạm vi riêng.
 
-Bài nền bỏ qua các mục về tình huống, SQL và `LineMap`.
+### 4.3 Tự rà trước review
 
-- [ ] Không đoạn nào dài dòng, vòng vo; không ý nào nói hai lần ngoài "Ghi nhớ" và câu tự kiểm tra.
-- [ ] Lý thuyết trả lời "vì sao, để làm gì, cái giá là gì"; không có câu hỏi trong lý thuyết.
-- [ ] Excel và SQL cùng một phần chính, chuyển ý rõ; ví dụ ở cạnh phần giải thích, không có bảng/khối chỉ để đủ khuôn.
-- [ ] Bài có câu lệnh: thấy câu lệnh trước phần giải thích, đúng mạch ở mục 2.1, mọi câu lệnh và giải thích chỉ bám tình huống.
-- [ ] Độ sâu và thời lượng phù hợp mục tiêu; điều kiện sâu có chỉ sang bài sau, phần chính luôn nhìn thấy.
-- [ ] Khái niệm được in đậm có chọn lọc; mọi giá trị dẫn chứng trong lời văn, tên bảng/cột và địa chỉ ô có kiểu code phù hợp.
-- [ ] Ứng dụng đúng khả năng của chủ đề, có việc làm/mục đích cụ thể và điều kiện cần thiết.
-- [ ] Mỗi dòng `LineMap` có "Ví dụ:"; có đoạn "Ở bài này chỉ cần…".
-- [ ] Mỗi bước sơ đồ đúng mục 2.6: Đầu vào đủ cột, Thực hiện không lặp Kết quả, bước `WHERE` có bảng soi với tiêu đề có tên cột.
-- [ ] Không câu nào hứa quá; con số nói rõ đếm gì và đã chạy lại.
-- [ ] Hình đánh dấu đúng chỗ, chú thích nói phần được đánh dấu.
-- [ ] Tình huống được khép lại, khớp hồ sơ công ty; Excel được tả đúng.
-- [ ] `copy={false}` cho đoạn chỉ để đọc; bài khái niệm có ít nhất ba câu tự kiểm tra bao phủ mục tiêu, gồm thuật ngữ nền tảng.
-- [ ] SQL có mốc thụt lề 4 cột, giữ được sau build và khi sao chép; `query`/`focus`/`sql` của sơ đồ khớp nhau cả khoảng trắng.
+- Mục tiêu → lời giảng → từng đề nối được; thuật ngữ giải nghĩa tại chỗ hoặc có tiền đề cụ thể.
+- Người mới lần được dữ liệu → thao tác → kết quả → câu trả lời; đủ điều kiện, đúng đơn vị/phạm vi, không hứa quá.
+- Cắt đoạn lặp/vòng vo; phần Hay nhầm nêu lỗi và hậu quả, không bổ sung kiến thức bắt buộc chưa dạy.
+- Kiểm các khối thật sự dùng theo mục 2: hình/đánh dấu, SQL/LineMap/RunFlow/Result, code/bold, tự kiểm và bài tập; không bỏ bảo vệ số liệu/đáp án vì đổi cách diễn đạt.
 
-### 4.4 Kiểm bằng máy
+### 4.4 Kiểm bằng máy theo tác động
 
-1. Câu làm đổi dữ liệu (để lấy nguyên văn lỗi) chỉ chạy qua API bài tập trên máy, có hoàn tác; xong thì `npm --prefix api run check:data`.
-2. Bài có bài tập: `npm --prefix api run build` rồi `npm --prefix api run check:exercises`.
-3. `npm test`, `npm run check`, `npm run build`, `npm run check:dist`.
-4. Mở bản build trên máy, xem các hình có đánh dấu và các khối mới.
-
-Khi chuyển một bài cũ sang khung mới, cập nhật các test đang kiểm tiêu đề cũ thành kiểm ý nghĩa còn phải giữ; không xóa bảo vệ về số liệu, giới hạn của database hay câu trả lời tình huống. Các danh sách cho phép khung cũ trong `tests/content.test.ts` chỉ dành cho các bài đã tồn tại: không thêm bài mới vào đó, chuyển xong bài nào thì gỡ bài đó. Nếu có lỗi nền ngoài phạm vi, ghi rõ tên test, bài bị ảnh hưởng và kết quả thực tế; không báo toàn bộ đạt hay nới test để bỏ qua.
-
-### 4.5 Review độc lập (bắt buộc, mỗi bài một lần)
-
-Làm xong một bài thì giao cho một agent mới, không mang ngữ cảnh lúc viết, học thử và review bài đó.
-
-Xác nhận ngày 03/11/2026: phần 1 đã xong; từ lượt 3.4–3.5 trở đi chạy luôn agent review sau khi có bản đã kiểm, không chờ người làm khóa học tự review. Vẫn xử lý từng nhận xét và review tích hợp theo quy trình dưới đây; quyền review không bao gồm quyền push/deploy.
-
-- **Claude:** review bằng model **Sonnet**, effort **high**.
-- **Codex:** agent review dùng **GPT-6.1 Terra**, effort **high**. Truyền rõ `model: "gpt-6.1-terra"`, `reasoning_effort: "high"`; không để kế thừa model khác của phiên. Áp dụng cho cả review từng bài và review tích hợp.
-- Review chạy nền; review nhiều bài thì chạy vài agent một lượt theo số slot công cụ cho phép. Với Codex, dùng ngữ cảnh mới (`fork_turns: "none"`), không sao chép lịch sử viết bài. Agent dừng do hết hạn mức thì tiếp tục đúng agent và lượt đó, không tạo agent thay thế hoặc đổi model. Nếu report đã ghi trước lúc bị ngắt, tiếp tục để xác nhận không còn phần thiếu; không review lại từ đầu.
-- Ghi đúng công cụ, model và effort đã cấu hình cho agent. Với Codex ghi `gpt-6.1-terra`/`high`; nếu công cụ không xác nhận model thực tế thì ghi rõ giới hạn đó, không tự đoán tên hoặc nhận đã xác minh.
-- Mỗi lượt ghi vào thư mục riêng theo ngày, như `temp/review/2026-10-25-doc-lap/`; lượt mới trong cùng ngày thêm hậu tố. Không ghi đè report của lượt đã kết thúc; được hoàn thiện report đang dở khi tiếp tục cùng lượt.
-
-#### Chuẩn bị gói giao review
-
-Người giao việc điền đủ các thông tin sau; chỉ gửi quyết định đã duyệt, không gửi nhận xét của reviewer khác hoặc kết luận của tác giả để dẫn hướng:
-
-| Thông tin | Cần ghi rõ |
+| Thay đổi | Kiểm bắt buộc trong vòng sửa |
 |---|---|
-| Phạm vi | Số bài, đường dẫn MDX/YAML, mục tiêu và phần thay đổi; bài trước cần đọc để có kiến thức nền |
-| Quyết định đã duyệt | Phần phải giữ, phần được sửa, ngoại lệ bố cục có chủ đích; chỉ tới đúng mục quyết định trong spec/plan |
-| Phiên bản | Commit hoặc trạng thái source đang giao; đường dẫn bản build và lần build đã đối chiếu với source đó |
-| Cách kiểm | Chỉ đọc nguồn/HTML hay có tương tác browser; công cụ sẵn có và phần chưa thể kiểm |
-| Đầu ra | Một đường dẫn report mới, chỉ rõ agent được ghi file này và không sửa sản phẩm/Git |
+| Chỉ chính tả/câu chữ, SQL/dữ liệu/YAML/cấu trúc giữ nguyên | Test nội dung liên quan; đối chiếu diff; build/HTML phần sửa. Không tự chạy lại mọi đáp án |
+| Định nghĩa, điều kiện hoặc cách giải thích | Như trên, thêm đối chiếu nguồn/bằng chứng cho khẳng định mới và tiền đề từng đề; review độc lập |
+| SQL, số liệu, YAML/bài tập | Kiểm query/kết quả liên quan theo mục 5; npm --prefix api run build rồi npm --prefix api run check:exercises; npm --prefix api run check:data sau luồng ghi hoàn tác |
+| Component/runner/API/đường thực hành chung | Test hồi quy phần bị ảnh hưởng, build/HTML và tương tác/API thực tế tương ứng; review tích hợp |
+| Nghiệm thu bản phát hành | npm test, npm run check, npm run build, npm run check:dist; bài tập/runner đổi thì kiểm API như trên; UI thay đổi thì kiểm tương tác liên quan |
 
-Nếu build chưa có hoặc cũ hơn source, vẫn review nội dung nguồn và ghi rõ phần HTML/UI chưa xác minh; người viết chuẩn bị build khớp trước khi nghiệm thu giao diện. Không gọi ảnh, HTML hay dữ liệu của bản cũ là bằng chứng cho thay đổi mới.
+check:exercises hiện kiểm toàn bộ, chưa hỗ trợ lọc ID; không tự bịa tham số lọc hoặc sao chép lệnh kiểm của repo khác. Không sửa runner chỉ để tối ưu một lượt biên tập. Bằng chứng đã có chỉ tái dùng khi source và các phụ thuộc liên quan không đổi: ghi nội dung đã kiểm, nguồn/lệnh và kết quả, phiên bản hoặc hash, giới hạn và điều kiện cần kiểm lại. Commit đơn lẻ không đủ khi còn diff; hash ghi sau không chứng minh bản đã kiểm trước. Thiếu căn cứ thì ghi chưa đủ điều kiện tái dùng. SQL, dữ liệu hoặc component liên quan đổi thì kiểm lại phần bị tác động; không lặp cả bộ vì sửa report.
 
-#### Lời dặn cho agent review một bài
+Khi đổi cấu trúc, sửa assertion giữ ý nghĩa/kiến thức cần bảo vệ, không khóa cứng câu chữ. Không thêm bài vào danh sách cho phép khung cũ. Lỗi nền ghi đúng test, phạm vi và kết quả, không nới test để báo đạt. Đọc HTML không chứng minh đã thử drawer/copy/bàn phím; ghi riêng kiểm thực tế và giới hạn.
 
-Giữ nguyên bốn dòng vai trò dưới đây, rồi điền bối cảnh từ gói giao việc:
+### 4.5 Review độc lập
 
-```text
+Bài mới hoặc sửa nội dung đáng kể cần một reviewer ngữ cảnh mới sau khi tác giả đã kiểm. Chỉnh chính tả thuần túy không bắt buộc mở reviewer mới. Mỗi bài trong một gói có review riêng; không bỏ review vì muốn tiết kiệm usage.
+
+- Codex: model gpt-6.1-terra, reasoning_effort high, fork_turns none; Claude: Sonnet, effort **high**. Ghi đúng cấu hình, không nhận đã xác minh model thực tế nếu công cụ không xác nhận.
+- Không truyền lịch sử viết, report cũ hoặc kết luận tác giả. Giao đường dẫn bài/YAML, mục tiêu, tiền đề cần đọc, quyết định đã duyệt, commit/diff, build khớp hoặc chưa có, công cụ được dùng và đường dẫn report mới.
+- Reviewer chỉ ghi report; không sửa sản phẩm/test/Git, đọc seed/secret, chạy SQL/API hoặc tạo agent khác. Đúng thì công nhận, không có finding là hợp lệ.
+- Reviewer đọc toàn bộ bài, các khối/drawer và từng đề, tự xác định cách làm trước khi xem answer; không lấy bài sau/đáp án/kiến thức chuyên gia bù phần chưa dạy. Không chép đáp án vào report.
+- Chỉ dùng browser khi được giao, giữ nháp/clipboard. Phân biệt bảng trích/tổng thật, sơ đồ logic/thực thi vật lý, đọc HTML/tương tác thật; thiếu bằng chứng thì ghi chưa xác minh.
+- Tách sai có căn cứ, thiếu tiền đề, đã dạy nhưng khó tìm và biên tập. Report có vị trí/câu gốc ngắn, tác động, đề xuất, phần giữ được, bảng tiền đề từng đề và giới hạn; không có hạn ngạch finding/điểm số. Câu chữ gây hiểu sai là lỗi cần xử lý, không hạ mức chỉ vì đoạn sửa ngắn.
+- Hết hạn mức thì tiếp tục đúng agent/lượt; không tạo reviewer thay thế, đổi model hoặc review lại từ đầu. Giữ report đã hoàn tất, lượt mới có đường dẫn mới.
+
+Giữ bốn dòng vai trò trong prompt:
+
+~~~text
 Đóng vai Business Consultant khó tính, muốn chuyển sang BA hoặc PM, học Microsoft SQL Server để đủ hiểu và phản biện developer.
 Học thử từ góc nhìn người học, soi từng câu từng chữ: chỗ mơ hồ, thuật ngữ chưa giải thích, thiếu điều kiện, ví dụ gây hiểu nhầm hoặc kiến thức không chính xác.
 Review chân thật: có lỗi thì chỉ rõ và giải thích; đúng thì công nhận; chưa xác minh được thì nói rõ, không đoán hay cố bới lỗi.
 Phải luôn tự đặt ra các câu hỏi tại sao, để làm gì, vì sao như thế,..., và xem bài học có trả lời được hay không.
+~~~
 
-Bối cảnh:
-- Bài: src/content/lessons/<slug>.mdx; YAML: <đường dẫn hoặc không có>; source: <commit/trạng thái>; build: <đường dẫn và phiên bản hoặc chưa có>; report: temp/review/<lượt>/review-bai-<slug>.md.
-- Đọc AGENTS.md, docs/quy-uoc.md, docs/lesson-template.md, docs/ho-so-cong-ty.md, bài mẫu tương ứng (2.1 hoặc 1.1) và các bài trước liên quan đã được chỉ ra. Quyết định đã duyệt: <phạm vi và mục spec/plan>. Không đọc report cũ ở temp/review hoặc docs/reviews, nhận xét reviewer khác hay ma trận tác giả. Tài liệu quyết định dùng để hiểu phạm vi, không dùng kết luận cũ thay cho học thử.
-- Giả định chưa biết SQL, lập trình hoặc quản trị hệ thống; chỉ biết Excel văn phòng cơ bản. Không mặc định đã biết VLOOKUP/PivotTable. Chỉ dùng bài đang học và các bài trước để hiểu; không lấy bài sau, đáp án hoặc kiến thức chuyên gia có sẵn bù phần chưa được dạy. Thuật ngữ mới cần có nghĩa tại chỗ; một mã/giá trị dữ liệu xuất hiện lần đầu không tự thành thuật ngữ cần thêm định nghĩa hoặc bảng chứng minh.
-- Không đọc database/HRM_Demo.sql, .env/secret hoặc tài liệu SQL ngoài khóa học; không kết nối database, chạy SQL, API/runner hay nộp bài. Chỗ nghi kiến thức/số liệu sai chỉ ghi nghi ngờ cùng căn cứ; điều cần chạy mới biết thì ghi "chưa xác minh". Người viết xác minh kỹ thuật riêng theo mục 4.6 và 5.
-- Đọc hết bài và mọi khối Excel/Sql/Result/Messages/LineMap/RunFlow/Ssms/Erd, gồm từng bước và nội dung drawer. Phân biệt hình minh họa, thẻ xem nhanh, bảng trích và tổng thật; không kết luận tổng sai vì thẻ/bảng chỉ hiện một phần. Với mỗi bước theo mục 2.6, kiểm Đầu vào có đủ cột để hiểu vì sao dòng bị giữ hoặc loại, bảng soi khớp Đầu vào và Kết quả, số dòng và số cột nối được sang bước sau.
-- Kiểm đường đi người học thực sự theo được: chỗ chọn web có mã hoặc SQL Server riêng, nơi nhận mã, bước cần làm và điều kiện hoàn thành có nhất quán không. Không bắt người chỉ chọn web tự kết nối SSMS, không đề nghị bỏ xác thực hoặc tự thêm thông tin liên hệ.
-- Kiểm mục tiêu, giả định, đơn vị đếm, thuật ngữ lần đầu và các giới hạn. Excel/SQL phải cùng phần chính; câu trả lời tình huống nằm ngay sau kết quả, trừ bài nền không có tình huống. Kiến thức cốt lõi để hiểu câu chính và làm đề phải được giảng trước phần ôn; không dùng tự kiểm tra để dạy bù. Với giới hạn đặt trong Hay nhầm theo quyết định riêng đã duyệt, kiểm tác động thực tế thay vì ép đổi vị trí theo quy tắc khái quát. Không yêu cầu khôi phục khung cũ hoặc chèn preview SQL cho bài khái niệm.
-- Đọc từng đề và thử xác định cách làm từ kiến thức đã học trước khi đối chiếu answer YAML. Ghi cho mỗi đề: cần kiến thức gì, đã được dạy ở đâu, còn thiếu gì; không coi answer là lời giảng. Không chép nguyên đáp án vào report. Tự kiểm tra phải phủ mục tiêu, đáp án đã được giảng và nằm sau Ghi nhớ, trước Bài tập nếu có.
-- Rà bold có chọn lọc, code cho dẫn chứng/tên bảng/cột/ô và dấu đánh trong hình; Ứng dụng phải nói việc làm được nhờ chủ đề. Đối chiếu bản render khi có: nháy SQL, tab bốn cột, query và focus khớp nhau, không lộ backtick/escape; `sql` của bước không hiện trên trang nên chỉ đối chiếu trong nguồn. Đọc HTML không chứng minh đã kiểm copy/paste, bàn phím, drawer hoặc SSMS thật.
-- Chỉ tương tác browser nếu được giao, giữ nháp/clipboard của người dùng và không chạy SQL. Ghi đúng thao tác đã thử, viewport thực tế, kết quả và giới hạn; không đổi thiết lập bảo mật để ép một phép kiểm đạt. Một lỗi truy cập trên trang dùng chung chỉ là một bằng chứng, không tự nhân thành lỗi riêng của mọi bài chưa mở.
-- Soi độ tải, chuyển ý, vòng vo và lặp ý; chỉ rõ câu nên bỏ/gộp. Đề xuất thêm bằng một vế ngắn khi thiếu nó người mới thật sự vấp. Không tăng nội dung chỉ để đủ khối/số finding; nhóm các đoạn giữ được, không chép lại cả bài. Với mỗi câu "tại sao/để làm gì" tự đặt ra, ghi bài đã trả lời ở đâu hoặc chưa.
-- Chỉ ghi report được giao; không sửa source/test/docs/index/HEAD/branch và không tạo reviewer khác. Đúng thì công nhận, không có finding là kết quả hợp lệ; không dùng điểm số tự đặt thay bằng chứng hoặc khẳng định học viên chắc chắn tự học được.
-```
+Giả định chỉ biết Excel văn phòng cơ bản, chưa biết SQL/lập trình/DBA. Gói giao chỉ dẫn đúng mục quy ước/template/hồ sơ và bài tiền đề cần đọc; người review được mở rộng khi có phụ thuộc chưa rõ, không mặc định đọc toàn bộ repo.
 
-Report gồm: phạm vi/phiên bản/công cụ thực tế → rà theo thứ tự bài → bảng tiền đề từng bài tập → ưu tiên → nguồn và giới hạn. Mỗi finding có câu gốc ngắn và vị trí, đánh giá **Cần sửa / Cần làm rõ / Cần cắt / Biên tập / Giữ được**, tác động tới người mới, căn cứ và đề xuất ngắn. Tách rõ chưa được dạy, đã dạy nhưng khó tìm, nội dung sai có căn cứ, và chưa thể xác minh. Kết luận nói đủ kiến thức làm các đề hay còn vướng gì; không biến đánh giá học thử thành xác nhận SQL/UI đã chạy đúng.
+**Review tích hợp:** thêm agent mới khi thay đổi quan hệ/tiền đề giữa nhiều bài, số bài/tiến độ, component/API/runner hoặc đường thực hành chung. Hai bài độc lập chỉ sửa lời giảng không tự tạo vòng tích hợp. Agent tích hợp được đọc evidence giao kèm base/head hoặc diff, phải phân biệt bằng chứng của tác giả với kiểm tự thực hiện; không lặp review toàn bộ từng bài.
 
-#### Review tích hợp sau nhiều bài hoặc có sửa công cụ
+### 4.6 Sửa theo review và bàn giao
 
-Sau vòng từng bài, giao một agent mới kiểm mạch giữa các bài và phần công cụ bị ảnh hưởng. Gói giao việc gồm base/head hoặc diff chính xác, spec/plan, các quyết định và hồ sơ kiểm của tác giả. Agent này được đọc evidence được giao nhưng phải phân biệt với kiểm do chính mình thực hiện; không cần lặp lại toàn bộ review từng bài.
-
-Kiểm đường thực hành, kiến thức nền/thuật ngữ giữa các bài, giới hạn/số liệu, scope bài tập/API/dữ liệu và tương thích nháp nếu sửa editor. Ghi findings theo tác động thực tế; những hành vi cân nhắc nhưng chưa kết luận hoặc để ngoài phạm vi phải được liệt kê kèm lý do để tác giả xử lý. Giữ cùng quy định model, không chạy database/đọc secret, chỉ ghi report được giao và không phân tiếp cho agent khác.
-
-### 4.6 Sau khi có bản review
-
-1. Đọc hết bản review rồi mới sửa. Người review chỉ học như học viên, nên người viết kiểm từng mục với script, với database (chỉ `SELECT`) và với tài liệu Microsoft; mục đúng thì sửa, mục sai, quá hiếm hoặc đi ngược quyết định đã chốt thì không làm theo và ghi lý do.
-2. Cập nhật test khi sửa cấu trúc hoặc một yêu cầu kiến thức cần bảo vệ; ưu tiên kiểm ý nghĩa và điều kiện quan trọng, tránh khóa cứng câu chữ chỉ vì đổi cách diễn đạt. Chạy lại mục 4.4.
-3. Ghi quyết định từng nhận xét (**Làm theo / Làm một phần / Không làm theo**) cùng căn cứ và kết quả sửa; cập nhật spec/plan của lượt hoặc level. Xử lý cả mục nhỏ có căn cứ; ngoài phạm vi hoặc không làm theo phải nói rõ lý do, không tự đổi đáp án/seed/API. Bài kể thêm điều mới về công ty thì cập nhật `ho-so-cong-ty.md`.
-4. Giữ report và nguồn nhận xét gốc; lưu bản sao vào hồ sơ của lượt khi bàn giao, không sửa kết luận của reviewer thành lời xác nhận của tác giả. Ghi riêng kiểm nguồn, HTML, tương tác UI, SQL live, lỗi nền và giới hạn; phần nào chưa kiểm không báo đạt. Review tích hợp có mục để tác giả kết luận thì xử lý và ghi lý do trước khi bàn giao.
-5. Gửi người làm khóa học: bài đã sửa, đường dẫn report và ma trận xử lý, tóm tắt phần gộp/rút/để bài sau cùng kết quả kiểm thực tế. Không lấy kết luận Ready của reviewer làm quyền merge/push; thực hiện theo phạm vi người dùng đã đồng ý ở mục 5.
+1. Đọc hết report, xác minh nhận xét bằng nguồn/script/SQL được phép khi cần. Giao sửa theo finding: vị trí, vấn đề, tác động, tiêu chí hết lỗi. Gom sửa theo đoạn; không thêm cảnh báo hiếm chỉ để làm reviewer hài lòng.
+2. Ghi Làm theo/Làm một phần/Không làm theo với căn cứ, kể cả mục nhỏ; giữ nguyên report gốc. Không đổi seed/API/đáp án ngoài phạm vi.
+3. Kiểm lại đoạn sửa cùng lời giải thích, kết quả và bài tập phụ thuộc. Tiếp tục cùng reviewer để làm rõ hoặc xác nhận sửa khi cần; chỉ mở review đáng kể khi còn lỗi trọng yếu, thiếu tiền đề hoặc có sửa lớn. Không chốt bài còn lỗi để giữ số vòng; nếu lặp mà chưa xử lý được, xác định nguyên nhân và báo điểm mắc.
+4. Một hồ sơ của lượt giữ mục tiêu, quyết định, phần sửa, report và bằng chứng/giới hạn. Cập nhật spec/plan bằng trạng thái và liên kết, không chép toàn bộ nội dung vào nhiều file. Có thêm dữ kiện công ty thì cập nhật hồ sơ công ty.
+5. Bàn giao bài đang làm, việc đã xong, finding còn mở, bước tiếp theo và đường dẫn bằng chứng trong cùng hồ sơ; tiếp tục từ đây, không đọc lại toàn bộ lịch sử. Theo dõi chi phí từng vai/giai đoạn theo bien-soan.md, thiếu log ghi thiếu. Không dùng Ready làm quyền push/deploy; an toàn và quyền thực hiện theo mục 5.
 
 ### 4.7 Bài giảng trình chiếu (duyệt 01/11/2026)
 

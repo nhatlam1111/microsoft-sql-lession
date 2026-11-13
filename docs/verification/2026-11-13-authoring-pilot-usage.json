@@ -1,0 +1,56 @@
+{
+  "as_of": "2026-11-13T15:17:35.823Z",
+  "note": "Snapshot before final handoff, not a quota/cost calculation; parent turns include workflow/skill/document edits and pilot, not lesson-only authoring. Child logs include resumed review; no replacement agents. Reasoning is included in output.",
+  "parent": [
+    {
+      "id": "01a1d572-fdec-7991-879a-79641e5fa889",
+      "label": "Apply proposal",
+      "model": "gpt-6-astra",
+      "effort": "high",
+      "usage": {
+        "responses": 13,
+        "input_tokens": 2660995,
+        "cached_input_tokens": 2633728,
+        "output_tokens": 12682,
+        "reasoning_output_tokens": 2465
+      }
+    },
+    {
+      "id": "01a1d579-91e0-7793-8ec1-ce7544782cfb",
+      "label": "Continue interrupted review",
+      "model": "gpt-6-astra",
+      "effort": "high",
+      "usage": {
+        "responses": 12,
+        "input_tokens": 2668253,
+        "cached_input_tokens": 2658688,
+        "output_tokens": 5531,
+        "reasoning_output_tokens": 1956
+      }
+    }
+  ],
+  "reviewers": [
+    {
+      "id": "01a1d578-3b77-7310-a557-a4a273a26008",
+      "name": "/root/pilot_review_1_1",
+      "usage": {
+        "responses": 12,
+        "input_tokens": 491394,
+        "cached_input_tokens": 455424,
+        "output_tokens": 3486,
+        "reasoning_output_tokens": 158
+      }
+    },
+    {
+      "id": "01a1d578-72bb-71b0-8e26-2edaf0dc7e22",
+      "name": "/root/pilot_review_3_10",
+      "usage": {
+        "responses": 10,
+        "input_tokens": 436549,
+        "cached_input_tokens": 400384,
+        "output_tokens": 3099,
+        "reasoning_output_tokens": 199
+      }
+    }
+  ]
+}
