@@ -5,7 +5,7 @@ title: Nhóm nhà cung cấp
 difficulty: vua
 lessons: [ 2-9-case-when-ham-if ]
 prompt: >-
-  Từ bảng NhaCungCap, lấy mã và nhóm cho mọi dòng: có từ 20 đơn trở lên ghi “Thân thiết”; nếu không thì có từ 5 đơn trở lên ghi “Quen”; còn lại ghi “Mới”. Số đơn luôn có giá trị.
+  Từ bảng NhaCungCap, lấy mã và nhóm cho mọi dòng: có từ 20 đơn trở lên ghi “Thân thiết”; nếu không thì có từ 5 đơn trở lên ghi “Quen”; còn lại ghi “Mới”. Số đơn luôn có giá trị. Thứ tự dòng không quan trọng.
 columns: [ MaNCC, Nhóm ]
 ordered: false
 tables:

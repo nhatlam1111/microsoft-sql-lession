@@ -1,0 +1,115 @@
+{
+  "checkedAt": "2026-11-15T03:35:07.479Z",
+  "inputHash": "628616460f8f71d47eb95a78c12d7701ce83a0691d29e92473054c2d437e62d7",
+  "statements": [
+    {
+      "clause": "FROM",
+      "sql": "SELECT * FROM NhanVien;",
+      "columns": [
+        "MaNV",
+        "HoTen",
+        "GioiTinh",
+        "NgaySinh",
+        "SoCCCD",
+        "Email",
+        "NgayVaoLam",
+        "NgayNghiViec",
+        "MaPB",
+        "MaCD",
+        "MaQuanLy",
+        "TrangThai"
+      ],
+      "count": 48,
+      "excerpt": [
+        [
+          "NV001",
+          "Trần Thị Mai",
+          "Nữ",
+          "1992-04-12",
+          "000192131376",
+          "mai.tt@hrmdemo.vn",
+          "2024-03-01",
+          null,
+          "KT",
+          "CV",
+          "NV005",
+          "Đang làm"
+        ],
+        [
+          "NV002",
+          "Lê Văn Hùng",
+          "Nam",
+          "1988-09-03",
+          "000088139295",
+          "hung.lv@hrmdemo.vn",
+          "2024-04-01",
+          null,
+          "KD",
+          "CVC",
+          "NV006",
+          "Đang làm"
+        ],
+        [
+          "NV003",
+          "Nguyễn Thu Hà",
+          "Nữ",
+          "1995-01-25",
+          "000195147214",
+          "ha.nt@hrmdemo.vn",
+          "2023-06-01",
+          null,
+          "KD",
+          "CV",
+          "NV006",
+          "Đang làm"
+        ],
+        [
+          "NV033",
+          "Khúc Văn Hải",
+          "Nam",
+          "1990-01-01",
+          "000090384784",
+          "hai.kv@hrmdemo.vn",
+          "2019-06-03",
+          "2026-06-30",
+          "VH",
+          "NV",
+          "NV008",
+          "Đã nghỉ"
+        ]
+      ]
+    },
+    {
+      "clause": "SELECT",
+      "sql": "SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên], NgayVaoLam AS [Ngày vào làm]\nFROM NhanVien;",
+      "columns": [
+        "Mã nhân viên",
+        "Họ tên",
+        "Ngày vào làm"
+      ],
+      "count": 48,
+      "excerpt": [
+        [
+          "NV001",
+          "Trần Thị Mai",
+          "2024-03-01"
+        ],
+        [
+          "NV002",
+          "Lê Văn Hùng",
+          "2024-04-01"
+        ],
+        [
+          "NV003",
+          "Nguyễn Thu Hà",
+          "2023-06-01"
+        ],
+        [
+          "NV033",
+          "Khúc Văn Hải",
+          "2019-06-03"
+        ]
+      ]
+    }
+  ]
+}

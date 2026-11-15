@@ -2,12 +2,34 @@ import { it, expect } from 'vitest';
 import { existsSync, readFileSync } from 'node:fs';
 import { parse } from 'yaml';
 import { lessonBlocks } from './helpers/lesson-blocks';
+import { lessonMainSection, sqlSubheadings } from './helpers/lessons';
 import { countsBy, leaveStartingIn, seedRows } from './helpers/hrm-seed';
 import { checkFlow, inputPreview } from '../src/lib/run-flow';
 
 const slug = '3-3-having-loc-sau-khi-gop';
 const active = seedRows('NhanVien').filter(r => r.TrangThai === 'Đang làm');
 const grouped = countsBy(active, ['MaPB']);
+
+it('3.3 teaches the group filter before the runnable query and explains the result outside the drawer', () => {
+  const { body, query } = lessonBlocks(slug);
+  expect(sqlSubheadings(body)).toEqual([
+    'Cấu trúc mới trong bài', 'Đọc câu SQL qua các bước', 'Vận dụng trên cùng tình huống',
+  ]);
+  const main = lessonMainSection(body);
+  const [structure, walkthrough] = main.split(/^### /m).slice(1);
+  expect(main).not.toMatch(/<(?:LineMap|details)\b/);
+  expect(structure).toContain('`HAVING COUNT(*) > 10`');
+  expect(structure).not.toContain('<Sql');
+
+  const statement = walkthrough.match(/<Sql code=\{`([\s\S]*?)`\} \/>/);
+  expect(statement?.[1]).toBe(query);
+  expect(walkthrough.indexOf('<RunFlow')).toBeGreaterThan(statement!.index!);
+  const summary = walkthrough.split('\n]} />\n')[1]?.split('<Result')[0];
+  expect(summary).toContain('`NV020`');
+  expect(summary).toContain('`KD`');
+  expect(summary).toContain('`IT`');
+  expect(summary).toContain('`SoHoSo`');
+});
 
 it('3.3 filters visible profiles first, then checks group counts without using the SELECT alias early', () => {
   const { steps, query } = lessonBlocks(slug);

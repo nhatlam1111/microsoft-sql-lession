@@ -27,16 +27,22 @@ Giả định: vẫn đọc `NhanVien` đang lưu, chọn `TrangThai = N'Đang l
 
 ## Lọc đúng lúc: trước hay sau khi gom nhóm
 
-### Từ Value Filters đến HAVING
+### Cấu trúc mới trong bài
 
-Trong PivotTable ở bài 3.2, **Value Filters** là bộ lọc theo giá trị đã tổng hợp. Bạn chọn `Count of MaNV` lớn hơn `10` để giữ các nhãn phòng đạt ngưỡng. Hình minh họa kết quả còn lại, đánh dấu mã phòng `KD` ở `A2` và số lượng của nhóm ở `B2`.
+Trong PivotTable ở bài 3.2, **Value Filters** lọc các nhóm theo giá trị đã tổng hợp. Bạn đặt `Count of MaNV` lớn hơn `10` để giữ các phòng đạt ngưỡng. Hình minh họa đánh dấu mã phòng còn lại ở `A2` và số hồ sơ của phòng đó ở `B2`.
 
 <Excel sheets="PivotTable · Count of MaNV > 10" cell="B2" formula="13" selected="B2" mark={['A2', 'B2']} rows={[
   ['Mã phòng', 'Count of MaNV'],
   ['KD', 13],
 ]} />
 
-Trong SQL, bạn giữ bộ lọc trạng thái và khóa nhóm của bài 3.2, rồi thêm **`HAVING`** để chỉ lấy những nhóm đạt ngưỡng số lượng. Câu lệnh cho chị Hạnh là:
+Trong SQL, **`WHERE` lọc từng dòng** trước khi gộp. Giữ điều kiện trạng thái để chỉ đưa hồ sơ đang làm vào phép đếm, rồi dùng `GROUP BY MaPB` để gom các hồ sơ theo mã phòng như bài 3.2.
+
+**`HAVING` lọc cả nhóm** theo điều kiện viết sau từ khóa. Thêm `HAVING COUNT(*) > 10` sau `GROUP BY`. Với mỗi phòng, `COUNT(*)` đếm các hồ sơ trong nhóm đã qua `WHERE`, rồi `> 10` quyết định nhóm có vào báo cáo hay không.
+
+`AS [SoHoSo]` đặt **bí danh cột** ở bước `SELECT`. Theo thứ tự xử lý logic, `HAVING` xét điều kiện trước bước đó, nên viết biểu thức `COUNT(*)` ngay trong điều kiện. `ORDER BY` dùng được `[SoHoSo]` vì bước sắp xếp đứng sau `SELECT`.
+
+### Đọc câu SQL qua các bước
 
 <Sql code={`SELECT MaPB, COUNT(*) AS [SoHoSo]
 FROM NhanVien
@@ -45,31 +51,7 @@ GROUP BY MaPB
 HAVING COUNT(*) > 10
 ORDER BY [SoHoSo] DESC, MaPB ASC;`} />
 
-Từng phần của câu:
-
-<LineMap rows={[
-  ['SELECT MaPB', 'Lấy mã chung để nhận ra nhóm phòng trong mỗi dòng kết quả. Ví dụ: nhóm KD trả mã KD.'],
-  ['COUNT(*) AS [SoHoSo]', 'Đếm các hồ sơ bên trong từng nhóm, đặt tiêu đề cột số đếm. Ví dụ: nhóm KD có SoHoSo bằng 13.'],
-  ['FROM NhanVien', 'Chọn bảng hồ sơ nguồn. Ví dụ: bắt đầu từ 48 hồ sơ đang lưu.'],
-  ["WHERE TrangThai = N'Đang làm'", 'Chọn từng hồ sơ được tính trước khi nhóm. Ví dụ: NV020 đã nghỉ nên không được đếm vào KD.'],
-  ['GROUP BY MaPB', 'Gom các hồ sơ cùng mã phòng để tính riêng từng nhóm. Ví dụ: NV002 và NV003 cùng thuộc nhóm KD.'],
-  ['HAVING COUNT(*) > 10', 'Chọn nhóm theo số hồ sơ đã tính. Ví dụ: KD có 13 được giữ, IT đúng 10 bị loại.'],
-  ['ORDER BY [SoHoSo] DESC, MaPB ASC', 'Xếp số đếm giảm dần rồi mã tăng dần như yêu cầu. Ví dụ: chỉ còn KD nên lần này không đổi vị trí.'],
-]} />
-
-**`WHERE` lọc dòng; `HAVING` lọc nhóm.** `WHERE` kiểm từng hồ sơ trước khi nhóm, nên chỉ hồ sơ đang làm được đưa vào phép đếm. `HAVING` xét từng nhóm đã hình thành và số liệu tổng hợp của nhóm; nhóm đạt điều kiện vẫn giữ số đếm từ toàn bộ hồ sơ đã qua `WHERE`.
-
-Ở bước `WHERE` của câu này chưa có nhóm để đếm, nên không đặt `COUNT(*) > 10` vào bộ lọc hồ sơ. `HAVING` cũng không thay bộ lọc trạng thái: nó chỉ giữ hoặc loại cả nhóm khỏi kết quả, không chọn lại từng hồ sơ trong nhóm.
-
-`HAVING` cần so đúng **chỉ tiêu tổng hợp** mà đề yêu cầu: báo cáo này dùng `COUNT(*)`; đề hỏi tổng thì so `SUM` đã học ở bài 3.1. Bạn có thể nối nhiều điều kiện nhóm bằng `AND` hoặc `OR` như ở `WHERE`. Khi nhóm nhiều cột như bài 3.2, điều kiện được xét riêng cho mỗi tổ hợp khóa nhóm.
-
-Theo thứ tự logic, `HAVING` được xét trước `SELECT`, nên alias `SoHoSo` của cùng câu chưa dùng được ở `HAVING`. Viết lại biểu thức `COUNT(*)` tại đó; sang `ORDER BY`, sau `SELECT`, bạn dùng được `[SoHoSo]`.
-
-Ở bài này chỉ cần phân biệt lọc dòng và lọc nhóm. Lấy thêm tên phòng từ danh mục bằng kết bảng học ở bài 3.4; đếm theo nhiều điều kiện trong cùng báo cáo học ở bài 3.1.
-
-### SQL Server chạy câu này thế nào
-
-Sơ đồ là **thứ tự xử lý logic**, không phải cách SQL Server đọc dữ liệu. Bấm `WHERE` và `HAVING` để đối chiếu việc lọc `48` hồ sơ còn `45`, rồi lọc `6` nhóm còn `1`. Trước `ORDER BY`, thứ tự dòng có thể khác hình:
+Sơ đồ theo **thứ tự xử lý logic** của câu. SQL Server tự chọn cách thực thi. Bấm `WHERE` và `HAVING` để xem từng lần lọc. Trước `ORDER BY`, các dòng có thể hiện theo thứ tự khác hình.
 
 <RunFlow query={`SELECT MaPB, COUNT(*) AS [SoHoSo]
 FROM NhanVien
@@ -220,11 +202,25 @@ ORDER BY [SoHoSo] DESC, MaPB ASC;`,
   },
 ]} />
 
+Trong `48` hồ sơ, `WHERE` loại các hồ sơ đã nghỉ như `NV020` của phòng `KD`. `45` hồ sơ qua lọc tạo thành `6` nhóm. `KD` có `13` nên qua `HAVING`, còn `IT` có đúng `10` nên bị loại.
+
+Với nhóm còn lại, `SELECT` lấy mã chung `KD` vào cột `MaPB` và đếm đủ `13` hồ sơ của nhóm vào cột `SoHoSo`. Báo cáo chỉ có một dòng nên `ORDER BY` không làm đổi vị trí.
+
 <Result columns={['MaPB', 'SoHoSo']} rows={[
   ['KD', 13],
 ]} />
 
-Bạn có thể trả lời chị Hạnh: chỉ `KD` có trên `10` hồ sơ đang làm, với số lượng `13` theo mã phòng hiện lưu. `IT` có đúng `10` nên không qua ngưỡng; đổi sang `>= 10` thì phòng này cũng được giữ. Kết quả chỉ trả lời tiêu chí số lượng, không tự kết luận phòng nào đang thiếu người.
+Bạn có thể báo chị Hạnh rằng theo mã phòng hiện lưu, chỉ `KD` có trên `10` hồ sơ đang làm, với `13` hồ sơ. Muốn đánh giá phòng nào thiếu người, chị cần biết nhu cầu nhân sự của từng phòng.
+
+### Vận dụng trên cùng tình huống
+
+**So hai cận của một khoảng.** Nếu yêu cầu là *từ `10` trở lên*, dùng `>=` để giữ thêm nhóm `IT` có đúng `10`. Nếu yêu cầu là *tối đa `10`*, dùng `<=` để giữ các nhóm có số đếm nhỏ hơn hoặc bằng `10`. Khi có cả cận dưới lẫn cận trên, so `COUNT(*)` với mỗi cận rồi nối hai điều kiện bằng `AND` trong `HAVING`. Nhóm chỉ được giữ khi cả hai điều kiện đều đúng.
+
+**Lọc theo chỉ tiêu được hỏi.** Ở bài 3.1, `COUNT(*)` đếm số đơn và `SUM` cộng số ngày. Khi nhóm theo loại, hai chỉ tiêu vẫn có thể cùng hiện trong `SELECT` như ở bài 3.2. Nếu ngưỡng áp dụng cho tổng số ngày, dùng phép `SUM` tương ứng trong `HAVING`. Điều kiện trạng thái và hai mốc ngày bắt đầu vẫn đặt trong `WHERE` như ví dụ tháng 9 ở bài 3.1.
+
+**Đổi độ chi tiết của nhóm.** Khi cần xem từng chức danh trong mỗi phòng, ghi cả hai cột khóa sau `GROUP BY` và chọn cả hai trong `SELECT`, như cách nhóm theo cặp ở bài 3.2. `HAVING` lúc này xét số đếm của từng cặp phòng và chức danh. Một phòng có thể đạt ngưỡng khi đếm chung nhưng có các cặp bị loại khi đếm riêng.
+
+Ở bài này chỉ cần phân biệt lọc dòng và lọc nhóm, rồi chọn đúng chỉ tiêu để so với ngưỡng. Bài 3.4 hướng dẫn lấy tên phòng từ danh mục bằng kết bảng.
 
 ## Hay nhầm ở đâu
 
@@ -232,7 +228,7 @@ Bạn có thể trả lời chị Hạnh: chỉ `KD` có trên `10` hồ sơ đa
 
 1. **Đặt `COUNT(*) > 10` vào `WHERE` của câu trên.** SQL Server không cho dùng phép tổng hợp nhóm ở chỗ đang lọc từng hồ sơ này; câu bị lỗi trước khi có báo cáo.
 2. **Bỏ `WHERE` vì đã có `HAVING`.** `KD` vẫn qua ngưỡng, nhưng số lượng thành `14` do tính thêm hồ sơ đã nghỉ, sai yêu cầu đang làm.
-3. **Dùng `SoHoSo` ở `HAVING` của cùng câu.** Alias chưa có ở bước này nên câu báo lỗi; phải viết biểu thức `COUNT(*)` như câu chính.
+3. **Dùng `SoHoSo` ở `HAVING` của cùng câu.** Câu báo lỗi vì bước này diễn ra trước khi `SELECT` đặt bí danh.
 
 </Mistakes>
 

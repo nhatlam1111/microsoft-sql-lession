@@ -3,8 +3,7 @@ import { readFileSync } from 'node:fs';
 import { parse } from 'yaml';
 import { lessonBlocks } from './helpers/lesson-blocks';
 import { seedRows } from './helpers/hrm-seed';
-import { checkFlow } from '../src/lib/run-flow';
-import { inputPreview } from '../src/lib/run-flow';
+import { checkFlow, inputPreview, inputSteps } from '../src/lib/run-flow';
 
 const slugs = ['3-8-union-gop-danh-sach', '3-9-subquery'];
 describe('lessons 3.8 and 3.9: full lessons and supported practice', () => {
@@ -32,7 +31,7 @@ describe('lessons 3.8 and 3.9: full lessons and supported practice', () => {
   });
   it('3.8 walks the exact situation query through two independent branches, UNION and shared ordering', () => {
     const { body, query, steps } = lessonBlocks(slugs[0]);
-    expect(body).toContain('### SQL Server chạy câu này thế nào');
+    expect(body).toContain('### Đọc câu SQL qua các bước');
     expect(steps.map(s => [s.clause, s.total])).toEqual([['SELECT', 9], ['SELECT', 76], ['UNION', 41], ['ORDER BY', 41]]);
     expect(checkFlow(steps, query)).toEqual([]);
     expect(steps[0].focus).toContain('FROM DonNghiPhep');
@@ -51,8 +50,8 @@ describe('lessons 3.8 and 3.9: full lessons and supported practice', () => {
     expect(steps[0].rows).toContainEqual(['NV005']);
     expect(steps[1].rows).toContainEqual(['NV005']);
     expect(steps[2].rows.filter(r => r[0] === 'NV005')).toHaveLength(1);
-    expect(body).toMatch(/nhánh độc lập/);
-    expect(body).toMatch(/không (?:phải|mô tả)[^.]*thực thi vật lý/);
+    expect(inputSteps(steps)).toEqual([[], [], [steps[0], steps[1]], [steps[2]]]);
+    expect(body).toMatch(/luồng dữ liệu logic/);
   });
   it('3.9 shows a correlated existence test and its inverse without multiplying employee rows', () => {
     const { body, results, steps } = lessonBlocks(slugs[1]);

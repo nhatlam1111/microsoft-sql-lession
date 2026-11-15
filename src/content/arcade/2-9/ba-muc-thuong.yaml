@@ -5,7 +5,7 @@ title: Ba mức thưởng
 difficulty: vua
 lessons: [ 2-9-case-when-ham-if ]
 prompt: >-
-  Từ bảng DoanhSo, lấy mã nhân viên và mức thưởng cho mọi dòng: doanh số từ 500 triệu đồng trở lên ghi “A”, từ 300 đến dưới 500 ghi “B”, còn lại ghi “C”. Cột DoanhSo tính bằng triệu đồng. Doanh số luôn có giá trị.
+  Từ bảng DoanhSo, lấy mã nhân viên và mức thưởng cho mọi dòng: doanh số từ 500 triệu đồng trở lên ghi “A”, từ 300 đến dưới 500 ghi “B”, còn lại ghi “C”. Cột DoanhSo tính bằng triệu đồng. Doanh số luôn có giá trị. Thứ tự dòng không quan trọng.
 columns: [ MaNV, Mức thưởng ]
 ordered: false
 tables:

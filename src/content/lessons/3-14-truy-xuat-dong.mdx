@@ -4,24 +4,302 @@ title: "Hàm cửa sổ: truy xuất dòng"
 shortTitle: Truy xuất dòng
 level: 3
 area: A5
-kind: summary
-minutes: 15
+kind: full
+minutes: 30
 prerequisites:
   - "3.13"
-goal: bạn chọn được hàm để lấy giá trị ở dòng trước, sau, đầu hoặc cuối theo thứ tự cần dùng
+goal: bạn lấy được giá trị ở dòng trước, sau, đầu hoặc cuối của từng nhóm và chọn đúng phạm vi dữ liệu để tính
 excel: So với ô phía trên, phía dưới hoặc hai đầu của một vùng đã sắp xếp
-summary: Đề cương LAG, LEAD, FIRST_VALUE và LAST_VALUE.
-noExercises: true
+summary: Dùng LAG, LEAD, FIRST_VALUE và LAST_VALUE để đối chiếu ngày công giữa các kỳ lương.
 ---
 
-## Nội dung chính
+## Tình huống
 
-**Đề cương.** Lấy giá trị dòng trước với `LAG`, dòng sau với `LEAD`, dòng đầu và cuối với `FIRST_VALUE` và `LAST_VALUE`. Bài sẽ giải thích cách chọn thứ tự và phạm vi lấy giá trị.
+Tháng 10/2026, chị Hạnh cần đối chiếu ngày công đã ghi trên bảng lương.
 
-## Liên hệ Excel
+<Chat who="Chị Hạnh · Phòng Nhân sự" time="10:15" initial="H">
+Em lấy ngày công thực tế trong kỳ tháng 8 và tháng 9 của NV001, NV032, NV041 giúp chị. Với mỗi dòng, cho chị xem ngày công của dòng kỳ liền trước, liền sau, đầu tiên và cuối cùng đang có trong hai tháng đó, tính riêng từng người.
+</Chat>
 
-So giá trị của một dòng với ô liền trước, ô liền sau hoặc hai đầu của vùng đã sắp xếp.
+Đọc `NgayCongThucTe` từ `BangLuong`. Mỗi dòng là một kỳ lương đang lưu của một mã. Giữ `NULL` nếu không có dòng trước hoặc sau trong phạm vi. Báo cáo dùng ngày công đã lưu để đối chiếu.
 
-## Tình huống ví dụ
+<Key>Chia theo mã, xếp kỳ, rồi lấy giá trị theo vị trí dòng.</Key>
 
-Ví dụ dự kiến là đọc ngày công theo từng kỳ và lấy chỉ tiêu ở các dòng liên quan. Có thể xem ví dụ dùng `LAG` để so với kỳ trước ở bài 3.16.
+## Đọc ngày công theo thứ tự kỳ lương
+
+### Cấu trúc mới trong bài
+
+Trong Excel, bạn có thể xếp các kỳ của từng người cạnh nhau rồi đọc ô ngay trên hoặc ngay dưới. Đến dòng cuối của một người, ô bên dưới có thể thuộc người khác. Phạm vi tìm ô cần dừng đúng chỗ đổi mã.
+
+Trong `OVER (...)`, `PARTITION BY MaNV` giữ phép tính trong từng người. `ORDER BY KyLuong ASC` bên trong `OVER` xếp kỳ cũ trước. Khóa gồm `KyLuong` và `MaNV` nên trong nhóm của một mã, mỗi kỳ xác định một vị trí. `ORDER BY` ngoài cùng dùng để trình bày bảng.
+
+**`LAG(NgayCongThucTe)`** đọc giá trị ở dòng trước và **`LEAD(NgayCongThucTe)`** đọc giá trị ở dòng sau, mặc định cách một dòng theo thứ tự đã chọn. Khi vị trí cần lấy nằm ngoài nhóm, kết quả mặc định là `NULL`. Nếu thiếu một kỳ, hai hàm vẫn đi theo các dòng đang có trong nhóm.
+
+**`FIRST_VALUE`** đọc giá trị ở dòng đầu của khung và **`LAST_VALUE`** đọc ở dòng cuối của khung. **Khung** là phần dòng được xét trong nhóm, tính cho mỗi dòng hiện tại. Để luôn xét từ đầu đến cuối nhóm, dùng `ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING` sau `ORDER BY`. Khi chỉ sắp theo kỳ mà bỏ khung, điểm cuối mặc định dừng ở kỳ hiện tại trong ví dụ này. Dòng tháng 8 của `NV001` khi đó cho `21` ở `LAST_VALUE`, còn khung bao trọn nhóm cho `19`.
+
+### Đọc câu SQL qua các bước
+
+<Sql code={`SELECT MaNV, KyLuong, NgayCongThucTe,
+\tLAG(NgayCongThucTe) OVER (PARTITION BY MaNV ORDER BY KyLuong ASC) AS [CongKyTruoc],
+\tLEAD(NgayCongThucTe) OVER (PARTITION BY MaNV ORDER BY KyLuong ASC) AS [CongKySau],
+\tFIRST_VALUE(NgayCongThucTe) OVER (
+\t\tPARTITION BY MaNV
+\t\tORDER BY KyLuong ASC
+\t\tROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+\t) AS [CongKyDau],
+\tLAST_VALUE(NgayCongThucTe) OVER (
+\t\tPARTITION BY MaNV
+\t\tORDER BY KyLuong ASC
+\t\tROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+\t) AS [CongKyCuoi]
+FROM BangLuong
+WHERE KyLuong IN ('2026-08', '2026-09')
+\tAND MaNV IN ('NV001', 'NV032', 'NV041')
+ORDER BY MaNV ASC, KyLuong ASC;`} />
+
+Sơ đồ chạy theo luồng dữ liệu logic. Mở bước `SELECT` để lần giá trị ngày công theo vị trí trong từng nhóm.
+
+<RunFlow query={`SELECT MaNV, KyLuong, NgayCongThucTe,
+\tLAG(NgayCongThucTe) OVER (PARTITION BY MaNV ORDER BY KyLuong ASC) AS [CongKyTruoc],
+\tLEAD(NgayCongThucTe) OVER (PARTITION BY MaNV ORDER BY KyLuong ASC) AS [CongKySau],
+\tFIRST_VALUE(NgayCongThucTe) OVER (
+\t\tPARTITION BY MaNV
+\t\tORDER BY KyLuong ASC
+\t\tROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+\t) AS [CongKyDau],
+\tLAST_VALUE(NgayCongThucTe) OVER (
+\t\tPARTITION BY MaNV
+\t\tORDER BY KyLuong ASC
+\t\tROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+\t) AS [CongKyCuoi]
+FROM BangLuong
+WHERE KyLuong IN ('2026-08', '2026-09')
+\tAND MaNV IN ('NV001', 'NV032', 'NV041')
+ORDER BY MaNV ASC, KyLuong ASC;`} steps={[
+  {
+    "clause": "FROM",
+    "title": "Đọc các dòng lương.",
+    "focus": "FROM BangLuong",
+    "input": "Bảng `BangLuong`. Mỗi cặp mã–kỳ có tối đa một dòng.",
+    "meaning": "`FROM` đọc bảng lương trước khi lọc kỳ và mã.",
+    "detail": "`86` dòng lương. Mã và kỳ kết hợp thành nhãn `DongLuong` để soi điều kiện.",
+    "sql": "SELECT CONCAT(MaNV, '/', KyLuong) AS [DongLuong], MaNV, KyLuong, NgayCongThucTe\nFROM BangLuong\nORDER BY MaNV ASC, KyLuong ASC;",
+    "columns": [
+      "DongLuong",
+      "MaNV",
+      "KyLuong",
+      "NgayCongThucTe"
+    ],
+    "rows": [["NV001/2026-08","NV001","2026-08",21],["NV001/2026-09","NV001","2026-09",19],["NV002/2026-08","NV002","2026-08",21],["NV002/2026-09","NV002","2026-09",19],["NV003/2026-08","NV003","2026-08",21],["NV003/2026-09","NV003","2026-09",19],["NV004/2026-08","NV004","2026-08",21],["NV004/2026-09","NV004","2026-09",20],["NV005/2026-08","NV005","2026-08",21],["NV005/2026-09","NV005","2026-09",18]],
+    "total": 86,
+    "preview": [
+      "MaNV",
+      "KyLuong",
+      "NgayCongThucTe"
+    ]
+  },
+  {
+    "clause": "WHERE",
+    "title": "Giữ kỳ và mã cần đối chiếu.",
+    "focus": "WHERE KyLuong IN ('2026-08', '2026-09')\n\tAND MaNV IN ('NV001', 'NV032', 'NV041')",
+    "meaning": "`WHERE` giữ hai kỳ tháng 8–9 và ba mã được yêu cầu.",
+    "detail": "`5` dòng với `3` cột dữ liệu và nhãn dòng. `NV041` chỉ có dòng tháng 8 trong phạm vi.",
+    "sql": "SELECT CONCAT(MaNV, '/', KyLuong) AS [DongLuong], MaNV, KyLuong, NgayCongThucTe\nFROM BangLuong\nWHERE KyLuong IN ('2026-08', '2026-09')\n\tAND MaNV IN ('NV001', 'NV032', 'NV041')\nORDER BY MaNV ASC, KyLuong ASC;",
+    "columns": [
+      "DongLuong",
+      "MaNV",
+      "KyLuong",
+      "NgayCongThucTe"
+    ],
+    "rows": [["NV001/2026-08","NV001","2026-08",21],["NV001/2026-09","NV001","2026-09",19],["NV032/2026-08","NV032","2026-08",21],["NV032/2026-09","NV032","2026-09",19],["NV041/2026-08","NV041","2026-08",10]],
+    "total": 5,
+    "inputColumns": [
+      "DongLuong",
+      "KyLuong",
+      "MaNV"
+    ],
+    "preview": [
+      "MaNV",
+      "KyLuong",
+      "NgayCongThucTe"
+    ],
+    "checks": {
+      "conditions": [
+        "KyLuong thuộc hai kỳ",
+        "MaNV thuộc ba mã"
+      ],
+      "rows": [["NV001/2026-08",true,true],["NV001/2026-09",true,true],["NV002/2026-08",true,false],["NV002/2026-09",true,false],["NV003/2026-08",true,false]],
+      "totals": [
+        86,
+        5,
+        5
+      ]
+    }
+  },
+  {
+    "clause": "SELECT",
+    "title": "Lấy bốn giá trị theo vị trí dòng.",
+    "focus": "SELECT MaNV, KyLuong, NgayCongThucTe,\n\tLAG(NgayCongThucTe) OVER (PARTITION BY MaNV ORDER BY KyLuong ASC) AS [CongKyTruoc],\n\tLEAD(NgayCongThucTe) OVER (PARTITION BY MaNV ORDER BY KyLuong ASC) AS [CongKySau],\n\tFIRST_VALUE(NgayCongThucTe) OVER (\n\t\tPARTITION BY MaNV\n\t\tORDER BY KyLuong ASC\n\t\tROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING\n\t) AS [CongKyDau],\n\tLAST_VALUE(NgayCongThucTe) OVER (\n\t\tPARTITION BY MaNV\n\t\tORDER BY KyLuong ASC\n\t\tROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING\n\t) AS [CongKyCuoi]",
+    "meaning": "`SELECT` dùng từng mã làm một nhóm. Bên trong nhóm, bốn hàm đọc giá trị ngày công theo thứ tự kỳ.",
+    "detail": "Vẫn `5` dòng, thêm bốn cột ngày công theo vị trí.",
+    "preview": [
+      "MaNV",
+      "KyLuong",
+      "CongKyTruoc",
+      "CongKySau"
+    ],
+    "examples": [
+      {
+        "title": "Dòng tháng 8 của NV001",
+        "note": "Hai dòng lương của NV001 trong phạm vi.",
+        "table": {
+          "columns": [
+            "KyLuong",
+            "NgayCongThucTe"
+          ],
+          "rows": [["2026-08",21],["2026-09",19]]
+        },
+        "calculations": [
+          {
+            "expression": "LAG(NgayCongThucTe)",
+            "explanation": "Đứng đầu nhóm nên chưa có dòng trước.",
+            "column": "CongKyTruoc",
+            "value": null
+          },
+          {
+            "expression": "LEAD(NgayCongThucTe)",
+            "explanation": "Dòng kế tiếp là tháng 9.",
+            "column": "CongKySau",
+            "value": 19
+          },
+          {
+            "expression": "FIRST_VALUE(NgayCongThucTe)",
+            "explanation": "Dòng đầu của khung là tháng 8.",
+            "column": "CongKyDau",
+            "value": 21
+          },
+          {
+            "expression": "LAST_VALUE(NgayCongThucTe)",
+            "explanation": "Dòng cuối của khung là tháng 9.",
+            "column": "CongKyCuoi",
+            "value": 19
+          }
+        ]
+      }
+    ],
+    "sql": "SELECT MaNV, KyLuong, NgayCongThucTe,\n\tLAG(NgayCongThucTe) OVER (PARTITION BY MaNV ORDER BY KyLuong ASC) AS [CongKyTruoc],\n\tLEAD(NgayCongThucTe) OVER (PARTITION BY MaNV ORDER BY KyLuong ASC) AS [CongKySau],\n\tFIRST_VALUE(NgayCongThucTe) OVER (\n\t\tPARTITION BY MaNV\n\t\tORDER BY KyLuong ASC\n\t\tROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING\n\t) AS [CongKyDau],\n\tLAST_VALUE(NgayCongThucTe) OVER (\n\t\tPARTITION BY MaNV\n\t\tORDER BY KyLuong ASC\n\t\tROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING\n\t) AS [CongKyCuoi]\nFROM BangLuong\nWHERE KyLuong IN ('2026-08', '2026-09')\n\tAND MaNV IN ('NV001', 'NV032', 'NV041')\nORDER BY MaNV ASC, KyLuong ASC;",
+    "columns": [
+      "MaNV",
+      "KyLuong",
+      "NgayCongThucTe",
+      "CongKyTruoc",
+      "CongKySau",
+      "CongKyDau",
+      "CongKyCuoi"
+    ],
+    "rows": [["NV001","2026-08",21,null,19,21,19],["NV001","2026-09",19,21,null,21,19],["NV032","2026-08",21,null,19,21,19],["NV032","2026-09",19,21,null,21,19],["NV041","2026-08",10,null,null,10,10]],
+    "total": 5,
+    "mark": [
+      1
+    ]
+  },
+  {
+    "clause": "ORDER BY",
+    "title": "Xếp theo mã rồi kỳ.",
+    "focus": "ORDER BY MaNV ASC, KyLuong ASC;",
+    "meaning": "`ORDER BY` ngoài cùng xếp bảng gửi đi theo mã rồi kỳ tăng dần.",
+    "detail": "`5` dòng, `7` cột, cùng mã thì kỳ tháng 8 đứng trước kỳ tháng 9.",
+    "sql": "SELECT MaNV, KyLuong, NgayCongThucTe,\n\tLAG(NgayCongThucTe) OVER (PARTITION BY MaNV ORDER BY KyLuong ASC) AS [CongKyTruoc],\n\tLEAD(NgayCongThucTe) OVER (PARTITION BY MaNV ORDER BY KyLuong ASC) AS [CongKySau],\n\tFIRST_VALUE(NgayCongThucTe) OVER (\n\t\tPARTITION BY MaNV\n\t\tORDER BY KyLuong ASC\n\t\tROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING\n\t) AS [CongKyDau],\n\tLAST_VALUE(NgayCongThucTe) OVER (\n\t\tPARTITION BY MaNV\n\t\tORDER BY KyLuong ASC\n\t\tROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING\n\t) AS [CongKyCuoi]\nFROM BangLuong\nWHERE KyLuong IN ('2026-08', '2026-09')\n\tAND MaNV IN ('NV001', 'NV032', 'NV041')\nORDER BY MaNV ASC, KyLuong ASC;",
+    "columns": [
+      "MaNV",
+      "KyLuong",
+      "NgayCongThucTe",
+      "CongKyTruoc",
+      "CongKySau",
+      "CongKyDau",
+      "CongKyCuoi"
+    ],
+    "rows": [["NV001","2026-08",21,null,19,21,19],["NV001","2026-09",19,21,null,21,19],["NV032","2026-08",21,null,19,21,19],["NV032","2026-09",19,21,null,21,19],["NV041","2026-08",10,null,null,10,10]],
+    "total": 5
+  }
+]} />
+
+`NV001` có `21` ngày ở tháng 8 và `19` ngày ở tháng 9. Từ dòng tháng 8, hàm đọc dòng sau lấy `19`, còn hàm đọc dòng trước trả `NULL`. Cả hai dòng của mã này cùng lấy `21` ở đầu và `19` ở cuối vì khung bao trọn nhóm. `NV041` chỉ có dòng tháng 8 nên đầu và cuối đều là `10`, còn trước và sau đều là `NULL`.
+
+<Result columns={["MaNV","KyLuong","NgayCongThucTe","CongKyTruoc","CongKySau","CongKyDau","CongKyCuoi"]} rows={[["NV001","2026-08",21,null,19,21,19],["NV001","2026-09",19,21,null,21,19],["NV032","2026-08",21,null,19,21,19],["NV032","2026-09",19,21,null,21,19],["NV041","2026-08",10,null,null,10,10]]} total={5} />
+
+Gửi chị Hạnh đủ `5` dòng đang lưu. `NV001` và `NV032` đều có hai kỳ, ngày công giảm từ `21` xuống `19`. `NV041` chỉ có tháng 8 trong phạm vi, nên để trống thông tin kỳ sau bằng `NULL`.
+
+### Vận dụng trên cùng tình huống
+
+Khi chỉ muốn **hiển thị tháng 8** mà vẫn đọc được ngày công tháng 9, giữ cả hai kỳ trong CTE tính `CongKySau`. Đặt `WHERE KyLuong = '2026-08'` ở câu ngoài. Nếu lọc tháng 8 ngay trong CTE thì các dòng tháng 9 đã bị loại khi `LEAD` tìm dòng sau.
+
+<Sql copy={false} title="Giữ hai kỳ để tính, chỉ hiển thị tháng 8" code={`WITH CongTheoKy AS (
+\tSELECT MaNV, KyLuong, NgayCongThucTe,
+\t\tLEAD(NgayCongThucTe) OVER (PARTITION BY MaNV ORDER BY KyLuong ASC) AS [CongKySau]
+\tFROM BangLuong
+\tWHERE KyLuong IN ('2026-08', '2026-09')
+\t\tAND MaNV IN ('NV001', 'NV032', 'NV041')
+)
+SELECT MaNV, KyLuong, NgayCongThucTe, CongKySau
+FROM CongTheoKy
+WHERE KyLuong = '2026-08'
+ORDER BY MaNV ASC;`} />
+
+Khi đổi sang hợp đồng ở bài tập, hãy chọn thứ tự ngày bắt đầu rồi mã hợp đồng để phân định các dòng cùng ngày, như bài 3.13. Cột đưa vào hàm có thể là mã của dòng đầu hoặc cuối. Cột sắp xếp quyết định dòng nào được chọn.
+
+Ở bài này chỉ cần xác định đúng nhóm, thứ tự và vị trí cần lấy. Bài 3.16 dùng khung theo từng dòng để tính lũy kế.
+
+## Hay nhầm ở đâu
+
+<Mistakes>
+
+1. **Bỏ phân nhóm theo mã.** Dòng sau của người này có thể thuộc người khác.
+2. **Dùng khung mặc định để lấy cuối nhóm.** Ở dòng tháng 8 của `NV001`, khung mặc định chỉ tới tháng 8 nên trả ngày công `21`.
+3. **Lọc kỳ hiển thị trước khi tính.** Lọc mất tháng 9 sớm sẽ khiến tháng 8 không còn dòng sau để đối chiếu.
+
+</Mistakes>
+
+## Ứng dụng
+
+<Apply>
+
+- **So kỳ liền kề:** thêm ngày công ở dòng trước hoặc sau để tra biến động của từng mã.
+- **Tra mốc đầu và cuối:** giữ các kỳ chi tiết và đọc giá trị tại hai đầu của tập kỳ đã chọn.
+
+</Apply>
+
+## Ghi nhớ
+
+<Memo rows={[
+  ['Trước hoặc sau', 'LAG và LEAD theo thứ tự trong OVER, mặc định cách một dòng'],
+  ['Đầu hoặc cuối', 'FIRST_VALUE và LAST_VALUE đọc trong khung'],
+  ['Giữ dòng để tính', 'Tính trong CTE rồi lọc dòng hiển thị ở câu ngoài'],
+]} />
+
+<details>
+<summary>Vì sao dòng tháng 8 của <code>NV041</code> nhận <code>NULL</code> ở cột kỳ sau?</summary>
+
+Trong hai tháng đã lọc, nhóm `NV041` chỉ có một dòng. `LEAD` không có dòng sau trong nhóm để đọc.
+
+</details>
+
+<details>
+<summary>Với <code>NV001</code> ở tháng 8, khung bao trọn nhóm giúp đọc được giá trị cuối nào?</summary>
+
+`LAST_VALUE` đọc `19` từ dòng tháng 9, là dòng cuối trong khung.
+
+</details>
+
+<details>
+<summary>Đặt điều kiện chỉ hiển thị tháng 8 ở đâu để vẫn lấy được ngày công tháng 9?</summary>
+
+Giữ hai kỳ trong CTE tính `LEAD` rồi lọc tháng 8 trong câu ngoài.
+
+</details>
+
+## Bài tập
+
+Trước khi viết, xác định kỳ nào cần giữ để tính và kỳ nào cần hiển thị. Với bảng hợp đồng, giữ các dòng chi tiết khi thêm mã đầu và cuối.
+
+<Exercises />

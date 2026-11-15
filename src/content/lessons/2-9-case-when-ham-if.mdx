@@ -27,9 +27,9 @@ Giả định dữ liệu đang mở là **bản chốt**, tức bản được 
 
 ## Tạo cột nhóm từ điều kiện và mốc ngày
 
-### Từ IF trong Excel đến biểu thức CASE
+### Cấu trúc mới trong bài
 
-Trong Excel, bạn thêm cột nhóm bằng **IF lồng nhau** hoặc **IFS**: thử điều kiện, rồi trả nhãn tương ứng. Hình minh họa ba hồ sơ được chọn từ bộ mẫu; ô `C2` được đánh dấu là kết quả công thức IF so ngày kỷ niệm với ngày chốt. `EDATE(B2,36)` lấy mốc sau `36` tháng.
+Trong Excel, bạn có thể đặt một hàm `IF` bên trong hàm `IF` khác. Công thức ở ô `C2` của `NV003` dùng `EDATE(B2,36)` để lấy ngày sau `36` tháng, rồi so với ngày chốt. Nếu chưa đủ ba năm, hàm `IF` bên trong mới kiểm mốc một năm. Hình minh họa ba hồ sơ từ bộ mẫu, đánh dấu nhãn tính được ở ô `C2`.
 
 <Excel sheets="Minh họa cột nhóm thâm niên" cell="C2" mark={['C2']} formula={'=IF(EDATE(B2,36)<=DATE(2026,10,21),"Từ 3 năm trở lên",IF(EDATE(B2,12)<=DATE(2026,10,21),"Từ 1 đến dưới 3 năm","Dưới 1 năm"))'} numeric={['B2', 'B3', 'B4']} rows={[
   ['MaNV', 'NgayVaoLam', 'NhomThamNien'],
@@ -38,7 +38,24 @@ Trong Excel, bạn thêm cột nhóm bằng **IF lồng nhau** hoặc **IFS**: t
   ['NV045', '2026-07-01', 'Dưới 1 năm'],
 ]} />
 
-Trong SQL, **`CASE`** là một biểu thức: một đoạn tính toán trả về một giá trị cho mỗi dòng. Đặt nó trong `SELECT` thì được một cột kết quả. Với danh sách của chị Hạnh, câu lệnh là:
+Trong `SELECT`, **`CASE`** là biểu thức chọn giá trị cho một cột kết quả. Mỗi dòng được giữ nhận một giá trị từ biểu thức đó. Đoạn dưới đây là phần tạo nhãn thâm niên, trích từ câu lệnh đầy đủ.
+
+<Sql copy={false} title="Đoạn trích tạo nhãn thâm niên" code={`SELECT ...,
+\tCASE
+\t\tWHEN DATEADD(year, 3, NgayVaoLam) <= '20261021' THEN N'Từ 3 năm trở lên'
+\t\tWHEN DATEADD(year, 1, NgayVaoLam) <= '20261021' THEN N'Từ 1 đến dưới 3 năm'
+\t\tELSE N'Dưới 1 năm'
+\tEND AS [Nhóm thâm niên]`} />
+
+Mỗi nhánh có `WHEN` để viết điều kiện và `THEN` để ghi giá trị trả về khi điều kiện đúng. `ELSE` cho giá trị khi không `WHEN` nào đúng. `END` đóng biểu thức, rồi `AS [Nhóm thâm niên]` đặt tiêu đề cho cột vừa tính. Các nhãn tiếng Việt có tiền tố `N` như ở bài 2.2.
+
+**Mốc kỷ niệm** là ngày vào làm cộng số năm cần xét bằng `DATEADD` như bài 2.8. Mốc đủ ba năm của `NV025` là `2026-11-01`, sau ngày chốt. `DATEDIFF(year, NgayVaoLam, '20261021')` cho `3` vì đếm ba lần qua đầu năm. Điều kiện mốc kỷ niệm dùng `<=` để tính cả hồ sơ vừa đủ năm đúng ngày chốt.
+
+**Thứ tự nhánh quyết định nhãn.** Với các điều kiện so sánh trong bài, `CASE` chọn `THEN` của `WHEN` đúng đầu tiên từ trên xuống. `NV003` đã qua cả mốc `2024-06-01` (đủ một năm) lẫn mốc `2026-06-01` (đủ ba năm). Xét mốc ba năm trước thì hồ sơ nhận `Từ 3 năm trở lên`, đúng như ô `C2` trong Excel.
+
+`NgayVaoLam` có ràng buộc `NOT NULL` như bài 1.4. Trong số hồ sơ đã vào làm tại ngày chốt, khi cả hai điều kiện đều sai thì hồ sơ nhận nhãn `Dưới 1 năm`. Nhãn chỉ có trong kết quả truy vấn.
+
+### Đọc câu SQL qua các bước
 
 <Sql code={`SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
 \tNgayVaoLam AS [Ngày vào làm],
@@ -51,32 +68,7 @@ FROM NhanVien
 WHERE TrangThai = N'Đang làm' AND NgayVaoLam <= '20261021'
 ORDER BY MaNV ASC;`} />
 
-Từng phần của câu:
-
-<LineMap rows={[
-  ['SELECT … AS …', 'Chọn ba cột và đặt tiêu đề như bài 2.1. Ví dụ: NgayVaoLam hiển thị dưới tiêu đề Ngày vào làm.'],
-  ['CASE … END AS [Nhóm thâm niên]', 'Bắt đầu bằng CASE, kết thúc bằng END; cả khối là một cột, AS đặt tiêu đề. Ví dụ: mỗi hồ sơ nhận đúng một nhãn.'],
-  ["WHEN DATEADD(year, 3, NgayVaoLam) <= '20261021'", 'WHEN nêu điều kiện của nhánh: mốc đủ 3 năm đã tới ngày chốt chưa; chuỗi ngày được đổi sang kiểu ngày như bài 2.2. Ví dụ: NV003 có mốc 2026-06-01 nên đúng.'],
-  ["THEN N'Từ 3 năm trở lên'", 'THEN là giá trị trả về khi nhánh đúng. Ví dụ: NV003 nhận nhãn này.'],
-  ["WHEN DATEADD(year, 1, NgayVaoLam) <= '20261021'", 'Chỉ xét khi nhánh trên sai. Ví dụ: NV025 có mốc 3 năm là 2026-11-01 nên sai nhánh trên, đúng nhánh này.'],
-  ["ELSE N'Dưới 1 năm'", 'Giá trị khi không nhánh nào đúng. Ví dụ: NV045 vào làm 2026-07-01 nên chưa đủ 1 năm.'],
-  ["WHERE TrangThai = N'Đang làm' AND NgayVaoLam <= '20261021'", 'Giữ hồ sơ trong phạm vi như bài 2.3. Ví dụ: NV020 đã nghỉ bị loại.'],
-  ['ORDER BY MaNV ASC', 'Xếp mã tăng dần như bài 2.4. Ví dụ: NV001 đứng đầu.'],
-]} />
-
-Thâm niên ở đây tính theo **mốc kỷ niệm**, tức ngày vào làm cộng đủ số năm bằng `DATEADD` như bài 2.8, không phải năm báo cáo trừ năm vào làm. Đúng ngày mốc cũng tính là đã đủ, nên điều kiện dùng `<=`. `NV025` vào làm `2023-11-01`, phải tới `2026-11-01` mới đủ, nên tại `2026-10-21` vẫn thuộc nhóm `Từ 1 đến dưới 3 năm`.
-
-SQL Server xét `WHEN` từ trên xuống và chọn nhánh đúng đầu tiên, nên đặt nhánh đủ `3` năm trước nhánh đủ `1` năm. `NV003` thỏa cả hai điều kiện nên dừng ngay ở nhánh đầu.
-
-**`ELSE`** cung cấp giá trị khi không nhánh `WHEN` nào đúng. Ở đây `NgayVaoLam` có `NOT NULL` (khái niệm ở bài 1.4) và đã lọc ngày không sau mốc chốt, nên phần còn lại chính là nhóm `Dưới 1 năm`. Cột có ô `NULL` thì so sánh cho `UNKNOWN` như bài 2.5, nên dòng đó cũng rơi vào `ELSE`. Bỏ `ELSE` thì dòng không khớp nhánh nào nhận `NULL`.
-
-`CASE` chọn giá trị giống IF trong công thức Excel, không thay `WHERE`: tạo nhãn trong `SELECT` không loại hồ sơ và không ghi nhãn vào bảng nguồn. Các nhánh cùng trả chuỗi Unicode `N'…'` để kết quả là một cột chữ.
-
-Ở bài này chỉ cần tạo giá trị bằng các điều kiện của từng dòng; tổng hợp theo nhóm học ở bài 3.1–3.2, kiểm dữ liệu bất thường ở bài 3.19.
-
-### SQL Server chạy câu này thế nào
-
-Sơ đồ là **thứ tự xử lý logic**, không phải cách SQL Server đọc dữ liệu. Bấm từng bước để thấy `48` hồ sơ còn `45`, rồi `SELECT` gán nhãn cho từng hồ sơ:
+Sơ đồ diễn giải **thứ tự xử lý logic** của câu truy vấn. Mở từng bước để xem hồ sơ qua điều kiện lọc và nhận nhãn ở nhánh nào.
 
 <RunFlow query={`SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
 \tNgayVaoLam AS [Ngày vào làm],
@@ -118,7 +110,7 @@ ORDER BY MaNV ASC;`} steps={[
     focus: "WHERE TrangThai = N'Đang làm' AND NgayVaoLam <= '20261021'",
     meaning: "`WHERE` xét từng hồ sơ, `AND` yêu cầu cả hai điều kiện cùng đúng: đang làm và vào làm không sau ngày chốt.",
     checks: { conditions: ["TrangThai = N'Đang làm'","NgayVaoLam <= ngày chốt"], rows: [["NV001",true,true],["NV003",true,true],["NV020",false,true],["NV025",true,true]], totals: [45,48,45] },
-    detail: "Còn `45` hồ sơ, vẫn đủ `12` cột. Điều kiện ngày chưa loại hồ sơ nào trong dữ liệu hiện có; nó bảo đảm `ELSE` không nhận ngày sau mốc chốt. Hình trích bảy dòng, thứ tự dòng chưa được bảo đảm.",
+    detail: "Còn `45` hồ sơ và `12` cột. Cả `48` hồ sơ đều thỏa điều kiện ngày, nên chỉ ba hồ sơ đã nghỉ bị loại. Bảng trích bảy dòng, thứ tự có thể khác khi chạy.",
     sql: `SELECT *
 FROM NhanVien
 WHERE TrangThai = N'Đang làm' AND NgayVaoLam <= '20261021';`,
@@ -140,7 +132,7 @@ WHERE TrangThai = N'Đang làm' AND NgayVaoLam <= '20261021';`,
     title: "Tính một nhãn cho mỗi hồ sơ.",
     focus: "SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],\n\tNgayVaoLam AS [Ngày vào làm],\n\tCASE\n\t\tWHEN DATEADD(year, 3, NgayVaoLam) <= '20261021' THEN N'Từ 3 năm trở lên'\n\t\tWHEN DATEADD(year, 1, NgayVaoLam) <= '20261021' THEN N'Từ 1 đến dưới 3 năm'\n\t\tELSE N'Dưới 1 năm'\n\tEND AS [Nhóm thâm niên]",
     inputColumns: ["MaNV","HoTen","NgayVaoLam"],
-    meaning: "`SELECT` chọn ba cột rồi dùng `CASE` gán nhãn: mỗi hồ sơ đi qua các nhánh `WHEN` từ trên xuống và dừng ở nhánh đúng đầu tiên; không nhánh nào đúng thì lấy `ELSE`.",
+    meaning: "`SELECT` chọn mã, họ tên, ngày vào làm và tính nhãn. Bảng soi cho thấy `NV003` dừng ở nhánh ba năm, `NV025` dừng ở nhánh một năm, còn `NV045` đi tới `ELSE`.",
     checks: { conditions: ["Mốc 3 năm <= ngày chốt","Mốc 1 năm <= ngày chốt"], rows: [["NV003",true,null],["NV025",false,true],["NV045",false,false]], labels: ["Từ 3 năm trở lên","Từ 1 đến dưới 3 năm","Dưới 1 năm"], totals: [33,8,4] },
     detail: "Vẫn `45` hồ sơ, còn `4` cột. Thứ tự dòng chưa được bảo đảm.",
     sql: `SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
@@ -199,6 +191,8 @@ ORDER BY MaNV ASC;`,
   },
 ]} />
 
+`WHERE` giữ `45` hồ sơ vì cả `48` đều đã vào làm tới ngày chốt và chỉ ba hồ sơ đã nghỉ. Trong các dòng được giữ, `NV025` đã qua mốc đủ một năm `2024-11-01` nhưng chưa tới mốc đủ ba năm, nên `CASE` trả `Từ 1 đến dưới 3 năm`. Bảng dưới trích `10` dòng đầu theo mã tăng dần và đánh dấu `NV003` để đối chiếu với ô `C2`.
+
 <Result columns={["Mã nhân viên","Họ tên","Ngày vào làm","Nhóm thâm niên"]} rows={[
   ["NV001","Trần Thị Mai","2024-03-01","Từ 1 đến dưới 3 năm"],
   ["NV002","Lê Văn Hùng","2024-04-01","Từ 1 đến dưới 3 năm"],
@@ -210,18 +204,24 @@ ORDER BY MaNV ASC;`,
   ["NV008","Phan Văn Lợi","2015-09-01","Từ 3 năm trở lên"],
   ["NV009","Ngô Thị Thu Trang","2019-05-06","Từ 3 năm trở lên"],
   ["NV010","Đỗ Thị Hồng","2016-06-01","Từ 3 năm trở lên"],
-]} total={45} mark={[1, 3]} />
+]} total={45} mark={[3]} />
 
-Kết quả trích `10` dòng đầu trong `45` hồ sơ đang làm đã chốt. Hai dòng đánh dấu cho thấy `NV001` thuộc nhóm `Từ 1 đến dưới 3 năm`, còn `NV003` thuộc nhóm `Từ 3 năm trở lên`. Toàn bộ danh sách có `33` hồ sơ từ `3` năm trở lên, `8` hồ sơ từ `1` đến dưới `3` năm và `4` hồ sơ dưới `1` năm.
+Danh sách gửi chị Hạnh có đủ bốn cột và `45` hồ sơ theo mã tăng dần. Trong toàn bộ danh sách có `4` hồ sơ dưới `1` năm, `8` hồ sơ từ `1` đến dưới `3` năm và `33` hồ sơ từ `3` năm trở lên.
 
-Bạn có thể gửi chị Hạnh danh sách đủ bốn cột theo mã tăng dần. Ba nhóm là quy tắc chị đã chọn; SQL chỉ áp dụng chúng lên ngày vào làm của từng hồ sơ trong bản chốt.
+### Vận dụng trên cùng tình huống
+
+**Chỉ ghi nhãn cho hồ sơ đạt mốc.** Để chỉ đánh dấu hồ sơ đủ ba năm, giữ một `WHEN` kiểm mốc ba năm rồi viết `END` ngay sau nhãn ở `THEN`. Khi bỏ `ELSE` và không nhánh nào đúng, ô nhãn nhận `NULL` của SQL. `NV025` vẫn có mặt vì hồ sơ đã qua `WHERE`.
+
+**Ghi riêng hồ sơ thiếu ngày.** Nếu một báo cáo cho phép `NgayVaoLam` là `NULL` và giữ cả hồ sơ thiếu ngày, đặt nhánh `WHEN NgayVaoLam IS NULL THEN N'Thiếu ngày vào làm'` trước các nhánh so mốc. Phép so sánh với dữ liệu thiếu cho `UNKNOWN` như bài 2.5, nên chỉ các nhánh so mốc sẽ để dòng đó rơi tới `ELSE`. Trong câu chính, `WHERE` chỉ giữ dòng có ngày vào làm tới ngày chốt.
+
+Ở bài này chỉ cần tạo giá trị bằng các điều kiện của từng dòng. Bài 3.1–3.2 dùng các giá trị đó khi tổng hợp, còn bài 3.19 đi sâu vào kiểm dữ liệu bất thường.
 
 ## Hay nhầm ở đâu
 
 <Mistakes>
 
-1. **Dùng `DATEDIFF(year, NgayVaoLam, '20261021')` làm số năm tròn.** Hàm đếm số ranh giới năm đã đi qua; `NV025` có kết quả `3` dù chưa tới kỷ niệm ba năm, nên bị xếp vào `Từ 3 năm trở lên` quá sớm.
-2. **Đặt nhánh đủ `1` năm trước nhánh đủ `3` năm.** `NV003` dừng ngay ở nhánh đầu và nhận `Từ 1 đến dưới 3 năm`; nhãn `Từ 3 năm trở lên` không còn hồ sơ nào nhận được.
+1. **Dùng `DATEDIFF(year, NgayVaoLam, '20261021')` làm số năm tròn.** Kết quả `3` khiến `NV025` bị xếp vào `Từ 3 năm trở lên` trước ngày kỷ niệm.
+2. **Đặt nhánh đủ `1` năm trước nhánh đủ `3` năm.** Mọi hồ sơ đủ ba năm đều thỏa điều kiện đủ một năm, nên cả nhóm bị gán nhãn `Từ 1 đến dưới 3 năm`.
 3. **Dùng `ELSE` cho mọi dòng còn lại mà không chặn phạm vi.** Bỏ điều kiện `NgayVaoLam <= '20261021'` thì hồ sơ có ngày sau mốc chốt cũng rơi vào `ELSE` và nhận `Dưới 1 năm`, che mất dữ liệu cần kiểm.
 
 </Mistakes>
@@ -243,6 +243,29 @@ Bạn có thể gửi chị Hạnh danh sách đủ bốn cột theo mã tăng d
   ['EDATE(ngày, 36) tạo mốc sau 36 tháng', 'DATEADD cộng năm để so mốc; DATEDIFF(year) không phải số năm tròn'],
   ['Giá trị cuối khi không điều kiện nào đúng', 'ELSE trả giá trị mặc định; bỏ ELSE thì nhận NULL'],
 ]} />
+
+**Tự kiểm tra trước khi viết truy vấn**
+
+<details>
+<summary>Nếu xét mốc một năm trước mốc ba năm, <code>NV003</code> nhận nhãn nào?</summary>
+
+`Từ 1 đến dưới 3 năm`, vì điều kiện đủ một năm đứng đầu và đã đúng. Nhãn này xếp sai hồ sơ đã đủ ba năm.
+
+</details>
+
+<details>
+<summary>Giả sử một hồ sơ vào làm đúng <code>2023-10-21</code> và qua lọc. Ngày <code>2026-10-21</code>, hồ sơ nhận nhãn nào?</summary>
+
+`Từ 3 năm trở lên`. Mốc đủ ba năm bằng ngày chốt, nên điều kiện `<=` đúng.
+
+</details>
+
+<details>
+<summary>Nếu chỉ giữ nhánh kiểm đủ ba năm và bỏ <code>ELSE</code>, dòng <code>NV025</code> có còn trong kết quả không? Ô nhãn nhận gì?</summary>
+
+Còn. Hồ sơ qua `WHERE`, nhưng điều kiện đủ ba năm chưa đúng, nên ô nhãn nhận `NULL`.
+
+</details>
 
 ## Bài tập
 

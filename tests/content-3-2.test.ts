@@ -2,12 +2,32 @@ import { it, expect } from 'vitest';
 import { readFileSync, existsSync } from 'node:fs';
 import { parse } from 'yaml';
 import { lessonBlocks } from './helpers/lesson-blocks';
+import { lessonMainSection, sqlSubheadings } from './helpers/lessons';
 import { countsBy, seedRows } from './helpers/hrm-seed';
 import { checkFlow, inputPreview } from '../src/lib/run-flow';
 
 const slug = '3-2-group-by-pivottable';
 const active = seedRows('NhanVien').filter(r => r.TrangThai === 'Đang làm');
 const departments = countsBy(active, ['MaPB']).sort((a, b) => Number(b[1]) - Number(a[1]) || String(a[0]).localeCompare(String(b[0])));
+
+it('3.2 explains grouped queries on the page before and after the interactive flow', () => {
+  const { body, query, steps } = lessonBlocks(slug);
+  expect(sqlSubheadings(body)).toEqual([
+    'Cấu trúc mới trong bài', 'Đọc câu SQL qua các bước', 'Vận dụng trên cùng tình huống',
+  ]);
+  const main = lessonMainSection(body);
+  const [structure, walkthrough] = main.split(/^### /m).slice(1);
+  expect(main).not.toMatch(/<(?:LineMap|details)\b/);
+  expect(structure).toContain('`GROUP BY MaPB`');
+  expect(structure).toContain('`COUNT(*)');
+  expect(structure).toContain('`SUM`');
+  expect(structure).not.toContain('<Sql');
+  expect(walkthrough.match(/<Sql code=\{`([\s\S]*?)`\}/)?.[1]).toBe(query);
+  const summary = walkthrough.split('\n]} />\n')[1]?.split('<Result')[0];
+  const example = steps[3].examples![0];
+  for (const row of example.table!.rows) expect(summary).toContain(`\`${row[0]}\``);
+  expect(summary).toContain(`\`${example.calculations!.map(cell => cell.value).join(' | ')}\``);
+});
 
 it('3.2 illustrates only two representative groups, with complete membership of those sample groups', () => {
   const { steps } = lessonBlocks(slug);

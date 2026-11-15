@@ -5,7 +5,7 @@ title: Báo cáo hợp đồng
 difficulty: kho
 lessons: [ 2-3-and-or-in-between-like, 2-4-sap-xep-va-top, 2-5-null-o-trong, 2-8-ham-ngay-tham-nien, 2-9-case-when-ham-if ]
 prompt: >-
-  Tại mốc cố định 21/10/2026, nhân sự cần báo cáo mọi dòng hợp đồng của phòng KD hoặc IT. Từ bảng HopDong, lấy mã hợp đồng và một cột ghi chú: chưa có ngày kết thúc thì ghi “Không thời hạn”; ngày kết thúc từ 20/10/2026 trở về trước thì ghi “Đã hết”; ngày kết thúc từ 21/10/2026 đến 20/11/2026 thì ghi “Sắp hết”; còn lại ghi “Còn hạn”. Xếp mã tăng dần.
+  Tại mốc cố định 21/10/2026, nhân sự cần báo cáo mọi dòng hợp đồng của phòng KD hoặc IT. Từ bảng HopDong giả định của đề, lấy mã hợp đồng và một cột ghi chú: chưa có ngày kết thúc thì ghi “Không thời hạn”; ngày kết thúc từ 20/10/2026 trở về trước thì ghi “Đã hết”; ngày kết thúc từ 21/10/2026 đến 20/11/2026 thì ghi “Sắp hết”; còn lại ghi “Còn hạn”. Xếp mã tăng dần. Mã hợp đồng không trùng.
 columns: [ MaHD, Ghi chú ]
 ordered: true
 tables:

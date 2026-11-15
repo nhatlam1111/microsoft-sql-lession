@@ -16,7 +16,6 @@ const LEGACY_LAYOUT_SLUGS = new Set([
 
 // Frozen migration list: lessons with a query keep the old subsections until each one is edited; remove a lesson when it moves to two.
 const PENDING_TWO_SUBSECTIONS = new Set([
-  '3-13-xep-hang-row-number-rank',
   '3-16-luy-ke-so-thang-truoc', '3-18-pivot-xoay-bang', '3-19-soi-chat-luong-du-lieu',
 ]);
 
@@ -62,28 +61,65 @@ describe('lesson files', () => {
       if (PENDING_TWO_SUBSECTIONS.has(f.slug) && f.body.includes('<RunFlow')) expect(h3.slice(-2), f.slug).toEqual(['Câu lệnh cho tình huống', 'SQL Server chạy câu này thế nào']);
     }
   });
-  it('lessons with a query go Excel, statement, its parts, then run order, result, answer', () => {
+  it('query lessons keep a single runnable statement, a coherent explanation, results and an answer', () => {
     for (const f of files) {
       const h3 = sqlSubheadings(f.body);
       if (PENDING_TWO_SUBSECTIONS.has(f.slug)) {
         expect(h3.length, `${f.slug}: moved to two subsections, take it off the pending list`).toBeGreaterThan(2);
         continue;
       }
-      if (!h3.includes('SQL Server chạy câu này thế nào') && !h3.includes('Kết quả cho tình huống')) continue;
-      expect(h3, f.slug).toHaveLength(2);
-      // The learner sees the statement first, then its parts; the scenario is the only example.
+      const structureFirst = h3.includes('Cấu trúc mới trong bài');
+      if (!structureFirst && !h3.includes('SQL Server chạy câu này thế nào') && !h3.includes('Kết quả cho tình huống')) continue;
+      if (structureFirst) {
+        expect(h3.slice(0, 2), f.slug).toEqual(['Cấu trúc mới trong bài', 'Đọc câu SQL qua các bước']);
+        expect(h3.slice(2), f.slug).toEqual(h3.length === 3 ? ['Vận dụng trên cùng tình huống'] : []);
+      } else expect(h3, f.slug).toHaveLength(2);
+      // The scenario supplies the examples for each layout.
       const main = lessonMainSection(f.body);
-      const [first, second] = main.split(/^### /m).slice(1);
+      const [first, second] = main.replaceAll('<AnimatedFlow', '<RunFlow').split(/^### /m).slice(1);
       // One runnable statement; read-only excerpts are allowed by quy-uoc §2 and must disable copying.
       const sqlBlocks = [...main.matchAll(/<Sql\b([\s\S]*?)\/>/g)];
       expect(sqlBlocks.filter(block => !/\bcopy=\{false\}/.test(block[1])), f.slug).toHaveLength(1);
-      expect(first.indexOf('<Excel'), f.slug).toBeLessThan(first.indexOf('<Sql'));
-      expect(first.indexOf('<Sql'), f.slug).toBeLessThan(first.indexOf('<LineMap'));
-      expect(main.replace(/<RunFlow[\s\S]*?\]\}(?: note="[^"]*")? \/>/, '').replace(/<Sql\b[\s\S]*?\/>/g, ''), f.slug).not.toMatch(/`SELECT [^`]*`/);
+      if (structureFirst) {
+        const excerpts = [...first.matchAll(/<Sql\b([\s\S]*?)\/>/g)];
+        expect(excerpts.every(m => /copy=\{false\}/.test(m[1])), f.slug).toBe(true);
+        const statement = second.match(/<Sql\b([\s\S]*?)\/>/);
+        expect(statement, f.slug).not.toBeNull();
+        expect(statement![1], f.slug).not.toContain('copy={false}');
+        const between = second.slice(statement!.index! + statement![0].length, second.indexOf('<RunFlow'));
+        if (second.includes('<RunFlow')) {
+          expect(second.indexOf('<RunFlow'), f.slug).toBeGreaterThan(statement!.index!);
+          expect(between, f.slug).not.toMatch(/<(?:LineMap|Sql|Result|details)\b|^### /m);
+          expect(between.trim().split(/\s+/).length, f.slug).toBeLessThan(90);
+          const afterFlow = second.slice(second.indexOf('<RunFlow')).replace(/^<RunFlow[\s\S]*?\}(?: (?:note|animation)="[^"]*")? \/>/, '');
+          expect(afterFlow.slice(0, afterFlow.indexOf('<Result')).trim().length, f.slug).toBeGreaterThan(30);
+        }
+      } else {
+        expect(first.indexOf('<Excel'), f.slug).toBeLessThan(first.indexOf('<Sql'));
+        expect(first.indexOf('<Sql'), f.slug).toBeLessThan(first.indexOf('<LineMap'));
+      }
+      expect(main.replace(/<(?:RunFlow|AnimatedFlow)[\s\S]*?\]\}(?: (?:note|animation)="[^"]*")? \/>/, '').replace(/<Sql\b[\s\S]*?\/>/g, ''), f.slug).not.toMatch(/`SELECT [^`]*`/);
       expect(second, f.slug).not.toContain('<Messages');
       if (second.includes('<RunFlow')) expect(second.indexOf('<RunFlow'), f.slug).toBeLessThan(second.indexOf('<Result'));
       expect(second.slice(second.lastIndexOf('<Result')), f.slug).toContain('chị Hạnh');
     }
+  });
+  it.each([
+    '2-1-chon-cot-dat-ten-cot', '2-2-where-loc-nhu-autofilter', '2-3-and-or-in-between-like',
+    '2-8-ham-ngay-tham-nien', '2-9-case-when-ham-if', '3-4-inner-join-vlookup', '3-5-left-join',
+    '3-6-ket-nhieu-bang', '3-7-self-join-quan-ly', '3-8-union-gop-danh-sach', '3-9-subquery',
+    '3-10-subquery-trong-select', '3-11-subquery-trong-from', '3-12-cte-tung-buoc',
+    '3-13-xep-hang-row-number-rank', '3-14-truy-xuat-dong', '3-15-tong-hop-voi-over',
+  ])('%s teaches structure separately and diagrams the runnable statement', slug => {
+    const { body } = lessonBlocks(slug);
+    const main = lessonMainSection(body);
+    expect(sqlSubheadings(body).slice(0, 2)).toEqual(['Cấu trúc mới trong bài', 'Đọc câu SQL qua các bước']);
+    expect(main).not.toContain('<LineMap');
+    const runnable = [...main.matchAll(/<Sql\b([\s\S]*?)\/>/g)].filter(m => !/copy=\{false\}/.test(m[1]));
+    expect(runnable).toHaveLength(1);
+    expect(runnable[0][1].match(/code=\{`([\s\S]*?)`\}/)?.[1]).toBe(main.match(/<(?:RunFlow|AnimatedFlow) query=\{`([\s\S]*?)`\}/)?.[1]);
+    // All compulsory teaching stays on the page; only self-check answers use details after Memo.
+    expect(main).not.toContain('<details');
   });
   it('sectionHeadings drops Bài tập only when asked', () => {
     expect(sectionHeadings('full', true)).toEqual(SECTION_HEADINGS.full.slice(0, 6));
@@ -269,7 +305,6 @@ describe('lessons explain why, show data before totals and mark what they point 
       ? main.split('### Lý thuyết cơ bản')[1]?.split(/\n### /)[0] ?? ''
       : main;
   };
-  const lineMapRows = (b: string) => [...b.matchAll(/<LineMap rows=\{\[([\s\S]*?)\]\} \/>/g)].flatMap(m => m[1].split(/\n\s*\[/).slice(1));
   it('level 1 queries show rows, not totals: aggregates wait for lesson 3.1', () => {
     for (const f of level1()) for (const m of f.body.matchAll(/(?:\bcode=\{|\bquery=\{|\bsql:\s*)`([\s\S]*?)`/g)) {
       expect(m[1], f.slug).not.toMatch(/\b(COUNT|SUM|AVG|MIN|MAX)\s*\(|\bGROUP\s+BY\b/i);
@@ -282,17 +317,6 @@ describe('lessons explain why, show data before totals and mark what they point 
       const t = (legacy ? theory(f.body) : main).replace(/`[^`]*`/g, '').replace(/gửi IT: “[^”]+”/g, 'mẫu tin nhắn IT');
       expect(t, f.slug).not.toContain('?');
       expect(t, f.slug).toMatch(/bài [2-6]\.\d+/);
-    }
-  });
-  it('each LineMap row gives a concrete example; narrative lessons choose whether they need this block', () => {
-    for (const f of readLessonFiles()) {
-      if ((f.data as { kind: string }).kind !== 'full') continue;
-      const legacy = lessonMainSection(f.body).split(/\r?\n/, 1)[0] === 'Làm bằng SQL';
-      const checkedLegacy = ['1.2', '1.3', '1.4', '1.5'].includes((f.data as { num: string }).num);
-      if (legacy && !checkedLegacy) continue;
-      const rows = lineMapRows(f.body);
-      if (legacy) expect(rows.length, f.slug).toBeGreaterThan(0);
-      for (const r of rows) expect(r, `${f.slug}: ${r.slice(0, 30)}`).toContain('Ví dụ');
     }
   });
   it('1.3 says where the conversion comes from', () => {
@@ -335,7 +359,7 @@ describe('fixes from the independent reviews of 2026-10-19', () => {
       'mỗi thông tin chỉ nằm ở một chỗ', 'được khai báo đủ', 'cặp NV001 và ngày 2026-09-01', 'bài 3.4 và 3.5 sẽ học']));
   it('2.1 counts records not people, closes the scenario and keeps the first-run advice', () => {
     check('2-1-chon-cot-dat-ten-cot',
-      ['48 hồ sơ', 'mỗi lần chỉ nhận một câu', 'bài 5.1', 'SoCCCD', 'Copy with Headers',
+      ['`48` hồ sơ', 'mỗi lần chỉ nhận một câu', 'bài 5.1', 'SoCCCD', 'Copy with Headers',
         'bài 2.2', 'câu truy vấn (query)', 'Giả định của tình huống', 'Sơ đồ database'],
       ['48 người, mỗi người một dòng', 'sẽ học ở các bài sau', 'của 10 người là đủ', 'đó là 10 người nào', 'PhongBanCu', 'Select Top 1000 Rows']);
     const page = readFileSync('src/pages/gioi-thieu.astro', 'utf8');
@@ -400,10 +424,10 @@ describe('fixes from the final review', () => {
     expect((f.data as { minutes: number }).minutes).toBe(15);
     expect((f.data as { prerequisites: string[] }).prerequisites).toEqual(['1.2', '1.3']);
     expect(f.body.match(/<Chat\b/g)).toHaveLength(1);
-    expect(f.body.match(/<RunFlow\b/g)).toHaveLength(1);
+    expect(f.body.match(/<(?:RunFlow|AnimatedFlow)\b/g)).toHaveLength(1);
     expect(f.body).not.toContain('TOP (5)');
     expect(f.body).not.toContain('SELECT MaPB');
-    expect(f.body).toContain('Dấu **`*`**');
+    expect(f.body).toMatch(/dấu \*\*`\*`\*\*/i);
     for (const s of ['gioi-thieu/#doc-ket-qua', 'gioi-thieu/#chon-noi-thuc-hanh']) expect(f.body, s).toContain(s);
     // Exercise 1 asks for this table, so printing the query would hand out the answer.
     expect(f.body).not.toContain('FROM HopDong');
@@ -412,13 +436,13 @@ describe('fixes from the final review', () => {
     const b = body('2-1-chon-cot-dat-ten-cot');
     const main = lessonMainSection(b);
     const [first, query] = main.split(/^### /m).slice(1);
-    expect(first).toMatch(/^Từ .+\r?\n\r?\nTrong Excel, /);
+    expect(first).toMatch(/^Cấu trúc mới trong bài\r?\n\r?\nTrong Excel, /);
     expect(first.indexOf('<Excel')).toBeLessThan(first.indexOf('Trong SQL'));
     expect(first).not.toContain('Invalid column name');
     expect(main.indexOf('<Excel')).toBeLessThan(main.indexOf('<Sql'));
     expect(main.match(/<Result\b/g)).toHaveLength(1);
     expect(main).not.toContain('<Messages');
-    expect(query.indexOf('<RunFlow')).toBeLessThan(query.indexOf('<Result'));
+    expect(query.search(/<(?:RunFlow|AnimatedFlow)\b/)).toBeLessThan(query.indexOf('<Result'));
     expect(query.indexOf('<Result')).toBeLessThan(query.indexOf('Bạn có thể trả lời chị Hạnh'));
   });
   it('no lesson or page points to the removed lesson 1.6', () => {
@@ -454,7 +478,7 @@ describe('fixes from the final review', () => {
     const join=lessonBlocks('3-5-left-join').steps[1];
     expect(join.total).toBe(57);
     expect(join.rows.filter(r=>r[0]==='NV021')).toHaveLength(3);
-    expect(join.rows.filter(r=>r[2]===null).map(r=>r[0])).toEqual(['NV047','NV048']);
+    expect(join.rows.filter(r=>r[2]===null).map(r=>r[0]).sort()).toEqual(['NV047','NV048']);
     expect(b).not.toContain('Tôn Thất Long có ba hợp đồng nên có ba dòng, vì vậy');
     expect(b).not.toContain('là bước cuối cùng');
     expect(b).not.toContain('ở dòng thứ hai');
@@ -463,10 +487,6 @@ describe('fixes from the final review', () => {
     expect(body('3-5-left-join')).not.toMatch(/ghép/i);
     expect(lessonBlocks('3-5-left-join').steps[1].clause).toBe('LEFT JOIN');
     expect(body('3-5-left-join')).toMatch(/\*\*kết bảng\*\*/i);
-  });
-  it('3.5 shows the run order of its final query', () => {
-    expect(body('3-5-left-join')).toContain('### SQL Server chạy câu này thế nào');
-    expect(body('3-5-left-join')).toContain('<RunFlow');
   });
   it('summaries state the corrected facts', () => {
     expect(body('1-5-doc-so-do-erd')).toContain('`stores` → `sales` → `titles`');

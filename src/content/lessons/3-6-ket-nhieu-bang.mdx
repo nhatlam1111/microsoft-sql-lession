@@ -28,7 +28,7 @@ Quy tắc báo cáo: hợp đồng **ứng viên tại mốc** có `NgayBatDau <
 
 ## Kết đúng quan hệ và kiểm độ chi tiết của dòng
 
-### Từ dò qua nhiều sheet đến hai INNER JOIN
+### Cấu trúc mới trong bài
 
 Trong Excel, bạn giữ sheet lương tháng 9, dò họ tên từ sheet nhân viên rồi dò mã hợp đồng từ sheet `HopDongMoc`. Để có sheet này, lọc hợp đồng theo hai điều kiện ngày đầu bài, dùng PivotTable đếm `MaHD` theo `MaNV` như bài 3.2 để kiểm mã nhiều ứng viên. Có mã bị trùng thì chưa dùng VLOOKUP lấy dòng đầu. Vùng dò đặt `MaNV` ở cột đầu, `MaHD` ở cột thứ hai.
 
@@ -40,7 +40,11 @@ Hình minh họa hai dòng của bản báo cáo; `C2` là mã hợp đồng dò
   ['NV001','Trần Thị Mai','HD2024-018',13285000],
 ]} />
 
-Trong SQL, viết hai `INNER JOIN`, mỗi phép có `ON` riêng. Cả hợp đồng và lương đều kết về mã trên hồ sơ; `BangLuong` không lưu `MaHD` để trỏ trực tiếp tới một hợp đồng. Câu lệnh cho báo cáo là:
+Hai phép kết cùng đi qua hồ sơ. Mỗi `INNER JOIN` có một `ON` riêng. Phép đầu dùng mã hồ sơ và hai điều kiện ngày để chọn hợp đồng ứng viên; phép sau dùng cùng mã hồ sơ và kỳ `2026-09` để lấy khoản thực lĩnh đã lưu. `BangLuong` không có `MaHD` để kết trực tiếp đến hợp đồng.
+
+**Độ chi tiết của dòng** là ý nghĩa của một dòng: `NhanVien` là một hồ sơ mỗi `MaNV`, `HopDong` là một hợp đồng mỗi `MaHD`, `BangLuong` là một khoản lương mỗi cặp `KyLuong`, `MaNV`. Khóa ghép của bảng lương đã học ở bài 1.4; cùng `MaNV` chưa làm ba bảng có cùng độ chi tiết.
+
+### Đọc câu SQL qua các bước
 
 <Sql code={`SELECT bl.MaNV, nv.HoTen, hd.MaHD,
 \thd.LoaiHD, bl.ThucLinh
@@ -52,28 +56,7 @@ INNER JOIN BangLuong AS bl ON bl.MaNV = nv.MaNV
 \tAND bl.KyLuong = '2026-09'
 ORDER BY bl.MaNV ASC, hd.MaHD ASC;`} />
 
-<LineMap rows={[
-  ['FROM NhanVien AS nv', 'Lấy hồ sơ làm điểm kết hai phía. Ví dụ: nv.HoTen của NV021 là Tôn Thất Long.'],
-  ['INNER JOIN HopDong AS hd ON hd.MaNV = nv.MaNV', 'Tìm các hợp đồng có cùng mã nhân viên. Ví dụ: NV021 có ba hợp đồng cùng mã trước khi xét ngày.'],
-  ["AND hd.NgayBatDau <= '20260930' AND (hd.NgayKetThuc IS NULL OR hd.NgayKetThuc >= '20260930')", 'Giới hạn các cặp hợp đồng được nhận tại mốc. Ví dụ: HD2021-002 kết thúc 2024-08-31 nên bị loại; HD2024-005 bắt đầu 2024-09-01 và chưa có ngày kết thúc nên được nhận.'],
-  ["INNER JOIN BangLuong AS bl ON bl.MaNV = nv.MaNV AND bl.KyLuong = '2026-09'", 'Chỉ nhận lương cùng mã và đúng kỳ. Ví dụ: NV021 lấy 16457000 của tháng 9, không lấy 17312000 của tháng 8.'],
-  ['SELECT bl.MaNV, nv.HoTen, hd.MaHD, hd.LoaiHD, bl.ThucLinh', 'Lấy năm cột từ đúng phía. Ví dụ: HD2024-005 và loại hợp đồng đến từ hd, khoản 16457000 đến từ bl.'],
-  ['ORDER BY bl.MaNV ASC, hd.MaHD ASC', 'Xếp hai mã tăng dần để đối chiếu. Ví dụ: NV001 đứng trước NV002.'],
-]} />
-
-**Độ chi tiết của dòng** là ý nghĩa của một dòng: `NhanVien` là một hồ sơ mỗi `MaNV`, `HopDong` là một hợp đồng mỗi `MaHD`, `BangLuong` là một khoản lương mỗi cặp `KyLuong`, `MaNV`. Khóa ghép của bảng lương đã học ở bài 1.4; cùng `MaNV` chưa làm ba bảng có cùng độ chi tiết.
-
-Nếu bỏ điều kiện ngày, một dòng lương kỳ `2026-09` của `NV021` khớp cả `HD2021-001`, `HD2021-002`, `HD2024-005`. Khoản `16457000` lặp ba lần; cộng sẽ thành `49371000`. Đó là ba cặp kết, không phải ba khoản lương. VLOOKUP chỉ lấy lần khớp đầu nên có thể che mất việc một mã có nhiều hợp đồng.
-
-**Điều kiện ngày chỉ chọn ứng viên, không bảo đảm duy nhất:** hai hợp đồng chồng ngày vẫn có thể cùng đạt. Kiểm trên `HopDong` đã lọc hai điều kiện ngày: `GROUP BY hd.MaNV`, đếm `COUNT(*)` rồi `HAVING COUNT(*) > 1` để tìm mã nhiều ứng viên, như bài 3.2–3.3. Bộ mẫu hiện không có mã nào như vậy. Nếu có, cần chốt quy tắc chọn với người phụ trách trước khi gửi báo cáo.
-
-**Kiểm không bị nhân dòng và kiểm không bị mất dòng là hai việc riêng.** Đếm `COUNT(*)` trên `BangLuong` của đúng kỳ được `43` dòng. Sau khi đã kiểm tối đa một hợp đồng ứng viên mỗi mã, đối chiếu báo cáo với số này; nếu ít hơn thì dùng cách tìm không khớp ở bài 3.5. Khi bài tập cần đếm cả lịch sử hợp đồng, bỏ phạm vi ngày, nhóm theo cả mã và họ tên rồi đếm `hd.MaHD`; phép đếm tính trên các dòng sau kết.
-
-Ở bài này chỉ cần kết đúng quan hệ, ngày và kỳ rồi kiểm độ chi tiết. Chọn dòng mới nhất bằng xếp hạng học ở bài 3.13; kiểm dữ liệu bất thường học ở bài 3.19. Không tự thay số tiền của kỳ bằng lương cơ bản trong hợp đồng.
-
-### SQL Server chạy câu này thế nào
-
-Theo **thứ tự xử lý logic**, lấy hồ sơ → kết hợp đồng → kết lương → chọn cột → sắp xếp. Đây không phải cách SQL Server đọc dữ liệu vật lý. Bản trích dùng `NV047` để thấy thiếu hợp đồng, `NV041` để thấy có hợp đồng ứng viên nhưng không có lương tháng 9; các tổng vẫn tính toàn bộ dữ liệu. Trước `ORDER BY`, thứ tự có thể khác hình:
+Sơ đồ lần theo luồng dữ liệu logic qua hai phép kết. Mở từng bước để xem mã, ngày và kỳ của các dòng được nhận.
 
 <RunFlow query={`SELECT bl.MaNV, nv.HoTen, hd.MaHD,
 \thd.LoaiHD, bl.ThucLinh
@@ -418,7 +401,9 @@ ORDER BY bl.MaNV ASC, hd.MaHD ASC;`} steps={[
   }
 ]} />
 
-Kết quả cuối trích năm dòng đầu, đánh dấu `NV001` có số thực lĩnh `13285000`:
+Từ `48` hồ sơ, phép kết theo mốc ngày giữ `45` cặp hồ sơ–hợp đồng. Phép kết lương giữ `43` cặp có dòng kỳ `2026-09`. Với `NV021`, chỉ `HD2024-005` qua điều kiện ngày, rồi dòng lương cùng mã cung cấp `16457000` đồng.
+
+Bảng trích năm dòng đầu và đánh dấu khoản thực lĩnh `13285000` đồng của `NV001`.
 
 <Result columns={[
   "MaNV",
@@ -465,6 +450,18 @@ Kết quả cuối trích năm dòng đầu, đánh dấu `NV001` có số thự
 ]} total={43} mark={[1]} />
 
 Bạn gửi chị Hạnh đủ `43` dòng lương kỳ `2026-09`, mỗi mã một lần sau kiểm ứng viên và đối chiếu số dòng gốc. Báo cáo thêm họ tên, mã và loại hợp đồng tại mốc đã chốt, giữ số thực lĩnh đã lưu.
+
+### Vận dụng trên cùng tình huống
+
+Nếu bỏ điều kiện ngày, dòng lương kỳ `2026-09` của `NV021` khớp cả `HD2021-001`, `HD2021-002` và `HD2024-005`. Khoản `16457000` đồng xuất hiện ba lần. Cộng cả ba sẽ ra `49371000` đồng cho cùng một khoản.
+
+**Điều kiện ngày chỉ chọn ứng viên, không bảo đảm duy nhất:** hai hợp đồng chồng ngày vẫn có thể cùng đạt. Kiểm trên `HopDong` đã lọc hai điều kiện ngày: `GROUP BY hd.MaNV`, đếm `COUNT(*)` rồi `HAVING COUNT(*) > 1` để tìm mã nhiều ứng viên, như bài 3.2–3.3. Bộ mẫu hiện không có mã nào như vậy. Nếu có, cần chốt quy tắc chọn với người phụ trách trước khi gửi báo cáo.
+
+**Kiểm mất dòng** bắt đầu từ `43` dòng trong `BangLuong` kỳ `2026-09`. Sau khi đã kiểm mỗi mã có tối đa một hợp đồng ứng viên, đối chiếu số dòng báo cáo với số dòng lương gốc. Nếu báo cáo ít dòng hơn, bắt đầu từ `BangLuong` đúng kỳ và dùng `LEFT JOIN` sang hồ sơ rồi sang hợp đồng, giữ điều kiện ngày trong `ON`. Kiểm `nv.MaNV IS NULL` để tìm dòng thiếu hồ sơ hoặc `hd.MaHD IS NULL` trên dòng có hồ sơ để tìm dòng thiếu hợp đồng ứng viên.
+
+Trong hai đề đầu, thay nguồn hợp đồng bằng danh mục phòng hoặc chức danh để lấy tên đang lưu. Lần từ mã trên hồ sơ sang khóa tương ứng của danh mục. Với đề đếm lịch sử, giữ điều kiện kỳ lương, bỏ phạm vi ngày hợp đồng và đếm số dòng hợp đồng sau kết theo từng mã và họ tên.
+
+Ở bài này chỉ cần kết đúng quan hệ, ngày và kỳ rồi kiểm độ chi tiết. Chọn dòng mới nhất bằng xếp hạng học ở bài 3.13; kiểm dữ liệu bất thường học ở bài 3.19. Không tự thay số tiền của kỳ bằng lương cơ bản trong hợp đồng.
 
 ## Hay nhầm ở đâu
 

@@ -1,10 +1,9 @@
 import { it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { runInNewContext } from 'node:vm';
-import { readLessonFiles } from './helpers/lessons';
+import { lessonMainSection, readLessonFiles } from './helpers/lessons';
 
-// A premature deduplication at SELECT, a missing department, or retaining MaNV
-// in the DISTINCT projection would misrepresent the question this lesson answers.
+// Both chosen columns determine whether a projected row is a duplicate.
 // This is a source-data/rendered-content contract, not SQL Server execution.
 const seed = readFileSync('database/HRM_Demo.sql', 'utf8');
 const insert = seed.match(/INSERT INTO dbo\.NhanVien \(([^)]+)\) VALUES\s*([\s\S]*?);/)!;
@@ -21,29 +20,41 @@ const project = (keys: string[]) => people.map(p => keys.map(k => p[k]));
 const uniqueSorted = (rows: (string | null)[][]) =>
   [...new Set(rows.map(r => JSON.stringify(r)))].sort().map(s => JSON.parse(s));
 
-it('2.6 projects every profile before DISTINCT and sorts the six department codes afterward', () => {
+it('2.6 projects every profile before DISTINCT and sorts the unique department and job pairs afterward', () => {
   const flow = body().match(/<RunFlow query=\{`([\s\S]*?)`\} steps=\{([\s\S]*?)\} \/>/);
   expect(flow).not.toBeNull();
   const steps = value<{ clause: string; columns: string[]; rows: (string | null)[][]; total: number }[]>(flow![2]);
+  const columns = ['MaPB', 'MaCD'];
+  const projected = project(columns);
+  const pairs = uniqueSorted(projected);
   expect(steps.map(s => [s.clause, s.total])).toEqual([
-    ['FROM', people.length], ['SELECT', people.length], ['DISTINCT', 6], ['ORDER BY', 6],
+    ['FROM', people.length], ['SELECT', people.length], ['DISTINCT', pairs.length], ['ORDER BY', pairs.length],
   ]);
-  expect(steps[1].columns).toEqual(['MaPB']);
-  expect(steps[1].rows.length).toBeGreaterThan(new Set(steps[1].rows.map(r => r[0])).size);
-  expect(steps[1].rows.every(r => project(['MaPB']).some(p => JSON.stringify(p) === JSON.stringify(r)))).toBe(true);
-  const departments = uniqueSorted(project(['MaPB']));
-  expect(steps[2].columns).toEqual(['MaPB']);
-  expect([...steps[2].rows].sort()).toEqual(departments);
-  expect(steps[3].rows).toEqual(departments);
-  expect(flow![1]).toMatch(/^SELECT DISTINCT MaPB\s+FROM NhanVien\s+ORDER BY MaPB ASC;$/);
+  expect(steps.slice(1).map(step => step.columns)).toEqual([columns, columns, columns]);
+  const profileColumns = steps[0].columns;
+  expect(steps[1].rows).toEqual(steps[0].rows.map(row => columns.map(c => row[profileColumns.indexOf(c)])));
+  expect(steps[2].rows).toEqual(expect.arrayContaining([['KD', 'CV'], ['KD', 'CVC']]));
+  expect(steps[2].rows).toHaveLength(uniqueSorted(steps[2].rows).length);
+  expect(pairs).toEqual(expect.arrayContaining(steps[2].rows));
+  expect(steps[3].rows).toEqual(pairs.slice(0, steps[3].rows.length));
+  const results = body().match(/<Result columns=\{(\[[^\n]+\])\} rows=\{(\[[\s\S]*?\])\} total=\{(\d+)\}/);
+  expect(results).not.toBeNull();
+  expect(value(results![1])).toEqual(columns);
+  expect(value(results![2])).toEqual(steps[3].rows);
+  expect(Number(results![3])).toBe(pairs.length);
+  expect(flow![1]).toMatch(/^SELECT DISTINCT MaPB, MaCD\s+FROM NhanVien\s+ORDER BY MaPB ASC, MaCD ASC;$/);
 });
 
-it('2.6 says adding a column changes what DISTINCT compares, with counts that match the seed', () => {
-  expect(uniqueSorted(project(['MaPB', 'MaCD']))).toHaveLength(19);
-  expect(uniqueSorted(project(['MaPB', 'MaCD', 'MaNV']))).toHaveLength(48);
-  expect(body()).toContain('`19` cặp');
-  expect(body()).toContain('ra `48` dòng');
-  // Exercises 2-6-2 and 2-6-3 need both of these from the main section.
-  expect(body()).toContain('cả dòng kết quả');
-  expect(body()).toContain('Câu có `WHERE` thì `DISTINCT` chỉ xét các dòng đã lọc');
+it('2.6 shows how choosing fewer or more columns changes the result', () => {
+  const departmentCount = uniqueSorted(project(['MaPB'])).length;
+  const profileCount = uniqueSorted(project(['MaPB', 'MaCD', 'MaNV'])).length;
+  expect(body()).toContain('`' + departmentCount + '` mã phòng');
+  expect(body()).toContain('`' + profileCount + '` dòng');
+
+  // Keep the exercise prerequisites visible in the lesson's application section.
+  const application = lessonMainSection(body()).split('### Vận dụng trên cùng tình huống')[1];
+  expect(application).toBeDefined();
+  expect(application).toContain('`MaPB`');
+  expect(application).toMatch(/`WHERE`[^\n]*`IN`[^\n]*`IS NOT NULL`/);
+  expect(application).toMatch(/`ORDER BY`[^\n]*`ASC`[^\n]*`DESC`/);
 });

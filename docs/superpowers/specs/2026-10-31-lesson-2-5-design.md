@@ -2,6 +2,8 @@
 
 Trạng thái: đã duyệt và đã làm trên nhánh `feat/lesson-2-5-null`, chưa push, 31/10/2026. [Hồ sơ kiểm](../../reviews/2026-10-31-lesson-2-5/verification.md).
 
+Bài đã chuyển sang khung truy vấn hiện hành ngày 14/11/2026. Xem [hồ sơ bàn giao 2.5](../../verification/2026-11-14-lesson-2-5.md) cho bản đang dùng.
+
 Khác thiết kế: hình Excel bỏ cột họ tên và dùng `NV031` thay `NV037` để thấy ô `(chưa có)` ở rộng 1024; Hay nhầm 3 đổi thành "coi dòng không có nhãn là đã có email"; bước `WHERE`, `SELECT` trích ba hồ sơ để thẻ sơ đồ thấy `NV044`.
 
 Tích hợp sau review từng bài: [hồ sơ merge 2.5–2.9](../../reviews/2026-10-31-publish-2-5-2-9/verification.md), có review mới và quyết định giữ nháp khi đề 2-5-3 đổi phạm vi. Không đổi thiết kế sản phẩm trong lượt merge.

@@ -59,11 +59,14 @@ it('2.9 shows one record stopping at each CASE branch and one reaching ELSE', ()
   expect(select.checks?.totals).toEqual([33, 8, 4]);
 });
 
-it('2.6 shows repeated codes in the input of its DISTINCT step', () => {
+it('2.6 shows both repeated pairs and pairs sharing only the department in its DISTINCT input', () => {
   const { steps } = lessonBlocks('2-6-distinct-bo-dong-trung');
   const at = steps.findIndex(s => s.clause === 'DISTINCT');
-  const codes = inputPreview(steps[at], steps[at - 1]).rows.flat();
-  expect(new Set(codes).size).toBeLessThan(codes.length);
+  const input = inputPreview(steps[at], steps[at - 1]);
+  expect(input.columns).toEqual(['MaPB', 'MaCD']);
+  const jobsInKD = input.rows.filter(([department]) => department === 'KD').map(([, job]) => job);
+  expect(jobsInKD.filter(job => job === 'CV')).toHaveLength(2);
+  expect(jobsInKD).toContain('CVC');
 });
 
 it('2.4 shows the sorted column in the input of its ORDER BY step', () => {

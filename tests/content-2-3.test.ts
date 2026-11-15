@@ -3,6 +3,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { runInNewContext } from 'node:vm';
 import { parse } from 'yaml';
 import { readLessonFiles, lessonMainSection, sqlSubheadings } from './helpers/lessons';
+import { lessonBlocks } from './helpers/lesson-blocks';
 import { guardExercise } from '../src/lib/sql-guard';
 import type { ExerciseFile } from '../src/lib/exercise-types';
 
@@ -20,30 +21,31 @@ function seedPeople() {
 }
 
 describe('lesson 2.3 combines conditions without changing their scope', () => {
-  it('uses one scenario statement before its parts, then logical steps, result and answer', () => {
+  it('teaches condition grouping before the runnable SQL and teaches patterns before practice', () => {
     const body = lesson().body;
-    expect(sqlSubheadings(body)).toHaveLength(2);
+    expect(sqlSubheadings(body)).toEqual(['Cấu trúc mới trong bài', 'Đọc câu SQL qua các bước', 'Vận dụng trên cùng tình huống']);
     const main = lessonMainSection(body);
-    const [first, second] = main.split(/^### /m).slice(1);
-    expect(main.match(/<Sql\b/g)).toHaveLength(1);
+    const [first, second, practice] = main.split(/^### /m).slice(1);
     expect(first.indexOf('<Excel')).toBeLessThan(first.indexOf('<Sql'));
-    expect(first.indexOf('<Sql')).toBeLessThan(first.indexOf('<LineMap'));
-    expect(second.indexOf('<RunFlow')).toBeLessThan(second.indexOf('<Result'));
-    expect(second.slice(second.indexOf('<Result'))).toContain('chị Hạnh');
-    expect(main.match(/<Result\b/g)).toHaveLength(1);
-    expect(main).toContain("N'Nguy_n%'");
-    expect(main.replace(/`|\*\*/g, '')).toMatch(/0 ký tự|không ký tự/);
-    expect(main.replace(/`|\*\*/g, '')).toContain('đúng một ký tự');
+    expect(first).toMatch(/<Sql copy=\{false\}[\s\S]*?WHERE \(MaPB = 'KD' OR MaPB = 'IT'\)[\s\S]*?AND NgayVaoLam BETWEEN/);
+    const cause = second.slice(second.indexOf(']} />'), second.indexOf('<Result'));
+    expect(cause).toContain('NV003');
+    expect(cause).toContain('NV002');
+    expect(practice).toMatch(/TrangThai\s*=\s*N'/);
+    expect(practice).toMatch(/LIKE N'%[^%']+%'/);
+    expect(practice).toMatch(/LIKE N'%[^%_']+_'/);
+    expect(practice.replace(/`|\*\*/g, '')).toMatch(/0 ký tự|không ký tự/);
+    expect(practice.replace(/`|\*\*/g, '')).toContain('đúng một ký tự');
     expect(body.indexOf('**Tự kiểm tra')).toBeGreaterThan(body.indexOf('## Ghi nhớ'));
     expect(body.indexOf('**Tự kiểm tra')).toBeLessThan(body.indexOf('## Bài tập'));
   });
 
   it('is a full lesson whose main example keeps both departments inside the date range', () => {
     expect((lesson().data as { kind: string }).kind).toBe('full');
-    const blocks = [...lesson().body.matchAll(/<Sql[^>]*code=\{(`([\s\S]*?)`)\}/g)].map(m => runInNewContext(m[1]) as string);
-    expect(blocks.some(sql => /MaPB IN \('KD', 'IT'\)\s+AND NgayVaoLam BETWEEN '20230101' AND '20230630'/.test(sql))).toBe(true);
+    const { query } = lessonBlocks(slug);
+    expect(query).toMatch(/MaPB IN \('KD', 'IT'\)\s+AND NgayVaoLam BETWEEN '20230101' AND '20230630'/);
     const text = lesson().body.replace(/`|\*\*/g, '');
-    for (const pattern of [/AND.{0,35}trước OR/, /cả hai (?:đầu mút|mốc)/, /không.{0,30}thứ tự.{0,30}(?:vật lý|đọc dữ liệu)/s]) {
+    for (const pattern of [/AND.{0,35}trước OR/, /cả hai (?:đầu mút|mốc)/, /thứ tự xử lý logic/, /SQL Server tự chọn cách đọc dữ liệu/]) {
       expect(text).toMatch(pattern);
     }
   });

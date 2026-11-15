@@ -2,7 +2,7 @@
 
 Đọc phần biến thể và component liên quan theo [quy trình biên soạn](bien-soan.md); không cần đọc toàn bộ thuộc tính khi chỉ sửa lời văn. Chốt đoạn giải thích đại diện trước khi dựng đủ khối. Lời giảng cốt lõi luôn hiện; drawer chỉ làm rõ thêm bằng dữ liệu.
 
-Bài có câu lệnh đối chiếu với [`bài 2.1`](../src/content/lessons/2-1-chon-cot-dat-ten-cot.mdx) về mạch kể, độ sâu, chữ đậm và giá trị được highlight; bài nền đối chiếu với [`bài 1.1`](../src/content/lessons/1-1-database-la-gi.mdx). [`Bài 3.5`](../src/content/lessons/3-5-left-join.mdx) là ví dụ kỹ thuật `RunFlow` nhiều bước, chưa chuyển sang bố cục hai tiểu mục.
+Bài có câu lệnh đối chiếu với [`bài 2.1`](../src/content/lessons/2-1-chon-cot-dat-ten-cot.mdx) về mạch kể, độ sâu, chữ đậm và giá trị được highlight; bài nền đối chiếu với [`bài 1.1`](../src/content/lessons/1-1-database-la-gi.mdx). [`Bài 3.5`](../src/content/lessons/3-5-left-join.mdx) minh họa `RunFlow` có cả bước kết bảng và bảng soi điều kiện lọc.
 
 File này hướng dẫn dựng bài và dùng các khối. Quy tắc viết, định dạng, số liệu, review và an toàn database nằm ở [`quy-uoc.md`](quy-uoc.md); bối cảnh, nhân vật và dữ liệu mẫu ở [`ho-so-cong-ty.md`](ho-so-cong-ty.md). Spec, plan, mockup và hồ sơ review là lịch sử từng lượt; khi viết tiếp dùng hai tài liệu hiện hành này.
 
@@ -33,7 +33,7 @@ summary: Một câu nói đúng vấn đề và nội dung chính của bài.
 
 Thứ tự cấp 2: **Tình huống → phần chính theo chủ đề → Hay nhầm ở đâu → Ứng dụng → Ghi nhớ → Bài tập**. Tiêu đề phần chính được đặt theo bài, như "Từ file Excel đến một nguồn dữ liệu chung" ở bài 1.1 hoặc "Lọc danh sách nhân viên theo điều kiện" ở bài `WHERE`. Các tên mục còn lại giữ đúng như khung.
 
-Khung dưới chép vào file MDX được; thay toàn bộ lời chỉ dẫn bằng nội dung thật. Các tiểu mục chỉ gợi ý nhịp kể. Bài khái niệm chọn khoảng 2–4 tiểu mục theo mục tiêu bài; bài có câu lệnh dùng đúng hai tiểu mục theo phần hướng dẫn bên dưới. Ví dụ và hình đặt ngay cạnh ý cần minh họa.
+Khung dưới chép vào file MDX được; thay toàn bộ lời chỉ dẫn bằng nội dung thật. Các tiểu mục chỉ gợi ý nhịp kể. Bài khái niệm chọn khoảng 2–4 tiểu mục theo mục tiêu bài; bài truy vấn tách cấu trúc mới khỏi luồng dữ liệu theo phần hướng dẫn bên dưới. Ví dụ và hình đặt ngay cạnh ý cần minh họa.
 
 ````mdx
 ## Tình huống
@@ -125,32 +125,37 @@ Bài 1.1/1.5 hướng tới 800–1.000 từ (trần 1.100), ba bài giữa 500�
 
 ### Bài có câu lệnh và kết quả
 
-Phần chính dùng đúng hai tiểu mục. Tiểu mục đầu đặt tên theo nhịp "Từ <việc trong Excel> đến <từ khóa SQL>", đi theo việc trong Excel kèm hình → trong SQL cần chạy câu lệnh gì → câu SQL đầy đủ của tình huống → `LineMap` giải thích từng phần của chính câu đó. Tiểu mục sau là `### SQL Server chạy câu này thế nào`: một lời dẫn ngắn → `RunFlow` → `Result` đã kiểm chứng → câu trả lời người hỏi. Bài không có `RunFlow` đặt tên tiểu mục sau là `### Kết quả cho tình huống`, gồm `Result` → câu trả lời. Không thêm hướng dẫn chạy hay giải thích cách đọc Results, Messages. Mọi giải thích và câu lệnh chỉ bám tình huống đầu bài, không thêm câu ví dụ trên bảng hay cột khác. Không chép thêm một phần giải SQL độc lập hay "Trả lời chị Hạnh" ở sau.
+Phần chính có hai tiểu mục chính như mẫu dưới. Cấu trúc mới nêu mục đích, cách viết, vai trò từng phần và điều kiện cần nhớ; dùng khuôn/đoạn trích từ cùng tình huống khi hữu ích. Chỉ giải thích lại phần đã học khi cần nối nghĩa. Tiểu mục sau đặt SQL đầy đủ sát RunFlow, rồi tóm tắt cách ra kết quả, Result và câu trả lời. Có thể thêm tiểu mục **Vận dụng trên cùng tình huống** sau câu trả lời để giảng biến thể/cách kiểm cần cho bài tập; đây vẫn là phần bắt buộc nếu đề cần. Bài không cần RunFlow dùng lời giải thích cách ra kết quả ở vị trí sơ đồ. Mọi giải thích và câu lệnh chỉ bám tình huống đầu bài. Không thêm hướng dẫn chạy hoặc đọc Results/Messages.
 
 Nếu có câu tự kiểm tra, đặt ngay sau `Memo` và trước `## Bài tập`, dùng `<details>` với đáp án đã được giải thích trong bài. Không đặt sau danh sách bài tập. Trong `<summary>`, dùng `<code>` cho tên cột hoặc giá trị thay vì backtick; chuỗi có nháy dùng biểu thức JSX, ví dụ `<code>{"MaPB = 'IT'"}</code>`, để giữ nháy thẳng sau build. Các bài 2.3, 2.7, 2.8 có ít nhất ba câu để ôn từng nhịp học; không dùng câu hỏi làm chỗ bổ sung lý thuyết còn thiếu.
 
-Sơ đồ đặt khối dưới đây là **mã minh họa thuộc tính**, không dán nguyên các tên biến vào bài. Thay `sqlDaKiemChung`, `cacPhanCuaCau`, `cacCot`, `cacDong`, `tongSoDong`, `cacBuocDaKiemChung` bằng các giá trị literal đã chạy và kiểm trước khi viết.
+Sơ đồ đặt khối dưới đây là **mã minh họa thuộc tính**, không dán nguyên các tên biến vào bài. Thay `sqlDaKiemChung`, `cacCot`, `cacDong`, `tongSoDong`, `cacBuocDaKiemChung` bằng các giá trị literal đã chạy và kiểm trước khi viết.
 
 ````mdx
-### Từ <việc trong Excel> đến <từ khóa SQL>
+### Cấu trúc mới trong bài
 
-Việc trong Excel, kèm hình `Excel`.
+Nối từ kiến thức đã biết hoặc việc trong Excel, kèm hình khi hữu ích.
 
-Trong SQL, câu lệnh cần chạy để làm việc đó. Với tình huống này, câu lệnh là:
+Giải thích cấu trúc mới: dùng để làm gì, viết thế nào, các phần liên hệ ra sao.
+Nếu cần khuôn/đoạn trích, ghi rõ phần lược và dùng Sql với copy={false}.
+
+### Đọc câu SQL qua các bước
 
 <Sql code={sqlDaKiemChung} />
 
-<LineMap rows={cacPhanCuaCau} />
-
-### SQL Server chạy câu này thế nào
-
-Một lời dẫn ngắn về thứ tự xử lý logic.
+Một lời dẫn ngắn về luồng xử lý logic; mời mở bước để xem chi tiết.
 
 <RunFlow query={sqlDaKiemChung} steps={cacBuocDaKiemChung} />
+
+Tóm tắt nối các bước và giải thích vì sao ra kết quả của tình huống.
 
 <Result columns={cacCot} rows={cacDong} total={tongSoDong} />
 
 Câu trả lời nghiệp vụ từ kết quả này, đúng giả định đầu bài.
+
+### Vận dụng trên cùng tình huống
+
+Chỉ giữ tiểu mục này nếu cần giảng biến thể/cách kiểm cho bài tập.
 ````
 
 - `Sql` dùng câu lệnh đầy đủ giải đúng tình huống. Đoạn trích, khuôn cú pháp và câu ghi dữ liệu chỉ để đọc có `copy={false}`. Kết quả lỗi dùng `Messages` với nguyên văn đã kiểm; không tự sáng tác thông báo.
@@ -163,7 +168,7 @@ Câu trả lời nghiệp vụ từ kết quả này, đúng giả định đầ
 - Bước `SELECT` có `CASE` thêm `labels` vào `checks` để thành bảng nhánh: `rows` ghi `false` trước nhánh đúng, `null` sau nhánh đúng, `labels` là nhãn của từng hàng, `totals` là số dòng dừng ở từng nhánh rồi ở `ELSE`. Ví dụ `checks: { conditions: ['Mốc 3 năm <= ngày chốt', 'Mốc 1 năm <= ngày chốt'], rows: [['NV003', true, null], ['NV025', false, true], ['NV045', false, false]], labels: ['Từ 3 năm trở lên', 'Từ 1 đến dưới 3 năm', 'Dưới 1 năm'], totals: [33, 8, 4] }`.
 - Với các CTE nối tiếp như bài 3.12, dùng một thẻ `CTE` cho mỗi kết quả có tên, trước `FROM` của câu ngoài. Xếp theo quan hệ dữ liệu, nêu nguồn và các mệnh đề trong từng CTE. `note` nói rõ đây là luồng dữ liệu logic; SQL Server tự chọn cách thực thi.
 - Với hai nhánh `UNION`, có thể tóm tắt mỗi nhánh đã qua `FROM` → `WHERE` → `SELECT` thành một bước `SELECT`, rồi bước `UNION` và `ORDER BY`. `RunFlow` nhận dạng bốn bước này để vẽ hai đầu vào độc lập, cùng đi vào phép gộp; không dùng mũi tên nối nhánh đầu sang nhánh sau. Viết `note` riêng để nói rõ quan hệ logic, không quy định nhánh nào chạy trước; câu kiểm từng nhánh chỉ đọc bảng của chính nhánh đó. Xem bài 3.8.
-- `LineMap` giải thích từng phần của câu lệnh tình huống. Mỗi dòng có "Ví dụ:" và giá trị cụ thể được nhận, loại hoặc đổi; không chép lại cùng lời giải thích ở cả bảng lẫn đoạn văn.
+- `LineMap` tùy chọn cho bảng ánh xạ cấu trúc mới khi hữu ích; không bắt đủ mọi mệnh đề hoặc mỗi dòng có “Ví dụ:”. Bài mẫu 2.1, 3.9, 3.12 không dùng bảng này. Tóm tắt nói nguyên nhân chính, drawer cho dữ liệu/phép tính cụ thể; không giấu tiền đề bắt buộc trong drawer.
 - Bài xử lý sự cố như 5.6 có thể đặt tên tiểu mục theo diễn biến sự cố; vẫn đi từ tình huống tới lời giải, giữ giới hạn an toàn và các mục cuối.
 
 ### Ví dụ thụt lề SQL trong MDX
@@ -278,7 +283,7 @@ Dùng thẳng trong MDX, không cần import.
 | `Sql` | `code`, `title?` (mặc định "SQL Server"), `copy?` (mặc định `true`) | Câu lệnh tô màu kiểu SSMS, có nút "Sao chép". `copy={false}` cho đoạn chỉ để đọc: câu ghi dữ liệu, đoạn trích có `...`, khuôn cú pháp có chỗ cần thay |
 | `Result` | `columns`, `rows`, `total?`, `db?`, `mark?` (số dòng, đếm từ 1) | Tab Results kiểu SSMS; `null` hiện `NULL` nền vàng; `total` khi chỉ trích; dòng trong `mark` tô màu dòng được chọn của SSMS |
 | `Messages` | `lines`, `db?` | Tab Messages: số dòng bị ảnh hưởng, lỗi |
-| `LineMap` | `rows`: `[đoạn lệnh, nghĩa]` | Bảng từng phần nghĩa là gì |
+| `LineMap` | `rows`: `[đoạn lệnh, nghĩa]` | Bảng ánh xạ cấu trúc khi cần; không bắt buộc |
 | `RunFlow` | `query`, `steps`, `note?` (câu nhắc trên sơ đồ, mặc định "Bạn viết SELECT trước, nhưng theo thứ tự logic, SQL Server xét FROM trước.") | Sơ đồ thứ tự xử lý logic, mỗi thẻ có drawer gồm Đầu vào, Thực hiện, Kết quả |
 | `Mistakes` | nội dung (danh sách đánh số) | Mục Hay nhầm ở đâu |
 | `Apply` | nội dung (danh sách) | Mục Ứng dụng |
@@ -290,3 +295,13 @@ Dùng thẳng trong MDX, không cần import.
 Dòng trạng thái của `Result` và `Messages` mặc định ghi `free-sql-db-8797714`, đúng tên database học viên thấy trong SSMS.
 
 Một bước `RunFlow` có thể thêm `examples` trong Thực hiện theo mục 2.6 của quy ước. Mỗi ví dụ có `title`, `note` nêu rõ phạm vi; `table?: { columns, rows }` cho dữ liệu minh họa (tối đa năm dòng), `calculations?: [{ expression, explanation, column, value }]` nối tối đa năm biểu thức với ô kết quả, `conclusion?` để ghép các ô thành dòng. `note`, `explanation`, `conclusion` hỗ trợ code giữa backtick, không hỗ trợ HTML/Markdown khối. Tối đa hai ví dụ đại diện; các ô `column/value` của cùng ví dụ phải cùng khớp một dòng trong `steps[].rows`. Bảng minh họa tách khỏi SQL Results và không thay bảng Đầu vào trích năm dòng. `steps[].mark?: number[]` đánh dấu dòng Results, đếm từ 1 trên các dòng đang hiện. Xem SELECT của bài 3.1, GROUP BY/SELECT của bài 3.2 và bảng danh mục trong INNER JOIN của bài 3.4; chỉ thêm ví dụ khi cần để lần ra kết quả theo mục 2.6, không chuyển hàng loạt các bài khác.
+
+### Biến thể AnimatedFlow
+
+Theo mục 2.6a của [quy ước](quy-uoc.md), vị trí `<RunFlow>` trong khung truy vấn có thể dùng:
+
+```mdx
+<AnimatedFlow query={sqlDaKiemChung} steps={cacBuocDaKiemChung} animation="2-1-select" />
+```
+
+`query` và `steps` giữ kiểu dữ liệu và các kiểm của RunFlow. `animation` là tên thư mục tài nguyên trong `public/lesson-animations`; manifest có ảnh bìa, GIF, hình tĩnh ánh xạ tới chỉ số bước, chú thích, alt và hash nguồn dựng. Hai cảnh chọn cột/đặt tiêu đề của bài 2.1 cùng ánh xạ bước SELECT. Component dựng phần Xem từng bước bằng HTML từ chính dữ liệu này. Hướng dẫn tái tạo nằm tại [scripts/animations/README.md](../scripts/animations/README.md).

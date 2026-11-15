@@ -28,9 +28,9 @@ Giả định: xét mọi hồ sơ trong `NhanVien`, không lọc trạng thái 
 
 ## Giữ hồ sơ khi bảng đối chiếu chưa có dòng
 
-### Từ ô dò không ra đến LEFT JOIN và IS NULL
+### Cấu trúc mới trong bài
 
-Trong Excel, bạn giữ danh sách hồ sơ, dùng VLOOKUP dò mã nhân viên sang bản xuất hợp đồng rồi lọc các ô `#N/A`. Sheet `HopDong` cần đặt `MaNV` ở cột `A`, `MaHD` ở cột `B`; `FALSE` vẫn yêu cầu dò chính xác như bài 3.4. Hình trích ba hồ sơ trước khi lọc, đánh dấu `D3` và `D4` vì không tìm thấy mã:
+Trong Excel, bạn giữ danh sách hồ sơ và dùng `VLOOKUP` để dò `MaNV` trong cột `A` của sheet `HopDong`, rồi lấy `MaHD` từ cột `B`. Như ở bài 3.4, `FALSE` yêu cầu mã khớp chính xác. Hình trích ba hồ sơ, đánh dấu hai ô `D3` và `D4` có `#N/A` để lọc ra những mã không tìm thấy.
 
 <Excel sheets="NhanVien · HopDong" cell="D3" formula="=VLOOKUP(A3,HopDong!A:B,2,FALSE)" selected="D3" mark={['D3','D4']} rows={[
   ['MaNV','HoTen','MaPB','MaHD (dò)'],
@@ -39,9 +39,18 @@ Trong Excel, bạn giữ danh sách hồ sơ, dùng VLOOKUP dò mã nhân viên 
   ['NV048','Đỗ Minh Quân','IT','#N/A'],
 ]} />
 
-Bản xuất trong hình xếp mã hợp đồng tăng dần nên VLOOKUP lấy `HD2021-001` đầu tiên cho `NV021`. Chỉ khi bản xuất đủ hợp đồng và mã dò đúng, `#N/A` mới cho biết không có mã khớp trong phạm vi đã kiểm; sai công thức hoặc thiếu dữ liệu xuất cũng có thể cho lỗi này.
+Bản xuất xếp theo mã hợp đồng nên `VLOOKUP` lấy lần khớp đầu tiên của `NV021`, mã `HD2021-001`. Muốn dựa vào `#N/A` để lập danh sách thiếu hợp đồng, bạn cần dò đúng mã và có bản xuất đủ dữ liệu.
 
-Trong SQL, **LEFT JOIN** là phép **kết bảng** giữ phía trái. Ở câu dưới, `NhanVien` sau `FROM` là bảng trái; `HopDong` sau `LEFT JOIN` là bảng phải. Để trả lời chị Hạnh, kết với toàn bộ hợp đồng rồi lọc phần không khớp:
+Trong SQL, **`LEFT JOIN`** là phép **kết bảng** giữ hồ sơ phía trái dù thiếu dòng khớp. Viết `FROM` với danh sách cần giữ, rồi `LEFT JOIN` với bảng đối chiếu. `ON` chỉ ra các cặp được tính là khớp, ở đây là hồ sơ và hợp đồng có cùng `MaNV`. Đoạn trích chỉ dùng để đọc cách đặt hai bảng và điều kiện.
+
+<Sql copy={false} title="Đoạn trích kết bảng" code={`FROM NhanVien AS nv
+LEFT JOIN HopDong AS hd ON hd.MaNV = nv.MaNV`} />
+
+Mỗi dòng hợp đồng khớp tạo một cặp, nên một hồ sơ có thể xuất hiện nhiều lần. Hồ sơ thiếu cặp vẫn tạo một dòng, với tất cả cột phía `hd` mang giá trị SQL `NULL` trong kết quả.
+
+Để chỉ lấy hồ sơ thiếu cặp, lọc bằng **`WHERE hd.MaHD IS NULL`** như cách kiểm `NULL` ở bài 2.5. Vì `MaHD` là khóa chính đã khai báo, hợp đồng thật luôn có giá trị ở cột này. `NgayKetThuc` có thể `NULL` trên hợp đồng không xác định thời hạn, nên lọc theo cột đó sẽ giữ cả hợp đồng có thật.
+
+### Đọc câu SQL qua các bước
 
 <Sql code={`SELECT nv.MaNV, nv.HoTen, nv.MaPB, nv.NgayVaoLam
 FROM NhanVien AS nv
@@ -49,23 +58,7 @@ LEFT JOIN HopDong AS hd ON hd.MaNV = nv.MaNV
 WHERE hd.MaHD IS NULL
 ORDER BY nv.MaNV ASC;`} />
 
-<LineMap rows={[
-  ['FROM NhanVien AS nv', 'Đặt hồ sơ nhân viên bên trái để giữ khi đối chiếu. Ví dụ: NV047 vẫn được xét dù chưa có hợp đồng.'],
-  ['LEFT JOIN HopDong AS hd ON hd.MaNV = nv.MaNV', 'Mỗi hợp đồng khớp mã tạo một cặp; hồ sơ không khớp vẫn có một dòng. Ví dụ: NV021 khớp ba hợp đồng, NV047 nhận phần bên hd là NULL.'],
-  ['WHERE hd.MaHD IS NULL', 'Chỉ giữ dòng không có khóa hợp đồng ở phía phải. Ví dụ: giữ NV047, loại các dòng hợp đồng của NV021.'],
-  ['SELECT nv.MaNV, nv.HoTen, nv.MaPB, nv.NgayVaoLam', 'Đưa bốn cột hồ sơ vào danh sách, không gửi cột khóa chỉ dùng để kiểm. Ví dụ: NV047 có ngày vào làm 2026-10-01.'],
-  ['ORDER BY nv.MaNV ASC', 'Xếp danh sách theo mã tăng dần. Ví dụ: NV047 đứng trước NV048.'],
-]} />
-
-Với dòng không có cặp khớp, các cột phía `hd` nhận `NULL` trong kết quả; SQL không ghi thêm hợp đồng trống vào bảng. `MaHD` là khóa chính đã khai báo nên không nhận `NULL` trên hợp đồng thật: kiểm cột này mới nhận diện được phần không khớp. `NgayKetThuc` có thể `NULL` ngay trên hợp đồng không xác định thời hạn, nên không thay được khóa trong phép kiểm này.
-
-**ON và WHERE có vai trò khác nhau:** `ON` xác định các cặp được phép khớp, còn `WHERE` lọc dòng sau khi kết. Muốn tìm người chưa có hợp đồng trong một phạm vi, chẳng hạn một loại hợp đồng, nối thêm điều kiện phạm vi bên phải với điều kiện mã bằng `AND` trong `ON`, rồi kiểm khóa bằng `IS NULL` ở `WHERE`. Đưa phép so sánh loại xuống `WHERE` sẽ loại phần bên phải `NULL`; cách chọn phạm vi này cũng dùng cho đề đối chiếu theo kỳ ở cuối bài.
-
-Yêu cầu hiện tại là chưa có **bất kỳ** hợp đồng nào, nên `ON` chỉ so `MaNV`, không thêm điều kiện loại hay ngày. Điều kiện giới hạn chính hồ sơ bên trái, như `nv.MaPB = 'IT'`, vẫn có thể đặt ở `WHERE` khi muốn bỏ các phòng khác. Ở bài này chỉ cần giữ dòng không khớp và chọn đúng khóa kiểm `NULL`; điều kiện ngày và kiểm nhiều hợp đồng cùng khớp học tiếp ở bài 3.6.
-
-### SQL Server chạy câu này thế nào
-
-Theo **thứ tự xử lý logic**, lấy hồ sơ → kết hợp đồng và giữ phía trái → lọc khóa không khớp → chọn cột → sắp xếp. Hình trích các hồ sơ `NV021`, `NV047`, `NV048` để thấy cả dòng bị loại lẫn dòng được giữ; số tổng vẫn tính trên toàn bộ dữ liệu, không chỉ bản trích. Thứ tự trước `ORDER BY` không được bảo đảm; sơ đồ không mô tả cách thực thi vật lý:
+Sơ đồ theo **thứ tự xử lý logic**. SQL Server tự chọn cách thực thi, và thứ tự dòng trước `ORDER BY` có thể khác hình. Mở `LEFT JOIN` để xem các mã hợp đồng khớp, rồi mở `WHERE` để soi dòng nào được giữ.
 
 <RunFlow query={`SELECT nv.MaNV, nv.HoTen, nv.MaPB, nv.NgayVaoLam
 FROM NhanVien AS nv
@@ -74,9 +67,9 @@ WHERE hd.MaHD IS NULL
 ORDER BY nv.MaNV ASC;`} steps={[
   {
     clause: "FROM",
-    title: "Giữ danh sách hồ sơ gốc.",
+    title: "Lấy danh sách hồ sơ gốc.",
     focus: "FROM NhanVien AS nv",
-    meaning: "`FROM` chọn mọi hồ sơ, dùng `nv` làm phía cần đối chiếu; chưa lọc hoặc chọn cột kết quả.",
+    meaning: "`FROM` lấy hồ sơ từ `NhanVien` với bí danh `nv`; chưa lọc hoặc chọn cột kết quả.",
     detail: "`48` hồ sơ; bản trích có `4` cột: `MaNV`, `HoTen`, `MaPB`, `NgayVaoLam`.",
     sql: `SELECT nv.MaNV, nv.HoTen, nv.MaPB, nv.NgayVaoLam
 FROM NhanVien AS nv;`,
@@ -96,29 +89,41 @@ FROM NhanVien AS nv;`,
     title: "Kết hợp đồng, giữ hồ sơ không khớp.",
     focus: "LEFT JOIN HopDong AS hd ON hd.MaNV = nv.MaNV",
     meaning: "`LEFT JOIN` tạo mọi cặp có `MaNV` bằng nhau; hồ sơ không khớp vẫn có một dòng với phần hợp đồng là `NULL`.",
-    detail: "`57` dòng: `55` cặp hợp đồng và `2` hồ sơ không khớp; bản trích có `5` cột. `NV021` xuất hiện ba lần ứng với ba `MaHD` khác nhau.",
+    detail: "`57` dòng, bản trích có `5` cột. Các dòng được đánh dấu cho thấy `NV021` có mã hợp đồng và `NV047` có `MaHD` là `NULL`.",
     sql: `SELECT nv.MaNV, nv.HoTen, hd.MaHD,
 \tnv.MaPB, nv.NgayVaoLam
 FROM NhanVien AS nv
 LEFT JOIN HopDong AS hd ON hd.MaNV = nv.MaNV;`,
     columns: ["MaNV","HoTen","MaHD","MaPB","NgayVaoLam"],
+    preview: ["MaNV","HoTen","MaHD"],
     rows: [
       ["NV021","Tôn Thất Long","HD2021-001","IT","2021-07-01"],
+      ["NV048","Đỗ Minh Quân",null,"IT","2026-10-05"],
+      ["NV047","Phạm Ngọc Ánh",null,"NS","2026-10-01"],
       ["NV021","Tôn Thất Long","HD2021-002","IT","2021-07-01"],
       ["NV021","Tôn Thất Long","HD2024-005","IT","2021-07-01"],
-      ["NV047","Phạm Ngọc Ánh",null,"NS","2026-10-01"],
-      ["NV048","Đỗ Minh Quân",null,"IT","2026-10-05"],
     ],
     total: 57,
-    input: "Bảng bên phải là toàn bộ `HopDong`; chưa giới hạn loại hoặc ngày hợp đồng.",
-    inputColumns: ["MaNV","HoTen","MaPB","NgayVaoLam"],
+    input: "Phía phải là toàn bộ bảng `HopDong`. So mã nhân viên trên từng hợp đồng với mã trên hồ sơ.",
+    inputColumns: ["MaNV","HoTen"],
+    examples: [{
+      title: "Dò mã hồ sơ trong HopDong",
+      note: "Trích toàn bộ `3` hợp đồng của `NV021` trong `55` hợp đồng. Trong toàn bộ bảng, `NV047` thiếu dòng khớp mã.",
+      table: { columns: ["MaNV","MaHD"], rows: [
+        ["NV021","HD2021-001"],
+        ["NV021","HD2021-002"],
+        ["NV021","HD2024-005"],
+      ] },
+      conclusion: "`NV021` khớp cả ba dòng, mỗi cặp lấy `MaHD` từ hợp đồng tương ứng. `NV047` vẫn giữ mã từ `nv`, còn `MaHD` phía `hd` nhận `NULL`.",
+    }],
+    mark: [1,3],
   },
   {
     clause: "WHERE",
     title: "Giữ hồ sơ không có hợp đồng khớp.",
     focus: "WHERE hd.MaHD IS NULL",
-    meaning: "`WHERE` chỉ giữ những dòng có khóa `hd.MaHD` là `NULL`; loại các dòng đã khớp hợp đồng.",
-    detail: "Từ `57` dòng còn `2` dòng và `5` cột trong bảng kiểm: `NV047`, `NV048` không có khóa hợp đồng khớp.",
+    meaning: "`WHERE` kiểm `hd.MaHD IS NULL` trên từng dòng đầu vào và giữ các dòng cho kết quả đúng.",
+    detail: "Còn `2` dòng, `5` cột trong bản trích: hồ sơ `NV047` và `NV048`.",
     sql: `SELECT nv.MaNV, nv.HoTen, hd.MaHD,
 \tnv.MaPB, nv.NgayVaoLam
 FROM NhanVien AS nv
@@ -126,11 +131,11 @@ LEFT JOIN HopDong AS hd ON hd.MaNV = nv.MaNV
 WHERE hd.MaHD IS NULL;`,
     columns: ["MaNV","HoTen","MaHD","MaPB","NgayVaoLam"],
     rows: [
-      ["NV047","Phạm Ngọc Ánh",null,"NS","2026-10-01"],
       ["NV048","Đỗ Minh Quân",null,"IT","2026-10-05"],
+      ["NV047","Phạm Ngọc Ánh",null,"NS","2026-10-01"],
     ],
     total: 2,
-    checks: {"conditions":["hd.MaHD IS NULL"],"rows":[["NV021",false],["NV021",false],["NV021",false],["NV047",true],["NV048",true]],"totals":[2,2]},
+    checks: {"conditions":["hd.MaHD IS NULL"],"rows":[["NV021",false],["NV048",true],["NV047",true],["NV021",false],["NV021",false]],"totals":[2,2]},
     inputColumns: ["MaNV","HoTen","MaHD"],
   },
   {
@@ -145,18 +150,18 @@ LEFT JOIN HopDong AS hd ON hd.MaNV = nv.MaNV
 WHERE hd.MaHD IS NULL;`,
     columns: ["MaNV","HoTen","MaPB","NgayVaoLam"],
     rows: [
-      ["NV047","Phạm Ngọc Ánh","NS","2026-10-01"],
       ["NV048","Đỗ Minh Quân","IT","2026-10-05"],
+      ["NV047","Phạm Ngọc Ánh","NS","2026-10-01"],
     ],
     total: 2,
-    inputColumns: ["MaNV","HoTen","MaHD","MaPB","NgayVaoLam"],
+    inputColumns: ["MaNV","HoTen","MaPB","NgayVaoLam"],
   },
   {
     clause: "ORDER BY",
     title: "Xếp mã để đối chiếu.",
     focus: "ORDER BY nv.MaNV ASC",
     meaning: "`ORDER BY` xếp mã nhân viên tăng dần để đối chiếu hồ sơ.",
-    detail: "`2` dòng, `4` cột; `NV047` đứng trước `NV048`. Hai dòng bản trích vốn đã ở thứ tự này.",
+    detail: "`2` dòng, `4` cột; `NV047` đứng trước `NV048`.",
     sql: `SELECT nv.MaNV, nv.HoTen, nv.MaPB, nv.NgayVaoLam
 FROM NhanVien AS nv
 LEFT JOIN HopDong AS hd ON hd.MaNV = nv.MaNV
@@ -170,16 +175,30 @@ ORDER BY nv.MaNV ASC;`,
     total: 2,
     inputColumns: ["MaNV","HoTen","MaPB","NgayVaoLam"],
   },
-]} />
+]} note="Số sau dấu + cho biết còn bao nhiêu dòng hoặc cột chưa hiện trong bảng trích của từng thẻ." />
 
-Kết quả cuối có đủ hai dòng:
+Mỗi hợp đồng trong bộ mẫu khớp một hồ sơ, nên có `55` cặp. Hai hồ sơ thiếu hợp đồng góp thêm mỗi hồ sơ một dòng, thành `57` dòng. Chỉ hai dòng thêm này có `hd.MaHD` là `NULL`, nên chúng đi qua bộ lọc. Bảng dưới đánh dấu cả hai hồ sơ theo thứ tự mã.
 
 <Result columns={["MaNV","HoTen","MaPB","NgayVaoLam"]} rows={[
   ["NV047","Phạm Ngọc Ánh","NS","2026-10-01"],
   ["NV048","Đỗ Minh Quân","IT","2026-10-05"],
 ]} total={2} mark={[1,2]} />
 
-Bạn có thể trả lời chị Hạnh: `NV047` và `NV048` là `2` hồ sơ chưa có bất kỳ dòng hợp đồng nào trong hệ thống, với ngày vào làm lần lượt `2026-10-01` và `2026-10-05`. Câu lệnh không lọc riêng người mới. Chị cần đối chiếu hồ sơ giấy hoặc thông tin nhập liệu trước khi kết luận tình trạng thực tế.
+Bạn có thể gửi chị Hạnh `2` hồ sơ `NV047` và `NV048` để đối chiếu hồ sơ giấy. Cả hai đều chưa có dòng hợp đồng nào trong hệ thống.
+
+### Vận dụng trên cùng tình huống
+
+**Thu hẹp phạm vi hợp đồng cần đối chiếu.** Nếu chị Hạnh cần tìm hồ sơ chưa có hợp đồng thử việc, thêm `AND hd.LoaiHD = N'Thử việc'` vào `ON`. Khi đó cặp chỉ khớp nếu đúng cả mã lẫn loại. Tiền tố `N` giữ chữ tiếng Việt trong chuỗi như ở bài 2.2.
+
+Trong `HopDong`, `NV001` chỉ có một hợp đồng, mã `HD2024-018`, thuộc loại `Xác định thời hạn`. Vì thiếu cặp thử việc, hồ sơ này vẫn xuất hiện với `hd.MaHD` là `NULL` và được `WHERE hd.MaHD IS NULL` giữ lại.
+
+Nếu chuyển điều kiện loại xuống `WHERE`, `NV001` khớp hợp đồng theo mã ở bước kết, rồi bị loại vì điều kiện loại cho kết quả sai. `NV047` thiếu hẳn hợp đồng, nên phép so loại với `NULL` cho `UNKNOWN` và `WHERE` cũng loại dòng này, theo quy tắc ở bài 2.5.
+
+**Thu hẹp danh sách hồ sơ.** Nếu chị chỉ cần phòng `IT`, nối thêm `AND nv.MaPB = 'IT'` trong `WHERE`. Điều kiện này giới hạn chính hồ sơ cần trả về. Phần `ON` vẫn so mã để xét toàn bộ hợp đồng của mỗi hồ sơ.
+
+**Liệt kê cả hồ sơ đã có hợp đồng.** Lấy thêm `hd.MaHD` trong `SELECT` và bỏ bộ lọc `hd.MaHD IS NULL` để giữ mọi cặp. Hồ sơ thiếu hợp đồng vẫn hiện với giá trị SQL `NULL`. Khi cần xếp các hợp đồng của cùng một hồ sơ, đặt mã hợp đồng làm tiêu chí thứ hai sau mã nhân viên, theo cách sắp ở bài 2.4.
+
+Ở bài này chỉ cần giữ hồ sơ thiếu cặp và chọn đúng phạm vi đối chiếu. Bài 3.6 đi tiếp vào điều kiện ngày và cách kiểm số dòng khi kết nhiều bảng.
 
 ## Hay nhầm ở đâu
 
@@ -187,7 +206,7 @@ Bạn có thể trả lời chị Hạnh: `NV047` và `NV048` là `2` hồ sơ c
 
 1. **Dùng `INNER JOIN` rồi tìm `hd.MaHD IS NULL`.** Các hồ sơ không có cặp đã bị loại ở bước kết, nên danh sách cần tìm biến mất.
 2. **Thay bằng `hd.NgayKetThuc IS NULL`.** Kết quả lẫn người đã có hợp đồng không xác định thời hạn, sai yêu cầu chưa có hợp đồng.
-3. **Thêm điều kiện loại hoặc ngày vào câu đang tìm “chưa có bất kỳ hợp đồng nào”.** Phạm vi đối chiếu bị thu hẹp; người có hợp đồng ngoài phạm vi có thể bị hiểu nhầm là chưa có.
+3. **Đặt điều kiện loại ở `WHERE` khi tìm hồ sơ thiếu hợp đồng thuộc loại đó.** Hồ sơ chỉ khớp loại khác bị loại, làm danh sách thiếu hồ sơ cần đối chiếu.
 4. **Gọi `57` dòng sau kết là `57` người.** Một hồ sơ có thể xuất hiện trong nhiều cặp; đếm dòng kết quả trực tiếp sẽ đếm lặp người.
 
 </Mistakes>
@@ -213,37 +232,37 @@ Bạn có thể trả lời chị Hạnh: `NV047` và `NV048` là `2` hồ sơ c
 **Tự kiểm tra:**
 
 <details>
-<summary>Trong câu chính, bảng nào ở phía trái và hồ sơ không có cặp nhận gì ở phía phải?</summary>
+<summary>Để giữ hồ sơ <code>NV047</code> khi chưa có hợp đồng, đặt bảng nào ở phía trái? Cột <code>hd.MaHD</code> nhận giá trị gì trước bước lọc?</summary>
 
-`NhanVien` ở phía trái. Hồ sơ không có hợp đồng vẫn tạo một dòng kết quả, các cột phía `HopDong` là `NULL`.
-
-</details>
-
-<details>
-<summary>Vì sao kiểm <code>MaHD</code> thay vì <code>NgayKetThuc</code> để tìm người chưa có hợp đồng?</summary>
-
-`MaHD` không nhận `NULL` trên hợp đồng thật; `NgayKetThuc` có thể `NULL` dù hợp đồng đã tồn tại.
+Đặt `NhanVien` sau `FROM`. `LEFT JOIN` giữ một dòng cho `NV047`, với `hd.MaHD` là `NULL` vì hồ sơ thiếu cặp.
 
 </details>
 
 <details>
-<summary><code>LEFT JOIN</code> có bảo đảm một dòng cho mỗi nhân viên không?</summary>
+<summary>Lọc <code>hd.NgayKetThuc IS NULL</code> sẽ giữ nhầm những hồ sơ nào khi tìm người chưa có hợp đồng?</summary>
 
-Không. Mỗi hợp đồng khớp tạo một cặp; `NV021` có ba hợp đồng nên xuất hiện ba lần trước khi lọc.
+Điều kiện còn giữ các dòng hợp đồng không xác định thời hạn vì chúng có `NgayKetThuc` là `NULL`. Lọc `hd.MaHD IS NULL` để giữ đúng hồ sơ thiếu cặp, vì hợp đồng thật luôn có `MaHD`.
 
 </details>
 
 <details>
-<summary>Muốn tìm người chưa có hợp đồng thử việc, điều kiện loại hợp đồng nằm ở đâu?</summary>
+<summary>Ở bước <code>LEFT JOIN</code>, hồ sơ <code>NV021</code> tạo bao nhiêu dòng khi có ba hợp đồng cùng mã?</summary>
 
-Đặt `hd.LoaiHD = N'Thử việc'` trong `ON` để chỉ xét loại đó, rồi kiểm `hd.MaHD IS NULL` trong `WHERE` để giữ người không có cặp phù hợp.
+Ba dòng. Mỗi hợp đồng khớp tạo một cặp riêng và đưa mã hợp đồng của cặp đó vào kết quả.
+
+</details>
+
+<details>
+<summary><code>NV001</code> chỉ có hợp đồng xác định thời hạn. Hồ sơ này có trong danh sách thiếu hợp đồng thử việc khi điều kiện loại nằm ở <code>ON</code> không?</summary>
+
+Có. `ON` chỉ tính cặp khớp cả mã lẫn loại thử việc. Hồ sơ `NV001` thiếu cặp như vậy, nên `LEFT JOIN` cho `hd.MaHD` là `NULL` và bộ lọc giữ hồ sơ.
 
 </details>
 
 ## Bài tập
 
-Ba đề lần lượt giới hạn phòng cần đối chiếu, chọn phạm vi kỳ ở bảng bên phải, rồi liệt kê mọi cặp kể cả hồ sơ không khớp. Đọc rõ “chưa có bất kỳ hợp đồng nào” hay “chưa có dòng của một kỳ”; xác định phạm vi khớp trước khi lọc.
+Ở đề theo kỳ lương, phạm vi dùng để tính cặp khớp là kỳ cần tìm, tương tự loại hợp đồng trong phần Vận dụng. Khóa chính của `BangLuong` gồm hai cột `KyLuong` và `MaNV`, như ở bài 1.4. `KyLuong` chứa mã kỳ theo dạng năm-tháng và `MaNV` luôn có giá trị trên dòng lương thật, nên có thể dùng mã nhân viên phía bảng lương để kiểm dòng thiếu cặp.
 
-Bộ chấm so giá trị, thứ tự cột và thứ tự dòng theo đề, không bắt buộc một khuôn cú pháp. Khi đề yêu cầu giữ cả hồ sơ không có cặp, không dùng điều kiện chỉ giữ khóa không khớp.
+Bộ chấm đối chiếu giá trị theo thứ tự cột và thứ tự dòng yêu cầu trong đề.
 
 <Exercises />

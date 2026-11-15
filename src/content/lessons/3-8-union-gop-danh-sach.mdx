@@ -29,7 +29,7 @@ Phạm vi: đơn `DonNghiPhep` đã duyệt có `TuNgay` từ `01/09` đến tr�
 
 ## Từ hai danh sách đến một danh sách chung
 
-### Từ dán chồng trong Excel đến UNION
+### Cấu trúc mới trong bài
 
 Trong Excel, bạn chép cột mã của nhóm thứ hai xuống dưới nhóm thứ nhất, chọn cả vùng rồi dùng **Remove Duplicates** (bỏ dòng trùng). Hình minh họa trích hai mã của mỗi nhóm trước khi bỏ trùng; `A2` và `A4` cùng là `NV005`. Cột nguồn chỉ giúp đọc hình, không nằm trong vùng bỏ trùng `A1:A5`.
 
@@ -41,7 +41,15 @@ Trong Excel, bạn chép cột mã của nhóm thứ hai xuống dưới nhóm t
   ['NV001','Giờ vào'],
 ]} />
 
-Trong SQL, **UNION** chồng kết quả của các câu `SELECT` rồi bỏ dòng trùng. Mỗi câu ở một phía gọi là một **nhánh**; mỗi nhánh tự lọc nguồn của mình. Với yêu cầu mỗi mã một dòng, câu lệnh là:
+Trong SQL, **UNION** chồng kết quả của các câu `SELECT` rồi bỏ dòng trùng. Mỗi câu ở một phía gọi là một **nhánh** và tự lọc nguồn của mình. `ORDER BY` cuối dùng tên cột từ nhánh đầu để xếp toàn bộ danh sách sau khi gộp.
+
+Hai nhánh phải có **cùng số cột**, các vị trí tương ứng có **kiểu dữ liệu tương thích**: cùng kiểu hoặc có thể **chuyển kiểu ngầm** về kiểu chung (bài 1.3). Ở đây đều là một cột `MaNV` kiểu `varchar`. SQL gộp theo **vị trí**, không dò tên cột; `JOIN` ở các bài trước lại kết các dòng theo điều kiện để lấy thông tin liên quan.
+
+Nếu SQL Server phải chuyển kiểu, một giá trị có thể không chuyển được hoặc đổi nghĩa sau khi chuyển, như ở bài 1.3. Kiểm kiểu và giá trị của từng cặp cột trước khi gộp.
+
+Dùng **UNION ALL** khi báo cáo cần giữ từng lần xuất hiện của một mã. Dùng `UNION` khi mỗi dòng giống nhau chỉ cần xuất hiện một lần, kể cả khi trùng ngay trong cùng nhánh.
+
+### Đọc câu SQL qua các bước
 
 <Sql code={`SELECT MaNV
 FROM DonNghiPhep
@@ -54,26 +62,7 @@ WHERE Ngay >= '20260901' AND Ngay < '20261001'
 \tAND GioVao > '08:00'
 ORDER BY MaNV;`} />
 
-<LineMap rows={[
-  ['SELECT MaNV … FROM DonNghiPhep', 'Nhánh đầu lấy mã của đơn, không lấy thêm chi tiết đơn. Ví dụ: NV005 có một đơn đạt điều kiện.'],
-  ["WHERE TrangThai = N'Đã duyệt' AND TuNgay >= '20260901' AND TuNgay < '20261001'", 'Chỉ chọn đơn đã duyệt bắt đầu trong tháng 9. Ví dụ: đơn của NV005 bắt đầu 10/09/2026 được lấy.'],
-  ['UNION', 'Chồng hai kết quả và bỏ dòng giống nhau, kể cả trùng ngay trong một nhánh. Ví dụ: NV005 ở cả hai nguồn chỉ còn một dòng mã.'],
-  ['SELECT MaNV … FROM ChamCong', 'Nhánh sau lấy mã của từng dòng chấm công đạt điều kiện. Ví dụ: NV005 có mặt ở nguồn này nữa.'],
-  ["WHERE Ngay >= '20260901' AND Ngay < '20261001' AND GioVao > '08:00'", 'Chọn ngày trong tháng 9 có giờ vào sau mốc, không nhận đúng 08:00. Ví dụ: 08:15 nằm sau mốc 08:00.'],
-  ['ORDER BY MaNV', 'Một ORDER BY ở cuối sắp toàn bộ kết quả chung tăng dần. Ví dụ: NV001 đứng trước NV005 sau khi gộp.'],
-]} />
-
-Hai nhánh phải có **cùng số cột**, các vị trí tương ứng có **kiểu dữ liệu tương thích**: cùng kiểu hoặc có thể **chuyển kiểu ngầm** về kiểu chung (bài 1.3). Ở đây đều là một cột `MaNV` kiểu `varchar`. SQL gộp theo **vị trí**, không dò tên cột; `JOIN` ở các bài trước lại kết các dòng theo điều kiện để lấy thông tin liên quan.
-
-**UNION ALL** giữ mọi lần xuất hiện. Thay duy nhất `UNION` trong câu trên bằng `UNION ALL` sẽ giữ `85` dòng từ `9` dòng đơn nghỉ và `76` dòng chấm công, gồm mã lặp ở nhiều ngày hoặc ở cả hai nguồn. Đây là số lần xuất hiện, không phải số mã khác nhau; `UNION` đã bỏ trùng nên không cần thêm `DISTINCT` ở từng nhánh.
-
-`UNION` xét trùng theo **toàn bộ cột được chọn**. Nếu cần nguồn ở bài tập, thêm `N'Đơn nghỉ' AS [Nguon]` sau `MaNV` ở nhánh đầu, `N'Giờ vào'` ở cùng vị trí nhánh sau; tên cột chung lấy từ nhánh đầu và `ORDER BY` cuối dùng tên đó. Với phạm vi đang xét, kết quả có `49` cặp mã–nguồn: `NV005` với `Đơn nghỉ` khác `NV005` với `Giờ vào`, nên giữ cả hai. Các lần cùng mã, cùng nguồn mới gộp lại.
-
-Ở bài này chỉ cần chồng các cột cùng ý nghĩa và chọn mức bỏ trùng. Đổi nhãn hay dùng `UNION ALL` không sửa dữ liệu nguồn; thời gian chạy còn tùy dữ liệu và cách thực thi. Cách đọc kế hoạch thực thi để xem máy xử lý học ở bài 4.7.
-
-### SQL Server chạy câu này thế nào
-
-Theo **thứ tự xử lý logic**, mỗi nhánh đi từ `FROM` → `WHERE` → `SELECT`, rồi hai kết quả cùng vào `UNION`, sau đó `ORDER BY` sắp xếp. Hai nhánh độc lập; sơ đồ không phải thứ tự thực thi vật lý. Hai thẻ đầu tóm tắt nhánh đã lọc, nên bảng kết quả của chúng chỉ còn mã:
+Hai nhánh cung cấp đầu vào độc lập cho phép gộp. Sơ đồ mô tả luồng dữ liệu logic. SQL Server tự chọn cách thực thi. Mở mỗi nhánh để xem các mã đạt điều kiện.
 
 <RunFlow query={`SELECT MaNV
 FROM DonNghiPhep
@@ -156,9 +145,19 @@ ORDER BY MaNV;`,
   }
 ]} note="Hai thẻ SELECT là hai đầu vào độc lập. Các mũi tên cùng đi vào UNION; chỉ ORDER BY cuối câu bảo đảm thứ tự kết quả." />
 
+Nhánh đơn nghỉ trả `9` dòng, nhánh chấm công trả `76` dòng. `NV005` có mặt ở cả hai nhánh. Mỗi nhánh chỉ xuất `MaNV`, nên các lần xuất hiện của cùng mã thành một dòng khi qua `UNION`. Bước cuối sắp `41` mã còn lại.
+
 <Result columns={["MaNV"]} rows={[["NV001"],["NV002"],["NV003"],["NV004"],["NV005"],["NV006"],["NV007"],["NV008"],["NV009"],["NV010"]]} total={41} />
 
 Gửi chị Hạnh danh sách `41` mã khác nhau, bảng trên trích `10` dòng đầu. Mã thuộc một nhóm hay cả hai đều chỉ có một dòng; danh sách này dùng đối chiếu theo điều kiện đã chọn, chưa phải kết luận nghỉ không phép hay đi muộn.
+
+### Vận dụng trên cùng tình huống
+
+Thay `UNION` bằng `UNION ALL` trong câu trên sẽ giữ `85` lần xuất hiện từ hai nhánh. Kết quả có thể lặp mã vì nhiều ngày chấm công hoặc vì mã có ở cả hai nguồn.
+
+`UNION` xét trùng theo **toàn bộ cột được chọn**. Nếu cần nguồn ở bài tập, thêm `N'Đơn nghỉ' AS [Nguon]` sau `MaNV` ở nhánh đầu, `N'Giờ vào'` ở cùng vị trí nhánh sau; tên cột chung lấy từ nhánh đầu và `ORDER BY` cuối dùng tên đó. Với phạm vi đang xét, kết quả có `49` cặp mã–nguồn: `NV005` với `Đơn nghỉ` khác `NV005` với `Giờ vào`, nên giữ cả hai. Các lần cùng mã, cùng nguồn mới gộp lại.
+
+Ở bài này chỉ cần chồng các cột cùng ý nghĩa và chọn mức bỏ trùng. Đổi nhãn hay dùng `UNION ALL` không sửa dữ liệu nguồn; thời gian chạy còn tùy dữ liệu và cách thực thi. Cách đọc kế hoạch thực thi để xem máy xử lý học ở bài 4.7.
 
 ## Hay nhầm ở đâu
 
@@ -215,6 +214,6 @@ Kiểm cùng số cột, các vị trí mang cùng ý nghĩa và kiểu tương 
 
 ## Bài tập
 
-Chốt trước đơn vị của một dòng: một mã khác nhau, một lần xuất hiện hay một cặp mã–nguồn. Bộ chấm so kết quả, không bắt buộc một cách viết duy nhất.
+Chốt trước đơn vị của một dòng: một mã khác nhau, một lần xuất hiện hay một cặp mã–nguồn. Trong `BangLuong`, khóa chính gồm `KyLuong` và `MaNV` như bài 1.4. Mỗi mã có tối đa một dòng mỗi kỳ, nên một mã có mặt ở cả hai kỳ đóng góp đúng hai dòng khi giữ mọi lần xuất hiện.
 
 <Exercises />

@@ -28,7 +28,7 @@ Lấy các dòng `DonNghiPhep` có `TrangThai = N'Đã duyệt'` và `TuNgay` t�
 
 ## Đọc một báo cáo qua các kết quả có tên
 
-### Từ vùng kết quả trong Excel đến WITH
+### Cấu trúc mới trong bài
 
 Trong Excel, bạn lọc đơn theo trạng thái và tháng bắt đầu, rồi dùng một vùng khác để cộng ngày theo loại. Hình minh họa trích vùng đã lọc, chỉ hiện ba đơn `Nghỉ ốm`. Các ô được đánh dấu là số ngày đưa vào tổng của loại này.
 
@@ -40,6 +40,26 @@ Trong Excel, bạn lọc đơn theo trạng thái và tháng bắt đầu, rồi
 ]} />
 
 Ở bài 3.11, câu con trong `FROM` tạo một nguồn trung gian. **CTE** (Common Table Expression, biểu thức bảng chung) cũng cho bạn một kết quả trung gian có tên để dùng như nguồn bảng. Với `WITH`, bạn đặt các định nghĩa lên đầu câu để thấy ngay báo cáo lấy dữ liệu từ bước nào.
+
+Khai báo một CTE bằng **`WITH TenCTE AS (...)`**. `TenCTE` là tên bạn đặt; bên trong ngoặc là truy vấn tạo ra các cột để phần phía sau dùng. Sau dấu đóng ngoặc phải có câu dùng CTE, chẳng hạn lấy dữ liệu từ tên đó trong `FROM`; phần khai báo đứng một mình chưa phải câu lệnh hoàn chỉnh.
+
+Với báo cáo này, ta cần hai CTE. Khuôn dưới lược phần truy vấn bằng `...`, chỉ để thấy cách các khối nối với nhau:
+
+<Sql copy={false} title="Khuôn hai CTE — chưa phải câu hoàn chỉnh" code={`WITH DonDaDuyetThang9 AS (
+\t...
+), TongTheoLoai AS (
+\t...
+)
+SELECT ...
+FROM TongTheoLoai;`} />
+
+Chỉ viết **một `WITH`**, đặt dấu phẩy giữa hai định nghĩa. `DonDaDuyetThang9` xuất các cột `MaDon`, `LoaiNghi`, `SoNgay`. `TongTheoLoai` đọc nguồn đó để xuất `LoaiNghi` và `TongNgay`, nên phải khai báo sau CTE đầu. Câu ngoài chỉ đọc được các cột mà CTE dùng làm nguồn xuất ra; nó không tự nhận mọi cột của bảng gốc.
+
+Tên CTE có phạm vi trong **một câu lệnh**: phần `WITH` và câu dùng tên CTE đi cùng nhau. Câu lệnh tiếp theo muốn dùng lại tên phải khai báo lại. CTE giúp tổ chức báo cáo thành các phần có tên để đọc và kiểm; SQL Server tự chọn cách thực thi, không bảo đảm lưu sẵn kết quả hay chạy nhanh hơn.
+
+### Đọc câu SQL qua các bước
+
+Điền các truy vấn lọc và tổng hợp vào hai định nghĩa, ta có câu đầy đủ:
 
 <Sql code={`WITH DonDaDuyetThang9 AS (
 \tSELECT MaDon, LoaiNghi, SoNgay
@@ -56,38 +76,7 @@ FROM TongTheoLoai AS tl
 WHERE tl.TongNgay >= 5
 ORDER BY tl.TongNgay DESC, tl.LoaiNghi ASC;`} />
 
-<LineMap rows={[
-  ['WITH DonDaDuyetThang9 AS (…)','AS gắn tên CTE với truy vấn trong ngoặc. Ví dụ: DonDaDuyetThang9 xuất MaDon, LoaiNghi, SoNgay của đơn DP002.'],
-  ['WHERE TrangThai = … AND TuNgay …','Lọc từng đơn theo trạng thái và khoảng từ đầu tháng 9 đến trước đầu tháng 10. Ví dụ: DP018 đã duyệt nhưng bắt đầu ngày 31/08 nên bị loại.'],
-  ['), TongTheoLoai AS (…)','Dấu phẩy mở định nghĩa CTE thứ hai. Ví dụ: TongTheoLoai đọc các đơn từ DonDaDuyetThang9.'],
-  ['SUM(SoNgay) AS [TongNgay] … GROUP BY LoaiNghi','Xuất một dòng mỗi loại, gồm LoaiNghi và TongNgay. Ví dụ: nhóm Nghỉ ốm xuất Nghỉ ốm / 5.'],
-  ['FROM TongTheoLoai AS tl','Dùng CTE thứ hai làm nguồn của câu ngoài, với bí danh tl. Ví dụ: tl.TongNgay đọc được giá trị 5 của Nghỉ ốm.'],
-  ['WHERE tl.TongNgay >= 5','Lọc các dòng đã tổng hợp. Ví dụ: Nghỉ ốm có đúng 5 ngày và được giữ, Việc riêng có 2 ngày và bị loại.'],
-  ['SELECT tl.LoaiNghi, tl.TongNgay','Chọn hai cột báo cáo. Ví dụ: dòng Nghỉ ốm có tổng ngày và không còn mã từng đơn.'],
-  ['ORDER BY tl.TongNgay DESC, tl.LoaiNghi ASC','Xếp tổng giảm dần, cùng tổng thì xếp tên loại tăng dần. Ví dụ: Phép năm / 9 đứng trước Nghỉ ốm / 5.'],
-]} />
-
-Một CTE chỉ cần `WITH Ten AS (...)` rồi tới câu dùng tên đó. Với hai CTE, viết một `WITH` và ngăn các định nghĩa bằng dấu phẩy. Trong bài này, `TongTheoLoai` đứng sau `DonDaDuyetThang9` vì nó đọc các cột mà CTE đầu xuất ra.
-
-Theo ba đơn `Nghỉ ốm` trong hình, `WHERE` đầu xét từng đơn. Sau khi cả ba đơn qua lọc, `GROUP BY LoaiNghi` gom chúng vào cùng nhóm và `SUM(SoNgay)` tính `1 + 2 + 2 = 5`. `WHERE` ngoài giữ dòng tổng này vì `TongNgay` đã là cột của nguồn `TongTheoLoai`. Tên vừa đặt bằng `AS [TongNgay]` chưa dùng được trong `WHERE` ở cùng cấp với phép cộng.
-
-Khi cần đếm dòng trong mỗi nhóm thay vì cộng ngày, dùng `COUNT(*)` như ở bài 3.1–3.2. CTE tổng hợp đặt tên cho cột đếm để bước sau dùng làm điều kiện, giống cách câu này đặt tên cho `TongNgay`.
-
-Để kiểm danh sách đơn, giữ phần từ `WITH` tới dấu đóng ngoặc của `DonDaDuyetThang9`. Bỏ dấu phẩy và định nghĩa `TongTheoLoai`, rồi dùng đoạn dưới làm phần cuối của câu.
-
-<Sql code={`SELECT MaDon, LoaiNghi, SoNgay
-FROM DonDaDuyetThang9
-ORDER BY MaDon ASC;`} copy={false} />
-
-Kết quả là `9` đơn. Để xem cả `3` tổng trước khi lọc, giữ hai định nghĩa và bỏ điều kiện `WHERE tl.TongNgay >= 5` ở câu ngoài. Nếu muốn kiểm riêng vài dòng ở một bước, đặt điều kiện trên các cột của CTE đang đọc trong phần cuối, như khi lọc danh sách bằng `WHERE` và `IN` ở bài 2.3.
-
-Tên CTE có phạm vi trong **một câu lệnh**. Phần `WITH` và câu dùng tên CTE đi cùng nhau, nên một câu lệnh thứ hai muốn dùng lại tên phải khai báo lại. CTE giúp đọc và kiểm báo cáo. SQL Server chọn cách thực thi, nên cách viết này không bảo đảm lưu sẵn kết quả hay chạy nhanh hơn.
-
-Ở bài này chỉ cần đặt tên cho từng bước và kiểm đúng đầu ra. Cách xem SQL Server thực thi học ở bài 4.7 và cách lưu định nghĩa truy vấn để dùng lại học ở bài 4.8.
-
-### SQL Server chạy câu này thế nào
-
-Đọc theo nguồn của từng bước. `DonDaDuyetThang9` lọc bảng gốc còn `9` đơn. `TongTheoLoai` dùng các đơn đó để tính `3` tổng theo loại. Câu ngoài đọc ba tổng và giữ `2` loại đạt ngưỡng. Mở hai thẻ CTE để xem thứ tự các mệnh đề bên trong mỗi khối.
+Sơ đồ biểu diễn **luồng dữ liệu logic**, không phải thứ tự thực thi vật lý. Mở hai thẻ CTE để xem đầu vào, phép xử lý và kết quả của từng khối.
 
 <RunFlow query={`WITH DonDaDuyetThang9 AS (
 \tSELECT MaDon, LoaiNghi, SoNgay
@@ -251,9 +240,29 @@ ORDER BY tl.TongNgay DESC, tl.LoaiNghi ASC;`} steps={[
   }
 ]} note="Mũi tên cho biết bước sau lấy dữ liệu từ đâu. SQL Server tự chọn cách thực thi." />
 
+`DonDaDuyetThang9` lọc còn `9` đơn; `TongTheoLoai` cộng thành `3` dòng theo loại nghỉ; câu ngoài giữ `2` loại có tổng từ năm ngày. Ngưỡng được xét trên dòng tổng, không phải trên từng đơn ban đầu.
+
+Ba đơn `Nghỉ ốm` qua bộ lọc có lần lượt `1`, `2` và `2` ngày. `GROUP BY LoaiNghi` gom chúng vào cùng nhóm và `SUM(SoNgay)` tính `1 + 2 + 2 = 5`. `WHERE` ngoài giữ dòng tổng này vì `TongNgay` đã là cột của nguồn `TongTheoLoai`. Tên vừa đặt bằng `AS [TongNgay]` chưa dùng được trong `WHERE` ở cùng cấp với phép cộng.
+
 <Result columns={["LoaiNghi","TongNgay"]} rows={[["Phép năm",9],["Nghỉ ốm",5]]} total={2} />
 
 Báo cáo gửi chị Hạnh có hai loại đạt ngưỡng. `Phép năm` có `9` ngày và `Nghỉ ốm` có `5` ngày trên các đơn đã duyệt bắt đầu trong tháng 9.
+
+### Vận dụng trên cùng tình huống
+
+Khi cần đếm dòng trong mỗi nhóm thay vì cộng ngày, dùng `COUNT(*)` như ở bài 3.1–3.2. CTE tổng hợp đặt tên cho cột đếm để bước sau dùng làm điều kiện, giống cách câu này đặt tên cho `TongNgay`.
+
+Để kiểm danh sách đơn, giữ phần từ `WITH` tới dấu đóng ngoặc của `DonDaDuyetThang9`. Bỏ dấu phẩy và định nghĩa `TongTheoLoai`, rồi dùng đoạn dưới làm phần cuối của câu.
+
+<Sql code={`SELECT MaDon, LoaiNghi, SoNgay
+FROM DonDaDuyetThang9
+ORDER BY MaDon ASC;`} copy={false} />
+
+Kết quả là `9` đơn. Để xem cả `3` tổng trước khi lọc, giữ hai định nghĩa và bỏ điều kiện `WHERE tl.TongNgay >= 5` ở câu ngoài. Khi kiểm riêng vài mã, đặt `WHERE` với `IN` trong `SELECT` cuối như bài 2.3, dùng cột mã mà CTE xuất ra.
+
+Nếu cần một CTE chuyên lọc ngưỡng, cho CTE đầu thực hiện cả việc chọn đơn và tổng hợp để xuất `LoaiNghi` cùng `TongNgay`. CTE thứ hai đọc hai cột đó từ CTE đầu và lọc theo `TongNgay`. Câu cuối đọc CTE thứ hai để chọn cột và sắp xếp.
+
+Ở bài này chỉ cần đặt tên cho từng bước và kiểm đúng đầu ra. Cách xem SQL Server thực thi học ở bài 4.7 và cách lưu định nghĩa truy vấn để dùng lại học ở bài 4.8.
 
 ## Hay nhầm ở đâu
 

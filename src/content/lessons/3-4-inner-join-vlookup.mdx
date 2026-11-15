@@ -28,9 +28,9 @@ Giả định: lấy mọi hồ sơ trong `NhanVien`, gồm cả người đã n
 
 ## Lấy tên phòng qua mã đang lưu
 
-### Từ dò tên phòng trong Excel đến INNER JOIN
+### Cấu trúc mới trong bài
 
-Trong Excel, bạn đặt danh mục phòng vào sheet `PhongBan` rồi dùng **VLOOKUP**, hàm tìm mã ở cột đầu của vùng dò và lấy giá trị cùng dòng ở cột khác. Công thức dưới lấy mã `KT` ở `C2`, dò trong cột `A` của sheet danh mục, trả tên từ cột thứ `2`; `FALSE` yêu cầu khớp chính xác. Hình trích ba hồ sơ, đánh dấu mã dò `C2` và tên nhận được `D2`:
+Trong Excel, **VLOOKUP** tìm mã ở cột đầu của vùng dò và lấy giá trị ở cột khác trên cùng dòng. Công thức lấy mã `KT` ở `C2`, dò trong cột `A` của sheet `PhongBan` rồi lấy tên từ cột thứ `2` của vùng `A:B`. Đối số `FALSE` yêu cầu mã khớp chính xác. Hình trích ba hồ sơ, đánh dấu mã dò ở `C2` và tên nhận được ở `D2`.
 
 <Excel sheets="NhanVien · PhongBan" cell="D2" formula="=VLOOKUP(C2,PhongBan!A:B,2,FALSE)" selected="D2" mark={['C2','D2']} rows={[
   ['MaNV','HoTen','MaPB','TenPB'],
@@ -39,7 +39,18 @@ Trong Excel, bạn đặt danh mục phòng vào sheet `PhongBan` rồi dùng **
   ['NV004','Hoàng Minh Tuấn','BGD','Ban Giám đốc'],
 ]} />
 
-Trong SQL, **kết bảng** tạo kết quả từ các dòng ở những bảng liên quan; **INNER JOIN** chỉ lấy những cặp dòng thỏa điều kiện khớp. Câu lệnh cho danh sách chị Hạnh cần là:
+Trong SQL, **kết bảng** cho phép lấy thông tin từ các dòng ở nhiều bảng. Bắt đầu bằng `FROM` với bảng hồ sơ, rồi viết **`INNER JOIN`** với bảng danh mục. Điều kiện **`ON`** ngay sau bảng danh mục xác định hai dòng nào được tính là một cặp. Đoạn trích sau chỉ dùng để đọc phần kết bảng.
+
+<Sql copy={false} title="Đoạn trích kết bảng" code={`FROM NhanVien AS nv
+INNER JOIN PhongBan AS pb ON pb.MaPB = nv.MaPB`} />
+
+`AS nv` và `AS pb` đặt **bí danh bảng** cho `NhanVien` và `PhongBan` trong câu lệnh. Ở bài 2.1, `AS` trong `SELECT` đặt tên cho cột kết quả. Ở đây, đặt bí danh trước dấu chấm để chỉ nguồn của cột, như `nv.MaPB` cho mã trên hồ sơ và `pb.MaPB` cho mã trong danh mục. Cách viết này phân biệt hai cột cùng tên và cho biết `pb.TenPB` phải lấy từ danh mục.
+
+Dựa vào liên kết đã học ở [bài 1.5](/microsoft-sql-lession/bai/1-5-doc-so-do-erd/), viết `ON pb.MaPB = nv.MaPB` để so mã phòng ở hai bảng. Điều kiện do bạn chọn. Hai cột trùng tên chưa đủ để SQL Server biết cần so chúng.
+
+`INNER JOIN` tạo một dòng kết quả cho mỗi cặp thỏa `ON` trong câu này. Nếu một hồ sơ thiếu phòng khớp, nó không tạo ra dòng nào, còn công thức Excel vẫn để hồ sơ trên sheet và hiện `#N/A` ở ô trả tên. Nếu một hồ sơ khớp nhiều dòng danh mục, SQL trả đủ các cặp, còn `VLOOKUP` dò chính xác trả lần khớp đầu tiên.
+
+### Đọc câu SQL qua các bước
 
 <Sql code={`SELECT nv.MaNV, nv.HoTen, nv.MaPB,
 \tpb.TenPB
@@ -47,25 +58,7 @@ FROM NhanVien AS nv
 INNER JOIN PhongBan AS pb ON pb.MaPB = nv.MaPB
 ORDER BY nv.MaNV ASC;`} />
 
-<LineMap rows={[
-  ['SELECT nv.MaNV, nv.HoTen, nv.MaPB, pb.TenPB', 'Lấy bốn cột theo đúng thứ tự yêu cầu. Ví dụ: dòng NV001 lấy họ tên từ hồ sơ và tên Kế toán từ danh mục.'],
-  ['FROM NhanVien AS nv', 'Dùng NhanVien làm nguồn, gọi ngắn là nv trong câu này. Ví dụ: nv.HoTen đọc họ tên Trần Thị Mai của NV001.'],
-  ['INNER JOIN PhongBan AS pb', 'Đối chiếu với danh mục phòng, gọi ngắn là pb; chỉ trả các cặp khớp. Ví dụ: NV001 đi cùng dòng phòng KT.'],
-  ['ON pb.MaPB = nv.MaPB', 'So mã phòng của danh mục với mã đang lưu trên hồ sơ. Ví dụ: hai giá trị KT bằng nhau nên lấy được tên Kế toán.'],
-  ['ORDER BY nv.MaNV ASC', 'Xếp kết quả theo mã nhân viên tăng dần. Ví dụ: NV001 đứng trước NV002.'],
-]} />
-
-Các tên ngắn `nv` và `pb` gọi là **bí danh bảng**; dấu chấm trong `pb.TenPB` tách bí danh với tên cột. Chúng chỉ có trong câu lệnh, không đổi tên bảng thật. Khác với bí danh cột ở bài 2.1, `AS nv` đặt tên cho nguồn dữ liệu; vì hai bảng đều có `MaPB`, viết `nv.MaPB` hoặc `pb.MaPB` mới chỉ rõ cột cần đọc.
-
-Điều kiện **ON** do bạn viết, không tự sinh từ tên cột giống nhau. Áp dụng cách đọc liên kết ở [bài 1.5](/microsoft-sql-lession/bai/1-5-doc-so-do-erd/): mã phòng trên hồ sơ cần khớp khóa phòng trong danh mục. SQL chỉ lấy tên vào kết quả, không chép tên trở lại từng hồ sơ.
-
-Mỗi hồ sơ trong bộ mẫu có đúng một phòng khớp: `NhanVien.MaPB` được khai báo `NOT NULL`, có khóa ngoại tới `PhongBan.MaPB`, còn mã danh mục là khóa chính. Thiếu cặp khớp thì `INNER JOIN` loại dòng; công thức Excel trên vẫn giữ dòng hồ sơ và báo `#N/A`. Khi phía danh mục có nhiều dòng khớp, SQL trả mọi cặp, còn VLOOKUP dò chính xác lấy lần khớp đầu tiên.
-
-Nếu cần lọc trước khi tổng hợp, đặt `WHERE` sau phần kết bảng. Khi báo cáo lấy cả mã và tên phòng, đưa cả hai vào `GROUP BY` như quy tắc nhiều cột ở bài 3.2; `COUNT(*)` đếm các dòng sau kết, còn `HAVING` lọc nhóm như bài 3.3. Ở bài này chỉ cần kết hai bảng theo mã; giữ dòng không khớp học ở bài 3.5, kiểm dòng nhân lên khi kết nhiều bảng ở bài 3.6.
-
-### SQL Server chạy câu này thế nào
-
-Theo **thứ tự xử lý logic**, lấy hồ sơ → tìm cặp phòng khớp → chọn cột → sắp xếp. Đây là cách hiểu câu lệnh, không phải thứ tự SQL Server đọc dữ liệu vật lý. Các bước đầu trích cùng năm hồ sơ, thứ tự trước `ORDER BY` không được bảo đảm:
+Sơ đồ theo **thứ tự xử lý logic** của câu. SQL Server tự chọn cách thực thi. Bấm bước `INNER JOIN` để đối chiếu mã trên hồ sơ với danh mục. Trước `ORDER BY`, thứ tự các dòng trích có thể khác hình.
 
 <RunFlow query={`SELECT nv.MaNV, nv.HoTen, nv.MaPB,
 \tpb.TenPB
@@ -166,9 +159,11 @@ ORDER BY nv.MaNV ASC;`,
     total: 48,
     inputColumns: ["MaNV","HoTen","MaPB","TenPB"],
   },
-]} />
+]} note="Số sau dấu + cho biết còn bao nhiêu dòng hoặc cột chưa hiện trong bảng trích của từng thẻ." />
 
-Kết quả cuối trích năm dòng đầu theo mã:
+Trong bộ mẫu, `NOT NULL` buộc mỗi hồ sơ có mã phòng và khóa ngoại buộc mã ấy có trong `PhongBan`. Vì `PhongBan.MaPB` là khóa chính, mỗi mã chỉ có một dòng danh mục. Mỗi hồ sơ tạo đúng một cặp, nên `48` hồ sơ cho `48` dòng.
+
+Hồ sơ `NV001` khớp dòng danh mục có mã `KT`. `SELECT` lấy `NV001`, `Trần Thị Mai` và `KT` từ hồ sơ, rồi lấy `Kế toán` từ dòng danh mục vừa khớp. `ORDER BY` đưa `NV001` lên đầu bảng trích năm dòng dưới đây, nơi dòng này được đánh dấu.
 
 <Result columns={["MaNV","HoTen","MaPB","TenPB"]} rows={[
   ["NV001","Trần Thị Mai","KT","Kế toán"],
@@ -178,15 +173,25 @@ Kết quả cuối trích năm dòng đầu theo mã:
   ["NV005","Vũ Thị Lan","KT","Kế toán"],
 ]} total={48} mark={[1]} />
 
-Bạn có thể trả lời chị Hạnh: danh sách có `48` dòng, đủ bốn cột và tên phòng cho mọi hồ sơ, gồm cả người đã nghỉ. `NV001` được đánh dấu: mã `KT` đi cùng tên `Kế toán`. Số dòng giữ nguyên nhờ mỗi hồ sơ có đúng một phòng khớp trong bộ mẫu, không phải vì mọi phép kết đều giữ số dòng.
+Bạn có thể gửi chị Hạnh danh sách `48` hồ sơ theo mã nhân viên tăng dần. Danh sách gồm cả người đã nghỉ và ghi tên phòng theo mã hiện lưu trên từng hồ sơ.
+
+### Vận dụng trên cùng tình huống
+
+**Thu hẹp danh sách hồ sơ.** Đặt `WHERE` sau phần kết bảng và lọc theo `nv.MaPB` khi yêu cầu chọn một mã phòng. Nếu cần lấy riêng hồ sơ đang làm của phòng đó, nối thêm điều kiện `nv.TrangThai = N'Đang làm'` bằng `AND`. Tiền tố `N` cho chuỗi Unicode giữ được chữ tiếng Việt như ở bài 2.2. Vẫn lấy tên từ `pb.TenPB` và sắp danh sách theo `nv.MaNV` tăng dần.
+
+**Đếm hồ sơ theo phòng sau khi kết.** Nếu báo cáo cần cả mã và tên phòng, chọn hai cột từ danh mục và đưa cả `pb.MaPB` lẫn `pb.TenPB` vào `GROUP BY` theo quy tắc ở bài 3.2. Sau `WHERE`, mỗi dòng còn lại vẫn ứng với một hồ sơ, nên `COUNT(*)` trong mỗi nhóm cho số hồ sơ của phòng đó. Dùng `AS [SoHoSo]` để đặt tên cột số đếm trong `SELECT`.
+
+Nếu cần giữ phòng có số hồ sơ **trên** một ngưỡng, viết điều kiện `COUNT(*)` lớn hơn ngưỡng trong `HAVING` sau `GROUP BY`, như bài 3.3. Khi cần xếp phòng đông trước, đặt số hồ sơ giảm dần làm tiêu chí đầu trong `ORDER BY` và mã phòng tăng dần làm tiêu chí phụ khi hai phòng bằng số.
+
+Ở bài này chỉ cần kết hai bảng theo mã. Bài 3.5 hướng dẫn giữ hồ sơ thiếu dòng khớp, còn bài 3.6 hướng dẫn kiểm số dòng khi kết nhiều bảng.
 
 ## Hay nhầm ở đâu
 
 <Mistakes>
 
-1. **Viết `ON nv.MaPB = nv.MaPB`.** Điều kiện chỉ so mã hồ sơ với chính nó, không đối chiếu mã danh mục; tên phòng trả về bị lặp và sai nghĩa.
-2. **Viết riêng `MaPB` khi cả hai bảng đều có cột này.** SQL Server không xác định được nguồn; phải dùng bí danh bảng trước dấu chấm.
-3. **Chỉ nhóm theo mã nhưng vẫn chọn tên phòng.** Câu tổng hợp có `pb.TenPB` ở `SELECT` mà không có trong `GROUP BY` sẽ bị lỗi; tên phòng chưa được coi là một cột của khóa nhóm.
+1. **Viết `ON nv.MaPB = nv.MaPB`.** Mã phòng có giá trị trên mọi hồ sơ trong bộ mẫu nên phép so với chính nó luôn đúng. Mỗi hồ sơ ghép với mọi dòng danh mục và có thể mang tên sai phòng.
+2. **Viết riêng `MaPB` khi cả hai bảng đều có cột này.** Câu báo lỗi vì SQL Server không biết lấy cột ở bảng nào.
+3. **Chỉ nhóm theo mã nhưng vẫn lấy trực tiếp `pb.TenPB` trong `SELECT`.** Câu báo lỗi vì cột tên phòng còn thiếu trong `GROUP BY`.
 
 </Mistakes>
 
@@ -204,7 +209,7 @@ Bạn có thể trả lời chị Hạnh: danh sách có `48` dòng, đủ bốn
 
 <Memo rows={[
   ['Dò mã sang sheet danh mục', 'INNER JOIN … ON trả các cặp dòng khớp điều kiện'],
-  ['Mã duy nhất trong danh mục', 'Mỗi mã hợp lệ khớp đúng một dòng; không tự suy ra cho mọi phép kết'],
+  ['Mã hồ sơ có trong danh mục và mã danh mục duy nhất', 'Mỗi hồ sơ tạo đúng một cặp'],
   ['Phân biệt cột giữa hai sheet', 'nv.MaPB và pb.MaPB chỉ rõ nguồn; bí danh bảng không đổi tên bảng thật'],
   ['VLOOKUP lấy lần khớp đầu tiên', 'JOIN trả mọi cặp khớp; phải hiểu một dòng kết quả đại diện cho gì'],
 ]} />
@@ -214,7 +219,7 @@ Bạn có thể trả lời chị Hạnh: danh sách có `48` dòng, đủ bốn
 <details>
 <summary>Vì sao <code>48</code> hồ sơ vẫn ra <code>48</code> dòng ở câu này?</summary>
 
-Mã phòng của mỗi hồ sơ không nhận `NULL`, có khóa ngoại hợp lệ và khớp một mã duy nhất trong danh mục. Vì thế mỗi hồ sơ tạo đúng một cặp.
+`NOT NULL` và khóa ngoại bảo đảm mỗi hồ sơ có mã phòng tồn tại trong danh mục. Khóa chính của danh mục bảo đảm mã đó chỉ có một dòng, nên mỗi hồ sơ tạo đúng một cặp.
 
 </details>
 
@@ -234,7 +239,7 @@ Không. `INNER JOIN` chỉ giữ các cặp thỏa điều kiện `ON`.
 
 ## Bài tập
 
-Ba đề đi từ lấy tên theo phạm vi hồ sơ tới tổng hợp theo phòng. Các điều kiện lọc, nhóm và ngưỡng đã học ở bài 2.2–2.3, 3.2–3.3; dùng bí danh để chỉ rõ nguồn cột. Tên phòng cần lấy từ danh mục, không tự gõ tên thay cho phép kết.
+Ba đề đi từ lấy tên phòng cho danh sách hồ sơ đến đếm hồ sơ theo phòng. Đối chiếu phần Vận dụng khi cần đặt điều kiện lọc hoặc chọn cột để nhóm.
 
 Bộ chấm so giá trị, thứ tự cột và thứ tự dòng theo đề; không so alias hay bắt buộc một cách viết.
 

@@ -21,7 +21,7 @@ exercises:
     title: Tìm đầu họ tên bằng chữ không dấu
     summary: Tìm theo luật không phân biệt dấu và trả thêm độ dài họ tên.
     prompt: >-
-      Trong NhanVien, tìm tất cả hồ sơ có HoTen bắt đầu bằng ho, so sánh không
+      Trong NhanVien, tìm tất cả hồ sơ có HoTen bắt đầu bằng do, so sánh không
       phân biệt hoa thường và không phân biệt dấu bằng collation Latin1_General_CI_AI.
       Không thêm điều kiện phòng, trạng thái hay ngày. Trả về đúng ba cột theo
       thứ tự: MaNV, HoTen nguyên bản có dấu, rồi số ký tự của HoTen theo hàm LEN
@@ -32,7 +32,7 @@ exercises:
     answer: |
       SELECT MaNV, HoTen, LEN(HoTen) AS DoDai
       FROM NhanVien
-      WHERE HoTen COLLATE Latin1_General_CI_AI LIKE N'ho%'
+      WHERE HoTen COLLATE Latin1_General_CI_AI LIKE N'do%'
       ORDER BY MaNV ASC;
   - id: 2-7-3
     title: Nhãn email của hồ sơ Vận hành

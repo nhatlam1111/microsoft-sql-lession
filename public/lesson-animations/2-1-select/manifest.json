@@ -1,0 +1,42 @@
+{
+  "fingerprint": "0df26e2cfd10f4f774b4b99a99dd05603fe5ed8e10bedbe61b61d589a765ed3b",
+  "sources": [
+    "scripts/animations/select.css",
+    "scripts/animations/render-select.mts",
+    "scripts/animations/select-story.ts",
+    "scripts/animations/sheet_to_gif.py",
+    "src/assets/animations/select-pulse.png",
+    "node_modules/@fontsource/be-vietnam-pro/files/be-vietnam-pro-latin-400-normal.woff",
+    "node_modules/@fontsource/be-vietnam-pro/files/be-vietnam-pro-vietnamese-400-normal.woff",
+    "node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff",
+    "node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-vietnamese-400-normal.woff"
+  ],
+  "width": 1080,
+  "height": 824,
+  "files": {
+    "animation.gif": "a7de2748844c4fb7bb8800544640b2462355ba523db915df0675025fdefd425b",
+    "poster.png": "b051cd0f4c94c1721ddd50a21a29b5b18cc0ee175d9d1099e0a74ccc3c678dec",
+    "from.png": "b051cd0f4c94c1721ddd50a21a29b5b18cc0ee175d9d1099e0a74ccc3c678dec",
+    "select.png": "483f2e2a5ae08f576f607106d0499b4b4de536b7655cf1e83381f2a7ca0f69ba",
+    "aliases.png": "f377c6ddce4bcb252dcec579014816e27456d526ef1a1844ef11adf6fb8af849"
+  },
+  "caption": "Minh họa xử lý logic. Trích 4 trong 48 hồ sơ, 4 trong 12 cột nguồn. Thứ tự dòng có thể khác khi chạy SQL.",
+  "alt": "FROM lấy bảng NhanVien; SELECT lấy ba cột và AS đặt tiêu đề tiếng Việt. Kết quả vẫn đủ 48 hồ sơ.",
+  "scenes": [
+    {
+      "step": 0,
+      "file": "from.png",
+      "alt": "FROM chọn bảng NhanVien làm nguồn."
+    },
+    {
+      "step": 1,
+      "file": "select.png",
+      "alt": "SELECT lấy MaNV, HoTen và NgayVaoLam theo đúng thứ tự."
+    },
+    {
+      "step": 1,
+      "file": "aliases.png",
+      "alt": "Trong SELECT, AS đặt tiêu đề Mã nhân viên, Họ tên và Ngày vào làm."
+    }
+  ]
+}

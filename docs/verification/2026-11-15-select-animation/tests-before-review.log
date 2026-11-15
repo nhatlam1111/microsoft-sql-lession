@@ -1,0 +1,112 @@
+
+> microsoft-sql-lession@0.1.0 test
+> vitest run
+
+
+ RUN  v3.2.7 E:/Projects/SQL Lession
+
+ ✓ tests/tsql-lexer.test.ts (4 tests) 25ms
+ ✓ tests/content-2-8.test.ts (2 tests) 183ms
+ ✓ tests/islands.test.ts (10 tests) 97ms
+ ✓ tests/appendix-content.test.ts (7 tests) 249ms
+ ✓ tests/content-4-1.test.ts (2 tests) 274ms
+ ✓ tests/content-2-5.test.ts (3 tests) 325ms
+ ✓ tests/arcade-view.test.ts (20 tests) 32ms
+ ✓ tests/content-2-9.test.ts (2 tests) 435ms
+   ✓ 2.9 keeps the three distinct exercise scopes, column order and ordered grading  323ms
+ ✓ tests/content-4-3.test.ts (3 tests) 398ms
+ ✓ tests/appendices.test.ts (8 tests) 80ms
+ ✓ tests/presentations.test.ts (7 tests) 80ms
+ ✓ tests/content-level-2.test.ts (4 tests) 465ms
+ ✓ tests/content-2-6.test.ts (2 tests) 527ms
+   ✓ 2.6 shows how choosing fewer or more columns changes the result  303ms
+ ✓ tests/content-4-series.test.ts (1 test) 534ms
+   ✓ illustrations and runnable flow checks do not solve any of the nine new exercises unchanged  533ms
+ ✓ tests/content-4-2.test.ts (4 tests) 546ms
+ ✓ tests/content-2-7.test.ts (3 tests) 587ms
+   ✓ 2.7 string projections preserve identity and source values > provides three distinct ordered query exercises, including a preserved source NULL  318ms
+ ✓ tests/content-2-4.test.ts (3 tests) 569ms
+   ✓ lesson 2.4 orders the filtered rows before applying TOP > makes all three exercises grade row order without publishing an answer in the lesson  309ms
+ ✓ tests/content-subquery-positions.test.ts (5 tests) 650ms
+ ✓ tests/content-4-4.test.ts (3 tests) 662ms
+   ✓ 3.18 practice changes the population, COUNT measure and monthly axis without copying an illustration  395ms
+ ✓ tests/content-4-6.test.ts (4 tests) 697ms
+   ✓ 3.19 exercises distinguish profiles from groups, keep departments with zero and count rules separately  378ms
+ ✓ tests/content-3-tail.test.ts (6 tests) 775ms
+ ✓ tests/content-3-3.test.ts (6 tests) 787ms
+ ✓ tests/exercise-level-2-discrimination.test.ts (4 tests) 31ms
+ ✓ tests/content-2-3.test.ts (4 tests) 925ms
+   ✓ lesson 2.3 combines conditions without changing their scope > is a full lesson whose main example keeps both departments inside the date range  327ms
+   ✓ lesson 2.3 combines conditions without changing their scope > ships four read-only exercises without exposing their answers in the lesson  346ms
+ ✓ tests/presentation-content.test.ts (7 tests) 26ms
+ ✓ tests/arcade-play.test.ts (8 tests) 16ms
+ ✓ tests/exercise-client.test.ts (8 tests) 17ms
+stderr | tests/arcade.test.ts > answers unavailable when Arcade is not configured
+Arcade call failed: ARCADE_SQL_DATABASE must be set.
+
+stderr | tests/arcade.test.ts > answers unavailable when Arcade is not configured
+Arcade call failed: ARCADE_SQL_DATABASE must be set.
+
+stderr | tests/arcade.test.ts > says the free allowance ran out when the store says so
+Arcade call failed: Database is paused: free amount limit reached
+
+ ✓ tests/content-3-2.test.ts (7 tests) 975ms
+stderr | tests/arcade.test.ts > leaves nothing behind when saving the result fails
+Arcade call failed: connection lost
+
+stderr | tests/arcade.test.ts > does not call a busy database a used-up allowance
+Arcade call failed: The request limit for the database is 30 and has been reached.
+
+ ✓ tests/arcade-schema.test.ts (11 tests) 12ms
+ ✓ tests/arcade.test.ts (31 tests) 23ms
+ ✓ tests/curriculum-v2.test.ts (14 tests) 15ms
+ ✓ tests/content-joins.test.ts (11 tests) 1058ms
+ ✓ tests/arcade-check.test.ts (12 tests) 11ms
+ ✓ tests/content-3-1.test.ts (6 tests) 1110ms
+   ✓ 3.1 exercises cover a different scope, decimal average and a genuine empty aggregate  489ms
+ ✓ tests/run-flow.test.ts (21 tests) 13ms
+ ✓ tests/progress-store.test.ts (14 tests) 10ms
+ ✓ tests/arcade-content.test.ts (5 tests) 1050ms
+   ✓ every challenge file passes the schema and the course rules  312ms
+ ✓ tests/flow-examples.test.ts (22 tests) 7ms
+ ✓ tests/presentation-state.test.ts (12 tests) 11ms
+ ✓ tests/arcade-client.test.ts (4 tests) 8ms
+ ✓ tests/popup-model.test.ts (7 tests) 8ms
+ ✓ tests/api-core.test.ts (9 tests) 12ms
+ ✓ tests/check-dist.test.ts (12 tests) 12ms
+ ✓ tests/presentation-outline.test.ts (3 tests) 13ms
+ ✓ tests/arcade-sql.test.ts (6 tests) 6ms
+ ✓ tests/progress.test.ts (12 tests) 7ms
+ ✓ tests/search.test.ts (6 tests) 17ms
+ ✓ tests/exercise-workspace.test.ts (6 tests) 19ms
+ ✓ tests/sql-guard.test.ts (7 tests) 7ms
+ ✓ tests/db-schema.test.ts (6 tests) 9ms
+ ✓ tests/mindmap-layout.test.ts (5 tests) 7ms
+ ✓ tests/catalog.test.ts (6 tests) 6ms
+ ✓ tests/roadmap.test.ts (6 tests) 6ms
+ ✓ tests/docs.test.ts (5 tests) 16ms
+ ✓ tests/progress-storage.test.ts (7 tests) 5ms
+ ✓ tests/tsql-highlight.test.ts (4 tests) 6ms
+ ✓ tests/lesson-redirects.test.ts (5 tests) 7ms
+ ✓ tests/grade.test.ts (8 tests) 6ms
+ ✓ tests/paths.test.ts (5 tests) 4ms
+ ✓ tests/focus-trap.test.ts (1 test) 3ms
+ ✓ tests/editor-keys.test.ts (2 tests) 3ms
+ ✓ tests/mindmap-view.test.ts (4 tests) 3ms
+ ✓ tests/content-student-review.test.ts (11 tests) 3ms
+ ✓ tests/arcade-store.test.ts (3 tests) 4ms
+ ✓ tests/exercises.test.ts (7 tests) 2044ms
+   ✓ every exercise file passes the schema and the course rules  1939ms
+ ✓ tests/content-flow-checks.test.ts (32 tests) 2091ms
+ ✓ tests/arcade-config.test.ts (3 tests) 4ms
+ ✓ tests/projection-relation.test.ts (5 tests) 16ms
+ ✓ tests/animated-flow.test.ts (2 tests) 43ms
+ ✓ tests/components.test.ts (30 tests) 133ms
+ ✓ tests/content.test.ts (82 tests) 3348ms
+   ✓ lesson files > has 7, 6, 3, 8, 11, 4, 5, 8 lessons in areas A1..A8  670ms
+
+ Test Files  71 passed (71)
+      Tests  617 passed (617)
+   Start at  10:35:05
+   Duration  4.51s (transform 6.36s, setup 0ms, collect 27.65s, tests 22.16s, environment 14ms, prepare 15.77s)
+

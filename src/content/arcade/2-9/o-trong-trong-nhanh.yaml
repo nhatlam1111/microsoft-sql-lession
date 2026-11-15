@@ -5,7 +5,7 @@ title: Tình trạng ngày nghỉ việc
 difficulty: vua
 lessons: [ 2-5-null-o-trong, 2-9-case-when-ham-if ]
 prompt: >-
-  Từ bảng NhanSu, lấy mã nhân viên và một cột tình trạng cho mọi dòng: NgayNghiViec là NULL thì ghi “Đang làm”, có ngày thì ghi “Đã nghỉ”, bất kể đó là ngày nào.
+  Từ bảng NhanSu, lấy mã nhân viên và một cột tình trạng cho mọi dòng: NgayNghiViec là NULL thì ghi “Đang làm”, có ngày thì ghi “Đã nghỉ”, bất kể đó là ngày nào. Thứ tự dòng không quan trọng.
 columns: [ MaNV, Tình trạng ]
 ordered: false
 tables:

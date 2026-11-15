@@ -5,7 +5,7 @@ title: Nhóm thâm niên tại mốc
 difficulty: kho
 lessons: [ 2-4-sap-xep-va-top, 2-8-ham-ngay-tham-nien, 2-9-case-when-ham-if ]
 prompt: >-
-  Tại mốc cố định 21/10/2026, chia người trong bảng NhanSu theo ngày kỷ niệm: đã đủ 3 năm thì ghi “Từ 3 năm”, đã đủ 1 năm thì ghi “Từ 1 năm”, còn lại ghi “Dưới 1 năm”. Đủ năm tính cả đúng ngày kỷ niệm. Lấy mã nhân viên và nhóm, xếp mã tăng dần.
+  Tại mốc cố định 21/10/2026, phân nhóm mọi dòng trong NhanSu: từ đủ 3 năm ghi “Từ 3 năm”, từ đủ 1 năm đến dưới 3 năm ghi “Từ 1 năm”, dưới 1 năm ghi “Dưới 1 năm”. Đúng ngày kỷ niệm được tính là đã đủ năm. Mọi ngày vào làm đều vào hoặc trước ngày chốt. Trả mã nhân viên rồi đến nhóm, xếp mã tăng dần. Mã nhân viên không trùng.
 columns: [ MaNV, Nhóm ]
 ordered: true
 tables:

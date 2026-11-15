@@ -28,9 +28,9 @@ Giả định: lấy bảng `DonNghiPhep` đang lưu; một dòng là một đơ
 
 ## Đối chiếu hai báo cáo trên cùng một dòng
 
-### Từ công thức Excel đến các hàm tổng hợp
+### Cấu trúc mới trong bài
 
-Trong Excel, bạn có thể đưa các đơn đã duyệt bắt đầu trong tháng 9 sang một sheet riêng. Trên vùng số ngày `C2:C10`, `SUM` tính tổng chung ở `C11`, `COUNTIFS` đếm đơn từ hai ngày ở `C12`, và `SUMIFS` cộng số ngày của các đơn đó ở `C13`. Nếu chỉ lọc ẩn dòng ở sheet gốc, `SUM` thông thường vẫn cộng cả dòng bị ẩn do lọc.
+Trong Excel, bạn có thể chép các đơn đã duyệt bắt đầu trong tháng 9 sang một sheet riêng. Với vùng số ngày `C2:C10`, `SUM` cộng tất cả số ngày ở `C11`, `COUNTIFS` đếm ô có giá trị từ `2` ở `C12`, còn `SUMIFS` chỉ cộng các giá trị đạt ngưỡng ở `C13`. Hình đánh dấu ba ô kết quả này.
 
 <Excel sheets="Đơn đã duyệt bắt đầu tháng 9" cell="C13" formula={'=SUMIFS(C2:C10,C2:C10,">=2")'} selected="C13" mark={['C11', 'C12', 'C13']} numeric={['B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B9', 'B10']} rows={[
   ['Mã đơn', 'Từ ngày', 'Số ngày'],
@@ -48,7 +48,23 @@ Trong Excel, bạn có thể đưa các đơn đã duyệt bắt đầu trong th
   ['Ngày bàn giao', '', 12],
 ]} />
 
-Trong SQL, **hàm tổng hợp** tính một giá trị từ nhiều dòng. `WHERE` chọn các đơn dùng chung cho hai báo cáo. Hai biểu thức có `CASE` trong `SELECT` tính riêng phần dành cho bảng bàn giao.
+Trong SQL, **hàm tổng hợp** tính một giá trị từ cả tập dòng. Viết mỗi phép tính sau `SELECT`, cách nhau bằng dấu phẩy, rồi dùng `AS` đặt tên cột kết quả như bài 2.1. Khi câu chỉ chọn các phép tổng hợp và không có `GROUP BY`, SQL Server trả một dòng, mỗi phép tính cho một ô.
+
+**Chọn phạm vi chung bằng `WHERE`.** Viết ngày theo dạng `yyyymmdd` như bài 2.2. `TuNgay >= '20260901'` lấy cả ngày đầu tháng 9 và `TuNgay < '20261001'` dừng trước ngày đầu tháng 10. Nối hai mốc với điều kiện trạng thái bằng `AND` để mọi phép tính dùng cùng tập đơn. Bỏ `WHERE` khi cần tính trên toàn bộ bảng.
+
+**Đếm đơn hay đếm giá trị đã có.** `COUNT(*)` đếm mỗi dòng qua `WHERE` một lần. `COUNT(SoNgay)` đếm mỗi giá trị `SoNgay` khác `NULL`, kể cả `0`. Hai cách cùng trả `9` vì `SoNgay` được khai báo `NOT NULL` trong bộ mẫu. Với cột văn bản có thể thiếu, chuỗi rỗng `''` vẫn được đếm vì khác `NULL`, như bài 2.5.
+
+Trong Excel, `COUNT(C2:C10)` đếm các ô số ngày, còn `COUNTA(A2:A10)` đếm các ô mã đơn đã điền. Dấu `*` trong `COUNT(*)` yêu cầu đếm dòng. Ở bài 2.1, dấu này đứng riêng sau `SELECT` để chọn mọi cột.
+
+**Chọn cột cần tính.** `SUM(SoNgay)` cộng số ngày, `AVG(SoNgay)` tính bình quân như `AVERAGE` trong Excel, còn `MIN(SoNgay)` và `MAX(SoNgay)` lấy mức nhỏ nhất và lớn nhất. Cả bốn hàm bỏ qua `NULL` và vẫn tính `0`. Giả định một cột số ngày có ba giá trị `2`, `NULL`, `0`. Có `3` dòng, nhưng mẫu số của `AVG` chỉ là `2` vì có hai giá trị đã biết, nên bình quân là `(2 + 0) / 2 = 1`.
+
+**Làm tròn sau khi tính bình quân.** `SoNgay` có kiểu `decimal(4,1)`, nên `AVG(SoNgay)` giữ phần lẻ. Khi cần hai chữ số sau dấu thập phân, bọc kết quả bằng `CAST(AVG(SoNgay) AS decimal(10,2))`. `CAST` đổi kiểu của giá trị bình quân thành số có tối đa `10` chữ số, trong đó có `2` chữ số phần lẻ, như bài 1.3. Khi đề yêu cầu giữ kết quả gốc, dùng `AVG(SoNgay)`.
+
+**Đếm riêng đơn bàn giao.** Đặt `CASE` vào trong ngoặc của hàm để chọn giá trị mỗi đơn đưa vào phép tính. Với `COUNT(CASE WHEN SoNgay >= 2 THEN 1 END)`, `DP001` có `2.0` ngày nên đưa vào `1`. `DP002` có `1.0` ngày nên nhận `NULL` vì `CASE` bỏ `ELSE`, như bài 2.9. `COUNT` chỉ đếm `DP001` trong hai đơn này.
+
+**Cộng số ngày bàn giao.** Viết `SUM(CASE WHEN SoNgay >= 2 THEN SoNgay ELSE 0 END)` để `DP001` góp đủ `2.0` ngày và `DP002` góp `0`. Cả hai đơn vẫn đi vào các chỉ tiêu chung vì đều qua `WHERE`. Thêm `ELSE 0` vào biểu thức bên trong `COUNT` sẽ làm `DP002` cũng được đếm vì `0` khác `NULL`.
+
+### Đọc câu SQL qua các bước
 
 <Sql code={`SELECT COUNT(*) AS [SoDon],
 \tSUM(SoNgay) AS [TongNgay],
@@ -60,42 +76,7 @@ FROM DonNghiPhep
 WHERE TrangThai = N'Đã duyệt'
 \tAND TuNgay >= '20260901' AND TuNgay < '20261001';`} />
 
-Từng phần của câu:
-
-<LineMap rows={[
-  ['COUNT(*) AS [SoDon]', 'Đếm dòng sau lọc, không lấy mọi cột như dấu * ở bài 2.1. Ví dụ: chín dòng đơn cho SoDon bằng 9.'],
-  ['SUM(SoNgay) AS [TongNgay]', 'Cộng số ngày, tương tự SUM(C2:C10) trong hình Excel. Ví dụ: chín đơn có tổng 16.0 ngày.'],
-  ['CAST(AVG(SoNgay) AS decimal(10,2))', 'AVG tính bình quân, tương tự AVERAGE của Excel; CAST đổi kết quả sang số có hai chữ số thập phân. Ví dụ: 16.0 chia 9 rồi làm tròn được 1.78.'],
-  ['MIN(SoNgay), MAX(SoNgay)', 'Tìm số ngày nhỏ nhất và lớn nhất, như MIN/MAX của Excel. Ví dụ: DP002 có 1.0 ngày, DP003 có 3.0 ngày, là hai mức đầu cuối.'],
-  ['COUNT(CASE WHEN SoNgay >= 2 THEN 1 END)', 'Đếm đơn đạt ngưỡng như COUNTIFS. CASE trả 1 cho đơn đạt và NULL cho đơn còn lại. Ví dụ: DP001 có đúng 2.0 ngày nên được đếm.'],
-  ['SUM(CASE WHEN SoNgay >= 2 THEN SoNgay ELSE 0 END)', 'Cộng số ngày của các đơn đạt ngưỡng như SUMIFS. Ví dụ: DP001 góp 2.0 ngày, DP002 góp 0.'],
-  ['FROM DonNghiPhep', 'Chỉ bảng nguồn, mỗi dòng là một đơn. Ví dụ: bắt đầu từ 20 đơn đang lưu.'],
-  ["WHERE TrangThai = N'Đã duyệt'", 'Giữ đơn đã duyệt như cách lọc ở bài 2.2. Ví dụ: DP010 bị loại vì có trạng thái Từ chối.'],
-  ["AND TuNgay >= '20260901'", 'AND yêu cầu thêm ngày bắt đầu không trước 01/09. Ví dụ: DP018 bắt đầu 31/08 nên bị loại.'],
-  ["AND TuNgay < '20261001'", 'Chặn trước 01/10, không lấy ngày đầu tháng sau. Ví dụ: DP008 bắt đầu 12/10 không đạt điều kiện này.'],
-]} />
-
-**Đếm dòng khác đếm giá trị đã có.** `COUNT(cột)` chỉ đếm các dòng mà cột đó khác `NULL`; thay cột bằng `SoNgay` thì viết `COUNT(SoNgay)`. Trong bộ mẫu, `SoNgay` là `decimal(4,1) NOT NULL`, nên cả `9` đơn đều có số ngày và hai cách đếm bằng nhau. Đếm giá trị đã có không xác nhận giá trị ấy đúng; với cột chữ, chuỗi rỗng vẫn được đếm vì khác `NULL`.
-
-Trong Excel, `COUNTA(A2:A10)` đếm các mã đơn đã điền, còn `COUNT` trên sheet chỉ đếm giá trị số nên không đếm được các mã chữ đó. `COUNT(*)` của SQL đếm dòng, không phụ thuộc mã là chữ hay số. Câu này không chia nhóm bằng `GROUP BY` như bài 3.2, nên các hàm tính cho cả phạm vi đã lọc và trả một dòng chung.
-
-`SUM`, `AVG`, `MIN`, `MAX` bỏ qua `NULL`, còn số `0` vẫn tham gia. Giả định một cột `SoNgay` được phép thiếu có ba giá trị `2`, `NULL`, `0`: đếm dòng là `3`, đếm giá trị là `2`, bình quân là `(2 + 0) / 2 = 1`. **Mẫu số** là số giá trị khác `NULL`. Đây là minh họa giả định, không phải ba đơn trong bộ mẫu; thay `NULL` bằng `0` trước khi tính sẽ đổi mẫu số.
-
-`SoNgay` đang là số thập phân nên `AVG` giữ phần lẻ; `CAST` ở ngoài chỉ làm tròn kết quả, không sửa từng đơn. Trong `decimal(10,2)`, `10` là tổng chữ số tối đa, `2` là số chữ số sau dấu thập phân như bài 1.3. Nếu ép `SoNgay` sang số nguyên `int` trước thì `AVG` trả `int`, mất phần lẻ; đổi kết quả đó lại sang `decimal` không lấy lại được phần đã mất.
-
-Khi không có dòng nào đạt `WHERE`, câu tổng hợp không `GROUP BY` vẫn trả một dòng: `COUNT(*)` và `COUNT(cột)` bằng `0`, bốn hàm còn lại trả `NULL`. Nếu có dòng nhưng cột được tính đều là `NULL`, các hàm đó cũng trả `NULL`. `SUM` và `AVG` dùng với số; `MIN`, `MAX` còn dùng được với ngày, như tìm `TuNgay` sớm nhất hoặc muộn nhất.
-
-**Điều kiện riêng của chỉ tiêu.** `WHERE` quyết định đơn nào đi vào mọi phép tính. Bên trong hai chỉ tiêu bàn giao, `CASE` quyết định mỗi đơn đóng góp giá trị gì cho phép đếm hoặc phép cộng.
-
-Cũng có thể đếm đơn bằng `SUM(CASE WHEN SoNgay >= 2 THEN 1 ELSE 0 END)`. Khi đó `SUM` cộng các số `1` và `0` do `CASE` trả về. Nếu vẫn dùng `COUNT` mà thêm `ELSE 0`, cả chín đơn đều được đếm vì `0` khác `NULL`.
-
-Nếu còn đơn qua `WHERE` nhưng không đơn nào đạt ngưỡng, `COUNT(CASE … END)` trả `0` và `SUM` có `ELSE 0` cũng trả `0`. Bỏ `ELSE 0` thì `SUM` trả `NULL` vì mọi giá trị đưa vào đều là `NULL`. Khi `WHERE` loại hết dòng, `SUM` trả `NULL` dù có `ELSE 0`.
-
-Ở bài này chỉ cần tổng hợp cả phạm vi đã lọc. Tính riêng từng nhóm học ở bài 3.2, lọc nhóm theo số liệu đã tính học ở bài 3.3.
-
-### SQL Server chạy câu này thế nào
-
-Sơ đồ mô tả **thứ tự xử lý logic**. `FROM` lấy `20` đơn, `WHERE` giữ `9` đơn, rồi `SELECT` tạo một dòng để đối chiếu. Bấm bước `SELECT` để xem vì sao cùng chín đơn cho hai tổng khác nhau.
+Sơ đồ diễn giải **thứ tự xử lý logic** của câu truy vấn. Bấm bước `SELECT` để lần từ số ngày trên các đơn đến từng ô kết quả.
 
 <RunFlow query={`SELECT COUNT(*) AS [SoDon],
 \tSUM(SoNgay) AS [TongNgay],
@@ -205,13 +186,27 @@ WHERE TrangThai = N'Đã duyệt'
   },
 ]} />
 
+Trong `20` đơn đang lưu, `9` đơn vừa có trạng thái `Đã duyệt` vừa bắt đầu trong tháng 9. Vì câu chỉ chọn các phép tổng hợp và không chia nhóm, cả `9` đơn tạo thành một dòng có bảy chỉ tiêu. Trong đó có ba đơn `2.0` ngày và hai đơn `3.0` ngày, nên `CASE` đưa `5` đơn vào số đếm bàn giao và `3 × 2.0 + 2 × 3.0 = 12.0` ngày vào tổng bàn giao.
+
 <Result columns={['SoDon', 'TongNgay', 'BinhQuan', 'ItNhat', 'NhieuNhat', 'SoDonTuHaiNgay', 'TongNgayTuHaiNgay']} rows={[
   [9, '16.0', '1.78', '1.0', '3.0', 5, '12.0'],
 ]} />
 
-Cả hai con số chị Hạnh cần đối chiếu đều khớp với phạm vi của từng báo cáo. Bảng tổng hợp có `9` đơn với `16.0` ngày. Bảng bàn giao có `5` đơn từ hai ngày trở lên với `12.0` ngày. Phần chênh `4.0` ngày đến từ bốn đơn một ngày.
+Hai số chị Hạnh cần đối chiếu đều khớp. `16.0` ngày là tổng của cả `9` đơn, còn `12.0` ngày là phần dành cho bàn giao. Phần chênh `4.0` ngày đến từ bốn đơn một ngày.
 
-Bình quân mỗi đơn là `1.78` ngày sau khi làm tròn, ít nhất `1.0` và nhiều nhất `3.0`. Các số này tính theo tháng bắt đầu ghi trên đơn. `DP018` bắt đầu `2026-08-31` nên nằm ngoài phạm vi dù kết thúc ngày `2026-09-04`.
+Số ngày mỗi đơn trong báo cáo chung từ `1.0` đến `3.0`, bình quân `1.78` sau khi làm tròn. `DP018` bắt đầu `2026-08-31` nên thuộc kỳ tháng 8 theo cách tính này, dù kết thúc ngày `2026-09-04`.
+
+### Vận dụng trên cùng tình huống
+
+**Khi không có dòng nào qua `WHERE`.** Nếu đổi mốc sang một tháng chưa có đơn, câu chỉ chọn các hàm tổng hợp và không có `GROUP BY` vẫn trả một dòng. `COUNT(*)` và `COUNT(SoNgay)` trả `0`. `SUM`, `AVG`, `MIN` và `MAX` trả `NULL` vì không có giá trị để tính.
+
+**Khi có đơn nhưng không đơn nào đạt ngưỡng bàn giao.** Giả sử phạm vi chỉ còn các đơn `1.0` ngày. `CASE` chỉ đưa `NULL` vào `COUNT` nên số đơn bàn giao là `0`. Với `SUM`, mỗi đơn góp `0` nhờ `ELSE 0` nên tổng bàn giao cũng bằng `0`. Nếu `WHERE` loại hết đơn, `CASE` không có dòng nào để đưa `0` vào `SUM`, nên tổng lại là `NULL`.
+
+Khi đổi phần cần kiểm trong `CASE`, bạn có thể thay so sánh ngưỡng bằng một điều kiện đã học. Dùng phép so sánh bằng cho trạng thái, hoặc dùng `IS NULL` và `IS NOT NULL` như bài 2.5 để kiểm cột còn thiếu hay đã có giá trị. Khi cần chọn nhiều mã cho *mọi* chỉ tiêu, dùng `IN` trong `WHERE` như bài 2.3.
+
+**Đọc thêm · đếm bằng `SUM`.** `SUM(CASE WHEN SoNgay >= 2 THEN 1 ELSE 0 END)` cộng `1` cho đơn đạt ngưỡng và `0` cho các đơn còn lại. Cách này đếm được `5` đơn trong báo cáo tháng 9. Khi `WHERE` loại hết dòng, cách này trả `NULL`, còn `COUNT(CASE … END)` trả `0`.
+
+Ở bài này chỉ cần tổng hợp cả phạm vi đã chọn. Bài 3.2 tính riêng từng nhóm, còn bài 3.3 lọc nhóm theo số liệu vừa tính.
 
 ## Hay nhầm ở đâu
 

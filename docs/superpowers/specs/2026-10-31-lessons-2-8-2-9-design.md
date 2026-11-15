@@ -130,3 +130,7 @@ Câu chữ, tên tiểu mục, tiêu đề cột bảng soi, nội dung Ứng d�
 - `npm --prefix api run build`, `check:exercises`, `check:data`; `npm test`, `npm run check`, `npm run build`, `npm run check:dist`.
 - Xem bản build ở rộng 1024: hình Excel, bốn drawer, hai kiểu bảng soi, nút Sao chép, Bước trước, Bước sau.
 - Một review độc lập cho mỗi bài theo mục 4.5, xử lý theo mục 4.6, hồ sơ ở `docs/reviews/2026-10-31-lesson-2-8/`, `2026-10-31-lesson-2-9/`.
+
+Bài 2.8 đã chuyển sang khung truy vấn hiện hành trong lượt 14/11/2026. Xem [hồ sơ bàn giao](../../verification/2026-11-14-lesson-2-8.md) để đối chiếu bản đang dùng, review và bằng chứng kiểm.
+
+Bài 2.9 đã chuyển sang khung truy vấn hiện hành. Xem [hồ sơ bàn giao bài 2.9](../../verification/2026-11-14-lesson-2-9.md) để đối chiếu phạm vi, review và bằng chứng kiểm.

@@ -4,7 +4,7 @@ Mọi quy ước khi viết bài, review bài và làm việc với database c�
 
 Điểm bắt đầu cho tác giả/reviewer: [biên soạn theo phạm vi](bien-soan.md). Định hướng phần 4–5 theo [mục tiêu khóa học](dinh-huong-khoa-hoc.md), áp dụng khi hoàn thiện từng bài.
 
-**Chuẩn hiện hành:** bài có câu lệnh lấy [`bài 2.1`](../src/content/lessons/2-1-chon-cot-dat-ten-cot.mdx) làm mẫu về mạch kể, độ sâu và cách đánh dấu chữ; bài nền theo mục 2.5 lấy [`bài 1.1`](../src/content/lessons/1-1-database-la-gi.mdx) làm mẫu. Excel và SQL được giải thích trong cùng một phần chính, có tiêu đề theo chủ đề của bài. Bố cục hai tiểu mục và quy tắc bám tình huống ở mục 2.1 áp dụng từ 31/10/2026; các bài chưa chuyển được liệt kê trong `tests/content.test.ts`, được chỉnh dần từng bài và không dùng làm mẫu bố cục. Không viết bài đầy đủ mới theo khung cũ. Spec, plan, mockup ở `docs/superpowers` và hồ sơ ở `docs/reviews` là lịch sử từng lượt; gặp chỗ khác file này thì file này đúng.
+**Chuẩn hiện hành:** bài có câu lệnh lấy [bài 2.1](../src/content/lessons/2-1-chon-cot-dat-ten-cot.mdx) làm mẫu về mạch kể, độ sâu và cách đánh dấu chữ; bài nền theo mục 2.5 lấy [bài 1.1](../src/content/lessons/1-1-database-la-gi.mdx) làm mẫu. Từ 14/11/2026, bài truy vấn tách cấu trúc mới khỏi luồng xử lý theo mục 2.1; áp dụng đầu tiên ở 2.1, 3.9 và 3.12. Các bài khác chỉ chuyển khi được giao, không thêm ngoại lệ khung cũ vào test. Spec, plan, mockup và hồ sơ review là lịch sử từng lượt; gặp chỗ khác file này thì file này đúng.
 
 ## 1. Viết gọn
 
@@ -23,7 +23,7 @@ Mọi quy ước khi viết bài, review bài và làm việc với database c�
 - Dùng "kết bảng" cho `JOIN`, không dùng "nối bảng" hay "ghép". Không dùng các cụm trong `BANNED_PHRASES` (`src/lib/lesson-schema.ts`), không dùng emoji.
 - Phần giảng tự trả lời "vì sao, để làm gì, cái giá là gì" bằng lời dẫn liền mạch; câu hỏi nằm ở tình huống và phần tự kiểm tra. Cơ chế SQL Server tự làm thì gọi đúng tên (chuyển kiểu ngầm) và nói gặp lại ở bài nào.
 - Mẫu tin nhắn cần gửi IT có thể trích câu hỏi trong ngoặc kép để người học dùng khi mắc lỗi; đó là hướng dẫn thao tác, không dùng nó làm câu hỏi dẫn lý thuyết.
-- Mỗi dòng `LineMap` có "Ví dụ:" với giá trị cụ thể của tình huống.
+- `LineMap` là khối tùy chọn khi bảng ánh xạ giúp hiểu cấu trúc mới; không bắt giải thích mọi mệnh đề hoặc mỗi dòng phải có “Ví dụ:”. Không lặp diễn biến dữ liệu đã có ở RunFlow. Giữ component cho bài cũ, không chuyển hàng loạt.
 - Cuối lý thuyết có đoạn "Ở bài này chỉ cần…" kể các bài đi sâu hơn ("bài 5.2").
 - Drawer của `RunFlow` theo mục 2.6.
 - Không hứa điều database không tự bảo đảm. Ràng buộc chỉ có khi được khai báo ("khi `MaNV` được khai báo là khóa chính…"). Tách "hợp lệ" với "đúng", "lưu được" với "đúng ý". Khóa ngoại là luật kiểm khi ghi, không phải ô chọn trên màn hình; nó xác nhận mã có thật, không xác nhận mã đúng.
@@ -37,10 +37,10 @@ Mọi quy ước khi viết bài, review bài và làm việc với database c�
 ### 2.1 Khung bài và độ sâu
 
 - Thứ tự bài đầy đủ: **Tình huống → phần chính có tiêu đề theo chủ đề → Hay nhầm ở đâu → Ứng dụng → Ghi nhớ → tự kiểm tra (nếu có) → Bài tập**. Tự kiểm tra luôn đặt ngay sau Ghi nhớ, trước Bài tập. Bài `noExercises: true` bỏ mục Bài tập và có ít nhất ba câu tự kiểm tra. Bản tóm tắt giữ khung riêng ở `lesson-template.md`; bài nền theo mục 2.5.
-- Phần chính đi từ vấn đề trong tình huống, qua khái niệm cần biết và cách Excel/SQL xử lý, tới câu trả lời. Bài có câu lệnh dùng đúng hai tiểu mục theo mạch nêu ở dưới. Bài khái niệm dùng khoảng 2–4 tiểu mục theo ý nghĩa, bài nền theo mục 2.5, bài xử lý sự cố như 5.6 theo diễn biến. Không bắt buộc chép đúng các tiểu mục của bài mẫu. Mỗi lần chuyển từ Excel sang database/SQL phải có lời dẫn rõ.
+- Phần chính đi từ tình huống, qua kiến thức đã biết/Excel và cấu trúc SQL mới, tới cách suy ra câu trả lời. Bài truy vấn có hai tiểu mục chính: **Cấu trúc mới trong bài** và **Đọc câu SQL qua các bước**; thêm **Vận dụng trên cùng tình huống** khi cần giảng biến thể hoặc cách kiểm kết quả cho bài tập. Không ép đúng hai tiểu mục. Bài khái niệm dùng khoảng 2–4 tiểu mục theo ý nghĩa, bài nền theo mục 2.5, bài xử lý sự cố như 5.6 theo diễn biến.
 - Mọi giải thích SQL và câu lệnh trong phần chính, Hay nhầm chỉ bám tình huống đầu bài, trên đúng bảng và cột tình huống cần; không thêm câu ví dụ trên bảng hay cột khác, để người học không rối và bài gọn. Đoạn trích của chính câu lệnh thì được. Hay nhầm dùng biến thể sai của chính câu đó. Từ khóa ngoài lời giải chỉ nhắc khi đề bài tập cần, bằng một vế gắn với tình huống. Bài tập được dùng bảng khác.
-- Khái niệm và ví dụ đứng cạnh nhau. Chỉ dùng khối giúp hiểu ý đang nói, không cần một bảng so sánh dài. Không giải thích trong lời văn rồi chép nguyên ý vào bảng.
-- Bài khái niệm chưa cần thực hành thì không chèn preview SQL cho đủ khuôn; dẫn sang bài thực hành tương ứng. Bài truy vấn có câu lệnh giải đúng tình huống và kết quả đã kiểm, người học thấy câu lệnh trước khi nghe giải thích. Tiểu mục đầu đi theo việc trong Excel → trong SQL cần chạy câu lệnh gì → câu lệnh của tình huống → giải thích từng phần của chính câu đó bằng `LineMap`. Tiểu mục sau là "SQL Server chạy câu này thế nào": `RunFlow` → bảng kết quả cuối → câu trả lời; bài không có `RunFlow` đặt tên tiểu mục này là "Kết quả cho tình huống". Không có hướng dẫn chạy hay giải thích cách đọc Results, Messages; phần này nằm ở trang Giới thiệu.
+- Khái niệm và ví dụ đứng cạnh nhau. Chỉ dùng khối giúp hiểu ý đang nói, không cần một bảng so sánh dài. Không giải thích trong lời văn rồi chép nguyên ý vào bảng. Phần cấu trúc mới nêu mục đích, cách viết, vai trò các thành phần và điều kiện cần nhớ; phần đã học chỉ nhắc để nối nghĩa. Khuôn/đoạn trích từ tình huống có chỗ lược phải ghi rõ chỉ để đọc và dùng copy={false}.
+- Bài khái niệm chưa cần thực hành không chèn SQL cho đủ khuôn. Bài truy vấn đặt **SQL đầy đủ → lời dẫn ngắn → minh họa luồng (RunFlow hoặc AnimatedFlow) → tóm tắt → Result → câu trả lời nghiệp vụ** trong tiểu mục thứ hai; không chen bảng giải thích từng mệnh đề giữa SQL và sơ đồ. Tóm tắt nối các bước với lý do ra kết quả, không chép lại tiêu đề thẻ. Bài không cần RunFlow vẫn có SQL, giải thích cách ra kết quả, Result và câu trả lời. Vận dụng nếu có nằm sau câu trả lời, trước Hay nhầm; kiến thức cần cho đề bắt buộc không được biến thành tùy chọn. Không thêm hướng dẫn thao tác Results/Messages đã có ở Giới thiệu.
 - Giữ kiến thức đủ để hiểu và xử lý yêu cầu của bài. Chi tiết sâu đã có bài riêng thì nêu điều kiện bằng một vế câu và dẫn bài; không biến bài nhập môn thành bài về kiểu dữ liệu, khóa, import hay giao dịch.
 - Bài khái niệm đơn giản hướng tới 10–12 phút gồm tự kiểm tra, bài nền theo mục 2.5; bài phức tạp ghi thời lượng theo nội dung thực tế. Rút bằng cách cắt lặp và giảm độ sâu ngoài mục tiêu; giữ phần giảng chính luôn hiển thị, không giấu sau tab/khối bấm mở để trông ngắn hơn.
 
@@ -81,13 +81,23 @@ Mọi quy ước khi viết bài, review bài và làm việc với database c�
 
 ### 2.6 Drawer của sơ đồ (duyệt 31/10/2026)
 
-- Bấm vào một bước, học viên chỉ đọc ba phần: **Đầu vào**, **Thực hiện**, **Kết quả**. Drawer không có liên hệ Excel hay câu lệnh xem dữ liệu; `sql` của bước là bằng chứng để chạy lại, không hiện trên trang.
+- Bấm vào một bước, học viên chỉ đọc ba phần: **Đầu vào**, **Thực hiện**, **Kết quả**. Drawer không có liên hệ Excel hay câu lệnh xem dữ liệu; `sql` của bước là bằng chứng để chạy lại, không hiện trên trang. Phần hiện trên trang phải đủ hiểu cấu trúc mới và nguyên nhân chính tạo kết quả; drawer dành cho lần dữ liệu/phép tính, không dạy bù kiến thức bắt buộc còn thiếu.
 - **Đầu vào** tự lấy từ bước trước, tối đa 5 dòng. Bước đầu có `input` nêu bảng gốc. Đầu vào phải đủ để hiểu bước đang xét: bước lọc thấy cột của điều kiện, bước `SELECT` thấy cột sắp lấy, bước sắp xếp thấy cột đang sắp; dùng `inputColumns` khi cần. Chọn dòng trích sao cho thấy được điều bước sau làm: hồ sơ bị loại, dòng trùng, thứ tự cần đổi.
 - **Thực hiện** bắt đầu từ từ khóa, nói việc bước đó làm với các dòng của tình huống. **Kết quả** nói số dòng, số cột và danh sách cần. Hai phần không lặp nhau, không chép lại điều bảng đã cho thấy. Bước `FROM` gọn: Đầu vào nêu bảng, Thực hiện nói chưa lọc, chưa chọn cột, Kết quả nêu số.
 - Khi lời giải chưa đủ để lần ra kết quả, **Thực hiện** có thể thêm `examples`: tối đa hai ví dụ đại diện, mỗi bảng dữ liệu tối đa năm dòng, mỗi ví dụ tối đa năm biểu thức. Nối biểu thức → dữ liệu/phép tính → ô kết quả; chỉ giải các nhóm hoặc trường hợp đủ thấy cơ chế, không liệt kê hết dữ liệu. Ghi rõ phạm vi minh họa là trích hay đủ nhóm mẫu; tổng hợp vẫn dùng toàn phạm vi của bước, không chỉ các dòng trích. Hình nhóm/phép tính là minh họa, không giả là kết quả SQL hoặc bảng mới được lưu. `mark` đánh dấu dòng kết quả được giải. Bảng Đầu vào vẫn tối đa năm dòng; không dùng `checks` của WHERE/CASE để diễn phép tổng hợp.
 - Bước `WHERE` có `checks` soi từng hồ sơ qua từng điều kiện, vì `WHERE` xét mọi điều kiện trên mỗi dòng, không lọc nhiều lượt. Tiêu đề điều kiện có tên cột, như `NgayNghiViec IS NULL`. Bảng có cả hồ sơ giữ và hồ sơ loại, mã hồ sơ nằm trong các dòng đang hiện ở Đầu vào. Ô so với `NULL` ghi `UNKNOWN`, không ghi Sai.
 - Bước `SELECT` có `CASE` dùng bảng nhánh: mỗi `WHEN` một cột, cột cuối là nhãn, ô sau nhánh đúng ghi `Không xét`, vì `CASE` dừng ở nhánh đúng đầu tiên. Bảng có đủ một hồ sơ dừng ở mỗi nhánh và một hồ sơ vào `ELSE`.
 - Lời các bước đi theo yêu cầu của tình huống, bước cuối là kết quả chị Hạnh cần. Các bài chưa chuyển bố cục được viết lại lời khi đến lượt.
+
+### 2.6a Ảnh động và hình tĩnh theo bước (thí điểm bài 2.1)
+
+- Chọn `AnimatedFlow` khi cần nhìn thấy dữ liệu chuyển qua thao tác; dùng `RunFlow` khi sơ đồ và drawer diễn đạt đủ. Thí điểm tại bài 2.1; chỉ chuyển bài khác khi được giao. Mạch bài giữ SQL đầy đủ → minh họa luồng → tóm tắt nguyên nhân → Result → trả lời nghiệp vụ.
+- Ảnh động có ảnh bìa và tự chạy, lặp lại khi ảnh xuất hiện trong vùng đọc. Nút Dừng minh họa trả về bìa, Phát minh họa chạy lại từ đầu; người học đã dừng thì không tự phát lại khi cuộn. Bên dưới có khối mở rộng Xem từng bước gồm hình tĩnh, Đầu vào, Thực hiện, Kết quả và bảng HTML. Kiến thức bắt buộc vẫn có trong lời giảng luôn hiện. Hỗ trợ bàn phím, đọc khi tắt JavaScript và giảm chuyển động; khi bật giảm chuyển động, mặc định hiện ảnh tĩnh và cho phép chủ động phát.
+- Chốt kịch bản từ dòng/nhóm đại diện đã kiểm SQL, từng trạng thái trước/sau, số dòng/cột và phạm vi trích. Mỗi ảnh phải nối được dữ liệu với thao tác và ô kết quả. `AS` thuộc `SELECT`; cảnh chuyển động không tạo thêm bước xử lý logic. Giữ đúng quan hệ các nhánh UNION, JOIN, NULL và phạm vi tổng hợp theo mục 2.6.
+- Dữ liệu `query`/`steps` dùng chung cho phần đọc HTML và nguồn dựng ảnh; dùng `checkFlow` để kiểm cấu trúc. Ảnh và dữ liệu bước phải khớp kết quả cuối của bài. SQL/số liệu kiểm theo mục 3 và 5; lưu bằng chứng và giới hạn.
+- Dùng skill `gifgen-local:make-gif` cho phần chuyển động sinh bằng AI và mã hóa GIF. Phần sinh ảnh là sprite sheet; chữ SQL, tiếng Việt, bảng và số liệu dựng bằng mã. Có thể dùng lại sprite sheet đã kiểm. Lưu nguồn dựng và tài nguyên cần tái tạo trong repo; không phụ thuộc đường dẫn tạm của máy tác giả.
+- Ảnh động dùng theme infographic tối đã duyệt: nền tím đậm, chữ sáng, viền tím/hồng, SQL ở trên và bảng nguồn/kết quả hai bên. Token và bố cục của bản thí điểm nằm trong `scripts/animations/select.css`; khung và điều khiển ngoài ảnh theo `src/styles/tokens.css`, font theo DESIGN.md. Hình tối đa 1080 px chiều ngang, kiểm tại vùng bài 720 px và màn hình hẹp, giữ thời gian đọc các cảnh chính. Có alt, chú thích phạm vi, kích thước khai báo và liên kết bản gốc. Nếu chữ nhỏ trên màn hình hẹp, phần HTML và bản gốc phải đọc được.
+- Manifest khóa SQL/dữ liệu bước, token, font, nguồn dựng và ảnh xuất bằng hash. Khi đầu vào đổi phải dựng và kiểm lại ảnh; build/test báo tài nguyên lỗi thời. Giữ riêng kiểm source, SQL live, HTML, UI và ảnh; đọc source không thay bằng chứng đã chạy SQL hay thử giao diện.
 
 ### 2.7 Bài phụ lục tra cứu (duyệt 01/11/2026)
 
@@ -146,7 +156,7 @@ Mọi quy ước khi viết bài, review bài và làm việc với database c�
 
 ### 4.2 Viết theo mục tiêu
 
-Theo biến thể trong template; giữ cấu trúc, định dạng và các mục 1–3. Lời văn giải thích mục đích/cơ chế, LineMap gắn phần câu với tác dụng, RunFlow minh họa chuyển đổi bằng dữ liệu, Memo dùng để ôn. Không chép cùng lời giải ở mọi khối.
+Theo biến thể trong template; giữ cấu trúc, định dạng và các mục 1–3. Cấu trúc mới giải thích mục đích/cách viết; RunFlow hoặc AnimatedFlow diễn giải luồng dữ liệu logic; tóm tắt nối các bước tới đáp án; drawer minh họa chi tiết; Memo dùng để ôn. Không chép cùng lời giải ở mọi khối hoặc mặc định thêm LineMap.
 
 Phần giải thích cốt lõi phải đọc được trước khi mở drawer. Excel làm cầu nối khi phù hợp; không mặc định người học biết VBA, VLOOKUP, PivotTable hoặc Evaluate Formula. Dùng ví dụ đại diện, không giảng hết mọi dòng. Không tự tạo hình, mockup hay sửa component nếu các khối sẵn có đã diễn đạt đủ; khi cần sửa công cụ, ghi thành phạm vi riêng.
 
@@ -178,7 +188,7 @@ Bài mới hoặc sửa nội dung đáng kể cần một reviewer ngữ cảnh
 - Codex: model gpt-6.1-terra, reasoning_effort high, fork_turns none; Claude: Sonnet, effort **high**. Ghi đúng cấu hình, không nhận đã xác minh model thực tế nếu công cụ không xác nhận.
 - Không truyền lịch sử viết, report cũ hoặc kết luận tác giả. Giao đường dẫn bài/YAML, mục tiêu, tiền đề cần đọc, quyết định đã duyệt, commit/diff, build khớp hoặc chưa có, công cụ được dùng và đường dẫn report mới.
 - Reviewer chỉ ghi report; không sửa sản phẩm/test/Git, đọc seed/secret, chạy SQL/API hoặc tạo agent khác. Đúng thì công nhận, không có finding là hợp lệ.
-- Reviewer đọc toàn bộ bài, các khối/drawer và từng đề, tự xác định cách làm trước khi xem answer; không lấy bài sau/đáp án/kiến thức chuyên gia bù phần chưa dạy. Không chép đáp án vào report.
+- Reviewer đọc toàn bộ bài, các khối/drawer và từng đề, tự xác định cách làm trước khi xem answer; không lấy bài sau/đáp án/kiến thức chuyên gia bù phần chưa dạy. Không chép đáp án vào report. Kiểm phần cấu trúc mới có trước SQL đầy đủ, sơ đồ nằm sát câu SQL, tóm tắt có giải thích nguyên nhân và drawer không giữ riêng kiến thức bắt buộc. Phân biệt cú pháp, luồng logic và thực thi vật lý.
 - Chỉ dùng browser khi được giao, giữ nháp/clipboard. Phân biệt bảng trích/tổng thật, sơ đồ logic/thực thi vật lý, đọc HTML/tương tác thật; thiếu bằng chứng thì ghi chưa xác minh.
 - Tách sai có căn cứ, thiếu tiền đề, đã dạy nhưng khó tìm và biên tập. Report có vị trí/câu gốc ngắn, tác động, đề xuất, phần giữ được, bảng tiền đề từng đề và giới hạn; không có hạn ngạch finding/điểm số. Câu chữ gây hiểu sai là lỗi cần xử lý, không hạ mức chỉ vì đoạn sửa ngắn.
 - Hết hạn mức thì tiếp tục đúng agent/lượt; không tạo reviewer thay thế, đổi model hoặc review lại từ đầu. Giữ report đã hoàn tất, lượt mới có đường dẫn mới.

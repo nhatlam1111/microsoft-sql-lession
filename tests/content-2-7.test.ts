@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { runInNewContext } from 'node:vm';
 import { parse } from 'yaml';
-import { readLessonFiles, lessonMainSection } from './helpers/lessons';
+import { readLessonFiles, lessonMainSection, sqlSubheadings } from './helpers/lessons';
 
 const slug = '2-7-ham-chuoi-tieng-viet';
 const value = <T>(source: string): T => JSON.parse(JSON.stringify(runInNewContext(`(${source})`)));
@@ -24,8 +24,10 @@ function people() {
 describe('2.7 string projections preserve identity and source values', () => {
   it('shows every current IT record as a code + full-name signing label', () => {
     const body = lesson().body;
+    expect(sqlSubheadings(body)).toEqual(['Cấu trúc mới trong bài', 'Đọc câu SQL qua các bước', 'Vận dụng trên cùng tình huống']);
     const flow = body.match(/<RunFlow query=\{`([\s\S]*?)`\} steps=\{([\s\S]*?)\} \/>/);
     expect(flow).not.toBeNull();
+    expect(body.match(/<Sql code=\{`([\s\S]*?)`\}/)?.[1]).toBe(flow![1]);
     const steps = value<{ clause: string; columns: string[]; rows: unknown[][]; total: number }[]>(flow![2]);
     const source = people();
     const itPeople = source.filter(p => p.MaPB === 'IT');
@@ -47,25 +49,28 @@ describe('2.7 string projections preserve identity and source values', () => {
         if (step.clause === 'WHERE') expect(p.MaPB).toBe('IT');
       }
     }
-    expect(steps[2].rows).toEqual(expected);
+    expect(steps[2].rows).toHaveLength(expected.length);
+    expect(steps[2].rows).toEqual(expect.arrayContaining(expected));
+    expect(steps[2].rows[0][0]).not.toBe(expected[0][0]);
     expect(steps[3].rows).toEqual(expected);
     const results = [...body.matchAll(/<Result columns=\{(\[[\s\S]*?\])\} rows=\{(\[[\s\S]*?\])\}[^>]*\/>/g)];
     expect(results.some(m => JSON.stringify(value(m[2])) === JSON.stringify(expected))).toBe(true);
   });
 
-  it('teaches what the exercises and lesson 4.6 need, on values of the scenario', () => {
+  it('teaches the expression and collation behavior needed for the lesson and Arcade exercises', () => {
     const main = lessonMainSection(lesson().body);
-    for (const term of ['LEFT(MaNV, 2)', 'SUBSTRING(MaNV, 3, 3)', 'TRIM(HoTen)', 'LOWER(HoTen)', 'COLLATE Latin1_General_CI_AI', "CONCAT(N'[', NULL, N']')"]) {
+    for (const term of ['LEFT(MaNV, 2)', 'SUBSTRING(MaNV, 3, 3)', 'WHERE SUBSTRING(MaNV, 3, 2)', 'LEN(TRIM(HoTen))', 'LOWER(HoTen)', "HoTen COLLATE Latin1_General_CI_AI LIKE N'bui%'", "CONCAT(N'[', NULL, N']')"]) {
       expect(main).toContain(term);
     }
-    // Vietnamese_CI_AI keeps Đ and Â as separate letters, so it does not search without marks.
-    expect(main).not.toContain('Vietnamese_CI_AI');
-    expect(lesson().body).toContain("`N'dang%'` không ra `Đặng Quốc Bảo`");
+    expect(main).toContain('Vietnamese_CI_AI');
+    expect(main).toContain('Âu Văn Kiên');
+    expect(main).not.toContain('<LineMap');
+    expect(main).not.toContain('<details');
   });
 
   it('provides three distinct ordered query exercises, including a preserved source NULL', () => {
     const file = parse(readFileSync(`src/content/exercises/${slug}.yaml`, 'utf8')) as {
-      lesson: string; exercises: { id: string; kind: string; ordered: boolean; columns: string[]; answer: string }[];
+      lesson: string; exercises: { id: string; kind: string; ordered: boolean; columns: string[]; prompt: string; answer: string }[];
     };
     expect(file.lesson).toBe(slug);
     expect(file.exercises.map(e => [e.id, e.kind, e.ordered])).toEqual([
@@ -81,13 +86,15 @@ describe('2.7 string projections preserve identity and source values', () => {
       expect(lesson().body.replace(/\s+/g, ' ')).not.toContain(e.answer.replace(/\s+/g, ' ').trim());
     }
     expect(file.exercises[0].answer).toMatch(/LEFT\(MaNV, 2\)[\s\S]*SUBSTRING\(MaNV, 3, 3\)[\s\S]*MaPB = 'KT'/);
-    expect(file.exercises[1].answer).toMatch(/LEN\(HoTen\)[\s\S]*HoTen COLLATE Latin1_General_CI_AI LIKE N'ho%'/);
+    expect(file.exercises[1].prompt).toMatch(/\bdo\b/);
+    expect(file.exercises[1].answer).toMatch(/LEN\(HoTen\)[\s\S]*HoTen COLLATE Latin1_General_CI_AI LIKE N'do%'/);
     expect(file.exercises[2].answer).toMatch(/MaNV, Email, CONCAT\(N'\[', UPPER\(Email\), N'\]'\)[\s\S]*MaPB = 'VH'/);
     const source = people();
     expect(source.filter(p => p.MaPB === 'KT')).toHaveLength(7);
-    const matches = source.filter(p => p.HoTen!.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase().startsWith('ho'));
+    // Model this prefix on the specific seed, including the two source names with Đ.
+    const matches = source.filter(p => p.HoTen!.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase().replace(/^đ/, 'd').startsWith('do'));
     expect(matches.map(p => [p.MaNV, p.HoTen, p.HoTen!.length])).toEqual([
-      ['NV004', 'Hoàng Minh Tuấn', 15], ['NV014', 'Hồ Thị Bích', 11],
+      ['NV010', 'Đỗ Thị Hồng', 11], ['NV036', 'Doãn Thị Thảo', 13], ['NV048', 'Đỗ Minh Quân', 12],
     ]);
     const labels = source.filter(p => p.MaPB === 'VH').map(p => [p.MaNV, p.Email, `[${p.Email?.toUpperCase() ?? ''}]`]);
     expect(labels).toHaveLength(10);
