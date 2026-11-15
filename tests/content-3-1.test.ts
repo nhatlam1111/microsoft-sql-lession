@@ -2,6 +2,7 @@ import { it, expect } from 'vitest';
 import { readFileSync, existsSync } from 'node:fs';
 import { parse } from 'yaml';
 import { lessonBlocks } from './helpers/lesson-blocks';
+import { lessonMainSection, sqlSubheadings } from './helpers/lessons';
 import { leaveStartingIn, seedRows } from './helpers/hrm-seed';
 import { checkFlow, inputPreview } from '../src/lib/run-flow';
 
@@ -68,17 +69,27 @@ it('3.1 filters approved forms by start month, then aggregates all nine rows int
   expect(lesson.query).not.toMatch(/GROUP BY|\bJOIN\b|\bDenNgay\b/);
 });
 
-it('3.1 teaches non-NULL counts and the empty aggregate on its own scenario before the recap', () => {
+it('3.1 teaches aggregation before the runnable statement and covers empty inputs before the recap', () => {
   const lesson = lessonBlocks(slug);
-  const teaching = lesson.body.split('## Hay nhầm ở đâu')[0];
+  expect(sqlSubheadings(lesson.body)).toEqual([
+    'Cấu trúc mới trong bài', 'Đọc câu SQL qua các bước', 'Vận dụng trên cùng tình huống',
+  ]);
+  const main = lessonMainSection(lesson.body);
+  const [teaching, walkthrough, practice] = main.split(/^### /m).slice(1);
+  expect(main).not.toMatch(/<(?:LineMap|details)\b/);
+  expect(teaching).not.toContain('<Sql');
   expect(teaching).toContain('COUNT(SoNgay)');
   expect(teaching).toContain('NOT NULL');
-  expect(teaching).toMatch(/giả định/);
+  expect(teaching).toMatch(/giả định/i);
   expect(teaching).toContain('NULL');
-  expect(teaching).toMatch(/không có dòng|không giữ dòng/);
   expect(teaching).toMatch(/mẫu số/);
-  expect(teaching.match(/<Sql\b/g)).toHaveLength(1);
-  expect(teaching).not.toContain('FROM NhanVien');
+  expect(walkthrough.match(/<Sql\b/g)).toHaveLength(1);
+  expect(walkthrough.match(/<Sql code=\{`([\s\S]*?)`\}/)?.[1]).toBe(
+    walkthrough.match(/<RunFlow query=\{`([\s\S]*?)`\}/)?.[1],
+  );
+  expect(practice).toMatch(/không có dòng/i);
+  expect(practice).toContain('SUM(CASE WHEN SoNgay >= 2 THEN 1 ELSE 0 END)');
+  expect(main).not.toContain('FROM NhanVien');
   // Cross-table transfer still needs to distinguish the two counts in exercise 1.
   const active = seedRows('NhanVien').filter(r => r.TrangThai === 'Đang làm');
   expect([active.length, active.filter(r => r.Email !== null).length]).toEqual([45, 43]);
@@ -88,13 +99,14 @@ it('3.1 reconciles both reports in the main query using the same nine forms', ()
   const { body, query, steps } = lessonBlocks(slug);
   const matching = leaveStartingIn('2026-09').filter(row => Number(row.SoNgay) >= 2);
   const total = matching.reduce((days, row) => days + Number(row.SoNgay), 0);
-  const teaching = body.split('### SQL Server chạy câu này thế nào')[0];
+  const teaching = body.split('### Đọc câu SQL qua các bước')[0];
   expect(query).toContain('COUNT(CASE WHEN SoNgay >= 2 THEN 1 END) AS [SoDonTuHaiNgay]');
   expect(query).toContain('SUM(CASE WHEN SoNgay >= 2 THEN SoNgay ELSE 0 END) AS [TongNgayTuHaiNgay]');
   expect(query.split('FROM DonNghiPhep')[1]).not.toContain('SoNgay >= 2');
   expect(steps[2].columns).toHaveLength(7);
   expect(steps[2].rows[0].slice(-2)).toEqual([matching.length, total.toFixed(1)]);
-  expect(teaching).toContain('SUM(CASE WHEN SoNgay >= 2 THEN 1 ELSE 0 END)');
+  expect(teaching).toContain('COUNT(CASE WHEN SoNgay >= 2 THEN 1 END)');
+  expect(teaching).toContain('SUM(CASE WHEN SoNgay >= 2 THEN SoNgay ELSE 0 END)');
   expect(body.split('</Chat>')[0]).toMatch(/16 ngày[\s\S]*12/);
   expect(body).toContain('Phần chênh `4.0` ngày đến từ bốn đơn một ngày.');
   expect(teaching).toContain('vì `0` khác `NULL`');

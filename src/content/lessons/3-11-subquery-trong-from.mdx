@@ -29,7 +29,7 @@ Phạm vi: mọi dòng `HopDong`, không lọc loại hay ngày; không lọc tr
 
 ## Lọc trên kết quả đã tổng hợp
 
-### Từ bảng tổng hợp Excel đến subquery trong FROM
+### Cấu trúc mới trong bài
 
 Trong Excel, bạn tạo bảng đếm hợp đồng theo mã như cách tổng hợp ở bài 3.2, rồi lọc cột số lượng từ `2` trở lên. Hình minh họa trích bảng trước khi lọc: ô `B2` là nhóm được giữ, `B4` là nhóm bị loại. Đây là bảng kết quả trung gian, không phải từng dòng hợp đồng gốc.
 
@@ -40,7 +40,15 @@ Trong Excel, bạn tạo bảng đếm hợp đồng theo mã như cách tổng 
   ['NV004',1],
 ]} />
 
-Trong SQL, có thể đặt câu tổng hợp trong ngoặc tại `FROM`, rồi để câu ngoài đọc kết quả ấy như một nguồn dữ liệu. Với yêu cầu này, câu lệnh là:
+Đặt câu tổng hợp trong ngoặc ngay sau `FROM`. Câu ngoài có thể dùng kết quả của câu con làm nguồn dữ liệu, giống cách bạn lọc bảng tổng hợp trong Excel.
+
+Kết quả câu con đặt trong `FROM` gọi là **bảng dẫn xuất (derived table)**: một nguồn dữ liệu được tạo từ câu truy vấn trong phạm vi câu lệnh này. Nó có thể có nhiều dòng và nhiều cột; khác bài 3.10, không phải ép toàn bộ kết quả vào một ô. `AS t` đặt **bí danh bảng** để câu ngoài gọi các cột `t.MaNV`, `t.SoHopDong`; bí danh này là bắt buộc cho bảng dẫn xuất, còn từ khóa `AS` có thể bỏ.
+
+Hai tầng có phạm vi riêng. Câu con dùng `hd` và chỉ xuất hai cột. Câu ngoài nhìn thấy hai cột của `t`, không thấy `hd` hoặc từng `MaHD` đã không được xuất. `AS [SoHopDong]` đặt tên cho biểu thức đếm để câu ngoài tham chiếu; các cột xuất ra cần tên riêng, không trùng nhau.
+
+Ở bài 3.3, `HAVING` lọc nhóm trong cùng một câu tổng hợp. Ở đây `SoHopDong` đã là một cột của nguồn `t`, nên `WHERE` ngoài đọc và lọc nó được. Đặt `WHERE SoHopDong >= 2` trong chính câu con sẽ báo lỗi vì lúc lọc dòng gốc, tên `SoHopDong` chưa có. Điều kiện trên từng hợp đồng đặt trước `GROUP BY`.
+
+### Đọc câu SQL qua các bước
 
 <Sql code={`SELECT t.MaNV, t.SoHopDong
 FROM (
@@ -51,30 +59,7 @@ FROM (
 WHERE t.SoHopDong >= 2
 ORDER BY t.SoHopDong DESC, t.MaNV ASC;`} />
 
-<LineMap rows={[
-  ['SELECT hd.MaNV, COUNT(hd.MaHD) AS [SoHopDong]', 'Câu con xuất mã và một cột đếm có tên. Ví dụ: nhóm NV021 xuất NV021 / 3.'],
-  ['FROM HopDong AS hd … GROUP BY hd.MaNV', 'Câu con xét mọi hợp đồng và gom theo mã nhân viên. Ví dụ: ba hợp đồng của NV021 thành một dòng tổng hợp.'],
-  ['FROM (…) AS t', 'Câu ngoài đặt bí danh t cho nguồn là kết quả câu con. Ví dụ: dòng NV004 / 1 vẫn có trong nguồn trước khi lọc.'],
-  ['WHERE t.SoHopDong >= 2', 'Câu ngoài lọc số lượng đã có trong nguồn t. Ví dụ: NV021 / 3 được giữ, NV004 / 1 bị loại.'],
-  ['SELECT t.MaNV, t.SoHopDong', 'Câu ngoài lấy đúng hai cột từ nguồn t. Ví dụ: không đưa từng MaHD của NV021 ra danh sách.'],
-  ['ORDER BY t.SoHopDong DESC, t.MaNV ASC', 'Xếp danh sách cuối theo số giảm dần, rồi mã tăng dần khi bằng nhau. Ví dụ: NV021 / 3 đứng trước NV025 / 2.'],
-]} />
-
-Kết quả câu con đặt trong `FROM` gọi là **bảng dẫn xuất (derived table)**: một nguồn dữ liệu được tạo từ câu truy vấn trong phạm vi câu lệnh này. Nó có thể có nhiều dòng và nhiều cột; khác bài 3.10, không phải ép toàn bộ kết quả vào một ô. `AS t` đặt **bí danh bảng** để câu ngoài gọi các cột `t.MaNV`, `t.SoHopDong`; bí danh này là bắt buộc cho bảng dẫn xuất, còn từ khóa `AS` có thể bỏ.
-
-Hai tầng có phạm vi riêng. Câu con dùng `hd`, nhóm `55` dòng hợp đồng thành `46` mã có hợp đồng và chỉ xuất hai cột. Câu ngoài nhìn thấy hai cột của `t`, không thấy `hd` hoặc từng `MaHD` đã không được xuất. `AS [SoHopDong]` đặt tên cho biểu thức đếm để câu ngoài tham chiếu; các cột xuất ra cần tên riêng, không trùng nhau.
-
-Ở bài 3.3, `HAVING` lọc nhóm trong cùng một câu tổng hợp. Ở đây `SoHopDong` đã là một cột của nguồn `t`, nên `WHERE` ngoài đọc và lọc nó được. Nếu đưa điều kiện lên hợp đồng gốc hoặc dùng bí danh vừa đặt trong `WHERE` của chính câu con, bạn đã đổi tầng xử lý. Không phải mọi điều kiện đều chuyển qua lại được: lọc hợp đồng trước khi đếm khác với lọc số lượng sau khi đếm.
-
-Cùng cách tổ chức này, có thể dùng `SUM` để cộng cột số, rồi câu ngoài lọc cột tổng. Điều kiện chọn dòng nguồn phải đặt trong câu con trước `GROUP BY`; ngưỡng trên tổng đặt ở câu ngoài. Mỗi dòng kết quả vẫn theo khóa nhóm của câu con. Chỉ có hợp đồng mới có nhóm, nên bảng dẫn xuất này không tự tạo dòng `0` cho `NV047` hoặc `NV048`.
-
-Bảng dẫn xuất không tạo bảng mới được lưu và không bảo đảm chạy nhanh hơn cách viết bằng `HAVING`. Sơ đồ chỉ giúp đọc quan hệ dữ liệu; SQL Server có thể tối ưu cách thực thi. `ORDER BY` ở câu ngoài mới bảo đảm thứ tự danh sách gửi đi; nguồn `t` không có thứ tự cố định để kế thừa.
-
-Ở bài này chỉ cần đặt tên nguồn, nhận đúng cột xuất ra và lọc kết quả tổng hợp. Không chuyển nguyên câu con tương quan của bài 3.10 sang bảng dẫn xuất thông thường để tham chiếu bí danh ngoài; cách dùng `APPLY` cho nguồn phụ thuộc từng dòng nằm ngoài phạm vi bài. Tổ chức nhiều bước có tên bằng CTE học ở bài 3.12; xem thực thi thật ở bài 4.7.
-
-### SQL Server chạy câu này thế nào
-
-Sơ đồ theo thứ tự xử lý logic của câu ngoài. Drawer `FROM` giải thích việc câu con nhóm `55` hợp đồng thành `46` dòng; câu ngoài bắt đầu với nguồn ấy rồi mới lọc ngưỡng:
+Sơ đồ bắt đầu từ bảng tổng hợp của câu con. Mở bước đầu để theo dõi số hợp đồng của mỗi mã trước khi lọc.
 
 <RunFlow query={`SELECT t.MaNV, t.SoHopDong
 FROM (
@@ -350,9 +335,21 @@ ORDER BY t.SoHopDong DESC, t.MaNV ASC;`} steps={[
   }
 ]} />
 
+Câu con gom `55` dòng hợp đồng thành `46` dòng theo mã. `NV021` vào bảng dẫn xuất với số đếm `3` nên được giữ, còn `NV004` có `1` nên bị loại. Câu ngoài lấy `7` dòng đạt ngưỡng và sắp theo số hợp đồng rồi mã.
+
 <Result columns={["MaNV", "SoHopDong"]} rows={[["NV021", 3], ["NV030", 3], ["NV025", 2], ["NV029", 2], ["NV040", 2], ["NV044", 2], ["NV045", 2]]} total={7} mark={[2,3]} />
 
 Kết quả gửi chị Hạnh có `7` mã với ít nhất hai dòng hợp đồng đang lưu: `NV021`, `NV030` có `3`; năm mã còn lại có `2`. Danh sách đã xếp số hợp đồng giảm dần, cùng số thì mã tăng dần. Hai dòng được đánh dấu cho thấy quy tắc xếp giữa nhóm `3` và nhóm `2`.
+
+### Vận dụng trên cùng tình huống
+
+Cùng cách tổ chức này, khi đề cần tổng tiền hoặc tổng ngày theo mã, dùng `SUM` trên cột số được yêu cầu. Giữ cột mã trong danh sách xuất và `GROUP BY` để mỗi mã có một dòng. Đặt tên cho cột tổng để `WHERE` ngoài lọc được. Điều kiện chọn dòng nguồn nằm trong câu con trước `GROUP BY`.
+
+Chỉ có mã xuất hiện trong nguồn mới có nhóm. Bảng dẫn xuất trong bài không tạo dòng số hợp đồng `0` cho `NV047` hay `NV048`.
+
+Bảng dẫn xuất không tạo bảng mới được lưu và không bảo đảm chạy nhanh hơn cách viết bằng `HAVING`. Sơ đồ chỉ giúp đọc quan hệ dữ liệu; SQL Server có thể tối ưu cách thực thi. `ORDER BY` ở câu ngoài mới bảo đảm thứ tự danh sách gửi đi; nguồn `t` không có thứ tự cố định để kế thừa.
+
+Ở bài này chỉ cần đặt tên nguồn, nhận đúng cột xuất ra và lọc kết quả tổng hợp. Không chuyển nguyên câu con tương quan của bài 3.10 sang bảng dẫn xuất thông thường để tham chiếu bí danh ngoài; cách dùng `APPLY` cho nguồn phụ thuộc từng dòng nằm ngoài phạm vi bài. Tổ chức nhiều bước có tên bằng CTE học ở bài 3.12; xem thực thi thật ở bài 4.7.
 
 ## Hay nhầm ở đâu
 

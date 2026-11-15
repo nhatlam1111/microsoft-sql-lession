@@ -8,7 +8,7 @@ import { guardExercise } from '../src/lib/sql-guard';
 const slug='3-13-xep-hang-row-number-rank';
 it('3.13 picks one whole contract per employee and preserves scoped, runnable flow queries',()=>{
   const l=lessonExamples(slug);
-  expect(l.pairs.length).toBe(3);
+  expect(l.pairs.length).toBe(2);
   expect(l.steps.map(s=>[s.clause,s.total])).toEqual([['FROM',55],['WHERE',46],['SELECT',46],['ORDER BY',46]]);
   expect(checkFlow(l.steps,l.query)).toEqual([]);
   for (const p of [...l.pairs,...l.steps]) {
@@ -18,9 +18,20 @@ it('3.13 picks one whole contract per employee and preserves scoped, runnable fl
     expect(got.rows.slice(0,p.rows.length)).toEqual(p.rows);
   }
   const rows=fixtureQuery(l.query).rows;
+  expect(rows.slice(0,l.results[0].rows.length)).toEqual(l.results[0].rows);
   expect(rows).toContainEqual(['NV021','HD2024-005','2024-09-01']);
   expect(rows.some(r=>r[0]==='NV047'||r[0]==='NV048')).toBe(false);
   expect(splitFocus(l.query,l.steps[3].focus)?.focus).toBe('ORDER BY xh.MaNV ASC;');
+});
+it('3.13 shows same-date contracts sharing ranks while NTILE can split a tie',()=>{
+  const lesson=lessonExamples(slug);
+  const rankExample=lesson.pairs.find(pair=>pair.columns.includes('Nhom'))!;
+  expect(rankExample.rows.map(row=>row.slice(3))).toEqual([
+    [1,1,1,1], [2,1,1,1], [3,3,2,2], [4,3,2,3],
+  ]);
+  expect(lesson.steps[1].checks?.rows.slice(0,3)).toEqual([
+    ['HD2024-005',true], ['HD2021-002',false], ['HD2021-001',false],
+  ]);
 });
 it('3.13 excludes future starts before numbering and resolves equal-date contracts by unique code',()=>{
   const l=lessonExamples(slug);

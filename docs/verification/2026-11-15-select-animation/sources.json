@@ -1,0 +1,29 @@
+{
+  "baseHead": "455456116077839099d41941984e5184f8780b97",
+  "note": "Workspace contains prior unrelated edits; hashes identify this final source snapshot.",
+  "sha256": {
+    "src/components/lesson/AnimatedFlow.astro": "fcebcedff2298265a5669d1a806cbc73720f5fb60499d2b04425da2fd2f1cf7c",
+    "src/lib/animation-assets.ts": "bda5ff18b666f0ff3113bdfca2504ac26c0fa8b17e3dfb2f612eff5c8d9174d7",
+    "src/components/lesson/index.ts": "38e3e56be1019062e8decfc1728c14507e34bd049b773dc431b56c1a8ff2b9f6",
+    "src/content/lessons/2-1-chon-cot-dat-ten-cot.mdx": "32478d9819d36932fee90f2d77c11349f216ce08fb0ee1cb4ef8238ae0277a45",
+    "tests/animated-flow.test.ts": "93337fd6cd21b1d940b7db9113ca479ad598cde2266ac4311b1ccb8f540f5447",
+    "tests/helpers/lesson-blocks.ts": "1ee6d17a97fc9f790bc0d8b00815e5dc89a313cd7d848d51c843616eb7f9de35",
+    "tests/content.test.ts": "1454b0b98075acea7c94470b10ec57439b218c65cb3b6db3793f5234f99c5417",
+    "docs/quy-uoc.md": "b04ad7e06bd90963031536aad9c4211af9c0b37b37ba34a44d0cb3c1bf11fe90",
+    "docs/bien-soan.md": "fa7d754addfafe26409adfd199fdc726a15a5a18e3a6725efc5f7368487ca331",
+    "docs/lesson-template.md": "cd3f2b481010d9808904c2c14f247f4af292fa8fe1a63bc25b8c70ae2adf8be5",
+    ".agents/skills/course-author/SKILL.md": "4000dd63765769e9a4cf1fb291861e6ef82f3831a05ee267083ace6849a5b496",
+    ".claude/skills/course-author/SKILL.md": "4000dd63765769e9a4cf1fb291861e6ef82f3831a05ee267083ace6849a5b496",
+    "DESIGN.md": "8bcc284b596a59019d4b479080ef4b5e2aff2c00c4e368b44da193f98e310730",
+    "package.json": "a3b9aeccecaf803ee980e254a1622801c93eae57ca0d64d7bd84d7a1d8aa8f43",
+    "package-lock.json": "fc56d39bb26f7d2983ac10150d2f6f1173df29487033daa3c87e4f8b5d9c5e7e",
+    "public/lesson-animations/2-1-select/manifest.json": "04e889d5e7e9af964d9030316960d83752d0cd21f4736f7894773f5f5f469a2d",
+    "scripts/animations/check-browser.mts": "f9edcee239f1b4e43f45fd3c11232a4ed7a9d56b55b67d08b669057ffb748a75",
+    "scripts/animations/README.md": "7a1d061ef3718243c1ec66a29776b3c51bf8a81a39ee63479005afde9e7f8fb6",
+    "scripts/animations/render-select.mts": "560abc8f6a7069903009eae23eac9bb601ad01a85674da980023f3fbd0d3fc1a",
+    "scripts/animations/select-story.ts": "5cfdb100ed56f77a3063ce04960d92cbeb3bac78242190d861b185165592c4b3",
+    "scripts/animations/select.css": "06299c5c92df2c937a22e881c5cf6b2e55f984f3ee3486aa27f3288f8cec23bd",
+    "scripts/animations/sheet_to_gif.py": "85d31b11aa3477ac339f08fc88f48904f959826dc90b06726bddaadd997d3b8b",
+    "scripts/animations/verify-select-sql.mts": "13bbbc1c2b332e0db46504b3d7b368da5cf99228aa9b9eab5a33079500906973"
+  }
+}

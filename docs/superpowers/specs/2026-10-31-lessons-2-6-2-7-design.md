@@ -2,6 +2,10 @@
 
 Trạng thái: đã duyệt và đã làm trên nhánh `feat/lesson-2-5-null`, chưa push, 31/10/2026. Hồ sơ kiểm: [2.6](../../reviews/2026-10-31-lesson-2-6/verification.md), [2.7](../../reviews/2026-10-31-lesson-2-7/verification.md).
 
+Bản 2.6 đã chuyển sang khung truy vấn hiện hành với ví dụ nhiều cột ngày 14/11/2026. Xem [hồ sơ bàn giao 2.6](../../verification/2026-11-14-lesson-2-6.md).
+
+Bản 2.7 theo khung truy vấn hiện hành và đề `2-7-2` dùng mẫu `do%` được ghi tại [hồ sơ bàn giao 2.7](../../verification/2026-11-14-lesson-2-7.md).
+
 Khác thiết kế, sau review:
 
 Hồ sơ tích hợp cuối: [merge 2.5–2.9](../../reviews/2026-10-31-publish-2-5-2-9/verification.md); giữ riêng giới hạn grader không xác minh tên collation từ kết quả. Không đổi thiết kế sản phẩm trong lượt merge.

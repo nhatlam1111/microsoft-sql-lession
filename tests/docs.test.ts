@@ -58,15 +58,14 @@ it('the copyable full-lesson template follows the approved narrative structure',
   expect(body).not.toMatch(/^### (Lý thuyết cơ bản|Trả lời chị Hạnh)$/m);
 });
 
-it('the template gives lessons with a query two subsections', () => {
+it('the query template teaches new structure before the statement and keeps the flow beside it', () => {
   const template = readFileSync('docs/lesson-template.md', 'utf8');
-  expect(template).toContain('dùng đúng hai tiểu mục');
-  const steps = ['<Sql code={sqlDaKiemChung}', '<LineMap rows={cacPhanCuaCau}', '### SQL Server chạy câu này thế nào', '<RunFlow query={sqlDaKiemChung}', '<Result columns={cacCot}', 'Câu trả lời nghiệp vụ từ kết quả này'];
+  const steps = ['### Cấu trúc mới trong bài', '### Đọc câu SQL qua các bước', '<Sql code={sqlDaKiemChung}', '<RunFlow query={sqlDaKiemChung}', 'Tóm tắt nối các bước', '<Result columns={cacCot}', 'Câu trả lời nghiệp vụ từ kết quả này', '### Vận dụng trên cùng tình huống'];
   const places = steps.map(s => template.lastIndexOf(s));
   expect(places.every(p => p >= 0)).toBe(true);
   expect(places).toEqual([...places].sort((a, b) => a - b));
   const rules = readFileSync('docs/quy-uoc.md', 'utf8');
-  expect(rules).toContain('Bài có câu lệnh dùng đúng hai tiểu mục');
+  expect(rules).toContain('Không ép đúng hai tiểu mục');
   expect(rules).toContain('chỉ bám tình huống đầu bài');
   expect(template).toContain('chỉ bám tình huống đầu bài');
 });

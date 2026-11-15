@@ -211,3 +211,9 @@ The top navigation offers “Sơ đồ database” beside “Luyện SQL”. It 
 - Do preserve the original Excel/SSMS replicas and editor layering.
 - Don't introduce new workflows, visible wording, dependencies or a theme switch in a style refresh.
 - Don't hide scrollbars, use faint ink for readable labels, or resize fixed diagram children independently of their geometry.
+
+## SQL animation pilot — 15/11/2026
+
+Bài 2.1 dùng infographic tối theo GIF người làm khóa học chọn: nền tím đậm, chữ sáng, nhấn tím/hồng, SQL phía trên, nguồn và kết quả đặt cạnh nhau. Token ảnh thuộc `scripts/animations/select.css`; giao diện ngoài ảnh tiếp tục dùng `src/styles/tokens.css`. Font ảnh dùng Be Vietnam Pro và JetBrains Mono có trong repo.
+
+GIF bắt đầu khi 25% ảnh vào vùng nhìn, lặp lại và có Dừng minh họa trả về ảnh bìa. Khi người học đã dừng, cuộn lại không tự phát. Reduced motion mặc định ảnh tĩnh; người học có thể chủ động phát. Xem từng bước dùng details bản địa, hình tĩnh và dữ liệu HTML. Bản không JavaScript đọc được hình và nội dung bước.

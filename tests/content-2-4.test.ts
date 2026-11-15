@@ -22,17 +22,28 @@ function latestActive() {
 }
 
 describe('lesson 2.4 orders the filtered rows before applying TOP', () => {
-  it('uses the scenario once, after Excel and before LineMap, then steps, result and answer', () => {
-    const body=lesson().body,main=lessonMainSection(body);
-    expect(sqlSubheadings(body)).toHaveLength(2);
-    const [first,second]=main.split(/^### /m).slice(1);
-    expect(main.match(/<Sql\b/g)).toHaveLength(1);
+  it('teaches the sort before the runnable query and explains the cutoff before the result', () => {
+    const body = lesson().body;
+    const main = lessonMainSection(body);
+    expect(sqlSubheadings(body)).toEqual([
+      'Cấu trúc mới trong bài', 'Đọc câu SQL qua các bước', 'Vận dụng trên cùng tình huống',
+    ]);
+    const [structure, query, practice] = main.split(/^### /m).slice(1);
+    expect(main).not.toContain('<LineMap');
+    expect(main).not.toContain('<details');
     expect(main.match(/<Result\b/g)).toHaveLength(1);
-    expect(first.indexOf('<Excel')).toBeLessThan(first.indexOf('<Sql'));
-    expect(first.indexOf('<Sql')).toBeLessThan(first.indexOf('<LineMap'));
-    expect(second.indexOf('<RunFlow')).toBeLessThan(second.indexOf('<Result'));
-    expect(second.slice(second.indexOf('<Result'))).toContain('chị Hạnh');
-    const plain=main.replace(/`|\*\*/g,'');
+    expect(structure).toMatch(/<Excel[\s\S]*?<Sql copy=\{false\}/);
+    const sql = query.match(/<Sql code=\{`([\s\S]*?)`\} \/>/);
+    const flow = query.match(/<RunFlow query=\{`([\s\S]*?)`\} steps=\{[\s\S]*?\} \/>/);
+    expect(sql).not.toBeNull();
+    expect(flow).not.toBeNull();
+    expect(sql![1]).toBe(flow![1]);
+    const result = query.indexOf('<Result');
+    expect(result).toBeGreaterThan(flow!.index!);
+    expect(query.slice(flow!.index! + flow![0].length, result)).toMatch(/NV044[\s\S]*NV040[\s\S]*TOP/);
+    expect(query.slice(result)).toContain('chị Hạnh');
+    expect(practice).toMatch(/Giả sử[^\n]*NV040[^\n]*NV044/);
+    const plain = structure.replace(/`|\*\*/g, '');
     expect(plain).toContain('tối đa');
     expect(plain).toMatch(/mặc định.{0,30}ASC/);
     expect(plain).toContain('trái sang phải');

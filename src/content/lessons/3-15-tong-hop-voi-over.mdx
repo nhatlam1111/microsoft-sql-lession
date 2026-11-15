@@ -4,26 +4,278 @@ title: "Hàm cửa sổ: tổng hợp với OVER"
 shortTitle: Tổng hợp với OVER
 level: 3
 area: A5
-kind: summary
-minutes: 15
+kind: full
+minutes: 25
 prerequisites:
   - "3.1"
   - "3.2"
   - "3.13"
-goal: bạn tính chỉ tiêu của nhóm trên mỗi dòng chi tiết bằng OVER
+goal: bạn tính được chỉ tiêu của nhóm trên mỗi dòng chi tiết và chọn giữa OVER với GROUP BY
 excel: Hiển thị tổng của phòng ngay cạnh từng dòng của phòng đó
-summary: Đề cương SUM, AVG, COUNT, MIN và MAX kết hợp OVER.
-noExercises: true
+summary: Dùng SUM, AVG, COUNT, MIN và MAX với OVER để giữ từng dòng chi tiết bên cạnh chỉ tiêu chung.
 ---
 
-## Nội dung chính
+## Tình huống
 
-**Đề cương.** Dùng `SUM`, `AVG`, `COUNT`, `MIN` và `MAX` với `OVER` để đưa chỉ tiêu của nhóm vào từng dòng chi tiết. Bài sẽ đối chiếu số dòng kết quả với cách dùng `GROUP BY`.
+Tháng 10/2026, chị Hạnh cần đối chiếu bảng lương của hai phòng.
 
-## Liên hệ Excel
+<Chat who="Chị Hạnh · Phòng Nhân sự" time="10:40" initial="H">
+Em gửi chị từng dòng thực lĩnh kỳ tháng 9 của các hồ sơ hiện thuộc IT hoặc KT. Ngay cạnh số thực lĩnh của mỗi người, thêm tổng thực lĩnh của phòng và số dòng lương của phòng trong kỳ để chị tiện đối chiếu nhé.
+</Chat>
 
-Đặt số liệu tổng hợp của phòng ngay cạnh mỗi dòng chi tiết để đối chiếu trong cùng bảng.
+Chọn `BangLuong` kỳ `2026-09`, kết `NhanVien` theo `MaNV` để lấy `MaPB` hiện lưu. Một dòng báo cáo đại diện cho một dòng lương. Số dòng của phòng tính trên các hồ sơ có lương trong phạm vi.
 
-## Tình huống ví dụ
+<Key>Thêm chỉ tiêu của phòng bên cạnh từng dòng lương.</Key>
 
-Ví dụ dự kiến là xem từng hồ sơ cạnh chỉ tiêu chung của phòng.
+## Giữ chi tiết và thêm số tổng hợp của nhóm
+
+### Cấu trúc mới trong bài
+
+Trong Excel, bạn có thể lập bảng tổng và số dòng theo phòng rồi dò hai số đó về từng dòng lương. Trong SQL, **hàm tổng hợp với `OVER`** tính chỉ tiêu của nhóm và đặt kết quả lên mỗi dòng chi tiết.
+
+`PARTITION BY nv.MaPB` chia các dòng qua lọc thành từng phòng. `SUM(bl.ThucLinh)` cộng tiền và `COUNT(*)` đếm các dòng trong phòng. Với hai phép tính này, `OVER (PARTITION BY nv.MaPB)` dùng cả nhóm mà không cần `ORDER BY` bên trong. `ORDER BY` cuối câu chỉ xếp bảng để dễ dò.
+
+`GROUP BY MaPB` như bài 3.2 cho một dòng tổng hợp mỗi phòng. Khi yêu cầu vẫn xem từng khoản thực lĩnh, giữ từng dòng và thêm hàm có `OVER` vào danh sách cột. Các dòng của cùng phòng mang cùng một tổng, nên cộng lại cột tổng phòng trên bảng chi tiết sẽ đếm một phòng nhiều lần.
+
+### Đọc câu SQL qua các bước
+
+<Sql code={`SELECT nv.MaPB, bl.MaNV, bl.ThucLinh,
+\tSUM(bl.ThucLinh) OVER (PARTITION BY nv.MaPB) AS [TongThucLinhPhong],
+\tCOUNT(*) OVER (PARTITION BY nv.MaPB) AS [SoDongLuongPhong]
+FROM BangLuong AS bl
+INNER JOIN NhanVien AS nv ON nv.MaNV = bl.MaNV
+WHERE bl.KyLuong = '2026-09'
+\tAND nv.MaPB IN ('IT', 'KT')
+ORDER BY nv.MaPB ASC, bl.MaNV ASC;`} />
+
+Sơ đồ đọc từ dòng lương đến phòng hiện lưu. Mở bước `SELECT` để thấy tổng và số dòng của phòng được đặt vào báo cáo như thế nào.
+
+<RunFlow query={`SELECT nv.MaPB, bl.MaNV, bl.ThucLinh,
+\tSUM(bl.ThucLinh) OVER (PARTITION BY nv.MaPB) AS [TongThucLinhPhong],
+\tCOUNT(*) OVER (PARTITION BY nv.MaPB) AS [SoDongLuongPhong]
+FROM BangLuong AS bl
+INNER JOIN NhanVien AS nv ON nv.MaNV = bl.MaNV
+WHERE bl.KyLuong = '2026-09'
+\tAND nv.MaPB IN ('IT', 'KT')
+ORDER BY nv.MaPB ASC, bl.MaNV ASC;`} steps={[
+  {
+    "clause": "FROM",
+    "title": "Đọc các dòng lương.",
+    "focus": "FROM BangLuong AS bl",
+    "input": "Bảng `BangLuong` lưu khoản thực lĩnh theo từng kỳ và mã.",
+    "meaning": "`FROM` chọn bảng lương làm nguồn, chưa lọc kỳ.",
+    "detail": "`86` dòng. Bảng trích ba cột dùng trong báo cáo.",
+    "sql": "SELECT MaNV, KyLuong, ThucLinh\nFROM BangLuong AS bl\nORDER BY KyLuong DESC, MaNV ASC;",
+    "columns": [
+      "MaNV",
+      "KyLuong",
+      "ThucLinh"
+    ],
+    "rows": [["NV001","2026-09",13285000],["NV002","2026-09",21631000],["NV003","2026-09",14088000],["NV004","2026-09",50025000],["NV005","2026-09",29297000],["NV006","2026-09",31310000],["NV007","2026-09",29910000],["NV008","2026-09",27882000],["NV009","2026-09",12482000],["NV010","2026-09",31116000]],
+    "total": 86
+  },
+  {
+    "clause": "INNER JOIN",
+    "title": "Lấy mã phòng hiện lưu từ hồ sơ.",
+    "focus": "INNER JOIN NhanVien AS nv ON nv.MaNV = bl.MaNV",
+    "input": "Bảng `NhanVien` có khóa `MaNV` và cột `MaPB`.",
+    "meaning": "`INNER JOIN` tìm hồ sơ cùng `MaNV` để đọc phòng.",
+    "detail": "`86` dòng với `4` cột dữ liệu và nhãn `DongLuong`. Mỗi dòng lương khớp một hồ sơ.",
+    "sql": "SELECT CONCAT(bl.MaNV, '/', bl.KyLuong) AS [DongLuong], nv.MaPB, bl.MaNV, bl.KyLuong, bl.ThucLinh\nFROM BangLuong AS bl\nINNER JOIN NhanVien AS nv ON nv.MaNV = bl.MaNV\nORDER BY CASE WHEN bl.MaNV IN ('NV001', 'NV004', 'NV007') THEN 0 ELSE 1 END, bl.MaNV ASC, bl.KyLuong DESC;",
+    "columns": [
+      "DongLuong",
+      "MaPB",
+      "MaNV",
+      "KyLuong",
+      "ThucLinh"
+    ],
+    "rows": [["NV001/2026-09","KT","NV001","2026-09",13285000],["NV001/2026-08","KT","NV001","2026-08",13997000],["NV004/2026-09","BGD","NV004","2026-09",50025000],["NV004/2026-08","BGD","NV004","2026-08",50025000],["NV007/2026-09","IT","NV007","2026-09",29910000],["NV007/2026-08","IT","NV007","2026-08",31310000],["NV002/2026-09","KD","NV002","2026-09",21631000],["NV002/2026-08","KD","NV002","2026-08",22694000],["NV003/2026-09","KD","NV003","2026-09",14088000],["NV003/2026-08","KD","NV003","2026-08",14848000]],
+    "total": 86,
+    "preview": [
+      "MaPB",
+      "MaNV",
+      "KyLuong"
+    ]
+  },
+  {
+    "clause": "WHERE",
+    "title": "Giữ tháng 9 ở hai phòng cần xem.",
+    "focus": "WHERE bl.KyLuong = '2026-09'\n\tAND nv.MaPB IN ('IT', 'KT')",
+    "meaning": "`WHERE` giữ dòng kỳ `2026-09` có mã phòng `IT` hoặc `KT`.",
+    "detail": "`16` dòng với `4` cột dữ liệu và nhãn dòng. Có `9` dòng `IT` và `7` dòng `KT`.",
+    "sql": "SELECT CONCAT(bl.MaNV, '/', bl.KyLuong) AS [DongLuong], nv.MaPB, bl.MaNV, bl.KyLuong, bl.ThucLinh\nFROM BangLuong AS bl\nINNER JOIN NhanVien AS nv ON nv.MaNV = bl.MaNV\nWHERE bl.KyLuong = '2026-09'\n\tAND nv.MaPB IN ('IT', 'KT')\nORDER BY nv.MaPB ASC, bl.MaNV ASC;",
+    "columns": [
+      "DongLuong",
+      "MaPB",
+      "MaNV",
+      "KyLuong",
+      "ThucLinh"
+    ],
+    "rows": [["NV007/2026-09","IT","NV007","2026-09",29910000],["NV011/2026-09","IT","NV011","2026-09",22350000],["NV017/2026-09","IT","NV017","2026-09",15693000],["NV021/2026-09","IT","NV021","2026-09",16457000],["NV029/2026-09","IT","NV029","2026-09",14848000],["NV035/2026-09","IT","NV035","2026-09",17266000],["NV039/2026-09","IT","NV039","2026-09",15693000],["NV043/2026-09","IT","NV043","2026-09",15698000],["NV046/2026-09","IT","NV046","2026-09",5830000],["NV001/2026-09","KT","NV001","2026-09",13285000]],
+    "total": 16,
+    "inputColumns": [
+      "DongLuong",
+      "KyLuong",
+      "MaPB"
+    ],
+    "preview": [
+      "MaPB",
+      "MaNV",
+      "ThucLinh"
+    ],
+    "checks": {
+      "conditions": [
+        "KyLuong = 2026-09",
+        "MaPB thuộc IT, KT"
+      ],
+      "rows": [["NV001/2026-09",true,true],["NV001/2026-08",false,true],["NV004/2026-09",true,false],["NV004/2026-08",false,false],["NV007/2026-09",true,true]],
+      "totals": [
+        43,
+        31,
+        16
+      ]
+    }
+  },
+  {
+    "clause": "SELECT",
+    "title": "Đặt tổng và số dòng của phòng cạnh thực lĩnh.",
+    "focus": "SELECT nv.MaPB, bl.MaNV, bl.ThucLinh,\n\tSUM(bl.ThucLinh) OVER (PARTITION BY nv.MaPB) AS [TongThucLinhPhong],\n\tCOUNT(*) OVER (PARTITION BY nv.MaPB) AS [SoDongLuongPhong]",
+    "meaning": "`SELECT` cộng và đếm trên các dòng sau lọc, tách theo `MaPB`. Mỗi ô thực lĩnh gốc đi cùng hai chỉ tiêu của đúng phòng.",
+    "detail": "`16` dòng, `5` cột. Tổng và số dòng lương lặp ở các dòng cùng phòng.",
+    "preview": [
+      "MaPB",
+      "MaNV",
+      "TongThucLinhPhong",
+      "SoDongLuongPhong"
+    ],
+    "examples": [
+      {
+        "title": "Chỉ tiêu ở dòng NV007",
+        "note": "Trích hai trong chín dòng lương của phòng IT.",
+        "table": {
+          "columns": [
+            "MaNV",
+            "ThucLinh"
+          ],
+          "rows": [["NV007",29910000],["NV011",22350000]]
+        },
+        "calculations": [
+          {
+            "expression": "SUM(bl.ThucLinh)",
+            "explanation": "Cộng khoản thực lĩnh của cả chín dòng IT.",
+            "column": "TongThucLinhPhong",
+            "value": 153745000
+          },
+          {
+            "expression": "COUNT(*)",
+            "explanation": "Đếm chín dòng lương trong cùng phòng.",
+            "column": "SoDongLuongPhong",
+            "value": 9
+          }
+        ]
+      }
+    ],
+    "sql": "SELECT nv.MaPB, bl.MaNV, bl.ThucLinh,\n\tSUM(bl.ThucLinh) OVER (PARTITION BY nv.MaPB) AS [TongThucLinhPhong],\n\tCOUNT(*) OVER (PARTITION BY nv.MaPB) AS [SoDongLuongPhong]\nFROM BangLuong AS bl\nINNER JOIN NhanVien AS nv ON nv.MaNV = bl.MaNV\nWHERE bl.KyLuong = '2026-09'\n\tAND nv.MaPB IN ('IT', 'KT')\nORDER BY nv.MaPB ASC, bl.MaNV ASC;",
+    "columns": [
+      "MaPB",
+      "MaNV",
+      "ThucLinh",
+      "TongThucLinhPhong",
+      "SoDongLuongPhong"
+    ],
+    "rows": [["IT","NV007",29910000,153745000,9],["IT","NV011",22350000,153745000,9],["IT","NV017",15693000,153745000,9],["IT","NV021",16457000,153745000,9],["IT","NV029",14848000,153745000,9],["IT","NV035",17266000,153745000,9],["IT","NV039",15693000,153745000,9],["IT","NV043",15698000,153745000,9],["IT","NV046",5830000,153745000,9],["KT","NV001",13285000,110206000,7]],
+    "total": 16,
+    "mark": [
+      1
+    ]
+  },
+  {
+    "clause": "ORDER BY",
+    "title": "Xếp theo phòng rồi mã nhân viên.",
+    "focus": "ORDER BY nv.MaPB ASC, bl.MaNV ASC;",
+    "meaning": "`ORDER BY` trình bày các dòng theo mã phòng rồi mã nhân viên.",
+    "detail": "`16` dòng, `5` cột. Các dòng cùng phòng đứng cạnh nhau.",
+    "sql": "SELECT nv.MaPB, bl.MaNV, bl.ThucLinh,\n\tSUM(bl.ThucLinh) OVER (PARTITION BY nv.MaPB) AS [TongThucLinhPhong],\n\tCOUNT(*) OVER (PARTITION BY nv.MaPB) AS [SoDongLuongPhong]\nFROM BangLuong AS bl\nINNER JOIN NhanVien AS nv ON nv.MaNV = bl.MaNV\nWHERE bl.KyLuong = '2026-09'\n\tAND nv.MaPB IN ('IT', 'KT')\nORDER BY nv.MaPB ASC, bl.MaNV ASC;",
+    "columns": [
+      "MaPB",
+      "MaNV",
+      "ThucLinh",
+      "TongThucLinhPhong",
+      "SoDongLuongPhong"
+    ],
+    "rows": [["IT","NV007",29910000,153745000,9],["IT","NV011",22350000,153745000,9],["IT","NV017",15693000,153745000,9],["IT","NV021",16457000,153745000,9],["IT","NV029",14848000,153745000,9],["IT","NV035",17266000,153745000,9],["IT","NV039",15693000,153745000,9],["IT","NV043",15698000,153745000,9],["IT","NV046",5830000,153745000,9],["KT","NV001",13285000,110206000,7]],
+    "total": 16
+  }
+]} />
+
+Mỗi dòng lương khớp một hồ sơ theo mã. Bộ lọc giữ `9` dòng của `IT` và `7` dòng của `KT`. Dòng `NV007` vẫn giữ thực lĩnh riêng `29910000` đồng, đồng thời nhận tổng `153745000` đồng và số `9` từ toàn nhóm `IT`. Với `GROUP BY` trên cùng phạm vi, kết quả sẽ có `2` dòng. Phép tính qua `OVER` vẫn trả đủ `16` dòng.
+
+<Result columns={["MaPB","MaNV","ThucLinh","TongThucLinhPhong","SoDongLuongPhong"]} rows={[["IT","NV007",29910000,153745000,9],["IT","NV011",22350000,153745000,9],["IT","NV017",15693000,153745000,9],["IT","NV021",16457000,153745000,9],["IT","NV029",14848000,153745000,9],["IT","NV035",17266000,153745000,9],["IT","NV039",15693000,153745000,9],["IT","NV043",15698000,153745000,9],["IT","NV046",5830000,153745000,9],["KT","NV001",13285000,110206000,7]]} total={16} />
+
+Gửi chị Hạnh `16` dòng lương, bảng trên trích mười dòng đầu. Phòng `IT` có `9` dòng với tổng `153745000` đồng. Phòng `KT` có `7` dòng với tổng `110206000` đồng. Hai tổng này dựa trên phòng hiện lưu của hồ sơ.
+
+### Vận dụng trên cùng tình huống
+
+Dùng `AVG` để tính trung bình, `MIN` để lấy giá trị thấp nhất và `MAX` để lấy giá trị cao nhất. Với `AVG` theo phòng, giữ `PARTITION BY nv.MaPB` như ở phép tổng. Viết `OVER ()` khi muốn tính chung trên tất cả các dòng đã qua lọc. Chẳng hạn `MIN(bl.ThucLinh) OVER ()` cho mức thực lĩnh thấp nhất trong cả hai phòng trên mỗi dòng.
+
+<Sql copy={false} title="Ba biểu thức thay thế trong SELECT" code={`AVG(bl.ThucLinh) OVER (PARTITION BY nv.MaPB) AS [ThucLinhTrungBinhPhong],
+\tMIN(bl.ThucLinh) OVER () AS [ThucLinhThapNhat],
+\tMAX(bl.ThucLinh) OVER () AS [ThucLinhCaoNhat]`} />
+
+Khi đổi yêu cầu sang chỉ tiêu của cả kỳ, bỏ điều kiện giới hạn hai phòng để các dòng của phòng khác được tham gia. Khi tính trung bình số ngày theo loại nghỉ, thay khóa phân nhóm bằng cột loại và lọc đơn đúng trạng thái trước khi tính.
+
+Ở bài này chỉ cần tổng hợp toàn nhóm hoặc toàn tập sau lọc. Bài 3.16 thêm thứ tự vào cửa sổ để tính lũy kế.
+
+## Hay nhầm ở đâu
+
+<Mistakes>
+
+1. **Dùng GROUP BY khi phải giữ dòng lương.** Nhóm theo phòng cho một dòng mỗi phòng, làm mất các dòng chi tiết cần đối chiếu.
+2. **Cộng lại các tổng phòng trên bảng chi tiết.** Tổng `IT` nằm trên cả chín dòng lương của phòng này.
+3. **Thêm thứ tự kỳ vào trong OVER để trình bày.** Với hàm tổng hợp hỗ trợ thứ tự, thêm `ORDER BY` trong `OVER` có thể đổi phạm vi tính. Dùng `ORDER BY` cuối câu để xếp báo cáo.
+
+</Mistakes>
+
+## Ứng dụng
+
+<Apply>
+
+- **Đối chiếu từng khoản với tổng phòng:** đặt khoản thực lĩnh và tổng của phòng trên cùng một dòng.
+- **Đọc giá trị trong bối cảnh chung:** đặt số ngày của từng đơn bên cạnh mức trung bình của loại nghỉ tương ứng.
+
+</Apply>
+
+## Ghi nhớ
+
+<Memo rows={[
+  ['Một chỉ tiêu trên từng dòng của phòng', 'Hàm tổng hợp OVER (PARTITION BY nv.MaPB)'],
+  ['Một chỉ tiêu chung cho tập sau lọc', 'Hàm tổng hợp OVER ()'],
+  ['Một dòng tổng hợp cho mỗi phòng', 'GROUP BY MaPB'],
+]} />
+
+<details>
+<summary>Cùng hai phòng trong tháng 9, vì sao dùng <code>GROUP BY</code> cho hai dòng còn câu trong bài cho mười sáu?</summary>
+
+`GROUP BY` thu các dòng lương của mỗi phòng thành một dòng tổng hợp. Câu dùng `OVER` giữ từng dòng lương và thêm chỉ tiêu của phòng bên cạnh.
+
+</details>
+
+<details>
+<summary><code>MIN(bl.ThucLinh) OVER ()</code> xét những dòng nào?</summary>
+
+Hàm xét mọi dòng sau bộ lọc của câu đang chạy. Trong tình huống này, đó là `16` dòng lương tháng 9 của `IT` và `KT`.
+
+</details>
+
+<details>
+<summary>Vì sao không cộng lại chín ô tổng của <code>IT</code> trong bảng chi tiết?</summary>
+
+Chín ô cùng lặp một tổng của phòng. Cộng các ô sẽ tính tổng đó chín lần.
+
+</details>
+
+## Bài tập
+
+Xác định phạm vi dòng cần đưa vào phép tính và cột dùng để chia nhóm. Mỗi đề giữ nguyên độ chi tiết của các dòng được yêu cầu.
+
+<Exercises />

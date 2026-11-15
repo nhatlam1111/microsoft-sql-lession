@@ -1,0 +1,139 @@
+---
+import { readAnimation } from '../../lib/animation-assets';
+import { checkFlow, inputSteps, inputPreview, excerptNote, inlineCode, rowCount, checkCellText, checkNote, type FlowStep } from '../../lib/run-flow';
+import { highlightTsql } from '../../lib/tsql-highlight';
+import FlowExamples from './FlowExamples.astro';
+
+interface Props { query: string; steps: FlowStep[]; animation: string }
+const { query, steps, animation } = Astro.props;
+const problems = checkFlow(steps, query);
+if (problems.length) throw new Error(problems.join('\n'));
+const asset = readAnimation(animation, query, steps);
+const base = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/lesson-animations/${animation}/`;
+const inputs = inputSteps(steps);
+---
+<figure class="animated-flow rf" data-animation={base + 'animation.gif'} data-poster={base + 'poster.png'}>
+  <img class="af-image" src={base + 'poster.png'} width={asset.width} height={asset.height} alt={asset.alt} loading="lazy" />
+  <div class="af-controls">
+    <button type="button" class="af-play" hidden aria-pressed="false">Phát minh họa</button>
+    <a href={base + 'poster.png'} target="_blank" rel="noopener">Xem kích thước gốc</a>
+    <a href={base + 'animation.gif'} download>Tải GIF</a>
+  </div>
+  <p class="af-status" role="status"></p>
+  <figcaption>{asset.caption}</figcaption>
+  <details class="af-details">
+    <summary>Xem từng bước</summary>
+    {steps.map((step, i) => (
+      <section class="af-step" aria-label={`Bước ${i + 1}: ${step.clause}`}>
+        <h4>Bước {i + 1} · {step.clause}</h4>
+        <p>{step.title}</p>
+        <pre class="af-focus"><code>{highlightTsql(step.focus).map(t => <span class={`t-${t.kind}`}>{t.text}</span>)}</code></pre>
+        {asset.scenes.filter(scene => scene.step === i).map(scene => (
+          <a href={base + scene.file} target="_blank" rel="noopener" aria-label={`${scene.alt}. Xem kích thước gốc`}>
+            <img src={base + scene.file} width={asset.width} height={asset.height} alt={scene.alt} loading="lazy" />
+          </a>
+        ))}
+        <h5>Đầu vào</h5>
+        {step.input && <p>{inlineCode(step.input).map(p => p.code ? <code>{p.text}</code> : p.text)}</p>}
+        {inputs[i].map(from => {
+          const preview = inputPreview(step, from);
+          return <div class="af-table" tabindex="0" role="region" aria-label={`Đầu vào bước ${i + 1}`}>
+            <table><caption>{excerptNote(preview) || `Đủ ${preview.rows.length} dòng đầu vào`}</caption>
+              <thead><tr>{preview.columns.map(c => <th scope="col">{c}</th>)}</tr></thead>
+              <tbody>{preview.rows.map(row => <tr>{row.map(c => <td>{c ?? 'NULL'}</td>)}</tr>)}</tbody>
+            </table>
+          </div>;
+        })}
+        <h5>Thực hiện</h5>
+        <p>{inlineCode(step.meaning).map(p => p.code ? <code>{p.text}</code> : p.text)}</p>
+        {step.checks && <div class="af-table" tabindex="0" role="region" aria-label="Soi điều kiện">
+          <table><caption>{checkNote(step.checks, inputs[i].reduce((n, s) => n + rowCount(s), 0))}</caption>
+            <thead><tr><th scope="col">Hồ sơ</th>{step.checks.conditions.map(c => <th scope="col">{c}</th>)}{step.checks.labels && <th scope="col">Nhãn</th>}</tr></thead>
+            <tbody>{step.checks.rows.map(([key, ...cells], row) => <tr><th scope="row">{key}</th>{cells.map(c => <td>{checkCellText(c, !!step.checks?.labels)}</td>)}{step.checks?.labels && <td>{step.checks.labels[row]}</td>}</tr>)}</tbody>
+          </table>
+        </div>}
+        {step.examples && <FlowExamples examples={step.examples} />}
+        <h5>Kết quả</h5>
+        <p>{inlineCode(step.detail).map(p => p.code ? <code>{p.text}</code> : p.text)}</p>
+        <div class="af-table" tabindex="0" role="region" aria-label={`Kết quả bước ${i + 1}`}>
+          <table><caption>Trích {step.rows.length} trong {rowCount(step)} dòng · {step.columns.length} cột</caption>
+            <thead><tr>{step.columns.map(c => <th scope="col">{c}</th>)}</tr></thead>
+            <tbody>{step.rows.map((row, r) => <tr class:list={{ 'af-mark': step.mark?.includes(r + 1) }}>{row.map(c => <td>{c ?? 'NULL'}</td>)}</tr>)}</tbody>
+          </table>
+        </div>
+      </section>
+    ))}
+  </details>
+</figure>
+<script>
+  document.querySelectorAll<HTMLElement>('.animated-flow').forEach(root => {
+    const button = root.querySelector<HTMLButtonElement>('.af-play')!;
+    const image = root.querySelector<HTMLImageElement>('.af-image')!;
+    const status = root.querySelector<HTMLElement>('.af-status')!;
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+    let playing = false;
+    let playback = 0;
+    let autoStarted = false;
+    let stoppedByReader = false;
+    function stop() {
+      playing = false;
+      image.src = root.dataset.poster!;
+      button.textContent = 'Phát minh họa';
+      button.setAttribute('aria-pressed', 'false');
+      status.textContent = '';
+    }
+    function play() {
+      playing = true;
+      image.src = `${root.dataset.animation}?play=${Date.now()}-${++playback}`;
+      button.textContent = 'Dừng minh họa';
+      button.setAttribute('aria-pressed', 'true');
+      status.textContent = '';
+    }
+    button.hidden = false;
+    button.addEventListener('click', () => {
+      stoppedByReader = true;
+      // A distinct URL in play() restarts the decoder instead of resuming a GIF.
+      if (playing) stop();
+      else play();
+    });
+    const observer = new IntersectionObserver(entries => {
+      if (entries.some(entry => entry.isIntersecting && entry.intersectionRatio >= 0.25) && !autoStarted && !stoppedByReader && !reduced.matches) {
+        autoStarted = true;
+        play();
+      }
+    }, { threshold: 0.25 });
+    observer.observe(image);
+    image.addEventListener('error', () => {
+      if (!playing) return;
+      stoppedByReader = true;
+      stop();
+      status.textContent = 'Chưa tải được ảnh động. Bạn có thể thử lại hoặc mở Xem từng bước.';
+    });
+    reduced.addEventListener('change', () => { if (reduced.matches) stop(); });
+  });
+</script>
+<style>
+  .animated-flow { margin: 24px 0; }
+  .animated-flow img { display: block; width: 100%; height: auto; border: 1px solid var(--rule); border-radius: var(--radius-m); }
+  .af-controls { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 20px; margin: 12px 0; font: 14px var(--font-ui); }
+  .af-play { min-height: 44px; padding: 8px 16px; border: 1px solid var(--accent); border-radius: var(--radius-s); background: var(--accent); color: white; font: inherit; cursor: pointer; }
+  .af-play[hidden] { display: none; }
+  .af-play:hover { background: var(--accent-hover); }
+  .af-play:active { box-shadow: inset 0 2px 4px var(--scrim); }
+  :is(button, a, summary, .af-table):focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  figcaption, .af-status { color: var(--ink-2); font: 14px/1.6 var(--font-ui); }
+  .af-status:empty { display: none; }
+  .af-details { margin-top: 16px; border: 1px solid var(--rule); border-radius: var(--radius-m); padding: 12px 16px; }
+  summary { cursor: pointer; min-height: 32px; font-family: var(--font-ui); font-weight: 600; }
+  .af-step + .af-step { border-top: 1px solid var(--rule); margin-top: 24px; }
+  h4, h5 { font-family: var(--font-ui); }
+  h5 { font-size: 16px; margin: 20px 0 8px; }
+  .af-step img { margin: 16px 0; }
+  .af-focus { overflow-x: auto; padding: 12px; background: var(--surface-subtle); font: 14px/1.6 var(--font-code); }
+  .af-table { overflow-x: auto; max-width: 100%; }
+  table { border-collapse: collapse; font: 14px/1.6 var(--font-tool); width: 100%; }
+  caption { text-align: left; padding: 8px 0; color: var(--ink-2); }
+  th, td { text-align: left; white-space: nowrap; padding: 8px; border: 1px solid var(--rule); }
+  th { background: var(--surface-subtle); }
+  .af-mark { background: var(--accent-soft); }
+</style>

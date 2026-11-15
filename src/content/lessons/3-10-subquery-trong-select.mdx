@@ -29,7 +29,7 @@ Phạm vi: mọi hồ sơ `NhanVien`, kể cả người đã nghỉ. Đếm m�
 
 ## Thêm số hợp đồng vào từng dòng hồ sơ
 
-### Từ cột đếm trong Excel đến subquery trong SELECT
+### Cấu trúc mới trong bài
 
 Trong Excel, bạn giữ bảng hồ sơ rồi thêm cột số hợp đồng. Giả sử sheet `HopDong` có mã nhân viên ở `B2:B56`, công thức `COUNTIF` đếm số ô bằng mã của dòng đang xét. Dấu `$` khóa vùng hợp đồng khi sao chép xuống, còn `A2` đổi theo dòng. Hình minh họa trích hai hồ sơ: công thức ở `C2` đếm mã trong `A2`; `C3` cho thấy người chưa có hợp đồng vẫn được giữ.
 
@@ -39,7 +39,15 @@ Trong Excel, bạn giữ bảng hồ sơ rồi thêm cột số hợp đồng. G
   ['NV047','Phạm Ngọc Ánh',0],
 ]} />
 
-Bài 3.9 dùng câu con trong `WHERE` để quyết định giữ hồ sơ. Ở đây cần giữ mọi hồ sơ và tạo thêm một giá trị, nên đặt câu con trong danh sách cột của `SELECT`:
+Bài 3.9 dùng câu con trong `WHERE` để quyết định giữ hồ sơ. Yêu cầu lần này cần thêm một ô vào từng dòng, nên đặt câu con trong ngoặc ở danh sách cột của `SELECT` và dùng `AS [SoHopDong]` để đặt tên cột.
+
+**Câu ngoài** là câu lấy hồ sơ từ `NhanVien`; **câu con** là phần nằm trong ngoặc. Câu con dùng `nv.MaNV` của dòng ngoài nên gọi là **subquery tương quan**: giá trị cần tính phụ thuộc hồ sơ đang xét. `hd` chỉ dùng trong câu con; viết rõ `hd.MaNV` và `nv.MaNV` giúp tránh nhầm hai cột cùng tên.
+
+Tại vị trí một ô trong `SELECT`, câu con là **subquery vô hướng (scalar subquery)**: phải trả đúng một cột và không quá một dòng. Một dòng cho giá trị của ô; không có dòng cho `NULL`; nhiều dòng làm cả câu lệnh báo lỗi. Khác với danh sách cho `IN`, tại đây không có chỗ chứa nhiều giá trị riêng trong một ô.
+
+`MaHD` là khóa chính nên `COUNT(hd.MaHD)` đếm mọi dòng hợp đồng khớp. Phép tổng hợp không có `GROUP BY` cho một giá trị đếm, kể cả khi không có hợp đồng.
+
+### Đọc câu SQL qua các bước
 
 <Sql code={`SELECT nv.MaNV, nv.HoTen,
 \t(
@@ -50,32 +58,7 @@ Bài 3.9 dùng câu con trong `WHERE` để quyết định giữ hồ sơ. Ở 
 FROM NhanVien AS nv
 ORDER BY nv.MaNV;`} />
 
-<LineMap rows={[
-  ['FROM NhanVien AS nv', 'Câu ngoài lấy hồ sơ, gọi bảng bằng bí danh nv. Ví dụ: NV047 vẫn thuộc nguồn dù chưa có hợp đồng.'],
-  ['SELECT nv.MaNV, nv.HoTen', 'Giữ mã và tên của dòng ngoài. Ví dụ: NV021 đi cùng tên Tôn Thất Long.'],
-  ['(SELECT COUNT(hd.MaHD) …)', 'Ngoặc bao câu con tạo một giá trị cho ô của dòng ngoài. Ví dụ: ba mã hợp đồng của NV021 cho số 3.'],
-  ['WHERE hd.MaNV = nv.MaNV', 'Liên hệ hợp đồng với đúng hồ sơ đang xét; hd thuộc câu con, nv thuộc câu ngoài. Ví dụ: khi nv.MaNV là NV021, chỉ hợp đồng cùng mã được đếm.'],
-  ['AS [SoHopDong]', 'Đặt tên cột nhận giá trị từ câu con. Ví dụ: ô SoHopDong của NV047 là 0.'],
-  ['ORDER BY nv.MaNV', 'Xếp danh sách cuối theo mã tăng dần. Ví dụ: NV021 đứng trước NV047.'],
-]} />
-
-**Câu ngoài** là câu lấy hồ sơ từ `NhanVien`; **câu con** là phần nằm trong ngoặc. Câu con dùng `nv.MaNV` của dòng ngoài nên gọi là **subquery tương quan**: giá trị cần tính phụ thuộc hồ sơ đang xét. `hd` chỉ dùng trong câu con; viết rõ `hd.MaNV` và `nv.MaNV` giúp tránh nhầm hai cột cùng tên.
-
-Tại vị trí một ô trong `SELECT`, câu con là **subquery vô hướng (scalar subquery)**: phải trả đúng một cột và không quá một dòng. Một dòng cho giá trị của ô; không có dòng cho `NULL`; nhiều dòng làm cả câu lệnh báo lỗi. Khác với danh sách cho `IN`, tại đây không có chỗ chứa nhiều giá trị riêng trong một ô.
-
-`COUNT(hd.MaHD)` đếm mã hợp đồng khác `NULL`. Trong thiết kế bộ mẫu, `MaHD` là khóa chính nên mỗi dòng hợp đồng đều có mã; đếm mã ở đây cũng là đếm dòng hợp đồng. Với `NV021`, ba hợp đồng cùng mã nhân viên cho số `3`.
-
-Phép đếm không có `GROUP BY` vẫn trả đúng một dòng tổng hợp khi không có hợp đồng khớp, nên `NV047` nhận `0`. Nếu lấy trực tiếp `MaHD` thay cho phép đếm thì câu con của `NV047` không có dòng và ô ngoài nhận `NULL`; `NV021` lại gây lỗi nhiều dòng. Số `0` đến từ phép đếm, không phải mọi câu con rỗng đều tự đổi thành `0`.
-
-Chọn phép tổng hợp theo việc cần biết: `SUM` để cộng, `MAX` để lấy giá trị lớn nhất như đã học ở bài 3.1. Khi không có dòng phù hợp, hai hàm này trả một dòng mang `NULL`; giữ `NULL` hay thay bằng giá trị khác qua `COALESCE` phải theo nghĩa báo cáo.
-
-Điều kiện đặt ở đâu quyết định phần dữ liệu bị lọc. Muốn chỉ đếm một loại hợp đồng nhưng vẫn giữ mọi hồ sơ, đặt điều kiện trong câu con cùng điều kiện mã; muốn bỏ hồ sơ khỏi danh sách, đặt điều kiện ở `WHERE` ngoài. Không thêm `GROUP BY` máy móc: nó có thể làm câu con trả không có dòng hoặc nhiều dòng.
-
-Ở bài này chỉ cần tạo một giá trị cho mỗi dòng bằng câu con tương quan. Dùng câu con làm cả nguồn dữ liệu học ở bài 3.11; xem cách máy thực thi thật học ở bài 4.7. Không suy từ cách diễn giải từng hồ sơ rằng SQL Server bắt buộc chạy lại câu con từng dòng hoặc subquery luôn nhanh hơn kết bảng.
-
-### SQL Server chạy câu này thế nào
-
-Sơ đồ diễn giải thứ tự xử lý logic của câu ngoài. Hai ví dụ ở bước `SELECT` soi toàn bộ hợp đồng cùng mã của `NV021` và `NV047`, không coi phần trích hồ sơ là toàn bộ dữ liệu cần đếm:
+Sơ đồ cho thấy cách mỗi hồ sơ nhận một giá trị đếm. Mở bước chọn cột để xem các hợp đồng khớp mã.
 
 <RunFlow query={`SELECT nv.MaNV, nv.HoTen,
 \t(
@@ -350,13 +333,23 @@ ORDER BY nv.MaNV;`} steps={[
   }
 ]} />
 
+Điều kiện mã tìm được ba hợp đồng của `NV021` nên ô `SoHopDong` là `3`. Với `NV047`, tập khớp rỗng nhưng phép `COUNT` vẫn cho `0`. Câu ngoài chỉ thêm một ô vào mỗi hồ sơ rồi sắp theo mã.
+
 <Result columns={["MaNV", "HoTen", "SoHopDong"]} rows={[["NV001", "Trần Thị Mai", 1], ["NV002", "Lê Văn Hùng", 1], ["NV003", "Nguyễn Thu Hà", 1], ["NV004", "Hoàng Minh Tuấn", 1], ["NV005", "Vũ Thị Lan", 1], ["NV006", "Đặng Quốc Bảo", 1], ["NV021", "Tôn Thất Long", 3], ["NV030", "Nghiêm Thị Hoa", 3], ["NV047", "Phạm Ngọc Ánh", 0], ["NV048", "Đỗ Minh Quân", 0]]} total={48} mark={[7,9]} />
 
 Kết quả gửi chị Hạnh có đủ `48` hồ sơ, mỗi hồ sơ một dòng, mã tăng dần. Hai dòng được đánh dấu cho thấy `NV021` có `3` dòng hợp đồng và `NV047` có `0`; đây là số hợp đồng đang lưu, không phải số hợp đồng còn hiệu lực.
 
+### Vận dụng trên cùng tình huống
+
+Chọn phép tổng hợp theo việc cần biết: `SUM` để cộng, `MAX` để lấy giá trị lớn nhất như đã học ở bài 3.1. Khi không có dòng phù hợp và không có `GROUP BY`, hai hàm này trả một dòng mang `NULL`; giữ `NULL` hay thay bằng giá trị khác qua `COALESCE` phải theo nghĩa báo cáo.
+
+Điều kiện đặt ở đâu quyết định phần dữ liệu bị lọc. Muốn chỉ đếm một loại hợp đồng nhưng vẫn giữ mọi hồ sơ, đặt điều kiện trong câu con cùng điều kiện mã; muốn bỏ hồ sơ khỏi danh sách, đặt điều kiện ở `WHERE` ngoài. Không thêm `GROUP BY` máy móc: nó có thể làm câu con trả không có dòng hoặc nhiều dòng.
+
+Ở bài này chỉ cần tạo một giá trị cho mỗi dòng bằng câu con tương quan. Dùng câu con làm cả nguồn dữ liệu học ở bài 3.11; xem cách máy thực thi thật học ở bài 4.7. Không suy từ cách diễn giải từng hồ sơ rằng SQL Server bắt buộc chạy lại câu con từng dòng hoặc subquery luôn nhanh hơn kết bảng.
+
 ## Hay nhầm ở đâu
 
-Các đoạn dưới chỉ là phần thay trong câu chính để đọc lỗi; giữ nguyên câu ngoài và điều kiện liên hệ, không chạy riêng từng đoạn.
+Các đoạn trích dưới đây minh họa lỗi khi sửa câu con. Đọc từng đoạn tại vị trí câu con trong câu SQL chính.
 
 <Mistakes>
 

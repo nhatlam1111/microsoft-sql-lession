@@ -3,7 +3,7 @@ import {readFileSync} from 'node:fs';
 import {parse} from 'yaml';
 import {lessonBlocks} from './helpers/lesson-blocks';
 import {seedRows,type SeedRow} from './helpers/hrm-seed';
-import {checkFlow,inputPreview} from '../src/lib/run-flow';
+import {checkFlow,inputPreview,previewOf} from '../src/lib/run-flow';
 import {guardExercise} from '../src/lib/sql-guard';
 
 const slugs=['3-4-inner-join-vlookup','3-5-left-join','3-6-ket-nhieu-bang','3-7-self-join-quan-ly'];
@@ -39,7 +39,19 @@ it('3.5 tests a NOT NULL right-hand key and preserves every unmatched profile',(
   expect(l.query).toMatch(/LEFT JOIN HopDong/); expect(l.query).toMatch(/WHERE hd\.MaHD IS NULL/);
   // Nullable contract end dates would retain matched unlimited contracts, not just missing ones.
   expect(contracts.filter(h=>h.NgayKetThuc===null).length+missing.length).toBe(27);
-  expect(contracts.filter(h=>h.MaNV==='NV021')).toHaveLength(3);
+  const join = l.steps[1];
+  const example = join.examples?.[0]?.table;
+  const matching = contracts.filter(h => h.MaNV === 'NV021');
+  expect(matching).toHaveLength(3);
+  expect(example?.columns).toEqual(['MaNV','MaHD']);
+  expect(example?.rows).toEqual(matching.map(h => [h.MaNV,h.MaHD]));
+  const preview = previewOf(join);
+  const contractId = preview.columns.indexOf('MaHD');
+  expect(contractId).toBeGreaterThanOrEqual(0);
+  expect(preview.rows.some(row => row[0] === 'NV021' && row[contractId] !== null)).toBe(true);
+  expect(preview.rows.some(row => row[0] === 'NV047' && row[contractId] === null)).toBe(true);
+  const where = l.steps[2];
+  expect(where.checks?.rows).toEqual(join.rows.map(row => [row[0], row[join.columns.indexOf('MaHD')] === null]));
 });
 it('3.4 shows the lookup codes and names needed to trace each displayed profile through ON',()=>{
   const l=lessonBlocks(slugs[0]);

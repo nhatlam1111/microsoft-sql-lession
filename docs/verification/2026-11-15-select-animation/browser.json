@@ -1,0 +1,21 @@
+{
+  "url": "http://127.0.0.1:4322/microsoft-sql-lession/bai/2-1-chon-cot-dat-ten-cot/",
+  "checkedAt": "2026-11-15T03:45:32.624Z",
+  "hashes": {
+    "dist/bai/2-1-chon-cot-dat-ten-cot/index.html": "3002f591d661e87b024aed2843df6a8e205770817693389b7cee6ed1d8861df9",
+    "src/components/lesson/AnimatedFlow.astro": "fcebcedff2298265a5669d1a806cbc73720f5fb60499d2b04425da2fd2f1cf7c",
+    "scripts/animations/check-browser.mts": "f9edcee239f1b4e43f45fd3c11232a4ed7a9d56b55b67d08b669057ffb748a75",
+    "public/lesson-animations/2-1-select/manifest.json": "04e889d5e7e9af964d9030316960d83752d0cd21f4736f7894773f5f5f469a2d"
+  },
+  "checks": [
+    "Remains still at 10% visibility; automatically plays beyond 25%; GIF decodes successfully.",
+    "Keyboard stop/play, stop persists after scrolling, replay uses a fresh URL.",
+    "Native disclosure works by keyboard and exposes two logical steps with HTML data.",
+    "LIMIT: existing desktop lesson shell collapses the article at 390px.",
+    "Isolated animation component fits 390px with readable HTML tables and original-size links.",
+    "Reduced motion defaults to still image, permits explicit play, stops when preference changes.",
+    "Without JavaScript, poster and native details/HTML data remain usable.",
+    "Failed GIF load falls back to poster with message; retry recovers."
+  ],
+  "pageErrors": []
+}

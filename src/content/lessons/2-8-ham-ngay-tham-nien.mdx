@@ -8,9 +8,9 @@ kind: full
 minutes: 20
 prerequisites:
   - "2.5"
-goal: bạn chốt được mốc ngày để lọc hợp đồng, phân biệt số ranh giới thời gian với thâm niên tròn và tìm tháng sinh, cuối tháng
-excel: TODAY, DATEDIF, EOMONTH, MONTH
-summary: Dùng DATEADD và DATEDIFF để rà hợp đồng theo mốc cố định; phân biệt đếm ranh giới với đủ năm tròn, biết MONTH và EOMONTH.
+goal: bạn lọc hợp đồng theo mốc ngày, tính số ngày còn lại, kiểm mốc đủ năm và tìm hồ sơ theo tháng sinh
+excel: DATE, TODAY, EOMONTH, MONTH
+summary: Dùng DATEADD và DATEDIFF để rà hợp đồng theo mốc cố định. Kiểm ngày đủ năm, chọn tháng sinh và tìm ngày cuối tháng.
 ---
 
 ## Tình huống
@@ -21,24 +21,36 @@ Ngày 21/10/2026, chị Hạnh chuẩn bị rà hợp đồng:
 Em lấy giúp chị các dòng hợp đồng có ngày kết thúc từ hôm nay đến mốc sau 30 ngày, lấy cả hai đầu nhé. Chị cần mã hợp đồng, mã nhân viên, ngày bắt đầu, ngày kết thúc và số ngày còn lại. Xếp ngày kết thúc gần nhất trước, cùng ngày thì xếp mã hợp đồng tăng dần để chị đối chiếu.
 </Chat>
 
-Phạm vi là toàn bộ bảng `HopDong`; mỗi dòng là một hợp đồng. Ngày chốt cố định là `2026-10-21`: lấy từ ngày 21/10 đến hết ngày 20/11/2026, gồm hôm nay và mốc sau `30` ngày.
+Mỗi dòng trong `HopDong` là một hợp đồng. **Ngày chốt** là mốc tính báo cáo, cố định ở `2026-10-21` để lần sau có thể rà lại cùng khoảng ngày.
 
 <Key>Tìm các dòng hợp đồng kết thúc từ `2026-10-21` đến hết `2026-11-20`, kèm số ngày còn lại.</Key>
 
 ## Tính mốc thời gian rồi lọc ngày kết thúc
 
-### Từ phép trừ ngày trong Excel đến DATEADD và DATEDIFF
+### Cấu trúc mới trong bài
 
-Trong Excel, nếu cột ngày đã là ngày thật, bạn lấy ngày kết thúc trừ ngày chốt để tính số ngày còn lại. Hình dưới minh họa ba hợp đồng từ bộ mẫu, đánh dấu các ô ngày kết thúc `B2`–`B4`; `DATE(2026,10,21)` trong công thức ở `C2` tạo ngày chốt từ năm, tháng, ngày.
+Trong Excel, nếu ô lưu giá trị ngày, bạn có thể lấy ngày kết thúc trừ ngày chốt. Hình minh họa ba hợp đồng từ bộ mẫu. Ở ô `C2` được đánh dấu, `DATE(2026,10,21)` tạo ngày chốt và `B2` là ngày kết thúc của `HD2025-014`.
 
-<Excel sheets="Minh họa rà hợp đồng" cell="C2" formula="=B2-DATE(2026,10,21)" mark={['B2', 'B3', 'B4']} numeric={['B2', 'B3', 'B4']} rows={[
+<Excel sheets="Minh họa rà hợp đồng" cell="C2" formula="=B2-DATE(2026,10,21)" mark={['C2']} numeric={['B2', 'B3', 'B4']} rows={[
   ['MaHD', 'NgayKetThuc', 'SoNgayConLai'],
   ['HD2025-014', '2026-10-31', 10],
   ['HD2026-004', '2026-11-13', 23],
   ['HD2024-008', '2026-11-14', 24],
 ]} />
 
-Trong SQL, **`DATEADD`** tạo ngày mới bằng cách cộng một khoảng thời gian, **`DATEDIFF`** đếm khoảng cách giữa hai ngày. Với danh sách của chị Hạnh, câu lệnh là:
+**Đổi mốc thành ngày.** Viết `CAST('20261021' AS date)` để đổi chuỗi năm–tháng–ngày thành giá trị `2026-10-21` có kiểu `date`, chỉ lưu ngày. Khi nhận giá trị kiểu `date`, `DATEADD` cũng trả kiểu `date`.
+
+**Tạo mốc trên.** `DATEADD(đơn vị, số lượng, ngày gốc)` trả ngày sau khi cộng số đơn vị vào ngày gốc. Viết đơn vị `day`, `month` hoặc `year` trực tiếp, không có dấu nháy. `DATEADD(day, 30, CAST('20261021' AS date))` cộng `30` ngày và trả `2026-11-20`.
+
+**Chọn ngày ở biên.** `NgayKetThuc >=` ngày chốt giữ ngày bằng hoặc sau mốc đó. `NgayKetThuc <=` mốc trên giữ ngày bằng hoặc trước mốc trên. Nối hai điều kiện bằng `AND` như bài 2.3. Vì tính cả ngày đầu và ngày cuối, khoảng cách `30` ngày bao phủ `31` ngày lịch.
+
+`NgayKetThuc` là `NULL` với hợp đồng không xác định thời hạn trong bộ mẫu. So sánh với `NULL` cho `UNKNOWN` như bài 2.5, nên `WHERE` loại dòng đó.
+
+**Tính số ngày còn lại.** SQL Server dùng `DATEDIFF(đơn vị, ngày đầu, ngày cuối)` để đếm số **ranh giới** của đơn vị đã đi qua. Với hai giá trị `date`, mỗi lần qua nửa đêm là một ranh giới ngày, nên `DATEDIFF(day, CAST('20261021' AS date), NgayKetThuc)` cho cùng số ngày như phép trừ trong Excel. Khi đếm ngày, hai mốc cùng ngày cho `0`, còn ngày cuối trước ngày đầu cho số âm.
+
+Đặt hàm trong `SELECT` để tính số ngày cho từng hợp đồng, rồi dùng `AS` như bài 2.1 để đặt tên cột kết quả `SoNgayConLai`.
+
+### Đọc câu SQL qua các bước
 
 <Sql code={`SELECT MaHD, MaNV, NgayBatDau, NgayKetThuc,
 \tDATEDIFF(day, CAST('20261021' AS date), NgayKetThuc) AS [SoNgayConLai]
@@ -47,44 +59,7 @@ WHERE NgayKetThuc >= CAST('20261021' AS date)
 \tAND NgayKetThuc <= DATEADD(day, 30, CAST('20261021' AS date))
 ORDER BY NgayKetThuc ASC, MaHD ASC;`} />
 
-Từng phần của câu:
-
-<LineMap rows={[
-  ['SELECT MaHD, MaNV, NgayBatDau, NgayKetThuc', 'Chọn bốn cột cần đối chiếu như bài 2.1. Ví dụ: HD2025-014 của NV025.'],
-  ["CAST('20261021' AS date)", 'Chuyển chuỗi tám chữ số dạng năm-tháng-ngày thành kiểu date, chỉ có ngày. Ví dụ: ngày chốt 2026-10-21.'],
-  ['DATEDIFF(day, …, NgayKetThuc)', 'Đếm số ngày từ ngày chốt tới ngày kết thúc; bằng 0 là kết thúc đúng ngày chốt, số âm là ngày đã qua. Ví dụ: HD2025-014 kết thúc 2026-10-31 cho 10.'],
-  ['FROM HopDong', 'Chỉ bảng nguồn, mỗi dòng là một hợp đồng. Ví dụ: bắt đầu từ 55 hợp đồng.'],
-  ['WHERE NgayKetThuc >= …', 'Giữ hợp đồng kết thúc từ ngày chốt, gồm cả ngày chốt. Ví dụ: HD2026-002 kết thúc 2026-08-31 bị loại.'],
-  ['AND NgayKetThuc <= DATEADD(day, 30, …)', 'DATEADD cộng 30 ngày vào ngày chốt, ra mốc 2026-11-20. Ví dụ: HD2023-003 kết thúc 2026-12-31 bị loại.'],
-  ['ORDER BY NgayKetThuc ASC, MaHD ASC', 'Xếp ngày gần nhất trước, cùng ngày thì xét mã như bài 2.4. Ví dụ: HD2025-014 đứng đầu.'],
-]} />
-
-Excel cộng trừ ngày trực tiếp bằng `+`, `-`, còn SQL Server thì không: trừ hai cột `date` báo `Operand data type date is invalid for subtract operator.` Vì vậy phải dùng hàm và nói rõ đơn vị. **`CAST`** ghi rõ `'20261021'` là ngày; bỏ đi thì `DATEADD` hiểu chuỗi đó là kiểu `datetime`, có cả phần giờ.
-
-Câu dùng ngày chốt cố định để chạy lại vẫn ra đúng danh sách đã đối chiếu. Khi thật sự cần mốc theo hôm nay, dùng **`GETDATE()`**, hàm lấy ngày giờ của máy chủ, tương tự `TODAY()` của Excel. Nguồn khóa học trên Azure dùng **UTC**, chậm hơn Việt Nam `7` giờ, nên sáng sớm ở Việt Nam máy chủ vẫn là ngày hôm trước.
-
-**`DATEADD(đơn vị, số lượng, ngày gốc)`** nhận đơn vị `day`, `month`, `year`, không đặt trong dấu nháy. Cộng `30` ngày khác cộng một tháng vì tháng có độ dài khác nhau.
-
-`>=` và `<=` lấy cả hai đầu, nên khoảng cách `30` ngày có `31` ngày lịch. `NgayKetThuc` có kiểu `date`, không có phần giờ. Với cột có giờ, muốn lấy hết ngày `2026-11-20` thì dùng đầu trên `< DATEADD(day, 1, CAST('20261120' AS date))`.
-
-**`DATEDIFF(đơn vị, ngày đầu, ngày cuối)`** đếm số **ranh giới** của đơn vị đã đi qua, như bước sang năm mới, không phải số năm tròn như `DATEDIF` của Excel. `HD2024-008` bắt đầu `2024-11-15`, kết thúc `2026-11-14`: `DATEDIFF(year, NgayBatDau, NgayKetThuc)` ra `2`, nhưng `DATEADD(year, 2, NgayBatDau)` là `2026-11-15`, sau ngày kết thúc. Muốn kiểm đã đủ số năm, hãy so mốc tạo bằng `DATEADD`. Với đơn vị `day` trên cột `date`, mỗi ranh giới là một ngày, nên số đếm khớp phép trừ trong hình Excel.
-
-Các hàm bài tập sẽ dùng, đọc trên `HD2024-008` và ngày chốt:
-
-| Hàm | Làm gì | Kết quả |
-|---|---|---|
-| `MONTH(NgayKetThuc)` | Lấy số tháng từ `1` đến `12`, bất kể năm | `11` |
-| `EOMONTH(NgayKetThuc)` | Lấy ngày cuối tháng chứa ngày gốc | `2026-11-30` |
-| `EOMONTH(CAST('20261021' AS date))` | Ngày gốc cũng có thể là ngày chốt | `2026-10-31` |
-| `MONTH(DATEADD(month, 1, CAST('20261021' AS date)))` | Lồng hàm như bài 2.7: tháng của ngày sau ngày chốt một tháng, `2026-11-21` | `11` |
-
-Trong bộ mẫu, `NgayKetThuc` là `NULL` nghĩa là hợp đồng không xác định thời hạn; so sánh với ô đó cho `UNKNOWN` như bài 2.5, nên các dòng này không vào danh sách.
-
-Ở bài này chỉ cần tạo mốc, đếm đúng loại khoảng cách và lọc theo ngày đã thống nhất. Bài 2.9 dùng `CASE` để phân nhóm theo các mốc đủ năm; lấy thêm họ tên bằng kết bảng ở bài 3.4, kiểm chất lượng ngày ở bài 3.19.
-
-### SQL Server chạy câu này thế nào
-
-Sơ đồ là **thứ tự xử lý logic**, không phải cách SQL Server đọc dữ liệu. Bấm từng bước để thấy `55` hợp đồng còn `3`, rồi `SELECT` tính số ngày còn lại; hình chỉ hiện các cột cần đối chiếu:
+Sơ đồ mô tả **thứ tự xử lý logic** của truy vấn. SQL Server tự chọn cách thực thi. Bấm từng bước để xem hợp đồng nào qua lọc và cách tính số ngày còn lại.
 
 <RunFlow query={`SELECT MaHD, MaNV, NgayBatDau, NgayKetThuc,
 \tDATEDIFF(day, CAST('20261021' AS date), NgayKetThuc) AS [SoNgayConLai]
@@ -118,7 +93,7 @@ FROM HopDong;`,
     focus: "WHERE NgayKetThuc >= CAST('20261021' AS date)\n\tAND NgayKetThuc <= DATEADD(day, 30, CAST('20261021' AS date))",
     meaning: "`WHERE` xét từng hợp đồng, `AND` yêu cầu cả hai điều kiện cùng đúng: từ ngày chốt đến mốc sau `30` ngày. Ô `NULL` cho `UNKNOWN` nên dòng đó không được giữ.",
     checks: { conditions: ["NgayKetThuc >= ngày chốt","NgayKetThuc <= mốc 30 ngày"], rows: [["HD2015-001",null,null],["HD2023-003",true,false],["HD2024-008",true,true],["HD2025-014",true,true],["HD2026-002",false,true]], totals: [20,13,3] },
-    detail: "Còn `3` dòng, vẫn bốn cột trong hình. Thứ tự dòng chưa được bảo đảm.",
+    detail: "Còn `3` hợp đồng. Hình trích bốn cột; thứ tự dòng có thể khác khi chạy.",
     sql: `SELECT MaHD, MaNV, NgayBatDau, NgayKetThuc
 FROM HopDong
 WHERE NgayKetThuc >= CAST('20261021' AS date)
@@ -138,7 +113,17 @@ WHERE NgayKetThuc >= CAST('20261021' AS date)
     focus: "SELECT MaHD, MaNV, NgayBatDau, NgayKetThuc,\n\tDATEDIFF(day, CAST('20261021' AS date), NgayKetThuc) AS [SoNgayConLai]",
     inputColumns: ["MaHD","MaNV","NgayBatDau","NgayKetThuc"],
     meaning: "`SELECT` giữ bốn cột, `DATEDIFF` tính thêm số ngày từ ngày chốt tới `NgayKetThuc` cho từng dòng.",
-    detail: "Vẫn `3` dòng, thêm cột `SoNgayConLai`. Thứ tự dòng chưa được bảo đảm.",
+    detail: "`3` dòng, `5` cột. Thứ tự dòng có thể khác khi chạy.",
+    examples: [{
+      title: "Tính số ngày còn lại của HD2025-014",
+      note: "Dòng hợp đồng có ngày kết thúc `2026-10-31`.",
+      calculations: [{
+        expression: "DATEDIFF(day, CAST('20261021' AS date), NgayKetThuc)",
+        explanation: "Từ ngày chốt `2026-10-21` đến `2026-10-31` qua `10` ranh giới ngày.",
+        column: "SoNgayConLai",
+        value: 10,
+      }],
+    }],
     sql: `SELECT MaHD, MaNV, NgayBatDau, NgayKetThuc,
 \tDATEDIFF(day, CAST('20261021' AS date), NgayKetThuc) AS [SoNgayConLai]
 FROM HopDong
@@ -158,7 +143,7 @@ WHERE NgayKetThuc >= CAST('20261021' AS date)
     title: "Xếp ngày gần nhất trước, cùng ngày thì xếp mã.",
     focus: "ORDER BY NgayKetThuc ASC, MaHD ASC",
     meaning: "`ORDER BY` xếp ngày kết thúc gần nhất trước; cùng ngày thì xét `MaHD`.",
-    detail: "Vẫn `3` dòng, từ `HD2025-014` đến `HD2024-008`; đây là danh sách chị Hạnh cần.",
+    detail: "`3` dòng, `5` cột. `HD2025-014` lên đầu vì kết thúc sớm nhất trong ba hợp đồng.",
     sql: `SELECT MaHD, MaNV, NgayBatDau, NgayKetThuc,
 \tDATEDIFF(day, CAST('20261021' AS date), NgayKetThuc) AS [SoNgayConLai]
 FROM HopDong
@@ -176,24 +161,42 @@ ORDER BY NgayKetThuc ASC, MaHD ASC;`,
   },
 ]} />
 
+Trong `55` hợp đồng, có `3` dòng qua cả hai điều kiện. `HD2025-014` kết thúc ngày `2026-10-31`, nằm giữa hai mốc, nên qua lọc và có `SoNgayConLai` bằng `10` như ô `C2` trong Excel. `ORDER BY` đưa hợp đồng này lên đầu và dùng `MaHD` để quyết định thứ tự nếu hai dòng cùng ngày kết thúc.
+
 <Result columns={["MaHD","MaNV","NgayBatDau","NgayKetThuc","SoNgayConLai"]} rows={[
   ["HD2025-014","NV025","2025-11-01","2026-10-31",10],
   ["HD2026-004","NV046","2026-09-14","2026-11-13",23],
   ["HD2024-008","NV036","2024-11-15","2026-11-14",24],
-]} mark={[1, 2, 3]} />
+]} mark={[1]} />
 
-Bạn có thể trả lời chị Hạnh: có `3` dòng hợp đồng kết thúc trong khoảng đã chốt, lần lượt là `HD2025-014`, `HD2026-004`, `HD2024-008`; còn `10`, `23`, `24` ngày, tính bằng ngày kết thúc trừ ngày chốt. Ba dòng được đánh dấu để đối chiếu số ngày còn lại với phép trừ trong hình Excel.
+Danh sách để chị Hạnh rà có ba hợp đồng. Dòng đánh dấu cần xem trước vì còn `10` ngày. Quyết định gia hạn cần đối chiếu thêm hồ sơ của từng người.
 
-Đây là danh sách hợp đồng để rà, không phải số nhân viên cần gia hạn. Câu lệnh chưa xác định hợp đồng cuối của từng người; việc có gia hạn hay không cần người phụ trách xem thêm hồ sơ và quyết định.
+### Vận dụng trên cùng tình huống
+
+**Đổi mốc trên thành cuối tháng.** `EOMONTH(ngày gốc)` trả ngày cuối tháng chứa ngày gốc. `EOMONTH(CAST('20261021' AS date))` trả `2026-10-31`, có thể đặt bên phải `<=` để lấy đến hết ngày đó. Nếu yêu cầu bắt đầu từ sau ngày chốt, dùng `>` thay `>=` để bỏ ngày đúng mốc.
+
+**Lọc hết ngày cuối trên cột có giờ.** `NgayKetThuc` trong bộ mẫu là `date`. Nếu cột lưu cả ngày và giờ, so với `<=` ngày `2026-11-20` sẽ dừng ở `00:00` đầu ngày đó. Giữ mốc dưới và dùng `< DATEADD(day, 1, CAST('20261120' AS date))` làm điều kiện trên cột có giờ. Dấu `<` lấy mọi thời điểm trước `00:00` ngày `2026-11-21`, gồm cả buổi chiều ngày `2026-11-20`.
+
+**Tìm tháng kế tiếp.** `MONTH(ngày)` trả số tháng từ `1` đến `12`. Trong `MONTH(DATEADD(month, 1, CAST('20261021' AS date)))`, `DATEADD` trả `2026-11-21` trước, rồi `MONTH` lấy `11`. Để lọc theo tháng, so sánh hai số tháng bằng `=` trong `WHERE`.
+
+Khi cộng tháng bằng `DATEADD`, mốc tự chuyển sang năm sau nếu qua tháng `12`. Nếu tháng đích thiếu ngày tương ứng, hàm lấy ngày cuối tháng đó. Chẳng hạn, `HD2025-014` kết thúc ngày `2026-10-31`; cộng một tháng được `2026-11-30`.
+
+**Đếm ranh giới tháng, năm.** Với `month`, `DATEDIFF` đếm các lần sang tháng mới. Từ ngày chốt đến ngày kết thúc `2026-11-14` của `HD2024-008`, hàm đếm `1` vì qua ngày `2026-11-01`. Với `year`, hàm đếm các lần sang năm mới. Từ `NgayBatDau` là `2024-11-15` đến `NgayKetThuc` của hợp đồng này, hàm đếm `2` vì qua đầu năm `2025` và `2026`.
+
+**Kiểm đã đủ năm.** Với hợp đồng đó, `DATEADD(year, 2, NgayBatDau)` trả mốc đủ hai năm là `2026-11-15`. Hợp đồng kết thúc sớm hơn một ngày nên thời hạn chưa đủ hai năm. Khi viết điều kiện, dùng mốc đủ năm `<=` ngày đối chiếu để xét đã đủ, hoặc mốc đủ năm `>` ngày đối chiếu để xét chưa đủ. Nếu chỉ xét các hợp đồng đã bắt đầu tại ngày chốt, thêm điều kiện `NgayBatDau <=` ngày chốt.
+
+**Nhận biết ngày giờ hiện tại.** Excel có `TODAY()` để lấy ngày hiện tại. `GETDATE()` trong SQL Server trả cả ngày và giờ của hệ thống database. Azure SQL Database của khóa học dùng UTC, mốc giờ quốc tế chậm hơn giờ Việt Nam `7` giờ. Vì vậy, trước `07:00` ở Việt Nam, ngày theo UTC vẫn là ngày hôm trước.
+
+Ở bài này chỉ cần tạo mốc, lọc theo biên ngày đã thống nhất và chọn cách tính theo yêu cầu. Bài 2.9 dùng `CASE` để phân nhóm hồ sơ theo mốc đủ năm. Tra các kiểu ngày giờ ở [PL.1](../../phu-luc/pl-1-chi-tiet-kieu-du-lieu/#ngay-gio) và cách đổi kiểu ở [PL.2](../../phu-luc/pl-2-chuyen-doi-kieu-du-lieu/).
 
 ## Hay nhầm ở đâu
 
 <Mistakes>
 
-1. **Chỉ viết ngày kết thúc nhỏ hơn mốc trên.** Hợp đồng đã kết thúc từ trước ngày chốt, như `HD2026-002`, cũng lọt vào danh sách sắp hết hạn.
+1. **Chỉ viết điều kiện mốc trên.** Hợp đồng đã kết thúc từ trước ngày chốt, như `HD2026-002`, cũng lọt vào danh sách sắp hết hạn.
 2. **Dùng ngày giờ hiện tại khi cần kết quả đối chiếu lại được.** Chạy vào ngày khác làm danh sách thay đổi dù dữ liệu nguồn vẫn vậy.
-3. **Gọi số ranh giới năm là đủ năm.** Có thể xét đạt mốc trước ngày đủ năm thật, như `HD2024-008`.
-4. **Thấy ba hợp đồng thì gọi là ba người phải gia hạn.** Một người có thể có nhiều hợp đồng, và ngày kết thúc chưa đủ để quyết định nghiệp vụ.
+3. **Cộng `1` tháng khi yêu cầu cộng `30` ngày.** Từ ngày `2026-10-21`, cộng một tháng ra `2026-11-21`, làm khoảng lọc dư một ngày.
+4. **Đảo thứ tự hai ngày trong `DATEDIFF`.** Với `HD2025-014`, đặt ngày kết thúc trước ngày chốt trong lời gọi hàm sẽ cho `-10` thay vì `10`.
 
 </Mistakes>
 
@@ -201,21 +204,20 @@ Bạn có thể trả lời chị Hạnh: có `3` dòng hợp đồng kết thú
 
 <Apply>
 
-- **Chuẩn bị rà hợp đồng:** tạo mốc sau một số ngày để lấy các dòng sắp kết thúc, có thứ tự ưu tiên theo ngày.
-- **Kiểm mốc thâm niên:** tạo mốc đủ năm bằng `DATEADD` rồi so với ngày báo cáo để xét đã chạm một mốc cụ thể.
-- **Lập lịch theo tháng:** dùng `MONTH` lấy danh sách sinh nhật trong tháng, `EOMONTH` đặt mốc cuối tháng để rà hợp đồng hết hạn trong tháng.
+- **Chuẩn bị rà hợp đồng.** Dùng `DATEADD` hoặc `EOMONTH` để lập danh sách hồ sơ cần xem trong số ngày tới hoặc đến hết tháng.
+- **Kiểm mốc thâm niên.** Tạo mốc đủ năm từ ngày vào làm để xét ai đã đủ thời gian theo chính sách tại ngày báo cáo.
+- **Lập lịch sinh nhật.** Dùng `MONTH` để chọn hồ sơ có tháng sinh trùng tháng cần gửi thiệp.
 
 </Apply>
 
 ## Ghi nhớ
 
 <Memo rows={[
-  ['TODAY lấy ngày hiện tại', 'GETDATE lấy ngày giờ máy chủ; cần đối chiếu lại thì dùng ngày chốt'],
-  ['Ô ngày là ngày thật, cộng trừ trực tiếp', "CAST('20261021' AS date) đổi chuỗi thành ngày; cộng trừ ngày qua hàm"],
-  ['Cộng khoảng thời gian để tạo ngày mới', 'DATEADD cần đơn vị, số lượng và ngày gốc'],
-  ['DATEDIF đếm tháng/năm tròn khác phép trừ ngày', 'DATEDIFF đếm ranh giới; DATEADD tạo mốc đủ năm để đối chiếu'],
-  ['MONTH lấy tháng; EOMONTH tìm cuối tháng', 'MONTH(NgayKetThuc) ra 11; EOMONTH(NgayKetThuc) ra 2026-11-30'],
-  ['Chốt lấy/bỏ hai đầu bộ lọc ngày', 'Từ 21/10 đến hết 20/11: >= ngày chốt và <= mốc sau 30 ngày'],
+  ['DATE tạo ngày từ năm, tháng, ngày', "CAST('20261021' AS date) đổi chuỗi thành ngày"],
+  ['Tạo ngày cách mốc 30 ngày', 'DATEADD(day, 30, ngày chốt) trả mốc trên'],
+  ['Trừ ngày hoặc kiểm ngày đủ năm', 'DATEDIFF đếm ranh giới. Dùng DATEADD để tạo mốc đủ năm'],
+  ['Lấy số tháng hoặc ngày cuối tháng', 'MONTH trả số tháng. EOMONTH trả ngày cuối tháng'],
+  ['Chọn lấy hoặc bỏ ngày ở biên', 'Cột date dùng >=, <= để lấy hai đầu. Cột có giờ dùng < đầu ngày kế tiếp để lấy trọn ngày cuối'],
 ]} />
 
 **Tự kiểm tra trước khi viết truy vấn:**
@@ -228,21 +230,28 @@ Mốc trên là `2026-11-20`. Khoảng cách hai mốc là `30` ngày, nhưng t�
 </details>
 
 <details>
-<summary><code>DATEDIFF(year, ...)</code> bằng <code>2</code> có chứng minh <code>HD2024-008</code> đủ hai năm không?</summary>
+<summary><code>HD2024-008</code> kết thúc trước hay sau mốc đủ hai năm? Bạn dùng hàm nào để kiểm?</summary>
 
-Không. Hàm đếm ranh giới năm; mốc đủ hai năm của hợp đồng này là `2026-11-15`, sau ngày kết thúc `2026-11-14`. So mốc tạo bằng `DATEADD` mới kiểm được đã đủ năm.
+`DATEADD(year, 2, NgayBatDau)` cho mốc `2026-11-15`. Ngày kết thúc `2026-11-14` đến trước mốc nên thời hạn chưa đủ hai năm.
 
 </details>
 
 <details>
-<summary>Dùng hàm nào để lấy tháng, hàm nào tạo ngày cuối tháng?</summary>
+<summary>Từ ngày chốt <code>2026-10-21</code>, số tháng kế tiếp và ngày cuối tháng chứa ngày chốt lần lượt là gì?</summary>
 
-`MONTH` lấy tháng dưới dạng số; `EOMONTH` trả ngày cuối tháng.
+`DATEADD` cộng một tháng, rồi `MONTH` lấy số `11`. `EOMONTH` áp dụng trên ngày chốt trả `2026-10-31`.
+
+</details>
+
+<details>
+<summary>Với cột có giờ, dùng mốc trên nào để giữ cả thời điểm <code>2026-11-20 15:00</code>?</summary>
+
+Dùng `<` với đầu ngày `2026-11-21`. Thời điểm `15:00` của ngày trước đó vẫn nằm trong khoảng.
 
 </details>
 
 ## Bài tập
 
-Ba bài dùng ngày chốt cố định `2026-10-21`, không dùng đồng hồ hiện tại. Trả đúng vị trí cột và **thứ tự dòng** theo từng đề; không thêm phạm vi ngoài yêu cầu. Tên cột không được chấm.
+Ba bài dùng ngày chốt cố định `2026-10-21`. Xem [phần vận dụng](#vận-dụng-trên-cùng-tình-huống) để ôn cách tìm tháng kế tiếp, kiểm mốc đủ năm và lấy ngày cuối tháng. Bộ chấm đối chiếu giá trị theo đúng vị trí cột và thứ tự dòng trong đề.
 
 <Exercises />

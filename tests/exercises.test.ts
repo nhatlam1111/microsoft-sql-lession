@@ -23,6 +23,16 @@ it('ships 3 exercises for 3.5 and 2 data-change exercises for 6.5', () => {
   expect(byLesson['5-6-update-quen-where'].map(e => [e.id, e.kind])).toEqual([['6-5-1', 'change'], ['6-5-2', 'change']]);
 });
 
+it('ships three ordered read-only window exercises per newly completed lesson', () => {
+  const byLesson = Object.fromEntries(readExerciseFiles().map(f => [f.lesson, f.exercises]));
+  for (const lesson of ['3-14-truy-xuat-dong', '3-15-tong-hop-voi-over']) {
+    const idPrefix = lesson.split('-').slice(0, 2).join('-');
+    expect(byLesson[lesson].map(e => [e.id, e.kind, e.ordered])).toEqual(
+      [1, 2, 3].map(n => [`${idPrefix}-${n}`, 'query', true]),
+    );
+  }
+});
+
 it('ships 4 exercises for 2.1, the first a whole table with no order, filter or TOP', () => {
   const byLesson = Object.fromEntries(readExerciseFiles().map(f => [f.lesson, f.exercises]));
   const l21 = byLesson['2-1-chon-cot-dat-ten-cot'];

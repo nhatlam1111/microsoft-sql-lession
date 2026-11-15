@@ -21,17 +21,17 @@ Tháng 10/2026, chị Hạnh muốn tách con số chung thành từng phòng:
 Em đếm giúp chị số hồ sơ đang làm theo từng mã phòng nhé. Phòng đông nhất để trên cùng; nếu bằng nhau thì xếp mã phòng tăng dần. Chị chỉ cần mã phòng và số hồ sơ.
 </Chat>
 
-Giả định: đọc `NhanVien` đang lưu, chỉ lấy `TrangThai = N'Đang làm'`. Phân phòng theo `MaPB` hiện tại, không suy ngược phòng của nhân viên ở tháng trước. Một hồ sơ là một dòng trong bảng có khóa chính `MaNV`.
+Đọc các dòng `NhanVien` có `TrangThai = N'Đang làm'` và dùng `MaPB` hiện lưu cho báo cáo tháng 10. Mỗi hồ sơ là một dòng có mã `MaNV` riêng vì cột này được khai báo là khóa chính.
 
 <Key>Trong phạm vi đang làm, mỗi mã phòng cần một dòng với số hồ sơ của phòng đó.</Key>
 
 ## Chọn nhóm trước khi tính chỉ tiêu
 
-### Từ Rows và Values của PivotTable đến GROUP BY
+### Cấu trúc mới trong bài
 
-Trong Excel, **PivotTable** tạo bảng tổng hợp từ danh sách. Đưa trạng thái vào Filters (bộ lọc) và chọn `Đang làm`, kéo mã phòng vào **Rows** (nhãn dòng), mã nhân viên vào **Values** (giá trị tổng hợp), rồi chọn **Count**. Count của PivotTable đếm ô có dữ liệu, khác hàm `COUNT` trên sheet ở bài 3.1.
+Trong Excel, **PivotTable** tạo bảng tổng hợp từ danh sách. Đưa trạng thái vào **Filters** (bộ lọc) và chọn `Đang làm`. Đặt mã phòng ở **Rows** (nhãn dòng) để có một dòng cho mỗi phòng. Đặt mã nhân viên ở **Values** (giá trị tổng hợp) và chọn **Count**. PivotTable đếm các ô mã đã điền, nên mỗi hồ sơ có mã góp một lượt đếm.
 
-Hình dưới minh họa phần kết quả sau khi sắp số lượng giảm dần. Các ô được đánh dấu là mã `KD` ở `A2`, số hồ sơ của phòng ở `B2` và tổng cộng ở `B8`; tổng cộng không phải một phòng.
+Hình minh họa bảng đã sắp theo số lượng giảm dần. Hai ô `A2`, `B2` cho biết phòng `KD` có `13` hồ sơ. Ô `B8` là **Grand Total** (tổng cộng) của tất cả các phòng.
 
 <Excel sheets="PivotTable · Hồ sơ đang làm" cell="B2" formula="13" selected="B2" mark={['A2', 'B2', 'B8']} rows={[
   ['Mã phòng', 'Count of MaNV'],
@@ -44,7 +44,13 @@ Hình dưới minh họa phần kết quả sau khi sắp số lượng giảm d
   ['Grand Total', 45],
 ]} />
 
-Trong SQL, **`GROUP BY`** chia các dòng đã qua `WHERE` thành những nhóm cùng giá trị để các hàm tổng hợp tính riêng từng nhóm. Với báo cáo của chị Hạnh, câu lệnh là:
+Trong SQL, `WHERE` chọn hồ sơ vào báo cáo như Filters trong hình. **`GROUP BY`** chia các dòng đã qua bộ lọc thành nhóm. Viết `GROUP BY MaPB` sau `WHERE` và trước `ORDER BY` để gom các hồ sơ có cùng mã phòng như Rows. `MaPB` là **khóa nhóm**, tức cột có giá trị quyết định hồ sơ thuộc nhóm nào.
+
+Mỗi dòng kết quả đại diện cho một nhóm. Viết `MaPB` trong `GROUP BY` để lập nhóm và trong danh sách `SELECT` để hiện mã chung của nhóm đó. Với cách nhóm theo tên cột trong bài, **cột lấy trực tiếp trong `SELECT` phải có trong `GROUP BY`** nếu cột ấy đứng ngoài hàm tổng hợp. Các hồ sơ cùng phòng có thể mang nhiều mã `MaNV`, nên dòng tổng hợp của phòng chỉ hiện mã `MaPB` cùng số đếm.
+
+Viết `COUNT(*) AS [SoHoSo]` trong danh sách `SELECT` để đếm số dòng của từng phòng như Values trong hình và đặt tên cột đếm. Khi cần nhiều chỉ tiêu, viết các hàm tổng hợp cách nhau bằng dấu phẩy như bài 3.1. `COUNT(*)` đếm dòng, còn `SUM` cộng giá trị của cột được chỉ định. Mỗi hàm tạo một ô trên cùng dòng kết quả và dùng các dòng thuộc nhóm đó.
+
+### Đọc câu SQL qua các bước
 
 <Sql code={`SELECT MaPB, COUNT(*) AS [SoHoSo]
 FROM NhanVien
@@ -52,34 +58,7 @@ WHERE TrangThai = N'Đang làm'
 GROUP BY MaPB
 ORDER BY [SoHoSo] DESC, MaPB ASC;`} />
 
-Từng phần của câu:
-
-<LineMap rows={[
-  ['SELECT MaPB', 'Chọn mã phòng để biết mỗi dòng đang nói về nhóm nào. Ví dụ: KD là dòng của phòng Kinh doanh.'],
-  ['COUNT(*) AS [SoHoSo]', 'Đếm dòng trong từng nhóm như bài 3.1, đặt tên kết quả bằng AS. Ví dụ: nhóm KD có SoHoSo bằng 13.'],
-  ['FROM NhanVien', 'Chỉ bảng hồ sơ nguồn, chưa lọc hoặc gom. Ví dụ: bắt đầu từ 48 hồ sơ.'],
-  ["WHERE TrangThai = N'Đang làm'", 'Lọc từng hồ sơ trước khi nhóm, như trường đặt ở Filters. Ví dụ: NV020 đã nghỉ bị loại khỏi phòng KD.'],
-  ['GROUP BY MaPB', 'Gom các dòng cùng mã, như đặt mã phòng vào Rows. Ví dụ: NV002 và NV003 cùng mã KD nên được đếm trong một nhóm.'],
-  ['ORDER BY [SoHoSo] DESC, MaPB ASC', 'Xếp số lượng giảm dần; bằng nhau thì xét mã tăng dần như bài 2.4. Ví dụ: KD có 13 hồ sơ đứng trước IT có 10.'],
-]} />
-
-`MaPB` là **khóa nhóm**: giá trị quyết định hồ sơ nào thuộc cùng một nhóm. Mỗi mã xuất hiện sau `WHERE` cho một dòng kết quả; `COUNT(*)` tính trên các hồ sơ của riêng mã đó. `GROUP BY` đặt sau `WHERE` và trước `ORDER BY`, tương ứng chọn Rows rồi chọn phép đếm ở Values; các hàm `SUM`, `AVG` của bài 3.1 cũng tính riêng trong từng nhóm khi được dùng ở `SELECT`.
-
-Với cách nhóm theo cột đang học, **cột lấy trực tiếp trong `SELECT`, nếu không nằm trong hàm tổng hợp, phải có trong `GROUP BY`**. Vì vậy câu này nhóm theo `MaPB`, còn `COUNT(*)` là phép tính cho mỗi nhóm. Một dòng kết quả đại diện cả phòng, không còn là một hồ sơ cụ thể.
-
-Khi dùng một biểu thức `SUM(CASE … END)` như ở bài 3.1 trong câu có `GROUP BY MaPB`, SQL Server cộng phần đóng góp của các hồ sơ trong từng phòng.
-
-**Nhóm nhiều cột** thì liệt kê các cột cách nhau bằng dấu phẩy: `GROUP BY MaPB, TrangThai` tạo một nhóm cho mỗi cặp giá trị. Vẫn lọc đang làm như tình huống thì không tách thêm nhóm, vì mọi hồ sơ cùng trạng thái; khi đề yêu cầu mọi trạng thái, các cặp phòng/trạng thái có hồ sơ sẽ thành những nhóm riêng. Trong PivotTable, đó là đặt thêm trạng thái vào Rows; số lượng được tính cho từng tổ hợp, không lặp nguyên tổng phòng.
-
-`GROUP BY MaPB` không tự tạo một dòng số `0` cho phòng không có hồ sơ qua `WHERE`, cũng không tự thêm **Grand Total** (tổng cộng) như ô `B8` trong hình Excel. Nhóm từ các dòng còn lại, nên không có dòng thì không có nhóm. Nếu cột nhóm có giá trị `NULL`, các dòng `NULL` của cột đó cùng thuộc một nhóm; các hồ sơ trong tình huống này đều có mã phòng.
-
-`GROUP BY` không bảo đảm thứ tự dòng. `SoHoSo` là alias được đặt ở `SELECT`; `ORDER BY` xét sau nên dùng được tên đó như bài 2.4, rồi dùng `MaPB` để chốt thứ tự khi bằng số lượng. Chỉ lấy danh sách mã không trùng bằng `DISTINCT` của bài 2.6 thì thiếu chỉ tiêu số hồ sơ chị Hạnh cần.
-
-Ở bài này chỉ cần chọn khóa nhóm và tính riêng cho từng nhóm. Lọc nhóm theo số liệu đã tính học ở bài 3.3; lấy tên phòng từ danh mục bằng kết bảng học ở bài 3.4, giữ dòng chưa khớp khi kết bảng học ở bài 3.5.
-
-### SQL Server chạy câu này thế nào
-
-Sơ đồ là **thứ tự xử lý logic**, không phải cách SQL Server đọc dữ liệu. Bấm từng bước để thấy `48` hồ sơ còn `45`, rồi thành `6` nhóm phòng. Trước `ORDER BY`, thứ tự dòng có thể khác hình:
+Sơ đồ mô tả **thứ tự xử lý logic** để lần từ dữ liệu nguồn đến kết quả. Bấm từng bước để xem hồ sơ nào qua bộ lọc và cách một nhóm tạo thành một dòng báo cáo. Trước `ORDER BY`, thứ tự các dòng có thể khác hình. SQL Server tự chọn cách thực thi câu lệnh.
 
 <RunFlow query={`SELECT MaPB, COUNT(*) AS [SoHoSo]
 FROM NhanVien
@@ -92,7 +71,7 @@ ORDER BY [SoHoSo] DESC, MaPB ASC;`} steps={[
     focus: 'FROM NhanVien',
     input: 'Bảng `NhanVien` trong database.',
     meaning: '`FROM` chọn bảng hồ sơ làm nguồn, chưa lọc dòng, chưa chọn cột kết quả, chưa gom nhóm.',
-    detail: '`48` hồ sơ. Hình trích năm hồ sơ và ba cột cần theo dõi; có cả hồ sơ đã nghỉ.',
+    detail: '`48` hồ sơ. Hình trích năm hồ sơ và ba cột cần theo dõi, có cả hồ sơ đã nghỉ.',
     sql: `SELECT MaNV, MaPB, TrangThai
 FROM NhanVien;`,
     columns: ['MaNV', 'MaPB', 'TrangThai'],
@@ -208,7 +187,7 @@ GROUP BY MaPB;`,
     focus: 'ORDER BY [SoHoSo] DESC, MaPB ASC',
     inputColumns: ['MaPB', 'SoHoSo'],
     meaning: '`ORDER BY` sắp số hồ sơ giảm dần, bằng nhau thì mã tăng dần. Bước này sau `SELECT` nên dùng được alias `SoHoSo`.',
-    detail: 'Vẫn `6` dòng, `2` cột theo đúng thứ tự chị Hạnh cần; không đổi số hồ sơ trong từng nhóm.',
+    detail: '`6` dòng, `2` cột. `KD` đứng đầu với `13` hồ sơ.',
     sql: `SELECT MaPB, COUNT(*) AS [SoHoSo]
 FROM NhanVien
 WHERE TrangThai = N'Đang làm'
@@ -220,6 +199,8 @@ ORDER BY [SoHoSo] DESC, MaPB ASC;`,
   },
 ]} />
 
+Trong `48` hồ sơ, `45` hồ sơ qua `WHERE` và tạo thành `6` nhóm theo mã phòng. Nhóm `BGD` gồm `NV004` và `NV009`. `SELECT` lấy mã chung `BGD` và `COUNT(*)` đếm hai hồ sơ trong nhóm, tạo dòng `BGD | 2`. `ORDER BY` dùng bí danh `SoHoSo` vừa đặt để xếp số đếm giảm dần, rồi xếp theo mã phòng tăng dần khi bằng số đếm.
+
 <Result columns={['MaPB', 'SoHoSo']} rows={[
   ['KD', 13],
   ['IT', 10],
@@ -229,16 +210,31 @@ ORDER BY [SoHoSo] DESC, MaPB ASC;`,
   ['BGD', 2],
 ]} />
 
-Bạn có thể trả lời chị Hạnh: có `6` dòng phòng; `KD` đứng đầu với `13` hồ sơ đang làm. Cộng sáu số lượng được `45`, không gồm ba hồ sơ đã nghỉ. Đây là phân bố theo mã phòng hiện lưu, không phải phòng của nhân viên tại một thời điểm trong quá khứ.
+Bạn có thể báo chị Hạnh rằng `KD` đứng đầu với `13` hồ sơ đang làm. Báo cáo có `6` mã phòng hiện lưu, tổng cộng `45` hồ sơ đang làm.
+
+### Vận dụng trên cùng tình huống
+
+**Nhóm theo cặp phòng và trạng thái.** Đặt thêm trạng thái vào Rows của PivotTable, hoặc viết `GROUP BY MaPB, TrangThai` trong SQL. Dấu phẩy ngăn hai cột khóa và mỗi cặp giá trị tạo một nhóm riêng. Chọn cả `MaPB` và `TrangThai` trong danh sách `SELECT` để đọc được nhóm trên mỗi dòng.
+
+Nếu vẫn lọc `Đang làm`, tất cả hồ sơ phòng `KD` có cùng cặp `KD` và `Đang làm`, nên phòng này vẫn chỉ có một nhóm `13` hồ sơ. Khi bỏ `WHERE` để lấy mọi trạng thái, `KD` có thêm nhóm `Đã nghỉ` gồm `1` hồ sơ. Mỗi nhóm được đếm riêng.
+
+**Chọn thứ tự báo cáo.** `GROUP BY` chỉ xác định nhóm. Khi cần xem lần lượt từng phòng rồi đưa trạng thái có nhiều hồ sơ lên trước trong phòng đó, đặt `MaPB ASC` trước `[SoHoSo] DESC` trong `ORDER BY`. SQL Server xét tiêu chí từ trái sang phải như bài 2.4. Với `KD`, dòng `Đang làm` đứng trước `Đã nghỉ` vì `13` lớn hơn `1`.
+
+**Đọc nhóm vắng trong kết quả.** Một nhóm chỉ xuất hiện khi có hồ sơ qua `WHERE` mang giá trị khóa của nhóm đó. Phòng có `0` hồ sơ đạt điều kiện sẽ vắng trong bảng. Với cách viết `GROUP BY` trong bài, bảng chỉ có các dòng nhóm, còn dòng tổng cộng là phần hình PivotTable thêm ở `B8`.
+
+Khi nhóm theo một cột cho phép `NULL`, các dòng có `NULL` trong cột đó thuộc cùng một nhóm. Riêng `MaPB` được khai báo `NOT NULL` trong bộ mẫu.
+
+Khi dùng `SUM(CASE … END)` từ bài 3.1 để tính chỉ tiêu có điều kiện, mỗi hồ sơ vẫn góp vào phép cộng của riêng phòng mình.
+
+Ở bài này chỉ cần chọn khóa nhóm và tính chỉ tiêu cho từng nhóm. Lọc theo chỉ tiêu đã tính học ở bài 3.3, lấy tên phòng từ danh mục học ở bài 3.4 và giữ cả phòng không có hồ sơ đạt điều kiện học ở bài 3.5.
 
 ## Hay nhầm ở đâu
 
 <Mistakes>
 
-1. **Thêm `MaNV` vào `GROUP BY` để hết lỗi chọn cột.** Khi mã là khóa chính, mỗi nhóm chỉ còn một hồ sơ; câu trả lời đổi thành đếm từng hồ sơ thay vì từng phòng.
-2. **Dùng `DISTINCT MaPB` thay cho tổng hợp.** Bạn có danh sách mã không trùng nhưng thiếu số hồ sơ của từng mã; `DISTINCT` của bài 2.6 không thay phép đếm trong nhóm.
-3. **Bỏ `WHERE` vì đã có `GROUP BY`.** Hồ sơ đã nghỉ vẫn được cộng vào phòng hiện lưu; các nhóm đúng cú pháp nhưng sai phạm vi chị Hạnh cần.
-4. **Coi kết quả gom nhóm đã được sắp.** Thứ tự hình có thể đổi khi chạy lại; phải có `ORDER BY` khi thứ tự là một phần yêu cầu.
+1. **Thêm `MaNV` vào `GROUP BY` để hết lỗi chọn cột.** Mỗi cặp phòng và mã hồ sơ chỉ có một dòng nguồn. Kết quả có một dòng cho mỗi hồ sơ, với số đếm luôn là `1`.
+2. **Dùng `DISTINCT MaPB` thay cho tổng hợp.** `DISTINCT` ở bài 2.6 cho danh sách mã phòng duy nhất và thiếu cột số hồ sơ chị Hạnh cần.
+3. **Bỏ `WHERE` vì đã có `GROUP BY`.** Báo cáo tính cả hồ sơ đã nghỉ. Ví dụ `NV020` làm số đếm của `KD` tăng từ `13` lên `14`.
 
 </Mistakes>
 
@@ -266,7 +262,7 @@ Bạn có thể trả lời chị Hạnh: có `6` dòng phòng; `KD` đứng đ�
 <details>
 <summary>Vẫn lọc đang làm, thêm <code>TrangThai</code> vào khóa nhóm có tách thêm nhóm không?</summary>
 
-Không trong phạm vi này: mọi dòng đều cùng trạng thái nên mỗi mã phòng vẫn chỉ có một tổ hợp. Nếu lấy mọi trạng thái thì mỗi cặp phòng/trạng thái xuất hiện mới là một nhóm riêng.
+Mỗi phòng vẫn có một nhóm vì mọi hồ sơ qua bộ lọc đều mang trạng thái `Đang làm`. Khi lấy mọi trạng thái, mỗi cặp phòng và trạng thái có hồ sơ sẽ tạo một nhóm.
 
 </details>
 
@@ -278,9 +274,9 @@ Không. `GROUP BY MaPB` chỉ tạo nhóm từ những dòng còn lại. Muốn 
 </details>
 
 <details>
-<summary>Muốn phòng đông nhất trước, bằng nhau thì mã tăng dần, cần phần nào của câu lệnh?</summary>
+<summary>Thêm <code>MaNV</code> vào <code>GROUP BY MaPB</code> làm mỗi dòng kết quả đại diện cho gì?</summary>
 
-`ORDER BY [SoHoSo] DESC, MaPB ASC`. `GROUP BY` không tự sắp kết quả; tiêu chí mã tăng dần quyết định thứ tự khi số hồ sơ bằng nhau.
+Mỗi dòng đại diện cho một hồ sơ qua bộ lọc. `MaNV` là khóa chính nên mỗi cặp `MaPB`, `MaNV` chỉ có một hồ sơ và `COUNT(*)` của nhóm bằng `1`.
 
 </details>
 

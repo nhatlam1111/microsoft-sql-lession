@@ -29,7 +29,7 @@ Giả định của tình huống: lấy toàn bộ hồ sơ có `MaPB` bằng `
 
 ## Từ chuỗi nguồn đến nhãn ký nhận có dấu
 
-### Từ công thức Excel đến hàm chuỗi
+### Cấu trúc mới trong bài
 
 **Chuỗi** là một dãy ký tự, như `NV007` hoặc `Bùi Thanh Sơn`. Trong Excel, nếu mã ở `A2` và họ tên ở `B2`, công thức `=CONCAT(RIGHT(A2,3)," - ",UPPER(B2))` tạo nhãn ở `C2`, còn `=LEN(B2)` đếm ký tự ở `D2`. Hình minh họa ba hồ sơ `IT` lấy từ bộ mẫu; ô `C2` được đánh dấu là nhãn vừa tạo.
 
@@ -40,7 +40,15 @@ Giả định của tình huống: lấy toàn bộ hồ sơ có `MaPB` bằng `
   ['NV017', 'Cao Minh Trí', '017 - CAO MINH TRÍ', 12],
 ]} />
 
-Trong SQL, **hàm chuỗi** nhận chuỗi đầu vào và trả giá trị đã xử lý; đặt hàm trong `SELECT` thì mỗi dòng có một giá trị mới. Các hàm này cùng tên với Excel và lồng được vào nhau. Với phiếu của chị Hạnh, câu lệnh là:
+Trong SQL, **hàm chuỗi** xử lý giá trị chữ, chẳng hạn cắt một phần mã hoặc đếm ký tự của họ tên. Viết tên hàm rồi đặt các giá trị đầu vào trong ngoặc đơn, cách nhau bằng dấu phẩy. Đặt hàm trong `SELECT` để tính một giá trị cho từng dòng của kết quả.
+
+Để làm nhãn của `NV007`, **`RIGHT(MaNV, 3)`** lấy tối đa `3` ký tự từ cuối mã, ra chuỗi `007` có số `0` đầu. **`UPPER(HoTen)`** đổi `Bùi Thanh Sơn` thành `BÙI THANH SƠN`, giữ dấu tiếng Việt. Bảng lưu `HoTen` bằng `nvarchar(100)`, kiểu dành cho **Unicode** như đã học ở bài 1.3. Khi tự viết chữ tiếng Việt trong SQL, đặt `N` ngay trước nháy đơn đầu để giữ ký tự, như `N'Bùi'`.
+
+**`CONCAT`** ghép các phần theo thứ tự trong ngoặc. Trong `CONCAT(RIGHT(MaNV, 3), N' - ', UPPER(HoTen))`, hai hàm bên trong trả `007` và `BÙI THANH SƠN` trước. `CONCAT` nhận hai kết quả ấy và ghép với `N' - '` ở giữa, ra `007 - BÙI THANH SƠN`. Dấu gạch và hai dấu cách có mặt vì bạn đã viết chúng trong chuỗi phân cách.
+
+**`LEN(HoTen)`** lấy họ tên gốc để đếm. `Bùi Thanh Sơn` có `11` chữ cái và `2` dấu cách giữa các từ, tổng cộng `13` ký tự. Khác Excel, `LEN` trong SQL bỏ qua dấu cách ở cuối chuỗi.
+
+### Đọc câu SQL qua các bước
 
 <Sql code={`SELECT MaNV AS [Mã nhân viên],
 \tCONCAT(RIGHT(MaNV, 3), N' - ', UPPER(HoTen)) AS [Nhãn ký nhận],
@@ -49,40 +57,7 @@ FROM NhanVien
 WHERE MaPB = 'IT'
 ORDER BY MaNV ASC;`} />
 
-Từng phần của câu:
-
-<LineMap rows={[
-  ['MaNV AS [Mã nhân viên]', 'Lấy mã và đặt tiêu đề như bài 2.1. Ví dụ: NV007 giữ nguyên để đối chiếu.'],
-  ['RIGHT(MaNV, 3)', 'Lấy ba ký tự từ bên phải. Ví dụ: NV007 cho 007, vẫn là chuỗi nên giữ số 0 ở đầu.'],
-  ['UPPER(HoTen)', 'Đổi chữ thường thành chữ hoa, giữ dấu. Ví dụ: Bùi Thanh Sơn thành BÙI THANH SƠN.'],
-  ["CONCAT(…, N' - ', …)", 'Ghép các đầu vào theo thứ tự; dấu phân cách phải tự viết. Ví dụ: 007, dấu gạch và BÙI THANH SƠN thành một nhãn.'],
-  ['LEN(HoTen)', 'Đếm số ký tự, tính cả dấu cách giữa các từ. Ví dụ: Bùi Thanh Sơn có 13 ký tự.'],
-  ["WHERE MaPB = 'IT'", 'Giữ hồ sơ phòng IT như bài 2.2. Ví dụ: NV003 có mã KD bị loại.'],
-  ['ORDER BY MaNV ASC', 'Xếp mã tăng dần như bài 2.4. Ví dụ: NV007 đứng đầu, NV048 đứng cuối.'],
-]} />
-
-Hàm nằm trong được tính trước: `CONCAT` nhận `007` từ `RIGHT` và `BÙI THANH SƠN` từ `UPPER` rồi mới ghép. Các hàm này chỉ đổi giá trị trả về, `HoTen` trong bảng vẫn là `Bùi Thanh Sơn`.
-
-Các hàm cùng nhóm mà bài tập sẽ dùng, đọc trên chính hồ sơ `NV007`:
-
-| Hàm | Làm gì | Kết quả |
-|---|---|---|
-| `LEFT(MaNV, 2)` | Lấy `2` ký tự từ trái | `NV` |
-| `SUBSTRING(MaNV, 3, 3)` | Bắt đầu ở vị trí `3`, lấy `3` ký tự; vị trí đầu là `1`, tương ứng `MID` của Excel | `007` |
-| `LOWER(HoTen)` | Đổi chữ hoa thành chữ thường, giữ dấu | `bùi thanh sơn` |
-| `TRIM(HoTen)` | Bỏ dấu cách thông thường ở hai đầu; họ tên này không có nên giữ nguyên | `Bùi Thanh Sơn` |
-
-Khác Excel, `LEN` của SQL không tính dấu cách cuối, còn `TRIM` không gộp dấu cách giữa các từ. `UPPER`, `LOWER` nhận `NULL` thì vẫn trả `NULL`, rồi `CONCAT` coi đầu vào `NULL` là chuỗi rỗng: `CONCAT(N'[', NULL, N']')` ra `[]`. Vì vậy, ghép được nhãn chưa chứng minh mọi thành phần đều có. Cần đánh dấu phần thiếu thì dùng `COALESCE` của bài 2.5 trước khi ghép.
-
-**Unicode** là chuẩn biểu diễn ký tự, gồm cả chữ tiếng Việt; `HoTen` là `nvarchar(100)` nên lưu được Unicode. Chuỗi tiếng Việt tự viết cần chữ **`N`** ngay trước dấu nháy như bài 1.3, thiếu `N` có thể mất dấu hoặc thành `?`. Khóa học viết `N` cho mọi chuỗi chữ tự viết, kể cả `N' - '` không có dấu, để khỏi phải nhớ chuỗi nào cần.
-
-**Collation** là bộ quy tắc so sánh và sắp xếp chữ. Database khóa học không phân biệt hoa thường (`CI`) nhưng phân biệt dấu (`AS`), nên `HoTen LIKE N'bui%'` không ra dòng nào. Khi việc tra cứu cho phép bỏ dấu, thêm **`COLLATE`** vào chính điều kiện: `HoTen COLLATE Latin1_General_CI_AI LIKE N'bui%'` tìm ra `NV007`, vì `AI` là không phân biệt dấu. `COLLATE` chỉ áp dụng cho phép so sánh đó, không đổi collation của database. Bỏ dấu thì tìm rộng hơn, nên xác nhận lại hồ sơ bằng mã. `N` giữ ký tự bạn viết, không quyết định cách so sánh.
-
-Ở bài này chỉ cần chọn hàm theo phần chuỗi cần lấy, giữ Unicode khi viết chữ và phân biệt luật so sánh với nội dung lưu. Kiểu dữ liệu xem lại bài 1.3, kiểm chất lượng dữ liệu học ở bài 3.19.
-
-### SQL Server chạy câu này thế nào
-
-Sơ đồ là **thứ tự xử lý logic**, không phải cách SQL Server đọc dữ liệu. Bấm từng bước để thấy `48` hồ sơ còn `10`, rồi `SELECT` dùng các hàm để tạo nhãn:
+Sơ đồ mô tả **thứ tự xử lý logic** của câu truy vấn. SQL Server tự chọn cách đọc dữ liệu khi thực thi. Bấm từng bước để xem hồ sơ nào qua lọc và các cột nào được dùng để tạo nhãn.
 
 <RunFlow query={`SELECT MaNV AS [Mã nhân viên],
 \tCONCAT(RIGHT(MaNV, 3), N' - ', UPPER(HoTen)) AS [Nhãn ký nhận],
@@ -96,7 +71,7 @@ ORDER BY MaNV ASC;`} steps={[
     focus: "FROM NhanVien",
     input: "Bảng `NhanVien` trong database.",
     meaning: "`FROM` chọn bảng này làm nguồn, chưa lọc dòng, chưa chọn cột.",
-    detail: "`48` hồ sơ, `12` cột. Hình trích ba hồ sơ để đối chiếu ở bước sau.",
+    detail: "`48` hồ sơ, `12` cột. Hình trích ba hồ sơ; thứ tự dòng có thể khác khi chạy.",
     sql: `SELECT * FROM NhanVien;`,
     columns: ["MaNV","HoTen","GioiTinh","NgaySinh","SoCCCD","Email","NgayVaoLam","NgayNghiViec","MaPB","MaCD","MaQuanLy","TrangThai"],
     rows: [
@@ -130,8 +105,9 @@ WHERE MaPB = 'IT';`,
     clause: "SELECT",
     title: "Lấy mã, tạo nhãn và đếm ký tự họ tên.",
     focus: "SELECT MaNV AS [Mã nhân viên],\n\tCONCAT(RIGHT(MaNV, 3), N' - ', UPPER(HoTen)) AS [Nhãn ký nhận],\n\tLEN(HoTen) AS [Số ký tự họ tên]",
-    meaning: "`SELECT` lấy mã rồi tạo hai giá trị mới cho từng dòng: `RIGHT` và `UPPER` chạy trước, `CONCAT` ghép kết quả thành nhãn, `LEN` đếm ký tự của `HoTen`.",
-    detail: "Vẫn `10` hồ sơ, còn `3` cột. Thứ tự dòng chưa được bảo đảm.",
+    inputColumns: ["MaNV", "HoTen"],
+    meaning: "`SELECT` lấy `MaNV` để đối chiếu và tạo hai cột cho phiếu. Với `NV007`, `RIGHT` cho `007` và `UPPER` cho `BÙI THANH SƠN` để `CONCAT` ghép nhãn. `LEN` đếm họ tên gốc, được `13` ký tự.",
+    detail: "Vẫn `10` hồ sơ, còn `3` cột. Hình minh họa một thứ tự trước khi sắp; khi chạy, các dòng có thể xuất hiện theo thứ tự khác.",
     sql: `SELECT MaNV AS [Mã nhân viên],
 \tCONCAT(RIGHT(MaNV, 3), N' - ', UPPER(HoTen)) AS [Nhãn ký nhận],
 \tLEN(HoTen) AS [Số ký tự họ tên]
@@ -139,8 +115,8 @@ FROM NhanVien
 WHERE MaPB = 'IT';`,
     columns: ["Mã nhân viên","Nhãn ký nhận","Số ký tự họ tên"],
     rows: [
-      ["NV007","007 - BÙI THANH SƠN",13],
       ["NV011","011 - LÝ MINH KHOA",12],
+      ["NV007","007 - BÙI THANH SƠN",13],
       ["NV017","017 - CAO MINH TRÍ",12],
       ["NV021","021 - TÔN THẤT LONG",13],
       ["NV029","029 - MẠC VĂN ĐÔNG",12],
@@ -156,7 +132,7 @@ WHERE MaPB = 'IT';`,
     clause: "ORDER BY",
     title: "Xếp kết quả theo mã tăng dần.",
     focus: "ORDER BY MaNV ASC",
-    meaning: "`ORDER BY` xếp mười dòng theo `MaNV` tăng dần. Đầu vào có thể đã đúng thứ tự, nhưng chỉ bước này mới bảo đảm điều đó.",
+    meaning: "`ORDER BY` xếp mười dòng theo `MaNV` tăng dần. Ở đầu vào minh họa, `NV007` nằm sau `NV011`; sau khi sắp, `NV007` lên trước.",
     detail: "Vẫn `10` hồ sơ và `3` cột, `NV007` đứng đầu, `NV048` đứng cuối; đây là danh sách chị Hạnh cần.",
     sql: `SELECT MaNV AS [Mã nhân viên],
 \tCONCAT(RIGHT(MaNV, 3), N' - ', UPPER(HoTen)) AS [Nhãn ký nhận],
@@ -181,6 +157,8 @@ ORDER BY MaNV ASC;`,
   },
 ]} />
 
+Trong `48` hồ sơ, chỉ `10` dòng có `MaPB` bằng `IT`. `NV003` thuộc `KD` nên bị loại, còn `NV007` qua lọc và có một nhãn. `SELECT` tạo các cột từ từng hồ sơ còn lại, giữ nguyên số dòng. `ORDER BY MaNV ASC` xếp danh sách từ `NV007` đến `NV048`.
+
 <Result columns={["Mã nhân viên","Nhãn ký nhận","Số ký tự họ tên"]} rows={[
   ["NV007","007 - BÙI THANH SƠN",13],
   ["NV011","011 - LÝ MINH KHOA",12],
@@ -194,7 +172,25 @@ ORDER BY MaNV ASC;`,
   ["NV048","048 - ĐỖ MINH QUÂN",12],
 ]} mark={[6, 9]} />
 
-Bạn có thể gửi chị Hạnh `10` nhãn của các hồ sơ hiện mang mã phòng `IT`, xếp theo mã tăng dần. Hai dòng được đánh dấu có họ tên dài nhất, `14` ký tự: `NV035`, `NV046`; ngắn nhất là `NV039` với `11` ký tự. Mỗi nhãn dài hơn họ tên `6` ký tự, gồm ba số của mã và dấu phân cách. Danh sách này là dữ liệu để in; việc ai thực tế đã ký nhận cần được ghi nhận riêng.
+Bạn có thể gửi chị Hạnh danh sách `10` nhãn để in phiếu ký nhận. Kiểm tra ô in với `NV035` và `NV046` trước vì hai hồ sơ này có họ tên dài nhất, `14` ký tự. Nhãn của mỗi hồ sơ đó dài `20` ký tự, gồm họ tên, ba chữ số của mã và dấu phân cách.
+
+### Vận dụng trên cùng tình huống
+
+**Cắt theo vị trí.** `LEFT(MaNV, 2)` lấy hai ký tự đầu, ra `NV` với `NV007`. `SUBSTRING(MaNV, 3, 3)` tương ứng `MID` của Excel. Số `3` thứ nhất là vị trí bắt đầu, đếm từ `1`, còn số `3` thứ hai là số ký tự cần lấy. Bắt đầu ở ký tự `0` ngay sau `NV` cho kết quả `007`.
+
+Bạn cũng có thể đặt hàm trực tiếp trong điều kiện. Chẳng hạn, `WHERE SUBSTRING(MaNV, 3, 2) = '00'` lấy hai ký tự bắt đầu ở vị trí `3` của từng mã rồi so với `00`. Điều kiện này giữ `NV007` vì phần cắt ra là `00`, còn `NV011` cho `01` nên bị loại.
+
+**Đổi chữ và bỏ dấu cách.** `LOWER(HoTen)` đổi chữ về dạng thường, cho `bùi thanh sơn` ở `NV007`. `TRIM(HoTen)` bỏ dấu cách thông thường ở hai đầu và giữ nguyên dấu cách giữa các từ. Nếu `Bùi Thanh Sơn` có thêm một dấu cách ở mỗi đầu, `LEN(HoTen)` sẽ đếm `14` vì vẫn tính dấu cách ở đầu. `LEN(TRIM(HoTen))` bỏ cả hai dấu cách thừa trước khi đếm, nên ra `13`.
+
+**Ghép khi thiếu giá trị.** Nếu dùng họ tên trong một nhãn có ngoặc vuông, `CONCAT(N'[', UPPER(HoTen), N']')` sẽ cho `[BÙI THANH SƠN]` với `NV007`. Nếu trường chữ đem ghép bị thiếu, `UPPER(NULL)` trả `NULL`. `CONCAT(N'[', NULL, N']')` cho `[]` vì hàm ghép coi đầu vào `NULL` như chuỗi rỗng. Chọn thêm cột gốc trong `SELECT` để vẫn nhìn thấy `NULL` bên cạnh nhãn.
+
+**Tìm họ tên khi chỉ gõ được chữ không dấu.** **Collation** là bộ quy tắc so sánh và sắp xếp chữ. Cột `HoTen` trong bộ mẫu dùng quy tắc không phân biệt hoa thường (`CI`) và phân biệt dấu (`AS`). Vì vậy `HoTen LIKE N'bui%'` không khớp `Bùi Thanh Sơn`.
+
+Viết `HoTen COLLATE Latin1_General_CI_AI LIKE N'bui%'` để tìm được `NV007`. **`COLLATE`** đứng sau cột cần so và trước `LIKE`, còn `AI` là không phân biệt dấu. Dấu `%` ở cuối dùng để tìm theo đầu chuỗi như bài 2.3. Quy tắc chỉ áp dụng cho điều kiện này, nên chọn `HoTen` ở `SELECT` vẫn trả họ tên gốc có dấu.
+
+Tên collation cũng chỉ bộ quy tắc cụ thể. Với `N'au%'`, `Latin1_General_CI_AI` tìm được `Âu Văn Kiên` (`NV039`), còn `Vietnamese_CI_AI` xem `A` và `Â` là hai chữ riêng nên bỏ sót hồ sơ này. Khi tra cứu theo tên không dấu, dùng mã để xác nhận hồ sơ vì nhiều tên có thể cùng khớp.
+
+Ở bài này chỉ cần cắt, ghép, trình bày chuỗi và chọn quy tắc so sánh cho điều kiện. Xem thêm [Phụ lục 3 về hàm xử lý chuỗi](../pl-3-ham-xu-ly-chuoi/) và bài 3.19 về kiểm tra chất lượng dữ liệu.
 
 ## Hay nhầm ở đâu
 
@@ -202,8 +198,7 @@ Bạn có thể gửi chị Hạnh `10` nhãn của các hồ sơ hiện mang m�
 
 1. **Coi phần số của mã là số.** Ép `007` thành kiểu số thì còn `7`, mất số `0` đầu, nhãn không còn khớp mã; lý do giống `SoCCCD` ở bài 1.3.
 2. **Đổi sang `UPPER` rồi mong tìm được chữ không dấu.** `BÙI` vẫn có dấu; cách này không thay được luật so sánh dấu.
-3. **Dùng `TRIM` rồi coi dữ liệu đã sạch.** Dấu cách bên trong hoặc ký tự trắng khác vẫn có thể còn; cần xác định lỗi trước khi chọn cách xử lý.
-4. **Dùng `Vietnamese_CI_AI` để tìm không dấu.** Tên nghe hợp tiếng Việt nhưng luật này coi `Đ`, `Â` là chữ riêng: `N'dang%'` không ra `Đặng Quốc Bảo`, `N'au%'` không ra `Âu Văn Kiên`. Với `Latin1_General_CI_AI`, cả hai đều ra.
+3. **Dùng độ dài họ tên làm độ dài cả nhãn.** `LEN(HoTen)` chỉ đo phần họ tên. Nếu ô in giới hạn theo số ký tự, còn phải tính phần mã và dấu phân cách như ở kết quả trên.
 
 </Mistakes>
 
@@ -224,17 +219,17 @@ Bạn có thể gửi chị Hạnh `10` nhãn của các hồ sơ hiện mang m�
   ['Công thức lồng: hàm trong tính trước', "CONCAT(RIGHT(MaNV, 3), N' - ', UPPER(HoTen))"],
   ['LEN đếm cả dấu cách cuối', 'LEN của SQL bỏ dấu cách cuối'],
   ['CONCAT tạo cột nhãn', 'CONCAT ghép đầu vào; NULL được coi là chuỗi rỗng'],
-  ['TRIM còn gộp dấu cách thông thường bên trong', 'TRIM chỉ bỏ dấu cách thông thường ở hai đầu'],
-  ['UPPER, LOWER đổi hoa thường', 'UPPER, LOWER giữ dấu; N giữ Unicode trong chuỗi tự viết'],
-  ['Text Filters tìm một phần chữ', "COLLATE Latin1_General_CI_AI trước LIKE để tìm không dấu; AS là phân biệt dấu, AI là không"],
+  ['TRIM của Excel còn gộp dấu cách giữa các từ', 'TRIM của SQL chỉ bỏ dấu cách thông thường ở hai đầu'],
+  ['UPPER, LOWER đổi hoa thường', 'UPPER, LOWER giữ dấu. Viết N trước nháy đơn đầu để tạo chuỗi Unicode.'],
+  ['Lọc theo phần đầu của tên', "HoTen COLLATE Latin1_General_CI_AI LIKE N'bui%' dùng quy tắc so sánh không phân biệt hoa thường và dấu"],
 ]} />
 
 **Tự kiểm tra trước khi viết truy vấn:**
 
 <details>
-<summary>Trong <code>{"CONCAT(RIGHT(MaNV, 3), N' - ', UPPER(HoTen))"}</code>, hàm nào được tính trước?</summary>
+<summary>Trước khi <code>CONCAT</code> ghép nhãn cho <code>NV007</code>, hai hàm bên trong trả về gì?</summary>
 
-`RIGHT` và `UPPER` nằm trong nên được tính trước; `CONCAT` nhận hai kết quả đó rồi ghép với dấu phân cách.
+`RIGHT` trả `007` và `UPPER` trả `BÙI THANH SƠN`. `CONCAT` ghép chúng với `N' - '` ở giữa.
 
 </details>
 
@@ -253,9 +248,9 @@ Vị trí đầu là `1`, nên hàm bắt đầu ở ký tự thứ ba là `0` r
 </details>
 
 <details>
-<summary>Ghép nhãn <code>{"CONCAT(N'[', NULL, N']')"}</code> có chứng minh đầu vào đầy đủ không?</summary>
+<summary>Nếu trường chữ bị thiếu thì <code>{"CONCAT(N'[', UPPER(NULL), N']')"}</code> cho kết quả gì?</summary>
 
-Không. `CONCAT` coi `NULL` là chuỗi rỗng nên trả `[]`; ghép được nhãn không có nghĩa thành phần nguồn đã có giá trị.
+`UPPER(NULL)` trả `NULL`. Khi ghép, `CONCAT` coi đầu vào đó như chuỗi rỗng nên nhãn chỉ còn `[]`.
 
 </details>
 

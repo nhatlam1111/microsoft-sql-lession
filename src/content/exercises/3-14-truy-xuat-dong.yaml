@@ -1,0 +1,67 @@
+lesson: 3-14-truy-xuat-dong
+exercises:
+  - id: 3-14-1
+    title: Thực lĩnh ở dòng kỳ trước
+    summary: Tìm dòng kỳ liền trước của cùng một mã.
+    prompt: >-
+      Lấy mọi dòng BangLuong kỳ 2026-08 hoặc 2026-09. Giữ từng dòng và dùng LAG để lấy
+      ThucLinh của dòng kỳ liền trước trong cùng MaNV, theo KyLuong tăng dần. Nếu nhóm
+      không có dòng trước thì giữ NULL. Trả MaNV, KyLuong, ThucLinh, ThucLinhKyTruoc
+      theo thứ tự này. Xếp MaNV rồi KyLuong tăng dần.
+    columns: [MaNV, KyLuong, ThucLinh, ThucLinhKyTruoc]
+    ordered: true
+    kind: query
+    answer: |-
+      SELECT MaNV, KyLuong, ThucLinh,
+          LAG(ThucLinh) OVER (PARTITION BY MaNV ORDER BY KyLuong ASC) AS [ThucLinhKyTruoc]
+      FROM BangLuong
+      WHERE KyLuong IN ('2026-08', '2026-09')
+      ORDER BY MaNV ASC, KyLuong ASC;
+  - id: 3-14-2
+    title: Mã hợp đồng đầu và cuối trong lịch sử
+    summary: Đọc mã của hai dòng ở hai đầu sau khi sắp.
+    prompt: >-
+      Đọc tất cả các dòng HopDong của NV021 và NV030. Giữ từng hợp đồng. Dùng FIRST_VALUE
+      và LAST_VALUE để lấy MaHD của dòng đầu và cuối mỗi MaNV theo NgayBatDau tăng dần,
+      cùng ngày thì theo MaHD tăng dần. Trả MaNV, MaHD, NgayBatDau, MaHDDau, MaHDCuoi.
+      Xếp bảng theo MaNV, NgayBatDau rồi MaHD tăng dần. Chỉ đối chiếu lịch sử đã lưu.
+    columns: [MaNV, MaHD, NgayBatDau, MaHDDau, MaHDCuoi]
+    ordered: true
+    kind: query
+    answer: |-
+      SELECT MaNV, MaHD, NgayBatDau,
+          FIRST_VALUE(MaHD) OVER (
+              PARTITION BY MaNV
+              ORDER BY NgayBatDau ASC, MaHD ASC
+              ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+          ) AS [MaHDDau],
+          LAST_VALUE(MaHD) OVER (
+              PARTITION BY MaNV
+              ORDER BY NgayBatDau ASC, MaHD ASC
+              ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+          ) AS [MaHDCuoi]
+      FROM HopDong
+      WHERE MaNV IN ('NV021', 'NV030')
+      ORDER BY MaNV ASC, NgayBatDau ASC, MaHD ASC;
+  - id: 3-14-3
+    title: Xem tháng 8 cạnh ngày công tháng 9
+    summary: Giữ hai kỳ để tính, hiển thị một kỳ.
+    prompt: >-
+      Dùng một CTE trên BangLuong để đọc mọi dòng của hai kỳ 2026-08 và 2026-09.
+      Dùng LEAD để lấy NgayCongThucTe từ dòng kỳ sau của cùng MaNV, theo KyLuong
+      tăng dần. Câu ngoài chỉ hiển thị các dòng tháng 8, giữ NULL nếu thiếu kỳ sau.
+      Trả MaNV, KyLuong, NgayCongThucTe, CongKySau theo thứ tự này, xếp MaNV tăng dần.
+    columns: [MaNV, KyLuong, NgayCongThucTe, CongKySau]
+    ordered: true
+    kind: query
+    answer: |-
+      WITH CongTheoKy AS (
+          SELECT MaNV, KyLuong, NgayCongThucTe,
+              LEAD(NgayCongThucTe) OVER (PARTITION BY MaNV ORDER BY KyLuong ASC) AS [CongKySau]
+          FROM BangLuong
+          WHERE KyLuong IN ('2026-08', '2026-09')
+      )
+      SELECT MaNV, KyLuong, NgayCongThucTe, CongKySau
+      FROM CongTheoKy
+      WHERE KyLuong = '2026-08'
+      ORDER BY MaNV ASC;

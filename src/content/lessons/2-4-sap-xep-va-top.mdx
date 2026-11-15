@@ -21,15 +21,15 @@ Tháng 10/2026, chị Hạnh cần một danh sách ngắn để đối chiếu 
 Sếp cần năm hồ sơ đang làm có ngày vào làm gần nhất. Em lấy giúp chị mã nhân viên, họ tên, mã phòng và ngày vào làm, đặt tiêu đề tiếng Việt nhé. Nếu cùng ngày thì xếp mã nhân viên tăng dần cho dễ đối chiếu.
 </Chat>
 
-Phạm vi: bảng `NhanVien` hiện tại, chỉ lấy `TrangThai` bằng `Đang làm`, ở mọi phòng và không giới hạn năm vào làm. “Gần nhất” xét theo `NgayVaoLam`, không phải ngày nhập hồ sơ hay thứ tự cấp mã.
+Xét hồ sơ có `TrangThai` là `Đang làm` trong bảng `NhanVien`, ở mọi phòng và mọi năm. “Gần nhất” được xác định theo `NgayVaoLam`.
 
 <Key>Lọc đúng nhóm đang làm, xếp ngày mới nhất trước, rồi lấy tối đa năm hồ sơ đầu.</Key>
 
 ## Sắp danh sách trước khi lấy những dòng đầu
 
-### Từ Sort trong Excel đến ORDER BY và TOP
+### Cấu trúc mới trong bài
 
-Trong Excel, bạn lọc `TrangThai` chỉ giữ `Đang làm`, chọn cả vùng có tiêu đề rồi mở **Data → Sort**. Đặt `NgayVaoLam` theo **Newest to Oldest**, dùng **Add Level** thêm `MaNV` theo **A to Z**, rồi lấy năm dòng đầu. Hình minh họa trích bốn cột cần gửi ở đầu danh sách sau lọc/sắp; cột ngày chứa ngày thật, các ô `D2` và `D6` đánh dấu hai đầu nhóm được lấy.
+Trong Excel, bạn lọc `TrangThai` để giữ hồ sơ `Đang làm`, chọn cả vùng có tiêu đề rồi mở **Data → Sort**. Xếp `NgayVaoLam` theo **Newest to Oldest**, dùng **Add Level** thêm `MaNV` theo **A to Z**, rồi lấy năm dòng đầu. Bảng minh họa trích bốn cột cần gửi, đánh dấu ngày ở dòng đầu và cuối của nhóm lấy được (`D2` và `D6`).
 
 <Excel sheets="NhanVien sau lọc và Sort" mark={['D2', 'D6']} numeric={['D2', 'D3', 'D4', 'D5', 'D6']} rows={[
   ["MaNV","HoTen","MaPB","NgayVaoLam"],
@@ -40,7 +40,17 @@ Trong Excel, bạn lọc `TrangThai` chỉ giữ `Đang làm`, chọn cả vùng
   ["NV044","Lã Thị Oanh","VH","04/08/2025"],
 ]} />
 
-Trong SQL, câu lệnh cho danh sách của chị Hạnh là:
+**`ORDER BY`** sắp xếp các dòng trả về. Trong câu này, viết mệnh đề sau `WHERE` và ngăn các tiêu chí bằng dấu phẩy. Đây là đoạn trích chỉ để đọc.
+
+<Sql copy={false} title="Tiêu chí sắp xếp" code={`ORDER BY NgayVaoLam DESC, MaNV ASC`} />
+
+**`DESC`** xếp giảm dần, nên ngày mới hơn đứng trước. **`ASC`** xếp tăng dần, nên ngày cũ hơn hoặc mã nhỏ hơn đứng trước trong cột tương ứng. Mỗi cột có hướng riêng, mặc định là `ASC` khi bỏ qua hướng.
+
+SQL Server xét các tiêu chí từ trái sang phải. Hai hồ sơ khác ngày được xếp theo `NgayVaoLam`. Khi cùng ngày, `MaNV ASC` đưa mã nhỏ hơn lên trước. Trong bảng `NhanVien`, `MaNV` được khai báo là khóa chính nên mỗi hồ sơ có một mã riêng để phân thứ tự.
+
+Viết **`TOP (5)`** ngay sau từ khóa `SELECT`, trước danh sách cột. Câu này lấy tối đa năm dòng đầu của cả danh sách đang làm đã sắp xếp, tính chung mọi phòng. Nếu ít hơn năm hồ sơ qua lọc, kết quả gồm tất cả hồ sơ qua lọc.
+
+### Đọc câu SQL qua các bước
 
 <Sql code={`SELECT TOP (5) MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
 \tMaPB AS [Mã phòng], NgayVaoLam AS [Ngày vào làm]
@@ -48,29 +58,7 @@ FROM NhanVien
 WHERE TrangThai = N'Đang làm'
 ORDER BY NgayVaoLam DESC, MaNV ASC;`} />
 
-Từng phần của câu:
-
-<LineMap rows={[
-  ['SELECT … AS …', 'Chọn bốn cột và đặt tiêu đề như bài 2.1. Ví dụ: MaNV hiển thị dưới tiêu đề Mã nhân viên.'],
-  ['TOP (5)', 'Viết ngay sau SELECT, lấy tối đa năm dòng theo thứ tự đã chọn. Ví dụ: danh sách này dừng ở NV044, dòng thứ năm sau sắp xếp.'],
-  ['FROM NhanVien', 'Chỉ bảng nguồn chứa hồ sơ cần đối chiếu. Ví dụ: bắt đầu từ 48 hồ sơ, có cả NV020 đã nghỉ.'],
-  ["WHERE TrangThai = N'Đang làm'", 'Lọc nhóm cần xem trước khi chọn những dòng đầu. Ví dụ: NV020 bị loại, NV048 được giữ; còn 45 hồ sơ.'],
-  ['ORDER BY NgayVaoLam DESC, MaNV ASC', 'Xếp ngày giảm dần; nếu cùng ngày mới xét mã tăng dần. Ví dụ: NV048 vào 05/10/2026 đứng trước NV047 vào 01/10/2026.'],
-]} />
-
-**`DESC`** là giảm dần, với ngày là mới đến cũ; **`ASC`** là tăng dần, với ngày là cũ đến mới. Mỗi cột có hướng riêng, mặc định là `ASC` nếu không ghi. Với nhiều cột, **`ORDER BY`** xét từ trái sang phải; chỉ khi các giá trị trước bằng nhau mới xét cột tiếp theo.
-
-Khi ngày vào làm trùng nhau, thêm `MaNV ASC` chốt thứ tự trong nhóm đó. `MaNV` được khai báo là khóa chính không trùng trong bộ mẫu, nên đủ phân thứ tự khi dữ liệu không đổi; điều này cũng xác định ai được lấy nếu nhóm trùng ngày nằm ở ranh giới năm dòng.
-
-**`TOP (5)`** giới hạn trên cả tập sau lọc và sắp xếp, không phải năm dòng cho từng phòng. Nếu ít hơn năm hồ sơ đạt điều kiện thì trả hết các hồ sơ đó. `TOP` viết ngay sau `SELECT`, còn thứ tự logic là lọc nhóm, sắp xếp rồi mới giới hạn số dòng, như sơ đồ dưới.
-
-`ORDER BY` chỉ sắp dòng kết quả, không lưu thứ tự mới vào bảng nguồn hoặc đổi vị trí các cột. Bạn cũng có thể viết `ORDER BY [Ngày vào làm] DESC, [Mã nhân viên] ASC` cho cùng câu này: khác `WHERE` ở bài 2.2, `ORDER BY` dùng được alias vì đứng sau `SELECT` trong thứ tự logic.
-
-Ở bài này chỉ cần sắp nhiều cột, chốt thứ tự và lấy nhóm đầu sau lọc. Giá trị `NULL` học ở bài 2.5, quy tắc sắp chữ tiếng Việt ở bài 2.7; cách tăng tốc truy vấn học ở bài 4.6.
-
-### SQL Server chạy câu này thế nào
-
-Sơ đồ là **thứ tự xử lý logic**, không phải cách SQL Server quét hay sắp dữ liệu vật lý. Bấm từng thẻ để thấy `48` hồ sơ nguồn còn `45` sau lọc; sắp xếp giữ nguyên số dòng, rồi `TOP` mới giới hạn còn `5`:
+Sơ đồ mô tả **thứ tự xử lý logic**, tức cách lần từ dữ liệu nguồn đến kết quả. `TOP (5)` nằm trên dòng `SELECT` và áp dụng sau `ORDER BY` theo thứ tự này. Bấm từng bước để xem dữ liệu trích.
 
 <RunFlow query={`SELECT TOP (5) MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
 \tMaPB AS [Mã phòng], NgayVaoLam AS [Ngày vào làm]
@@ -185,6 +173,10 @@ ORDER BY NgayVaoLam DESC, MaNV ASC;`,
 },
 ]} />
 
+`NV044` có trạng thái `Đang làm` nên nằm trong `45` hồ sơ qua lọc. `SELECT` giữ bốn cột cần gửi và đặt tiêu đề tiếng Việt. Trong danh sách xếp theo ngày mới nhất trước, `NV044` vào làm ngày `2025-08-04` đứng thứ năm, ngay trước `NV040` vào ngày `2025-05-05`. `TOP (5)` dừng ở `NV044`.
+
+Bảng đánh dấu hồ sơ ở đầu và cuối danh sách gửi chị Hạnh.
+
 <Result columns={["Mã nhân viên","Họ tên","Mã phòng","Ngày vào làm"]} rows={[
   ["NV048","Đỗ Minh Quân","IT","2026-10-05"],
   ["NV047","Phạm Ngọc Ánh","NS","2026-10-01"],
@@ -193,16 +185,27 @@ ORDER BY NgayVaoLam DESC, MaNV ASC;`,
   ["NV044","Lã Thị Oanh","VH","2025-08-04"],
 ]} mark={[1,5]} />
 
-Bạn có thể trả lời chị Hạnh: năm hồ sơ phù hợp theo thứ tự là `NV048`, `NV047`, `NV046`, `NV045`, `NV044`. Hai dòng được đánh dấu là đầu và cuối danh sách: `NV048` vào làm `2026-10-05`, còn `NV044` vào làm `2025-08-04`. “Gần nhất” trong nhóm đang lưu vì vậy không đồng nghĩa với chỉ lấy hồ sơ năm 2026.
+Bạn có thể gửi bảng này cho chị Hạnh. Danh sách gồm bốn hồ sơ vào làm năm `2026` và một hồ sơ vào làm năm `2025`, vì yêu cầu xét cả các năm.
 
-Bốn cột có đúng thứ tự và tiêu đề cần gửi. Nếu ngày vào làm hoặc trạng thái được cập nhật, lần chạy sau có thể cho danh sách khác; câu lệnh giữ tiêu chí lựa chọn, không giữ nguyên một bản chốt dữ liệu.
+### Vận dụng trên cùng tình huống
+
+**Khi hai hồ sơ cùng ngày ở vị trí cuối danh sách.** Giả sử riêng trong ví dụ này, `NV040` cũng có ngày vào làm `2025-08-04` như `NV044`. Bốn hồ sơ có ngày mới hơn vẫn đứng đầu. Trong hai hồ sơ cùng ngày, `MaNV ASC` đưa `NV040` lên thứ năm và `NV044` xuống thứ sáu. `TOP (5)` giữ `NV040`, còn `NV044` nằm ngoài danh sách.
+
+**Khi yêu cầu đổi phạm vi hoặc thứ tự.** Giữ một điều kiện cho mỗi yêu cầu lọc. Dùng `IN` để chọn một trong nhiều mã phòng, hoặc nối điều kiện mã phòng với điều kiện trạng thái bằng `AND` nếu cần cả hai (bài 2.2 và 2.3). Chọn cột theo đúng thứ tự đề yêu cầu như bài 2.1.
+
+- Để xếp theo phòng trước, đặt `MaPB ASC` đầu danh sách sắp xếp. Tiêu chí ngày chỉ phân thứ tự trong cùng phòng, rồi đến mã nếu ngày cũng trùng. Bỏ `TOP` khi đề yêu cầu lấy tất cả hồ sơ qua lọc.
+- Để lấy nhóm vào làm sớm nhất, đổi riêng hướng của `NgayVaoLam` thành `ASC`, giữ `MaNV ASC` và dùng số dòng tối đa theo yêu cầu.
+
+Bạn cũng có thể viết `ORDER BY [Ngày vào làm] DESC, [Mã nhân viên] ASC` cho câu của chị Hạnh. `ORDER BY` dùng được tiêu đề đặt bằng `AS` vì theo thứ tự logic, `SELECT` đã đặt tên cho các cột này.
+
+Ở bài này chỉ cần sắp nhiều cột, phân thứ tự khi trùng và lấy nhóm đầu sau lọc. Giá trị `NULL` học ở bài 2.5, quy tắc sắp chữ tiếng Việt ở bài 2.7 và cách tăng tốc truy vấn ở bài 4.6.
 
 ## Hay nhầm ở đâu
 
 <Mistakes>
 
 1. **Nghĩ một `DESC` áp dụng cho mọi cột.** Trong `ORDER BY NgayVaoLam, MaNV DESC`, ngày vẫn tăng dần; chỉ mã giảm dần. Cách này không lấy nhóm có ngày vào làm gần nhất của tình huống.
-2. **Chỉ thêm `TOP (5)` mà thiếu `ORDER BY`.** Câu vẫn chạy và giới hạn số dòng, nhưng không bảo đảm chọn năm hồ sơ có ngày vào làm gần nhất; mã lớn hơn cũng chưa chắc có ngày mới hơn.
+2. **Chỉ thêm `TOP (5)` mà thiếu `ORDER BY`.** Câu vẫn giới hạn số dòng, nhưng có thể bỏ sót hồ sơ vào làm gần đây vì chưa đặt tiêu chí chọn dòng.
 3. **Lấy năm dòng rồi mới tự chọn người đang làm trong đó.** Danh sách có thể thiếu người đủ điều kiện vì đã giới hạn nhầm tập nguồn. Điều kiện trạng thái phải tham gia trước bước lấy nhóm đầu.
 
 </Mistakes>
@@ -228,6 +231,6 @@ Bốn cột có đúng thứ tự và tiêu đề cần gửi. Nếu ngày vào 
 
 ## Bài tập
 
-Ba bài đều chấm **thứ tự dòng** và vị trí cột; trả đủ dữ liệu nhưng xếp sai vẫn bị chấm sai. Dùng đúng phạm vi của từng đề, không thêm giới hạn hay điều kiện ngoài đề.
+Ba bài đều chấm **thứ tự dòng** và vị trí cột. Xem lại [Vận dụng trên cùng tình huống](#vận-dụng-trên-cùng-tình-huống) khi cần đổi phạm vi lọc, tiêu chí sắp xếp hoặc số dòng tối đa.
 
 <Exercises />

@@ -1,0 +1,55 @@
+lesson: 3-15-tong-hop-voi-over
+exercises:
+  - id: 3-15-1
+    title: Thực lĩnh tháng 8 cạnh tổng của phòng
+    summary: Giữ từng dòng lương và thêm hai chỉ tiêu theo phòng.
+    prompt: >-
+      Lấy mọi dòng BangLuong kỳ 2026-08, kết NhanVien theo MaNV để lấy MaPB hiện lưu.
+      Giữ từng dòng lương. Dùng SUM và COUNT với OVER để thêm tổng thực lĩnh và
+      số dòng lương của phòng trong kỳ. Trả MaPB, MaNV, ThucLinh, TongThucLinhPhong,
+      SoDongLuongPhong theo thứ tự này. Xếp MaPB rồi MaNV tăng dần.
+    columns: [MaPB, MaNV, ThucLinh, TongThucLinhPhong, SoDongLuongPhong]
+    ordered: true
+    kind: query
+    answer: |-
+      SELECT nv.MaPB, bl.MaNV, bl.ThucLinh,
+          SUM(bl.ThucLinh) OVER (PARTITION BY nv.MaPB) AS [TongThucLinhPhong],
+          COUNT(*) OVER (PARTITION BY nv.MaPB) AS [SoDongLuongPhong]
+      FROM BangLuong AS bl
+      INNER JOIN NhanVien AS nv ON nv.MaNV = bl.MaNV
+      WHERE bl.KyLuong = '2026-08'
+      ORDER BY nv.MaPB ASC, bl.MaNV ASC;
+  - id: 3-15-2
+    title: Số ngày của từng đơn cạnh trung bình theo loại
+    summary: Tính trung bình theo loại trong tập đơn đã duyệt.
+    prompt: >-
+      Lấy mọi đơn DonNghiPhep có TrangThai là chuỗi Unicode Đã duyệt, mọi ngày.
+      Giữ từng đơn đã duyệt và dùng AVG với OVER để thêm SoNgayTrungBinh theo LoaiNghi
+      trên tập đã lọc. Giữ phần thập phân. Trả MaDon, LoaiNghi, SoNgay, SoNgayTrungBinh
+      theo thứ tự này. Xếp LoaiNghi rồi MaDon tăng dần.
+    columns: [MaDon, LoaiNghi, SoNgay, SoNgayTrungBinh]
+    ordered: true
+    kind: query
+    answer: |-
+      SELECT MaDon, LoaiNghi, SoNgay,
+          AVG(SoNgay) OVER (PARTITION BY LoaiNghi) AS [SoNgayTrungBinh]
+      FROM DonNghiPhep
+      WHERE TrangThai = N'Đã duyệt'
+      ORDER BY LoaiNghi ASC, MaDon ASC;
+  - id: 3-15-3
+    title: Khoảng thực lĩnh của toàn kỳ tháng 9
+    summary: Đặt giá trị nhỏ nhất và lớn nhất của kỳ cạnh từng dòng lương.
+    prompt: >-
+      Lấy mọi dòng BangLuong kỳ 2026-09, giữ từng dòng lương. Dùng MIN và MAX với
+      OVER() để thêm mức thực lĩnh thấp nhất và cao nhất trong cả kỳ. Trả MaNV, ThucLinh,
+      ThucLinhThapNhat, ThucLinhCaoNhat theo thứ tự này. Xếp MaNV tăng dần.
+    columns: [MaNV, ThucLinh, ThucLinhThapNhat, ThucLinhCaoNhat]
+    ordered: true
+    kind: query
+    answer: |-
+      SELECT MaNV, ThucLinh,
+          MIN(ThucLinh) OVER () AS [ThucLinhThapNhat],
+          MAX(ThucLinh) OVER () AS [ThucLinhCaoNhat]
+      FROM BangLuong
+      WHERE KyLuong = '2026-09'
+      ORDER BY MaNV ASC;

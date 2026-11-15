@@ -10,6 +10,7 @@ Quy trình dùng chung cho Codex và Claude, áp dụng từ 13/11/2026. Mục t
 | Sửa giải thích/điều kiện | Toàn bài/YAML; mục 1–2, 4 của quy ước; đoạn tiền đề trực tiếp. Có dữ kiện công ty thì đọc phần liên quan trong [hồ sơ](ho-so-cong-ty.md) |
 | Viết mới/đổi bố cục | Như trên; biến thể và khối cần dùng trong [template](lesson-template.md); bài mẫu 1.1 cho bài nền, 2.1 cho truy vấn |
 | SQL/số liệu/bài tập | Mục 3, 4.4, 5 của quy ước; câu lệnh, dữ liệu và kiểm liên quan |
+| Ảnh động luồng SQL | Mục 2.6a, 3, 4.4–4.5 của quy ước; dữ liệu bước, nguồn dựng, token và ảnh xuất của bài |
 | Review | Toàn bài/YAML và tiền đề được giao; mục 4.5 và các quy tắc áp dụng. Không đọc kết luận/report cũ |
 | Làm phần 4–5 | Thêm [định hướng khóa học](dinh-huong-khoa-hoc.md); lấy năng lực BA/PM làm đầu ra |
 
@@ -21,7 +22,7 @@ Chốt mục tiêu, tiền đề và phạm vi trong một gói ngắn ngay tron
 
 Tự lần một dòng/nhóm đại diện từ dữ liệu đến từng ô kết quả trước khi dựng đủ các khối. Dùng cấu trúc đã có; chỉ mở brainstorming khi còn quyết định thật sự về cách giảng hoặc công cụ. Một bài đơn lẻ không cần thêm agent chỉ làm điều phối.
 
-Viết phần cốt lõi để người học hiểu mà chưa cần mở drawer. Lời văn nói vì sao, LineMap gắn câu với tác dụng, RunFlow minh họa chuyển đổi, Memo dùng để ôn. Mỗi đoạn một ý; cơ chế khó được giải thích đủ, không chỉ rút ngắn số chữ.
+Viết phần cốt lõi để người học hiểu mà chưa cần mở drawer. Cấu trúc mới giải thích mục đích/cách viết trước SQL; SQL đầy đủ đặt sát minh họa luồng, sau đó tóm tắt nguyên nhân ra kết quả và trả lời nghiệp vụ. Drawer cho dữ liệu/phép tính chi tiết; Memo dùng để ôn. Không mặc định LineMap hoặc giảng lại mọi mệnh đề đã học. Mỗi đoạn một ý; cơ chế khó được giải thích đủ, không chỉ rút ngắn số chữ.
 
 Kiểm theo tác động ở mục 4.4; một reviewer độc lập cho bài mới/sửa đáng kể theo mục 4.5; gom sửa và ghi quyết định. Chỉ review tích hợp khi có tác động xuyên bài/công cụ như quy định. Không tăng số reviewer thay cho làm rõ cách giải thích.
 
@@ -35,6 +36,8 @@ Database chung chỉ đọc; câu ghi qua runner luôn hoàn tác, không backup
 Bài/đường dẫn:
 Sau bài, người học tự làm được:
 Tiền đề đã học:
+Cấu trúc mới cần giảng / kiến thức cũ chỉ cần nhắc:
+Ý phải hiện trên trang / chi tiết dành cho drawer:
 Tình huống và phạm vi dữ liệu (bài nền không bắt buộc):
 Phần giữ nguyên / được sửa / để bài sau:
 Mức từng ý: phải hiểu để làm bài / cần nhận biết / tùy chọn:
@@ -62,6 +65,7 @@ Phạm vi công cụ: chỉ source/HTML hoặc tương tác UI được giao:
 Đường dẫn report mới, chỉ được ghi report này:
 
 Đọc hết bài và các khối/drawer; tự xác định cách làm từng đề trước khi xem answer.
+Kiểm cấu trúc mới → SQL sát RunFlow → tóm tắt → kết quả; không lặp lời hoặc giấu tiền đề trong drawer.
 Không dùng bài sau hoặc kiến thức chuyên gia bù lời giảng; ghi tiền đề từng đề/câu tự kiểm.
 Report ngắn: vị trí/câu gốc, tác động, đề xuất; phần giữ được; điều chưa xác minh.
 Không đọc report cũ, seed/secret; không SQL/API, sửa bài/test/Git hoặc tạo agent khác.
@@ -99,3 +103,9 @@ Tách chi phí chuẩn bị quy trình/công cụ khỏi viết bài. Chỉ so v
 course-author là điểm vào cho biên soạn/review trong repo. Bốn teach-skills dùng khi được gọi rõ cho dạy tương tác, không tự tạo HTML/workspace, nghiên cứu, bẫy kiến trúc hay suy trạng thái học viên từ thời gian người làm khóa học trả lời.
 
 Không kích hoạt quy trình phát triển phần mềm chỉ vì bài có SQL. Nếu cần sửa component/runner, xác định tác vụ kỹ thuật riêng và dùng skill tương ứng. Tác giả dùng model/effort người dùng chọn; chưa có phép thử để áp một model khác làm mặc định.
+
+## Dựng ảnh động luồng SQL
+
+Theo mục 2.6a của quy ước, ghi lựa chọn RunFlow/AnimatedFlow và kịch bản trong hồ sơ lượt hiện có. Lần một hồ sơ/nhóm đại diện trước khi dựng; ghi trạng thái đầu vào, thao tác, đầu ra, cảnh giữ để đọc và câu SQL kiểm. Bài 2.1 dùng `npm run render:select-gif`; cách tái tạo tại [hướng dẫn nguồn dựng](../scripts/animations/README.md).
+
+Sau khi đổi dữ liệu hoặc nguồn dựng, xuất lại GIF/hình tĩnh rồi kiểm từng cảnh và phần HTML. Giao reviewer bài/YAML, nguồn dựng, ảnh, manifest và bằng chứng theo mục 4.5; review tích hợp bao gồm component, kiểm tài nguyên lỗi thời, bàn phím, lỗi tải ảnh và chế độ giảm chuyển động.

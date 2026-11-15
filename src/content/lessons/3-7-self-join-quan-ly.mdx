@@ -28,7 +28,7 @@ Giả định: đọc `MaQuanLy` hiện lưu của mọi hồ sơ, gồm cả ng
 
 ## Đọc một bảng bằng hai vai trò
 
-### Từ dò trong cùng sheet đến self join
+### Cấu trúc mới trong bài
 
 Trong Excel, bạn dò `MaQuanLy` về cột `MaNV` của chính sheet để lấy họ tên. Bản xuất đặt mã nhân viên ở cột `A`, họ tên ở cột `B`. Hình minh họa ba hồ sơ, đánh dấu mã `NV005` ở `C2` và tên `Vũ Thị Lan` nhận được ở `D2`:
 
@@ -41,7 +41,13 @@ Trong Excel, bạn dò `MaQuanLy` về cột `MaNV` của chính sheet để l�
 
 `IF` xét ô `C2`: nếu trống thì hiển thị chuỗi rỗng, nếu có mã thì VLOOKUP dò chính xác trong hai cột đầu. Đây là cách trình bày của bản Excel; không đổi `NULL` trong database thành một tên hoặc chuỗi rỗng.
 
-Trong SQL, **self join** là kết một bảng với chính nó bằng hai bí danh cho hai vai trò. Không có từ khóa `SELF JOIN` riêng; vẫn chọn `INNER JOIN` hoặc `LEFT JOIN`. Với yêu cầu giữ mọi hồ sơ, câu lệnh là:
+Trong SQL, **self join** là kết một bảng với chính nó bằng hai bí danh cho hai vai trò. Đọc `NhanVien AS nv` để lấy hồ sơ cần tìm quản lý, rồi `LEFT JOIN NhanVien AS ql` để tìm hồ sơ quản lý. Điều kiện `ql.MaNV = nv.MaQuanLy` dò giá trị ở cột quản lý của dòng `nv` vào khóa của dòng `ql`.
+
+**Bí danh bảng phân biệt vai trò**, không tạo hai bảng mới hay sao chép dữ liệu. `nv.HoTen` và `ql.HoTen` đọc cùng tên cột nhưng trên hai dòng đang được kết. Đổi tên bí danh được, miễn dùng nhất quán trong cả câu. Dò nhầm `ql.MaNV = nv.MaNV` sẽ lấy lại tên của chính nhân viên; đổi thành `ql.MaQuanLy = nv.MaNV` lại tìm cấp dưới.
+
+`NV001` trỏ tới `NV005`, còn `NV005` trỏ tới `NV004`: đó là hai quan hệ trực tiếp riêng. Một phép kết này không tự đi tiếp để gán `NV004` làm quản lý trực tiếp của `NV001`.
+
+### Đọc câu SQL qua các bước
 
 <Sql code={`SELECT nv.MaNV, nv.HoTen, nv.MaQuanLy,
 \tql.HoTen AS [QuanLyTrucTiep]
@@ -49,33 +55,7 @@ FROM NhanVien AS nv
 LEFT JOIN NhanVien AS ql ON ql.MaNV = nv.MaQuanLy
 ORDER BY nv.MaNV ASC;`} />
 
-<LineMap rows={[
-  ['FROM NhanVien AS nv', 'Đọc bảng trong vai trò người cần tìm quản lý. Ví dụ: nv.HoTen của NV001 là Trần Thị Mai.'],
-  ['LEFT JOIN NhanVien AS ql', 'Đọc cùng bảng trong vai trò quản lý, giữ phía nv khi không có cặp. Ví dụ: NV004 vẫn có trong kết quả.'],
-  ['ON ql.MaNV = nv.MaQuanLy', 'Mã quản lý của dòng nv phải bằng mã nhân viên của dòng ql. Ví dụ: NV001 lưu NV005 nên khớp hồ sơ NV005, không dò lại NV001.'],
-  ['SELECT nv.MaNV, nv.HoTen, nv.MaQuanLy, ql.HoTen AS [QuanLyTrucTiep]', 'Lấy ba cột của nhân viên, rồi tên của quản lý và đặt tiêu đề. Ví dụ: NV001 đi cùng tên Vũ Thị Lan lấy từ ql.HoTen.'],
-  ['ORDER BY nv.MaNV ASC', 'Xếp theo mã người được quản lý. Ví dụ: NV001 đứng trước NV005 dù mã quản lý của NV005 nhỏ hơn.'],
-]} />
-
-**Bí danh bảng phân biệt vai trò**, không tạo hai bảng mới hay sao chép dữ liệu. `nv.HoTen` và `ql.HoTen` đọc cùng tên cột nhưng trên hai dòng đang được kết. Đổi tên bí danh được, miễn dùng nhất quán trong cả câu. Dò nhầm `ql.MaNV = nv.MaNV` sẽ lấy lại tên của chính nhân viên; đổi thành `ql.MaQuanLy = nv.MaNV` lại tìm cấp dưới.
-
-`NV001` trỏ tới `NV005`, còn `NV005` trỏ tới `NV004`: đó là hai quan hệ trực tiếp riêng. Một phép kết này không tự đi tiếp để gán `NV004` làm quản lý trực tiếp của `NV001`.
-
-**Giữ người không có quản lý** bằng `LEFT JOIN` từ vai trò `nv`. `NV004` có `MaQuanLy` là `NULL`, nên phần `ql` nhận `NULL`; dùng `INNER JOIN` sẽ bỏ hồ sơ đó và chỉ còn `47` dòng. Mã quản lý chưa được gán có thể có chủ đích như giám đốc trong bộ mẫu, chưa đủ để kết luận hồ sơ sai.
-
-`ql.MaNV` là khóa chính đã khai báo nên mỗi mã quản lý khớp tối đa một dòng. Bộ mẫu có khóa ngoại từ `MaQuanLy` tới `MaNV`, cho phép `NULL`. Vì vậy câu này giữ `48` dòng cho `48` hồ sơ; tên có thể trùng nhưng mã khóa chính không trùng.
-
-Khi cần thêm thuộc tính của quản lý, chọn cột với tiền tố `ql`; thuộc tính nhân viên dùng `nv`. Điều kiện lọc cũng phân biệt như vậy: `nv.MaPB` giới hạn phòng của nhân viên, còn `ql.MaPB` là phòng của quản lý. Khóa học không lưu lịch sử chuyển phòng, nên đây đều là phòng hiện lưu.
-
-**Đếm cấp dưới trực tiếp** thì đổi phía được giữ: đặt vai trò `ql` sau `FROM`, kết vai trò `nv` bằng `nv.MaQuanLy = ql.MaNV`. Mỗi dòng cấp dưới khớp tạo một cặp; nhóm theo cả `ql.MaNV`, `ql.HoTen` rồi đếm `COUNT(nv.MaNV)` như bài 3.1–3.2. Nếu thống kê mọi hồ sơ thì `NV004` và `NV005` mỗi mã có `6` cấp dưới, `NV048` có `0`.
-
-`COUNT(nv.MaNV)` chỉ đếm mã cấp dưới khác `NULL`; `COUNT(*)` đếm cả dòng giữ lại cho người chưa có cấp dưới nên cho `NV048` thành `1`. Muốn chỉ đếm cấp dưới đang làm mà vẫn giữ số `0`, thêm `AND nv.TrangThai = N'Đang làm'` vào `ON`. Muốn chỉ thống kê chính những người đang làm thì dùng `ql.TrangThai = N'Đang làm'` ở `WHERE`, như cách tách phạm vi hai phía ở bài 3.5.
-
-Ở bài này chỉ cần đọc một cấp trực tiếp hoặc đếm các dòng trỏ tới một mã. Kết thêm bảng theo cách ở bài 3.6; truy vết cả cây quản lý gồm nhiều cấp nằm ngoài phép kết trực tiếp này.
-
-### SQL Server chạy câu này thế nào
-
-Theo **thứ tự xử lý logic**, đọc vai trò nhân viên → tìm dòng quản lý → chọn cột → sắp xếp. Sơ đồ không mô tả cách đọc dữ liệu vật lý. Các bước đầu trích `NV005`, `NV004`, `NV001` để theo cả chuỗi mã lẫn trường hợp `NULL`; thứ tự trước `ORDER BY` có thể khác hình:
+Sơ đồ đọc một cấp quản lý theo luồng logic. Mở bước kết để đối chiếu mã ở hai vai trò.
 
 <RunFlow query={`SELECT nv.MaNV, nv.HoTen, nv.MaQuanLy,
 \tql.HoTen AS [QuanLyTrucTiep]
@@ -308,7 +288,9 @@ ORDER BY nv.MaNV ASC;`} steps={[
   }
 ]} />
 
-Kết quả cuối trích năm dòng đầu, đánh dấu `NV004` vẫn có mặt dù không có mã quản lý:
+`NV001` mang `MaQuanLy = NV005`, nên tên ở cột quản lý lấy từ `ql.HoTen` của hồ sơ `NV005`. Khóa `ql.MaNV` chỉ cho tối đa một cặp với mỗi hồ sơ. `LEFT JOIN` giữ cả `NV004` dù mã quản lý chưa được gán, nên kết quả vẫn có `48` dòng.
+
+Bảng trích năm dòng đầu và đánh dấu dòng `NV004`.
 
 <Result columns={[
   "MaNV",
@@ -349,6 +331,16 @@ Kết quả cuối trích năm dòng đầu, đánh dấu `NV004` vẫn có mặ
 ]} total={48} mark={[4]} />
 
 Bạn gửi chị Hạnh đủ `48` dòng theo mã nhân viên tăng dần. `NV001` đi cùng quản lý trực tiếp `NV005` và tên `Vũ Thị Lan`; `NV004` giữ mã và tên quản lý là `NULL`. Danh sách phản ánh quan hệ hiện lưu, gồm cả người đã nghỉ, không tự đổi người nhận phiếu hay bổ nhiệm quản lý mới.
+
+### Vận dụng trên cùng tình huống
+
+Khi cần thêm thuộc tính của quản lý, chọn cột với tiền tố `ql`; thuộc tính nhân viên dùng `nv`. Điều kiện lọc cũng phân biệt như vậy: `nv.MaPB` giới hạn phòng của nhân viên, còn `ql.MaPB` là phòng của quản lý. Khóa học không lưu lịch sử chuyển phòng, nên đây đều là phòng hiện lưu.
+
+**Đếm cấp dưới trực tiếp** thì giữ người được thống kê bằng `FROM NhanVien AS ql` rồi `LEFT JOIN NhanVien AS nv` theo `nv.MaQuanLy = ql.MaNV`. Khi nhóm theo `ql.MaNV` và `ql.HoTen`, nhóm `NV048` có một dòng giữ lại với `nv.MaNV` là `NULL`. `COUNT(nv.MaNV)` cho `0` ở nhóm này. Khi thống kê mọi trạng thái, `NV004` và `NV005` mỗi mã có `6` cấp dưới.
+
+`COUNT(nv.MaNV)` chỉ đếm mã cấp dưới khác `NULL`; `COUNT(*)` đếm cả dòng giữ lại cho người chưa có cấp dưới nên cho `NV048` thành `1`. Muốn chỉ đếm cấp dưới đang làm mà vẫn giữ số `0`, thêm `AND nv.TrangThai = N'Đang làm'` vào `ON`. Muốn chỉ thống kê chính những người đang làm thì dùng `ql.TrangThai = N'Đang làm'` ở `WHERE`, như cách tách phạm vi hai phía ở bài 3.5.
+
+Ở bài này chỉ cần đọc một cấp trực tiếp hoặc đếm các dòng trỏ tới một mã. Kết thêm bảng theo cách ở bài 3.6; truy vết cả cây quản lý gồm nhiều cấp nằm ngoài phép kết trực tiếp này.
 
 ## Hay nhầm ở đâu
 
@@ -403,7 +395,7 @@ Lấy `MaQuanLy` là `NV005` để dò sang `ql.MaNV`; tên nhận được là 
 </details>
 
 <details>
-<summary>Đếm cấp dưới của <code>NV048</code> bằng <code>COUNT(*)</code> sẽ sai thế nào?</summary>
+<summary>Khi dùng <code>LEFT JOIN</code> để giữ người được thống kê và nhóm theo người đó, vì sao <code>COUNT(*)</code> cho sai số cấp dưới của <code>NV048</code>?</summary>
 
 Dòng được `LEFT JOIN` giữ vẫn bị đếm thành `1`. `COUNT(nv.MaNV)` bỏ mã cấp dưới `NULL` nên trả `0`.
 

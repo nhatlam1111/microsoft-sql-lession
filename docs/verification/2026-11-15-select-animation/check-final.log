@@ -1,0 +1,45 @@
+
+> microsoft-sql-lession@0.1.0 check
+> astro check
+
+10:42:58 [content] Syncing content
+10:42:58 [content] Synced content
+10:42:58 [types] Generated 396ms
+10:42:58 [check] Getting diagnostics for Astro files in E:\Projects\SQL Lession...
+[96msrc/components/islands/ArcadeHome.tsx[0m:[93m116[0m:[93m26[0m - [93mwarning[0m[90m ts(6385): [0m'FormEvent' is deprecated.
+
+[7m116[0m   const submitCode = (e: FormEvent) => {
+[7m   [0m [93m                         ~~~~~~~~~[0m
+[96msrc/components/islands/ArcadeHome.tsx[0m:[93m1[0m:[93m65[0m - [93mwarning[0m[90m ts(6385): [0m'FormEvent' is deprecated.
+
+[7m1[0m import { useEffect, useLayoutEffect, useMemo, useRef, useState, type FormEvent } from 'react';
+[7m [0m [93m                                                                ~~~~~~~~~~~~~~[0m
+
+[96msrc/components/islands/ArcadeWorkspace.tsx[0m:[93m97[0m:[93m26[0m - [93mwarning[0m[90m ts(6385): [0m'FormEvent' is deprecated.
+
+[7m97[0m   const submitCode = (e: FormEvent) => {
+[7m  [0m [93m                         ~~~~~~~~~[0m
+[96msrc/components/islands/ArcadeWorkspace.tsx[0m:[93m1[0m:[93m48[0m - [93mwarning[0m[90m ts(6385): [0m'FormEvent' is deprecated.
+
+[7m1[0m import { useEffect, useMemo, useRef, useState, type FormEvent, type KeyboardEvent } from 'react';
+[7m [0m [93m                                               ~~~~~~~~~~~~~~[0m
+
+[96msrc/components/islands/ExerciseWorkspace.tsx[0m:[93m69[0m:[93m26[0m - [93mwarning[0m[90m ts(6385): [0m'FormEvent' is deprecated.
+
+[7m69[0m   const submitCode = (e: FormEvent) => {
+[7m  [0m [93m                         ~~~~~~~~~[0m
+[96msrc/components/islands/ExerciseWorkspace.tsx[0m:[93m1[0m:[93m48[0m - [93mwarning[0m[90m ts(6385): [0m'FormEvent' is deprecated.
+
+[7m1[0m import { useEffect, useMemo, useRef, useState, type FormEvent, type KeyboardEvent } from 'react';
+[7m [0m [93m                                               ~~~~~~~~~~~~~~[0m
+
+[96msrc/components/islands/SqlEditor.tsx[0m:[93m30[0m:[93m20[0m - [93mwarning[0m[90m ts(6387): [0mThe signature '(commandId: string, showUI?: boolean | undefined, value?: string | undefined): boolean' of 'document.execCommand' is deprecated.
+
+[7m30[0m       if (document.execCommand('insertText', false, edit.insert)) {
+[7m  [0m [93m                   ~~~~~~~~~~~[0m
+
+Result (323 files): 
+- 0 errors
+- 0 warnings
+- 7 hints
+

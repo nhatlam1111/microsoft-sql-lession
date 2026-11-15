@@ -1,0 +1,17 @@
+
+> microsoft-sql-lession@0.1.0 test
+> vitest run --run tests/animated-flow.test.ts tests/content.test.ts tests/content-level-2.test.ts tests/docs.test.ts
+
+
+ RUN  v3.2.7 E:/Projects/SQL Lession
+
+ ✓ tests/docs.test.ts (5 tests) 7ms
+ ✓ tests/content-level-2.test.ts (4 tests) 164ms
+ ✓ tests/animated-flow.test.ts (4 tests) 53ms
+ ✓ tests/content.test.ts (82 tests) 2225ms
+
+ Test Files  4 passed (4)
+      Tests  95 passed (95)
+   Start at  10:42:23
+   Duration  2.79s (transform 579ms, setup 0ms, collect 1.69s, tests 2.45s, environment 0ms, prepare 386ms)
+
