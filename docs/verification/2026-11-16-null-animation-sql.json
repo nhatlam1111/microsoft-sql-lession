@@ -1,0 +1,235 @@
+{
+  "checkedAt": "2026-11-16T08:35:06.881Z",
+  "inputHash": "3d5e1ac9997e457fbbac690eaca682ffbdf7f252693a7cdc0d9049aadc3aa668",
+  "statements": [
+    {
+      "clause": "FROM",
+      "sql": "SELECT * FROM NhanVien;",
+      "columns": [
+        "MaNV",
+        "HoTen",
+        "GioiTinh",
+        "NgaySinh",
+        "SoCCCD",
+        "Email",
+        "NgayVaoLam",
+        "NgayNghiViec",
+        "MaPB",
+        "MaCD",
+        "MaQuanLy",
+        "TrangThai"
+      ],
+      "count": 48,
+      "excerpt": [
+        [
+          "NV008",
+          "Phan Văn Lợi",
+          "Nam",
+          "1980-12-15",
+          "000080186809",
+          "loi.pv@hrmdemo.vn",
+          "2015-09-01",
+          null,
+          "VH",
+          "TP",
+          "NV004",
+          "Đang làm"
+        ],
+        [
+          "NV033",
+          "Khúc Văn Hải",
+          "Nam",
+          "1990-01-01",
+          "000090384784",
+          "hai.kv@hrmdemo.vn",
+          "2019-06-03",
+          "2026-06-30",
+          "VH",
+          "NV",
+          "NV008",
+          "Đã nghỉ"
+        ],
+        [
+          "NV044",
+          "Lã Thị Oanh",
+          "Nữ",
+          "1998-04-14",
+          "000198471893",
+          null,
+          "2025-08-04",
+          null,
+          "VH",
+          "NV",
+          "NV008",
+          "Đang làm"
+        ],
+        [
+          "NV045",
+          "Ung Văn Lực",
+          "Nam",
+          "2001-01-09",
+          "000201479812",
+          null,
+          "2026-07-01",
+          null,
+          "KD",
+          "NV",
+          "NV006",
+          "Đang làm"
+        ]
+      ]
+    },
+    {
+      "clause": "WHERE",
+      "sql": "SELECT *\nFROM NhanVien\nWHERE MaPB = 'VH'\n\tAND NgayNghiViec IS NULL;",
+      "columns": [
+        "MaNV",
+        "HoTen",
+        "GioiTinh",
+        "NgaySinh",
+        "SoCCCD",
+        "Email",
+        "NgayVaoLam",
+        "NgayNghiViec",
+        "MaPB",
+        "MaCD",
+        "MaQuanLy",
+        "TrangThai"
+      ],
+      "count": 8,
+      "excerpt": [
+        [
+          "NV008",
+          "Phan Văn Lợi",
+          "Nam",
+          "1980-12-15",
+          "000080186809",
+          "loi.pv@hrmdemo.vn",
+          "2015-09-01",
+          null,
+          "VH",
+          "TP",
+          "NV004",
+          "Đang làm"
+        ],
+        [
+          "NV037",
+          "Giang Văn Bình",
+          "Nam",
+          "1988-06-24",
+          "000088416460",
+          "binh.gv@hrmdemo.vn",
+          "2017-05-02",
+          null,
+          "VH",
+          "NV",
+          "NV008",
+          "Đang làm"
+        ],
+        [
+          "NV044",
+          "Lã Thị Oanh",
+          "Nữ",
+          "1998-04-14",
+          "000198471893",
+          null,
+          "2025-08-04",
+          null,
+          "VH",
+          "NV",
+          "NV008",
+          "Đang làm"
+        ]
+      ]
+    },
+    {
+      "clause": "SELECT",
+      "sql": "SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],\n\tCOALESCE(Email, N'(chưa có)') AS [Email]\nFROM NhanVien\nWHERE MaPB = 'VH'\n\tAND NgayNghiViec IS NULL;",
+      "columns": [
+        "Mã nhân viên",
+        "Họ tên",
+        "Email"
+      ],
+      "count": 8,
+      "excerpt": [
+        [
+          "NV044",
+          "Lã Thị Oanh",
+          "(chưa có)"
+        ],
+        [
+          "NV008",
+          "Phan Văn Lợi",
+          "loi.pv@hrmdemo.vn"
+        ],
+        [
+          "NV037",
+          "Giang Văn Bình",
+          "binh.gv@hrmdemo.vn"
+        ]
+      ]
+    },
+    {
+      "clause": "ORDER BY",
+      "sql": "SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],\n\tCOALESCE(Email, N'(chưa có)') AS [Email]\nFROM NhanVien\nWHERE MaPB = 'VH'\n\tAND NgayNghiViec IS NULL\nORDER BY MaNV ASC;",
+      "columns": [
+        "Mã nhân viên",
+        "Họ tên",
+        "Email"
+      ],
+      "count": 8,
+      "excerpt": [
+        [
+          "NV008",
+          "Phan Văn Lợi",
+          "loi.pv@hrmdemo.vn"
+        ],
+        [
+          "NV015",
+          "Dương Văn Nam",
+          "nam.dv@hrmdemo.vn"
+        ],
+        [
+          "NV019",
+          "Châu Văn Phúc",
+          "phuc.cv@hrmdemo.vn"
+        ],
+        [
+          "NV024",
+          "Võ Thị Thanh",
+          "thanh.vt@hrmdemo.vn"
+        ],
+        [
+          "NV027",
+          "Đinh Công Hậu",
+          "hau.dc@hrmdemo.vn"
+        ],
+        [
+          "NV031",
+          "Ông Văn Tú",
+          "tu.ov@hrmdemo.vn"
+        ],
+        [
+          "NV037",
+          "Giang Văn Bình",
+          "binh.gv@hrmdemo.vn"
+        ],
+        [
+          "NV044",
+          "Lã Thị Oanh",
+          "(chưa có)"
+        ]
+      ]
+    }
+  ],
+  "conditionCounts": [
+    {
+      "sql": "SELECT MaNV FROM NhanVien WHERE MaPB = 'VH';",
+      "count": 10
+    },
+    {
+      "sql": "SELECT MaNV FROM NhanVien WHERE NgayNghiViec IS NULL;",
+      "count": 45
+    }
+  ]
+}

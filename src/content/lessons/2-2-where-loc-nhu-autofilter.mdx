@@ -53,9 +53,9 @@ WHERE MaPB = 'KD';`} />
 FROM NhanVien
 WHERE MaPB = 'KD';`} />
 
-Bấm từng bước để xem dữ liệu theo **thứ tự xử lý logic** `FROM` → `WHERE` → `SELECT`. SQL Server tự chọn cách đọc dữ liệu khi thực thi.
+Xem minh họa và mở từng bước để theo dõi dữ liệu theo **thứ tự xử lý logic** `FROM` → `WHERE` → `SELECT`. SQL Server tự chọn cách đọc dữ liệu khi thực thi.
 
-<RunFlow query={`SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
+<AnimatedFlow query={`SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
 \tMaPB AS [Mã phòng], TrangThai AS [Trạng thái]
 FROM NhanVien
 WHERE MaPB = 'KD';`} steps={[
@@ -113,7 +113,7 @@ WHERE MaPB = 'KD';`,
     ],
     total: 14,
   },
-]} />
+]} animation="2-2-where" />
 
 Trong `48` hồ sơ nguồn, `NV001` mang mã `KT` nên bị loại. Hồ sơ `NV020` mang mã `KD` nên được giữ dù đã nghỉ, vì điều kiện chỉ xét `MaPB`. `SELECT` lấy bốn cột từ mỗi hồ sơ trong `14` dòng còn lại.
 

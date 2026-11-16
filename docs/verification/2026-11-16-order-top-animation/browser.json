@@ -1,0 +1,21 @@
+{
+  "url": "http://127.0.0.1:4322/microsoft-sql-lession/bai/2-4-sap-xep-va-top/",
+  "checkedAt": "2026-11-16T08:41:27.019Z",
+  "hashes": {
+    "dist/bai/2-4-sap-xep-va-top/index.html": "263ffcd48af569280556e2583e4885be5d6518d57a268260f239ca9c81775ff8",
+    "src/content/lessons/2-4-sap-xep-va-top.mdx": "2de230d6ab778f6bc5acf2fe4da6c2a51e84b21382693c3dc689321999d14eda",
+    "src/components/lesson/AnimatedFlow.astro": "769549d8ea868e4743a7b09978dd04819ee2a99415d025f4fb66b64d7b34dd9c",
+    "public/lesson-animations/2-4-order-top/manifest.json": "8d4ba72f6ac0243c41ba1925cbe6bc3184963936a0d42580ec19d1d45b92dbc8",
+    "public/lesson-animations/2-4-order-top/animation.gif": "c61f0c3c4a53805e24b124e162d9ceaaf8d076f8734960bd5d15567a330e01bb",
+    "scripts/animations/check-order-top-browser.mts": "1d93df8e07508b196b3960dd4563a5374c3c7964aa8dab05ac5b9ced71467136"
+  },
+  "checks": [
+    "GIF decodes and plays; keyboard stop/play, stop persistence, replay, details and five scene images work.",
+    "Isolated component fits 720px and 390px; HTML details remain available.",
+    "LIMIT: existing lesson shell compresses the article at 390px.",
+    "Reduced motion starts still and permits explicit playback.",
+    "Without JavaScript the poster and five HTML steps are available.",
+    "Failed GIF load falls back to poster and retry works."
+  ],
+  "pageErrors": []
+}

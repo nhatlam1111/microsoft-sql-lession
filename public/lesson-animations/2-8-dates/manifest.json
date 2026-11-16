@@ -1,0 +1,47 @@
+{
+  "fingerprint": "461c543b03f4069046042bb2d09d6491c60af18e61b51444d16ec27e1aec7066",
+  "sources": [
+    "scripts/animations/select.css",
+    "scripts/animations/render-dates.mts",
+    "scripts/animations/sheet_to_gif.py",
+    "src/assets/animations/select-pulse.png",
+    "node_modules/@fontsource/be-vietnam-pro/files/be-vietnam-pro-latin-400-normal.woff",
+    "node_modules/@fontsource/be-vietnam-pro/files/be-vietnam-pro-vietnamese-400-normal.woff",
+    "node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff",
+    "node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-vietnamese-400-normal.woff"
+  ],
+  "width": 1080,
+  "height": 824,
+  "files": {
+    "animation.gif": "02b23b16a0ea3f00147ba7ca929bbd07082374680349f9421fb608f157709f3c",
+    "poster.png": "0a5385763c0c6607e4ab219795e61c4140649352a34e98a77b30b5b41734a1d0",
+    "from.png": "0a5385763c0c6607e4ab219795e61c4140649352a34e98a77b30b5b41734a1d0",
+    "where.png": "9c4519c4117a60109606fef981ecbdf15dbcec74c5d7dcd44f3d849162ccd77c",
+    "select.png": "3f323b07f5e3272bd15995971188f7cfd0c7debb821433703b3beeb5d429eda0",
+    "order.png": "2930f9b64bc1fc4d600422d1be82d2692f2ce34af0587e87423388058d9d3007"
+  },
+  "caption": "Minh họa xử lý logic: nguồn trích 5/55 hợp đồng và 2/6 cột; kết quả trích 2/3 hợp đồng và 3/5 cột. Thứ tự trước ORDER BY là minh họa.",
+  "alt": "Từ năm hợp đồng trích, hai hợp đồng nằm trong khoảng được đưa qua lọc. DATEDIFF tính 24 và 10 ngày; ORDER BY đặt ngày 31/10 trước ngày 14/11.",
+  "scenes": [
+    {
+      "step": 0,
+      "file": "from.png",
+      "alt": "FROM chọn HopDong, trích năm trong 55 hợp đồng."
+    },
+    {
+      "step": 1,
+      "file": "where.png",
+      "alt": "WHERE trích hai trong ba hợp đồng thỏa khoảng ngày."
+    },
+    {
+      "step": 2,
+      "file": "select.png",
+      "alt": "DATEDIFF tính 24 và 10 ngày còn lại từ ngày chốt."
+    },
+    {
+      "step": 3,
+      "file": "order.png",
+      "alt": "ORDER BY đặt hợp đồng kết thúc ngày 31/10 trước hợp đồng kết thúc ngày 14/11."
+    }
+  ]
+}

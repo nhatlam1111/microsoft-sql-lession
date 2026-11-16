@@ -1,0 +1,150 @@
+{
+  "checkedAt": "2026-11-16T08:48:37.666Z",
+  "inputHash": "6e999c3d180b1f01e1b87b5676447218714c6416810f4d258ad9af69ca750d8f",
+  "statements": [
+    {
+      "clause": "FROM",
+      "sql": "SELECT MaHD, MaNV, NgayBatDau, NgayKetThuc\nFROM HopDong;",
+      "columns": [
+        "MaHD",
+        "MaNV",
+        "NgayBatDau",
+        "NgayKetThuc"
+      ],
+      "count": 55,
+      "excerpt": [
+        [
+          "HD2015-001",
+          "NV004",
+          "2015-01-05",
+          null
+        ],
+        [
+          "HD2023-003",
+          "NV017",
+          "2023-06-01",
+          "2026-12-31"
+        ],
+        [
+          "HD2024-008",
+          "NV036",
+          "2024-11-15",
+          "2026-11-14"
+        ],
+        [
+          "HD2025-014",
+          "NV025",
+          "2025-11-01",
+          "2026-10-31"
+        ],
+        [
+          "HD2026-002",
+          "NV045",
+          "2026-07-01",
+          "2026-08-31"
+        ]
+      ]
+    },
+    {
+      "clause": "WHERE",
+      "sql": "SELECT MaHD, MaNV, NgayBatDau, NgayKetThuc\nFROM HopDong\nWHERE NgayKetThuc >= CAST('20261021' AS date)\n\tAND NgayKetThuc <= DATEADD(day, 30, CAST('20261021' AS date));",
+      "columns": [
+        "MaHD",
+        "MaNV",
+        "NgayBatDau",
+        "NgayKetThuc"
+      ],
+      "count": 3,
+      "excerpt": [
+        [
+          "HD2024-008",
+          "NV036",
+          "2024-11-15",
+          "2026-11-14"
+        ],
+        [
+          "HD2025-014",
+          "NV025",
+          "2025-11-01",
+          "2026-10-31"
+        ],
+        [
+          "HD2026-004",
+          "NV046",
+          "2026-09-14",
+          "2026-11-13"
+        ]
+      ]
+    },
+    {
+      "clause": "SELECT",
+      "sql": "SELECT MaHD, MaNV, NgayBatDau, NgayKetThuc,\n\tDATEDIFF(day, CAST('20261021' AS date), NgayKetThuc) AS [SoNgayConLai]\nFROM HopDong\nWHERE NgayKetThuc >= CAST('20261021' AS date)\n\tAND NgayKetThuc <= DATEADD(day, 30, CAST('20261021' AS date));",
+      "columns": [
+        "MaHD",
+        "MaNV",
+        "NgayBatDau",
+        "NgayKetThuc",
+        "SoNgayConLai"
+      ],
+      "count": 3,
+      "excerpt": [
+        [
+          "HD2024-008",
+          "NV036",
+          "2024-11-15",
+          "2026-11-14",
+          24
+        ],
+        [
+          "HD2025-014",
+          "NV025",
+          "2025-11-01",
+          "2026-10-31",
+          10
+        ],
+        [
+          "HD2026-004",
+          "NV046",
+          "2026-09-14",
+          "2026-11-13",
+          23
+        ]
+      ]
+    },
+    {
+      "clause": "ORDER BY",
+      "sql": "SELECT MaHD, MaNV, NgayBatDau, NgayKetThuc,\n\tDATEDIFF(day, CAST('20261021' AS date), NgayKetThuc) AS [SoNgayConLai]\nFROM HopDong\nWHERE NgayKetThuc >= CAST('20261021' AS date)\n\tAND NgayKetThuc <= DATEADD(day, 30, CAST('20261021' AS date))\nORDER BY NgayKetThuc ASC, MaHD ASC;",
+      "columns": [
+        "MaHD",
+        "MaNV",
+        "NgayBatDau",
+        "NgayKetThuc",
+        "SoNgayConLai"
+      ],
+      "count": 3,
+      "excerpt": [
+        [
+          "HD2025-014",
+          "NV025",
+          "2025-11-01",
+          "2026-10-31",
+          10
+        ],
+        [
+          "HD2026-004",
+          "NV046",
+          "2026-09-14",
+          "2026-11-13",
+          23
+        ],
+        [
+          "HD2024-008",
+          "NV036",
+          "2024-11-15",
+          "2026-11-14",
+          24
+        ]
+      ]
+    }
+  ]
+}

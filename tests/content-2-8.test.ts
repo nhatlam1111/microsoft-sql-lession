@@ -4,6 +4,7 @@ import { runInNewContext } from 'node:vm';
 import { parse } from 'yaml';
 import { readLessonFiles } from './helpers/lessons';
 import { checkFlow, type FlowStep } from '../src/lib/run-flow';
+import { readAnimation } from '../src/lib/animation-assets';
 
 // INSERT values are tokenized as data, never evaluated as JavaScript or SQL.
 function seedRows(table: string): Record<string, string | number | null>[] {
@@ -27,10 +28,12 @@ it('2.8 filters contract rows at the fixed inclusive horizon before calculating 
   const contracts = seedRows('HopDong');
   // MDX and JavaScript literals normalize CRLF; compare the captured query in the same form.
   const body = readLessonFiles().find(f => f.slug === '2-8-ham-ngay-tham-nien')!.body.replace(/\r\n?/g, '\n');
-  const flow = body.match(/<RunFlow query=\{`([\s\S]*?)`\} steps=\{([\s\S]*?)\} \/>/);
+  const flow = body.match(/<(?:RunFlow|AnimatedFlow) query=\{`([\s\S]*?)`\} steps=\{([\s\S]*?)\}(?: animation="[^"]*")? \/>/);
   expect(flow).not.toBeNull();
   const steps = literal<FlowStep[]>(flow![2]);
   expect(checkFlow(steps, literal<string>('`' + flow![1] + '`'))).toEqual([]);
+  const animation = readAnimation('2-8-dates', literal<string>('`' + flow![1] + '`'), steps);
+  expect(animation.scenes.map(scene => scene.step)).toEqual([0, 1, 2, 3]);
   expect(contracts).toHaveLength(55);
   const chosen = contracts.filter(c => typeof c.NgayKetThuc === 'string'
     && c.NgayKetThuc >= '2026-10-21' && c.NgayKetThuc <= '2026-11-20');

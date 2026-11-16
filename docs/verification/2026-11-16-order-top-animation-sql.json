@@ -1,0 +1,293 @@
+{
+  "checkedAt": "2026-11-16T08:33:21.470Z",
+  "inputHash": "4ea8db5b3adf0814a16ddb61720197bc1985e1caa692cc39838e2584ea1896dc",
+  "statements": [
+    {
+      "clause": "FROM",
+      "sql": "SELECT * FROM NhanVien;",
+      "columns": [
+        "MaNV",
+        "HoTen",
+        "GioiTinh",
+        "NgaySinh",
+        "SoCCCD",
+        "Email",
+        "NgayVaoLam",
+        "NgayNghiViec",
+        "MaPB",
+        "MaCD",
+        "MaQuanLy",
+        "TrangThai"
+      ],
+      "count": 48,
+      "excerpt": [
+        [
+          "NV001",
+          "Trần Thị Mai",
+          "Nữ",
+          "1992-04-12",
+          "000192131376",
+          "mai.tt@hrmdemo.vn",
+          "2024-03-01",
+          null,
+          "KT",
+          "CV",
+          "NV005",
+          "Đang làm"
+        ],
+        [
+          "NV020",
+          "Kiều Thị Hạnh",
+          "Nữ",
+          "1990-05-19",
+          "000190281837",
+          "hanh.kt@hrmdemo.vn",
+          "2019-04-01",
+          "2025-12-31",
+          "KD",
+          "CV",
+          "NV006",
+          "Đã nghỉ"
+        ],
+        [
+          "NV047",
+          "Phạm Ngọc Ánh",
+          "Nữ",
+          "1999-02-17",
+          "000199495650",
+          "anh.pn@hrmdemo.vn",
+          "2026-10-01",
+          null,
+          "NS",
+          "CV",
+          "NV010",
+          "Đang làm"
+        ],
+        [
+          "NV048",
+          "Đỗ Minh Quân",
+          "Nam",
+          "2000-08-25",
+          "000200503569",
+          "quan.dm@hrmdemo.vn",
+          "2026-10-05",
+          null,
+          "IT",
+          "NV",
+          "NV007",
+          "Đang làm"
+        ]
+      ]
+    },
+    {
+      "clause": "WHERE",
+      "sql": "SELECT *\nFROM NhanVien\nWHERE TrangThai = N'Đang làm';",
+      "columns": [
+        "MaNV",
+        "HoTen",
+        "GioiTinh",
+        "NgaySinh",
+        "SoCCCD",
+        "Email",
+        "NgayVaoLam",
+        "NgayNghiViec",
+        "MaPB",
+        "MaCD",
+        "MaQuanLy",
+        "TrangThai"
+      ],
+      "count": 45,
+      "excerpt": [
+        [
+          "NV001",
+          "Trần Thị Mai",
+          "Nữ",
+          "1992-04-12",
+          "000192131376",
+          "mai.tt@hrmdemo.vn",
+          "2024-03-01",
+          null,
+          "KT",
+          "CV",
+          "NV005",
+          "Đang làm"
+        ],
+        [
+          "NV047",
+          "Phạm Ngọc Ánh",
+          "Nữ",
+          "1999-02-17",
+          "000199495650",
+          "anh.pn@hrmdemo.vn",
+          "2026-10-01",
+          null,
+          "NS",
+          "CV",
+          "NV010",
+          "Đang làm"
+        ],
+        [
+          "NV048",
+          "Đỗ Minh Quân",
+          "Nam",
+          "2000-08-25",
+          "000200503569",
+          "quan.dm@hrmdemo.vn",
+          "2026-10-05",
+          null,
+          "IT",
+          "NV",
+          "NV007",
+          "Đang làm"
+        ]
+      ]
+    },
+    {
+      "clause": "SELECT",
+      "sql": "SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],\n\tMaPB AS [Mã phòng], NgayVaoLam AS [Ngày vào làm]\nFROM NhanVien\nWHERE TrangThai = N'Đang làm';",
+      "columns": [
+        "Mã nhân viên",
+        "Họ tên",
+        "Mã phòng",
+        "Ngày vào làm"
+      ],
+      "count": 45,
+      "excerpt": [
+        [
+          "NV001",
+          "Trần Thị Mai",
+          "KT",
+          "2024-03-01"
+        ],
+        [
+          "NV047",
+          "Phạm Ngọc Ánh",
+          "NS",
+          "2026-10-01"
+        ],
+        [
+          "NV048",
+          "Đỗ Minh Quân",
+          "IT",
+          "2026-10-05"
+        ]
+      ]
+    },
+    {
+      "clause": "ORDER BY",
+      "sql": "SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],\n\tMaPB AS [Mã phòng], NgayVaoLam AS [Ngày vào làm]\nFROM NhanVien\nWHERE TrangThai = N'Đang làm'\nORDER BY NgayVaoLam DESC, MaNV ASC;",
+      "columns": [
+        "Mã nhân viên",
+        "Họ tên",
+        "Mã phòng",
+        "Ngày vào làm"
+      ],
+      "count": 45,
+      "excerpt": [
+        [
+          "NV048",
+          "Đỗ Minh Quân",
+          "IT",
+          "2026-10-05"
+        ],
+        [
+          "NV047",
+          "Phạm Ngọc Ánh",
+          "NS",
+          "2026-10-01"
+        ],
+        [
+          "NV046",
+          "Hứa Thị Phương",
+          "IT",
+          "2026-09-14"
+        ],
+        [
+          "NV045",
+          "Ung Văn Lực",
+          "KD",
+          "2026-07-01"
+        ],
+        [
+          "NV044",
+          "Lã Thị Oanh",
+          "VH",
+          "2025-08-04"
+        ],
+        [
+          "NV040",
+          "Lục Thị Xuân",
+          "KD",
+          "2025-05-05"
+        ],
+        [
+          "NV029",
+          "Mạc Văn Đông",
+          "IT",
+          "2025-03-01"
+        ],
+        [
+          "NV036",
+          "Doãn Thị Thảo",
+          "KD",
+          "2024-11-15"
+        ],
+        [
+          "NV042",
+          "Bạch Thị Tuyết",
+          "KT",
+          "2024-07-01"
+        ],
+        [
+          "NV002",
+          "Lê Văn Hùng",
+          "KD",
+          "2024-04-01"
+        ]
+      ]
+    },
+    {
+      "clause": "TOP",
+      "sql": "SELECT TOP (5) MaNV AS [Mã nhân viên], HoTen AS [Họ tên],\n\tMaPB AS [Mã phòng], NgayVaoLam AS [Ngày vào làm]\nFROM NhanVien\nWHERE TrangThai = N'Đang làm'\nORDER BY NgayVaoLam DESC, MaNV ASC;",
+      "columns": [
+        "Mã nhân viên",
+        "Họ tên",
+        "Mã phòng",
+        "Ngày vào làm"
+      ],
+      "count": 5,
+      "excerpt": [
+        [
+          "NV048",
+          "Đỗ Minh Quân",
+          "IT",
+          "2026-10-05"
+        ],
+        [
+          "NV047",
+          "Phạm Ngọc Ánh",
+          "NS",
+          "2026-10-01"
+        ],
+        [
+          "NV046",
+          "Hứa Thị Phương",
+          "IT",
+          "2026-09-14"
+        ],
+        [
+          "NV045",
+          "Ung Văn Lực",
+          "KD",
+          "2026-07-01"
+        ],
+        [
+          "NV044",
+          "Lã Thị Oanh",
+          "VH",
+          "2025-08-04"
+        ]
+      ]
+    }
+  ]
+}

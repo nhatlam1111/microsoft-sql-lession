@@ -41,3 +41,17 @@ SHA-256 cuối lượt. Dùng lại bằng chứng chỉ khi source, công cụ 
 | `Sql.astro` | `18977601D216F3198C3EFA12CE64504BC29D2D469A4658EAF3D53006F700AE05` |
 
 Tác giả theo model và effort của phiên, reviewer cấu hình như trên. Có một lượt review độc lập và một đợt sửa theo report. Thiếu log tách riêng input/cache/output, số lần gọi model, số lượt đọc tài liệu và chi phí theo giai đoạn.
+
+## Cập nhật chuyển động ảnh bài 2.2 ngày 15/11/2026
+
+Dùng `AnimatedFlow` để người học theo được cùng một hồ sơ qua các bước. `NV020` đi từ bảng `NhanVien` sang bảng lọc vì `MaPB = 'KD'`, giữ cả `TrangThai = 'Đã nghỉ'`. Sau bước lọc, `SELECT` giữ giá trị của bốn cột được hỏi và đặt tiêu đề. Minh họa trích thêm `GioiTinh` trong 5/12 cột nguồn để có một cột cụ thể biến mất ở `SELECT`. SQL, dữ liệu bước, bài tập và component dùng chung giữ nguyên trong lần sửa chuyển động. Câu kiểm và lệnh dựng xem [hướng dẫn](../../scripts/animations/README.md).
+
+| Phạm vi | Kết quả và giới hạn |
+|---|---|
+| GIF và hình tĩnh | Giải mã bằng Pillow, 1080 × 824, lặp, tổng đúng 15.000 ms. Encoder gộp các khung giống nhau, còn 57 khung. Tại 2,8 giây, `NV001` chỉ được đánh dấu ở bảng trái. Kiểm giữa lượt và lúc đến tại 4,0/4,6, 5,2/5,8 và 6,4/7,0 giây. Bảng phải lần lượt thêm `NV002`, `NV003`, `NV020`. Cảnh 8,3 giây ghi tổng 14 dòng và 12 cột, cảnh 10,6 giây đang thu cột `GioiTinh`, cảnh 13,2 giây giữ cùng ba dòng trích và đủ bốn tiêu đề. Đã xem khung giải mã ở 720 và 390 px. GIF SHA-256 `2a95c1a716788b97fc7f81c5a734fae0696823d603159464057a55753b647eb6`. |
+| SQL live | Dùng [kết quả đã chạy](2026-11-15-where-animation-sql.json) vì hash `query`/ `steps` hiện tại trùng `2642af867532e91d2a65061815d6d0cf022e881ca4ee6d92af3d2e8b3b5ba273`. Đã kiểm 48 dòng/12 cột, 14 dòng/12 cột, 14 dòng/4 cột và các hồ sơ trích, gồm `GioiTinh` trong hai bước đầu. Lượt chỉnh ảnh này không chạy lại SQL. |
+| Kiểm và build | `npm test` đạt 620/620. `npm run check` có 0 lỗi, 0 cảnh báo và 7 hint hiện có. Build tạo 204 trang, `check:dist` đạt 286 trang và 4.250 liên kết. Manifest khóa nguồn dựng, ảnh và dữ liệu bước. |
+| Trình duyệt | [Bằng chứng của lần dựng này](2026-11-15-where-animation/row-motion-browser.json) ghi hash và kết quả phát/dừng bằng bàn phím, ba ảnh tĩnh, giảm chuyển động, tắt JavaScript và lỗi tải GIF. Chữ trong GIF nhỏ ở 390 px và khung trang desktop hiện tại bóp hẹp vùng nội dung. Khi tách component ở chiều rộng đó, bảng HTML và liên kết mở ảnh gốc vẫn có thể dùng. |
+| Review | [Report chuyển động](../reviews/2026-11-15-lesson-2-2-row-motion.md) không ghi lỗi về ảnh hoặc source. Dùng [review tiền đề từng đề](../reviews/2026-11-15-lesson-2-2-animation.md#tiền-đề-từng-đề) cho phần bài tập vì hash MDX và YAML khớp chính xác. Reviewer lượt này đã thấy đáp án khi đọc đề nên kết quả lượt này không thay thế kiểm tiền đề trước khi đọc đáp án. |
+
+Tác giả dùng model của phiên. Cấu hình reviewer `gpt-6.1-terra`, `high`, `fork_turns: none`. Không có bằng chứng về model thực tế hoặc log chi phí theo giai đoạn.

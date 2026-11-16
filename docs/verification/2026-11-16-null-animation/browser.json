@@ -1,0 +1,21 @@
+{
+  "url": "http://127.0.0.1:4323/microsoft-sql-lession/bai/2-5-null-o-trong/",
+  "checkedAt": "2026-11-16T08:42:25.387Z",
+  "hashes": {
+    "dist/bai/2-5-null-o-trong/index.html": "ec42d5d6f902163497cebe7e1f076e6b2390680bf16605419055c79f344e7b3f",
+    "src/components/lesson/AnimatedFlow.astro": "769549d8ea868e4743a7b09978dd04819ee2a99415d025f4fb66b64d7b34dd9c",
+    "scripts/animations/check-null-browser.mts": "2b11c9d486a070f53b87c38d92379759eb3b2edf848aafc17aa34b8b36de166a",
+    "public/lesson-animations/2-5-null/manifest.json": "5f59191094ba18c42242b8c4982c67d8d6a9af803763f0981bfc9322cb1afe2d"
+  },
+  "checks": [
+    "Remains still at 10% visibility; automatically plays beyond 25%; GIF decodes successfully.",
+    "Keyboard stop/play, stop persists after scrolling, replay uses a fresh URL.",
+    "Native disclosure works by keyboard and exposes four logical steps with HTML data.",
+    "LIMIT: existing desktop lesson shell collapses the article at 390px.",
+    "Isolated animation component fits 390px with readable HTML tables and original-size links.",
+    "Reduced motion defaults to still image, permits explicit play, stops when preference changes.",
+    "Without JavaScript, poster and native details/HTML data remain usable.",
+    "Failed GIF load falls back to poster with message; retry recovers."
+  ],
+  "pageErrors": []
+}

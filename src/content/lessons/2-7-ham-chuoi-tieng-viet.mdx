@@ -57,9 +57,9 @@ FROM NhanVien
 WHERE MaPB = 'IT'
 ORDER BY MaNV ASC;`} />
 
-Sơ đồ mô tả **thứ tự xử lý logic** của câu truy vấn. SQL Server tự chọn cách đọc dữ liệu khi thực thi. Bấm từng bước để xem hồ sơ nào qua lọc và các cột nào được dùng để tạo nhãn.
+Minh họa mô tả **thứ tự xử lý logic** của câu truy vấn. SQL Server tự chọn cách đọc dữ liệu khi thực thi. Mở Xem từng bước để xem hồ sơ nào qua lọc và các cột nào được dùng để tạo nhãn.
 
-<RunFlow query={`SELECT MaNV AS [Mã nhân viên],
+<AnimatedFlow query={`SELECT MaNV AS [Mã nhân viên],
 \tCONCAT(RIGHT(MaNV, 3), N' - ', UPPER(HoTen)) AS [Nhãn ký nhận],
 \tLEN(HoTen) AS [Số ký tự họ tên]
 FROM NhanVien
@@ -155,7 +155,7 @@ ORDER BY MaNV ASC;`,
     ],
     total: 10,
   },
-]} />
+]} animation="2-7-strings" />
 
 Trong `48` hồ sơ, chỉ `10` dòng có `MaPB` bằng `IT`. `NV003` thuộc `KD` nên bị loại, còn `NV007` qua lọc và có một nhãn. `SELECT` tạo các cột từ từng hồ sơ còn lại, giữ nguyên số dòng. `ORDER BY MaNV ASC` xếp danh sách từ `NV007` đến `NV048`.
 

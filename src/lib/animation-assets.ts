@@ -22,7 +22,7 @@ export function readAnimation(id: string, query: string, steps: FlowStep[]) {
     scenes: { step: number; file: string; alt: string }[];
   };
   if (animationFingerprint(query, steps, manifest.sources) !== manifest.fingerprint)
-    throw new Error(`Ảnh động ${id} đã lỗi thời. Chạy npm run render:select-gif.`);
+    throw new Error(`Ảnh động ${id} đã lỗi thời. Chạy lệnh dựng lại ảnh của bài tương ứng.`);
   const referenced = ['animation.gif', 'poster.png', ...manifest.scenes.map(scene => scene.file)];
   if (referenced.some(file => !/^[a-z0-9-]+\.(?:gif|png)$/.test(file) || !manifest.files[file]))
     throw new Error(`Ảnh động ${id} thiếu hash của tài nguyên được tham chiếu`);

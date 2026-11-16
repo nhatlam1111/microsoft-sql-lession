@@ -58,9 +58,9 @@ FROM NhanVien
 WHERE TrangThai = N'Đang làm'
 ORDER BY NgayVaoLam DESC, MaNV ASC;`} />
 
-Sơ đồ mô tả **thứ tự xử lý logic**, tức cách lần từ dữ liệu nguồn đến kết quả. `TOP (5)` nằm trên dòng `SELECT` và áp dụng sau `ORDER BY` theo thứ tự này. Bấm từng bước để xem dữ liệu trích.
+Minh họa mô tả **thứ tự xử lý logic**, tức cách lần từ dữ liệu nguồn đến kết quả. `TOP (5)` nằm trên dòng `SELECT` và áp dụng sau `ORDER BY` theo thứ tự này. Mở **Xem từng bước** để xem dữ liệu trích.
 
-<RunFlow query={`SELECT TOP (5) MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
+<AnimatedFlow query={`SELECT TOP (5) MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
 \tMaPB AS [Mã phòng], NgayVaoLam AS [Ngày vào làm]
 FROM NhanVien
 WHERE TrangThai = N'Đang làm'
@@ -171,7 +171,7 @@ ORDER BY NgayVaoLam DESC, MaNV ASC;`,
   total: 5,
   preview: ["Mã nhân viên","Ngày vào làm"],
 },
-]} />
+]} animation="2-4-order-top" />
 
 `NV044` có trạng thái `Đang làm` nên nằm trong `45` hồ sơ qua lọc. `SELECT` giữ bốn cột cần gửi và đặt tiêu đề tiếng Việt. Trong danh sách xếp theo ngày mới nhất trước, `NV044` vào làm ngày `2025-08-04` đứng thứ năm, ngay trước `NV040` vào ngày `2025-05-05`. `TOP (5)` dừng ở `NV044`.
 

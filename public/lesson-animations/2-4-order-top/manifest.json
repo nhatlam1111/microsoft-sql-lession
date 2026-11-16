@@ -1,0 +1,53 @@
+{
+  "fingerprint": "4183125900411a8830012496abd06dfb210bf80115251d5e7c891bb625262098",
+  "sources": [
+    "scripts/animations/select.css",
+    "scripts/animations/render-order-top.mts",
+    "scripts/animations/sheet_to_gif.py",
+    "src/assets/animations/select-pulse.png",
+    "node_modules/@fontsource/be-vietnam-pro/files/be-vietnam-pro-latin-400-normal.woff",
+    "node_modules/@fontsource/be-vietnam-pro/files/be-vietnam-pro-vietnamese-400-normal.woff",
+    "node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff",
+    "node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-vietnamese-400-normal.woff"
+  ],
+  "width": 1080,
+  "height": 824,
+  "files": {
+    "animation.gif": "c61f0c3c4a53805e24b124e162d9ceaaf8d076f8734960bd5d15567a330e01bb",
+    "poster.png": "267066c981f5c7e7d88304f639b9a6962bdd96ca53218710cbdb90f3a9af4434",
+    "from.png": "267066c981f5c7e7d88304f639b9a6962bdd96ca53218710cbdb90f3a9af4434",
+    "where.png": "87ddddcc3a398eac0c61a21680b30afd2926268edc833e6e5669527da6929320",
+    "select.png": "431659646da844377bc31178890197934a5ca78c4b7627812243cf40dd401e93",
+    "order.png": "53285dae319e58a0e0c8e6af5b6c23d8c6b3a63d9898c5ecc8c24c3aeae945a7",
+    "top.png": "909808a5f728002557d1274d0084e0128c0528637bb79dbfd666354a53989b3f"
+  },
+  "caption": "Minh họa xử lý logic: nguồn 48 hồ sơ, lọc còn 45, chọn 4 cột, xếp rồi lấy 5 dòng. Cảnh xếp trích 6 dòng và 2 cột; thứ tự trước ORDER BY chỉ là minh họa.",
+  "alt": "Lọc hồ sơ đang làm, chọn cột, lần lượt xếp sáu hồ sơ trích theo ngày mới nhất trước, rồi chuyển năm hồ sơ đầu sang kết quả; NV040 đứng thứ sáu không được lấy.",
+  "scenes": [
+    {
+      "step": 0,
+      "file": "from.png",
+      "alt": "FROM chọn bảng nguồn, trích bốn trong 48 hồ sơ."
+    },
+    {
+      "step": 1,
+      "file": "where.png",
+      "alt": "WHERE loại NV020 đã nghỉ; còn 45 hồ sơ đang làm."
+    },
+    {
+      "step": 2,
+      "file": "select.png",
+      "alt": "SELECT chọn bốn cột và đặt tiêu đề; còn 45 hồ sơ."
+    },
+    {
+      "step": 3,
+      "file": "order.png",
+      "alt": "ORDER BY xếp ngày mới trước, trích sáu trong 45 hồ sơ, NV044 đứng thứ năm."
+    },
+    {
+      "step": 4,
+      "file": "top.png",
+      "alt": "TOP giữ năm hồ sơ đầu, NV040 đứng thứ sáu không được lấy."
+    }
+  ]
+}

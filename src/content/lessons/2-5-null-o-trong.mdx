@@ -59,9 +59,9 @@ WHERE MaPB = 'VH'
 \tAND NgayNghiViec IS NULL
 ORDER BY MaNV ASC;`} />
 
-Bấm từng bước để xem bảng đầu vào, điều kiện và kết quả. Sơ đồ trình bày **thứ tự xử lý logic** của câu truy vấn. SQL Server tự chọn cách đọc dữ liệu khi thực thi.
+Xem minh họa **thứ tự xử lý logic** của câu truy vấn, rồi mở **Xem từng bước** để đối chiếu dữ liệu. SQL Server tự chọn cách đọc dữ liệu khi thực thi.
 
-<RunFlow query={`SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
+<AnimatedFlow query={`SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
 \tCOALESCE(Email, N'(chưa có)') AS [Email]
 FROM NhanVien
 WHERE MaPB = 'VH'
@@ -153,7 +153,7 @@ ORDER BY MaNV ASC;`,
   total: 8,
   preview: ["Mã nhân viên","Email"],
 },
-]} />
+]} animation="2-5-null" />
 
 Trong `48` hồ sơ, `8` dòng vừa thuộc `VH` vừa có `NgayNghiViec` là `NULL`. `NV044` đáp ứng cả hai điều kiện nên qua được `WHERE` dù email còn thiếu. Tới `SELECT`, `COALESCE` điền nhãn vào cột kết quả, còn `Email` trong bảng nguồn vẫn là `NULL`. `ORDER BY MaNV ASC` xếp `NV044` ở cuối danh sách dưới đây.
 

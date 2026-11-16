@@ -1,0 +1,47 @@
+{
+  "fingerprint": "4c20eb28ab43e8ce92a4f115f1b0462025652de1dbccb72953e425ddbd177025",
+  "sources": [
+    "scripts/animations/select.css",
+    "scripts/animations/render-distinct.mts",
+    "scripts/animations/sheet_to_gif.py",
+    "src/assets/animations/select-pulse.png",
+    "node_modules/@fontsource/be-vietnam-pro/files/be-vietnam-pro-latin-400-normal.woff",
+    "node_modules/@fontsource/be-vietnam-pro/files/be-vietnam-pro-vietnamese-400-normal.woff",
+    "node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff",
+    "node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-vietnamese-400-normal.woff"
+  ],
+  "width": 1080,
+  "height": 824,
+  "files": {
+    "animation.gif": "73d1a3943e659ac4c67f726fb7c3c407239efe32cfddf624e98b1247165534e0",
+    "poster.png": "60c34dabaa2028617540a3b790c7631af13ab558ae2cbb0233546077b4fd3891",
+    "from.png": "60c34dabaa2028617540a3b790c7631af13ab558ae2cbb0233546077b4fd3891",
+    "select.png": "72beb3f9824c5fbb6c80f01ce5d7e50ef5fe36640021b89d9a0b79c70004f734",
+    "distinct.png": "42427ff9dc17565527219e5be69545b01630ebf4f66449274d230f437a2fe4e9",
+    "order.png": "669c0875ecba6edfd2efc39b3c2d38a8d12447434f57d3c84f1312a4cf64760b"
+  },
+  "caption": "Minh họa xử lý logic: nguồn 48 hồ sơ; chọn hai cột, bỏ trùng còn 19 cặp. Các bảng chỉ trích dữ liệu; thứ tự trước ORDER BY là minh họa.",
+  "alt": "SELECT lấy mã phòng và mã chức danh của năm hồ sơ. DISTINCT gộp hai dòng KD, CV, vẫn giữ KD, CVC. ORDER BY xếp bốn cặp được trích theo hai mã.",
+  "scenes": [
+    {
+      "step": 0,
+      "file": "from.png",
+      "alt": "FROM chọn bảng NhanVien, trích năm trong 48 hồ sơ."
+    },
+    {
+      "step": 1,
+      "file": "select.png",
+      "alt": "SELECT chọn MaPB và MaCD; NV003 và NV013 cùng cho cặp KD, CV."
+    },
+    {
+      "step": 2,
+      "file": "distinct.png",
+      "alt": "DISTINCT gộp hai dòng KD, CV; KD, CVC còn riêng. Tổng 19 cặp."
+    },
+    {
+      "step": 3,
+      "file": "order.png",
+      "alt": "ORDER BY xếp bốn cặp được trích theo mã phòng rồi mã chức danh; không phải bốn dòng đầu kết quả."
+    }
+  ]
+}

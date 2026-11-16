@@ -6,6 +6,7 @@ import { readLessonFiles, lessonMainSection, sqlSubheadings } from './helpers/le
 import { compareResults, type Shape } from '../src/lib/grade';
 import { guardExercise } from '../src/lib/sql-guard';
 import type { ExerciseFile } from '../src/lib/exercise-types';
+import { readAnimation } from '../src/lib/animation-assets';
 
 const slug = '2-4-sap-xep-va-top';
 const lesson = () => readLessonFiles().find(f => f.slug === slug)!;
@@ -34,7 +35,7 @@ describe('lesson 2.4 orders the filtered rows before applying TOP', () => {
     expect(main.match(/<Result\b/g)).toHaveLength(1);
     expect(structure).toMatch(/<Excel[\s\S]*?<Sql copy=\{false\}/);
     const sql = query.match(/<Sql code=\{`([\s\S]*?)`\} \/>/);
-    const flow = query.match(/<RunFlow query=\{`([\s\S]*?)`\} steps=\{[\s\S]*?\} \/>/);
+    const flow = query.match(/<AnimatedFlow query=\{`([\s\S]*?)`\} steps=\{[\s\S]*?\} animation="2-4-order-top" \/>/);
     expect(sql).not.toBeNull();
     expect(flow).not.toBeNull();
     expect(sql![1]).toBe(flow![1]);
@@ -53,7 +54,7 @@ describe('lesson 2.4 orders the filtered rows before applying TOP', () => {
   it('shows the latest five active profiles and the correct logical totals', () => {
     const f = lesson();
     expect((f.data as { kind: string }).kind).toBe('full');
-    const flow = f.body.match(/<RunFlow query=\{`([\s\S]*?)`\} steps=\{([\s\S]*?)\} \/>/);
+    const flow = f.body.match(/<AnimatedFlow query=\{`([\s\S]*?)`\} steps=\{([\s\S]*?)\} animation="2-4-order-top" \/>/);
     expect(flow).not.toBeNull();
     expect(flow![1]).toMatch(/^SELECT TOP \(5\)/);
     expect(flow![1]).toContain("WHERE TrangThai = N'Đang làm'");
@@ -70,6 +71,15 @@ describe('lesson 2.4 orders the filtered rows before applying TOP', () => {
     const result = f.body.match(/<Result columns=\{\[[\s\S]*?\]\} rows=\{(\[[\s\S]*?\])\}[^>]*\/>/);
     expect(result).not.toBeNull();
     expect(runInNewContext(`(${result![1]})`)).toEqual(expected.slice(0, 5));
+  });
+
+  it('binds all five illustrations to the exact query and step data', () => {
+    const match = lesson().body.match(/<AnimatedFlow query=\{(`[^]*?`)\} steps=\{([^]*?)\} animation="2-4-order-top"/)!;
+    const query = runInNewContext(match[1]);
+    const steps = JSON.parse(JSON.stringify(runInNewContext(`(${match[2]})`)));
+    const asset = readAnimation('2-4-order-top', query, steps);
+    expect(asset.scenes.map(scene => scene.step)).toEqual([0, 1, 2, 3, 4]);
+    expect(() => readAnimation('2-4-order-top', query + ' ', steps)).toThrow('lỗi thời');
   });
 
   it('makes all three exercises grade row order without publishing an answer in the lesson', () => {

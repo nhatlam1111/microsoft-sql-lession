@@ -1,0 +1,60 @@
+import assert from 'node:assert/strict';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { chromium, type Page } from 'playwright';
+
+const base = process.env.LESSON_PREVIEW_URL || 'http://127.0.0.1:4322/microsoft-sql-lession';
+const url = `${base}/bai/2-4-sap-xep-va-top/`;
+const out = process.env.ORDER_TOP_EVIDENCE_DIR || 'docs/verification/2026-11-16-order-top-animation';
+mkdirSync(out,{recursive:true});
+const browser=await chromium.launch({channel:'chrome',headless:true});
+const checks:string[]=[];
+async function open(page:Page){await page.goto(url);await page.locator('.rp-modal').waitFor();await page.locator('.rp-modal').getByRole('button',{name:'Đóng',exact:true}).click();}
+try {
+  const page=await browser.newPage({viewport:{width:1440,height:1000}});
+  const errors:string[]=[]; page.on('pageerror',error=>errors.push(error.message));
+  await open(page);
+  const image=page.locator('.af-image'), button=page.locator('.af-play');
+  await image.scrollIntoViewIfNeeded();
+  await page.waitForFunction(()=>document.querySelector('.af-play')?.getAttribute('aria-pressed')==='true');
+  await image.evaluate(async(img:HTMLImageElement)=>img.decode());
+  await page.screenshot({path:`${out}/desktop.png`});
+  await button.focus();await page.keyboard.press('Enter');
+  assert.match(await image.getAttribute('src')||'',/poster\.png$/);
+  await page.evaluate(()=>scrollTo(0,0));await image.scrollIntoViewIfNeeded();
+  assert.equal(await button.getAttribute('aria-pressed'),'false');
+  await button.press('Space');const first=await image.getAttribute('src');
+  await button.click();await button.click();assert.notEqual(await image.getAttribute('src'),first);
+  await button.click();
+  await page.locator('.af-details summary').focus();await page.keyboard.press('Enter');
+  assert.equal(await page.locator('.af-details').getAttribute('open'),'');
+  assert.equal(await page.locator('.af-step').count(),5);
+  assert.match(await page.locator('.af-details').innerText(),/NV044/);
+  assert.match(await page.locator('.af-details').innerText(),/NV040/);
+  for(const scene of await page.locator('.af-step img').all()){await scene.scrollIntoViewIfNeeded();await scene.evaluate(async(img:HTMLImageElement)=>img.decode());}
+  checks.push('GIF decodes and plays; keyboard stop/play, stop persistence, replay, details and five scene images work.');
+  await page.evaluate(()=>{const root=document.querySelector('.animated-flow')!;const main=document.createElement('main');main.className='prose';main.style.cssText='width:720px;max-width:100%;padding:0;min-width:0';main.append(root);document.body.replaceChildren(main);scrollTo(0,0);});
+  assert.equal(Math.round((await image.boundingBox())!.width),720);
+  await page.screenshot({path:`${out}/component-720.png`});
+  await page.setViewportSize({width:390,height:844});
+  const box=await image.boundingBox();assert(box&&box.width<=390&&box.width>=300);
+  await page.screenshot({path:`${out}/component-390.png`});
+  checks.push('Isolated component fits 720px and 390px; HTML details remain available.');
+  const narrow=await browser.newPage({viewport:{width:390,height:844}});await open(narrow);await narrow.locator('.af-image').scrollIntoViewIfNeeded();
+  const shell=await narrow.locator('.af-image').boundingBox();await narrow.screenshot({path:`${out}/narrow-shell.png`});
+  checks.push(shell&&shell.width>=200&&shell.x>=0&&shell.x+shell.width<=390?'Full lesson fits 390px.':'LIMIT: existing lesson shell compresses the article at 390px.');
+  const reduced=await browser.newPage({viewport:{width:1440,height:1000},reducedMotion:'reduce'});await open(reduced);await reduced.locator('.af-image').scrollIntoViewIfNeeded();
+  assert.match(await reduced.locator('.af-image').getAttribute('src')||'',/poster\.png$/);await reduced.locator('.af-play').click();assert.equal(await reduced.locator('.af-play').getAttribute('aria-pressed'),'true');
+  checks.push('Reduced motion starts still and permits explicit playback.');
+  const noJs=await browser.newPage({javaScriptEnabled:false,viewport:{width:1440,height:1000}});await noJs.goto(url);assert.equal(await noJs.locator('.af-play').isVisible(),false);await noJs.locator('.af-details summary').click();assert.equal(await noJs.locator('.af-step').count(),5);
+  checks.push('Without JavaScript the poster and five HTML steps are available.');
+  const failure=await browser.newPage({viewport:{width:1440,height:1000}});await failure.route('**/animation.gif?*',route=>route.abort());await open(failure);await failure.locator('.af-image').scrollIntoViewIfNeeded();
+  await failure.waitForFunction(()=>document.querySelector('.af-status')?.textContent?.includes('Chưa tải'));assert.match(await failure.locator('.af-image').getAttribute('src')||'',/poster\.png$/);
+  await failure.unroute('**/animation.gif?*');await failure.locator('.af-play').click();await failure.locator('.af-image').evaluate(async(img:HTMLImageElement)=>img.decode());
+  checks.push('Failed GIF load falls back to poster and retry works.');
+  assert.deepEqual(errors,[]);
+  const files=['dist/bai/2-4-sap-xep-va-top/index.html','src/content/lessons/2-4-sap-xep-va-top.mdx','src/components/lesson/AnimatedFlow.astro','public/lesson-animations/2-4-order-top/manifest.json','public/lesson-animations/2-4-order-top/animation.gif','scripts/animations/check-order-top-browser.mts'];
+  const hashes=Object.fromEntries(files.map(file=>[file,createHash('sha256').update(readFileSync(file)).digest('hex')]));
+  writeFileSync(`${out}/browser.json`,JSON.stringify({url,checkedAt:new Date().toISOString(),hashes,checks,pageErrors:errors},null,2)+'\n');
+  console.log(checks.join('\n'));
+}finally{await browser.close();}

@@ -1,3 +1,4 @@
+import { runInNewContext } from 'node:vm';
 import { it, expect } from 'vitest';
 import { experimental_AstroContainer } from 'astro/container';
 import AnimatedFlow from '../src/components/lesson/AnimatedFlow.astro';
@@ -59,4 +60,34 @@ it('static HTML preserves two logical steps, data and text without JavaScript', 
   expect(html).toContain('width="1080" height="824"');
   expect(html.match(/class="af-step"/g)).toHaveLength(2);
   expect(html).toMatch(/class="af-play" hidden/);
+});
+
+it('WHERE animation and the displayed SQL stay in sync', () => {
+  const where = lessonBlocks('2-2-where-loc-nhu-autofilter');
+  const sql = where.body.match(/<Sql code=\{`([\s\S]*?)`\}\s*\/>\s*[\s\S]*?<AnimatedFlow query=/);
+  expect(sql).not.toBeNull();
+  expect(runInNewContext('`' + sql![1] + '`')).toBe(where.query);
+  const asset = readAnimation('2-2-where', where.query, where.steps);
+  expect(asset.scenes.map(s => s.step)).toEqual([0, 1, 2]);
+});
+
+it('combined-condition animation matches the displayed query and three lesson steps', () => {
+  const lesson = lessonBlocks('2-3-and-or-in-between-like');
+  const sql = lesson.body.match(/<Sql code=\{`([\s\S]*?)`\}\s*\/>\s*[\s\S]*?<AnimatedFlow query=/);
+  expect(sql).not.toBeNull();
+  expect(runInNewContext('`' + sql![1] + '`')).toBe(lesson.query);
+  const asset = readAnimation('2-3-conditions', lesson.query, lesson.steps);
+  expect(asset.scenes.map(s => s.step)).toEqual([0, 1, 2]);
+  expect(asset.alt).toContain('NV003');
+  expect(() => readAnimation('2-3-conditions', lesson.query + ' ', lesson.steps)).toThrow('lỗi thời');
+});
+
+it('shows the condition totals described by the table caption', async () => {
+  const lesson = lessonBlocks('2-3-and-or-in-between-like');
+  const container = await experimental_AstroContainer.create();
+  const html = await container.renderToString(AnimatedFlow, { props: { query: lesson.query, steps: lesson.steps, animation: '2-3-conditions' } });
+  expect(html).toMatch(/<tfoot[^>]*>\s*<tr[^>]*>\s*<th scope="row"[^>]*>Cả 48 dòng<\/th>\s*<td[^>]*>24 đúng<\/td>\s*<td[^>]*>3 đúng<\/td>\s*<td[^>]*>2 giữ<\/td>/);
+  expect(html).toContain('NV002');
+  expect(html).toContain('Loại');
+  expect(html).toContain('Giữ');
 });

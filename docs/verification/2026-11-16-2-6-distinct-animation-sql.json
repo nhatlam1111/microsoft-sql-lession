@@ -1,0 +1,202 @@
+{
+  "checkedAt": "2026-11-16T08:59:24.923Z",
+  "inputHash": "50240c67223fe41871aa03887563c4c52e069edf662683abaa0bcd8eec1e78e7",
+  "statements": [
+    {
+      "clause": "FROM",
+      "sql": "SELECT * FROM NhanVien;",
+      "columns": [
+        "MaNV",
+        "HoTen",
+        "GioiTinh",
+        "NgaySinh",
+        "SoCCCD",
+        "Email",
+        "NgayVaoLam",
+        "NgayNghiViec",
+        "MaPB",
+        "MaCD",
+        "MaQuanLy",
+        "TrangThai"
+      ],
+      "count": 48,
+      "excerpt": [
+        [
+          "NV001",
+          "Trần Thị Mai",
+          "Nữ",
+          "1992-04-12",
+          "000192131376",
+          "mai.tt@hrmdemo.vn",
+          "2024-03-01",
+          null,
+          "KT",
+          "CV",
+          "NV005",
+          "Đang làm"
+        ],
+        [
+          "NV002",
+          "Lê Văn Hùng",
+          "Nam",
+          "1988-09-03",
+          "000088139295",
+          "hung.lv@hrmdemo.vn",
+          "2024-04-01",
+          null,
+          "KD",
+          "CVC",
+          "NV006",
+          "Đang làm"
+        ],
+        [
+          "NV003",
+          "Nguyễn Thu Hà",
+          "Nữ",
+          "1995-01-25",
+          "000195147214",
+          "ha.nt@hrmdemo.vn",
+          "2023-06-01",
+          null,
+          "KD",
+          "CV",
+          "NV006",
+          "Đang làm"
+        ],
+        [
+          "NV004",
+          "Hoàng Minh Tuấn",
+          "Nam",
+          "1975-07-19",
+          "000075155133",
+          "tuan.hm@hrmdemo.vn",
+          "2015-01-05",
+          null,
+          "BGD",
+          "GD",
+          null,
+          "Đang làm"
+        ],
+        [
+          "NV013",
+          "Mai Đức Anh",
+          "Nam",
+          "1994-01-11",
+          "000094226404",
+          "anh.md@hrmdemo.vn",
+          "2019-03-04",
+          null,
+          "KD",
+          "CV",
+          "NV006",
+          "Đang làm"
+        ]
+      ]
+    },
+    {
+      "clause": "SELECT",
+      "sql": "SELECT MaPB, MaCD\nFROM NhanVien;",
+      "columns": [
+        "MaPB",
+        "MaCD"
+      ],
+      "count": 48,
+      "excerpt": [
+        [
+          "KT",
+          "CV"
+        ],
+        [
+          "KD",
+          "CVC"
+        ],
+        [
+          "KD",
+          "CV"
+        ],
+        [
+          "BGD",
+          "GD"
+        ],
+        [
+          "KD",
+          "CV"
+        ]
+      ]
+    },
+    {
+      "clause": "DISTINCT",
+      "sql": "SELECT DISTINCT MaPB, MaCD\nFROM NhanVien;",
+      "columns": [
+        "MaPB",
+        "MaCD"
+      ],
+      "count": 19,
+      "excerpt": [
+        [
+          "KT",
+          "CV"
+        ],
+        [
+          "KD",
+          "CVC"
+        ],
+        [
+          "KD",
+          "CV"
+        ],
+        [
+          "BGD",
+          "GD"
+        ],
+        [
+          "IT",
+          "CV"
+        ]
+      ]
+    },
+    {
+      "clause": "ORDER BY",
+      "sql": "SELECT DISTINCT MaPB, MaCD\nFROM NhanVien\nORDER BY MaPB ASC, MaCD ASC;",
+      "columns": [
+        "MaPB",
+        "MaCD"
+      ],
+      "count": 19,
+      "excerpt": [
+        [
+          "BGD",
+          "GD"
+        ],
+        [
+          "BGD",
+          "TL"
+        ],
+        [
+          "IT",
+          "CV"
+        ],
+        [
+          "IT",
+          "CVC"
+        ],
+        [
+          "IT",
+          "NV"
+        ],
+        [
+          "IT",
+          "TP"
+        ],
+        [
+          "KD",
+          "CV"
+        ],
+        [
+          "KD",
+          "CVC"
+        ]
+      ]
+    }
+  ]
+}
