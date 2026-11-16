@@ -28,7 +28,7 @@ describe('lesson 2.3 combines conditions without changing their scope', () => {
     const [first, second, practice] = main.split(/^### /m).slice(1);
     expect(first.indexOf('<Excel')).toBeLessThan(first.indexOf('<Sql'));
     expect(first).toMatch(/<Sql copy=\{false\}[\s\S]*?WHERE \(MaPB = 'KD' OR MaPB = 'IT'\)[\s\S]*?AND NgayVaoLam BETWEEN/);
-    const cause = second.slice(second.indexOf(']} />'), second.indexOf('<Result'));
+    const cause = second.slice(second.indexOf('animation="2-3-conditions" />'), second.indexOf('<Result'));
     expect(cause).toContain('NV003');
     expect(cause).toContain('NV002');
     expect(practice).toMatch(/TrangThai\s*=\s*N'/);
@@ -59,9 +59,7 @@ describe('lesson 2.3 combines conditions without changing their scope', () => {
     const arrays = [...body.matchAll(/<Result columns=\{(\[[\s\S]*?\])\} rows=\{(\[[\s\S]*?\])\}[^>]*\/>/g)]
       .map(m => runInNewContext(`(${m[2]})`) as unknown[][]);
     expect(arrays).toContainEqual(matches.map(p => [p.MaNV, p.HoTen, p.MaPB, p.NgayVaoLam]));
-    const flow = body.match(/<RunFlow query=\{`[\s\S]*?`\} steps=\{([\s\S]*?)\} \/>/);
-    expect(flow).not.toBeNull();
-    const steps = runInNewContext(`(${flow![1]})`) as { clause: string; rows: unknown[][]; total: number }[];
+    const { steps } = lessonBlocks(slug);
     expect(steps.map(s => [s.clause, s.total])).toEqual([['FROM', 48], ['WHERE', 2], ['SELECT', 2]]);
     expect(steps.at(-1)!.rows).toEqual(matches.map(p => [p.MaNV, p.HoTen, p.MaPB, p.NgayVaoLam]));
   });

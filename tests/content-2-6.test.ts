@@ -21,7 +21,7 @@ const uniqueSorted = (rows: (string | null)[][]) =>
   [...new Set(rows.map(r => JSON.stringify(r)))].sort().map(s => JSON.parse(s));
 
 it('2.6 projects every profile before DISTINCT and sorts the unique department and job pairs afterward', () => {
-  const flow = body().match(/<RunFlow query=\{`([\s\S]*?)`\} steps=\{([\s\S]*?)\} \/>/);
+  const flow = body().match(/<AnimatedFlow query=\{`([\s\S]*?)`\} steps=\{([\s\S]*?)\} animation="2-6-distinct" \/>/);
   expect(flow).not.toBeNull();
   const steps = value<{ clause: string; columns: string[]; rows: (string | null)[][]; total: number }[]>(flow![2]);
   const columns = ['MaPB', 'MaCD'];

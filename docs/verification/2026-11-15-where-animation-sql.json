@@ -1,0 +1,177 @@
+{
+  "checkedAt": "2026-11-15T04:07:00.275Z",
+  "inputHash": "2642af867532e91d2a65061815d6d0cf022e881ca4ee6d92af3d2e8b3b5ba273",
+  "statements": [
+    {
+      "clause": "FROM",
+      "sql": "SELECT * FROM NhanVien;",
+      "columns": [
+        "MaNV",
+        "HoTen",
+        "GioiTinh",
+        "NgaySinh",
+        "SoCCCD",
+        "Email",
+        "NgayVaoLam",
+        "NgayNghiViec",
+        "MaPB",
+        "MaCD",
+        "MaQuanLy",
+        "TrangThai"
+      ],
+      "count": 48,
+      "excerpt": [
+        [
+          "NV001",
+          "Trần Thị Mai",
+          "Nữ",
+          "1992-04-12",
+          "000192131376",
+          "mai.tt@hrmdemo.vn",
+          "2024-03-01",
+          null,
+          "KT",
+          "CV",
+          "NV005",
+          "Đang làm"
+        ],
+        [
+          "NV002",
+          "Lê Văn Hùng",
+          "Nam",
+          "1988-09-03",
+          "000088139295",
+          "hung.lv@hrmdemo.vn",
+          "2024-04-01",
+          null,
+          "KD",
+          "CVC",
+          "NV006",
+          "Đang làm"
+        ],
+        [
+          "NV003",
+          "Nguyễn Thu Hà",
+          "Nữ",
+          "1995-01-25",
+          "000195147214",
+          "ha.nt@hrmdemo.vn",
+          "2023-06-01",
+          null,
+          "KD",
+          "CV",
+          "NV006",
+          "Đang làm"
+        ],
+        [
+          "NV020",
+          "Kiều Thị Hạnh",
+          "Nữ",
+          "1990-05-19",
+          "000190281837",
+          "hanh.kt@hrmdemo.vn",
+          "2019-04-01",
+          "2025-12-31",
+          "KD",
+          "CV",
+          "NV006",
+          "Đã nghỉ"
+        ]
+      ]
+    },
+    {
+      "clause": "WHERE",
+      "sql": "SELECT * FROM NhanVien WHERE MaPB = 'KD';",
+      "columns": [
+        "MaNV",
+        "HoTen",
+        "GioiTinh",
+        "NgaySinh",
+        "SoCCCD",
+        "Email",
+        "NgayVaoLam",
+        "NgayNghiViec",
+        "MaPB",
+        "MaCD",
+        "MaQuanLy",
+        "TrangThai"
+      ],
+      "count": 14,
+      "excerpt": [
+        [
+          "NV002",
+          "Lê Văn Hùng",
+          "Nam",
+          "1988-09-03",
+          "000088139295",
+          "hung.lv@hrmdemo.vn",
+          "2024-04-01",
+          null,
+          "KD",
+          "CVC",
+          "NV006",
+          "Đang làm"
+        ],
+        [
+          "NV003",
+          "Nguyễn Thu Hà",
+          "Nữ",
+          "1995-01-25",
+          "000195147214",
+          "ha.nt@hrmdemo.vn",
+          "2023-06-01",
+          null,
+          "KD",
+          "CV",
+          "NV006",
+          "Đang làm"
+        ],
+        [
+          "NV020",
+          "Kiều Thị Hạnh",
+          "Nữ",
+          "1990-05-19",
+          "000190281837",
+          "hanh.kt@hrmdemo.vn",
+          "2019-04-01",
+          "2025-12-31",
+          "KD",
+          "CV",
+          "NV006",
+          "Đã nghỉ"
+        ]
+      ]
+    },
+    {
+      "clause": "SELECT",
+      "sql": "SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],\n\tMaPB AS [Mã phòng], TrangThai AS [Trạng thái]\nFROM NhanVien\nWHERE MaPB = 'KD';",
+      "columns": [
+        "Mã nhân viên",
+        "Họ tên",
+        "Mã phòng",
+        "Trạng thái"
+      ],
+      "count": 14,
+      "excerpt": [
+        [
+          "NV002",
+          "Lê Văn Hùng",
+          "KD",
+          "Đang làm"
+        ],
+        [
+          "NV003",
+          "Nguyễn Thu Hà",
+          "KD",
+          "Đang làm"
+        ],
+        [
+          "NV020",
+          "Kiều Thị Hạnh",
+          "KD",
+          "Đã nghỉ"
+        ]
+      ]
+    }
+  ]
+}

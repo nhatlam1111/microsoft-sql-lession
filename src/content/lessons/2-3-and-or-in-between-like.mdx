@@ -58,9 +58,9 @@ FROM NhanVien
 WHERE MaPB IN ('KD', 'IT')
 \tAND NgayVaoLam BETWEEN '20230101' AND '20230630';`} />
 
-Bấm từng bước để xem **thứ tự xử lý logic** `FROM` → `WHERE` → `SELECT`. SQL Server tự chọn cách đọc dữ liệu khi thực thi.
+Xem minh họa **thứ tự xử lý logic** `FROM` → `WHERE` → `SELECT`, rồi mở **Xem từng bước** để đối chiếu dữ liệu. SQL Server tự chọn cách đọc dữ liệu khi thực thi.
 
-<RunFlow query={`SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
+<AnimatedFlow query={`SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
 \tMaPB AS [Mã phòng], NgayVaoLam AS [Ngày vào làm]
 FROM NhanVien
 WHERE MaPB IN ('KD', 'IT')
@@ -120,7 +120,7 @@ WHERE MaPB IN ('KD', 'IT')
     ],
     total: 2,
   },
-]} />
+]} animation="2-3-conditions" />
 
 `NV003` có mã `KD` và vào làm ngày `2023-06-01`, nên qua cả hai điều kiện. `NV002` cũng có mã `KD` nhưng bị loại vì vào làm ngày `2024-04-01`. Từ các hồ sơ qua lọc, `SELECT` lấy mã, họ tên, phòng và ngày vào làm, rồi đặt tiêu đề theo yêu cầu.
 

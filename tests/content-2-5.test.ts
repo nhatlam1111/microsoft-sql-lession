@@ -9,7 +9,7 @@ const LABEL = '(chưa có)';
 // This checks the lesson's rendered data contract, not SQL Server execution.
 it('2.5 keeps VH profiles with no leave date and labels only the missing email', () => {
   const lesson = body();
-  const flow = lesson.match(/<RunFlow query=\{`([\s\S]*?)`\} steps=\{([\s\S]*?)\} \/>/);
+  const flow = lesson.match(/<AnimatedFlow query=\{`([\s\S]*?)`\} steps=\{([\s\S]*?)\} animation="2-5-null" \/>/);
   expect(flow).not.toBeNull();
   const steps = runInNewContext(`(${flow![2]})`) as {
     clause: string; columns: string[]; rows: unknown[][]; total: number;

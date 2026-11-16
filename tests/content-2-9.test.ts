@@ -12,7 +12,7 @@ const labels = ['Dưới 1 năm', 'Từ 1 đến dưới 3 năm', 'Từ 3 năm t
 // Removing the active filter, computing before filtering, or mislabelling a profile must fail.
 it('2.9 filters current active profiles before computing the anniversary groups', () => {
   const body = lesson();
-  const flow = body.match(/<RunFlow query=\{`([\s\S]*?)`\} steps=\{([\s\S]*?)\} \/>/);
+  const flow = body.match(/<AnimatedFlow query=\{`([\s\S]*?)`\} steps=\{([\s\S]*?)\} animation="2-9-case" \/>/);
   expect(flow).not.toBeNull();
   const steps = literal(flow![2]);
   expect(steps.map((s: { clause: string; total: number }) => [s.clause, s.total])).toEqual([

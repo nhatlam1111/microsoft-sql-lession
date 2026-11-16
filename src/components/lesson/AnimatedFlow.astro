@@ -1,6 +1,6 @@
 ---
 import { readAnimation } from '../../lib/animation-assets';
-import { checkFlow, inputSteps, inputPreview, excerptNote, inlineCode, rowCount, checkCellText, checkNote, type FlowStep } from '../../lib/run-flow';
+import { checkFlow, inputSteps, inputPreview, excerptNote, inlineCode, rowCount, checkCellText, checkKept, checkNote, type FlowStep } from '../../lib/run-flow';
 import { highlightTsql } from '../../lib/tsql-highlight';
 import FlowExamples from './FlowExamples.astro';
 
@@ -48,8 +48,9 @@ const inputs = inputSteps(steps);
         <p>{inlineCode(step.meaning).map(p => p.code ? <code>{p.text}</code> : p.text)}</p>
         {step.checks && <div class="af-table" tabindex="0" role="region" aria-label="Soi điều kiện">
           <table><caption>{checkNote(step.checks, inputs[i].reduce((n, s) => n + rowCount(s), 0))}</caption>
-            <thead><tr><th scope="col">Hồ sơ</th>{step.checks.conditions.map(c => <th scope="col">{c}</th>)}{step.checks.labels && <th scope="col">Nhãn</th>}</tr></thead>
-            <tbody>{step.checks.rows.map(([key, ...cells], row) => <tr><th scope="row">{key}</th>{cells.map(c => <td>{checkCellText(c, !!step.checks?.labels)}</td>)}{step.checks?.labels && <td>{step.checks.labels[row]}</td>}</tr>)}</tbody>
+            <thead><tr><th scope="col">Hồ sơ</th>{step.checks.conditions.map(c => <th scope="col">{c}</th>)}<th scope="col">{step.checks.labels ? 'Nhãn' : 'Kết quả'}</th></tr></thead>
+            <tbody>{step.checks.rows.map(([key, ...cells], row) => <tr><th scope="row">{key}</th>{cells.map(c => <td>{checkCellText(c, !!step.checks?.labels)}</td>)}<td>{step.checks?.labels ? step.checks.labels[row] : checkKept([key, ...cells]) ? 'Giữ' : 'Loại'}</td></tr>)}</tbody>
+            <tfoot><tr><th scope="row">Cả {inputs[i].reduce((n, s) => n + rowCount(s), 0)} dòng</th>{step.checks.totals.slice(0, -1).map(n => <td>{step.checks!.labels ? `${n} dòng` : `${n} đúng`}</td>)}<td>{step.checks.labels ? `${step.checks.totals.at(-1)} dòng` : `${step.checks.totals.at(-1)} giữ`}</td></tr></tfoot>
           </table>
         </div>}
         {step.examples && <FlowExamples examples={step.examples} />}

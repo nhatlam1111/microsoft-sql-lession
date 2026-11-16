@@ -59,9 +59,9 @@ WHERE NgayKetThuc >= CAST('20261021' AS date)
 \tAND NgayKetThuc <= DATEADD(day, 30, CAST('20261021' AS date))
 ORDER BY NgayKetThuc ASC, MaHD ASC;`} />
 
-Sơ đồ mô tả **thứ tự xử lý logic** của truy vấn. SQL Server tự chọn cách thực thi. Bấm từng bước để xem hợp đồng nào qua lọc và cách tính số ngày còn lại.
+Minh họa mô tả **thứ tự xử lý logic** của truy vấn. SQL Server tự chọn cách thực thi. Mở từng bước để xem hợp đồng nào qua lọc và cách tính số ngày còn lại.
 
-<RunFlow query={`SELECT MaHD, MaNV, NgayBatDau, NgayKetThuc,
+<AnimatedFlow query={`SELECT MaHD, MaNV, NgayBatDau, NgayKetThuc,
 \tDATEDIFF(day, CAST('20261021' AS date), NgayKetThuc) AS [SoNgayConLai]
 FROM HopDong
 WHERE NgayKetThuc >= CAST('20261021' AS date)
@@ -159,7 +159,7 @@ ORDER BY NgayKetThuc ASC, MaHD ASC;`,
     total: 3,
     preview: ["MaHD","NgayKetThuc","SoNgayConLai"],
   },
-]} />
+]} animation="2-8-dates" />
 
 Trong `55` hợp đồng, có `3` dòng qua cả hai điều kiện. `HD2025-014` kết thúc ngày `2026-10-31`, nằm giữa hai mốc, nên qua lọc và có `SoNgayConLai` bằng `10` như ô `C2` trong Excel. `ORDER BY` đưa hợp đồng này lên đầu và dùng `MaHD` để quyết định thứ tự nếu hai dòng cùng ngày kết thúc.
 

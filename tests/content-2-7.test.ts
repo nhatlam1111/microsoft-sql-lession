@@ -25,7 +25,7 @@ describe('2.7 string projections preserve identity and source values', () => {
   it('shows every current IT record as a code + full-name signing label', () => {
     const body = lesson().body;
     expect(sqlSubheadings(body)).toEqual(['Cấu trúc mới trong bài', 'Đọc câu SQL qua các bước', 'Vận dụng trên cùng tình huống']);
-    const flow = body.match(/<RunFlow query=\{`([\s\S]*?)`\} steps=\{([\s\S]*?)\} \/>/);
+    const flow = body.match(/<AnimatedFlow query=\{`([\s\S]*?)`\} steps=\{([\s\S]*?)\} animation="2-7-strings" \/>/);
     expect(flow).not.toBeNull();
     expect(body.match(/<Sql code=\{`([\s\S]*?)`\}/)?.[1]).toBe(flow![1]);
     const steps = value<{ clause: string; columns: string[]; rows: unknown[][]; total: number }[]>(flow![2]);

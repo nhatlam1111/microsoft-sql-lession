@@ -1,0 +1,78 @@
+{
+  "checkedAt": "2026-11-16T09:02:17.143Z",
+  "base": "http://127.0.0.1:4322/microsoft-sql-lession",
+  "results": [
+    {
+      "slug": "2-6-distinct-bo-dong-trung",
+      "id": "2-6-distinct",
+      "shellFits390": false,
+      "checks": [
+        "GIF tự chạy và giải mã",
+        "dừng/phát bằng bàn phím, dừng được giữ khi cuộn",
+        "bốn bước và hình tĩnh",
+        "giảm chuyển động",
+        "HTML khi tắt JavaScript",
+        "component cô lập 390px"
+      ],
+      "hashes": {
+        "dist/bai/2-6-distinct-bo-dong-trung/index.html": "38908816295bc4ed274e659feef1411cf0897f655b2bd631bfc57747d9f2309d",
+        "public/lesson-animations/2-6-distinct/manifest.json": "6cd249e661b9e7cc53674f490edeb9c744559403332caf53e759622015fab6ae",
+        "src/components/lesson/AnimatedFlow.astro": "769549d8ea868e4743a7b09978dd04819ee2a99415d025f4fb66b64d7b34dd9c"
+      }
+    },
+    {
+      "slug": "2-7-ham-chuoi-tieng-viet",
+      "id": "2-7-strings",
+      "shellFits390": false,
+      "checks": [
+        "GIF tự chạy và giải mã",
+        "dừng/phát bằng bàn phím, dừng được giữ khi cuộn",
+        "bốn bước và hình tĩnh",
+        "giảm chuyển động",
+        "HTML khi tắt JavaScript",
+        "component cô lập 390px"
+      ],
+      "hashes": {
+        "dist/bai/2-7-ham-chuoi-tieng-viet/index.html": "49d01939227579f445959e46caebc9e78631cf4aaedf963fe42f96a094a01e06",
+        "public/lesson-animations/2-7-strings/manifest.json": "06c7936dd75c9e8a34327665b1a1efb49f0be37da73fdbd2011883a1bae7a998",
+        "src/components/lesson/AnimatedFlow.astro": "769549d8ea868e4743a7b09978dd04819ee2a99415d025f4fb66b64d7b34dd9c"
+      }
+    },
+    {
+      "slug": "2-8-ham-ngay-tham-nien",
+      "id": "2-8-dates",
+      "shellFits390": false,
+      "checks": [
+        "GIF tự chạy và giải mã",
+        "dừng/phát bằng bàn phím, dừng được giữ khi cuộn",
+        "bốn bước và hình tĩnh",
+        "giảm chuyển động",
+        "HTML khi tắt JavaScript",
+        "component cô lập 390px"
+      ],
+      "hashes": {
+        "dist/bai/2-8-ham-ngay-tham-nien/index.html": "05ba317b4a3f9d3071088720621767cbbba47b0caca661d09cd3c9895774e754",
+        "public/lesson-animations/2-8-dates/manifest.json": "3e427bcf263700d4a358e43dd09d2c37bf25a6f850bb864ad1d872e9453c9bce",
+        "src/components/lesson/AnimatedFlow.astro": "769549d8ea868e4743a7b09978dd04819ee2a99415d025f4fb66b64d7b34dd9c"
+      }
+    },
+    {
+      "slug": "2-9-case-when-ham-if",
+      "id": "2-9-case",
+      "shellFits390": false,
+      "checks": [
+        "GIF tự chạy và giải mã",
+        "dừng/phát bằng bàn phím, dừng được giữ khi cuộn",
+        "bốn bước và hình tĩnh",
+        "giảm chuyển động",
+        "HTML khi tắt JavaScript",
+        "component cô lập 390px"
+      ],
+      "hashes": {
+        "dist/bai/2-9-case-when-ham-if/index.html": "278dce26265f5b4a9db4d2cfef0c080f68e2f5b4c93dcaa7079f3a669ae03444",
+        "public/lesson-animations/2-9-case/manifest.json": "793df8537b67ca3b7ce2da0f8b9e6c5b47f95327100e635c027c6973afea423d",
+        "src/components/lesson/AnimatedFlow.astro": "769549d8ea868e4743a7b09978dd04819ee2a99415d025f4fb66b64d7b34dd9c"
+      }
+    }
+  ]
+}

@@ -1,0 +1,256 @@
+{
+  "checkedAt": "2026-11-16T08:59:25.939Z",
+  "inputHash": "31513e6b574f9657ae5f6f2e5e791912634d4acab0f31ce7933d5d1d2ffa555b",
+  "statements": [
+    {
+      "clause": "FROM",
+      "sql": "SELECT * FROM NhanVien;",
+      "columns": [
+        "MaNV",
+        "HoTen",
+        "GioiTinh",
+        "NgaySinh",
+        "SoCCCD",
+        "Email",
+        "NgayVaoLam",
+        "NgayNghiViec",
+        "MaPB",
+        "MaCD",
+        "MaQuanLy",
+        "TrangThai"
+      ],
+      "count": 48,
+      "excerpt": [
+        [
+          "NV003",
+          "Nguyễn Thu Hà",
+          "Nữ",
+          "1995-01-25",
+          "000195147214",
+          "ha.nt@hrmdemo.vn",
+          "2023-06-01",
+          null,
+          "KD",
+          "CV",
+          "NV006",
+          "Đang làm"
+        ],
+        [
+          "NV007",
+          "Bùi Thanh Sơn",
+          "Nam",
+          "1986-05-30",
+          "000086178890",
+          "son.bt@hrmdemo.vn",
+          "2017-02-13",
+          null,
+          "IT",
+          "TP",
+          "NV004",
+          "Đang làm"
+        ],
+        [
+          "NV011",
+          "Lý Minh Khoa",
+          "Nam",
+          "1990-10-02",
+          "000090210566",
+          "khoa.lm@hrmdemo.vn",
+          "2018-04-02",
+          null,
+          "IT",
+          "CVC",
+          "NV007",
+          "Đang làm"
+        ]
+      ]
+    },
+    {
+      "clause": "WHERE",
+      "sql": "SELECT *\nFROM NhanVien\nWHERE MaPB = 'IT';",
+      "columns": [
+        "MaNV",
+        "HoTen",
+        "GioiTinh",
+        "NgaySinh",
+        "SoCCCD",
+        "Email",
+        "NgayVaoLam",
+        "NgayNghiViec",
+        "MaPB",
+        "MaCD",
+        "MaQuanLy",
+        "TrangThai"
+      ],
+      "count": 10,
+      "excerpt": [
+        [
+          "NV007",
+          "Bùi Thanh Sơn",
+          "Nam",
+          "1986-05-30",
+          "000086178890",
+          "son.bt@hrmdemo.vn",
+          "2017-02-13",
+          null,
+          "IT",
+          "TP",
+          "NV004",
+          "Đang làm"
+        ],
+        [
+          "NV011",
+          "Lý Minh Khoa",
+          "Nam",
+          "1990-10-02",
+          "000090210566",
+          "khoa.lm@hrmdemo.vn",
+          "2018-04-02",
+          null,
+          "IT",
+          "CVC",
+          "NV007",
+          "Đang làm"
+        ],
+        [
+          "NV017",
+          "Cao Minh Trí",
+          "Nam",
+          "1993-07-07",
+          "000093258080",
+          "tri.cm@hrmdemo.vn",
+          "2020-06-01",
+          null,
+          "IT",
+          "CV",
+          "NV007",
+          "Đang làm"
+        ]
+      ]
+    },
+    {
+      "clause": "SELECT",
+      "sql": "SELECT MaNV AS [Mã nhân viên],\n\tCONCAT(RIGHT(MaNV, 3), N' - ', UPPER(HoTen)) AS [Nhãn ký nhận],\n\tLEN(HoTen) AS [Số ký tự họ tên]\nFROM NhanVien\nWHERE MaPB = 'IT';",
+      "columns": [
+        "Mã nhân viên",
+        "Nhãn ký nhận",
+        "Số ký tự họ tên"
+      ],
+      "count": 10,
+      "excerpt": [
+        [
+          "NV011",
+          "011 - LÝ MINH KHOA",
+          12
+        ],
+        [
+          "NV007",
+          "007 - BÙI THANH SƠN",
+          13
+        ],
+        [
+          "NV017",
+          "017 - CAO MINH TRÍ",
+          12
+        ],
+        [
+          "NV021",
+          "021 - TÔN THẤT LONG",
+          13
+        ],
+        [
+          "NV029",
+          "029 - MẠC VĂN ĐÔNG",
+          12
+        ],
+        [
+          "NV035",
+          "035 - THÁI MINH HIẾU",
+          14
+        ],
+        [
+          "NV039",
+          "039 - ÂU VĂN KIÊN",
+          11
+        ],
+        [
+          "NV043",
+          "043 - ĐÀM VĂN KHÁNH",
+          13
+        ],
+        [
+          "NV046",
+          "046 - HỨA THỊ PHƯƠNG",
+          14
+        ],
+        [
+          "NV048",
+          "048 - ĐỖ MINH QUÂN",
+          12
+        ]
+      ]
+    },
+    {
+      "clause": "ORDER BY",
+      "sql": "SELECT MaNV AS [Mã nhân viên],\n\tCONCAT(RIGHT(MaNV, 3), N' - ', UPPER(HoTen)) AS [Nhãn ký nhận],\n\tLEN(HoTen) AS [Số ký tự họ tên]\nFROM NhanVien\nWHERE MaPB = 'IT'\nORDER BY MaNV ASC;",
+      "columns": [
+        "Mã nhân viên",
+        "Nhãn ký nhận",
+        "Số ký tự họ tên"
+      ],
+      "count": 10,
+      "excerpt": [
+        [
+          "NV007",
+          "007 - BÙI THANH SƠN",
+          13
+        ],
+        [
+          "NV011",
+          "011 - LÝ MINH KHOA",
+          12
+        ],
+        [
+          "NV017",
+          "017 - CAO MINH TRÍ",
+          12
+        ],
+        [
+          "NV021",
+          "021 - TÔN THẤT LONG",
+          13
+        ],
+        [
+          "NV029",
+          "029 - MẠC VĂN ĐÔNG",
+          12
+        ],
+        [
+          "NV035",
+          "035 - THÁI MINH HIẾU",
+          14
+        ],
+        [
+          "NV039",
+          "039 - ÂU VĂN KIÊN",
+          11
+        ],
+        [
+          "NV043",
+          "043 - ĐÀM VĂN KHÁNH",
+          13
+        ],
+        [
+          "NV046",
+          "046 - HỨA THỊ PHƯƠNG",
+          14
+        ],
+        [
+          "NV048",
+          "048 - ĐỖ MINH QUÂN",
+          12
+        ]
+      ]
+    }
+  ]
+}

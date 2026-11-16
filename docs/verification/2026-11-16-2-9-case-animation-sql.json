@@ -1,0 +1,414 @@
+{
+  "checkedAt": "2026-11-16T08:59:27.433Z",
+  "inputHash": "90c4e4e3a1ed9783f0b1c4981dc7406f356689454b9a76f949ebbc5aa3122d93",
+  "statements": [
+    {
+      "clause": "FROM",
+      "sql": "SELECT * FROM NhanVien;",
+      "columns": [
+        "MaNV",
+        "HoTen",
+        "GioiTinh",
+        "NgaySinh",
+        "SoCCCD",
+        "Email",
+        "NgayVaoLam",
+        "NgayNghiViec",
+        "MaPB",
+        "MaCD",
+        "MaQuanLy",
+        "TrangThai"
+      ],
+      "count": 48,
+      "excerpt": [
+        [
+          "NV001",
+          "Trần Thị Mai",
+          "Nữ",
+          "1992-04-12",
+          "000192131376",
+          "mai.tt@hrmdemo.vn",
+          "2024-03-01",
+          null,
+          "KT",
+          "CV",
+          "NV005",
+          "Đang làm"
+        ],
+        [
+          "NV003",
+          "Nguyễn Thu Hà",
+          "Nữ",
+          "1995-01-25",
+          "000195147214",
+          "ha.nt@hrmdemo.vn",
+          "2023-06-01",
+          null,
+          "KD",
+          "CV",
+          "NV006",
+          "Đang làm"
+        ],
+        [
+          "NV020",
+          "Kiều Thị Hạnh",
+          "Nữ",
+          "1990-05-19",
+          "000190281837",
+          "hanh.kt@hrmdemo.vn",
+          "2019-04-01",
+          "2025-12-31",
+          "KD",
+          "CV",
+          "NV006",
+          "Đã nghỉ"
+        ],
+        [
+          "NV025",
+          "Huỳnh Văn Tài",
+          "Nam",
+          "1993-06-06",
+          "000093321432",
+          "tai.hv@hrmdemo.vn",
+          "2023-11-01",
+          null,
+          "KD",
+          "CV",
+          "NV006",
+          "Đang làm"
+        ],
+        [
+          "NV033",
+          "Khúc Văn Hải",
+          "Nam",
+          "1990-01-01",
+          "000090384784",
+          "hai.kv@hrmdemo.vn",
+          "2019-06-03",
+          "2026-06-30",
+          "VH",
+          "NV",
+          "NV008",
+          "Đã nghỉ"
+        ],
+        [
+          "NV041",
+          "Hà Văn Quý",
+          "Nam",
+          "1991-07-21",
+          "000091448136",
+          "quy.hv@hrmdemo.vn",
+          "2020-01-06",
+          "2026-08-15",
+          "VH",
+          "NV",
+          "NV008",
+          "Đã nghỉ"
+        ],
+        [
+          "NV044",
+          "Lã Thị Oanh",
+          "Nữ",
+          "1998-04-14",
+          "000198471893",
+          null,
+          "2025-08-04",
+          null,
+          "VH",
+          "NV",
+          "NV008",
+          "Đang làm"
+        ],
+        [
+          "NV045",
+          "Ung Văn Lực",
+          "Nam",
+          "2001-01-09",
+          "000201479812",
+          null,
+          "2026-07-01",
+          null,
+          "KD",
+          "NV",
+          "NV006",
+          "Đang làm"
+        ],
+        [
+          "NV047",
+          "Phạm Ngọc Ánh",
+          "Nữ",
+          "1999-02-17",
+          "000199495650",
+          "anh.pn@hrmdemo.vn",
+          "2026-10-01",
+          null,
+          "NS",
+          "CV",
+          "NV010",
+          "Đang làm"
+        ],
+        [
+          "NV048",
+          "Đỗ Minh Quân",
+          "Nam",
+          "2000-08-25",
+          "000200503569",
+          "quan.dm@hrmdemo.vn",
+          "2026-10-05",
+          null,
+          "IT",
+          "NV",
+          "NV007",
+          "Đang làm"
+        ]
+      ]
+    },
+    {
+      "clause": "WHERE",
+      "sql": "SELECT *\nFROM NhanVien\nWHERE TrangThai = N'Đang làm' AND NgayVaoLam <= '20261021';",
+      "columns": [
+        "MaNV",
+        "HoTen",
+        "GioiTinh",
+        "NgaySinh",
+        "SoCCCD",
+        "Email",
+        "NgayVaoLam",
+        "NgayNghiViec",
+        "MaPB",
+        "MaCD",
+        "MaQuanLy",
+        "TrangThai"
+      ],
+      "count": 45,
+      "excerpt": [
+        [
+          "NV001",
+          "Trần Thị Mai",
+          "Nữ",
+          "1992-04-12",
+          "000192131376",
+          "mai.tt@hrmdemo.vn",
+          "2024-03-01",
+          null,
+          "KT",
+          "CV",
+          "NV005",
+          "Đang làm"
+        ],
+        [
+          "NV003",
+          "Nguyễn Thu Hà",
+          "Nữ",
+          "1995-01-25",
+          "000195147214",
+          "ha.nt@hrmdemo.vn",
+          "2023-06-01",
+          null,
+          "KD",
+          "CV",
+          "NV006",
+          "Đang làm"
+        ],
+        [
+          "NV025",
+          "Huỳnh Văn Tài",
+          "Nam",
+          "1993-06-06",
+          "000093321432",
+          "tai.hv@hrmdemo.vn",
+          "2023-11-01",
+          null,
+          "KD",
+          "CV",
+          "NV006",
+          "Đang làm"
+        ],
+        [
+          "NV044",
+          "Lã Thị Oanh",
+          "Nữ",
+          "1998-04-14",
+          "000198471893",
+          null,
+          "2025-08-04",
+          null,
+          "VH",
+          "NV",
+          "NV008",
+          "Đang làm"
+        ],
+        [
+          "NV045",
+          "Ung Văn Lực",
+          "Nam",
+          "2001-01-09",
+          "000201479812",
+          null,
+          "2026-07-01",
+          null,
+          "KD",
+          "NV",
+          "NV006",
+          "Đang làm"
+        ],
+        [
+          "NV047",
+          "Phạm Ngọc Ánh",
+          "Nữ",
+          "1999-02-17",
+          "000199495650",
+          "anh.pn@hrmdemo.vn",
+          "2026-10-01",
+          null,
+          "NS",
+          "CV",
+          "NV010",
+          "Đang làm"
+        ],
+        [
+          "NV048",
+          "Đỗ Minh Quân",
+          "Nam",
+          "2000-08-25",
+          "000200503569",
+          "quan.dm@hrmdemo.vn",
+          "2026-10-05",
+          null,
+          "IT",
+          "NV",
+          "NV007",
+          "Đang làm"
+        ]
+      ]
+    },
+    {
+      "clause": "SELECT",
+      "sql": "SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],\n\tNgayVaoLam AS [Ngày vào làm],\n\tCASE\n\t\tWHEN DATEADD(year, 3, NgayVaoLam) <= '20261021' THEN N'Từ 3 năm trở lên'\n\t\tWHEN DATEADD(year, 1, NgayVaoLam) <= '20261021' THEN N'Từ 1 đến dưới 3 năm'\n\t\tELSE N'Dưới 1 năm'\n\tEND AS [Nhóm thâm niên]\nFROM NhanVien\nWHERE TrangThai = N'Đang làm' AND NgayVaoLam <= '20261021';",
+      "columns": [
+        "Mã nhân viên",
+        "Họ tên",
+        "Ngày vào làm",
+        "Nhóm thâm niên"
+      ],
+      "count": 45,
+      "excerpt": [
+        [
+          "NV001",
+          "Trần Thị Mai",
+          "2024-03-01",
+          "Từ 1 đến dưới 3 năm"
+        ],
+        [
+          "NV003",
+          "Nguyễn Thu Hà",
+          "2023-06-01",
+          "Từ 3 năm trở lên"
+        ],
+        [
+          "NV025",
+          "Huỳnh Văn Tài",
+          "2023-11-01",
+          "Từ 1 đến dưới 3 năm"
+        ],
+        [
+          "NV044",
+          "Lã Thị Oanh",
+          "2025-08-04",
+          "Từ 1 đến dưới 3 năm"
+        ],
+        [
+          "NV045",
+          "Ung Văn Lực",
+          "2026-07-01",
+          "Dưới 1 năm"
+        ],
+        [
+          "NV047",
+          "Phạm Ngọc Ánh",
+          "2026-10-01",
+          "Dưới 1 năm"
+        ],
+        [
+          "NV048",
+          "Đỗ Minh Quân",
+          "2026-10-05",
+          "Dưới 1 năm"
+        ]
+      ]
+    },
+    {
+      "clause": "ORDER BY",
+      "sql": "SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],\n\tNgayVaoLam AS [Ngày vào làm],\n\tCASE\n\t\tWHEN DATEADD(year, 3, NgayVaoLam) <= '20261021' THEN N'Từ 3 năm trở lên'\n\t\tWHEN DATEADD(year, 1, NgayVaoLam) <= '20261021' THEN N'Từ 1 đến dưới 3 năm'\n\t\tELSE N'Dưới 1 năm'\n\tEND AS [Nhóm thâm niên]\nFROM NhanVien\nWHERE TrangThai = N'Đang làm' AND NgayVaoLam <= '20261021'\nORDER BY MaNV ASC;",
+      "columns": [
+        "Mã nhân viên",
+        "Họ tên",
+        "Ngày vào làm",
+        "Nhóm thâm niên"
+      ],
+      "count": 45,
+      "excerpt": [
+        [
+          "NV001",
+          "Trần Thị Mai",
+          "2024-03-01",
+          "Từ 1 đến dưới 3 năm"
+        ],
+        [
+          "NV002",
+          "Lê Văn Hùng",
+          "2024-04-01",
+          "Từ 1 đến dưới 3 năm"
+        ],
+        [
+          "NV003",
+          "Nguyễn Thu Hà",
+          "2023-06-01",
+          "Từ 3 năm trở lên"
+        ],
+        [
+          "NV004",
+          "Hoàng Minh Tuấn",
+          "2015-01-05",
+          "Từ 3 năm trở lên"
+        ],
+        [
+          "NV005",
+          "Vũ Thị Lan",
+          "2016-03-14",
+          "Từ 3 năm trở lên"
+        ],
+        [
+          "NV006",
+          "Đặng Quốc Bảo",
+          "2016-08-01",
+          "Từ 3 năm trở lên"
+        ],
+        [
+          "NV007",
+          "Bùi Thanh Sơn",
+          "2017-02-13",
+          "Từ 3 năm trở lên"
+        ],
+        [
+          "NV008",
+          "Phan Văn Lợi",
+          "2015-09-01",
+          "Từ 3 năm trở lên"
+        ],
+        [
+          "NV009",
+          "Ngô Thị Thu Trang",
+          "2019-05-06",
+          "Từ 3 năm trở lên"
+        ],
+        [
+          "NV010",
+          "Đỗ Thị Hồng",
+          "2016-06-01",
+          "Từ 3 năm trở lên"
+        ]
+      ]
+    }
+  ]
+}

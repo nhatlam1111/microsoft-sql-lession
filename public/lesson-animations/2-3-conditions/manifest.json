@@ -1,0 +1,41 @@
+{
+  "fingerprint": "07714ca4d1de03a10770da4046623a4159eb35595797cbcc3cf5049dddf3546e",
+  "sources": [
+    "scripts/animations/select.css",
+    "scripts/animations/render-conditions.mts",
+    "scripts/animations/sheet_to_gif.py",
+    "src/assets/animations/select-pulse.png",
+    "node_modules/@fontsource/be-vietnam-pro/files/be-vietnam-pro-latin-400-normal.woff",
+    "node_modules/@fontsource/be-vietnam-pro/files/be-vietnam-pro-vietnamese-400-normal.woff",
+    "node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff",
+    "node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-vietnamese-400-normal.woff"
+  ],
+  "width": 1080,
+  "height": 824,
+  "files": {
+    "animation.gif": "98a91f1ee80717e5ae88a2b9b8af4463652719751836f48908e6296b40b86595",
+    "poster.png": "f5ee64741a0eb0105b536950faedc667be6cba269b819e13a80be75383b35e27",
+    "from.png": "f5ee64741a0eb0105b536950faedc667be6cba269b819e13a80be75383b35e27",
+    "where.png": "b5ce46c777e5c57d7259bff6068f50e492b931b393b5264ce372282f85b3ad2a",
+    "select.png": "39976bb725f5f34e2c7902afbf3c3db85cf0c76126c9854c87c11845bae2a067"
+  },
+  "caption": "Minh họa xử lý logic. Bảng nguồn trích 4 trong 48 hồ sơ và 5 trong 12 cột; kết quả có đủ 2 hồ sơ. Thứ tự dòng có thể khác khi chạy SQL.",
+  "alt": "FROM chọn bảng nguồn. WHERE loại NV002 sai ngày và NV030 sai phòng, chuyển NV003 và NV043 đạt cả hai điều kiện sang bảng kết quả. SELECT giữ hai dòng, chọn bốn cột và đặt tiêu đề.",
+  "scenes": [
+    {
+      "step": 0,
+      "file": "from.png",
+      "alt": "FROM chọn bảng NhanVien, trích bốn hồ sơ và năm cột."
+    },
+    {
+      "step": 1,
+      "file": "where.png",
+      "alt": "WHERE giữ NV003 và NV043; loại NV002 sai ngày và NV030 sai phòng. Bước lọc vẫn giữ 12 cột."
+    },
+    {
+      "step": 2,
+      "file": "select.png",
+      "alt": "SELECT giữ hai hồ sơ, chọn bốn cột và đặt tiêu đề tiếng Việt."
+    }
+  ]
+}

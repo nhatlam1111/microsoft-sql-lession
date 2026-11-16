@@ -68,9 +68,9 @@ FROM NhanVien
 WHERE TrangThai = N'Đang làm' AND NgayVaoLam <= '20261021'
 ORDER BY MaNV ASC;`} />
 
-Sơ đồ diễn giải **thứ tự xử lý logic** của câu truy vấn. Mở từng bước để xem hồ sơ qua điều kiện lọc và nhận nhãn ở nhánh nào.
+Sơ đồ diễn giải **thứ tự xử lý logic** của câu truy vấn. Xem minh họa rồi mở từng bước để xem hồ sơ qua điều kiện lọc và nhận nhãn ở nhánh nào.
 
-<RunFlow query={`SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
+<AnimatedFlow query={`SELECT MaNV AS [Mã nhân viên], HoTen AS [Họ tên],
 \tNgayVaoLam AS [Ngày vào làm],
 \tCASE
 \t\tWHEN DATEADD(year, 3, NgayVaoLam) <= '20261021' THEN N'Từ 3 năm trở lên'
@@ -189,7 +189,7 @@ ORDER BY MaNV ASC;`,
     total: 45,
     preview: ["Mã nhân viên","Nhóm thâm niên"],
   },
-]} />
+]} animation="2-9-case" />
 
 `WHERE` giữ `45` hồ sơ vì cả `48` đều đã vào làm tới ngày chốt và chỉ ba hồ sơ đã nghỉ. Trong các dòng được giữ, `NV025` đã qua mốc đủ một năm `2024-11-01` nhưng chưa tới mốc đủ ba năm, nên `CASE` trả `Từ 1 đến dưới 3 năm`. Bảng dưới trích `10` dòng đầu theo mã tăng dần và đánh dấu `NV003` để đối chiếu với ô `C2`.
 

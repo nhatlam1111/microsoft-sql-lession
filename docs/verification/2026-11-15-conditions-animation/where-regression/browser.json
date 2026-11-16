@@ -1,0 +1,21 @@
+{
+  "url": "http://127.0.0.1:4322/microsoft-sql-lession/bai/2-2-where-loc-nhu-autofilter/",
+  "checkedAt": "2026-11-15T08:57:48.730Z",
+  "hashes": {
+    "dist/bai/2-2-where-loc-nhu-autofilter/index.html": "677d2c18ff8343d7e3f773ac49e89d8eeca627ffdc5e409501590c04c33580f0",
+    "src/components/lesson/AnimatedFlow.astro": "769549d8ea868e4743a7b09978dd04819ee2a99415d025f4fb66b64d7b34dd9c",
+    "scripts/animations/check-where-browser.mts": "905398d4eba704f753339881b4cd41a239c3e06972cf147ca514156c428a1070",
+    "public/lesson-animations/2-2-where/manifest.json": "c704d124cda9f38e4fb0daec523ad5cbb118699d47860d0e20a369ffb1a738a9"
+  },
+  "checks": [
+    "Remains still at 10% visibility; automatically plays beyond 25%; GIF decodes successfully.",
+    "Keyboard stop/play, stop persists after scrolling, replay uses a fresh URL.",
+    "Native disclosure works by keyboard and exposes three logical steps with HTML data.",
+    "LIMIT: existing desktop lesson shell collapses the article at 390px.",
+    "Isolated animation component fits 390px with readable HTML tables and original-size links.",
+    "Reduced motion defaults to still image, permits explicit play, stops when preference changes.",
+    "Without JavaScript, poster and native details/HTML data remain usable.",
+    "Failed GIF load falls back to poster with message; retry recovers."
+  ],
+  "pageErrors": []
+}

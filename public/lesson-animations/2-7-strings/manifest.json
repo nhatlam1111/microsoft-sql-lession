@@ -1,0 +1,47 @@
+{
+  "fingerprint": "bb7f2bc0d70fc4a6aa93a11e525b7d4dc621afef2f55eb7b1f7a85bf96e443bd",
+  "sources": [
+    "scripts/animations/select.css",
+    "scripts/animations/render-strings.mts",
+    "scripts/animations/sheet_to_gif.py",
+    "src/assets/animations/select-pulse.png",
+    "node_modules/@fontsource/be-vietnam-pro/files/be-vietnam-pro-latin-400-normal.woff",
+    "node_modules/@fontsource/be-vietnam-pro/files/be-vietnam-pro-vietnamese-400-normal.woff",
+    "node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff",
+    "node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-vietnamese-400-normal.woff"
+  ],
+  "width": 1080,
+  "height": 824,
+  "files": {
+    "animation.gif": "9ca821bf5796cf6898e843e93033e179258e8cdb8fd81bdd22d905c57ebfe5d0",
+    "poster.png": "823811af9ef9c1643952ecf596e9e0c7129efd010d1a55743a6ff78ff0bff434",
+    "from.png": "823811af9ef9c1643952ecf596e9e0c7129efd010d1a55743a6ff78ff0bff434",
+    "where.png": "c89fc9ba1dfe9fc845a1499deb4a8fd296e5c71fff4b0a3a11601394f461ad5e",
+    "select.png": "feb0f366e937b30b9e936ea10348a5cc8d208631ae718c019a60a8e6b8b19fd9",
+    "order.png": "96787cdf88ef9550b17d698f14ffe5d3105bef4c5759c5d1f8d2ab46888338da"
+  },
+  "caption": "Minh họa xử lý logic: nguồn trích 3/48 hồ sơ; hai hồ sơ trích qua lọc trong tổng 10. SELECT lần NV007; cảnh xếp trích 2/10 hồ sơ. Thứ tự trước ORDER BY chỉ là minh họa.",
+  "alt": "WHERE loại NV003 và giữ NV007, NV011. Với NV007, RIGHT lấy 007, UPPER đổi tên thành BÙI THANH SƠN, CONCAT ghép nhãn và LEN đếm 13 ký tự. ORDER BY xếp NV007 trước NV011.",
+  "scenes": [
+    {
+      "step": 0,
+      "file": "from.png",
+      "alt": "FROM chọn bảng NhanVien, trích ba trong 48 hồ sơ."
+    },
+    {
+      "step": 1,
+      "file": "where.png",
+      "alt": "WHERE loại NV003, giữ NV007 và NV011; tổng 10 hồ sơ đạt."
+    },
+    {
+      "step": 2,
+      "file": "select.png",
+      "alt": "Với NV007, RIGHT cho 007, UPPER cho BÙI THANH SƠN, CONCAT ghép nhãn, LEN đếm 13 ký tự."
+    },
+    {
+      "step": 3,
+      "file": "order.png",
+      "alt": "ORDER BY xếp NV007 trước NV011, trích hai trong 10 hồ sơ."
+    }
+  ]
+}

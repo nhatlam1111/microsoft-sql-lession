@@ -10,7 +10,15 @@
     "test": "vitest run",
     "check": "astro check",
     "check:dist": "node scripts/check-dist.mjs",
-    "render:select-gif": "node scripts/animations/render-select.mts"
+    "render:select-gif": "node scripts/animations/render-select.mts",
+    "render:where-gif": "node scripts/animations/render-where.mts",
+    "render:conditions-gif": "node scripts/animations/render-conditions.mts",
+    "render:order-top-gif": "node scripts/animations/render-order-top.mts",
+    "render:null-gif": "node scripts/animations/render-null.mts",
+    "render:distinct-gif": "node scripts/animations/render-distinct.mts",
+    "render:strings-gif": "node scripts/animations/render-strings.mts",
+    "render:dates-gif": "node scripts/animations/render-dates.mts",
+    "render:case-gif": "node scripts/animations/render-case.mts"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.14",

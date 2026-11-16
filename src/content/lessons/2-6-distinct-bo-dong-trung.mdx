@@ -49,9 +49,9 @@ Với `MaPB` và `MaCD`, `DISTINCT` so **cả dòng kết quả**. Hai dòng ch�
 FROM NhanVien
 ORDER BY MaPB ASC, MaCD ASC;`} />
 
-Sơ đồ cho thấy **thứ tự xử lý logic**, tức cách lần từ bảng nguồn đến kết quả. `DISTINCT` áp dụng sau khi chọn cột. Bấm từng bước để xem dữ liệu trích.
+Sơ đồ cho thấy **thứ tự xử lý logic**, tức cách lần từ bảng nguồn đến kết quả. `DISTINCT` áp dụng sau khi chọn cột. Xem minh họa rồi mở từng bước để xem dữ liệu trích.
 
-<RunFlow query={`SELECT DISTINCT MaPB, MaCD
+<AnimatedFlow query={`SELECT DISTINCT MaPB, MaCD
 FROM NhanVien
 ORDER BY MaPB ASC, MaCD ASC;`} steps={[
   {
@@ -112,7 +112,7 @@ ORDER BY MaPB ASC, MaCD ASC;`,
     rows: [["BGD","GD"],["BGD","TL"],["IT","CV"],["IT","CVC"],["IT","NV"],["IT","TP"],["KD","CV"],["KD","CVC"]],
     total: 19,
   },
-]} />
+]} animation="2-6-distinct" />
 
 Câu xét cả `48` hồ sơ vì không có `WHERE`. `NV003` và `NV013` cùng cho cặp `KD`, `CV` nên gộp thành một dòng. Cặp `KD`, `CVC` từ `NV002` có mã chức danh khác nên vẫn được giữ. Hai cặp được đánh dấu dưới đây nằm trong `19` cặp đã xếp theo mã phòng rồi theo mã chức danh.
 

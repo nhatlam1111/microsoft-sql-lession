@@ -1,0 +1,21 @@
+{
+  "url": "http://127.0.0.1:4322/microsoft-sql-lession/bai/2-3-and-or-in-between-like/",
+  "checkedAt": "2026-11-15T08:58:28.844Z",
+  "hashes": {
+    "dist/bai/2-3-and-or-in-between-like/index.html": "93faa50066e91c9f487b320553121f3e04af1d5fbd00f182f0d560be34c56785",
+    "src/components/lesson/AnimatedFlow.astro": "769549d8ea868e4743a7b09978dd04819ee2a99415d025f4fb66b64d7b34dd9c",
+    "scripts/animations/check-conditions-browser.mts": "2dcb9fce2c652ebcfe97e4ff8840060bb0e1776ac58bf32abe6988278b79b466",
+    "public/lesson-animations/2-3-conditions/manifest.json": "4eaf79fbdc62bb7a9cbb7fdb9b4bc1effda6e301a6a180e938f117e2ea1574a6"
+  },
+  "checks": [
+    "Remains still at 10% visibility; automatically plays beyond 25%; GIF decodes successfully.",
+    "Keyboard stop/play, stop persists after scrolling, replay uses a fresh URL.",
+    "Native disclosure works by keyboard and exposes three logical steps with HTML data.",
+    "LIMIT: existing desktop lesson shell collapses the article at 390px.",
+    "Isolated animation component fits 390px with readable HTML tables and original-size links.",
+    "Reduced motion defaults to still image, permits explicit play, stops when preference changes.",
+    "Without JavaScript, poster and native details/HTML data remain usable.",
+    "Failed GIF load falls back to poster with message; retry recovers."
+  ],
+  "pageErrors": []
+}

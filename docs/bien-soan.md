@@ -106,6 +106,6 @@ Không kích hoạt quy trình phát triển phần mềm chỉ vì bài có SQL
 
 ## Dựng ảnh động luồng SQL
 
-Theo mục 2.6a của quy ước, ghi lựa chọn RunFlow/AnimatedFlow và kịch bản trong hồ sơ lượt hiện có. Lần một hồ sơ/nhóm đại diện trước khi dựng; ghi trạng thái đầu vào, thao tác, đầu ra, cảnh giữ để đọc và câu SQL kiểm. Bài 2.1 dùng `npm run render:select-gif`; cách tái tạo tại [hướng dẫn nguồn dựng](../scripts/animations/README.md).
+Giao việc bằng [prompt ảnh động](../scripts/animations/README.md#prompt-giao-việc). Theo mục 2.6a của quy ước, ghi lựa chọn RunFlow/AnimatedFlow, kịch bản và câu SQL kiểm trong hồ sơ lượt hiện có. Dùng bài 2.1 làm mẫu chuyển cột và bài 2.2 làm mẫu chuyển dòng.
 
-Sau khi đổi dữ liệu hoặc nguồn dựng, xuất lại GIF/hình tĩnh rồi kiểm từng cảnh và phần HTML. Giao reviewer bài/YAML, nguồn dựng, ảnh, manifest và bằng chứng theo mục 4.5; review tích hợp bao gồm component, kiểm tài nguyên lỗi thời, bàn phím, lỗi tải ảnh và chế độ giảm chuyển động.
+Sau khi đổi dữ liệu hoặc nguồn dựng, xuất lại GIF/hình tĩnh rồi kiểm từng cảnh, khung giữa chuyển động trong GIF và phần HTML. Giao review theo tác động ở mục 4.4–4.5. Khi có review tích hợp, giao đúng phần dùng chung và bằng chứng liên quan, gồm tài nguyên lỗi thời, bàn phím, lỗi tải ảnh và giảm chuyển động khi các phần đó bị tác động.
