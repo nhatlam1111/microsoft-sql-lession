@@ -1,47 +1,49 @@
 {
-  "fingerprint": "971b5814fa5c44b726705e1efb099fea7383b3e475f585b52bdabb3783e2a203",
+  "fingerprint": "03dd4689fba8b49df19715782c190467058b519705e8b215dfa58f52e9c7f965",
   "sources": [
     "scripts/animations/select.css",
-    "scripts/animations/render-null.mts",
+    "scripts/animations/render-flow.mts",
+    "scripts/animations/storyboard.mts",
+    "scripts/animations/select-story.ts",
+    "src/lib/run-flow.ts",
     "scripts/animations/sheet_to_gif.py",
-    "src/assets/animations/select-pulse.png",
     "node_modules/@fontsource/be-vietnam-pro/files/be-vietnam-pro-latin-400-normal.woff",
     "node_modules/@fontsource/be-vietnam-pro/files/be-vietnam-pro-vietnamese-400-normal.woff",
     "node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff",
     "node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-vietnamese-400-normal.woff"
   ],
   "width": 1080,
-  "height": 824,
+  "height": 720,
   "files": {
-    "animation.gif": "dba1956269015a61b406c31c344b5ee2f1fe7221094d3d071fc1fbbd9d8f0a8f",
-    "poster.png": "53f0712ec313945c148a066b0bb9a81d13840fce5a132dd67dcd0dffb6361977",
-    "from.png": "53f0712ec313945c148a066b0bb9a81d13840fce5a132dd67dcd0dffb6361977",
-    "where.png": "d4352e6703c5614bedbb4a8f4aabe165b80f9f6f7d0d574dc5b311150768835d",
-    "select.png": "073ff4fd6ce6440ab4842a4f868a941dddc5750e0d9a745d123d44c3aeb1f4c2",
-    "order.png": "8f3df4d71b17e513c37896d3137fc6947f127f1421ec07d55177581f1ba9f5dc"
+    "animation.gif": "3cc17f6561ff77482dfbaca970e1b88878d6081f23c9093bd2e7e3b819a282c8",
+    "poster.png": "f8da81d983be61e5c5276015c8f7a506cfcf9f6c2147ae9487d8e91b5fc0839c",
+    "from.png": "62ac5c47fa2b072efa7a2c208ca2ff5164017f96445710c90537e10d24200fca",
+    "where.png": "8db51e59fedc540b7144a17fceb8518ef45272d9889fe966ba865ea6dda767e3",
+    "select.png": "9c1fdd42845bf8993d54acddd5c361441dd71a069bf879498647aa24fce1d096",
+    "order.png": "677a65198b958f5a69122241d22d5fbd4f8ecca9a75337e5132c50a2d7d39e42"
   },
-  "caption": "Minh họa xử lý logic. Nguồn trích 4/48 hồ sơ và 5/12 cột; các bảng sau trích 2/8 hồ sơ. Thứ tự trước ORDER BY chỉ là minh họa.",
-  "alt": "WHERE giữ NV008 và NV044, loại NV033 và NV045. SELECT giữ email NV008 và ghi nhãn cho email NULL của NV044. ORDER BY xếp NV008 trước NV044; nguồn không đổi.",
+  "caption": "Minh họa xử lý logic. Bảng trái là đầu vào của bước đang xem. Số dòng và cột trích được ghi ở mỗi bảng.",
+  "alt": "Minh họa FROM → WHERE → SELECT → ORDER BY. WHERE giữ các dòng minh họa NV044, NV008. Kết quả có 8 dòng.",
   "scenes": [
     {
       "step": 0,
       "file": "from.png",
-      "alt": "FROM chọn bảng NhanVien, trích bốn hồ sơ."
+      "alt": "Lấy bảng nhân viên làm nguồn. Bảng nguồn còn đầy đủ dòng và cột."
     },
     {
       "step": 1,
       "file": "where.png",
-      "alt": "WHERE giữ NV008 và NV044, loại NV033 và NV045; tổng tám hồ sơ đạt."
+      "alt": "Giữ hồ sơ phòng VH chưa có ngày nghỉ việc. Giữ 8 trong 48 dòng. Các cột giữ nguyên."
     },
     {
       "step": 2,
       "file": "select.png",
-      "alt": "SELECT giữ email NV008, đổi NULL thành nhãn ở cột kết quả của NV044."
+      "alt": "Chọn ba cột và ghi nhãn ở email còn thiếu. AS đặt tiêu đề cột. Các giá trị giữ nguyên."
     },
     {
       "step": 3,
       "file": "order.png",
-      "alt": "ORDER BY xếp NV008 trước NV044, trích hai trong tám hồ sơ."
+      "alt": "Xếp kết quả theo mã tăng dần. Xếp tại chỗ theo Mã nhân viên tăng dần. Vẫn 8 dòng. Chỉ thứ tự dòng thay đổi."
     }
   ]
 }

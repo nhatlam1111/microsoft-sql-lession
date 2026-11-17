@@ -1,47 +1,49 @@
 {
-  "fingerprint": "1789343ed462992d7df5048ce7a96091bf2c57187ae5bb6263d8e996a9121b11",
+  "fingerprint": "082db64400cdd91d7e118a38a3a4ef52cc5c74c7339b5ed826ae272db93103bf",
   "sources": [
     "scripts/animations/select.css",
-    "scripts/animations/render-case.mts",
+    "scripts/animations/render-flow.mts",
+    "scripts/animations/storyboard.mts",
+    "scripts/animations/select-story.ts",
+    "src/lib/run-flow.ts",
     "scripts/animations/sheet_to_gif.py",
-    "src/assets/animations/select-pulse.png",
     "node_modules/@fontsource/be-vietnam-pro/files/be-vietnam-pro-latin-400-normal.woff",
     "node_modules/@fontsource/be-vietnam-pro/files/be-vietnam-pro-vietnamese-400-normal.woff",
     "node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff",
     "node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-vietnamese-400-normal.woff"
   ],
   "width": 1080,
-  "height": 824,
+  "height": 720,
   "files": {
-    "animation.gif": "257f4b402b7b2362cb0d7a68af196b9ee23f893e264e7f8d4c000a9be5aa5e5f",
-    "poster.png": "d38809f55b383e8f14236332a3acc60def5f3fd1b1f4032e903619cd9d0d865e",
-    "from.png": "d38809f55b383e8f14236332a3acc60def5f3fd1b1f4032e903619cd9d0d865e",
-    "where.png": "9a3a2c89339b1501b57b0006af3ccb6da604b5cf3baa3f59c99a9fda96bf7c63",
-    "select.png": "dac3ac16556a74daf5337eaa414e15dc3bb79b03d22dca6277189fc140c9a0f8",
-    "order.png": "64bad3fba3c71f8b6610160ada342bd967d87cb05e70137d510fe28207ea4c9a"
+    "animation.gif": "52c6a9491fd4e00884fadcb875068887784324cf248d1ea67280e4fe5a6a7243",
+    "poster.png": "2fd77ff5c0c7aea61ff93153df257b28155ad0660c8c39783032bc679b195788",
+    "from.png": "416accbf976c72624d446831355a633379657f6536e425ee92f9f5c4ba8a1ef9",
+    "where.png": "3a37d59155bac9c1f6a1b62ccc73a438ef3e1c42029c14efe34333b960b96783",
+    "select.png": "5fa89a87d4a23c7b167532fd0428f875bb06a66e502e61d5e08a112a05c75410",
+    "order.png": "acf33e781c95a7e51fb29b4d6f38849090a793e6d124a4c7ed4c6ba195326e1a"
   },
-  "caption": "Minh họa xử lý logic. Nguồn 48 hồ sơ, lọc còn 45; trích ba hồ sơ để xét CASE và xếp theo mã. Thứ tự trước ORDER BY chỉ là minh họa.",
-  "alt": "WHERE loại NV020 đã nghỉ. CASE cho NV003 dừng ở nhánh ba năm, NV025 ở nhánh một năm, NV045 nhận ELSE; ORDER BY xếp ba mã trích tăng dần.",
+  "caption": "Minh họa xử lý logic. Bảng trái là đầu vào của bước đang xem. Số dòng và cột trích được ghi ở mỗi bảng.",
+  "alt": "Minh họa FROM → WHERE → SELECT → ORDER BY. WHERE giữ các dòng minh họa NV003, NV045, NV025. Kết quả có 45 dòng.",
   "scenes": [
     {
       "step": 0,
       "file": "from.png",
-      "alt": "FROM chọn bảng NhanVien, trích bốn trong 48 hồ sơ."
+      "alt": "Lấy nguồn 48 hồ sơ. Bảng nguồn còn đầy đủ dòng và cột."
     },
     {
       "step": 1,
       "file": "where.png",
-      "alt": "WHERE loại NV020 đã nghỉ và giữ ba hồ sơ mẫu; tổng 45 hồ sơ."
+      "alt": "Giữ 45 hồ sơ trong phạm vi. Giữ 45 trong 48 dòng. Các cột giữ nguyên."
     },
     {
       "step": 2,
       "file": "select.png",
-      "alt": "CASE xét lần lượt NV003, NV025, NV045 và trả ba nhãn thâm niên."
+      "alt": "Tính một nhãn cho mỗi hồ sơ. AS đặt tiêu đề cột. Các giá trị giữ nguyên."
     },
     {
       "step": 3,
       "file": "order.png",
-      "alt": "ORDER BY xếp ba hồ sơ trích NV003, NV025, NV045 theo mã; không phải ba dòng đầu kết quả."
+      "alt": "Xếp mã tăng dần. Xếp tại chỗ theo Mã nhân viên tăng dần. Vẫn 45 dòng. Chỉ thứ tự dòng thay đổi."
     }
   ]
 }
