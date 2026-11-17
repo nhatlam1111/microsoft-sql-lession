@@ -1,42 +1,43 @@
 {
-  "fingerprint": "0df26e2cfd10f4f774b4b99a99dd05603fe5ed8e10bedbe61b61d589a765ed3b",
+  "fingerprint": "0957630500b7aa86401ee53834c7252af0faf9bf0e0b39b53f71a5da392aadee",
   "sources": [
     "scripts/animations/select.css",
-    "scripts/animations/render-select.mts",
+    "scripts/animations/render-flow.mts",
+    "scripts/animations/storyboard.mts",
     "scripts/animations/select-story.ts",
+    "src/lib/run-flow.ts",
     "scripts/animations/sheet_to_gif.py",
-    "src/assets/animations/select-pulse.png",
     "node_modules/@fontsource/be-vietnam-pro/files/be-vietnam-pro-latin-400-normal.woff",
     "node_modules/@fontsource/be-vietnam-pro/files/be-vietnam-pro-vietnamese-400-normal.woff",
     "node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff",
     "node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-vietnamese-400-normal.woff"
   ],
   "width": 1080,
-  "height": 824,
+  "height": 720,
   "files": {
-    "animation.gif": "a7de2748844c4fb7bb8800544640b2462355ba523db915df0675025fdefd425b",
-    "poster.png": "b051cd0f4c94c1721ddd50a21a29b5b18cc0ee175d9d1099e0a74ccc3c678dec",
-    "from.png": "b051cd0f4c94c1721ddd50a21a29b5b18cc0ee175d9d1099e0a74ccc3c678dec",
-    "select.png": "483f2e2a5ae08f576f607106d0499b4b4de536b7655cf1e83381f2a7ca0f69ba",
-    "aliases.png": "f377c6ddce4bcb252dcec579014816e27456d526ef1a1844ef11adf6fb8af849"
+    "animation.gif": "0a1ad5c75cd4129ecde71c73569293d4b63080007f1fd252727ac00b05e543f6",
+    "poster.png": "2b16965ad2771b9897a9a0522440b8c2ed6611febef120d4c7124bc5d174b405",
+    "from.png": "bb1664bd9e2ee2facd55be713eba461fb8465ac2ce289091aed7e4c665b3efba",
+    "select.png": "ba92e2cdd480cbe984a52a7fc422c9e66c616530036884be98f89808eeb1fd38",
+    "aliases.png": "47deec7192f363508165775d16beb7759bd178c6ed3bba216660a457d76c23b1"
   },
-  "caption": "Minh họa xử lý logic. Trích 4 trong 48 hồ sơ, 4 trong 12 cột nguồn. Thứ tự dòng có thể khác khi chạy SQL.",
-  "alt": "FROM lấy bảng NhanVien; SELECT lấy ba cột và AS đặt tiêu đề tiếng Việt. Kết quả vẫn đủ 48 hồ sơ.",
+  "caption": "Minh họa xử lý logic. Bảng trái là đầu vào của bước đang xem. Số dòng và cột trích được ghi ở mỗi bảng.",
+  "alt": "Minh họa FROM → SELECT. Kết quả có 48 hồ sơ.",
   "scenes": [
     {
       "step": 0,
       "file": "from.png",
-      "alt": "FROM chọn bảng NhanVien làm nguồn."
+      "alt": "Lấy bảng NhanVien làm nguồn. Bảng nguồn còn đầy đủ dòng và cột."
     },
     {
       "step": 1,
       "file": "select.png",
-      "alt": "SELECT lấy MaNV, HoTen và NgayVaoLam theo đúng thứ tự."
+      "alt": "Chọn ba cột chị Hạnh cần và đặt tiêu đề. Giữ 48 dòng · Kết quả SELECT có 3 cột."
     },
     {
       "step": 1,
       "file": "aliases.png",
-      "alt": "Trong SELECT, AS đặt tiêu đề Mã nhân viên, Họ tên và Ngày vào làm."
+      "alt": "Chọn ba cột chị Hạnh cần và đặt tiêu đề. AS đặt tiêu đề cột. Các giá trị giữ nguyên."
     }
   ]
 }

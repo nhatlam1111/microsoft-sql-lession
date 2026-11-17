@@ -1,47 +1,49 @@
 {
-  "fingerprint": "4c20eb28ab43e8ce92a4f115f1b0462025652de1dbccb72953e425ddbd177025",
+  "fingerprint": "2350ddf8fd81fac4037e406305d70dc5e30e49d0cd3d75fd6fc04cb8db852fbe",
   "sources": [
     "scripts/animations/select.css",
-    "scripts/animations/render-distinct.mts",
+    "scripts/animations/render-flow.mts",
+    "scripts/animations/storyboard.mts",
+    "scripts/animations/select-story.ts",
+    "src/lib/run-flow.ts",
     "scripts/animations/sheet_to_gif.py",
-    "src/assets/animations/select-pulse.png",
     "node_modules/@fontsource/be-vietnam-pro/files/be-vietnam-pro-latin-400-normal.woff",
     "node_modules/@fontsource/be-vietnam-pro/files/be-vietnam-pro-vietnamese-400-normal.woff",
     "node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff",
     "node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-vietnamese-400-normal.woff"
   ],
   "width": 1080,
-  "height": 824,
+  "height": 720,
   "files": {
-    "animation.gif": "73d1a3943e659ac4c67f726fb7c3c407239efe32cfddf624e98b1247165534e0",
-    "poster.png": "60c34dabaa2028617540a3b790c7631af13ab558ae2cbb0233546077b4fd3891",
-    "from.png": "60c34dabaa2028617540a3b790c7631af13ab558ae2cbb0233546077b4fd3891",
-    "select.png": "72beb3f9824c5fbb6c80f01ce5d7e50ef5fe36640021b89d9a0b79c70004f734",
-    "distinct.png": "42427ff9dc17565527219e5be69545b01630ebf4f66449274d230f437a2fe4e9",
-    "order.png": "669c0875ecba6edfd2efc39b3c2d38a8d12447434f57d3c84f1312a4cf64760b"
+    "animation.gif": "18b2c8f2f51596c15883e71e7296d528d2f01bfcc83a9347584b7fd0ee882527",
+    "poster.png": "5d4e54213c2ac293a8e34faa28535caa36d28ee1b2a20d3a87fafc35cc14d5bc",
+    "from.png": "071ec59417357a578ab293e8c99e27625f15e43f453090b7780d38a7f4f51da2",
+    "select.png": "4610ed157a52c9b357a6931cbe8c2ba86b38f304281520dc22c6ad1e0c423d26",
+    "distinct.png": "a41939f33a5affa92235379bb2aaad0c2c53f7504a567289de42dda5d18a35f0",
+    "order.png": "a4c812eec51e60e55e6da6228854357cc40735c1c4ebe96268a9e73d609e017c"
   },
-  "caption": "Minh họa xử lý logic: nguồn 48 hồ sơ; chọn hai cột, bỏ trùng còn 19 cặp. Các bảng chỉ trích dữ liệu; thứ tự trước ORDER BY là minh họa.",
-  "alt": "SELECT lấy mã phòng và mã chức danh của năm hồ sơ. DISTINCT gộp hai dòng KD, CV, vẫn giữ KD, CVC. ORDER BY xếp bốn cặp được trích theo hai mã.",
+  "caption": "Minh họa xử lý logic. Bảng trái là đầu vào của bước đang xem. Số dòng và cột trích được ghi ở mỗi bảng.",
+  "alt": "Minh họa FROM → SELECT → DISTINCT → ORDER BY. Kết quả có 19 dòng.",
   "scenes": [
     {
       "step": 0,
       "file": "from.png",
-      "alt": "FROM chọn bảng NhanVien, trích năm trong 48 hồ sơ."
+      "alt": "Lấy toàn bộ hồ sơ nhân viên làm nguồn. Bảng nguồn còn đầy đủ dòng và cột."
     },
     {
       "step": 1,
       "file": "select.png",
-      "alt": "SELECT chọn MaPB và MaCD; NV003 và NV013 cùng cho cặp KD, CV."
+      "alt": "Lấy hai mã từ mỗi hồ sơ. Giữ 48 dòng · Kết quả SELECT có 2 cột."
     },
     {
       "step": 2,
       "file": "distinct.png",
-      "alt": "DISTINCT gộp hai dòng KD, CV; KD, CVC còn riêng. Tổng 19 cặp."
+      "alt": "Giữ mỗi cặp phòng và chức danh một lần. Toàn bộ kết quả có 19 cặp khác nhau."
     },
     {
       "step": 3,
       "file": "order.png",
-      "alt": "ORDER BY xếp bốn cặp được trích theo mã phòng rồi mã chức danh; không phải bốn dòng đầu kết quả."
+      "alt": "Sắp theo mã phòng rồi theo mã chức danh. Xếp tại chỗ theo MaPB tăng dần. Nếu bằng nhau, xếp theo MaCD tăng dần. Vẫn 19 dòng. Chỉ thứ tự dòng thay đổi."
     }
   ]
 }

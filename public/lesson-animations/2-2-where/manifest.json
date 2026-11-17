@@ -1,41 +1,43 @@
 {
-  "fingerprint": "7cf4eda9fe01dc37ed649b159bcb9eaec4425faf901855fe928b8a72a7ee3260",
+  "fingerprint": "dfdfaf2f33cc467b875e8cb393343d65fbe51f8f2ef74ae48e93293eb8eee692",
   "sources": [
     "scripts/animations/select.css",
-    "scripts/animations/render-where.mts",
+    "scripts/animations/render-flow.mts",
+    "scripts/animations/storyboard.mts",
+    "scripts/animations/select-story.ts",
+    "src/lib/run-flow.ts",
     "scripts/animations/sheet_to_gif.py",
-    "src/assets/animations/select-pulse.png",
     "node_modules/@fontsource/be-vietnam-pro/files/be-vietnam-pro-latin-400-normal.woff",
     "node_modules/@fontsource/be-vietnam-pro/files/be-vietnam-pro-vietnamese-400-normal.woff",
     "node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff",
     "node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-vietnamese-400-normal.woff"
   ],
   "width": 1080,
-  "height": 824,
+  "height": 720,
   "files": {
-    "animation.gif": "2a95c1a716788b97fc7f81c5a734fae0696823d603159464057a55753b647eb6",
-    "poster.png": "2db5bd5e1ef66418c6f0e661ab3d1bb8d3dd82a3a361944e34ecff2fc5b6780c",
-    "from.png": "2db5bd5e1ef66418c6f0e661ab3d1bb8d3dd82a3a361944e34ecff2fc5b6780c",
-    "where.png": "af29578c887f27388af613298c2683a4f80494af6011c1cedbd3a1ec97206434",
-    "select.png": "ff332ca532faf8cc920550166a8cd41d704569cc3a8faf588f29e5088e871683"
+    "animation.gif": "6b3846a69ad4199e6bf624bff965c1e2f7079e37ce1a65c778be52bd84d01afc",
+    "poster.png": "2f8cc1e3e8f402457b7a9821a9b00a986d23be53db584ff1d71d43ae7f4e03bc",
+    "from.png": "0b5a92ce275c2e0e04da5176803c1b7ffbb7be282c3a3a79bf66ea913257058d",
+    "where.png": "7bf30c73416e118f8fa067d484e982a695ac59c62f0f17bf1ef4d7d31580afc6",
+    "select.png": "f8eabeabd9c9e1ebbed95710bfba1cae4f6077e3886eaee561b716ddbd85112b"
   },
-  "caption": "Minh họa xử lý logic. Bảng nguồn trích 4 trong 48 hồ sơ và 5 trong 12 cột. Thứ tự dòng có thể khác khi chạy SQL.",
-  "alt": "FROM chọn bảng nguồn. WHERE loại NV001 mã KT và chuyển lần lượt ba hồ sơ mẫu mã KD sang bảng bên phải, gồm NV020 đã nghỉ. SELECT giữ các dòng, chọn bốn cột và đặt tiêu đề tiếng Việt.",
+  "caption": "Minh họa xử lý logic. Bảng trái là đầu vào của bước đang xem. Số dòng và cột trích được ghi ở mỗi bảng.",
+  "alt": "Minh họa FROM → WHERE → SELECT. WHERE giữ các dòng minh họa NV002, NV003, NV020. Kết quả có 14 dòng.",
   "scenes": [
     {
       "step": 0,
       "file": "from.png",
-      "alt": "FROM chọn bảng NhanVien làm nguồn. Bảng trái trích bốn hồ sơ và năm cột."
+      "alt": "Xác định nguồn là bảng NhanVien. Bảng nguồn còn đầy đủ dòng và cột."
     },
     {
       "step": 1,
       "file": "where.png",
-      "alt": "WHERE loại NV001 mã KT. Bảng phải trích ba trong 14 hồ sơ mã KD. Bước lọc vẫn giữ 12 cột, trong đó có GioiTinh."
+      "alt": "Giữ các hồ sơ có mã phòng KD. Giữ 14 trong 48 dòng. Các cột giữ nguyên."
     },
     {
       "step": 2,
       "file": "select.png",
-      "alt": "SELECT giữ 14 hồ sơ, bỏ GioiTinh khỏi kết quả và hiển thị bốn cột với tiêu đề tiếng Việt."
+      "alt": "Hiển thị bốn cột với tiêu đề yêu cầu. AS đặt tiêu đề cột. Các giá trị giữ nguyên."
     }
   ]
 }

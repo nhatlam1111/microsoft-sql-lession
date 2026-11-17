@@ -1,41 +1,43 @@
 {
-  "fingerprint": "07714ca4d1de03a10770da4046623a4159eb35595797cbcc3cf5049dddf3546e",
+  "fingerprint": "84d8077ef4d8f107314c282eb5fdd3142576b27c7a6ea57385da31aed0a824d7",
   "sources": [
     "scripts/animations/select.css",
-    "scripts/animations/render-conditions.mts",
+    "scripts/animations/render-flow.mts",
+    "scripts/animations/storyboard.mts",
+    "scripts/animations/select-story.ts",
+    "src/lib/run-flow.ts",
     "scripts/animations/sheet_to_gif.py",
-    "src/assets/animations/select-pulse.png",
     "node_modules/@fontsource/be-vietnam-pro/files/be-vietnam-pro-latin-400-normal.woff",
     "node_modules/@fontsource/be-vietnam-pro/files/be-vietnam-pro-vietnamese-400-normal.woff",
     "node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff",
     "node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-vietnamese-400-normal.woff"
   ],
   "width": 1080,
-  "height": 824,
+  "height": 720,
   "files": {
-    "animation.gif": "98a91f1ee80717e5ae88a2b9b8af4463652719751836f48908e6296b40b86595",
-    "poster.png": "f5ee64741a0eb0105b536950faedc667be6cba269b819e13a80be75383b35e27",
-    "from.png": "f5ee64741a0eb0105b536950faedc667be6cba269b819e13a80be75383b35e27",
-    "where.png": "b5ce46c777e5c57d7259bff6068f50e492b931b393b5264ce372282f85b3ad2a",
-    "select.png": "39976bb725f5f34e2c7902afbf3c3db85cf0c76126c9854c87c11845bae2a067"
+    "animation.gif": "f3d954bbcfb72a454a70b30b6ec4976c33048b2e068d93bb1c5545f0d160cb62",
+    "poster.png": "2a2b25034bbb0b6cc709da762f2f59a2c5f5bbfe362e5f231bba10f72f049f2b",
+    "from.png": "ce0458ef11d6d23666b242498a7497c59ae06eafc94b65995aff88bfc73d308a",
+    "where.png": "125c59c17094c7bd682e20c55d49f95a46b55976cc9f3f0b5493baf827390569",
+    "select.png": "10abae2053db6669648bff4aa25264bde1140f5ad76b6a2ba12db5737d2c2d19"
   },
-  "caption": "Minh họa xử lý logic. Bảng nguồn trích 4 trong 48 hồ sơ và 5 trong 12 cột; kết quả có đủ 2 hồ sơ. Thứ tự dòng có thể khác khi chạy SQL.",
-  "alt": "FROM chọn bảng nguồn. WHERE loại NV002 sai ngày và NV030 sai phòng, chuyển NV003 và NV043 đạt cả hai điều kiện sang bảng kết quả. SELECT giữ hai dòng, chọn bốn cột và đặt tiêu đề.",
+  "caption": "Minh họa xử lý logic. Bảng trái là đầu vào của bước đang xem. Số dòng và cột trích được ghi ở mỗi bảng.",
+  "alt": "Minh họa FROM → WHERE → SELECT. WHERE giữ các dòng minh họa NV003, NV043. Kết quả có 2 dòng.",
   "scenes": [
     {
       "step": 0,
       "file": "from.png",
-      "alt": "FROM chọn bảng NhanVien, trích bốn hồ sơ và năm cột."
+      "alt": "Xác định bảng NhanVien làm nguồn. Bảng nguồn còn đầy đủ dòng và cột."
     },
     {
       "step": 1,
       "file": "where.png",
-      "alt": "WHERE giữ NV003 và NV043; loại NV002 sai ngày và NV030 sai phòng. Bước lọc vẫn giữ 12 cột."
+      "alt": "Giữ hồ sơ qua cả nhóm phòng và khoảng ngày. Giữ 2 trong 48 dòng. Các cột giữ nguyên."
     },
     {
       "step": 2,
       "file": "select.png",
-      "alt": "SELECT giữ hai hồ sơ, chọn bốn cột và đặt tiêu đề tiếng Việt."
+      "alt": "Lấy bốn cột và đặt tiêu đề tiếng Việt. AS đặt tiêu đề cột. Các giá trị giữ nguyên."
     }
   ]
 }

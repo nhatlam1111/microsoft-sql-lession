@@ -1,53 +1,55 @@
 {
-  "fingerprint": "4183125900411a8830012496abd06dfb210bf80115251d5e7c891bb625262098",
+  "fingerprint": "77cffeced9158868a8422ca0b89c7559ee5e0b520c7d876952e767ddfc6287dd",
   "sources": [
     "scripts/animations/select.css",
-    "scripts/animations/render-order-top.mts",
+    "scripts/animations/render-flow.mts",
+    "scripts/animations/storyboard.mts",
+    "scripts/animations/select-story.ts",
+    "src/lib/run-flow.ts",
     "scripts/animations/sheet_to_gif.py",
-    "src/assets/animations/select-pulse.png",
     "node_modules/@fontsource/be-vietnam-pro/files/be-vietnam-pro-latin-400-normal.woff",
     "node_modules/@fontsource/be-vietnam-pro/files/be-vietnam-pro-vietnamese-400-normal.woff",
     "node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff",
     "node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-vietnamese-400-normal.woff"
   ],
   "width": 1080,
-  "height": 824,
+  "height": 720,
   "files": {
-    "animation.gif": "c61f0c3c4a53805e24b124e162d9ceaaf8d076f8734960bd5d15567a330e01bb",
-    "poster.png": "267066c981f5c7e7d88304f639b9a6962bdd96ca53218710cbdb90f3a9af4434",
-    "from.png": "267066c981f5c7e7d88304f639b9a6962bdd96ca53218710cbdb90f3a9af4434",
-    "where.png": "87ddddcc3a398eac0c61a21680b30afd2926268edc833e6e5669527da6929320",
-    "select.png": "431659646da844377bc31178890197934a5ca78c4b7627812243cf40dd401e93",
-    "order.png": "53285dae319e58a0e0c8e6af5b6c23d8c6b3a63d9898c5ecc8c24c3aeae945a7",
-    "top.png": "909808a5f728002557d1274d0084e0128c0528637bb79dbfd666354a53989b3f"
+    "animation.gif": "19f200f37716ee60a701c86b9f2348d08e01cde679d29250b0b36e7c8ee1ff4b",
+    "poster.png": "28d4379ab1621aa47db12fb54f7624272a3f70616a6bd3fc560401fae77495d2",
+    "from.png": "a769b4df4e11e48a60da530375399cff0c77072bcc452b3f0c2310354c44ed4d",
+    "where.png": "6c9ee2cd0e530f60140686b094902e50aab61b3a2f8d4b247ff45b22c6182058",
+    "select.png": "45b84844ef3f1b1866e28f0d61bb18af992cab5668e744090aeb9bf3a323ff6b",
+    "order.png": "9382f1fa6556f9e40f65f9a1aaed61ead6115daedcf982ac432b387da3c019a5",
+    "top.png": "4a5e89eb122ef22bef90e4bff209f3a40034deca09d7e876f03654eaf849bfd4"
   },
-  "caption": "Minh họa xử lý logic: nguồn 48 hồ sơ, lọc còn 45, chọn 4 cột, xếp rồi lấy 5 dòng. Cảnh xếp trích 6 dòng và 2 cột; thứ tự trước ORDER BY chỉ là minh họa.",
-  "alt": "Lọc hồ sơ đang làm, chọn cột, lần lượt xếp sáu hồ sơ trích theo ngày mới nhất trước, rồi chuyển năm hồ sơ đầu sang kết quả; NV040 đứng thứ sáu không được lấy.",
+  "caption": "Minh họa xử lý logic. Bảng trái là đầu vào của bước đang xem. Số dòng và cột trích được ghi ở mỗi bảng.",
+  "alt": "Minh họa FROM → WHERE → SELECT → ORDER BY → TOP. WHERE giữ các dòng minh họa NV001, NV047, NV048. Kết quả có 5 dòng.",
   "scenes": [
     {
       "step": 0,
       "file": "from.png",
-      "alt": "FROM chọn bảng nguồn, trích bốn trong 48 hồ sơ."
+      "alt": "Xác định bảng nhân viên làm nguồn. Bảng nguồn còn đầy đủ dòng và cột."
     },
     {
       "step": 1,
       "file": "where.png",
-      "alt": "WHERE loại NV020 đã nghỉ; còn 45 hồ sơ đang làm."
+      "alt": "Chỉ giữ hồ sơ có trạng thái Đang làm. Giữ 45 trong 48 dòng. Các cột giữ nguyên."
     },
     {
       "step": 2,
       "file": "select.png",
-      "alt": "SELECT chọn bốn cột và đặt tiêu đề; còn 45 hồ sơ."
+      "alt": "Chọn bốn cột và đặt tiêu đề. AS đặt tiêu đề cột. Các giá trị giữ nguyên."
     },
     {
       "step": 3,
       "file": "order.png",
-      "alt": "ORDER BY xếp ngày mới trước, trích sáu trong 45 hồ sơ, NV044 đứng thứ năm."
+      "alt": "Xếp ngày mới nhất trước, cùng ngày thì xếp theo mã. Xếp tại chỗ theo Ngày vào làm giảm dần. Nếu bằng nhau, xếp theo Mã nhân viên tăng dần. Vẫn 45 dòng. Chỉ thứ tự dòng thay đổi. Đổi mẫu từ 3 sang 6 dòng để thấy ranh giới TOP (5). Mẫu vẫn có NV047 và NV048."
     },
     {
       "step": 4,
       "file": "top.png",
-      "alt": "TOP giữ năm hồ sơ đầu, NV040 đứng thứ sáu không được lấy."
+      "alt": "Giữ tối đa năm dòng đầu của danh sách đã xếp. Kết quả có 5 dòng."
     }
   ]
 }
