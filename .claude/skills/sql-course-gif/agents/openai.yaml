@@ -1,0 +1,4 @@
+interface:
+  display_name: "GIF SQL cho BA/PM"
+  short_description: "Dựng GIF theo bài SQL từ dữ liệu đến kết quả"
+  default_prompt: "Dùng $sql-course-gif để dựng GIF bài 2.2 theo dữ liệu khóa học và kiểm bản đã xuất."
